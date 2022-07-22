@@ -10,19 +10,10 @@ export const getUser = async (username: string): Promise<UserData> => {
 	if (!existingUser) {
 		return Promise.reject(new Error('User does not exist'));
 	} else {
-		const user = JSON.parse(existingUser);
-		delete user.password;
+		// TODO: Does this work? does the return type automatically remove the password property?
+		// TODO: Since the UserData return omits the password property, does it remove it in this function's return??
+		const user: User = JSON.parse(existingUser);
 		return Promise.resolve(user);
-	}
-};
-
-export const setUser = async (username: string, userData: User): Promise<string> => {
-	const existingUser = await db.get(username);
-	if (existingUser) {
-		await db.set(username, JSON.stringify(userData));
-		return Promise.resolve('User has been set');
-	} else {
-		return Promise.reject(new Error('User does not exist'));
 	}
 };
 
