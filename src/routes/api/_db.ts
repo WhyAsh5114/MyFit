@@ -30,11 +30,11 @@ export const registerUser = async (credentials: AccountDetails): Promise<UserDat
 		};
 
 		await db.set(newUser.username, JSON.stringify(newUser));
-		
+
 		const userData: UserData = {
 			username: credentials.username,
 			splits: {}
-		}
+		};
 		return Promise.resolve(userData);
 	}
 };

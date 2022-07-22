@@ -5,8 +5,8 @@
 	let password: string;
 
 	let modalHeading: string;
-    let modalHeadingColor: string;
-	let modalText: string;
+	let modalHeadingColor: string;
+	let modalText: string | unknown;
 	let modal: HTMLInputElement;
 
 	async function login() {
@@ -26,11 +26,16 @@
 			} else {
 				const body = await res.json();
 				modalHeading = 'Error';
-                modalHeadingColor = 'text-red-500';
+				modalHeadingColor = 'text-red-500';
 				modalText = body.message;
 				modal.checked = true;
 			}
-		} catch (err) {}
+		} catch (err) {
+            modalHeading = 'Error';
+            modalHeadingColor = 'text-red-500';
+            modalText = err;
+            modal.checked = true;
+        }
 	}
 </script>
 

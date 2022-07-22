@@ -1,1 +1,1 @@
-import '../src/global'
+import '../src/global';

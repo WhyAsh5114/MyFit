@@ -15,13 +15,13 @@
 		imagePath="/dumbbell.svg"
 		link="/workouts"
 	/>
-    <MenuButton
+	<MenuButton
 		title="Records"
 		description="See and modify logged stats like workout and cardio"
 		imagePath="/record.svg"
 		link="/records"
 	/>
-    <MenuButton
+	<MenuButton
 		title="Tracking"
 		description="Visualize your progress using multiple metrics"
 		imagePath="/graph.svg"

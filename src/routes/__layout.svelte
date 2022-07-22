@@ -30,7 +30,10 @@
 		MyFit
 	</a>
 	<div class="dropdown dropdown-end ml-auto h-full">
-		<button tabindex="0" class="btn no-animation btn-primary btn-square lg:px-1.5 h-full avatar lg:w-20">
+		<button
+			tabindex="0"
+			class="btn no-animation btn-primary btn-square lg:px-1.5 h-full avatar lg:w-20"
+		>
 			<div class="rounded-full w-8 md:w-9 lg:w-12">
 				<img src="/profile.png" alt="profile-pic" />
 			</div>

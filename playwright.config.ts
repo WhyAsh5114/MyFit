@@ -31,19 +31,19 @@ const config: PlaywrightTestConfig = {
 		},
 
 		{
-		  name: 'Mobile Chrome',
-		  use: {
-		    ...devices['Pixel 5'],
-		  },
+			name: 'Mobile Chrome',
+			use: {
+				...devices['Pixel 5']
+			}
 		},
 
 		{
-		  name: 'Google Chrome',
-		  use: {
-		    channel: 'chrome',
-		  },
-		},
-	],
+			name: 'Google Chrome',
+			use: {
+				channel: 'chrome'
+			}
+		}
+	]
 };
 
 export default config;
