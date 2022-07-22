@@ -52,6 +52,6 @@
 		</ul>
 	</div>
 </div>
-<div class="px-2 py-0.5">
+<div class="px-2 py-0.5 h-full">
 	<slot />
 </div>
