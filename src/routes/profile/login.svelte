@@ -1,15 +1,29 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import MyModal from '$lib/MyModal.svelte';
 
 	let username: string;
 	let password: string;
 
-	let modalHeading: string;
-	let modalHeadingColor: string;
-	let modalText: string | unknown;
-	let modal: HTMLInputElement;
+	let modalOpen = false;
+	let modalTexts: string[];
 
 	async function login() {
+		console.log(modalOpen);
+		let errors: string[] = [];
+		if (!username) {
+			errors.push('Username cannot be empty');
+		}
+		if (!password) {
+			errors.push('Password cannot be empty');
+		}
+		
+		if (errors.length > 0) {
+			modalTexts = errors;
+			modalOpen = true;
+			return;
+		}		
+
 		try {
 			const res = await fetch('/api/auth/login', {
 				method: 'POST',
@@ -24,31 +38,18 @@
 			if (res.ok) {
 				goto('/profile');
 			} else {
-				const body = await res.json();
-				modalHeading = 'Error';
-				modalHeadingColor = 'text-red-500';
-				modalText = body.message;
-				modal.checked = true;
+				const body: { message: string } = await res.json();
+				modalTexts = [body.message];
+				modalOpen = true;
 			}
 		} catch (err) {
-            modalHeading = 'Error';
-            modalHeadingColor = 'text-red-500';
-            modalText = err;
-            modal.checked = true;
+            modalTexts = ['Check console for more information'];
+            modalOpen = true;
         }
 	}
 </script>
 
-<!-- Modal -->
-<input type="checkbox" id="my-modal-4" class="modal-toggle" bind:this={modal} />
-<label for="my-modal-4" class="modal cursor-pointer">
-	<label class="modal-box relative bg-primary" for="">
-		<h3 class="text-lg font-bold {modalHeadingColor}">{modalHeading}</h3>
-		<p class="py-4">{modalText}</p>
-	</label>
-</label>
-
-<!-- Login form -->
+<MyModal modalTexts={modalTexts} bind:modalOpen={modalOpen} />
 <form class="flex w-full justify-center h-full items-center" on:submit|preventDefault>
 	<div class="bg-secondary w-1/5 px-5 pt-4 rounded-md flex flex-col">
 		<h3 class="text-stone-800 text-center font-semibold text-xl">Welcome</h3>
