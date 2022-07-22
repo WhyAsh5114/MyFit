@@ -12,7 +12,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		return {
 			status: 404,
 			body: {
-				message: 'User does not exist, register first?'
+				message: 'User does not exist'
 			}
 		};
 	}
