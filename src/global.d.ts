@@ -10,11 +10,7 @@ interface User {
 	workouts?: Record<string, Array<exercise>>;
 }
 
-interface UserData {
-	username: string;
-	splits: Record<string, split>;
-	workouts?: Record<string, Array<exercise>>;
-}
+type UserData = Omit<User, "password">
 
 interface split {
 	name: string;
