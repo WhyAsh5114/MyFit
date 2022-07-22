@@ -13,7 +13,7 @@
 		}}
 	>
 		<h3 class="text-lg font-bold text-error">Error</h3>
-		<ul class="py-4">
+		<ul class="py-4" data-test-id="modal-messages-list">
 			{#each modalTexts as text}
 				<li>{text}</li>
 			{/each}
