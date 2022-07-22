@@ -8,7 +8,7 @@ const config: PlaywrightTestConfig = {
 	retries: process.env.CI ? 2 : 0,
 	workers: process.env.CI ? 1 : undefined,
 	webServer: {
-		command: 'npm run build && npm run preview',
+		command: 'export NODE_NO_WARNINGS=1 && npm run build && npm run preview',
 		port: 4173
 	},
 	use: {
