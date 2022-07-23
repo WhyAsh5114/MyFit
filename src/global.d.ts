@@ -5,7 +5,7 @@ interface AccountDetails {
 
 interface User {
 	username: string;
-	password: string;
+	password?: string;
 	splits: Record<string, split>;
 	workouts?: Record<string, Array<exercise>>;
 }
