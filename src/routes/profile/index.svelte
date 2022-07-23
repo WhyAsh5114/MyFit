@@ -9,7 +9,10 @@
 				}
 			};
 		} else {
-			return {};
+			return {
+				redirect: '/profile/login',
+				status: 302
+			};
 		}
 	};
 </script>
@@ -27,18 +30,10 @@
 </script>
 
 <div class="flex flex-col w-full place-items-center h-full justify-center gap-3">
-	{#if user}
-		<p>{JSON.stringify(user)}</p>
-		<button class="btn no-animation btn-sm normal-case btn-error w-fit" on:click={logout}
-			>Logout</button
-		>
-	{:else}
-		<p class="text-lg lg:text-xl">You haven't logged in yet</p>
-		<div class="flex gap-5">
-			<button class="btn normal-case bg-primary lg:text-lg no-animation"> Login </button>
-			<button class="btn normal-case bg-primary lg:text-lg no-animation">
-				Create an account
-			</button>
-		</div>
-	{/if}
+	<p>Hi {user.username}</p>
+	<button
+		class="btn no-animation btn-sm normal-case btn-error w-fit"
+		on:click={logout}
+		data-test-id="profile-logout-button">Logout</button
+	>
 </div>
