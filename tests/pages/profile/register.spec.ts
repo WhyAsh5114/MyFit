@@ -49,5 +49,8 @@ test('should throw error (Username cannot be empty and passwords do not match)',
 	await page.locator('button', { hasText: 'Submit' }).click();
 
 	const messages = page.locator('ul[data-test-id=modal-messages-list] li');
-	expect(await messages.allTextContents()).toStrictEqual(['Username cannot be empty', 'Passwords do not match']);
+	expect(await messages.allTextContents()).toStrictEqual([
+		'Username cannot be empty',
+		'Passwords do not match'
+	]);
 });
