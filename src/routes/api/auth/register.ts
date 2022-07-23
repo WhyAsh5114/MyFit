@@ -10,7 +10,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		return {
 			status: 201,
 			body: {
-				message: 'User registered successfully'
+				message: 'Account created successfully'
 			}
 		};
 	} catch (err) {
