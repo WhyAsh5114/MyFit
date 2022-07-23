@@ -10,9 +10,8 @@ export const getUser = async (username: string): Promise<UserData> => {
 	if (!existingUser) {
 		return Promise.reject(new Error('User does not exist'));
 	} else {
-		// TODO: Does this work? does the return type automatically remove the password property?
-		// TODO: Since the UserData return omits the password property, does it remove it in this function's return??
 		const user: User = JSON.parse(existingUser);
+		delete user.password;
 		return Promise.resolve(user);
 	}
 };
@@ -30,12 +29,8 @@ export const registerUser = async (credentials: AccountDetails): Promise<UserDat
 		};
 
 		await db.set(newUser.username, JSON.stringify(newUser));
-
-		const userData: UserData = {
-			username: credentials.username,
-			splits: {}
-		};
-		return Promise.resolve(userData);
+		delete newUser.password;
+		return Promise.resolve(newUser);
 	}
 };
 
@@ -45,7 +40,7 @@ export const loginUser = async ({ username, password }: AccountDetails): Promise
 		return Promise.reject(new Error('User does not exist'));
 	} else {
 		const existingUser: User = JSON.parse(userData);
-		if (await compare(password, existingUser.password)) {
+		if (existingUser.password && (await compare(password, existingUser.password))) {
 			const sessionID = await createSession(username);
 			return Promise.resolve(sessionID);
 		} else {
