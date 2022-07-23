@@ -19,6 +19,14 @@
 	import '../app.css';
 
 	export let user: User | undefined;
+
+	async function logout() {
+		await fetch('/api/auth/logout', {
+			method: 'GET'
+		});
+		// TODO: fix (change to goto()) once SvelteKit solves #4426
+		window.location.href = '/profile/login';
+	}
 </script>
 
 <div class="navbar bg-base-100 gap-2 md:h-20 lg:h-24">
@@ -33,6 +41,7 @@
 		<button
 			tabindex="0"
 			class="btn no-animation btn-primary btn-square lg:px-1.5 h-full avatar lg:w-20"
+			data-test-id="dropdown-button"
 		>
 			<div class="rounded-full w-8 md:w-9 lg:w-12">
 				<img src="/profile.png" alt="profile-pic" />
@@ -48,7 +57,7 @@
 					<a href="/profile">Profile</a>
 				</li>
 				<li><a href="/profile/settings">Settings</a></li>
-				<li><button>Logout</button></li>
+				<li><button on:click={logout}>Logout</button></li>
 			{:else}
 				<li><a href="/profile/login">Login</a></li>
 				<li><a href="/profile/register">Register</a></li>
