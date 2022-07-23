@@ -18,7 +18,7 @@
 <script lang="ts">
 	import '../app.css';
 
-	export let user: User;
+	export let user: User | undefined;
 </script>
 
 <div class="navbar bg-base-100 gap-2 md:h-20 lg:h-24">
@@ -51,6 +51,7 @@
 				<li><button>Logout</button></li>
 			{:else}
 				<li><a href="/profile/login">Login</a></li>
+				<li><a href="/profile/register">Register</a></li>
 			{/if}
 		</ul>
 	</div>
