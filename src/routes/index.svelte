@@ -16,7 +16,9 @@
 </script>
 
 <script lang="ts">
+	import LoginButton from '$lib/LoginButton.svelte';
 	import MenuButton from '../lib/MenuButton.svelte';
+	import RegisterButton from '$lib/RegisterButton.svelte';
 	export let user: User | undefined;
 </script>
 
@@ -36,8 +38,8 @@
 			</h3>
 			<div class="w-full h-px bg-white" />
 			<div class="flex flex-col gap-2 justify-evenly md:w-1/3">
-				<a class="btn no-animation btn-sm btn-secondary" href="/profile/login?page=/">Login</a>
-				<a class="btn no-animation btn-sm btn-secondary" href="/profile/register">Register</a>
+				<LoginButton classes="btn no-animation btn-sm btn-secondary" />
+				<RegisterButton classes="btn no-animation btn-sm btn-secondary" />
 			</div>
 		{/if}
 	</div>

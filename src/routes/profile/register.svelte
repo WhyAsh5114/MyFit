@@ -2,7 +2,7 @@
 	import type { Load } from '@sveltejs/kit';
 
 	// Redirect to profile if already logged in
-	export const load: Load = ({ session }) => {
+	export const load: Load = ({ session, url }) => {
 		if (session?.user) {
 			return {
 				redirect: '/profile',
@@ -14,6 +14,7 @@
 
 <script lang="ts">
 	import MyModal from '$lib/MyModal.svelte';
+	import { page } from '$app/stores';
 
 	let username: string = '';
 	let password: string = '';
@@ -64,7 +65,7 @@
 
 				// TODO: fix (change to goto()) once SvelteKit solves #4426
 				onClose = () => {
-					window.location.href = '/profile/login';
+					window.location.href = `/profile/login?page=${$page.url.searchParams.get('page')}`;
 				};
 				modalOpen = true;
 			} else {
@@ -108,7 +109,7 @@
 			on:click={register}>Submit</button
 		>
 		<div class="w-full h-px bg-primary mt-6" />
-		<a href="/profile/login" class="mb-2 mt-1 text-blue-600 text-center"
+		<a href="/profile/login?page={$page.url.pathname}" class="mb-2 mt-1 text-blue-600 text-center"
 			>Already have an account? Login</a
 		>
 	</div>
