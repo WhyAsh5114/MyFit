@@ -2,7 +2,7 @@
 	import type { Load } from '@sveltejs/kit';
 
 	// Redirect to profile if already logged in
-	export const load: Load = ({ session, url }) => {
+	export const load: Load = ({ session }) => {
 		if (session?.user) {
 			return {
 				redirect: '/profile',
@@ -65,6 +65,7 @@
 
 				// TODO: fix (change to goto()) once SvelteKit solves #4426
 				onClose = () => {
+					// Only pass page argument if one is provided here
 					const redirectTo = $page.url.searchParams.get('page');
 					if (redirectTo) {
 						window.location.href = `/profile/login?page=${redirectTo}`;
