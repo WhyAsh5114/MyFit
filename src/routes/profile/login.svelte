@@ -2,18 +2,24 @@
 	import type { Load } from '@sveltejs/kit';
 
 	// Redirect to profile if already logged in
-	export const load: Load = ({ session }) => {
+	export const load: Load = ({ session, url }) => {
 		if (session?.user) {
 			return {
 				redirect: '/profile',
 				status: 302
 			};
 		}
+		return {
+			props: {
+				page: url.searchParams.get('page') || '/profile'
+			}
+		};
 	};
 </script>
 
 <script lang="ts">
 	import MyModal from '$lib/MyModal.svelte';
+	export let page: string;
 
 	let username: string = '';
 	let password: string = '';
@@ -49,7 +55,7 @@
 			});
 			if (res.ok) {
 				// TODO: fix (change to goto()) once SvelteKit solves #4426
-				window.location.href = '/profile';
+				window.location.href = page;
 			} else {
 				const body: { message: string } = await res.json();
 				modalTexts = [body.message];
@@ -63,6 +69,7 @@
 </script>
 
 <MyModal {modalTexts} modalTitle="Error" bind:modalOpen />
+<p>{page}</p>
 <form class="flex w-full justify-center h-full items-center" on:submit|preventDefault>
 	<div class="bg-secondary w-3/4 max-w-sm px-5 pt-4 rounded-md flex flex-col">
 		<h3 class="text-stone-800 text-center font-semibold text-xl">Welcome</h3>
