@@ -53,7 +53,7 @@
 		title="Logging"
 		description="Log workout, cardio, nutrition, and more"
 		imagePath="/dumbbell.svg"
-		link="/workouts"
+		link="/logging"
 	/>
 	<MenuButton
 		title="Records"
