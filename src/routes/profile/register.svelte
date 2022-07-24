@@ -65,7 +65,13 @@
 
 				// TODO: fix (change to goto()) once SvelteKit solves #4426
 				onClose = () => {
-					window.location.href = `/profile/login?page=${$page.url.searchParams.get('page')}`;
+					const redirectTo = $page.url.searchParams.get('page');
+					if (redirectTo) {
+						window.location.href = `/profile/login?page=${redirectTo}`;
+					} else {
+						window.location.href = `/profile/login`;
+					}
+					
 				};
 				modalOpen = true;
 			} else {
