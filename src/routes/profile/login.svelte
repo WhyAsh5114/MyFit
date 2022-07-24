@@ -69,7 +69,6 @@
 </script>
 
 <MyModal {modalTexts} modalTitle="Error" bind:modalOpen />
-<p>{page}</p>
 <form class="flex w-full justify-center h-full items-center" on:submit|preventDefault>
 	<div class="bg-secondary w-3/4 max-w-sm px-5 pt-4 rounded-md flex flex-col">
 		<h3 class="text-stone-800 text-center font-semibold text-xl">Welcome</h3>
