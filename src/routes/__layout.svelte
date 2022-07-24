@@ -65,6 +65,6 @@
 		</ul>
 	</div>
 </div>
-<div class="px-2 py-0.5 h-full">
+<div class="flex flex-col px-2 pt-0.5 pb-1 h-full">
 	<slot />
 </div>
