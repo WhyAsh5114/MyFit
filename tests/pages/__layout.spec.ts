@@ -5,19 +5,19 @@ test.beforeEach(async ({ page }) => {
 	await page.goto('/');
 });
 
-test('should show [login, create account] in dropdown when not signed in', async ({ page }) => {
+test('should show [login, register] in dropdown when not signed in', async ({ page }) => {
 	const dropdown = page.locator('ul[data-test-id=profile-options-dropdown] li');
 	const options = await dropdown.allTextContents();
 	expect(options).toStrictEqual(['Login', 'Register']);
 
 	await page.locator('button[data-test-id=dropdown-button]').click();
-	await dropdown.first().click();
-	await expect(page).toHaveURL('/profile/login');
+	await Promise.all([dropdown.first().click(), page.waitForNavigation()]);
+	expect(page.url()).toContain('/profile/login');
 	await page.goBack();
 
 	await page.locator('button[data-test-id=dropdown-button]').click();
-	await dropdown.nth(1).click();
-	await expect(page).toHaveURL('/profile/register');
+	await Promise.all([dropdown.nth(1).click(), page.waitForNavigation()]);
+	expect(page.url()).toContain('/profile/register');
 });
 
 testLoggedIn(

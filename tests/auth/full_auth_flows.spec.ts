@@ -62,10 +62,10 @@ testWithCreatableUsername(
 		cookies = await page.context().cookies();
 		session_id = cookies.find((cookie) => cookie.name === 'session_id');
 		expect(session_id).toBeUndefined();
-		await messages.first().click();
 
 		// Login
-		await expect(page).toHaveURL('/profile/login');
+		await Promise.all([messages.first().click(), page.waitForNavigation()])
+		expect(page.url()).toContain('/profile/login');
 		await page.fill('input[placeholder=Username]', creatable_username);
 		await page.fill('input[placeholder=Password]', 'password');
 		// Button and response
