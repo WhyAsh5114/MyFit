@@ -26,7 +26,7 @@
 	}}
 >
 	<label class="modal-box relative bg-primary" for="">
-		<h3 class="text-lg font-bold text-error {modalTitleColor}">{modalTitle}</h3>
+		<h3 class="text-lg font-bold {modalTitleColor}">{modalTitle}</h3>
 		<ul class="py-4" data-test-id="modal-messages-list">
 			{#each modalTexts as text}
 				<li>{text}</li>
