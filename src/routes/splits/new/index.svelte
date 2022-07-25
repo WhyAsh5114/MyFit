@@ -43,36 +43,38 @@
 	<title>MyFit | New Split</title>
 </svelte:head>
 <MyModal {modalTexts} modalTitle="Error" bind:modalOpen />
-<form on:submit|preventDefault class="flex flex-col h-full">
-	<div class="flex flex-col justify-center items-center flex-grow">
-		<div class="flex flex-col gap-10 justify-center items-center max-w-xs">
-			<label class="input-group input-group-vertical">
-				<p class="text-center bg-primary py-1 font-semibold">Split Name</p>
-				<input
-					type="text"
-					name="split-name"
-					class="input bg-secondary input-sm border-2 text-lg text-black col-span-2 text-center"
-					bind:value={split_name}
-					required
-				/>
-			</label>
-			<div class="flex flex-col gap-3.5 bg-primary p-4 rounded-lg">
-				{#each days as day, i}
-					<label class="input-group input-group-sm shadow-md shadow-black">
-						<p class="bg-accent text-black w-20 font-semibold text-center">{day}</p>
-						<input
-							type="text"
-							name={day}
-							class="input input-bordered w-full text-base bg-secondary text-black input-sm col-span-2 text-center"
-							on:change={update_workouts}
-							bind:value={days_input[i]}
-						/>
-					</label>
-				{/each}
-			</div>
+<form on:submit|preventDefault class="flex flex-col h-full justify-center items-center">
+	<div class="flex flex-col gap-10 justify-center items-center max-w-xs flex-grow">
+		<label class="input-group input-group-vertical">
+			<p class="text-center bg-primary py-1 font-semibold">Split Name</p>
+			<input
+				type="text"
+				name="split-name"
+				class="input bg-secondary input-sm border-2 text-lg text-black col-span-2 text-center"
+				bind:value={split_name}
+				required
+			/>
+		</label>
+		<div class="flex flex-col gap-3.5 bg-primary p-4 rounded-lg">
+			{#each days as day, i}
+				<label class="input-group input-group-sm shadow-md shadow-black">
+					<p class="bg-accent text-black w-20 font-semibold text-center">{day}</p>
+					<input
+						type="text"
+						name={day}
+						class="input input-bordered w-full text-base bg-secondary text-black input-sm col-span-2 text-center"
+						on:change={update_workouts}
+						bind:value={days_input[i]}
+					/>
+				</label>
+			{/each}
 		</div>
 	</div>
-	<button type="submit" class="btn lg:btn-lg btn-primary w-full mb-2 lg:text-lg" on:click={create_schedule}>
+	<button
+		type="submit"
+		class="btn lg:btn-lg btn-primary w-full mb-2 lg:text-lg"
+		on:click={create_schedule}
+	>
 		Create {unique_workouts.size} unique workouts
 	</button>
 </form>
