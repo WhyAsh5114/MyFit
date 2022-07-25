@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	export { loadUserOrRedirectToLogin as load } from "$lib/loadUserOrRedirectToLogin";
+	export { loadUserOrRedirectToLogin as load } from '$lib/loadUserOrRedirectToLogin';
 </script>
 
 <script lang="ts">

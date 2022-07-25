@@ -25,11 +25,11 @@
 
 	async function create_schedule() {
 		let errors = [];
-		if (unique_workouts.size === 0) {
-			errors.push('Add at least one workout');
-		}
 		if (split_name === '') {
 			errors.push('Enter split name');
+		}
+		if (unique_workouts.size === 0) {
+			errors.push('Add at least one workout');
 		}
 		if (errors.length > 0) {
 			modalTexts = errors;
@@ -56,9 +56,9 @@
 					required
 				/>
 			</label>
-			<div class="flex flex-col gap-3">
+			<div class="flex flex-col gap-3.5 bg-primary p-4 rounded-lg">
 				{#each days as day, i}
-					<label class="input-group input-group-sm">
+					<label class="input-group input-group-sm shadow-md shadow-black">
 						<p class="bg-accent text-black w-20 font-semibold text-center">{day}</p>
 						<input
 							type="text"
@@ -72,7 +72,7 @@
 			</div>
 		</div>
 	</div>
-	<button type="submit" class="btn btn-primary w-full mb-2" on:click={create_schedule}>
+	<button type="submit" class="btn lg:btn-lg btn-primary w-full mb-2 lg:text-lg" on:click={create_schedule}>
 		Create {unique_workouts.size} unique workouts
 	</button>
 </form>
