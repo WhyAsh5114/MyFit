@@ -1,3 +1,7 @@
+<script context="module">
+	export const prerender = true;
+</script>
+
 <script lang="ts">
 	import ListButton from '$lib/ListButton.svelte';
 </script>
