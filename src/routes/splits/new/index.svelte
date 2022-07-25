@@ -88,7 +88,7 @@
 			/>
 		</label>
 		<div class="flex flex-col gap-3.5 bg-primary p-4 rounded-lg shadow-black shadow-lg">
-			{#each Object.keys(days_input) as day, i}
+			{#each Object.keys(days_input) as day}
 				<label class="input-group input-group-sm shadow-md shadow-black">
 					<p class="bg-accent text-black w-20 font-semibold text-center">{day}</p>
 					<input
@@ -106,7 +106,7 @@
 	</div>
 	<button
 		type="submit"
-		class="btn normal-case lg:btn-lg btn-primary w-full mb-2 text-base lg:text-lg"
+		class="btn normal-case lg:btn-lg btn-primary w-full text-base lg:text-lg"
 		on:click={create_schedule}
 		data-test-id="create-schedule-button"
 	>
