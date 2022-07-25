@@ -1,20 +1,5 @@
 <script context="module" lang="ts">
-	import type { Load } from '@sveltejs/kit';
-
-	export const load: Load = ({ session }) => {
-		if (session?.user) {
-			return {
-				props: {
-					user: session.user
-				}
-			};
-		} else {
-			return {
-				redirect: '/profile/login',
-				status: 302
-			};
-		}
-	};
+	export { loadUserOrRedirectToLogin as load } from "$lib/loadUserOrRedirectToLogin";
 </script>
 
 <script lang="ts">
