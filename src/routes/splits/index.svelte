@@ -13,27 +13,27 @@
 	<div class="grid gap-3 lg:gap-5 lg:grid-cols-2 h-fit lg:h-1/2">
 		<ListButton
 			imagePath="/calendar_plus.svg"
-			title="New Split"
+			title="New split"
 			description="Create a weekly routine from scratch"
 			link="/splits/new"
 		/>
 		<ListButton
 			imagePath="/calendar_PPL.svg"
-			title="Common Splits"
+			title="Common splits"
 			description="Adjust and use common splits"
-			link="/splits/common"
+			link="/"
 		/>
 		<ListButton
 			imagePath="/calendar_gear.svg"
-			title="Modify Split"
+			title="Modify split"
 			description="Modify current split's exercises, progression"
-			link="/splits/modify"
+			link="/"
 		/>
 		<ListButton
 			imagePath="/record.svg"
-			title="Splits Records"
+			title="Splits records"
 			description="View, copy and adjust previous splits"
-			link="/records/splits"
+			link="/"
 		/>
 	</div>
 </div>
