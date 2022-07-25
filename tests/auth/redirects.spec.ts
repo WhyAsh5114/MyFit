@@ -3,7 +3,7 @@ import { testWithExistingUsername, testWithCreatableUsername, expect } from '../
 testWithExistingUsername(
 	'should redirect back to requested page after login',
 	async ({ page, username }) => {
-		await page.goto('/splits/new');
+		await page.goto('/random/page');
 		const dropdown = page.locator('ul[data-test-id=profile-options-dropdown] li');
 		const options = await dropdown.allTextContents();
 		expect(options).toStrictEqual(['Login', 'Register']);
@@ -12,7 +12,7 @@ testWithExistingUsername(
 		await Promise.all([dropdown.first().click(), page.waitForNavigation()]);
 		expect(page.url()).toContain('/profile/login');
 
-		await expect(page).toHaveURL('/profile/login?page=/splits/new');
+		await expect(page).toHaveURL('/profile/login?page=/random/page');
 		await page.fill('input[placeholder=Username]', username);
 		await page.fill('input[placeholder=Password]', 'password');
 		await Promise.all([
@@ -22,14 +22,14 @@ testWithExistingUsername(
 			page.locator('button', { hasText: 'Submit' }).click()
 		]);
 
-		await expect(page).toHaveURL('/splits/new');
+		await expect(page).toHaveURL('/random/page');
 	}
 );
 
 testWithCreatableUsername(
 	'should redirect back to requested page after register & login',
 	async ({ page, creatable_username }) => {
-		await page.goto('/splits/new');
+		await page.goto('/random/page');
 		const dropdown = page.locator('ul[data-test-id=profile-options-dropdown] li');
 		const options = await dropdown.allTextContents();
 		expect(options).toStrictEqual(['Login', 'Register']);
@@ -38,7 +38,7 @@ testWithCreatableUsername(
 		await Promise.all([dropdown.nth(1).click(), page.waitForNavigation()]);
 		expect(page.url()).toContain('/profile/register');
 
-		await expect(page).toHaveURL('/profile/register?page=/splits/new');
+		await expect(page).toHaveURL('/profile/register?page=/random/page');
 		await page.fill('input[placeholder=Username]', creatable_username);
 		await page.fill('input[placeholder=Password]', 'password');
 		await page.fill('input[placeholder="Confirm Password"]', 'password');
@@ -50,7 +50,7 @@ testWithCreatableUsername(
 		]);
 
 		await page.locator('label[data-test-id=modal]').click();
-		await expect(page).toHaveURL('/profile/login?page=/splits/new');
+		await expect(page).toHaveURL('/profile/login?page=/random/page');
 		await page.fill('input[placeholder=Username]', creatable_username);
 		await page.fill('input[placeholder=Password]', 'password');
 		await Promise.all([
@@ -60,6 +60,6 @@ testWithCreatableUsername(
 			page.locator('button', { hasText: 'Submit' }).click()
 		]);
 
-		await expect(page).toHaveURL('/splits/new');
+		await expect(page).toHaveURL('/random/page');
 	}
 );
