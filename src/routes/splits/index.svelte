@@ -2,6 +2,9 @@
 	import ListButton from '$lib/ListButton.svelte';
 </script>
 
+<svelte:head>
+	<title>MyFit | Splits</title>
+</svelte:head>
 <div class="flex flex-col justify-center h-full">
 	<div class="grid gap-3 lg:gap-5 lg:grid-cols-2 h-fit lg:h-1/2">
 		<ListButton
