@@ -45,24 +45,8 @@
 	</div>
 </div>
 <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 mb-2">
-	<MenuButton
-		title="Splits"
-		imagePath="/calendar.svg"
-		link="/splits"
-	/>
-	<MenuButton
-		title="Logging"
-		imagePath="/pencil.svg"
-		link="/logging"
-	/>
-	<MenuButton
-		title="Records"
-		imagePath="/record.svg"
-		link="/records"
-	/>
-	<MenuButton
-		title="Tracking"
-		imagePath="/graph.svg"
-		link="/tracking"
-	/>
+	<MenuButton title="Splits" imagePath="/calendar.svg" link="/splits" />
+	<MenuButton title="Logging" imagePath="/pencil.svg" link="/logging" />
+	<MenuButton title="Records" imagePath="/record.svg" link="/records" />
+	<MenuButton title="Tracking" imagePath="/graph.svg" link="/tracking" />
 </div>

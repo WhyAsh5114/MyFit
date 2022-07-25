@@ -2,11 +2,11 @@
 	import type { Load } from '@sveltejs/kit';
 
 	// If user is logged in, don't show Logout option
-	export const load: Load = ({ session, url }) => {
+	export const load: Load = ({ session }) => {
 		if (session?.user) {
 			return {
 				props: {
-					user: session.user,
+					user: session.user
 				}
 			};
 		} else {
@@ -16,9 +16,8 @@
 </script>
 
 <script lang="ts">
-	import { page } from '$app/stores';
-import LoginButton from '$lib/LoginButton.svelte';
-import RegisterButton from '$lib/RegisterButton.svelte';
+	import LoginButton from '$lib/LoginButton.svelte';
+	import RegisterButton from '$lib/RegisterButton.svelte';
 	import '../app.css';
 	export let user: User | undefined;
 

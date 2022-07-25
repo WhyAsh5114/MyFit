@@ -72,7 +72,6 @@
 					} else {
 						window.location.href = `/profile/login`;
 					}
-					
 				};
 				modalOpen = true;
 			} else {
