@@ -68,6 +68,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>MyFit | Login</title>
+</svelte:head>
 <MyModal {modalTexts} modalTitle="Error" bind:modalOpen />
 <form class="flex w-full justify-center h-full items-center" on:submit|preventDefault>
 	<div class="bg-secondary w-3/4 max-w-sm px-5 pt-4 rounded-md flex flex-col">
