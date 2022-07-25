@@ -4,6 +4,7 @@
 
 <script lang="ts">
 	import MyModal from '$lib/MyModal.svelte';
+	export let user: UserData;
 
 	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 	let split_name = '';
@@ -27,6 +28,8 @@
 		let errors = [];
 		if (split_name === '') {
 			errors.push('Enter split name');
+		} else if (split_name in user.splits) {
+			errors.push('Split already exists');
 		}
 		if (unique_workouts.size === 0) {
 			errors.push('Add at least one workout');
@@ -45,8 +48,8 @@
 <MyModal {modalTexts} modalTitle="Error" bind:modalOpen />
 <form on:submit|preventDefault class="flex flex-col h-full justify-center items-center">
 	<div class="flex flex-col gap-10 justify-center items-center max-w-xs flex-grow">
-		<label class="input-group input-group-vertical">
-			<p class="text-center bg-primary py-1 font-semibold">Split Name</p>
+		<label class="input-group input-group-vertical shadow-black shadow-lg">
+			<p class="text-center bg-primary py-1 font-semibold">Split name</p>
 			<input
 				type="text"
 				name="split-name"
@@ -55,7 +58,7 @@
 				required
 			/>
 		</label>
-		<div class="flex flex-col gap-3.5 bg-primary p-4 rounded-lg">
+		<div class="flex flex-col gap-3.5 bg-primary p-4 rounded-lg shadow-black shadow-lg">
 			{#each days as day, i}
 				<label class="input-group input-group-sm shadow-md shadow-black">
 					<p class="bg-accent text-black w-20 font-semibold text-center">{day}</p>
@@ -72,7 +75,7 @@
 	</div>
 	<button
 		type="submit"
-		class="btn lg:btn-lg btn-primary w-full mb-2 lg:text-lg"
+		class="btn normal-case lg:btn-lg btn-primary w-full mb-2 lg:text-lg"
 		on:click={create_schedule}
 	>
 		Create {unique_workouts.size} unique workouts
