@@ -24,6 +24,7 @@
 	on:click={() => {
 		onClose();
 	}}
+	data-test-id="modal"
 >
 	<label class="modal-box relative bg-primary" for="">
 		<h3 class="text-lg font-bold {modalTitleColor}">{modalTitle}</h3>
