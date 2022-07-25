@@ -24,6 +24,7 @@
 	onMount(() => {
 		split_name = $SplitName;
 		days_input = $SplitSchedule;
+		update_workouts();
 	})
 
 	let modalTexts: string[];
@@ -105,7 +106,7 @@
 	</div>
 	<button
 		type="submit"
-		class="btn normal-case lg:btn-lg btn-primary w-full mb-2 lg:text-lg"
+		class="btn normal-case lg:btn-lg btn-primary w-full mb-2 text-base lg:text-lg"
 		on:click={create_schedule}
 		data-test-id="create-schedule-button"
 	>
