@@ -33,7 +33,7 @@ import RegisterButton from '$lib/RegisterButton.svelte';
 
 <div class="navbar bg-base-100 gap-2 md:h-20 lg:h-24">
 	<a
-		class="btn no-animation h-full normal-case text-xl md:text-2xl lg:text-4xl btn-primary flex-grow gap-2"
+		class="btn h-full normal-case text-xl md:text-2xl lg:text-4xl btn-primary flex-grow gap-2"
 		href="/"
 	>
 		<img src="/favicon.png" alt="logo" width="40" />
@@ -42,7 +42,7 @@ import RegisterButton from '$lib/RegisterButton.svelte';
 	<div class="dropdown dropdown-end ml-auto h-full">
 		<button
 			tabindex="0"
-			class="btn no-animation btn-primary btn-square lg:px-1.5 h-full avatar lg:w-20"
+			class="btn btn-primary btn-square lg:px-1.5 h-full avatar lg:w-20"
 			data-test-id="dropdown-button"
 		>
 			<div class="rounded-full w-8 md:w-9 lg:w-12">

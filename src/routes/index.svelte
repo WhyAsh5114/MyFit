@@ -38,34 +38,30 @@
 			</h3>
 			<div class="w-full h-px bg-white" />
 			<div class="flex flex-col gap-2 justify-evenly md:w-1/3">
-				<LoginButton classes="btn no-animation btn-sm btn-secondary" />
-				<RegisterButton classes="btn no-animation btn-sm btn-secondary" />
+				<LoginButton classes="btn btn-sm btn-secondary" />
+				<RegisterButton classes="btn btn-sm btn-secondary" />
 			</div>
 		{/if}
 	</div>
 </div>
-<div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+<div class="grid grid-cols-2 gap-3 lg:grid-cols-4 mb-2">
 	<MenuButton
 		title="Splits"
-		description="Make weekly routines, modify current split"
 		imagePath="/calendar.svg"
 		link="/splits"
 	/>
 	<MenuButton
 		title="Logging"
-		description="Log workout, cardio, nutrition, and more"
-		imagePath="/dumbbell.svg"
+		imagePath="/pencil.svg"
 		link="/logging"
 	/>
 	<MenuButton
 		title="Records"
-		description="See and modify logged stats like workout and cardio"
 		imagePath="/record.svg"
 		link="/records"
 	/>
 	<MenuButton
 		title="Tracking"
-		description="Visualize your progress using multiple metrics"
 		imagePath="/graph.svg"
 		link="/tracking"
 	/>

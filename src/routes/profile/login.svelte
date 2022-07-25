@@ -90,7 +90,7 @@
 		/>
 		<a href="/profile/forgot_password" class="mb-2 mt-1 text-blue-600">Forgot your password?</a>
 		<button
-			class="btn btn-sm rounded-sm normal-case btn-accent no-animation lg:text-lg shadow-md"
+			class="btn btn-sm rounded-sm normal-case btn-accent lg:text-lg shadow-md"
 			on:click={login}>Submit</button
 		>
 		<div class="w-full h-px bg-primary mt-6" />

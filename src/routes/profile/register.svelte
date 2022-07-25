@@ -115,7 +115,7 @@
 			class="input bg-white text-black border-2 -my-px border-stone-400 hover:border-stone-500 focus:border-black rounded-none input-bordered w-full"
 		/>
 		<button
-			class="btn btn-sm rounded-sm normal-case btn-accent no-animation lg:text-lg shadow-md mt-4"
+			class="btn btn-sm rounded-sm normal-case btn-accent lg:text-lg shadow-md mt-4"
 			on:click={register}>Submit</button
 		>
 		<div class="w-full h-px bg-primary mt-6" />

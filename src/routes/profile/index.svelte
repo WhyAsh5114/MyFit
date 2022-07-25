@@ -35,7 +35,7 @@
 <div class="flex flex-col w-full place-items-center h-full justify-center gap-3">
 	<p>Hi {user.username}</p>
 	<button
-		class="btn no-animation btn-sm normal-case btn-error w-fit"
+		class="btn btn-sm normal-case btn-error w-fit"
 		on:click={logout}
 		data-test-id="profile-logout-button">Logout</button
 	>
