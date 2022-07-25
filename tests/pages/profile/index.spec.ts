@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('should redirect to login when not logged in', async ({ page }) => {
-	await expect(page).toHaveURL('/profile/login');
+	await expect(page).toHaveURL('/profile/login?page=/profile');
 });
 
 testLoggedIn('should show username and logout button when logged in', async ({ page, user }) => {
