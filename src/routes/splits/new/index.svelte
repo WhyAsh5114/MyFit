@@ -3,20 +3,35 @@
 </script>
 
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import MyModal from '$lib/MyModal.svelte';
+	import { onMount } from 'svelte';
+	import { SplitName, SplitSchedule } from '../split_store';
 	export let user: UserData;
 
-	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 	let split_name = '';
-	let days_input = Array(7).fill('');
+	let days_input: Record<string, string> = {
+		Mon: '',
+		Tue: '',
+		Wed: '',
+		Thu: '',
+		Fri: '',
+		Sat: '',
+		Sun: ''
+	};
 	let unique_workouts = new Set();
+
+	onMount(() => {
+		split_name = $SplitName;
+		days_input = $SplitSchedule;
+	})
 
 	let modalTexts: string[];
 	let modalOpen: boolean;
 
 	function update_workouts() {
 		let local_unique_workouts = new Set();
-		days_input.forEach((day_input) => {
+		Object.values(days_input).forEach((day_input) => {
 			if (day_input !== '' && day_input.toLowerCase() !== 'rest') {
 				local_unique_workouts.add(day_input);
 			}
@@ -24,11 +39,12 @@
 		unique_workouts = local_unique_workouts;
 	}
 
-	async function create_schedule() {
+	function create_schedule() {
 		let errors = [];
 		if (split_name === '') {
 			errors.push('Enter split name');
-		} else if (split_name in user.splits) {
+		}
+		if (split_name in user.splits) {
 			errors.push('Split already exists');
 		}
 		if (unique_workouts.size === 0) {
@@ -39,11 +55,22 @@
 			modalOpen = true;
 			return;
 		}
+
+		SplitName.set(split_name);
+
+		// Remove rest days and replace with ''
+		for (let day in days_input) {
+			if (days_input[day].toLowerCase() === 'rest' || days_input[day] == '') {
+				days_input[day] = 'Rest';
+			}
+		}
+		SplitSchedule.set(days_input);
+		goto('/splits/new/workouts');
 	}
 </script>
 
 <svelte:head>
-	<title>MyFit | New Split</title>
+	<title>MyFit | New split</title>
 </svelte:head>
 <MyModal {modalTexts} modalTitle="Error" bind:modalOpen />
 <form on:submit|preventDefault class="flex flex-col h-full justify-center items-center">
@@ -55,19 +82,22 @@
 				name="split-name"
 				class="input bg-secondary input-sm border-2 text-lg text-black col-span-2 text-center"
 				bind:value={split_name}
+				data-test-id="split-name-input"
 				required
 			/>
 		</label>
 		<div class="flex flex-col gap-3.5 bg-primary p-4 rounded-lg shadow-black shadow-lg">
-			{#each days as day, i}
+			{#each Object.keys(days_input) as day, i}
 				<label class="input-group input-group-sm shadow-md shadow-black">
 					<p class="bg-accent text-black w-20 font-semibold text-center">{day}</p>
 					<input
 						type="text"
 						name={day}
+						data-test-id={day}
 						class="input input-bordered w-full text-base bg-secondary text-black input-sm col-span-2 text-center"
-						on:change={update_workouts}
-						bind:value={days_input[i]}
+						bind:value={days_input[day]}
+						on:input={update_workouts}
+						on:focus={update_workouts}
 					/>
 				</label>
 			{/each}
@@ -77,7 +107,12 @@
 		type="submit"
 		class="btn normal-case lg:btn-lg btn-primary w-full mb-2 lg:text-lg"
 		on:click={create_schedule}
+		data-test-id="create-schedule-button"
 	>
-		Create {unique_workouts.size} unique workouts
+		{#if unique_workouts.size === 1}
+			Create {unique_workouts.size} unique workout
+		{:else}
+			Create {unique_workouts.size} unique workouts
+		{/if}
 	</button>
 </form>
