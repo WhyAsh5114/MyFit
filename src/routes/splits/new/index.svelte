@@ -19,7 +19,7 @@
 		Sat: '',
 		Sun: ''
 	};
-	let unique_workouts = new Set();
+	let unique_workouts = new Set<string>;
 
 	onMount(() => {
 		split_name = $SplitName;
@@ -29,14 +29,14 @@
 
 	let modalTitle = 'Note';
 	let modalTexts = [
-		'Use different names if workouts are going to different',
+		'Use different names if workouts are going to be different',
 		'If Push workout on Monday is different from Push workout on Thursday, use Push1 and Push2',
 		'Use same names only for identical workouts'
 	];
 	let modalOpen = true;
 
 	function update_workouts() {
-		let local_unique_workouts = new Set();
+		let local_unique_workouts = new Set<string>;
 		Object.values(days_input).forEach((day_input) => {
 			if (day_input !== '' && day_input.toLowerCase() !== 'rest') {
 				local_unique_workouts.add(day_input);
@@ -75,11 +75,11 @@
 
 		// Set SplitWorkouts
 		const split_workouts: Record<string, Array<Exercise>> = {};
-		for (let workout in unique_workouts) {
+		for (let workout of unique_workouts) {
 			split_workouts[workout] = new Array<Exercise>;
 		}
 		SplitWorkouts.set(split_workouts);
-		
+
 		goto('/splits/new/workouts');
 	}
 </script>
