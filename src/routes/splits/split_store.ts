@@ -14,4 +14,8 @@ export const SplitSchedule: Writable<Record<string, string>> = writable({
 });
 
 // UniqueWorkoutName => workout
-export const SplitWorkouts: Writable<Record<string, Array<Exercise>>> = writable({});
+export const SplitWorkouts: Writable<Record<string, Array<Exercise>>> = writable({
+	Push: new Array<Exercise>,
+	Pull: new Array<Exercise>,
+	Legs: new Array<Exercise>
+});
