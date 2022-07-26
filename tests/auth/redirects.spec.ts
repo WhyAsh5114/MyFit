@@ -49,7 +49,7 @@ testWithCreatableUsername(
 			page.locator('button', { hasText: 'Submit' }).click()
 		]);
 
-		await page.locator('label[data-test-id=modal]').click();
+		await page.locator('[data-test-id=close-modal-button]').click();
 		await expect(page).toHaveURL('/profile/login?page=/random/page');
 		await page.fill('input[placeholder=Username]', creatable_username);
 		await page.fill('input[placeholder=Password]', 'password');

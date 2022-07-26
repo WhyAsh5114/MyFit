@@ -64,7 +64,10 @@ testWithCreatableUsername(
 		expect(session_id).toBeUndefined();
 
 		// Login
-		await Promise.all([messages.first().click(), page.waitForNavigation()]);
+		await Promise.all([
+			page.locator('[data-test-id=modal-close-button]').click(),
+			page.waitForNavigation()
+		]);
 		expect(page.url()).toContain('/profile/login');
 		await page.fill('input[placeholder=Username]', creatable_username);
 		await page.fill('input[placeholder=Password]', 'password');
