@@ -32,10 +32,10 @@
 	let modalOpen = false;
 
 	function open_help_modal() {
-		modalTitle = 'Note';
+		modalTitle = 'Help';
 		modalTexts = [
 			'Use different names if workouts are going to be different',
-			'If Push workout on Monday is different from Push workout on Thursday, use Push1 and Push2',
+			'For example: if Push workout on Monday is different from Push workout on Thursday, use Push1 and Push2',
 			'Use same names only for identical workouts'
 		];
 		modalOpen = true;
@@ -98,7 +98,7 @@
 <form on:submit|preventDefault class="flex flex-col h-full justify-center items-center">
 	<div class="flex flex-col gap-10 justify-center items-center max-w-xs flex-grow">
 		<div
-			class="rounded-full border-2 w-fit px-3 font-semibold -my-7 hover:bg-black cursor-pointer place-self-end transition-colors"
+			class="rounded-full mr-1 border-2 border-accent w-fit px-3 font-semibold -my-7 hover:bg-black cursor-pointer place-self-end transition-colors"
 			on:click={open_help_modal}
 		>
 			?
