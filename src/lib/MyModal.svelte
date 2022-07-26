@@ -16,7 +16,7 @@
 	} else if (modalTitle === 'Warning') {
 		modalTitleColor = 'text-yellow-500';
 	} else if (modalTitle === 'Help') {
-		modalTitleColor = 'text-accent'
+		modalTitleColor = 'text-accent';
 	} else {
 		modalTitleColor = 'text-white';
 	}
