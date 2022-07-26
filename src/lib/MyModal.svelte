@@ -8,12 +8,14 @@
 
 	// The dollar means re-run whenever referenced value (modalTitle) is changed
 	// Whenever modalTitle is changed we want to change the color of it as well
-	$: if (modalTitle == 'Error') {
+	$: if (modalTitle === 'Error') {
 		modalTitleColor = 'text-red-500';
-	} else if (modalTitle == 'Success') {
+	} else if (modalTitle === 'Success') {
 		modalTitleColor = 'text-green-500';
-	} else if (modalTitle == 'Warning') {
+	} else if (modalTitle === 'Warning') {
 		modalTitleColor = 'text-yellow-500';
+	} else if (modalTitle === 'Help') {
+		modalTitleColor = 'text-accent'
 	} else {
 		modalTitleColor = 'text-white';
 	}
@@ -35,7 +37,7 @@
 			data-test-id="close-modal-button">✕</label
 		>
 		<h3 class="text-lg font-bold {modalTitleColor}">{modalTitle}</h3>
-		<ul class="py-4" data-test-id="modal-messages-list">
+		<ul class="py-4 list-disc pl-5" data-test-id="modal-messages-list">
 			{#each modalTexts as text}
 				<li>{text}</li>
 			{/each}
