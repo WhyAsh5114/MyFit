@@ -14,6 +14,8 @@
 		modalTitleColor = 'text-green-500';
 	} else if (modalTitle == 'Warning') {
 		modalTitleColor = 'text-yellow-500';
+	} else {
+		modalTitleColor = 'text-white';
 	}
 </script>
 
@@ -27,6 +29,11 @@
 	data-test-id="modal"
 >
 	<label class="modal-box relative bg-primary" for="">
+		<label
+			for="my-modal"
+			class="btn btn-sm btn-circle absolute right-2 top-2"
+			data-test-id="close-modal-button">✕</label
+		>
 		<h3 class="text-lg font-bold {modalTitleColor}">{modalTitle}</h3>
 		<ul class="py-4" data-test-id="modal-messages-list">
 			{#each modalTexts as text}
