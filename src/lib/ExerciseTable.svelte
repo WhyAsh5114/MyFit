@@ -1,12 +1,13 @@
 <script lang="ts">
-	import MyModal from "./MyModal.svelte";
+	import MyModal from './MyModal.svelte';
 	import { fly, slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 
 	export let workoutName: string;
 	export let exercises: Exercise[];
 
-	let mode: 'normal' | 'adding' | 'deleting' | 'editing' | 'reordering' = 'normal';
+	let mode: 'normal' | 'adding' | 'deleting' | 'editing' | 'reordering' | 'selecting' = 'normal';
+	let exercise_grid: HTMLDivElement;
 	let name_input: string = '';
 	let reps_input: string = '';
 	let sets_input: string = '';
@@ -19,23 +20,23 @@
 	function are_inputs_valid() {
 		let errors: string[] = [];
 		if (name_input === '') {
-			errors.push("Enter exercise name");
+			errors.push('Enter exercise name');
 		}
 		if (reps_input === '') {
-			errors.push("Enter reps value");
-		} else if (isNaN(Number(reps_input) )|| Number(reps_input) <= 0) {
-			errors.push("Reps should be a positive numeric value");
+			errors.push('Enter reps value');
+		} else if (isNaN(Number(reps_input)) || Number(reps_input) <= 0) {
+			errors.push('Reps should be a positive numeric value');
 		}
 		if (sets_input === '') {
-			errors.push("Enter sets value");
+			errors.push('Enter sets value');
 		} else if (isNaN(Number(sets_input)) || Number(sets_input) <= 0) {
-			errors.push("Sets should be a positive numeric value");
+			errors.push('Sets should be a positive numeric value');
 		}
 		if (load_input === '') {
-			errors.push("Enter load value");
+			errors.push('Enter load value');
 		} else if (isNaN(Number(load_input)) || Number(load_input) <= 0) {
-			errors.push("Load should be a positive numeric value");
-		}		
+			errors.push('Load should be a positive numeric value');
+		}
 
 		if (errors.length > 0) {
 			modalTitle = 'Error';
@@ -46,8 +47,48 @@
 		return true;
 	}
 
+	let pre_deletion_exercise_list: Exercise[] = [];
+	function delete_entry(id: number) {
+		if (pre_deletion_exercise_list.length < exercises.length) {
+			pre_deletion_exercise_list = JSON.parse(JSON.stringify(exercises));
+		}
+		const index_to_remove = exercises.findIndex((exercise) => exercise.id === id);
+		if (index_to_remove === -1) {
+			return;
+		}
+		exercises.splice(index_to_remove, 1);
+		exercises = exercises;
+	}
+
+	let selected_entry: HTMLDivElement | undefined;
+	function edit_entry(exercise: Exercise) {
+		if (mode !== 'selecting') {
+			return;
+		}
+		const entry_to_edit = exercise_grid.children[exercise.id - 1] as HTMLDivElement;
+		selected_entry = entry_to_edit;
+
+		selected_entry.classList.add('animate-pulse');
+		selected_entry.classList.add('border-y-4');
+		selected_entry.classList.add('border-accent');
+		mode = 'editing';
+
+		name_input = exercise.name;
+		reps_input = exercise.reps.toString();
+		sets_input = exercise.sets.toString();
+		load_input = exercise.sets.toString();
+	}
+
+	function enter_reordering_mode() {
+		mode = 'reordering';
+		for (let i = 0; i < exercise_grid.children.length; i++) {
+			const entry = exercise_grid.children[i] as HTMLDivElement;
+			entry.draggable = true;
+		}
+	}
+
 	function save_action() {
-		if (mode === "adding") {
+		if (mode === 'adding') {
 			if (are_inputs_valid() === false) {
 				return;
 			}
@@ -60,24 +101,93 @@
 			});
 			exercises = exercises;
 		}
+		if (mode === 'deleting') {
+			for (let i = 0; i < exercises.length; i++) {
+				exercises[i].id = i + 1;
+			}
+			pre_deletion_exercise_list = [];
+			exercises = exercises;
+		}
+		if (mode === 'editing' && selected_entry) {
+			if (are_inputs_valid() === false) {
+				return;
+			}
+			selected_entry.classList.remove('animate-pulse');
+			selected_entry.classList.remove('border-y-4');
+			selected_entry.classList.remove('border-accent');
+
+			const selected_id = Number(selected_entry.children[0].textContent);
+			for (let i = 0; i < exercises.length; i++) {
+				if (exercises[i].id === selected_id) {
+					exercises[i].name = name_input;
+					exercises[i].reps = Number(reps_input);
+					exercises[i].sets = Number(sets_input);
+					exercises[i].load = Number(load_input);
+				}
+			}
+			exercises = exercises;
+
+			selected_entry = undefined;
+		}
+		if (mode === 'reordering') {
+			for (let i = 0; i < exercise_grid.children.length; i++) {
+				const entry = exercise_grid.children[i] as HTMLDivElement;
+				entry.draggable = false;
+			}
+		}
 		mode = 'normal';
 	}
 
 	function cancel_action() {
+		if (mode === 'deleting') {
+			exercises = JSON.parse(JSON.stringify(pre_deletion_exercise_list));
+			pre_deletion_exercise_list = [];
+		}
+		if (mode === 'editing' && selected_entry) {
+			selected_entry.classList.remove('animate-pulse');
+			selected_entry.classList.remove('border-y-4');
+			selected_entry.classList.remove('border-accent');
+
+			selected_entry = undefined;
+		}
+		if (mode === 'reordering') {
+			for (let i = 0; i < exercise_grid.children.length; i++) {
+				const entry = exercise_grid.children[i] as HTMLDivElement;
+				entry.draggable = false;
+			}
+		}
 		mode = 'normal';
 	}
 </script>
 
 <MyModal {modalTitle} {modalTexts} bind:modalOpen />
 <div class="flex flex-col w-full flex-1 rounded-xl my-2.5 bg-primary max-w-xl">
-	<h3 class="w-full text-center text-xl font-bold bg-accent text-black rounded-t-xl pt-1">
+	<h3 class="w-full text-center text-xl font-bold bg-accent text-black rounded-t-xl pt-1 animate">
 		{workoutName}
 	</h3>
 	{#key workoutName}
-		<div class="flex flex-col gap-1 overflow-y-auto flex-auto h-px my-1.5">
+		<div
+			class="flex flex-col gap-1 overflow-y-auto flex-auto h-px my-1.5"
+			bind:this={exercise_grid}
+		>
 			{#each exercises as exercise (exercise.id)}
-				<div class="flex w-full bg-secondary text-black" animate:flip in:slide>
-					<p class="basis-8 text-center border-r border-black">{exercise.id}</p>
+				<div
+					class="flex w-full bg-secondary text-black"
+					animate:flip
+					in:slide
+					on:click={() => edit_entry(exercise)}
+					on:drag={() => console.log('dragged')}
+				>
+					{#if mode === 'deleting'}
+						<button
+							class="bg-error basis-8 font-semibold hover:brightness-90 active:brightness-75 transition-all"
+							on:click={() => delete_entry(exercise.id)}
+						>
+							X
+						</button>
+					{:else}
+						<p class="basis-8 text-center border-r border-black">{exercise.id}</p>
+					{/if}
 					<p class="flex-grow text-center border-x border-black">{exercise.name}</p>
 					<p class="basis-8 text-center border-x border-black">{exercise.reps}</p>
 					<p class="basis-8 text-center border-x border-black">{exercise.sets}</p>
@@ -141,14 +251,12 @@
 			<button
 				class="btn btn-sm bg-accent text-black flex-grow rounded-none rounded-br-none hover:bg-accent hover:brightness-75"
 				on:click={() => {
-					mode = 'editing';
+					mode = 'selecting';
 				}}>EDIT</button
 			>
 			<button
 				class="btn btn-sm bg-accent text-black flex-grow rounded-t-none rounded-bl-none hover:bg-accent hover:brightness-75"
-				on:click={() => {
-					mode = 'reordering';
-				}}>REORDER</button
+				on:click={enter_reordering_mode}>REORDER</button
 			>
 		</div>
 	{:else}
