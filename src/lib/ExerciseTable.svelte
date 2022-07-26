@@ -1,5 +1,7 @@
 <script lang="ts">
 	import MyModal from "./MyModal.svelte";
+	import { fly, slide } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
 
 	export let workoutName: string;
 	export let exercises: Exercise[];
@@ -71,19 +73,21 @@
 	<h3 class="w-full text-center text-xl font-bold bg-accent text-black rounded-t-xl pt-1">
 		{workoutName}
 	</h3>
-	<div class="flex flex-col gap-1 overflow-y-auto flex-auto h-px my-1.5">
-		{#each exercises as exercise}
-			<div class="flex w-full bg-secondary text-black">
-				<p class="basis-8 text-center border-r border-black">{exercise.id}</p>
-				<p class="flex-grow text-center border-x border-black">{exercise.name}</p>
-				<p class="basis-8 text-center border-x border-black">{exercise.reps}</p>
-				<p class="basis-8 text-center border-x border-black">{exercise.sets}</p>
-				<p class="basis-8 text-center border-l border-black">{exercise.load}</p>
-			</div>
-		{/each}
-	</div>
+	{#key workoutName}
+		<div class="flex flex-col gap-1 overflow-y-auto flex-auto h-px my-1.5">
+			{#each exercises as exercise (exercise.id)}
+				<div class="flex w-full bg-secondary text-black" animate:flip in:slide>
+					<p class="basis-8 text-center border-r border-black">{exercise.id}</p>
+					<p class="flex-grow text-center border-x border-black">{exercise.name}</p>
+					<p class="basis-8 text-center border-x border-black">{exercise.reps}</p>
+					<p class="basis-8 text-center border-x border-black">{exercise.sets}</p>
+					<p class="basis-8 text-center border-l border-black">{exercise.load}</p>
+				</div>
+			{/each}
+		</div>
+	{/key}
 	{#if ['adding', 'editing'].includes(mode)}
-		<div class="flex flex-col w-full items-center gap-6 py-5 bg-base-300">
+		<div class="flex flex-col w-full items-center gap-6 py-5 bg-base-300" in:fly={{ y: 200 }}>
 			<div class="flex flex-col w-1/2">
 				<p class="text-center bg-primary rounded-t-lg font-semibold">Name</p>
 				<input
