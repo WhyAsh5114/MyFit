@@ -6,7 +6,7 @@
 	import { goto } from '$app/navigation';
 	import MyModal from '$lib/MyModal.svelte';
 	import { onMount } from 'svelte';
-	import { SplitName, SplitSchedule } from '../split_store';
+	import { SplitName, SplitSchedule, SplitWorkouts } from '../split_store';
 	export let user: UserData;
 
 	let split_name = '';
@@ -72,6 +72,14 @@
 			}
 		}
 		SplitSchedule.set(days_input);
+
+		// Set SplitWorkouts
+		const split_workouts: Record<string, Array<Exercise>> = {};
+		for (let workout in unique_workouts) {
+			split_workouts[workout] = new Array<Exercise>;
+		}
+		SplitWorkouts.set(split_workouts);
+		
 		goto('/splits/new/workouts');
 	}
 </script>
