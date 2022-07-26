@@ -19,7 +19,7 @@
 		Sat: '',
 		Sun: ''
 	};
-	let unique_workouts = new Set<string>;
+	let unique_workouts = new Set<string>();
 
 	onMount(() => {
 		split_name = $SplitName;
@@ -27,16 +27,22 @@
 		update_workouts();
 	});
 
-	let modalTitle = 'Note';
-	let modalTexts = [
-		'Use different names if workouts are going to be different',
-		'If Push workout on Monday is different from Push workout on Thursday, use Push1 and Push2',
-		'Use same names only for identical workouts'
-	];
-	let modalOpen = true;
+	let modalTitle: string;
+	let modalTexts: string[];
+	let modalOpen = false;
+
+	function open_help_modal() {
+		modalTitle = 'Note';
+		modalTexts = [
+			'Use different names if workouts are going to be different',
+			'If Push workout on Monday is different from Push workout on Thursday, use Push1 and Push2',
+			'Use same names only for identical workouts'
+		];
+		modalOpen = true;
+	}
 
 	function update_workouts() {
-		let local_unique_workouts = new Set<string>;
+		let local_unique_workouts = new Set<string>();
 		Object.values(days_input).forEach((day_input) => {
 			if (day_input !== '' && day_input.toLowerCase() !== 'rest') {
 				local_unique_workouts.add(day_input);
@@ -76,7 +82,7 @@
 		// Set SplitWorkouts
 		const split_workouts: Record<string, Array<Exercise>> = {};
 		for (let workout of unique_workouts) {
-			split_workouts[workout] = new Array<Exercise>;
+			split_workouts[workout] = new Array<Exercise>();
 		}
 		SplitWorkouts.set(split_workouts);
 
@@ -87,9 +93,16 @@
 <svelte:head>
 	<title>MyFit | New split</title>
 </svelte:head>
+
 <MyModal {modalTexts} {modalTitle} bind:modalOpen />
 <form on:submit|preventDefault class="flex flex-col h-full justify-center items-center">
 	<div class="flex flex-col gap-10 justify-center items-center max-w-xs flex-grow">
+		<div
+			class="rounded-full border-2 w-fit px-3 font-semibold -my-7 hover:bg-black cursor-pointer place-self-end transition-colors"
+			on:click={open_help_modal}
+		>
+			?
+		</div>
 		<label class="input-group input-group-vertical shadow-black shadow-lg">
 			<p class="text-center bg-primary py-1 font-semibold">Split name</p>
 			<input
