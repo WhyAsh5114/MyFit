@@ -25,10 +25,15 @@
 		split_name = $SplitName;
 		days_input = $SplitSchedule;
 		update_workouts();
-	})
+	});
 
-	let modalTexts: string[];
-	let modalOpen: boolean;
+	let modalTitle = 'Note';
+	let modalTexts = [
+		'Use different names if workouts are going to different',
+		'If Push workout on Monday is different from Push workout on Thursday, use Push1 and Push2',
+		'Use same names only for identical workouts'
+	];
+	let modalOpen = true;
 
 	function update_workouts() {
 		let local_unique_workouts = new Set();
@@ -52,6 +57,7 @@
 			errors.push('Add at least one workout');
 		}
 		if (errors.length > 0) {
+			modalTitle = 'Error';
 			modalTexts = errors;
 			modalOpen = true;
 			return;
@@ -73,7 +79,7 @@
 <svelte:head>
 	<title>MyFit | New split</title>
 </svelte:head>
-<MyModal {modalTexts} modalTitle="Error" bind:modalOpen />
+<MyModal {modalTexts} {modalTitle} bind:modalOpen />
 <form on:submit|preventDefault class="flex flex-col h-full justify-center items-center">
 	<div class="flex flex-col gap-10 justify-center items-center max-w-xs flex-grow">
 		<label class="input-group input-group-vertical shadow-black shadow-lg">
