@@ -61,6 +61,14 @@
 		exercises = exercises;
 	}
 
+	function enter_select_mode() {
+		mode = 'selecting';
+		for (let i = 0; i < exercise_grid.children.length; i++) {
+			exercise_grid.children[i].classList.add('animate-pulse');
+			exercise_grid.children[i].classList.add('cursor-pointer');
+		}
+	}
+
 	let selected_entry: HTMLDivElement | undefined;
 	function edit_entry(exercise: Exercise) {
 		if (mode !== 'selecting') {
@@ -68,6 +76,11 @@
 		}
 		const entry_to_edit = exercise_grid.children[exercise.id - 1] as HTMLDivElement;
 		selected_entry = entry_to_edit;
+
+		for (let i = 0; i < exercise_grid.children.length; i++) {
+			exercise_grid.children[i].classList.remove('animate-pulse');
+			exercise_grid.children[i].classList.remove('cursor-pointer');
+		}
 
 		selected_entry.classList.add('animate-pulse');
 		selected_entry.classList.add('border-y-4');
@@ -91,9 +104,11 @@
 
 	function save_action() {
 		if (mode === 'adding') {
+			// Inputs must be valid to add to the ExerciseArray
 			if (are_inputs_valid() === false) {
 				return;
 			}
+			// Add to the ExerciseArray
 			exercises.push({
 				id: exercises.length + 1,
 				name: name_input,
@@ -101,23 +116,40 @@
 				sets: Number(sets_input),
 				load: Number(load_input)
 			});
+			// Re-assign to reflect in DOM
 			exercises = exercises;
 		}
 		if (mode === 'deleting') {
+			// Update indices of all exercise entries
 			for (let i = 0; i < exercises.length; i++) {
 				exercises[i].id = i + 1;
 			}
+			// Clear holder value to avoid weird behaviour
 			pre_deletion_exercise_list = [];
+			// Re-assign to reflect in DOM
 			exercises = exercises;
 		}
+		// Nothing was selected and we never entered editing mode
+		if (mode === 'selecting') {
+			// Remove selecting animations and classes
+			for (let i = 0; i < exercise_grid.children.length; i++) {
+				exercise_grid.children[i].classList.remove('animate-pulse');
+				exercise_grid.children[i].classList.remove('cursor-pointer');
+			}
+		}
 		if (mode === 'editing' && selected_entry) {
+			// Inputs must be valid to change the ExerciseArray
 			if (are_inputs_valid() === false) {
 				return;
 			}
+
+			// Remove selected hint classes
 			selected_entry.classList.remove('animate-pulse');
 			selected_entry.classList.remove('border-y-4');
 			selected_entry.classList.remove('border-accent');
 
+			// Get selected entry's ID and modify it's values
+			// according to input from user
 			const selected_id = Number(selected_entry.children[0].textContent);
 			for (let i = 0; i < exercises.length; i++) {
 				if (exercises[i].id === selected_id) {
@@ -127,8 +159,9 @@
 					exercises[i].load = Number(load_input);
 				}
 			}
+			// Re-assign to reflect in DOM
 			exercises = exercises;
-
+			// Clear selected entry to avoid weird behaviour
 			selected_entry = undefined;
 		}
 		if (mode === 'reordering') {
@@ -137,23 +170,34 @@
 				entry.draggable = false;
 			}
 		}
+		// Reset mode
 		mode = 'normal';
 	}
 
 	function cancel_action() {
 		if (mode === 'deleting') {
 			// If something WAS deleted
-			if (pre_deletion_exercise_list !== []) {
+			if (pre_deletion_exercise_list.length !== 0) {
 				// Update the original list
 				exercises = JSON.parse(JSON.stringify(pre_deletion_exercise_list));
 			}
+			// Clear holder variable to avoid weird behaviour
 			pre_deletion_exercise_list = [];
 		}
+		// Nothing was selected and we never entered editing mode
+		if (mode === 'selecting') {
+			// Remove selecting animations and classes
+			for (let i = 0; i < exercise_grid.children.length; i++) {
+				exercise_grid.children[i].classList.remove('animate-pulse');
+				exercise_grid.children[i].classList.remove('cursor-pointer');
+			}
+		}
 		if (mode === 'editing' && selected_entry) {
+			// Remove selected hint classes
 			selected_entry.classList.remove('animate-pulse');
 			selected_entry.classList.remove('border-y-4');
 			selected_entry.classList.remove('border-accent');
-
+			// Clear holder variable to avoid weird behaviour
 			selected_entry = undefined;
 		}
 		if (mode === 'reordering') {
@@ -162,6 +206,7 @@
 				entry.draggable = false;
 			}
 		}
+		// Reset mode
 		mode = 'normal';
 	}
 </script>
@@ -256,9 +301,7 @@
 			>
 			<button
 				class="btn btn-sm bg-accent text-black flex-grow rounded-none rounded-br-none hover:bg-accent hover:brightness-75"
-				on:click={() => {
-					mode = 'selecting';
-				}}>EDIT</button
+				on:click={enter_select_mode}>EDIT</button
 			>
 			<button
 				class="btn btn-sm bg-accent text-black flex-grow rounded-t-none rounded-bl-none hover:bg-accent hover:brightness-75"
