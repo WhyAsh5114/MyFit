@@ -160,7 +160,7 @@
 	}
 </script>
 
-<MyModal {modalTitle} {modalTexts} bind:modalOpen />
+<MyModal modalName="table-modal" {modalTitle} {modalTexts} bind:modalOpen />
 <div class="flex flex-col w-full flex-1 rounded-xl my-2.5 bg-primary max-w-xl">
 	<h3 class="w-full text-center text-xl font-bold bg-accent text-black rounded-t-xl pt-1 animate">
 		{workoutName}

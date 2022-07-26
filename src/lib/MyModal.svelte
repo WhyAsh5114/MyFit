@@ -3,6 +3,7 @@
 	export let modalTitle: string;
 	export let modalTexts: string[] = [];
 	export let onClose: () => void = () => {};
+	export let modalName: string = 'my-modal';
 
 	let modalTitleColor = 'text-white';
 
@@ -21,9 +22,9 @@
 	}
 </script>
 
-<input type="checkbox" id="my-modal" class="modal-toggle" bind:checked={modalOpen} />
+<input type="checkbox" id={modalName} class="modal-toggle" bind:checked={modalOpen} />
 <label
-	for="my-modal"
+	for={modalName}
 	class="modal modal-bottom md:modal-middle cursor-pointer"
 	on:click={() => {
 		onClose();
@@ -32,7 +33,7 @@
 >
 	<label class="modal-box relative bg-primary" for="">
 		<label
-			for="my-modal"
+			for={modalName}
 			class="btn btn-sm btn-circle absolute right-2 top-2"
 			data-test-id="close-modal-button">✕</label
 		>
