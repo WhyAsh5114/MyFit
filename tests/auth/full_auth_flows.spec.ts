@@ -65,7 +65,7 @@ testWithCreatableUsername(
 
 		// Login
 		await Promise.all([
-			page.locator('[data-test-id=modal-close-button]').click(),
+			page.locator('[data-test-id=close-modal-button]').click(),
 			page.waitForNavigation()
 		]);
 		expect(page.url()).toContain('/profile/login');
