@@ -13,6 +13,7 @@
 	let sets_input: string = '';
 	let load_input: string = '';
 
+	// Modal variables
 	let modalTitle: string;
 	let modalTexts: string[];
 	let modalOpen = false;
@@ -81,6 +82,7 @@
 
 	function enter_reordering_mode() {
 		mode = 'reordering';
+		// Make all entries draggable
 		for (let i = 0; i < exercise_grid.children.length; i++) {
 			const entry = exercise_grid.children[i] as HTMLDivElement;
 			entry.draggable = true;
@@ -140,7 +142,11 @@
 
 	function cancel_action() {
 		if (mode === 'deleting') {
-			exercises = JSON.parse(JSON.stringify(pre_deletion_exercise_list));
+			// If something WAS deleted
+			if (pre_deletion_exercise_list !== []) {
+				// Update the original list
+				exercises = JSON.parse(JSON.stringify(pre_deletion_exercise_list));
+			}
 			pre_deletion_exercise_list = [];
 		}
 		if (mode === 'editing' && selected_entry) {
