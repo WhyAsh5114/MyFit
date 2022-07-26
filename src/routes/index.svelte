@@ -19,7 +19,7 @@
 	import LoginButton from '$lib/LoginButton.svelte';
 	import MenuButton from '../lib/MenuButton.svelte';
 	import RegisterButton from '$lib/RegisterButton.svelte';
-	export let user: User | undefined;
+	export let user: UserData | undefined;
 </script>
 
 <svelte:head>

@@ -19,7 +19,7 @@
 	import LoginButton from '$lib/LoginButton.svelte';
 	import RegisterButton from '$lib/RegisterButton.svelte';
 	import '../app.css';
-	export let user: User | undefined;
+	export let user: UserData | undefined;
 
 	async function logout() {
 		await fetch('/api/auth/logout', {
