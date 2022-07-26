@@ -2,16 +2,14 @@ import { testLoggedIn, expect } from '../../fixtures.js';
 
 testLoggedIn.beforeEach(async ({ page }) => {
 	await page.goto('/splits/new');
-	// Close info modal
-	await page.locator('[data-test-id=close-modal-button]').click();
 });
 
-testLoggedIn('should show info modal', async ({ page }) => {
-	await page.reload();
+testLoggedIn('should show info modal when clicked on help', async ({ page }) => {
+	await page.locator('div[data-test-id=help-button]').click();
 	const messages = page.locator('ul[data-test-id=modal-messages-list] li');
 	expect(await messages.allTextContents()).toStrictEqual([
 		'Use different names if workouts are going to be different',
-		'If Push workout on Monday is different from Push workout on Thursday, use Push1 and Push2',
+		'For example: if Push workout on Monday is different from Push workout on Thursday, use Push1 and Push2',
 		'Use same names only for identical workouts'
 	]);
 });

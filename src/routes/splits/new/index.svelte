@@ -100,6 +100,7 @@
 		<div
 			class="rounded-full mr-1 border-2 border-accent w-fit px-3 font-semibold -my-7 hover:bg-black cursor-pointer place-self-end transition-colors"
 			on:click={open_help_modal}
+			data-test-id="help-button"
 		>
 			?
 		</div>
