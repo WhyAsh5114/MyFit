@@ -1,41 +1,41 @@
 <script lang="ts">
 	import MyModal from './MyModal.svelte';
-	import { fly, slide } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 
 	export let workoutName: string;
 	export let exercises: Exercise[] = [];
 
 	let mode: 'normal' | 'adding' | 'deleting' | 'editing' | 'reordering' | 'selecting' = 'normal';
-	let exercise_grid: HTMLDivElement;
-	let name_input: string = '';
-	let reps_input: string = '';
-	let sets_input: string = '';
-	let load_input: string = '';
+	let exerciseGrid: HTMLDivElement;
+	let nameInput: string = '';
+	let repsInput: string = '';
+	let setsInput: string = '';
+	let loadInput: string = '';
 
 	// Modal variables
 	let modalTitle: string;
 	let modalTexts: string[];
 	let modalOpen = false;
 
-	function are_inputs_valid() {
+	function areInputsValid() {
 		let errors: string[] = [];
-		if (name_input === '') {
+		if (nameInput === '') {
 			errors.push('Enter exercise name');
 		}
-		if (reps_input === '') {
+		if (repsInput === '') {
 			errors.push('Enter reps value');
-		} else if (isNaN(Number(reps_input)) || Number(reps_input) <= 0) {
+		} else if (isNaN(Number(repsInput)) || Number(repsInput) <= 0) {
 			errors.push('Reps should be a positive numeric value');
 		}
-		if (sets_input === '') {
+		if (setsInput === '') {
 			errors.push('Enter sets value');
-		} else if (isNaN(Number(sets_input)) || Number(sets_input) <= 0) {
+		} else if (isNaN(Number(setsInput)) || Number(setsInput) <= 0) {
 			errors.push('Sets should be a positive numeric value');
 		}
-		if (load_input === '') {
+		if (loadInput === '') {
 			errors.push('Enter load value');
-		} else if (isNaN(Number(load_input)) || Number(load_input) <= 0) {
+		} else if (isNaN(Number(loadInput)) || Number(loadInput) <= 0) {
 			errors.push('Load should be a positive numeric value');
 		}
 
@@ -48,73 +48,73 @@
 		return true;
 	}
 
-	let pre_deletion_exercise_list: Exercise[] = [];
-	function delete_entry(id: number) {
-		if (pre_deletion_exercise_list.length < exercises.length) {
-			pre_deletion_exercise_list = JSON.parse(JSON.stringify(exercises));
+	let preDeletionExerciseList: Exercise[] = [];
+	function deleteEntry(id: number) {
+		if (preDeletionExerciseList.length < exercises.length) {
+			preDeletionExerciseList = JSON.parse(JSON.stringify(exercises));
 		}
-		const index_to_remove = exercises.findIndex((exercise) => exercise.id === id);
-		if (index_to_remove === -1) {
+		const indexToRemove = exercises.findIndex((exercise) => exercise.id === id);
+		if (indexToRemove === -1) {
 			return;
 		}
-		exercises.splice(index_to_remove, 1);
+		exercises.splice(indexToRemove, 1);
 		exercises = exercises;
 	}
 
-	function enter_select_mode() {
+	function enterSelectMode() {
 		mode = 'selecting';
-		for (let i = 0; i < exercise_grid.children.length; i++) {
-			exercise_grid.children[i].classList.add('animate-pulse');
-			exercise_grid.children[i].classList.add('cursor-pointer');
+		for (let i = 0; i < exerciseGrid.children.length; i++) {
+			exerciseGrid.children[i].classList.add('animate-pulse');
+			exerciseGrid.children[i].classList.add('cursor-pointer');
 		}
 	}
 
-	let selected_entry: HTMLDivElement | undefined;
-	function edit_entry(exercise: Exercise) {
+	let selectedEntry: HTMLDivElement | undefined;
+	function editEntry(exercise: Exercise) {
 		if (mode !== 'selecting') {
 			return;
 		}
-		const entry_to_edit = exercise_grid.children[exercise.id - 1] as HTMLDivElement;
-		selected_entry = entry_to_edit;
+		const entry_to_edit = exerciseGrid.children[exercise.id - 1] as HTMLDivElement;
+		selectedEntry = entry_to_edit;
 
-		for (let i = 0; i < exercise_grid.children.length; i++) {
-			exercise_grid.children[i].classList.remove('animate-pulse');
-			exercise_grid.children[i].classList.remove('cursor-pointer');
+		for (let i = 0; i < exerciseGrid.children.length; i++) {
+			exerciseGrid.children[i].classList.remove('animate-pulse');
+			exerciseGrid.children[i].classList.remove('cursor-pointer');
 		}
 
-		selected_entry.classList.add('animate-pulse');
-		selected_entry.classList.add('border-y-4');
-		selected_entry.classList.add('border-accent');
+		selectedEntry.classList.add('animate-pulse');
+		selectedEntry.classList.add('border-y-4');
+		selectedEntry.classList.add('border-accent');
 		mode = 'editing';
 
-		name_input = exercise.name;
-		reps_input = exercise.reps.toString();
-		sets_input = exercise.sets.toString();
-		load_input = exercise.sets.toString();
+		nameInput = exercise.name;
+		repsInput = exercise.reps.toString();
+		setsInput = exercise.sets.toString();
+		loadInput = exercise.sets.toString();
 	}
 
-	function enter_reordering_mode() {
+	function enterReorderingMode() {
 		mode = 'reordering';
 		// Make all entries draggable
-		for (let i = 0; i < exercise_grid.children.length; i++) {
-			const entry = exercise_grid.children[i] as HTMLDivElement;
+		for (let i = 0; i < exerciseGrid.children.length; i++) {
+			const entry = exerciseGrid.children[i] as HTMLDivElement;
 			entry.draggable = true;
 		}
 	}
 
-	function save_action() {
+	function saveAction() {
 		if (mode === 'adding') {
 			// Inputs must be valid to add to the ExerciseArray
-			if (are_inputs_valid() === false) {
+			if (areInputsValid() === false) {
 				return;
 			}
 			// Add to the ExerciseArray
 			exercises.push({
 				id: exercises.length + 1,
-				name: name_input,
-				reps: Number(reps_input),
-				sets: Number(sets_input),
-				load: Number(load_input)
+				name: nameInput,
+				reps: Number(repsInput),
+				sets: Number(setsInput),
+				load: Number(loadInput)
 			});
 			// Re-assign to reflect in DOM
 			exercises = exercises;
@@ -125,48 +125,48 @@
 				exercises[i].id = i + 1;
 			}
 			// Clear holder value to avoid weird behaviour
-			pre_deletion_exercise_list = [];
+			preDeletionExerciseList = [];
 			// Re-assign to reflect in DOM
 			exercises = exercises;
 		}
 		// Nothing was selected and we never entered editing mode
 		if (mode === 'selecting') {
 			// Remove selecting animations and classes
-			for (let i = 0; i < exercise_grid.children.length; i++) {
-				exercise_grid.children[i].classList.remove('animate-pulse');
-				exercise_grid.children[i].classList.remove('cursor-pointer');
+			for (let i = 0; i < exerciseGrid.children.length; i++) {
+				exerciseGrid.children[i].classList.remove('animate-pulse');
+				exerciseGrid.children[i].classList.remove('cursor-pointer');
 			}
 		}
-		if (mode === 'editing' && selected_entry) {
+		if (mode === 'editing' && selectedEntry) {
 			// Inputs must be valid to change the ExerciseArray
-			if (are_inputs_valid() === false) {
+			if (areInputsValid() === false) {
 				return;
 			}
 
 			// Remove selected hint classes
-			selected_entry.classList.remove('animate-pulse');
-			selected_entry.classList.remove('border-y-4');
-			selected_entry.classList.remove('border-accent');
+			selectedEntry.classList.remove('animate-pulse');
+			selectedEntry.classList.remove('border-y-4');
+			selectedEntry.classList.remove('border-accent');
 
 			// Get selected entry's ID and modify it's values
 			// according to input from user
-			const selected_id = Number(selected_entry.children[0].textContent);
+			const selectedID = Number(selectedEntry.children[0].textContent);
 			for (let i = 0; i < exercises.length; i++) {
-				if (exercises[i].id === selected_id) {
-					exercises[i].name = name_input;
-					exercises[i].reps = Number(reps_input);
-					exercises[i].sets = Number(sets_input);
-					exercises[i].load = Number(load_input);
+				if (exercises[i].id === selectedID) {
+					exercises[i].name = nameInput;
+					exercises[i].reps = Number(repsInput);
+					exercises[i].sets = Number(setsInput);
+					exercises[i].load = Number(loadInput);
 				}
 			}
 			// Re-assign to reflect in DOM
 			exercises = exercises;
 			// Clear selected entry to avoid weird behaviour
-			selected_entry = undefined;
+			selectedEntry = undefined;
 		}
 		if (mode === 'reordering') {
-			for (let i = 0; i < exercise_grid.children.length; i++) {
-				const entry = exercise_grid.children[i] as HTMLDivElement;
+			for (let i = 0; i < exerciseGrid.children.length; i++) {
+				const entry = exerciseGrid.children[i] as HTMLDivElement;
 				entry.draggable = false;
 			}
 		}
@@ -174,35 +174,35 @@
 		mode = 'normal';
 	}
 
-	function cancel_action() {
+	function cancelAction() {
 		if (mode === 'deleting') {
 			// If something WAS deleted
-			if (pre_deletion_exercise_list.length !== 0) {
+			if (preDeletionExerciseList.length !== 0) {
 				// Update the original list
-				exercises = JSON.parse(JSON.stringify(pre_deletion_exercise_list));
+				exercises = JSON.parse(JSON.stringify(preDeletionExerciseList));
 			}
 			// Clear holder variable to avoid weird behaviour
-			pre_deletion_exercise_list = [];
+			preDeletionExerciseList = [];
 		}
 		// Nothing was selected and we never entered editing mode
 		if (mode === 'selecting') {
 			// Remove selecting animations and classes
-			for (let i = 0; i < exercise_grid.children.length; i++) {
-				exercise_grid.children[i].classList.remove('animate-pulse');
-				exercise_grid.children[i].classList.remove('cursor-pointer');
+			for (let i = 0; i < exerciseGrid.children.length; i++) {
+				exerciseGrid.children[i].classList.remove('animate-pulse');
+				exerciseGrid.children[i].classList.remove('cursor-pointer');
 			}
 		}
-		if (mode === 'editing' && selected_entry) {
+		if (mode === 'editing' && selectedEntry) {
 			// Remove selected hint classes
-			selected_entry.classList.remove('animate-pulse');
-			selected_entry.classList.remove('border-y-4');
-			selected_entry.classList.remove('border-accent');
+			selectedEntry.classList.remove('animate-pulse');
+			selectedEntry.classList.remove('border-y-4');
+			selectedEntry.classList.remove('border-accent');
 			// Clear holder variable to avoid weird behaviour
-			selected_entry = undefined;
+			selectedEntry = undefined;
 		}
 		if (mode === 'reordering') {
-			for (let i = 0; i < exercise_grid.children.length; i++) {
-				const entry = exercise_grid.children[i] as HTMLDivElement;
+			for (let i = 0; i < exerciseGrid.children.length; i++) {
+				const entry = exerciseGrid.children[i] as HTMLDivElement;
 				entry.draggable = false;
 			}
 		}
@@ -219,20 +219,20 @@
 	{#key workoutName}
 		<div
 			class="flex flex-col gap-1 overflow-y-auto flex-auto h-px my-1.5"
-			bind:this={exercise_grid}
+			bind:this={exerciseGrid}
 		>
 			{#each exercises as exercise (exercise.id)}
 				<div
 					class="flex w-full bg-secondary text-black"
 					animate:flip
 					in:slide
-					on:click={() => edit_entry(exercise)}
+					on:click={() => editEntry(exercise)}
 					on:drag={() => console.log('dragged')}
 				>
 					{#if mode === 'deleting'}
 						<button
 							class="bg-error basis-8 font-semibold hover:brightness-90 active:brightness-75 transition-all"
-							on:click={() => delete_entry(exercise.id)}
+							on:click={() => deleteEntry(exercise.id)}
 						>
 							X
 						</button>
@@ -254,7 +254,7 @@
 				<input
 					type="text"
 					class="input input-xs text-base text-center rounded-t-none text-black bg-secondary"
-					bind:value={name_input}
+					bind:value={nameInput}
 				/>
 			</div>
 			<div class="grid grid-cols-3 w-full gap-3 place-items-center">
@@ -263,7 +263,7 @@
 					<input
 						type="text"
 						class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-16"
-						bind:value={reps_input}
+						bind:value={repsInput}
 					/>
 				</div>
 				<div class="flex flex-auto">
@@ -271,7 +271,7 @@
 					<input
 						type="text"
 						class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-16"
-						bind:value={sets_input}
+						bind:value={setsInput}
 					/>
 				</div>
 				<div class="flex flex-auto">
@@ -279,7 +279,7 @@
 					<input
 						type="text"
 						class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-16"
-						bind:value={load_input}
+						bind:value={loadInput}
 					/>
 				</div>
 			</div>
@@ -301,18 +301,18 @@
 			>
 			<button
 				class="btn btn-sm bg-accent text-black flex-grow rounded-none rounded-br-none hover:bg-accent hover:brightness-75"
-				on:click={enter_select_mode}>EDIT</button
+				on:click={enterSelectMode}>EDIT</button
 			>
 			<button
 				class="btn btn-sm bg-accent text-black flex-grow rounded-t-none rounded-bl-none hover:bg-accent hover:brightness-75"
-				on:click={enter_reordering_mode}>REORDER</button
+				on:click={enterReorderingMode}>REORDER</button
 			>
 		</div>
 	{:else}
 		<div class="grid grid-cols-2 gap-1">
 			<button
 				class="btn btn-sm btn-accent rounded-t-none rounded-br-none hover:brightness-75"
-				on:click={save_action}
+				on:click={saveAction}
 			>
 				{#if mode === 'adding'}
 					ADD
@@ -322,7 +322,7 @@
 			</button>
 			<button
 				class="btn btn-sm btn-error rounded-t-none rounded-bl-none hover:brightness-75"
-				on:click={cancel_action}>CANCEL</button
+				on:click={cancelAction}>CANCEL</button
 			>
 		</div>
 	{/if}
