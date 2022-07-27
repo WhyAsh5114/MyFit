@@ -4,8 +4,8 @@ test.beforeEach(async ({ page }) => {
 	await page.goto('/profile/login');
 });
 
-test('should throw error (User does not exist)', async ({ page, creatable_username }) => {
-	await page.fill('input[placeholder=Username]', creatable_username);
+test('should throw error (User does not exist)', async ({ page, creatableUsername }) => {
+	await page.fill('input[placeholder=Username]', creatableUsername);
 	await page.fill('input[placeholder=Password]', generate_random_phrase(9));
 
 	await Promise.all([
@@ -19,8 +19,8 @@ test('should throw error (User does not exist)', async ({ page, creatable_userna
 	expect(await messages.allTextContents()).toStrictEqual(['User does not exist']);
 });
 
-test('should throw error (Incorrect password)', async ({ page, registered_account }) => {
-	await page.fill('input[placeholder=Username]', registered_account.username);
+test('should throw error (Incorrect password)', async ({ page, registeredAccount }) => {
+	await page.fill('input[placeholder=Username]', registeredAccount.username);
 	// In fixtures, random phrase is of length 9
 	// so the following phrase will always be different
 	await page.fill('input[placeholder=Password]', generate_random_phrase(9));
@@ -38,9 +38,9 @@ test('should throw error (Incorrect password)', async ({ page, registered_accoun
 
 test(
 	'should login successfully and redirect to /profile',
-	async ({ page, registered_account }) => {
-		await page.fill('input[placeholder=Username]', registered_account.username);
-		await page.fill('input[placeholder=Password]', registered_account.password);
+	async ({ page, registeredAccount }) => {
+		await page.fill('input[placeholder=Username]', registeredAccount.username);
+		await page.fill('input[placeholder=Password]', registeredAccount.password);
 
 		await Promise.all([
 			page.waitForResponse(

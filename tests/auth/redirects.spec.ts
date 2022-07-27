@@ -1,6 +1,6 @@
 import { test, expect } from '../fixtures.js';
 
-test('should redirect back to requested page after login', async ({ page, registered_account }) => {
+test('should redirect back to requested page after login', async ({ page, registeredAccount }) => {
 	await page.goto('/random/page');
 	const dropdown = page.locator('ul[data-test-id=profile-options-dropdown] li');
 	const options = await dropdown.allTextContents();
@@ -11,8 +11,8 @@ test('should redirect back to requested page after login', async ({ page, regist
 	expect(page.url()).toContain('/profile/login');
 
 	await expect(page).toHaveURL('/profile/login?page=/random/page');
-	await page.fill('input[placeholder=Username]', registered_account.username);
-	await page.fill('input[placeholder=Password]', registered_account.password);
+	await page.fill('input[placeholder=Username]', registeredAccount.username);
+	await page.fill('input[placeholder=Password]', registeredAccount.password);
 	await Promise.all([
 		page.waitForResponse(
 			(response) => response.url().includes('/api/auth/login') && response.status() === 200
@@ -25,7 +25,7 @@ test('should redirect back to requested page after login', async ({ page, regist
 
 test('should redirect back to requested page after register & login', async ({
 	page,
-	creatable_username
+	creatableUsername
 }) => {
 	await page.goto('/random/page');
 	const dropdown = page.locator('ul[data-test-id=profile-options-dropdown] li');
@@ -37,7 +37,7 @@ test('should redirect back to requested page after register & login', async ({
 	expect(page.url()).toContain('/profile/register');
 
 	await expect(page).toHaveURL('/profile/register?page=/random/page');
-	await page.fill('input[placeholder=Username]', creatable_username);
+	await page.fill('input[placeholder=Username]', creatableUsername);
 	await page.fill('input[placeholder=Password]', 'password');
 	await page.fill('input[placeholder="Confirm Password"]', 'password');
 	await Promise.all([
@@ -49,7 +49,7 @@ test('should redirect back to requested page after register & login', async ({
 
 	await page.locator('[data-test-id=close-modal-button]').click();
 	await expect(page).toHaveURL('/profile/login?page=/random/page');
-	await page.fill('input[placeholder=Username]', creatable_username);
+	await page.fill('input[placeholder=Username]', creatableUsername);
 	await page.fill('input[placeholder=Password]', 'password');
 	await Promise.all([
 		page.waitForResponse(

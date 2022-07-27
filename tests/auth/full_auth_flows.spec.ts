@@ -3,14 +3,14 @@ import type { Cookie } from '@playwright/test';
 
 test('testing normal auth flow register->login->logout through endpoints', async ({
 	page,
-	creatable_username
+	creatableUsername
 }) => {
 	let cookies: Cookie[];
 	let session_id: Cookie | undefined;
 
 	const register_res = await page.request.post('/api/auth/register', {
 		data: {
-			username: creatable_username,
+			username: creatableUsername,
 			password: 'password'
 		}
 	});
@@ -21,7 +21,7 @@ test('testing normal auth flow register->login->logout through endpoints', async
 
 	const login_res = await page.request.post('/api/auth/login', {
 		data: {
-			username: creatable_username,
+			username: creatableUsername,
 			password: 'password'
 		}
 	});
@@ -39,13 +39,13 @@ test('testing normal auth flow register->login->logout through endpoints', async
 
 test(
 	'testing normal auth flow register->login->logout through UI',
-	async ({ page, creatable_username }) => {
+	async ({ page, creatableUsername }) => {
 		let cookies: Cookie[];
 		let session_id: Cookie | undefined;
 
 		// Register
 		await page.goto('/profile/register');
-		await page.fill('input[placeholder=Username]', creatable_username);
+		await page.fill('input[placeholder=Username]', creatableUsername);
 		await page.fill('input[placeholder=Password]', 'password');
 		await page.fill('input[placeholder="Confirm Password"]', 'password');
 		// Button and response
@@ -69,7 +69,7 @@ test(
 			page.waitForNavigation()
 		]);
 		expect(page.url()).toContain('/profile/login');
-		await page.fill('input[placeholder=Username]', creatable_username);
+		await page.fill('input[placeholder=Username]', creatableUsername);
 		await page.fill('input[placeholder=Password]', 'password');
 		// Button and response
 		await Promise.all([
