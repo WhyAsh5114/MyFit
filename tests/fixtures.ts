@@ -2,7 +2,7 @@ import { test as base, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { createClient } from 'redis';
 
-export function generate_random_phrase(length: number) {
+export function generateRandomPhrase(length: number) {
 	let result = '';
 	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 	const charactersLength = characters.length;
@@ -31,7 +31,7 @@ export const test = base.extend<MyFixtures>({
 			// Generate an unused username
 			let username: string;
 			do {
-				username = 'user' + generate_random_phrase(5);
+				username = 'user' + generateRandomPhrase(5);
 			} while ((await client.get(username)) !== null);
 			await use(username);
 		},
@@ -39,15 +39,15 @@ export const test = base.extend<MyFixtures>({
 	],
 	registeredAccount: [
 		async ({ creatableUsername, request }, use) => {
-			const random_password = generate_random_phrase(10);
+			const randomPassword = generateRandomPhrase(10);
 			const credentials: AccountDetails = {
 				username: creatableUsername,
-				password: random_password
+				password: randomPassword
 			};
-			const register_res = await request.post('/api/auth/register', {
+			const registerRes = await request.post('/api/auth/register', {
 				data: credentials
 			});
-			expect(register_res.ok()).toStrictEqual(true);
+			expect(registerRes.ok()).toStrictEqual(true);
 			await use(credentials);
 		},
 		{ scope: 'test' }
@@ -68,13 +68,13 @@ export const test = base.extend<MyFixtures>({
 	loggedInPage: [
 		async ({ page, user }, use) => {
 			// Login with account
-			const login_res = await page.request.post('/api/auth/login', {
+			const loginRes = await page.request.post('/api/auth/login', {
 				data: {
 					username: user.username,
 					password: user.password
 				}
 			});
-			expect(login_res.ok()).toStrictEqual(true);
+			expect(loginRes.ok()).toStrictEqual(true);
 			await use(page);
 		},
 		{ scope: 'test' }
@@ -86,7 +86,7 @@ export const test = base.extend<MyFixtures>({
 			const split: Split = {
 				name: 'PPL',
 				schedule: ['Push', 'Pull', 'Legs', 'Push', 'Pull', 'Legs', 'Rest'],
-				split_workouts: {}
+				splitWorkouts: {}
 			};
 
 			await use(split);

@@ -74,8 +74,8 @@
 		if (mode !== 'selecting') {
 			return;
 		}
-		const entry_to_edit = exerciseGrid.children[exercise.id - 1] as HTMLDivElement;
-		selectedEntry = entry_to_edit;
+		const entryToEdit = exerciseGrid.children[exercise.id - 1] as HTMLDivElement;
+		selectedEntry = entryToEdit;
 
 		for (let i = 0; i < exerciseGrid.children.length; i++) {
 			exerciseGrid.children[i].classList.remove('animate-pulse');

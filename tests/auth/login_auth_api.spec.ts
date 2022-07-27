@@ -1,4 +1,4 @@
-import { test, expect, generate_random_phrase } from '../fixtures.js';
+import { test, expect, generateRandomPhrase } from '../fixtures.js';
 
 test.beforeEach(async ({ page }) => {
 	await page.goto('/profile/login');
@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
 
 test('should throw error (User does not exist)', async ({ page, creatableUsername }) => {
 	await page.fill('input[placeholder=Username]', creatableUsername);
-	await page.fill('input[placeholder=Password]', generate_random_phrase(9));
+	await page.fill('input[placeholder=Password]', generateRandomPhrase(9));
 
 	await Promise.all([
 		page.waitForResponse(
@@ -23,7 +23,7 @@ test('should throw error (Incorrect password)', async ({ page, registeredAccount
 	await page.fill('input[placeholder=Username]', registeredAccount.username);
 	// In fixtures, random phrase is of length 9
 	// so the following phrase will always be different
-	await page.fill('input[placeholder=Password]', generate_random_phrase(9));
+	await page.fill('input[placeholder=Password]', generateRandomPhrase(9));
 
 	await Promise.all([
 		page.waitForResponse(

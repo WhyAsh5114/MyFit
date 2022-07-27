@@ -6,11 +6,11 @@
 	import { goto } from '$app/navigation';
 	import MyModal from '$lib/MyModal.svelte';
 	import { onMount } from 'svelte';
-	import { SplitName, SplitSchedule, SplitWorkouts } from '../split_store';
+	import { SplitName, SplitSchedule, SplitWorkouts } from '../splitStore';
 	export let user: UserData;
 
-	let split_name = '';
-	let days_input: Record<string, string> = {
+	let splitName = '';
+	let daysInput: Record<string, string> = {
 		Mon: '',
 		Tue: '',
 		Wed: '',
@@ -19,19 +19,19 @@
 		Sat: '',
 		Sun: ''
 	};
-	let unique_workouts = new Set<string>();
+	let uniqueWorkouts = new Set<string>();
 
 	onMount(() => {
-		split_name = $SplitName;
-		days_input = $SplitSchedule;
-		update_workouts();
+		splitName = $SplitName;
+		daysInput = $SplitSchedule;
+		updateWorkouts();
 	});
 
 	let modalTitle: string;
 	let modalTexts: string[];
 	let modalOpen = false;
 
-	function open_help_modal() {
+	function openHelpModal() {
 		modalTitle = 'Help';
 		modalTexts = [
 			'Use different names if workouts are going to be different',
@@ -41,25 +41,25 @@
 		modalOpen = true;
 	}
 
-	function update_workouts() {
-		let local_unique_workouts = new Set<string>();
-		Object.values(days_input).forEach((day_input) => {
-			if (day_input !== '' && day_input.toLowerCase() !== 'rest') {
-				local_unique_workouts.add(day_input);
+	function updateWorkouts() {
+		let localUniqueWorkouts = new Set<string>();
+		Object.values(daysInput).forEach((dayInput) => {
+			if (dayInput !== '' && dayInput.toLowerCase() !== 'rest') {
+				localUniqueWorkouts.add(dayInput);
 			}
 		});
-		unique_workouts = local_unique_workouts;
+		uniqueWorkouts = localUniqueWorkouts;
 	}
 
-	function create_schedule() {
+	function createSchedule() {
 		let errors = [];
-		if (split_name === '') {
+		if (splitName === '') {
 			errors.push('Enter split name');
 		}
-		if (split_name in user.splits) {
+		if (splitName in user.splits) {
 			errors.push('Split already exists');
 		}
-		if (unique_workouts.size === 0) {
+		if (uniqueWorkouts.size === 0) {
 			errors.push('Add at least one workout');
 		}
 		if (errors.length > 0) {
@@ -69,22 +69,22 @@
 			return;
 		}
 
-		SplitName.set(split_name);
+		SplitName.set(splitName);
 
 		// Remove rest days and replace with ''
-		for (let day in days_input) {
-			if (days_input[day].toLowerCase() === 'rest' || days_input[day] == '') {
-				days_input[day] = 'Rest';
+		for (let day in daysInput) {
+			if (daysInput[day].toLowerCase() === 'rest' || daysInput[day] == '') {
+				daysInput[day] = 'Rest';
 			}
 		}
-		SplitSchedule.set(days_input);
+		SplitSchedule.set(daysInput);
 
 		// Set SplitWorkouts
-		const split_workouts: Record<string, Array<Exercise>> = {};
-		for (let workout of unique_workouts) {
-			split_workouts[workout] = new Array<Exercise>();
+		const splitWorkouts: Record<string, Array<Exercise>> = {};
+		for (let workout of uniqueWorkouts) {
+			splitWorkouts[workout] = new Array<Exercise>();
 		}
-		SplitWorkouts.set(split_workouts);
+		SplitWorkouts.set(splitWorkouts);
 
 		goto('/splits/new/workouts');
 	}
@@ -99,7 +99,7 @@
 	<div class="flex flex-col gap-10 justify-center items-center max-w-xs flex-grow">
 		<div
 			class="rounded-full mr-1 border-2 border-accent w-fit px-3 font-semibold -my-7 hover:bg-black cursor-pointer place-self-end transition-colors"
-			on:click={open_help_modal}
+			on:click={openHelpModal}
 			data-test-id="help-button"
 		>
 			?
@@ -110,13 +110,13 @@
 				type="text"
 				name="split-name"
 				class="input bg-secondary input-sm border-2 text-lg text-black col-span-2 text-center"
-				bind:value={split_name}
+				bind:value={splitName}
 				data-test-id="split-name-input"
 				required
 			/>
 		</label>
 		<div class="flex flex-col gap-3.5 bg-primary p-4 rounded-lg shadow-black shadow-lg">
-			{#each Object.keys(days_input) as day}
+			{#each Object.keys(daysInput) as day}
 				<label class="input-group input-group-sm shadow-md shadow-black">
 					<p class="bg-accent text-black w-20 font-semibold text-center">{day}</p>
 					<input
@@ -124,9 +124,9 @@
 						name={day}
 						data-test-id={day}
 						class="input input-bordered w-full text-base bg-secondary text-black input-sm col-span-2 text-center"
-						bind:value={days_input[day]}
-						on:input={update_workouts}
-						on:focus={update_workouts}
+						bind:value={daysInput[day]}
+						on:input={updateWorkouts}
+						on:focus={updateWorkouts}
 					/>
 				</label>
 			{/each}
@@ -135,13 +135,13 @@
 	<button
 		type="submit"
 		class="btn normal-case lg:btn-lg btn-primary w-full text-base lg:text-lg"
-		on:click={create_schedule}
+		on:click={createSchedule}
 		data-test-id="create-schedule-button"
 	>
-		{#if unique_workouts.size === 1}
-			Create {unique_workouts.size} unique workout
+		{#if uniqueWorkouts.size === 1}
+			Create {uniqueWorkouts.size} unique workout
 		{:else}
-			Create {unique_workouts.size} unique workouts
+			Create {uniqueWorkouts.size} unique workouts
 		{/if}
 	</button>
 </form>

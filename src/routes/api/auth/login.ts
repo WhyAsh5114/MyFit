@@ -23,7 +23,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		return {
 			status: 200,
 			headers: {
-				'set-cookie': serialize('session_id', id, {
+				'set-cookie': serialize('sessionID', id, {
 					sameSite: 'strict',
 					maxAge: 60 * 60 * 24 * 7,
 					path: '/',

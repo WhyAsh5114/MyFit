@@ -42,53 +42,53 @@ test('should throw error (Enter split name)', async ({ loggedInPage }) => {
 
 test('should update unique workouts number properly', async ({ loggedInPage }) => {
 	// '', '', '', '', '', '', ''
-	const submit_button = loggedInPage.locator('button[data-test-id=create-schedule-button]');
+	const submitButton = loggedInPage.locator('button[data-test-id=create-schedule-button]');
 
 	await loggedInPage.fill('input[data-test-id=Mon]', 'workout1');
 	// 'workout1', '', '', '', '', '', ''
-	await expect(submit_button).toHaveText('Create 1 unique workout');
+	await expect(submitButton).toHaveText('Create 1 unique workout');
 
 	await loggedInPage.fill('input[data-test-id=Tue]', 'workout2');
 	// 'workout1', 'workout2', '', '', '', '', ''
-	await expect(submit_button).toHaveText('Create 2 unique workouts');
+	await expect(submitButton).toHaveText('Create 2 unique workouts');
 
 	await loggedInPage.fill('input[data-test-id=Wed]', 'workout1');
 	// 'workout1', 'workout2', 'workout1', '', '', '', ''
-	await expect(submit_button).toHaveText('Create 2 unique workouts');
+	await expect(submitButton).toHaveText('Create 2 unique workouts');
 
 	await loggedInPage.fill('input[data-test-id=Thu]', 'rest');
 	// 'workout1', 'workout2', 'workout1', 'rest', '', '', ''
-	await expect(submit_button).toHaveText('Create 2 unique workouts');
+	await expect(submitButton).toHaveText('Create 2 unique workouts');
 
 	await loggedInPage.fill('input[data-test-id=Fri]', 'workout3');
 	// 'workout1', 'workout2', 'workout1', 'rest', 'workout3', '', ''
-	await expect(submit_button).toHaveText('Create 3 unique workouts');
+	await expect(submitButton).toHaveText('Create 3 unique workouts');
 
 	await loggedInPage.fill('input[data-test-id=Fri]', 'workout2');
 	// 'workout1', 'workout2', 'workout1', 'rest', 'workout2', '', ''
-	await expect(submit_button).toHaveText('Create 2 unique workouts');
+	await expect(submitButton).toHaveText('Create 2 unique workouts');
 
 	await loggedInPage.fill('input[data-test-id=Sat]', 'rest');
 	// 'workout1', 'workout2', 'workout1', 'rest', 'workout2', 'rest', ''
-	await expect(submit_button).toHaveText('Create 2 unique workouts');
+	await expect(submitButton).toHaveText('Create 2 unique workouts');
 
 	await loggedInPage.fill('input[data-test-id=Sun]', 'REST');
 	// 'workout1', 'workout2', 'workout1', 'rest', 'workout2', 'rest', 'REST'
-	await expect(submit_button).toHaveText('Create 2 unique workouts');
+	await expect(submitButton).toHaveText('Create 2 unique workouts');
 
 	await loggedInPage.fill('input[data-test-id=Tue]', '');
 	// 'workout1', '', 'workout1', 'rest', 'workout2', 'rest', 'REST'
-	await expect(submit_button).toHaveText('Create 2 unique workouts');
+	await expect(submitButton).toHaveText('Create 2 unique workouts');
 
 	await loggedInPage.fill('input[data-test-id=Mon]', '');
 	// '', '', 'workout1', 'rest', 'workout2', 'rest', 'REST'
-	await expect(submit_button).toHaveText('Create 2 unique workouts');
+	await expect(submitButton).toHaveText('Create 2 unique workouts');
 
 	await loggedInPage.fill('input[data-test-id=Wed]', '');
 	// '', '', '', 'rest', 'workout2', 'rest', 'REST'
-	await expect(submit_button).toHaveText('Create 1 unique workout');
+	await expect(submitButton).toHaveText('Create 1 unique workout');
 
 	await loggedInPage.fill('input[data-test-id=Fri]', '');
 	// '', '', '', 'rest', '', 'rest', 'REST'
-	await expect(submit_button).toHaveText('Create 0 unique workouts');
+	await expect(submitButton).toHaveText('Create 0 unique workouts');
 });

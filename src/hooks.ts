@@ -5,9 +5,9 @@ import { getUser, getUsernameFromSession } from './routes/api/_db';
 export const handle: Handle = async ({ event, resolve }) => {
 	const cookies = parse(event.request.headers.get('cookie') || '');
 
-	if (cookies.session_id) {
+	if (cookies.sessionID) {
 		try {
-			const username = await getUsernameFromSession(cookies.session_id);
+			const username = await getUsernameFromSession(cookies.sessionID);
 			const user = await getUser(username);
 			if (username) {
 				event.locals = { user };
@@ -17,7 +17,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			event.locals = {};
 			event.request.headers.set(
 				'set-cookie',
-				serialize('session_id', '', {
+				serialize('sessionID', '', {
 					path: '/',
 					httpOnly: true,
 					sameSite: 'strict',

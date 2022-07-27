@@ -7,7 +7,7 @@
 	import ExerciseTable from '$lib/ExerciseTable.svelte';
 	import MyModal from '$lib/MyModal.svelte';
 	import { onMount } from 'svelte';
-	import { SplitName, SplitSchedule, SplitWorkouts } from '../split_store';
+	import { SplitName, SplitSchedule, SplitWorkouts } from '../splitStore';
 
 	let modalTitle: string;
 	let modalTexts: string[];
@@ -55,7 +55,7 @@
 	const firstUniqueWorkout: string = uniqueWorkouts.keys().next().value;
 	selectedUniqueWorkout = firstUniqueWorkout;
 
-	function change_selectedUniqueWorkout(_day: string) {
+	function changeSelectedUniqueWorkout(_day: string) {
 		if ($SplitSchedule[_day] === 'Rest') return;
 		const selectedWorkout = $SplitSchedule[_day];
 		for (let [day, workout] of Object.entries($SplitSchedule)) {
@@ -94,7 +94,7 @@
 		<div
 			class="flex flex-col w-full normal-case text-base font-normal rounded-xl cursor-pointer border-base-100 border-4"
 			bind:this={scheduleElements[day]}
-			on:click={() => change_selectedUniqueWorkout(day)}
+			on:click={() => changeSelectedUniqueWorkout(day)}
 			data-test-id={"calendar-" + day}
 		>
 			<p class="bg-primary text-center w-full rounded-t-lg py-0.5 font-semibold" data-test-id={"day-" + day}>{day}</p>

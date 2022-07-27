@@ -6,24 +6,24 @@ test.beforeEach(async ({ page }) => {
 
 test('cookie should be set after login', async ({ loggedInPage }) => {
 	const cookies = await loggedInPage.context().cookies();
-	const session_id = cookies.find((cookie) => cookie.name === 'session_id');
-	expect(session_id).toBeDefined();
-	expect(session_id?.secure).toStrictEqual(true);
+	const sessionID = cookies.find((cookie) => cookie.name === 'sessionID');
+	expect(sessionID).toBeDefined();
+	expect(sessionID?.secure).toStrictEqual(true);
 });
 
 test('cookie should not be set when not logged in', async ({ page }) => {
 	const cookies = await page.context().cookies();
-	const session_id = cookies.find((cookie) => cookie.name === 'session_id');
-	expect(session_id).toBeUndefined();
+	const sessionID = cookies.find((cookie) => cookie.name === 'sessionID');
+	expect(sessionID).toBeUndefined();
 });
 
 test('cookie should be removed after logout', async ({ loggedInPage }) => {
 	let cookies = await loggedInPage.context().cookies();
-	let session_id = cookies.find((cookie) => cookie.name === 'session_id');
-	expect(session_id).toBeDefined();
+	let sessionID = cookies.find((cookie) => cookie.name === 'sessionID');
+	expect(sessionID).toBeDefined();
 
 	await loggedInPage.request.get('/api/auth/logout');
 	cookies = await loggedInPage.context().cookies();
-	session_id = cookies.find((cookie) => cookie.name === 'session_id');
-	expect(session_id).toBeUndefined();
+	sessionID = cookies.find((cookie) => cookie.name === 'sessionID');
+	expect(sessionID).toBeUndefined();
 });

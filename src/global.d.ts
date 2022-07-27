@@ -15,7 +15,7 @@ type UserData = Omit<User, 'password'>;
 interface Split {
 	name: string;
 	schedule: string[];
-	split_workouts: Record<string, Array<Exercise>>;
+	splitWorkouts: Record<string, Array<Exercise>>;
 }
 
 interface Exercise {

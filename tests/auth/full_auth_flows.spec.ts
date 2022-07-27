@@ -6,42 +6,42 @@ test('testing normal auth flow register->login->logout through endpoints', async
 	creatableUsername
 }) => {
 	let cookies: Cookie[];
-	let session_id: Cookie | undefined;
+	let sessionID: Cookie | undefined;
 
-	const register_res = await page.request.post('/api/auth/register', {
+	const registerRes = await page.request.post('/api/auth/register', {
 		data: {
 			username: creatableUsername,
 			password: 'password'
 		}
 	});
-	expect(register_res.status()).toStrictEqual(201);
+	expect(registerRes.status()).toStrictEqual(201);
 	cookies = await page.context().cookies();
-	session_id = cookies.find((cookie) => cookie.name === 'session_id');
-	expect(session_id).toBeUndefined();
+	sessionID = cookies.find((cookie) => cookie.name === 'sessionID');
+	expect(sessionID).toBeUndefined();
 
-	const login_res = await page.request.post('/api/auth/login', {
+	const loginRes = await page.request.post('/api/auth/login', {
 		data: {
 			username: creatableUsername,
 			password: 'password'
 		}
 	});
-	expect(login_res.status()).toStrictEqual(200);
+	expect(loginRes.status()).toStrictEqual(200);
 	cookies = await page.context().cookies();
-	session_id = cookies.find((cookie) => cookie.name === 'session_id');
-	expect(session_id).toBeDefined();
+	sessionID = cookies.find((cookie) => cookie.name === 'sessionID');
+	expect(sessionID).toBeDefined();
 
-	const logout_res = await page.request.get('/api/auth/logout');
-	expect(logout_res.status()).toStrictEqual(201);
+	const logoutRes = await page.request.get('/api/auth/logout');
+	expect(logoutRes.status()).toStrictEqual(201);
 	cookies = await page.context().cookies();
-	session_id = cookies.find((cookie) => cookie.name === 'session_id');
-	expect(session_id).toBeUndefined();
+	sessionID = cookies.find((cookie) => cookie.name === 'sessionID');
+	expect(sessionID).toBeUndefined();
 });
 
 test(
 	'testing normal auth flow register->login->logout through UI',
 	async ({ page, creatableUsername }) => {
 		let cookies: Cookie[];
-		let session_id: Cookie | undefined;
+		let sessionID: Cookie | undefined;
 
 		// Register
 		await page.goto('/profile/register');
@@ -60,8 +60,8 @@ test(
 		expect(await messages.allTextContents()).toStrictEqual(['Account created successfully']);
 		// Cookies
 		cookies = await page.context().cookies();
-		session_id = cookies.find((cookie) => cookie.name === 'session_id');
-		expect(session_id).toBeUndefined();
+		sessionID = cookies.find((cookie) => cookie.name === 'sessionID');
+		expect(sessionID).toBeUndefined();
 
 		// Login
 		await Promise.all([
@@ -80,8 +80,8 @@ test(
 		]);
 		// Cookies
 		cookies = await page.context().cookies();
-		session_id = cookies.find((cookie) => cookie.name === 'session_id');
-		expect(session_id).toBeDefined();
+		sessionID = cookies.find((cookie) => cookie.name === 'sessionID');
+		expect(sessionID).toBeDefined();
 
 		// Logout
 		await expect(page).toHaveURL('/profile');
@@ -95,7 +95,7 @@ test(
 		await expect(page).toHaveURL('/profile/login');
 		// Cookies
 		cookies = await page.context().cookies();
-		session_id = cookies.find((cookie) => cookie.name === 'session_id');
-		expect(session_id).toBeUndefined();
+		sessionID = cookies.find((cookie) => cookie.name === 'sessionID');
+		expect(sessionID).toBeUndefined();
 	}
 );
