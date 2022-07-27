@@ -4,7 +4,7 @@
 	import { flip } from 'svelte/animate';
 
 	export let workoutName: string;
-	export let exercises: Exercise[];
+	export let exercises: Exercise[] = [];
 
 	let mode: 'normal' | 'adding' | 'deleting' | 'editing' | 'reordering' | 'selecting' = 'normal';
 	let exercise_grid: HTMLDivElement;
@@ -248,7 +248,7 @@
 		</div>
 	{/key}
 	{#if ['adding', 'editing'].includes(mode)}
-		<div class="flex flex-col w-full items-center gap-6 py-5 bg-base-300" in:fly={{ y: 200 }}>
+		<div class="flex flex-col w-full items-center gap-6 py-5 bg-base-300" transition:slide>
 			<div class="flex flex-col w-1/2">
 				<p class="text-center bg-primary rounded-t-lg font-semibold">Name</p>
 				<input
