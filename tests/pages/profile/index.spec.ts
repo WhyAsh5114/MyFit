@@ -1,17 +1,14 @@
-import { test, expect } from '@playwright/test';
-import { testLoggedIn } from '../../fixtures.js';
-
-test.beforeEach(async ({ page }) => {
-	await page.goto('/profile');
-});
+import { test, expect } from '../../fixtures.js';
 
 test('should redirect to login when not logged in', async ({ page }) => {
+	await page.goto('/profile');
 	await expect(page).toHaveURL('/profile/login?page=/profile');
 });
 
-testLoggedIn('should show username and logout button when logged in', async ({ page, user }) => {
-	await expect(page.locator('p')).toHaveText(`Hi ${user.username}`);
-	const logoutButton = page.locator('button[data-test-id=profile-logout-button]', {
+test('should show username and logout button when logged in', async ({ loggedInPage, user }) => {
+	await loggedInPage.goto('/profile')
+	await expect(loggedInPage.locator('p')).toHaveText(`Hi ${user.username}`);
+	const logoutButton = loggedInPage.locator('button[data-test-id=profile-logout-button]', {
 		hasText: 'Logout'
 	});
 	expect(await logoutButton.count()).toStrictEqual(1);

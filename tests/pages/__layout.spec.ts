@@ -1,11 +1,7 @@
-import { test, expect } from '@playwright/test';
-import { testLoggedIn } from '../fixtures.js';
-
-test.beforeEach(async ({ page }) => {
-	await page.goto('/');
-});
+import { test, expect } from '../fixtures.js';
 
 test('should show [login, register] in dropdown when not signed in', async ({ page }) => {
+	await page.goto('/')
 	const dropdown = page.locator('ul[data-test-id=profile-options-dropdown] li');
 	const options = await dropdown.allTextContents();
 	expect(options).toStrictEqual(['Login', 'Register']);
@@ -20,25 +16,26 @@ test('should show [login, register] in dropdown when not signed in', async ({ pa
 	expect(page.url()).toContain('/profile/register');
 });
 
-testLoggedIn(
+test(
 	'should show [profile, settings, logout] in dropdown when signed in',
-	async ({ page }) => {
-		const dropdown = page.locator('ul[data-test-id=profile-options-dropdown] li');
+	async ({ loggedInPage }) => {
+		await loggedInPage.goto('/')
+		const dropdown = loggedInPage.locator('ul[data-test-id=profile-options-dropdown] li');
 		const options = await dropdown.allTextContents();
 		expect(options).toStrictEqual(['Profile', 'Settings', 'Logout']);
 
-		await page.locator('button[data-test-id=dropdown-button]').click();
+		await loggedInPage.locator('button[data-test-id=dropdown-button]').click();
 		await dropdown.nth(0).click();
-		await expect(page).toHaveURL('/profile');
-		await page.goBack();
+		await expect(loggedInPage).toHaveURL('/profile');
+		await loggedInPage.goBack();
 
-		await page.locator('button[data-test-id=dropdown-button]').click();
+		await loggedInPage.locator('button[data-test-id=dropdown-button]').click();
 		await dropdown.nth(1).click();
-		await expect(page).toHaveURL('/profile/settings');
-		await page.goBack();
+		await expect(loggedInPage).toHaveURL('/profile/settings');
+		await loggedInPage.goBack();
 
-		await page.locator('button[data-test-id=dropdown-button]').click();
+		await loggedInPage.locator('button[data-test-id=dropdown-button]').click();
 		await dropdown.nth(2).click();
-		await expect(page).toHaveURL('/profile/login');
+		await expect(loggedInPage).toHaveURL('/profile/login');
 	}
 );

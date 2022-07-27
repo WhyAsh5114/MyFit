@@ -1,32 +1,29 @@
-import { test, expect } from '@playwright/test';
-import { testWithCreatableUsername, testWithExistingUsername } from '../fixtures.js';
+import { test, expect, generate_random_phrase } from '../fixtures.js';
 
 test.beforeEach(async ({ page }) => {
 	await page.goto('/profile/login');
 });
 
-testWithCreatableUsername(
-	'should throw error (User does not exist)',
-	async ({ page, creatable_username }) => {
-		await page.fill('input[placeholder=Username]', creatable_username);
-		await page.fill('input[placeholder=Password]', 'random_password');
+test('should throw error (User does not exist)', async ({ page, creatable_username }) => {
+	await page.fill('input[placeholder=Username]', creatable_username);
+	await page.fill('input[placeholder=Password]', generate_random_phrase(9));
 
-		await Promise.all([
-			page.waitForResponse(
-				(response) => response.url().includes('/api/auth/login') && response.status() === 404
-			),
-			page.locator('button', { hasText: 'Submit' }).click()
-		]);
+	await Promise.all([
+		page.waitForResponse(
+			(response) => response.url().includes('/api/auth/login') && response.status() === 404
+		),
+		page.locator('button', { hasText: 'Submit' }).click()
+	]);
 
-		const messages = page.locator('ul[data-test-id=modal-messages-list] li');
-		expect(await messages.allTextContents()).toStrictEqual(['User does not exist']);
-	}
-);
+	const messages = page.locator('ul[data-test-id=modal-messages-list] li');
+	expect(await messages.allTextContents()).toStrictEqual(['User does not exist']);
+});
 
-testWithExistingUsername('should throw error (Incorrect password)', async ({ page, username }) => {
-	await page.fill('input[placeholder=Username]', username);
-	// In fixtures, normal password of existing account is just 'password'
-	await page.fill('input[placeholder=Password]', 'wrong_password');
+test('should throw error (Incorrect password)', async ({ page, registered_account }) => {
+	await page.fill('input[placeholder=Username]', registered_account.username);
+	// In fixtures, random phrase is of length 9
+	// so the following phrase will always be different
+	await page.fill('input[placeholder=Password]', generate_random_phrase(9));
 
 	await Promise.all([
 		page.waitForResponse(
@@ -39,12 +36,11 @@ testWithExistingUsername('should throw error (Incorrect password)', async ({ pag
 	expect(await messages.allTextContents()).toStrictEqual(['Incorrect password']);
 });
 
-testWithExistingUsername(
+test(
 	'should login successfully and redirect to /profile',
-	async ({ page, username }) => {
-		await page.fill('input[placeholder=Username]', username);
-		// In fixtures, normal password of existing account is just 'password'
-		await page.fill('input[placeholder=Password]', 'password');
+	async ({ page, registered_account }) => {
+		await page.fill('input[placeholder=Username]', registered_account.username);
+		await page.fill('input[placeholder=Password]', registered_account.password);
 
 		await Promise.all([
 			page.waitForResponse(

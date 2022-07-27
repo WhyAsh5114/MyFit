@@ -1,43 +1,43 @@
-import { testWithCreatableUsername, expect } from '../fixtures.js';
+import { test, expect } from '../fixtures.js';
 import type { Cookie } from '@playwright/test';
 
-testWithCreatableUsername(
-	'testing normal auth flow register->login->logout through endpoints',
-	async ({ page, creatable_username }) => {
-		let cookies: Cookie[];
-		let session_id: Cookie | undefined;
+test('testing normal auth flow register->login->logout through endpoints', async ({
+	page,
+	creatable_username
+}) => {
+	let cookies: Cookie[];
+	let session_id: Cookie | undefined;
 
-		const register_res = await page.request.post('/api/auth/register', {
-			data: {
-				username: creatable_username,
-				password: 'password'
-			}
-		});
-		expect(register_res.status()).toStrictEqual(201);
-		cookies = await page.context().cookies();
-		session_id = cookies.find((cookie) => cookie.name === 'session_id');
-		expect(session_id).toBeUndefined();
+	const register_res = await page.request.post('/api/auth/register', {
+		data: {
+			username: creatable_username,
+			password: 'password'
+		}
+	});
+	expect(register_res.status()).toStrictEqual(201);
+	cookies = await page.context().cookies();
+	session_id = cookies.find((cookie) => cookie.name === 'session_id');
+	expect(session_id).toBeUndefined();
 
-		const login_res = await page.request.post('/api/auth/login', {
-			data: {
-				username: creatable_username,
-				password: 'password'
-			}
-		});
-		expect(login_res.status()).toStrictEqual(200);
-		cookies = await page.context().cookies();
-		session_id = cookies.find((cookie) => cookie.name === 'session_id');
-		expect(session_id).toBeDefined();
+	const login_res = await page.request.post('/api/auth/login', {
+		data: {
+			username: creatable_username,
+			password: 'password'
+		}
+	});
+	expect(login_res.status()).toStrictEqual(200);
+	cookies = await page.context().cookies();
+	session_id = cookies.find((cookie) => cookie.name === 'session_id');
+	expect(session_id).toBeDefined();
 
-		const logout_res = await page.request.get('/api/auth/logout');
-		expect(logout_res.status()).toStrictEqual(201);
-		cookies = await page.context().cookies();
-		session_id = cookies.find((cookie) => cookie.name === 'session_id');
-		expect(session_id).toBeUndefined();
-	}
-);
+	const logout_res = await page.request.get('/api/auth/logout');
+	expect(logout_res.status()).toStrictEqual(201);
+	cookies = await page.context().cookies();
+	session_id = cookies.find((cookie) => cookie.name === 'session_id');
+	expect(session_id).toBeUndefined();
+});
 
-testWithCreatableUsername(
+test(
 	'testing normal auth flow register->login->logout through UI',
 	async ({ page, creatable_username }) => {
 		let cookies: Cookie[];
