@@ -7,6 +7,7 @@
 	export let exercises: Exercise[] = [];
 
 	let mode: 'normal' | 'adding' | 'deleting' | 'editing' | 'reordering' | 'selecting' = 'normal';
+	$: mode = workoutName ? 'normal' : 'normal'
 	let exerciseGrid: HTMLDivElement;
 	let nameInput: string = '';
 	let repsInput: string = '';
