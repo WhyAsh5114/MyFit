@@ -13,62 +13,64 @@
 	let modalTexts: string[];
 	let modalOpen = false;
 
-	let schedule_elements: Record<string, HTMLDivElement> = {};
-	let selected_unique_workout: string;
-	let split_workouts = $SplitWorkouts;
+	let scheduleElements: Record<string, HTMLDivElement> = {};
+	let selectedUniqueWorkout: string;
+	let splitWorkouts = $SplitWorkouts;
 
 	// Redirect if stores are empty
-	const empty_schedule = { Mon: '', Tue: '', Wed: '', Thu: '', Fri: '', Sat: '', Sun: '' };
+	const emptySchedule = { Mon: '', Tue: '', Wed: '', Thu: '', Fri: '', Sat: '', Sun: '' };
 	onMount(() => {
-		if ($SplitName === '' || $SplitSchedule === empty_schedule) {
+		if ($SplitName === '' || $SplitSchedule === emptySchedule) {
 			goto('/splits/new');
 			return;
 		}
 
 		// Highlight the first unique workout days
-		const first_unique_workout_schedule: string[] = unique_workouts.values().next().value;
-		for (const day of first_unique_workout_schedule) {
-			schedule_elements[day]?.classList.add('border-accent');
-			schedule_elements[day]?.classList.remove('border-base-100');
+		const firstUniqueWorkoutSchedule: string[] = uniqueWorkouts.values().next().value;
+		for (const day of firstUniqueWorkoutSchedule) {
+			scheduleElements[day]?.classList.add('border-accent');
+			scheduleElements[day]?.classList.remove('border-base-100');
 		}
 
+		// Darken Rest days
 		for (const day in $SplitSchedule) {
 			const workout = $SplitSchedule[day];
 			if (workout === 'Rest') {
-				schedule_elements[day]?.classList.add('opacity-50');
+				scheduleElements[day]?.classList.add('opacity-50');
+				scheduleElements[day]?.classList.remove('cursor-pointer');
 			}
 		}
 	});
 
-	const unique_workouts = new Map<string, string[]>();
+	const uniqueWorkouts = new Map<string, string[]>();
 	for (const day in $SplitSchedule) {
 		const workout = $SplitSchedule[day];
-		if (workout !== 'Rest' && !unique_workouts.has(workout)) {
-			unique_workouts.set(workout, [day]);
+		if (workout !== 'Rest' && !uniqueWorkouts.has(workout)) {
+			uniqueWorkouts.set(workout, [day]);
 		} else if (workout !== 'Rest') {
-			unique_workouts.get(workout)?.push(day);
+			uniqueWorkouts.get(workout)?.push(day);
 		}
 	}
 
-	const first_unique_workout: string = unique_workouts.keys().next().value;
-	selected_unique_workout = first_unique_workout;
+	const firstUniqueWorkout: string = uniqueWorkouts.keys().next().value;
+	selectedUniqueWorkout = firstUniqueWorkout;
 
-	function change_selected_unique_workout(_day: string) {
+	function change_selectedUniqueWorkout(_day: string) {
 		if ($SplitSchedule[_day] === 'Rest') return;
-		const selected_workout = $SplitSchedule[_day];
+		const selectedWorkout = $SplitSchedule[_day];
 		for (let [day, workout] of Object.entries($SplitSchedule)) {
-			if (workout === selected_workout) {
-				schedule_elements[day]?.classList.add('border-accent');
-				schedule_elements[day]?.classList.remove('border-base-100');
+			if (workout === selectedWorkout) {
+				scheduleElements[day]?.classList.add('border-accent');
+				scheduleElements[day]?.classList.remove('border-base-100');
 			} else {
-				schedule_elements[day]?.classList.remove('border-accent');
-				schedule_elements[day]?.classList.add('border-base-100');
+				scheduleElements[day]?.classList.remove('border-accent');
+				scheduleElements[day]?.classList.add('border-base-100');
 			}
 		}
-		selected_unique_workout = selected_workout;
+		selectedUniqueWorkout = selectedWorkout;
 	}
 
-	function open_help_modal() {
+	function openHelpModal() {
 		modalTitle = 'Help';
 		modalTexts = [
 			'Select unique workouts from the calendar section',
@@ -86,20 +88,22 @@
 <MyModal {modalTexts} {modalTitle} bind:modalOpen />
 <div
 	class="grid grid-cols-4 lg:grid-cols-7 gap-1 w-full max-w-xl place-self-center place-items-center"
+	data-test-id="calendar"
 >
 	{#each Object.keys($SplitSchedule) as day}
 		<div
 			class="flex flex-col w-full normal-case text-base font-normal rounded-xl cursor-pointer border-base-100 border-4"
-			bind:this={schedule_elements[day]}
-			on:click={() => change_selected_unique_workout(day)}
+			bind:this={scheduleElements[day]}
+			on:click={() => change_selectedUniqueWorkout(day)}
+			data-test-id={"calendar-" + day}
 		>
-			<p class="bg-primary text-center w-full rounded-t-lg py-0.5 font-semibold">{day}</p>
-			<p class="text-center bg-secondary text-black rounded-b-lg py-0.5">{$SplitSchedule[day]}</p>
+			<p class="bg-primary text-center w-full rounded-t-lg py-0.5 font-semibold" data-test-id={"day-" + day}>{day}</p>
+			<p class="text-center bg-secondary text-black rounded-b-lg py-0.5" data-test-id={"workout-" + day}>{$SplitSchedule[day]}</p>
 		</div>
 	{/each}
 	<div
 		class="rounded-full border-2 border-accent w-fit px-3 font-semibold hover:bg-black cursor-pointer transition-colors lg:col-span-full lg:mt-2"
-		on:click={open_help_modal}
+		on:click={openHelpModal}
 		data-test-id="help-button"
 	>
 		?
@@ -107,8 +111,8 @@
 </div>
 <div class="flex justify-center w-full flex-1">
 	<ExerciseTable
-		workoutName={selected_unique_workout}
-		bind:exercises={split_workouts[selected_unique_workout]}
+		workoutName={selectedUniqueWorkout}
+		bind:exercises={splitWorkouts[selectedUniqueWorkout]}
 	/>
 </div>
 <button class="basis-10 normal-case text-base btn lg:btn-lg lg:text-lg btn-primary">
