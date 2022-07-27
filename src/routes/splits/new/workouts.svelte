@@ -17,19 +17,6 @@
 	let selected_unique_workout: string;
 	let split_workouts = $SplitWorkouts;
 
-	const unique_workouts = new Map<string, string[]>();
-	for (const day in $SplitSchedule) {
-		const workout = $SplitSchedule[day];
-		if (workout !== 'Rest' && !unique_workouts.has(workout)) {
-			unique_workouts.set(workout, [day]);
-		} else if (workout !== 'Rest') {
-			unique_workouts.get(workout)?.push(day);
-		}
-	}
-
-	const first_unique_workout: string = unique_workouts.keys().next().value;
-	selected_unique_workout = first_unique_workout;
-
 	// Redirect if stores are empty
 	const empty_schedule = { Mon: '', Tue: '', Wed: '', Thu: '', Fri: '', Sat: '', Sun: '' };
 	onMount(() => {
@@ -52,6 +39,19 @@
 			}
 		}
 	});
+
+	const unique_workouts = new Map<string, string[]>();
+	for (const day in $SplitSchedule) {
+		const workout = $SplitSchedule[day];
+		if (workout !== 'Rest' && !unique_workouts.has(workout)) {
+			unique_workouts.set(workout, [day]);
+		} else if (workout !== 'Rest') {
+			unique_workouts.get(workout)?.push(day);
+		}
+	}
+
+	const first_unique_workout: string = unique_workouts.keys().next().value;
+	selected_unique_workout = first_unique_workout;
 
 	function change_selected_unique_workout(_day: string) {
 		if ($SplitSchedule[_day] === 'Rest') return;
@@ -110,4 +110,6 @@
 		bind:exercises={split_workouts[selected_unique_workout]}
 	/>
 </div>
-<button class="basis-10 normal-case text-base btn lg:btn-lg lg:text-lg btn-primary"> Set split options </button>
+<button class="basis-10 normal-case text-base btn lg:btn-lg lg:text-lg btn-primary">
+	Set split options
+</button>
