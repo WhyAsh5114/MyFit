@@ -100,6 +100,7 @@
 	<div
 		class="rounded-full border-2 border-accent w-fit px-3 font-semibold hover:bg-black cursor-pointer transition-colors lg:col-span-full lg:mt-2"
 		on:click={open_help_modal}
+		data-test-id="help-button"
 	>
 		?
 	</div>
