@@ -1,6 +1,6 @@
 <script lang="ts">
 	import MyModal from './MyModal.svelte';
-	import { slide } from 'svelte/transition';
+	import { slide, scale, fade } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 
 	export let workoutName: string;
@@ -213,19 +213,24 @@
 
 <MyModal modalName="table-modal" {modalTitle} {modalTexts} bind:modalOpen />
 <div class="flex flex-col w-full flex-1 rounded-xl my-2.5 bg-primary max-w-xl">
-	<h3 class="w-full text-center text-xl font-bold bg-accent text-black rounded-t-xl pt-1 animate">
+	<h3
+		class="w-full text-center text-xl font-bold bg-accent text-black rounded-t-xl pt-1 animate"
+		data-test-id="workout-name"
+	>
 		{workoutName}
 	</h3>
 	{#key workoutName}
 		<div
 			class="flex flex-col gap-1 overflow-y-auto flex-auto h-px my-1.5"
 			bind:this={exerciseGrid}
+			data-test-id="exercise-grid"
 		>
 			{#each exercises as exercise (exercise.id)}
 				<div
 					class="flex w-full bg-secondary text-black"
 					animate:flip
 					in:slide
+					out:scale|local
 					on:click={() => editEntry(exercise)}
 					on:drag={() => console.log('dragged')}
 				>
@@ -248,12 +253,16 @@
 		</div>
 	{/key}
 	{#if ['adding', 'editing'].includes(mode)}
-		<div class="flex flex-col w-full items-center gap-6 py-5 bg-base-300" transition:slide>
+		<div
+			class="flex flex-col w-full items-center gap-6 py-5 bg-base-300"
+			transition:slide={{ duration: 100 }}
+		>
 			<div class="flex flex-col w-1/2">
 				<p class="text-center bg-primary rounded-t-lg font-semibold">Name</p>
 				<input
 					type="text"
 					class="input input-xs text-base text-center rounded-t-none text-black bg-secondary"
+					data-test-id="name-input"
 					bind:value={nameInput}
 				/>
 			</div>
@@ -263,6 +272,7 @@
 					<input
 						type="text"
 						class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-16"
+						data-test-id="reps-input"
 						bind:value={repsInput}
 					/>
 				</div>
@@ -271,6 +281,7 @@
 					<input
 						type="text"
 						class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-16"
+						data-test-id="sets-input"
 						bind:value={setsInput}
 					/>
 				</div>
@@ -279,6 +290,7 @@
 					<input
 						type="text"
 						class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-16"
+						data-test-id="load-input"
 						bind:value={loadInput}
 					/>
 				</div>
@@ -286,33 +298,38 @@
 		</div>
 	{/if}
 	{#if mode === 'normal'}
-		<div class="grid grid-cols-4 gap-1">
+		<div class="grid grid-cols-4 gap-1" in:fade={{ duration: 150 }}>
 			<button
-				class="btn btn-sm bg-accent text-black flex-grow rounded-t-none rounded-br-none hover:bg-accent hover:brightness-75"
+				class="btn btn-sm bg-accent text-black flex-grow rounded-t-none rounded-br-none hover:bg-accent hover:brightness-75 no-animation"
+				data-test-id="add-button"
 				on:click={() => {
 					mode = 'adding';
 				}}>ADD</button
 			>
 			<button
-				class="btn btn-sm bg-accent text-black flex-grow rounded-none rounded-br-none hover:bg-accent hover:brightness-75"
+				class="btn btn-sm bg-accent text-black flex-grow rounded-none rounded-br-none hover:bg-accent hover:brightness-75 no-animation"
+				data-test-id="delete-button"
 				on:click={() => {
 					mode = 'deleting';
 				}}>DELETE</button
 			>
 			<button
-				class="btn btn-sm bg-accent text-black flex-grow rounded-none rounded-br-none hover:bg-accent hover:brightness-75"
+				class="btn btn-sm bg-accent text-black flex-grow rounded-none rounded-br-none hover:bg-accent hover:brightness-75 no-animation"
+				data-test-id="edit-button"
 				on:click={enterSelectMode}>EDIT</button
 			>
 			<button
-				class="btn btn-sm bg-accent text-black flex-grow rounded-t-none rounded-bl-none hover:bg-accent hover:brightness-75"
+				class="btn btn-sm bg-accent text-black flex-grow rounded-t-none rounded-bl-none hover:bg-accent hover:brightness-75 no-animation"
+				data-test-id="reorder-button"
 				on:click={enterReorderingMode}>REORDER</button
 			>
 		</div>
 	{:else}
-		<div class="grid grid-cols-2 gap-1">
+		<div class="grid grid-cols-2 gap-1" in:fade={{ duration: 150 }}>
 			<button
-				class="btn btn-sm btn-accent rounded-t-none rounded-br-none hover:brightness-75"
+				class="btn btn-sm no-animation btn-accent rounded-t-none rounded-br-none hover:brightness-75"
 				on:click={saveAction}
+				data-test-id="save-button"
 			>
 				{#if mode === 'adding'}
 					ADD
@@ -321,8 +338,9 @@
 				{/if}
 			</button>
 			<button
-				class="btn btn-sm btn-error rounded-t-none rounded-bl-none hover:brightness-75"
-				on:click={cancelAction}>CANCEL</button
+				class="btn btn-sm no-animation btn-error rounded-t-none rounded-bl-none hover:brightness-75"
+				on:click={cancelAction}
+				data-test-id="cancel-button">CANCEL</button
 			>
 		</div>
 	{/if}
