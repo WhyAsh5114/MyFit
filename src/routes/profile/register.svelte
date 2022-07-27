@@ -19,6 +19,7 @@
 	let username: string = '';
 	let password: string = '';
 	let confirmPassword: string = '';
+	let submitButton: HTMLButtonElement;
 
 	let modalOpen = false;
 	let modalTexts: string[];
@@ -62,6 +63,7 @@
 			if (res.ok) {
 				modalTitle = 'Success';
 				modalTexts = [body.message];
+				submitButton.disabled = true;
 
 				// TODO: fix (change to goto()) once SvelteKit solves #4426
 				onClose = () => {
@@ -115,7 +117,7 @@
 		/>
 		<button
 			class="btn btn-sm rounded-sm normal-case btn-accent lg:text-lg shadow-md mt-4"
-			on:click={register}>Submit</button
+			on:click={register} bind:this={submitButton}>Submit</button
 		>
 		<div class="w-full h-px bg-primary mt-6" />
 		<a href="/profile/login?page={$page.url.pathname}" class="mb-2 mt-1 text-blue-600 text-center"
