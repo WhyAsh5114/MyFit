@@ -5,6 +5,7 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
     import MyModal from '$lib/MyModal.svelte';
+import { onMount } from 'svelte';
     import { fly, fade } from 'svelte/transition';
     import { SplitSchedule, SplitName, SplitWorkouts } from '../splitStore';
 
@@ -19,6 +20,15 @@
     let modalTexts: string[];
     let modalOpen = false;
     let onClose = () => {};
+
+    // Redirect if stores are empty
+    const emptySchedule = { Mon: '', Tue: '', Wed: '', Thu: '', Fri: '', Sat: '', Sun: '' };
+    onMount(() => {
+        if ($SplitName === '' || $SplitSchedule === emptySchedule) {
+            goto('/splits/new');
+            return;
+        }
+    })
 
     const messages: Record<number, string> = {
         0: 'Why so low?',
