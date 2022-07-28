@@ -1,4 +1,4 @@
-import { registerUser } from '../_db';
+import { ErrorResponse, registerUser } from '../_db';
 import type { RequestHandler } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -14,10 +14,18 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 		};
 	} catch (err) {
+		if (err instanceof ErrorResponse) {
+			return {
+				status: err.status,
+				body: {
+					message: err.message
+				}
+			};
+		}
 		return {
-			status: 409,
+			status: 500,
 			body: {
-				message: 'User already exists'
+				message: JSON.stringify(err)
 			}
 		};
 	}

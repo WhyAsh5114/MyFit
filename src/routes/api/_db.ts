@@ -8,7 +8,7 @@ db.connect();
 export const getUser = async (username: string): Promise<UserData> => {
 	const existingUser = await db.get(username);
 	if (!existingUser) {
-		return Promise.reject(new Error('User does not exist'));
+		return Promise.reject(new ErrorResponse('User does not exist', 404));
 	}
 	const user: User = JSON.parse(existingUser);
 	delete user.password;
@@ -22,17 +22,17 @@ export const setUser = async (userData: UserData, session: string): Promise<stri
 		return Promise.reject(new Error('User does not exist'));
 	}
 	// Reject if session is unauthorized (expired/corrupted)
-	if (await getUsernameFromSession(session) !== userData.username) {
+	if ((await getUsernameFromSession(session)) !== userData.username) {
 		return Promise.reject(new Error('Unauthorized session'));
 	}
 	await db.set(userData.username, JSON.stringify(userData));
 	return Promise.resolve('User set successfully');
-}
+};
 
 export const registerUser = async (credentials: AccountDetails): Promise<UserData> => {
 	const existingUser = await db.get(credentials.username);
 	if (existingUser) {
-		return Promise.reject(new Error('User already exists'));
+		return Promise.reject(new ErrorResponse('User already exists', 409));
 	}
 	const hashedPassword = await hash(credentials.password, 10);
 	const newUser: User = {
@@ -49,14 +49,14 @@ export const registerUser = async (credentials: AccountDetails): Promise<UserDat
 export const loginUser = async ({ username, password }: AccountDetails): Promise<string> => {
 	const userData = await db.get(username);
 	if (!userData) {
-		return Promise.reject(new Error('User does not exist'));
+		return Promise.reject(new ErrorResponse('User does not exist', 404));
 	}
 	const existingUser: User = JSON.parse(userData);
 	if (existingUser.password && (await compare(password, existingUser.password))) {
 		const sessionID = await createSession(username);
 		return Promise.resolve(sessionID);
 	} else {
-		return Promise.reject(new Error('Incorrect password'));
+		return Promise.reject(new ErrorResponse('Incorrect password', 403));
 	}
 };
 
@@ -70,7 +70,7 @@ export const createSession = async (username: string): Promise<string> => {
 export const getUsernameFromSession = async (sessionID: string): Promise<string> => {
 	const username = await db.get(sessionID);
 	if (!username) {
-		return Promise.reject(new Error('User does not exist'));
+		return Promise.reject(new ErrorResponse('User does not exist', 404));
 	}
 	return Promise.resolve(username);
 };
@@ -78,8 +78,12 @@ export const getUsernameFromSession = async (sessionID: string): Promise<string>
 export const removeSession = async (sessionID: string): Promise<string> => {
 	const username = await db.get(sessionID);
 	if (!username) {
-		return Promise.reject(new Error('Session not found'));
+		return Promise.reject(new ErrorResponse('Session not found', 404));
 	}
 	await db.del(sessionID);
 	return Promise.resolve(sessionID);
 };
+
+export class ErrorResponse {
+	constructor(public message: string, public status: number) {}
+}
