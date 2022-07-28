@@ -113,7 +113,10 @@ export const test = base.extend<MyFixtures>({
 						{ id: 4, name: 'Leg curls', reps: 12, sets: 3, load: 15 },
 						{ id: 5, name: 'Calf raises', reps: 12, sets: 5, load: 15 },
 					]
-				}
+				},
+				progressiveOverload: 5,
+				overloadFrequency: '/session',
+				dateCreated: new Date().toJSON().slice(0, 10)
 			};
 
 			await use(split);
