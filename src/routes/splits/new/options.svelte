@@ -3,6 +3,8 @@
 </script>
 
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import MyModal from '$lib/MyModal.svelte';
 	import { fly, fade } from 'svelte/transition';
 	import { SplitSchedule, SplitName, SplitWorkouts } from '../splitStore';
 
@@ -12,6 +14,11 @@
 	const freqMultiplier: Record<string, number> = { '/month': 0.5, '/week': 1, '/session': 1.5 };
 	let meanOverload: number;
 	$: meanOverload = freqMultiplier[frequency] * progressionValue;
+
+	let modalTitle: string;
+	let modalTexts: string[];
+	let modalOpen = false;
+	let onClose = () => {};
 
 	const messages: Record<number, string> = {
 		0: 'Why so low?',
@@ -62,11 +69,6 @@
 	}
 
 	async function createSplit() {
-		console.log($SplitName);
-		console.log($SplitSchedule);
-		console.log($SplitWorkouts);
-		console.log(progressionValue, frequency);
-		
 		const newSplit: Split = {
 			name: $SplitName,
 			schedule: Object.values($SplitSchedule),
@@ -74,19 +76,31 @@
 			progressiveOverload: progressionValue,
 			overloadFrequency: frequency,
 			dateCreated: new Date().toJSON().slice(0, 10)
-		}
-		
+		};
+
 		const res = await fetch('/api/saveSplit', {
 			method: 'POST',
 			body: JSON.stringify(newSplit)
-		})
+		});
+		if (res.ok) {
+			modalTitle = 'Success';
+			modalTexts = ['Split created successfully'];
+			onClose = () => goto('/');
+			modalOpen = true;
+		} else {
+			const body = await res.json();
+			modalTitle = 'Error';
+			modalTexts = [body.message];
+			onClose = () => {};
+			modalOpen = true;
+		}
 	}
 </script>
 
 <svelte:head>
 	<title>MyFit | New split</title>
 </svelte:head>
-
+<MyModal bind:modalOpen {modalTitle} {modalTexts} bind:onClose />
 <div class="flex h-full justify-center">
 	<div
 		class="flex flex-col max-w-lg mx-2 p-2 lg:p-10 border-4 rounded-xl self-center w-full bg-primary bg-opacity-50 {borderColor} transition-colors"
@@ -114,12 +128,17 @@
 			</div>
 			<div class="stat-title font-semibold text-lg opacity-75">Progression</div>
 			{#key progressionValue}
-				<div class="stat-value text-4xl transition-colors {textColor} mb-1" in:fly={{duration:150, y:25}}>
+				<div
+					class="stat-value text-4xl transition-colors {textColor} mb-1"
+					in:fly={{ duration: 150, y: 25 }}
+				>
 					{progressionValue}%
 				</div>
 			{/key}
 			{#key message}
-				<div class="stat-desc text-white text-sm opacity-70" in:fade={{duration:150}}>{message}</div>
+				<div class="stat-desc text-white text-sm opacity-70" in:fade={{ duration: 150 }}>
+					{message}
+				</div>
 			{/key}
 		</div>
 		<div class="mx-5 flex flex-col items-center gap-3 mb-3">
@@ -138,6 +157,9 @@
 		</div>
 	</div>
 </div>
-<button class="btn normal-case lg:btn-lg btn-primary w-full text-base lg:text-lg mt-auto" on:click={createSplit}>
+<button
+	class="btn normal-case lg:btn-lg btn-primary w-full text-base lg:text-lg mt-auto"
+	on:click={createSplit}
+>
 	Create split
 </button>
