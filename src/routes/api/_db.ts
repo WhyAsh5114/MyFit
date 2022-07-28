@@ -25,7 +25,13 @@ export const setUser = async (userData: UserData, session: string): Promise<stri
     if ((await getUsernameFromSession(session)) !== userData.username) {
         return Promise.reject(new ErrorResponse('Unauthorized session', 403));
     }
-    await db.set(userData.username, JSON.stringify(userData));
+    const newUser: User = JSON.parse(existingUser);
+    newUser.splits = userData.splits;
+
+    // TODO: newUser.workouts = userData.workouts;
+    // * and other stats, also make them necessary in app.d.ts
+
+    await db.set(newUser.username, JSON.stringify(newUser));
     return Promise.resolve('User set successfully');
 };
 
