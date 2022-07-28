@@ -150,9 +150,9 @@
                 bind:value={progressionValue}
             />
             <select class="select select-sm w-44" bind:value={frequency}>
-                <option>/month</option>
-                <option selected>/week</option>
                 <option>/session</option>
+                <option selected>/week</option>
+                <option>/month</option>
             </select>
         </div>
     </div>
