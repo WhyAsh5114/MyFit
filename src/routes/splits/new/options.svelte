@@ -7,7 +7,7 @@
 	import { SplitSchedule, SplitName, SplitWorkouts } from '../splitStore';
 
 	let progressionValue: number = 5;
-	let frequency: string = '/week';
+	let frequency: '/week' | '/month' | '/session' = '/week';
 
 	const freqMultiplier: Record<string, number> = { '/month': 0.5, '/week': 1, '/session': 1.5 };
 	let meanOverload: number;
@@ -61,12 +61,25 @@
 		}
 	}
 
-	function createSplit() {
+	async function createSplit() {
 		console.log($SplitName);
 		console.log($SplitSchedule);
 		console.log($SplitWorkouts);
 		console.log(progressionValue, frequency);
-		// SAVE
+		
+		const newSplit: Split = {
+			name: $SplitName,
+			schedule: Object.values($SplitSchedule),
+			splitWorkouts: $SplitWorkouts,
+			progressiveOverload: progressionValue,
+			overloadFrequency: frequency,
+			dateCreated: new Date().toJSON().slice(0, 10)
+		}
+		
+		const res = await fetch('/api/saveSplit', {
+			method: 'POST',
+			body: JSON.stringify(newSplit)
+		})
 	}
 </script>
 

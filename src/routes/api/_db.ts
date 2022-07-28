@@ -19,11 +19,11 @@ export const setUser = async (userData: UserData, session: string): Promise<stri
 	const existingUser = await db.get(userData.username);
 	// Make sure user exists
 	if (!existingUser) {
-		return Promise.reject(new Error('User does not exist'));
+		return Promise.reject(new ErrorResponse('User does not exist', 404));
 	}
 	// Reject if session is unauthorized (expired/corrupted)
 	if ((await getUsernameFromSession(session)) !== userData.username) {
-		return Promise.reject(new Error('Unauthorized session'));
+		return Promise.reject(new ErrorResponse('Unauthorized session', 403));
 	}
 	await db.set(userData.username, JSON.stringify(userData));
 	return Promise.resolve('User set successfully');

@@ -1,4 +1,4 @@
-import { setUser } from './_db';
+import { ErrorResponse, setUser } from './_db';
 import type { RequestHandler } from '@sveltejs/kit';
 import { parse } from 'cookie';
 
@@ -30,19 +30,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
             }
         }
     } catch (err) {
-        if (err === 'User does not exist') {
+        if (err instanceof ErrorResponse) {
             return {
-                status: 404,
+                status: err.status,
                 body: {
-                    message: err
-                }
-            }
-        }
-        if (err === 'Unauthorized session') {
-            return {
-                status: 403,
-                body: {
-                    message: err
+                    message: err.message
                 }
             }
         }
