@@ -75,7 +75,7 @@
             splitWorkouts: $SplitWorkouts,
             progressiveOverload: progressionValue,
             overloadFrequency: frequency,
-            dateCreated: new Date().toJSON().slice(0, 10)
+            timeCreated: + new Date()
         };
 
         const res = await fetch('/api/saveSplit', {

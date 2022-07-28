@@ -38,7 +38,7 @@ interface Split {
     splitWorkouts: Record<string, Array<Exercise>>;
     progressiveOverload: number;
     overloadFrequency: '/session' | '/week' | '/month';
-    dateCreated: string;
+    timeCreated: number;
 }
 
 interface Exercise {
