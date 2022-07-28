@@ -16,6 +16,9 @@ interface Split {
 	name: string;
 	schedule: string[];
 	splitWorkouts: Record<string, Array<Exercise>>;
+	progressiveOverload: number;
+	overloadFrequency: '/session' | '/week' | '/month';
+	dateCreated: string;
 }
 
 interface Exercise {
