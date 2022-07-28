@@ -19,8 +19,18 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         };
     }
 
+    if (split.name in locals.user.splits) {
+        return {
+            status: 409,
+            body: {
+                message: 'Split already exists'
+            }
+        }
+    }
+
     // Add the split to userData in locals
     locals.user.splits[split.name] = split;
+
     try {
         await setUser(locals.user, sessionID);
         return {
