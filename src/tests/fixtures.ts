@@ -116,7 +116,7 @@ export const test = base.extend<MyFixtures>({
                 },
                 progressiveOverload: 5,
                 overloadFrequency: '/session',
-                dateCreated: new Date().toJSON().slice(0, 10)
+                timeCreated: + new Date()
             };
 
             await use(split);
