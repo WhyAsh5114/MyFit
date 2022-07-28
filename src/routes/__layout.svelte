@@ -1,71 +1,71 @@
 <script context="module" lang="ts">
-  import type { Load } from '@sveltejs/kit';
+    import type { Load } from '@sveltejs/kit';
 
-  // If user is logged in, don't show Logout option
-  export const load: Load = ({ session }) => {
-    if (session?.user) {
-      return {
-        props: {
-          user: session.user
+    // If user is logged in, don't show Logout option
+    export const load: Load = ({ session }) => {
+        if (session?.user) {
+            return {
+                props: {
+                    user: session.user
+                }
+            };
+        } else {
+            return {};
         }
-      };
-    } else {
-      return {};
-    }
-  };
+    };
 </script>
 
 <script lang="ts">
-  import LoginButton from '$lib/LoginButton.svelte';
-  import RegisterButton from '$lib/RegisterButton.svelte';
-  import '../app.css';
-  export let user: UserData | undefined;
+    import LoginButton from '$lib/LoginButton.svelte';
+    import RegisterButton from '$lib/RegisterButton.svelte';
+    import '../app.css';
+    export let user: UserData | undefined;
 
-  async function logout() {
-    await fetch('/api/auth/logout', {
-      method: 'GET'
-    });
-    // TODO: fix (change to goto()) once SvelteKit solves #4426
-    window.location.href = '/profile/login';
-  }
+    async function logout() {
+        await fetch('/api/auth/logout', {
+            method: 'GET'
+        });
+        // TODO: fix (change to goto()) once SvelteKit solves #4426
+        window.location.href = '/profile/login';
+    }
 </script>
 
 <div class="navbar bg-base-100 gap-2 md:h-20 lg:h-24">
-  <a
-    class="btn h-full normal-case text-xl md:text-2xl lg:text-4xl btn-primary flex-grow gap-2"
-    href="/"
-  >
-    <img src="/favicon.png" alt="logo" width="40" />
-    MyFit
-  </a>
-  <div class="dropdown dropdown-end ml-auto h-full">
-    <button
-      tabindex="0"
-      class="btn btn-primary btn-square lg:px-1.5 h-full avatar lg:w-20"
-      data-test-id="dropdown-button"
+    <a
+        class="btn h-full normal-case text-xl md:text-2xl lg:text-4xl btn-primary flex-grow gap-2"
+        href="/"
     >
-      <div class="rounded-full w-8 md:w-9 lg:w-12">
-        <img src="/profile.png" alt="profile-pic" />
-      </div>
-    </button>
-    <ul
-      tabindex="0"
-      class="mt-3 md:p-1 lg:p-2 shadow menu menu-compact dropdown-content bg-secondary text-black font-semibold rounded-md"
-      data-test-id="profile-options-dropdown"
-    >
-      {#if user}
-        <li>
-          <a href="/profile">Profile</a>
-        </li>
-        <li><a href="/profile/settings">Settings</a></li>
-        <li><button on:click={logout}>Logout</button></li>
-      {:else}
-        <li><LoginButton /></li>
-        <li><RegisterButton /></li>
-      {/if}
-    </ul>
-  </div>
+        <img src="/favicon.png" alt="logo" width="40" />
+        MyFit
+    </a>
+    <div class="dropdown dropdown-end ml-auto h-full">
+        <button
+            tabindex="0"
+            class="btn btn-primary btn-square lg:px-1.5 h-full avatar lg:w-20"
+            data-test-id="dropdown-button"
+        >
+            <div class="rounded-full w-8 md:w-9 lg:w-12">
+                <img src="/profile.png" alt="profile-pic" />
+            </div>
+        </button>
+        <ul
+            tabindex="0"
+            class="mt-3 md:p-1 lg:p-2 shadow menu menu-compact dropdown-content bg-secondary text-black font-semibold rounded-md"
+            data-test-id="profile-options-dropdown"
+        >
+            {#if user}
+                <li>
+                    <a href="/profile">Profile</a>
+                </li>
+                <li><a href="/profile/settings">Settings</a></li>
+                <li><button on:click={logout}>Logout</button></li>
+            {:else}
+                <li><LoginButton /></li>
+                <li><RegisterButton /></li>
+            {/if}
+        </ul>
+    </div>
 </div>
 <div class="flex flex-col px-2 pt-0.5 pb-3 h-full">
-  <slot />
+    <slot />
 </div>

@@ -1,19 +1,19 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 
 const config: PlaywrightTestConfig = {
-  testDir: './src/tests',
-  fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  webServer: {
-    command: 'export NODE_NO_WARNINGS=1 && npm run build && npm run preview',
-    port: 4173
-  },
-  use: {
-    baseURL: 'http://localhost:4173',
-    video: 'retain-on-failure'
-  }
+    testDir: './src/tests',
+    fullyParallel: true,
+    forbidOnly: !!process.env.CI,
+    retries: process.env.CI ? 2 : 0,
+    workers: process.env.CI ? 1 : undefined,
+    webServer: {
+        command: 'export NODE_NO_WARNINGS=1 && npm run build && npm run preview',
+        port: 4173
+    },
+    use: {
+        baseURL: 'http://localhost:4173',
+        video: 'retain-on-failure'
+    }
 };
 
 export default config;

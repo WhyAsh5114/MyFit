@@ -26,18 +26,18 @@ export const SplitName = writable('');
 
 // Day => Workout
 export const SplitSchedule: Writable<Record<string, string>> = writable({
-  Mon: '',
-  Tue: '',
-  Wed: '',
-  Thu: '',
-  Fri: '',
-  Sat: '',
-  Sun: ''
+    Mon: '',
+    Tue: '',
+    Wed: '',
+    Thu: '',
+    Fri: '',
+    Sat: '',
+    Sun: ''
 });
 
 // UniqueWorkoutName => workout
 export const SplitWorkouts: Writable<Record<string, Array<Exercise>>> = writable({
-  Push: new Array<Exercise>(),
-  Pull: new Array<Exercise>(),
-  Legs: new Array<Exercise>()
+    Push: new Array<Exercise>(),
+    Pull: new Array<Exercise>(),
+    Legs: new Array<Exercise>()
 });
