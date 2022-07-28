@@ -122,7 +122,7 @@
         nameInput = exercise.name;
         repsInput = exercise.reps.toString();
         setsInput = exercise.sets.toString();
-        loadInput = exercise.sets.toString();
+        loadInput = exercise.load.toString();
     }
 
     // Event listener function references, so that they can be removed later
@@ -205,12 +205,6 @@
                 exerciseGrid.children[i].classList.remove('cursor-pointer');
             }
         }
-        if (mode === 'editing' && selectedEntry) {
-            // Remove selected hint classes
-            selectedEntry.classList.remove('animate-pulse');
-            selectedEntry.classList.remove('border-y-4');
-            selectedEntry.classList.remove('border-accent');
-        }
         if (mode === 'reordering') {
             for (let i = 0; i < exerciseGrid.children.length; i++) {
                 const entry = exerciseGrid.children[i] as HTMLDivElement;
@@ -264,6 +258,18 @@
                 return;
             }
 
+            // Remove selected hint classes
+            /* 
+                This must be done after validation because if the user entered
+                invalid data and clicked save and called callAction('save')
+                the highlight would be removed, but save won't occur because 
+                input was invalid and the edit didn't finish, so don't try to
+                move these removals in callAction and reduce redundancy
+            */
+            selectedEntry.classList.remove('animate-pulse');
+            selectedEntry.classList.remove('border-y-4');
+            selectedEntry.classList.remove('border-accent');
+
             // Get selected entry's ID and modify it's values
             // according to input from user
             const selectedID = Number(selectedEntry.children[0].textContent);
@@ -299,6 +305,10 @@
             preDeletionExerciseList = [];
         }
         if (mode === 'editing' && selectedEntry) {
+            // Remove selected hint classes
+            selectedEntry.classList.remove('animate-pulse');
+            selectedEntry.classList.remove('border-y-4');
+            selectedEntry.classList.remove('border-accent');
             // Clear holder variable to avoid weird behaviour
             selectedEntry = undefined;
         }
