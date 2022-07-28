@@ -7,7 +7,7 @@
 	export let exercises: Exercise[] = [];
 
 	let mode: 'normal' | 'adding' | 'deleting' | 'editing' | 'reordering' | 'selecting' = 'normal';
-	$: mode = workoutName ? 'normal' : 'normal'
+	$: mode = workoutName ? 'normal' : 'normal';
 	let exerciseGrid: HTMLDivElement;
 	let nameInput: string = '';
 	let repsInput: string = '';
@@ -18,6 +18,37 @@
 	let modalTitle: string;
 	let modalTexts: string[];
 	let modalOpen = false;
+
+	const throttle = (fn: Function, wait: number = 300) => {
+		let inThrottle: boolean, lastFn: ReturnType<typeof setTimeout>, lastTime: number;
+		return function (this: any) {
+			const context = this;
+			const args = arguments;
+			if (!inThrottle) {
+				fn.apply(context, args);
+				lastTime = Date.now();
+				inThrottle = true;
+			} else {
+				clearTimeout(lastFn);
+				lastFn = setTimeout(() => {
+					if (Date.now() - lastTime >= wait) {
+						fn.apply(context, args);
+						lastTime = Date.now();
+					}
+				}, Math.max(wait - (Date.now() - lastTime), 0));
+			}
+		};
+	};
+
+	function array_move(arr: Array<any>, old_index: number, new_index: number) {
+		if (new_index >= arr.length) {
+			var k = new_index - arr.length + 1;
+			while (k--) {
+				arr.push(undefined);
+			}
+		}
+		arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+	}
 
 	function areInputsValid() {
 		let errors: string[] = [];
@@ -94,12 +125,65 @@
 		loadInput = exercise.sets.toString();
 	}
 
+	// Event listener function references, so that they can be removed later
+	const timeout = 500;
+	const handleNormalDrag = throttle(handle_normal_drag, timeout);
+	const handleTouchDrag = throttle(handle_touch_drag, timeout);
+	function removeHighlight(this: HTMLDivElement) {
+		setTimeout(() => {
+			this.classList.remove('bg-accent');
+			this.classList.add('bg-secondary');
+		}, timeout);
+	}
+
 	function enterReorderingMode() {
 		mode = 'reordering';
 		// Make all entries draggable
 		for (let i = 0; i < exerciseGrid.children.length; i++) {
 			const entry = exerciseGrid.children[i] as HTMLDivElement;
 			entry.draggable = true;
+			entry.classList.add('cursor-grab');
+			entry.addEventListener('drag', handleNormalDrag);
+			entry.addEventListener('touchmove', handleTouchDrag);
+			entry.addEventListener('dragend', removeHighlight);
+			entry.addEventListener('touchend', removeHighlight);
+		}
+	}
+
+	// Parsing functions for different events of touch and drag
+	function handle_normal_drag(this: HTMLDivElement, event: DragEvent) {
+		handle_drag(event.clientY, this);
+	}
+	function handle_touch_drag(this: HTMLDivElement, event: TouchEvent) {
+		handle_drag(event.targetTouches[0].clientY, this);
+	}
+
+	// Main drag function
+	function handle_drag(clientY: number, element: HTMLElement) {
+		element.classList.add('bg-accent');
+		element.classList.remove('bg-secondary');
+		let exercise_div_index = Array.prototype.indexOf.call(exerciseGrid.children, element);
+
+		// Make an array of all the elements' center y position
+		let elements_y_center: number[] = [];
+		[].forEach.call(exerciseGrid.children, (other_entry: HTMLDivElement) => {
+			let bounding_rect = other_entry.getBoundingClientRect();
+			// Hard-coded, 28 is entry's height + gap/padding/margin/stuff
+			let y_center = Math.round(bounding_rect.y + 28 / 2);
+			elements_y_center.push(y_center);
+		});
+		// So that the user can drag further than the last element's end
+		// and still be able to put the element in the last position
+		// the if condition in the next loop needs this so that the array_move
+		// is performed even if clientY is beyond last element's y center
+		elements_y_center[elements_y_center.length - 1] = Infinity;
+
+		for (let i = 0; i < elements_y_center.length; i++) {
+			if (clientY < elements_y_center[i] && clientY !== 0) {
+				array_move(exercises, exercise_div_index, i);
+				exercises = exercises;
+				break;
+			}
 		}
 	}
 
@@ -169,6 +253,30 @@
 			for (let i = 0; i < exerciseGrid.children.length; i++) {
 				const entry = exerciseGrid.children[i] as HTMLDivElement;
 				entry.draggable = false;
+				entry.classList.remove('cursor-grab');
+				entry.classList.remove('bg-accent');
+				entry.classList.add('bg-secondary');
+				entry.removeEventListener('drag', handleNormalDrag);
+				entry.removeEventListener('touchmove', handleTouchDrag);
+				entry.removeEventListener('dragend', removeHighlight);
+				entry.removeEventListener('touchend', removeHighlight);
+
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				// TODO
 			}
 		}
 		// Reset mode
@@ -205,6 +313,13 @@
 			for (let i = 0; i < exerciseGrid.children.length; i++) {
 				const entry = exerciseGrid.children[i] as HTMLDivElement;
 				entry.draggable = false;
+				entry.classList.remove('cursor-grab');
+				entry.classList.remove('bg-accent');
+				entry.classList.add('bg-secondary');
+				entry.removeEventListener('drag', handleNormalDrag);
+				entry.removeEventListener('touchmove', handleTouchDrag);
+				entry.removeEventListener('dragend', removeHighlight);
+				entry.removeEventListener('touchend', removeHighlight);
 			}
 		}
 		// Reset mode
@@ -228,23 +343,25 @@
 		>
 			{#each exercises as exercise (exercise.id)}
 				<div
-					class="flex w-full bg-secondary text-black"
+					class="flex w-full bg-secondary text-black transition-colors"
 					animate:flip
 					in:slide
 					out:scale|local
 					on:click={() => editEntry(exercise)}
-					on:drag={() => console.log('dragged')}
 					data-test-id={`entry-${exercise.id}`}
 				>
 					{#if mode === 'deleting'}
 						<button
 							class="bg-error basis-8 font-semibold hover:brightness-90 active:brightness-75 transition-all"
 							on:click={() => deleteEntry(exercise.id)}
+							in:scale={{ duration: 200 }}
 						>
 							X
 						</button>
 					{:else}
-						<p class="basis-8 text-center border-r border-black">{exercise.id}</p>
+						<p class="basis-8 text-center border-r border-black" in:fade={{ duration: 200 }}>
+							{exercise.id}
+						</p>
 					{/if}
 					<p class="flex-grow text-center border-x border-black">{exercise.name}</p>
 					<p class="basis-8 text-center border-x border-black">{exercise.reps}</p>
@@ -257,7 +374,7 @@
 	{#if ['adding', 'editing'].includes(mode)}
 		<div
 			class="flex flex-col w-full items-center gap-6 py-5 bg-base-300"
-			transition:slide={{ duration: 100 }}
+			transition:slide={{ duration: 200 }}
 		>
 			<div class="flex flex-col w-1/2">
 				<p class="text-center bg-primary rounded-t-lg font-semibold">Name</p>
@@ -300,7 +417,7 @@
 		</div>
 	{/if}
 	{#if mode === 'normal'}
-		<div class="grid grid-cols-4 gap-1" in:fade={{ duration: 150 }}>
+		<div class="grid grid-cols-4 gap-1" in:fade={{ duration: 300 }}>
 			<button
 				class="btn btn-sm bg-accent text-black flex-grow rounded-t-none rounded-br-none hover:bg-accent hover:brightness-75 no-animation"
 				data-test-id="add-button"
@@ -327,7 +444,7 @@
 			>
 		</div>
 	{:else}
-		<div class="grid grid-cols-2 gap-1" in:fade={{ duration: 150 }}>
+		<div class="grid grid-cols-2 gap-1" in:fade={{ duration: 300 }}>
 			<button
 				class="btn btn-sm no-animation btn-accent rounded-t-none rounded-br-none hover:brightness-75"
 				on:click={saveAction}
