@@ -17,6 +17,8 @@
 	let selectedUniqueWorkout: string;
 	let splitWorkouts = $SplitWorkouts;
 
+	let cancelAction: () => {};
+
 	// Redirect if stores are empty
 	const emptySchedule = { Mon: '', Tue: '', Wed: '', Thu: '', Fri: '', Sat: '', Sun: '' };
 	onMount(() => {
@@ -56,6 +58,7 @@
 	selectedUniqueWorkout = firstUniqueWorkout;
 
 	function changeSelectedUniqueWorkout(_day: string) {
+		cancelAction();
 		if ($SplitSchedule[_day] === 'Rest') return;
 		const selectedWorkout = $SplitSchedule[_day];
 		for (let [day, workout] of Object.entries($SplitSchedule)) {
@@ -138,6 +141,7 @@
 	<ExerciseTable
 		workoutName={selectedUniqueWorkout}
 		bind:exercises={splitWorkouts[selectedUniqueWorkout]}
+		bind:cancelAction
 	/>
 </div>
 <button class="basis-10 normal-case text-base btn lg:btn-lg lg:text-lg btn-primary" on:click={saveSplit}>

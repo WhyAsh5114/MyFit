@@ -136,8 +136,10 @@
 		}, timeout);
 	}
 
+	let preReorderingExerciseList: Exercise[] = [];
 	function enterReorderingMode() {
 		mode = 'reordering';
+		preReorderingExerciseList = JSON.parse(JSON.stringify(exercises));
 		// Make all entries draggable
 		for (let i = 0; i < exerciseGrid.children.length; i++) {
 			const entry = exerciseGrid.children[i] as HTMLDivElement;
@@ -187,6 +189,51 @@
 		}
 	}
 
+	function updateIndices() {
+		// Update indices of all exercise entries
+		for (let i = 0; i < exercises.length; i++) {
+			exercises[i].id = i + 1;
+		}
+	}
+
+	function callAction(action: string) {
+		// Nothing was selected and we never entered editing mode
+		if (mode === 'selecting') {
+			// Remove selecting animations and classes
+			for (let i = 0; i < exerciseGrid.children.length; i++) {
+				exerciseGrid.children[i].classList.remove('animate-pulse');
+				exerciseGrid.children[i].classList.remove('cursor-pointer');
+			}
+		}
+		if (mode === 'editing' && selectedEntry) {
+			// Remove selected hint classes
+			selectedEntry.classList.remove('animate-pulse');
+			selectedEntry.classList.remove('border-y-4');
+			selectedEntry.classList.remove('border-accent');
+		}
+		if (mode === 'reordering') {
+			for (let i = 0; i < exerciseGrid.children.length; i++) {
+				const entry = exerciseGrid.children[i] as HTMLDivElement;
+				// Remove all highlights
+				entry.draggable = false;
+				entry.classList.remove('cursor-grab');
+				entry.classList.remove('bg-accent');
+				entry.classList.add('bg-secondary');
+				// Remove all event listeners
+				entry.removeEventListener('drag', handleNormalDrag);
+				entry.removeEventListener('touchmove', handleTouchDrag);
+				entry.removeEventListener('dragend', removeHighlight);
+				entry.removeEventListener('touchend', removeHighlight);
+			}
+		}
+
+		if (action === 'save') {
+			saveAction();
+		} else if (action === 'cancel') {
+			cancelAction();
+		}
+	}
+
 	function saveAction() {
 		if (mode === 'adding') {
 			// Inputs must be valid to add to the ExerciseArray
@@ -205,33 +252,17 @@
 			exercises = exercises;
 		}
 		if (mode === 'deleting') {
-			// Update indices of all exercise entries
-			for (let i = 0; i < exercises.length; i++) {
-				exercises[i].id = i + 1;
-			}
+			updateIndices();
 			// Clear holder value to avoid weird behaviour
 			preDeletionExerciseList = [];
 			// Re-assign to reflect in DOM
 			exercises = exercises;
-		}
-		// Nothing was selected and we never entered editing mode
-		if (mode === 'selecting') {
-			// Remove selecting animations and classes
-			for (let i = 0; i < exerciseGrid.children.length; i++) {
-				exerciseGrid.children[i].classList.remove('animate-pulse');
-				exerciseGrid.children[i].classList.remove('cursor-pointer');
-			}
 		}
 		if (mode === 'editing' && selectedEntry) {
 			// Inputs must be valid to change the ExerciseArray
 			if (areInputsValid() === false) {
 				return;
 			}
-
-			// Remove selected hint classes
-			selectedEntry.classList.remove('animate-pulse');
-			selectedEntry.classList.remove('border-y-4');
-			selectedEntry.classList.remove('border-accent');
 
 			// Get selected entry's ID and modify it's values
 			// according to input from user
@@ -250,40 +281,14 @@
 			selectedEntry = undefined;
 		}
 		if (mode === 'reordering') {
-			for (let i = 0; i < exerciseGrid.children.length; i++) {
-				const entry = exerciseGrid.children[i] as HTMLDivElement;
-				entry.draggable = false;
-				entry.classList.remove('cursor-grab');
-				entry.classList.remove('bg-accent');
-				entry.classList.add('bg-secondary');
-				entry.removeEventListener('drag', handleNormalDrag);
-				entry.removeEventListener('touchmove', handleTouchDrag);
-				entry.removeEventListener('dragend', removeHighlight);
-				entry.removeEventListener('touchend', removeHighlight);
-
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-			}
+			updateIndices();
+			preReorderingExerciseList = [];
 		}
 		// Reset mode
 		mode = 'normal';
 	}
 
-	function cancelAction() {
+	export function cancelAction() {
 		if (mode === 'deleting') {
 			// If something WAS deleted
 			if (preDeletionExerciseList.length !== 0) {
@@ -293,34 +298,18 @@
 			// Clear holder variable to avoid weird behaviour
 			preDeletionExerciseList = [];
 		}
-		// Nothing was selected and we never entered editing mode
-		if (mode === 'selecting') {
-			// Remove selecting animations and classes
-			for (let i = 0; i < exerciseGrid.children.length; i++) {
-				exerciseGrid.children[i].classList.remove('animate-pulse');
-				exerciseGrid.children[i].classList.remove('cursor-pointer');
-			}
-		}
 		if (mode === 'editing' && selectedEntry) {
-			// Remove selected hint classes
-			selectedEntry.classList.remove('animate-pulse');
-			selectedEntry.classList.remove('border-y-4');
-			selectedEntry.classList.remove('border-accent');
 			// Clear holder variable to avoid weird behaviour
 			selectedEntry = undefined;
 		}
 		if (mode === 'reordering') {
-			for (let i = 0; i < exerciseGrid.children.length; i++) {
-				const entry = exerciseGrid.children[i] as HTMLDivElement;
-				entry.draggable = false;
-				entry.classList.remove('cursor-grab');
-				entry.classList.remove('bg-accent');
-				entry.classList.add('bg-secondary');
-				entry.removeEventListener('drag', handleNormalDrag);
-				entry.removeEventListener('touchmove', handleTouchDrag);
-				entry.removeEventListener('dragend', removeHighlight);
-				entry.removeEventListener('touchend', removeHighlight);
+			// If something WAS reordered
+			if (preReorderingExerciseList.length !== 0) {
+				// Update the original list
+				exercises = JSON.parse(JSON.stringify(preReorderingExerciseList));
 			}
+			// Clear holder variable to avoid weird behaviour
+			preReorderingExerciseList = [];
 		}
 		// Reset mode
 		mode = 'normal';
@@ -447,7 +436,7 @@
 		<div class="grid grid-cols-2 gap-1" in:fade={{ duration: 300 }}>
 			<button
 				class="btn btn-sm no-animation btn-accent rounded-t-none rounded-br-none hover:brightness-75"
-				on:click={saveAction}
+				on:click={() => callAction('save')}
 				data-test-id="save-button"
 			>
 				{#if mode === 'adding'}
@@ -458,7 +447,7 @@
 			</button>
 			<button
 				class="btn btn-sm no-animation btn-error rounded-t-none rounded-bl-none hover:brightness-75"
-				on:click={cancelAction}
+				on:click={() => callAction('cancel')}
 				data-test-id="cancel-button">CANCEL</button
 			>
 		</div>
