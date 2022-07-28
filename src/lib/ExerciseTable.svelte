@@ -244,6 +244,11 @@
             });
             // Re-assign to reflect in DOM
             exercises = exercises;
+            // Clear inputs
+            nameInput = '';
+            repsInput = '';
+            setsInput = '';
+            loadInput = '';
         }
         if (mode === 'deleting') {
             updateIndices();
@@ -257,6 +262,12 @@
             if (areInputsValid() === false) {
                 return;
             }
+
+            // Clear inputs (only if they were valid)
+            nameInput = '';
+            repsInput = '';
+            setsInput = '';
+            loadInput = '';
 
             // Remove selected hint classes
             /* 
@@ -309,6 +320,11 @@
             selectedEntry.classList.remove('animate-pulse');
             selectedEntry.classList.remove('border-y-4');
             selectedEntry.classList.remove('border-accent');
+            // Clear inputs
+            nameInput = '';
+            repsInput = '';
+            setsInput = '';
+            loadInput = '';
             // Clear holder variable to avoid weird behaviour
             selectedEntry = undefined;
         }
