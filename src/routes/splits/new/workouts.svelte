@@ -59,6 +59,10 @@
 		if ($SplitSchedule[_day] === 'Rest') return;
 		const selectedWorkout = $SplitSchedule[_day];
 		for (let [day, workout] of Object.entries($SplitSchedule)) {
+			// This animation would be added if nothing was added
+			// to this particular workout, so in case it has been added
+			// remove it after selecting this particular workout
+			scheduleElements[day]?.classList.remove('animate-pulse');
 			if (workout === selectedWorkout) {
 				scheduleElements[day]?.classList.add('border-accent');
 				scheduleElements[day]?.classList.remove('border-base-100');
@@ -79,6 +83,27 @@
 			'Add at least one exercise to each unique workout'
 		];
 		modalOpen = true;
+	}
+
+	function saveSplit() {
+		let errors: string[] = [];
+		for (const [name, exercises] of Object.entries(splitWorkouts)) {
+			if (exercises.length === 0) {
+				errors.push(`Add at least one exercise in ${name}`)
+				for (let [day, workout] of Object.entries($SplitSchedule)) {
+					if (workout === name) {
+						scheduleElements[day].classList.add('animate-pulse');
+					}
+				}
+			}
+		}
+		if (errors.length > 0) {
+			modalTitle = 'Error';
+			modalTexts = errors;
+			modalOpen = true;
+			return;
+		}
+		goto('/splits/new/options')
 	}
 </script>
 
@@ -115,6 +140,6 @@
 		bind:exercises={splitWorkouts[selectedUniqueWorkout]}
 	/>
 </div>
-<button class="basis-10 normal-case text-base btn lg:btn-lg lg:text-lg btn-primary">
+<button class="basis-10 normal-case text-base btn lg:btn-lg lg:text-lg btn-primary" on:click={saveSplit}>
 	Set split options
 </button>
