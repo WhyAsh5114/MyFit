@@ -394,7 +394,7 @@
             class="flex flex-col w-full items-center gap-6 py-5 bg-base-300"
             transition:slide={{ duration: 200 }}
         >
-            <div class="grid grid-cols-4 w-full items-center px-2 gap-5 max-w-lg">
+            <div class="grid grid-cols-4 w-full items-center px-1.5 gap-5 max-w-lg">
                 <div class="flex col-span-3">
                     <p class="text-center bg-primary font-semibold rounded-l-lg px-2 py-1">Name</p>
                     <input
@@ -416,9 +416,9 @@
                     Clear
                 </button>
             </div>
-            <div class="grid grid-cols-3 w-full gap-3 place-items-center px-2 max-w-lg">
+            <div class="grid grid-cols-3 w-full gap-3 place-items-center px-1.5 max-w-lg">
                 <div class="flex flex-auto place-self-start">
-                    <p class="text-center bg-primary font-semibold rounded-l-lg px-2">Reps</p>
+                    <p class="text-center bg-primary font-semibold rounded-l-lg px-1.5 md:px-2">Reps</p>
                     <input
                         type="text"
                         class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-14 md:w-20"
@@ -427,7 +427,7 @@
                     />
                 </div>
                 <div class="flex flex-auto">
-                    <p class="text-center bg-primary font-semibold rounded-l-lg px-2">Sets</p>
+                    <p class="text-center bg-primary font-semibold rounded-l-lg px-1.5 md:px-2">Sets</p>
                     <input
                         type="text"
                         class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-14 md:w-20"
@@ -436,7 +436,7 @@
                     />
                 </div>
                 <div class="flex flex-auto place-self-end">
-                    <p class="text-center bg-primary font-semibold rounded-l-lg px-2">Load</p>
+                    <p class="text-center bg-primary font-semibold rounded-l-lg px-1.5 md:px-2">Load</p>
                     <input
                         type="text"
                         class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-14 md:w-20"
