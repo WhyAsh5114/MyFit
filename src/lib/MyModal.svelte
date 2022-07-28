@@ -2,9 +2,7 @@
     export let modalOpen = false;
     export let modalTitle: string;
     export let modalTexts: string[] = [];
-    export let onClose: () => void = () => {
-        /* do nothing */
-    };
+    export let onClose: () => void = () => {};
     export let modalName = 'my-modal';
 
     let modalTitleColor = 'text-white';
@@ -39,7 +37,7 @@
             class="btn btn-sm btn-circle absolute right-2 top-2"
             data-test-id="close-modal-button">✕</label
         >
-        <h3 class="text-lg font-bold {modalTitleColor}">{modalTitle}</h3>
+        <h3 class="text-lg font-bold {modalTitleColor}" data-test-id="modal-title">{modalTitle}</h3>
         <ul class="py-4 list-disc pl-5" data-test-id="modal-messages-list">
             {#each modalTexts as text}
                 <li>{text}</li>
