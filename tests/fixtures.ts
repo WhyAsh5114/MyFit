@@ -2,7 +2,7 @@ import { test as base, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { createClient } from 'redis';
 
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const Days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 export function generateRandomPhrase(length: number) {
 	let result = '';
@@ -153,7 +153,7 @@ export const test = base.extend<MyFixtures>({
 			}
 
 			for (const workout of uniqueWorkouts) {
-				for (const day of DAYS) {
+				for (const day of Days) {
 					const workoutElement = page.locator(`p[data-test-id=workout-${day}]`)
 					const currentWorkout = await workoutElement.textContent() as string;
 					if (currentWorkout === workout) {

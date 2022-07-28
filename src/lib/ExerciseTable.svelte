@@ -234,6 +234,7 @@
 					out:scale|local
 					on:click={() => editEntry(exercise)}
 					on:drag={() => console.log('dragged')}
+					data-test-id={`entry-${exercise.id}`}
 				>
 					{#if mode === 'deleting'}
 						<button
