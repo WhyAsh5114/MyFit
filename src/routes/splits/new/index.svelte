@@ -7,7 +7,7 @@
     import MyModal from '$lib/MyModal.svelte';
     import { onMount } from 'svelte';
     import { SplitName, SplitSchedule, SplitWorkouts } from '../splitStore';
-    export let user: UserData;
+    export let user: User;
 
     let splitName = '';
     let daysInput: Record<string, string> = {

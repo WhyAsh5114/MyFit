@@ -57,7 +57,7 @@ export const test = base.extend<MyFixtures>({
     ],
     user: [
         async ({ request, registeredAccount }, use) => {
-            // Get the account details as UserData
+            // Get the account details
             const data = await request.post('/api/auth/getUserData', {
                 data: registeredAccount
             });

@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-    export let user: UserData;
+    export let user: User;
 
     async function logout() {
         await fetch('/api/auth/logout', {
