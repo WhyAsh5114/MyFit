@@ -5,7 +5,7 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
     import MyModal from '$lib/MyModal.svelte';
-import { onMount } from 'svelte';
+    import { onMount } from 'svelte';
     import { fly, fade } from 'svelte/transition';
     import { SplitSchedule, SplitName, SplitWorkouts } from '../splitStore';
 
@@ -28,7 +28,7 @@ import { onMount } from 'svelte';
             goto('/splits/new');
             return;
         }
-    })
+    });
 
     const messages: Record<number, string> = {
         0: 'Why so low?',
@@ -85,7 +85,7 @@ import { onMount } from 'svelte';
             splitWorkouts: $SplitWorkouts,
             progressiveOverload: progressionValue,
             overloadFrequency: frequency,
-            timeCreated: + new Date()
+            timeCreated: +new Date()
         };
 
         const res = await fetch('/api/saveSplit', {

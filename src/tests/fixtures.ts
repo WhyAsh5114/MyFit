@@ -116,7 +116,7 @@ export const test = base.extend<MyFixtures>({
                 },
                 progressiveOverload: 5,
                 overloadFrequency: '/session',
-                timeCreated: + new Date()
+                timeCreated: +new Date()
             };
 
             await use(split);

@@ -25,7 +25,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
             body: {
                 message: 'Split already exists'
             }
-        }
+        };
     }
 
     // Add the split to userData in locals

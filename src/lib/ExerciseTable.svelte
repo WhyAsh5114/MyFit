@@ -391,7 +391,10 @@
     {/key}
     {#if ['adding', 'editing'].includes(mode)}
         <div class="flex w-full bg-base-300 justify-center">
-            <div class="grid grid-cols-3 w-full items-center px-1.5 gap-5 max-w-lg py-5" transition:slide|local={{duration: 150}}>
+            <div
+                class="grid grid-cols-3 w-full items-center px-1.5 gap-5 max-w-lg py-5"
+                transition:slide|local={{ duration: 150 }}
+            >
                 <div class="flex col-span-2">
                     <p class="text-center bg-primary font-semibold rounded-l-lg px-2 py-1">Name</p>
                     <input
@@ -413,7 +416,9 @@
                     Clear
                 </button>
                 <div class="flex w-full">
-                    <p class="text-center bg-primary font-semibold rounded-l-lg px-1.5 md:px-2">Reps</p>
+                    <p class="text-center bg-primary font-semibold rounded-l-lg px-1.5 md:px-2">
+                        Reps
+                    </p>
                     <input
                         type="text"
                         class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-full"
@@ -422,7 +427,9 @@
                     />
                 </div>
                 <div class="flex w-full">
-                    <p class="text-center bg-primary font-semibold rounded-l-lg px-1.5 md:px-2">Sets</p>
+                    <p class="text-center bg-primary font-semibold rounded-l-lg px-1.5 md:px-2">
+                        Sets
+                    </p>
                     <input
                         type="text"
                         class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-full"
@@ -431,7 +438,9 @@
                     />
                 </div>
                 <div class="flex w-full">
-                    <p class="text-center bg-primary font-semibold rounded-l-lg px-1.5 md:px-2">Load</p>
+                    <p class="text-center bg-primary font-semibold rounded-l-lg px-1.5 md:px-2">
+                        Load
+                    </p>
                     <input
                         type="text"
                         class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-full"

@@ -1,7 +1,8 @@
 <script>
-    import MenuButtonGrid from "$lib/MenuButtonGrid.svelte";
-    import ListButton from "$lib/ListButton.svelte";
+    import MenuButtonGrid from '$lib/MenuButtonGrid.svelte';
+    import ListButton from '$lib/ListButton.svelte';
 </script>
+
 <svelte:head>
     <title>MyFit | Records</title>
 </svelte:head>
