@@ -111,7 +111,7 @@ import { onMount } from 'svelte';
     <title>MyFit | New split</title>
 </svelte:head>
 <MyModal bind:modalOpen {modalTitle} {modalTexts} bind:onClose />
-<div class="flex h-full justify-center">
+<div class="flex h-full justify-center w-full">
     <div
         class="flex flex-col max-w-lg mx-2 p-2 lg:p-10 border-4 rounded-xl self-center w-full bg-primary bg-opacity-50 {borderColor} transition-colors"
     >

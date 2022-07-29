@@ -25,7 +25,7 @@
 <svelte:head>
     <title>MyFit</title>
 </svelte:head>
-<div class="flex w-full place-items-center justify-center flex-grow">
+<div class="flex place-items-center justify-center flex-grow">
     <div class="flex flex-col gap-3 w-5/6 md:w-2/3 max-w-sm place-items-center">
         {#if user}
             <h3 class="text-center">
@@ -45,7 +45,7 @@
         {/if}
     </div>
 </div>
-<div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+<div class="grid grid-cols-2 gap-3 lg:grid-cols-4 w-full">
     <MenuButton title="Splits" imagePath="/calendar.svg" link="/splits" />
     <MenuButton title="Logging" imagePath="/pencil.svg" link="/logging" />
     <MenuButton title="Records" imagePath="/record.svg" link="/records" />
