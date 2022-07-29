@@ -391,7 +391,7 @@
     {/key}
     {#if ['adding', 'editing'].includes(mode)}
         <div class="flex w-full bg-base-300 justify-center">
-            <div class="grid grid-cols-3 w-full items-center px-1.5 gap-5 max-w-lg py-5" transition:slide={{duration: 150}}>
+            <div class="grid grid-cols-3 w-full items-center px-1.5 gap-5 max-w-lg py-5" transition:slide|local={{duration: 150}}>
                 <div class="flex col-span-2">
                     <p class="text-center bg-primary font-semibold rounded-l-lg px-2 py-1">Name</p>
                     <input
