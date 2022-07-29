@@ -19,6 +19,11 @@
 </svelte:head>
 <div class="flex flex-col w-full place-items-center h-full justify-center gap-3">
     <p>Hi {user.username}</p>
+    {#if user.activeSplit}
+        <p>Active split: {user.activeSplit}</p>
+    {:else}
+        <p>No active split</p>
+    {/if}
     <button
         class="btn btn-sm normal-case btn-error w-fit"
         on:click={logout}
