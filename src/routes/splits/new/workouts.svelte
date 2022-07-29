@@ -115,7 +115,7 @@
 </svelte:head>
 <MyModal {modalTexts} {modalTitle} bind:modalOpen />
 <div
-    class="grid grid-cols-4 lg:grid-cols-7 gap-1 w-full max-w-xl place-self-center place-items-center"
+    class="grid grid-cols-4 lg:grid-cols-7 gap-1 w-full max-w-xl place-items-center"
     data-test-id="calendar"
 >
     {#each Object.keys($SplitSchedule) as day}
