@@ -5,7 +5,9 @@ import { compare, hash } from 'bcrypt';
 const db = createClient();
 db.connect();
 
-export const getUser = async (username: string): Promise<UserData> => {
+// ! Whenever returning Promise<User>, delete password property first
+
+export const getUser = async (username: string): Promise<User> => {
     const existingUser = await db.get(username);
     if (!existingUser) {
         return Promise.reject(new ErrorResponse('User does not exist', 404));
@@ -15,7 +17,7 @@ export const getUser = async (username: string): Promise<UserData> => {
     return Promise.resolve(user);
 };
 
-export const setUser = async (userData: UserData, session: string): Promise<string> => {
+export const setUser = async (userData: User, session: string): Promise<string> => {
     const existingUser = await db.get(userData.username);
     // Make sure user exists
     if (!existingUser) {
@@ -25,17 +27,16 @@ export const setUser = async (userData: UserData, session: string): Promise<stri
     if ((await getUsernameFromSession(session)) !== userData.username) {
         return Promise.reject(new ErrorResponse('Unauthorized session', 403));
     }
-    const newUser: User = JSON.parse(existingUser);
-    newUser.splits = userData.splits;
-
-    // TODO: newUser.workouts = userData.workouts;
-    // * and other stats, also make them necessary in app.d.ts
-
-    await db.set(newUser.username, JSON.stringify(newUser));
+    // Get password from DB and set it to passed data
+    // * Remember the password is deleted when coming from application
+    const userPassword: string = JSON.parse(existingUser).password;
+    userData.password = userPassword;
+    // Then updated database to this new userData with the password
+    await db.set(userData.username, JSON.stringify(userData));
     return Promise.resolve('User set successfully');
 };
 
-export const registerUser = async (credentials: AccountDetails): Promise<UserData> => {
+export const registerUser = async (credentials: AccountDetails): Promise<User> => {
     const existingUser = await db.get(credentials.username);
     if (existingUser) {
         return Promise.reject(new ErrorResponse('User already exists', 409));

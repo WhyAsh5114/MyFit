@@ -9,6 +9,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         try {
             const username = await getUsernameFromSession(cookies.sessionID);
             const user = await getUser(username);
+            delete user.password;
             if (username) {
                 event.locals = { user };
                 return resolve(event);

@@ -5,11 +5,11 @@
 // and what to do when importing types
 declare namespace App {
     interface Locals {
-        user?: UserData;
+        user?: User;
     }
     // interface Platform {}
     interface Session {
-        user?: UserData;
+        user?: User;
     }
     // interface Stuff {}
 }
@@ -24,12 +24,7 @@ interface User {
     password?: string;
     splits: Record<string, Split>;
     workouts?: Record<string, Array<Exercise>>;
-}
-
-interface UserData {
-    username: string;
-    splits: Record<string, Split>;
-    workouts?: Record<string, Array<Exercise>>;
+    activeSplit?: string;
 }
 
 interface Split {
