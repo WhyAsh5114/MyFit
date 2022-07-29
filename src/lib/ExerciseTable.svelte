@@ -390,12 +390,9 @@
         </div>
     {/key}
     {#if ['adding', 'editing'].includes(mode)}
-        <div
-            class="flex flex-col w-full items-center gap-6 py-5 bg-base-300"
-            transition:slide={{ duration: 200 }}
-        >
-            <div class="grid grid-cols-4 w-full items-center px-1.5 gap-5 max-w-lg">
-                <div class="flex col-span-3">
+        <div class="flex w-full bg-base-300 justify-center">
+            <div class="grid grid-cols-3 w-full items-center px-1.5 gap-5 max-w-lg py-5" transition:slide={{duration: 150}}>
+                <div class="flex col-span-2">
                     <p class="text-center bg-primary font-semibold rounded-l-lg px-2 py-1">Name</p>
                     <input
                         type="text"
@@ -415,31 +412,29 @@
                 >
                     Clear
                 </button>
-            </div>
-            <div class="grid grid-cols-3 w-full gap-3 place-items-center px-1.5 max-w-lg">
-                <div class="flex flex-auto place-self-start">
+                <div class="flex w-full">
                     <p class="text-center bg-primary font-semibold rounded-l-lg px-1.5 md:px-2">Reps</p>
                     <input
                         type="text"
-                        class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-14 md:w-20"
+                        class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-full"
                         data-test-id="reps-input"
                         bind:value={repsInput}
                     />
                 </div>
-                <div class="flex flex-auto">
+                <div class="flex w-full">
                     <p class="text-center bg-primary font-semibold rounded-l-lg px-1.5 md:px-2">Sets</p>
                     <input
                         type="text"
-                        class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-14 md:w-20"
+                        class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-full"
                         data-test-id="sets-input"
                         bind:value={setsInput}
                     />
                 </div>
-                <div class="flex flex-auto place-self-end">
+                <div class="flex w-full">
                     <p class="text-center bg-primary font-semibold rounded-l-lg px-1.5 md:px-2">Load</p>
                     <input
                         type="text"
-                        class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-14 md:w-20"
+                        class="input input-xs text-base text-center rounded-l-none text-black bg-secondary w-full"
                         data-test-id="load-input"
                         bind:value={loadInput}
                     />
