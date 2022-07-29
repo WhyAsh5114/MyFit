@@ -95,7 +95,7 @@
 </svelte:head>
 
 <MyModal {modalTexts} {modalTitle} bind:modalOpen />
-<form on:submit|preventDefault class="flex flex-col h-full justify-center items-center">
+<form on:submit|preventDefault class="flex flex-col flex-grow w-full justify-center items-center">
     <div class="flex flex-col gap-10 justify-center items-center max-w-xs flex-grow">
         <div
             class="rounded-full mr-1 border-2 border-accent w-fit px-3 font-semibold -my-7 hover:bg-black cursor-pointer place-self-end transition-colors"
