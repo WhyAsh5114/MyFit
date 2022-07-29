@@ -30,6 +30,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
     // Add the split to userData in locals
     locals.user.splits[split.name] = split;
+    // Make the new split the active split
+    locals.user.activeSplit = split.name;
 
     try {
         await setUser(locals.user, sessionID);
