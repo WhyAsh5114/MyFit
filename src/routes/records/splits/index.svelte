@@ -3,19 +3,12 @@
 </script>
 
 <script lang="ts">
+    import { getFormattedDate } from '$lib/usefulFunctions';
     import { scale } from 'svelte/transition';
     export let user: User;
 
     // Reverse to sort by creation time
     const splits = Object.values(user.splits).reverse();
-
-    function formattedDate(timestamp: number) {
-        const date = new Date(timestamp);
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        let year = date.getFullYear();
-        return `${day}-${month}-${year}`;
-    }
 </script>
 
 <div class="flex flex-col w-full max-w-md gap-2 items-center">
@@ -31,7 +24,7 @@
             <div class="flex w-full">
                 <h2 class="text-lg font-semibold">{split.name}</h2>
                 <h3 class="ml-auto">
-                    {formattedDate(split.timeCreated)}
+                    {getFormattedDate(split.timeCreated)}
                 </h3>
             </div>
         </a>
