@@ -15,7 +15,7 @@
         modalTitleColor = 'text-green-500';
     } else if (modalTitle === 'Warning') {
         modalTitleColor = 'text-yellow-500';
-    } else if (modalTitle === 'Help') {
+    } else if (modalTitle === 'Help' || modalTitle === 'Review changes') {
         modalTitleColor = 'text-accent';
     } else {
         modalTitleColor = 'text-white';
@@ -40,7 +40,7 @@
         <h3 class="text-lg font-bold {modalTitleColor}" data-test-id="modal-title">{modalTitle}</h3>
         <ul class="py-4 list-disc pl-5" data-test-id="modal-messages-list">
             {#each modalTexts as text}
-                <li>{text}</li>
+                <li class="whitespace-pre-wrap">{text}</li>
             {/each}
         </ul>
     </label>
