@@ -18,10 +18,10 @@
     }
 </script>
 
-<div class="flex flex-col w-full max-w-md gap-2">
+<div class="flex flex-col w-full max-w-md gap-2 items-center">
     {#each splits as split}
         <a
-            class="flex flex-col gap-1 bg-primary rounded-lg p-3 active:scale-95 hover:bg-opacity-50 transition-all border-2 {split.name ===
+            class="flex flex-col w-full gap-1 bg-primary rounded-lg p-3 active:scale-95 hover:bg-opacity-50 transition-all border-2 {split.name ===
             user.activeSplit
                 ? 'border-accent'
                 : 'border-base-100'}"
@@ -36,4 +36,8 @@
             </div>
         </a>
     {/each}
+    {#if splits.length === 0}
+        <h2 class="text-center">No split created</h2>
+        <a href="/splits/new" class="btn btn-primary w-44 normal-case">Create split</a>
+    {/if}
 </div>
