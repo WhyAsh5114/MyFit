@@ -66,6 +66,6 @@
         </ul>
     </div>
 </div>
-<div class="flex flex-col justify-center place-items-center px-2 pt-0.5 pb-3 flex-grow">
+<div class="flex flex-col place-items-center px-2 pt-0.5 pb-3 flex-grow">
     <slot />
 </div>
