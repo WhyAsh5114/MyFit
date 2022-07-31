@@ -4,6 +4,7 @@
 
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import Breadcrumbs from '$lib/Breadcrumbs.svelte';
     import ExerciseTable from '$lib/ExerciseTable.svelte';
     import MyModal from '$lib/MyModal.svelte';
     import { onMount } from 'svelte';
@@ -113,6 +114,14 @@
 <svelte:head>
     <title>MyFit | New split</title>
 </svelte:head>
+<Breadcrumbs>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/splits">Splits</a></li>
+        <li>New ({$SplitName})</li>
+        <li>Workouts</li>
+    </ul>
+</Breadcrumbs>
 <MyModal {modalTexts} {modalTitle} bind:modalOpen />
 <div
     class="grid grid-cols-4 lg:grid-cols-7 gap-1 w-full max-w-xl place-items-center"

@@ -4,6 +4,7 @@
 
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import Breadcrumbs from '$lib/Breadcrumbs.svelte';
     import MyModal from '$lib/MyModal.svelte';
     import { onMount } from 'svelte';
     import { fly, fade } from 'svelte/transition';
@@ -110,6 +111,14 @@
 <svelte:head>
     <title>MyFit | New split</title>
 </svelte:head>
+<Breadcrumbs>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/splits">Splits</a></li>
+        <li>New ({$SplitName})</li>
+        <li>Options</li>
+    </ul>
+</Breadcrumbs>
 <MyModal bind:modalOpen {modalTitle} {modalTexts} bind:onClose />
 <div class="flex h-full justify-center w-full">
     <div
