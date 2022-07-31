@@ -6,6 +6,12 @@
 <svelte:head>
     <title>MyFit | Splits</title>
 </svelte:head>
+<div class="text-sm breadcrumbs flex flex-col place-items-center bg-secondary text-black px-2 rounded-lg font-semibold w-full mb-2">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li>Splits</li>
+    </ul>
+</div>
 <MenuButtonGrid>
     <ListButton
         imagePath="/calendar_plus.svg"
