@@ -1,7 +1,6 @@
 <script lang="ts">
-    import type { PageData } from './$types'
-    export let data: PageData;
-    export let user: User | undefined = data.props?.user;
+    import { page } from '$app/stores';
+    let user: User | undefined = $page.data.user;    
 
     import LoginButton from '$lib/LoginButton.svelte';
     import RegisterButton from '$lib/RegisterButton.svelte';
