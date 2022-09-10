@@ -1,18 +1,18 @@
 <script lang="ts">
-    import type { PageData } from './$types';
+    import type { PageData } from './$types'
     export let data: PageData;
     export let user: User | undefined = data.props?.user;
 
     import LoginButton from '$lib/LoginButton.svelte';
     import RegisterButton from '$lib/RegisterButton.svelte';
     import '../app.css';
-    import { goto } from '$app/navigation';
 
     async function logout() {
         await fetch('/api/auth/logout', {
             method: 'GET'
         });
-        goto('/profile/login');
+        // TODO: fix (change to goto()) once SvelteKit solves #4426
+        window.location.href = '/profile/login';
     }
 </script>
 
