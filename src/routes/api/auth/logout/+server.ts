@@ -1,4 +1,4 @@
-import { ErrorResponse, removeSession } from '../_db';
+import { ErrorResponse, removeSession } from '../../_db';
 import { parse, serialize } from 'cookie';
 import type { RequestHandler } from '@sveltejs/kit';
 
@@ -11,25 +11,18 @@ export const GET: RequestHandler = async ({ request }) => {
             await removeSession(cookies.sessionID);
         } catch (err) {
             if (err instanceof ErrorResponse) {
-                return {
-                    status: err.status,
-                    body: {
-                        message: err.message
-                    }
-                };
+                return new Response(err.message, {
+                    status: err.status
+                })
             }
-            return {
-                status: 500,
-                body: {
-                    message: 'Internal Server Error'
-                }
-            };
+            return new Response(JSON.stringify(err), {
+                status: 500
+            })
         }
     }
 
     // Return 201, and overwrite cookie in browser to expire immediately
-    return {
-        status: 201,
+    return new Response(null, {
         headers: {
             'set-cookie': serialize('sessionID', '', {
                 path: '/',
@@ -37,6 +30,7 @@ export const GET: RequestHandler = async ({ request }) => {
                 sameSite: 'strict',
                 maxAge: 0
             })
-        }
-    };
+        },
+        status: 201
+    })
 };
