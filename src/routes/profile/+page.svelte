@@ -17,7 +17,7 @@
     <title>MyFit | Profile</title>
 </svelte:head>
 <div class="flex flex-col w-full place-items-center h-full justify-center gap-3">
-    <p>Hi {user.username}</p>
+    <b>Hi {user.username}</b>
     {#if user.activeSplit}
         <p>Active split: {user.activeSplit}</p>
     {:else}
