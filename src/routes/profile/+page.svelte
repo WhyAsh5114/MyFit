@@ -1,9 +1,12 @@
-<script context="module" lang="ts">
-    export { loadUserOrRedirectToLogin as load } from '$lib/loadUserOrRedirectToLogin';
-</script>
-
 <script lang="ts">
-    export let user: User;
+    import { goto } from '$app/navigation';
+    import type { PageData } from './$types';
+    export let data: PageData;
+    export let user: User = data.props?.user;
+
+    if (!user) {
+        goto('/profile/login');
+    }
 
     async function logout() {
         await fetch('/api/auth/logout', {
