@@ -35,8 +35,6 @@
         }
 
         try {
-            console.log(JSON.stringify({username, password}));
-            
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: {
