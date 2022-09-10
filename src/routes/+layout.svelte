@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
+    import { goto, invalidateAll } from '$app/navigation';
     import { page } from '$app/stores';
 
     import LoginButton from '$lib/LoginButton.svelte';
@@ -10,7 +10,8 @@
         await fetch('/api/auth/logout', {
             method: 'GET'
         });
-        goto('/profile/login');
+        await invalidateAll();
+        await goto('/profile/login');
     }
 </script>
 

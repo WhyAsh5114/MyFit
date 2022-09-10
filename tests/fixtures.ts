@@ -61,8 +61,8 @@ export const test = base.extend<MyFixtures>({
             const data = await request.post('/api/auth/getUserData', {
                 data: registeredAccount
             });
-            const rawBody = await data.json();
-            const userData: User = data ? JSON.parse(rawBody.user) : '';
+            const rawBody = await data.text();
+            const userData: User = data ? JSON.parse(rawBody) : '';
             userData.password = registeredAccount.password;
             await use(userData);
         },

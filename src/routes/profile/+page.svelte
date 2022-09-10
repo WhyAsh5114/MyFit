@@ -1,18 +1,15 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
+    import { goto, invalidateAll } from '$app/navigation';
     import type { PageData } from './$types';
     export let data: PageData;
-    export let user: User = data.props?.user;
-
-    if (!user) {
-        goto('/profile/login');
-    }
+    export let user: User = data.user;
 
     async function logout() {
         await fetch('/api/auth/logout', {
             method: 'GET'
         });
-        goto('/profile/login');
+        await goto('/profile/login');
+        await invalidateAll();
     }
 </script>
 

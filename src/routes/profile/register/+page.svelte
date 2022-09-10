@@ -1,7 +1,7 @@
 <script lang="ts">
     import MyModal from '$lib/MyModal.svelte';
     import { page } from '$app/stores';
-    import { goto } from '$app/navigation';
+    import { goto, invalidateAll } from '$app/navigation';
 
     let username = '';
     let password = '';
@@ -52,9 +52,10 @@
                 modalTexts = [body];
                 submitButton.disabled = true;
 
-                onClose = () => {
+                onClose = async () => {
                     // Only pass page argument if one is provided here
                     const redirectTo = $page.url.searchParams.get('page');
+                    await invalidateAll();
                     if (redirectTo) {
                         goto(`/profile/login?page=${redirectTo}`);
                     } else {

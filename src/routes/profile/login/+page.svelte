@@ -3,7 +3,7 @@
     import MyModal from '$lib/MyModal.svelte';
     import { page as pageStore } from '$app/stores';
 
-    let page = $pageStore.url.searchParams.get('page') || '/';
+    let page = $pageStore.url.searchParams.get('page') || '/profile';
 
     let username = '';
     let password = '';
@@ -38,11 +38,11 @@
                 })
             });
             if (res.ok) {
+                await goto(`${page}`);
                 await invalidateAll();
-                await goto(page);
             } else {
-                const body: { message: string } = await res.json();
-                modalTexts = [body.message];
+                const body = await res.text();
+                modalTexts = [body];
                 modalOpen = true;
             }
         } catch (err) {
@@ -56,7 +56,6 @@
     <title>MyFit | Login</title>
 </svelte:head>
 <MyModal {modalTexts} modalTitle="Error" bind:modalOpen />
-<p>{page}</p>
 <form class="flex w-full justify-center h-full items-center" on:submit|preventDefault>
     <div class="bg-secondary w-3/4 max-w-sm px-5 pt-4 rounded-md flex flex-col">
         <h3 class="text-stone-800 text-center font-semibold text-xl">Welcome</h3>
