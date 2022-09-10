@@ -1,14 +1,13 @@
 import { ErrorResponse, removeSession } from '../../_db';
-import { parse, serialize } from 'cookie';
 import type { RequestHandler } from '@sveltejs/kit';
 
-export const GET: RequestHandler = async ({ request }) => {
+export const GET: RequestHandler = async ({ request, cookies }) => {
     // Check if cookie exists, if yes, remove it from DB
-    const cookies = parse(request.headers.get('set-cookie') || '');
+    const sessionID = cookies.get('sessionID');
 
-    if (cookies.sessionID) {
+    if (sessionID) {
         try {
-            await removeSession(cookies.sessionID);
+            await removeSession(sessionID);
         } catch (err) {
             if (err instanceof ErrorResponse) {
                 return new Response(err.message, {
@@ -22,15 +21,13 @@ export const GET: RequestHandler = async ({ request }) => {
     }
 
     // Return 201, and overwrite cookie in browser to expire immediately
+    cookies.set('sessionID', '', {
+        path: '/',
+        httpOnly: true,
+        sameSite: 'strict',
+        maxAge: 0
+    })
     return new Response(null, {
-        headers: {
-            'set-cookie': serialize('sessionID', '', {
-                path: '/',
-                httpOnly: true,
-                sameSite: 'strict',
-                maxAge: 0
-            })
-        },
         status: 201
     })
 };
