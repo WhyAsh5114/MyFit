@@ -1,17 +1,3 @@
-<script context="module" lang="ts">
-    import type { Load } from '@sveltejs/kit';
-
-    // Redirect to profile if already logged in
-    export const load: Load = ({ session }) => {
-        if (session?.user) {
-            return {
-                redirect: '/profile',
-                status: 302
-            };
-        }
-    };
-</script>
-
 <script lang="ts">
     import MyModal from '$lib/MyModal.svelte';
     import { page } from '$app/stores';
@@ -49,6 +35,8 @@
         }
 
         try {
+            console.log(JSON.stringify({username, password}));
+            
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: {
@@ -59,10 +47,10 @@
                     password
                 })
             });
-            const body: { message: string } = await res.json();
+            const body = await res.text();
             if (res.ok) {
                 modalTitle = 'Success';
-                modalTexts = [body.message];
+                modalTexts = [body];
                 submitButton.disabled = true;
 
                 // TODO: fix (change to goto()) once SvelteKit solves #4426
@@ -78,13 +66,14 @@
                 modalOpen = true;
             } else {
                 modalTitle = 'Error';
-                modalTexts = [body.message];
+                modalTexts = [body];
                 modalOpen = true;
             }
         } catch (err) {
             modalTitle = 'Error';
             modalTexts = ['Check console for more information'];
             modalOpen = true;
+            console.error(err);
         }
     }
 </script>
