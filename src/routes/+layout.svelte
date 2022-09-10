@@ -1,25 +1,11 @@
-<script context="module" lang="ts">
-    import type { Load } from '@sveltejs/kit';
-
-    // If user is logged in, don't show Logout option
-    export const load: Load = ({ session }) => {
-        if (session?.user) {
-            return {
-                props: {
-                    user: session.user
-                }
-            };
-        } else {
-            return {};
-        }
-    };
-</script>
-
 <script lang="ts">
+    import type { PageData } from './$types'
+    export let data: PageData;
+
     import LoginButton from '$lib/LoginButton.svelte';
     import RegisterButton from '$lib/RegisterButton.svelte';
     import '../app.css';
-    export let user: User | undefined;
+    export let user = data.props?.user;
 
     async function logout() {
         await fetch('/api/auth/logout', {
