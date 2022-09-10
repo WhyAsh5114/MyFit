@@ -26,7 +26,7 @@ export const POST: RequestHandler = async ({ request }) => {
                 status: err.status
             });
         }
-        return new Response('Internal server error', {
+        return new Response(JSON.stringify(err), {
             status: 500
         })
     }
