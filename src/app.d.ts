@@ -8,9 +8,6 @@ declare namespace App {
         user?: User;
     }
     // interface Platform {}
-    interface Session {
-        user?: User;
-    }
     // interface Stuff {}
 }
 
