@@ -1,4 +1,4 @@
-import { ErrorResponse, loginUser } from '../_db';
+import { ErrorResponse, loginUser } from '../../_db';
 import type { RequestHandler } from '@sveltejs/kit';
 import { serialize } from 'cookie';
 
@@ -8,7 +8,7 @@ export const POST: RequestHandler = async ({ request }) => {
     // Try logging in the user
     try {
         const id = await loginUser(body);
-        return {
+        return new Response('Logged in successfully', {
             status: 200,
             headers: {
                 'set-cookie': serialize('sessionID', id, {
@@ -18,25 +18,16 @@ export const POST: RequestHandler = async ({ request }) => {
                     httpOnly: true,
                     secure: true
                 })
-            },
-            body: {
-                message: 'Logged in successfully'
             }
-        };
+        });
     } catch (err) {
         if (err instanceof ErrorResponse) {
-            return {
-                status: err.status,
-                body: {
-                    message: err.message
-                }
-            };
+            return new Response(err.message, {
+                status: err.status
+            });
         }
-        return {
-            status: 500,
-            body: {
-                message: 'Internal server error'
-            }
-        };
+        return new Response('Internal server error', {
+            status: 500
+        })
     }
 };
