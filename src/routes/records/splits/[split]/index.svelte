@@ -181,7 +181,10 @@
                         </h4>
                         <input class="w-full text-center py-1" bind:value={splitSchedule[i]} />
                         {#key splitSchedule[i]}
-                            <div class="basis-24 flex-shrink-0 text-center" in:scale|local={{duration: 200}}>
+                            <div
+                                class="basis-24 flex-shrink-0 text-center"
+                                in:scale|local={{ duration: 200 }}
+                            >
                                 {#if workoutChanged(i)}
                                     <p class="px-2 bg-warning py-1">Changed</p>
                                 {:else if !uniqueWorkouts.has(splitSchedule[i]) && splitSchedule[i] !== 'Rest'}

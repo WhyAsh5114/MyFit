@@ -11,7 +11,7 @@
     let modalOpen = false;
     let modalTexts: string[];
 
-    async function login() {        
+    async function login() {
         let errors: string[] = [];
         if (!username) {
             errors.push('Username cannot be empty');

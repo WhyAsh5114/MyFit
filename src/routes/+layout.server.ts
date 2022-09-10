@@ -1,4 +1,4 @@
-import type { LayoutServerLoad } from './$types'
+import type { LayoutServerLoad } from './$types';
 import { getUser, getUsernameFromSession } from './api/_db';
 
 export const load: LayoutServerLoad = async ({ cookies }) => {

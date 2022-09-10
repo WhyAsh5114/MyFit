@@ -13,7 +13,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
             path: '/',
             httpOnly: true,
             secure: true
-        })
+        });
         return new Response('Logged in successfully', {
             status: 200
         });
@@ -25,6 +25,6 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
         }
         return new Response(JSON.stringify(err), {
             status: 500
-        })
+        });
     }
 };

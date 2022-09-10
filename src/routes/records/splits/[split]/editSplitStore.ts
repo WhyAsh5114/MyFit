@@ -1,4 +1,4 @@
-import { type Writable, writable } from "svelte/store";
+import { type Writable, writable } from 'svelte/store';
 
 export const CurrentSplit: Writable<Split> = writable();
 

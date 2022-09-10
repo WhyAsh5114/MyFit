@@ -12,11 +12,11 @@ export const GET: RequestHandler = async ({ request, cookies }) => {
             if (err instanceof ErrorResponse) {
                 return new Response(err.message, {
                     status: err.status
-                })
+                });
             }
             return new Response(JSON.stringify(err), {
                 status: 500
-            })
+            });
         }
     }
 
@@ -26,8 +26,8 @@ export const GET: RequestHandler = async ({ request, cookies }) => {
         httpOnly: true,
         sameSite: 'strict',
         maxAge: 0
-    })
+    });
     return new Response(null, {
         status: 201
-    })
+    });
 };
