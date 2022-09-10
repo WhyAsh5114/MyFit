@@ -1,6 +1,7 @@
 <script lang="ts">
     import MyModal from '$lib/MyModal.svelte';
     import { page } from '$app/stores';
+    import { goto } from '$app/navigation';
 
     let username = '';
     let password = '';
@@ -51,14 +52,13 @@
                 modalTexts = [body];
                 submitButton.disabled = true;
 
-                // TODO: fix (change to goto()) once SvelteKit solves #4426
                 onClose = () => {
                     // Only pass page argument if one is provided here
                     const redirectTo = $page.url.searchParams.get('page');
                     if (redirectTo) {
-                        window.location.href = `/profile/login?page=${redirectTo}`;
+                        goto(`/profile/login?page=${redirectTo}`);
                     } else {
-                        window.location.href = `/profile/login`;
+                        goto(`/profile/login`);
                     }
                 };
                 modalOpen = true;

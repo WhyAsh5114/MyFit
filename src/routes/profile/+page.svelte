@@ -12,8 +12,7 @@
         await fetch('/api/auth/logout', {
             method: 'GET'
         });
-        // TODO: fix (change to goto()) once SvelteKit solves #4426
-        window.location.href = '/profile/login';
+        goto('/profile/login');
     }
 </script>
 
