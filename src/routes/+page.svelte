@@ -1,25 +1,9 @@
-<script context="module" lang="ts">
-    import type { Load } from '@sveltejs/kit';
-
-    // If user is logged in, don't show Logout option
-    export const load: Load = ({ session }) => {
-        if (session?.user) {
-            return {
-                props: {
-                    user: session.user
-                }
-            };
-        } else {
-            return {};
-        }
-    };
-</script>
-
 <script lang="ts">
     import LoginButton from '$lib/LoginButton.svelte';
     import MenuButton from '../lib/MenuButton.svelte';
     import RegisterButton from '$lib/RegisterButton.svelte';
-    export let user: User | undefined;
+    import { page } from '$app/stores';
+    let user: User | undefined = $page.data.user;
 </script>
 
 <svelte:head>

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
+    import { goto, invalidateAll } from '$app/navigation';
     import MyModal from '$lib/MyModal.svelte';
     import { page as pageStore } from '$app/stores';
 
@@ -38,7 +38,8 @@
                 })
             });
             if (res.ok) {
-                goto(page);
+                await invalidateAll();
+                await goto(page);
             } else {
                 const body: { message: string } = await res.json();
                 modalTexts = [body.message];

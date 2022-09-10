@@ -1,7 +1,7 @@
-import type { ServerLoad } from '@sveltejs/kit';
+import type { LayoutServerLoad } from './$types'
 import { getUser, getUsernameFromSession } from './api/_db';
 
-export const load: ServerLoad = async ({ request, cookies }) => {
+export const load: LayoutServerLoad = async ({ cookies }) => {
     const sessionID = cookies.get('sessionID');
     if (!sessionID) {
         return {};

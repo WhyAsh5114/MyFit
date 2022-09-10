@@ -1,6 +1,5 @@
 <script lang="ts">
     import { page } from '$app/stores';
-    let user: User | undefined = $page.data.user;    
 
     import LoginButton from '$lib/LoginButton.svelte';
     import RegisterButton from '$lib/RegisterButton.svelte';
@@ -38,7 +37,7 @@
             class="mt-3 md:p-1 lg:p-2 shadow menu menu-compact dropdown-content bg-secondary text-black font-semibold rounded-md"
             data-test-id="profile-options-dropdown"
         >
-            {#if user}
+            {#if $page.data.user}
                 <li>
                     <a href="/profile">Profile</a>
                 </li>
