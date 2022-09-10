@@ -1,25 +1,9 @@
-<script context="module" lang="ts">
-    import type { Load } from '@sveltejs/kit';
-
-    // Redirect to profile if already logged in
-    export const load: Load = ({ session, url }) => {
-        if (session?.user) {
-            return {
-                redirect: '/profile',
-                status: 302
-            };
-        }
-        return {
-            props: {
-                page: url.searchParams.get('page') || '/profile'
-            }
-        };
-    };
-</script>
-
 <script lang="ts">
+    import { goto } from '$app/navigation';
     import MyModal from '$lib/MyModal.svelte';
-    export let page: string;
+    import { page as pageStore } from '$app/stores';
+
+    let page = $pageStore.url.searchParams.get('page') || '/';
 
     let username = '';
     let password = '';
@@ -28,6 +12,8 @@
     let modalTexts: string[];
 
     async function login() {
+        console.log(page);
+        
         let errors: string[] = [];
         if (!username) {
             errors.push('Username cannot be empty');
@@ -54,8 +40,8 @@
                 })
             });
             if (res.ok) {
-                // TODO: fix (change to goto()) once SvelteKit solves #4426
-                window.location.href = page;
+                console.log(page);
+                goto(page);
             } else {
                 const body: { message: string } = await res.json();
                 modalTexts = [body.message];
@@ -72,6 +58,7 @@
     <title>MyFit | Login</title>
 </svelte:head>
 <MyModal {modalTexts} modalTitle="Error" bind:modalOpen />
+<p>{page}</p>
 <form class="flex w-full justify-center h-full items-center" on:submit|preventDefault>
     <div class="bg-secondary w-3/4 max-w-sm px-5 pt-4 rounded-md flex flex-col">
         <h3 class="text-stone-800 text-center font-semibold text-xl">Welcome</h3>
