@@ -11,9 +11,7 @@
     let modalOpen = false;
     let modalTexts: string[];
 
-    async function login() {
-        console.log(page);
-        
+    async function login() {        
         let errors: string[] = [];
         if (!username) {
             errors.push('Username cannot be empty');
@@ -40,7 +38,6 @@
                 })
             });
             if (res.ok) {
-                console.log(page);
                 goto(page);
             } else {
                 const body: { message: string } = await res.json();
