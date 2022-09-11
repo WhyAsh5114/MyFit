@@ -5,6 +5,14 @@ export const GET: RequestHandler = async ({ request, cookies }) => {
     // Check if cookie exists, if yes, remove it from DB
     const sessionID = cookies.get('sessionID');
 
+    // Return 201, and overwrite cookie in browser to expire immediately
+    cookies.set('sessionID', '', {
+        path: '/',
+        httpOnly: true,
+        sameSite: 'strict',
+        maxAge: 0
+    });
+
     if (sessionID) {
         try {
             await removeSession(sessionID);
@@ -20,13 +28,6 @@ export const GET: RequestHandler = async ({ request, cookies }) => {
         }
     }
 
-    // Return 201, and overwrite cookie in browser to expire immediately
-    cookies.set('sessionID', '', {
-        path: '/',
-        httpOnly: true,
-        sameSite: 'strict',
-        maxAge: 0
-    });
     return new Response(null, {
         status: 201
     });
