@@ -1,4 +1,4 @@
-import { ErrorResponse, setUser } from './_db';
+import { ErrorResponse, setUser } from '../_db';
 import type { RequestHandler } from '@sveltejs/kit';
 import { parse } from 'cookie';
 
@@ -11,21 +11,15 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     // Make sure user is logged in by checking if
     // locals.user and sessionID are loaded
     if (!locals.user || !sessionID) {
-        return {
-            status: 403,
-            body: {
-                message: 'Not logged in, locals empty'
-            }
-        };
+        return new Response('Not logged in, locals empty', {
+            status: 403
+        })
     }
 
     if (split.name in locals.user.splits) {
-        return {
-            status: 409,
-            body: {
-                message: 'Split already exists'
-            }
-        };
+        return new Response('Split already exists', {
+            status: 409
+        })
     }
 
     // Add the split to userData in locals
@@ -35,26 +29,17 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
     try {
         await setUser(locals.user, sessionID);
-        return {
-            status: 200,
-            body: {
-                message: 'Split saved successfully'
-            }
-        };
+        return new Response('Split saved successfully', {
+            status: 200
+        });
     } catch (err) {
         if (err instanceof ErrorResponse) {
-            return {
-                status: err.status,
-                body: {
-                    message: err.message
-                }
-            };
+            return new Response(err.message, {
+                status: err.status
+            });
         }
-        return {
-            status: 500,
-            body: {
-                message: JSON.stringify(err)
-            }
-        };
+        return new Response(JSON.stringify(err), {
+            status: 500
+        });
     }
 };
