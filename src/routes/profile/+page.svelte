@@ -1,16 +1,14 @@
 <script lang="ts">
-    import type { PageData } from './$types';
-    export let data: PageData;
-    export let user: User = data.user;
+    import { page } from '$app/stores';
 </script>
 
 <svelte:head>
     <title>MyFit | Profile</title>
 </svelte:head>
 <div class="flex flex-col w-full place-items-center h-full justify-center gap-3">
-    <b>Hi {user.username}</b>
-    {#if user.activeSplit}
-        <p>Active split: {user.activeSplit}</p>
+    <b>Hi {$page.data.user.username}</b>
+    {#if $page.data.user.activeSplit}
+        <p>Active split: {$page.data.user.activeSplit}</p>
     {:else}
         <p>No active split</p>
     {/if}
