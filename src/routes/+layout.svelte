@@ -1,18 +1,8 @@
 <script lang="ts">
-    import { goto, invalidateAll } from '$app/navigation';
     import { page } from '$app/stores';
-
     import LoginButton from '$lib/LoginButton.svelte';
     import RegisterButton from '$lib/RegisterButton.svelte';
     import '../app.css';
-
-    async function logout() {
-        await fetch('/api/auth/logout', {
-            method: 'GET'
-        });
-        await goto('/profile/login');
-        await invalidateAll();
-    }
 </script>
 
 <div class="navbar bg-base-100 gap-2 md:h-20 lg:h-24">
@@ -43,7 +33,7 @@
                     <a href="/profile">Profile</a>
                 </li>
                 <li><a href="/profile/settings">Settings</a></li>
-                <li><button on:click={logout}>Logout</button></li>
+                <li><a href="/profile/logout">Logout</a></li>
             {:else}
                 <li><LoginButton /></li>
                 <li><RegisterButton /></li>
