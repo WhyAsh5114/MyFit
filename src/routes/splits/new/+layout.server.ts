@@ -1,12 +1,12 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 
-export const load: LayoutServerLoad = async ({ parent, url }) => {
+export const load: LayoutServerLoad = async ({ parent }) => {
     const { user } = await parent();
 
     if (user) {
         return { user };
     } else {
-        throw redirect(307, `/profile/login?page=${url.pathname}`);
+        throw redirect(307, `/profile/login?page=/splits/new`);
     }
 };
