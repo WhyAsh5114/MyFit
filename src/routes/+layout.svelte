@@ -10,8 +10,8 @@
         await fetch('/api/auth/logout', {
             method: 'GET'
         });
-        await invalidateAll();
         await goto('/profile/login');
+        await invalidateAll();
     }
 </script>
 
