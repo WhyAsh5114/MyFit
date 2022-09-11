@@ -14,10 +14,10 @@ export const POST: RequestHandler = async ({ request }) => {
         if (err instanceof ErrorResponse) {
             return new Response(err.message, {
                 status: err.status
-            })
+            });
         }
         return new Response(JSON.stringify(err), {
             status: 500
-        })
+        });
     }
 };
