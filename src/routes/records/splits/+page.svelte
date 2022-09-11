@@ -1,15 +1,12 @@
-<script context="module" lang="ts">
-    export { loadUserOrRedirectToLogin as load } from '$lib/loadUserOrRedirectToLogin';
-</script>
-
 <script lang="ts">
     import Breadcrumbs from '$lib/Breadcrumbs.svelte';
     import { getFormattedDate } from '$lib/usefulFunctions';
     import { scale } from 'svelte/transition';
-    export let user: User;
+    import { page } from '$app/stores';
 
+    const user = $page.data.user;
     // Reverse to sort by creation time
-    const splits = Object.values(user.splits).reverse();
+    const splits = Object.values(user.splits).reverse() as Split[];
 </script>
 
 <Breadcrumbs>
@@ -19,7 +16,7 @@
         <li>Splits</li>
     </ul>
 </Breadcrumbs>
-<div class="flex flex-col w-full max-w-md gap-2 items-center">
+<div class="flex flex-col w-full max-w-md gap-2 items-center justify-center flex-grow">
     {#each splits as split}
         <a
             class="flex flex-col w-full gap-1 bg-primary rounded-lg p-3 active:scale-95 hover:bg-opacity-50 transition-all border-2 {split.name ===
