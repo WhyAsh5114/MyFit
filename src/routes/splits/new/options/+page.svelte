@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
+    import { goto, invalidateAll } from '$app/navigation';
+    import { page } from '$app/stores';
     import Breadcrumbs from '$lib/Breadcrumbs.svelte';
     import MyModal from '$lib/MyModal.svelte';
     import { onMount } from 'svelte';
@@ -87,17 +88,18 @@
 
         const res = await fetch('/api/saveSplit', {
             method: 'POST',
-            body: JSON.stringify(newSplit)
+            body: JSON.stringify({ split: newSplit, user: $page.data.user })
         });
         if (res.ok) {
             modalTitle = 'Success';
             modalTexts = ['Split created successfully'];
             onClose = () => goto('/');
             modalOpen = true;
+            await invalidateAll();
         } else {
-            const body = await res.json();
+            const body = await res.text();
             modalTitle = 'Error';
-            modalTexts = [body.message];
+            modalTexts = [body];
             onClose = () => {};
             modalOpen = true;
         }
