@@ -11,7 +11,8 @@
 <div class="flex flex-col gap-3 w-5/6 md:w-2/3 max-w-sm justify-center items-center flex-grow">
     {#if $page.data.user}
         <h3 class="text-center">
-            <b>Hi {$page.data.user.username}!</b><br /> You haven't created a schedule yet, create one in
+            <b>Hi {$page.data.user.username}!</b><br /> You haven't created a schedule yet, create
+            one in
             <b>Splits</b>
         </h3>
     {:else}
