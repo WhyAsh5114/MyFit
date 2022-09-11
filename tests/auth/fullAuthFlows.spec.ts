@@ -91,9 +91,9 @@ test('testing normal auth flow register->login->logout through UI', async ({
         page.waitForResponse(
             (response) => response.url().includes('/api/auth/logout') && response.status() === 201
         ),
-        page.locator('button[data-test-id=profile-logout-button]').click()
+        page.locator('a[data-test-id=profile-logout-button]').click()
     ]);
-    await expect(page).toHaveURL('/profile/login');
+    await expect(page).toHaveURL('/profile/logout');
     // Cookies
     cookies = await page.context().cookies();
     sessionID = cookies.find((cookie) => cookie.name === 'sessionID');

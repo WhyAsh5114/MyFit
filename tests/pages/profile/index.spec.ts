@@ -8,7 +8,7 @@ test('should redirect to login when not logged in', async ({ page }) => {
 test('should show username and logout button when logged in', async ({ loggedInPage, user }) => {
     await loggedInPage.goto('/profile');
     await expect(loggedInPage.locator('b')).toHaveText(`Hi ${user.username}`);
-    const logoutButton = loggedInPage.locator('button[data-test-id=profile-logout-button]', {
+    const logoutButton = loggedInPage.locator('a[data-test-id=profile-logout-button]', {
         hasText: 'Logout'
     });
     expect(await logoutButton.count()).toStrictEqual(1);
