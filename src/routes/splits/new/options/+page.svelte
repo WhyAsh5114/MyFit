@@ -8,7 +8,7 @@
     import MyModal from '$lib/MyModal.svelte';
     import { onMount } from 'svelte';
     import { fly, fade } from 'svelte/transition';
-    import { SplitSchedule, SplitName, SplitWorkouts } from '../splitStore';
+    import { SplitSchedule, SplitName, SplitWorkouts } from '../../splitStore';
 
     let progressionValue = 5;
     let frequency: '/week' | '/month' | '/session' = '/week';

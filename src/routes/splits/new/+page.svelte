@@ -1,14 +1,10 @@
-<script context="module" lang="ts">
-    export { loadUserOrRedirectToLogin as load } from '$lib/loadUserOrRedirectToLogin';
-</script>
-
 <script lang="ts">
     import { goto } from '$app/navigation';
     import Breadcrumbs from '$lib/Breadcrumbs.svelte';
     import MyModal from '$lib/MyModal.svelte';
     import { onMount } from 'svelte';
     import { SplitName, SplitSchedule, SplitWorkouts } from '../splitStore';
-    export let user: User;
+    import { page } from '$app/stores';
 
     let splitName = '';
     let daysInput: Record<string, string> = {
@@ -52,12 +48,12 @@
         uniqueWorkouts = localUniqueWorkouts;
     }
 
-    function createSchedule() {
+    async function createSchedule() {
         let errors = [];
         if (splitName === '') {
             errors.push('Enter split name');
         }
-        if (splitName in user.splits) {
+        if (splitName in $page.data.user.splits) {
             errors.push('Split already exists');
         }
         if (uniqueWorkouts.size === 0) {
@@ -87,7 +83,7 @@
         }
         SplitWorkouts.set(splitWorkouts);
 
-        goto('/splits/new/workouts');
+        await goto('/splits/new/workouts');
     }
 </script>
 

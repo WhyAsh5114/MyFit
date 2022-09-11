@@ -8,7 +8,7 @@
     import ExerciseTable from '$lib/ExerciseTable.svelte';
     import MyModal from '$lib/MyModal.svelte';
     import { onMount } from 'svelte';
-    import { SplitName, SplitSchedule, SplitWorkouts } from '../splitStore';
+    import { SplitName, SplitSchedule, SplitWorkouts } from '../../splitStore';
 
     let modalTitle: string;
     let modalTexts: string[];
