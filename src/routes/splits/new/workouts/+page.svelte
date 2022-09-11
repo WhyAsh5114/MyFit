@@ -1,7 +1,3 @@
-<script context="module" lang="ts">
-    export { loadUserOrRedirectToLogin as load } from '$lib/loadUserOrRedirectToLogin';
-</script>
-
 <script lang="ts">
     import { goto } from '$app/navigation';
     import Breadcrumbs from '$lib/Breadcrumbs.svelte';
