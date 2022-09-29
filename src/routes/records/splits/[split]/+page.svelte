@@ -1,10 +1,6 @@
-<script context="module" lang="ts">
-    export { loadUserOrRedirectToLogin as load } from '$lib/loadUserOrRedirectToLogin';
-</script>
-
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import { page, session } from '$app/stores';
+    import { page } from '$app/stores';
     import MyModal from '$lib/MyModal.svelte';
     import { areArraysIdentical, getFormattedDate } from '$lib/usefulFunctions';
     import { fly, scale } from 'svelte/transition';
@@ -14,10 +10,10 @@
         CurrentSplit,
         EditedWorkouts
     } from './editSplitStore';
-    export let user: User;
+    const user = $page.data.user;
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const split = $session.user?.splits[$page.params.split] as Split;
+    const split = $page.data.user?.splits[$page.params.split] as Split;
     if (!split) {
         goto('/records/splits');
     }
