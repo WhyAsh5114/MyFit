@@ -11,9 +11,13 @@ body {
 }
 
 .footer-button {
-    @apply btn btn-primary normal-case lg:btn-lg w-full text-base lg:text-lg
+    @apply btn btn-primary normal-case lg:btn-lg w-full text-base lg:text-lg;
 }
 
 .breadcrumbs-container {
-    @apply text-sm breadcrumbs w-fit overflow-hidden flex flex-col place-items-center px-2 font-semibold mb-2 border-b
+    @apply text-sm breadcrumbs w-fit overflow-hidden flex flex-col place-items-center px-2 font-semibold mb-2 border-b;
+}
+
+.menu-button-grid {
+    @apply grid w-full gap-2 lg:grid-cols-2 h-fit;
 }

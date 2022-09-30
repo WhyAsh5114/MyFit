@@ -1,12 +1,11 @@
 <script>
-    import MenuButtonGrid from '$lib/MenuButtonGrid.svelte';
     import MenuButton from '$lib/MenuButton.svelte';
 </script>
 
 <svelte:head>
     <title>MyFit | Logging</title>
 </svelte:head>
-<MenuButtonGrid>
+<div class="menu-button-grid">
     <MenuButton
         imagePath="/dumbbell.png"
         title="Log workout"
@@ -37,4 +36,4 @@
         description="Steps, weight, height, fat percentage"
         link="/logging/bodystats"
     />
-</MenuButtonGrid>
+</div>

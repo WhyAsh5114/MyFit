@@ -1,5 +1,4 @@
 <script>
-    import MenuButtonGrid from '$lib/MenuButtonGrid.svelte';
     import MenuButton from '$lib/MenuButton.svelte';
 </script>
 
@@ -13,7 +12,7 @@
         <li>Records</li>
     </ul>
 </div>
-<MenuButtonGrid>
+<div class="menu-button-grid">
     <MenuButton
         imagePath="/calendar.svg"
         title="Splits records"
@@ -50,4 +49,4 @@
         description="Check and edit body metrics"
         link="/records/bodystats"
     />
-</MenuButtonGrid>
+</div>

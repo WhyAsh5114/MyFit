@@ -1,6 +1,5 @@
 <script lang="ts">
     import MenuButton from '$lib/MenuButton.svelte';
-    import MenuButtonGrid from '$lib/MenuButtonGrid.svelte';
 </script>
 
 <svelte:head>
@@ -12,7 +11,7 @@
         <li>Splits</li>
     </ul>
 </div>
-<MenuButtonGrid>
+<div class="menu-button-grid">
     <MenuButton
         imagePath="/calendar_plus.svg"
         title="New split"
@@ -37,4 +36,4 @@
         description="View, copy and adjust previous splits"
         link="/"
     />
-</MenuButtonGrid>
+</div>
