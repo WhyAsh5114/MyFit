@@ -53,7 +53,7 @@
         if (splitName === '') {
             errors.push('Enter split name');
         }
-        if (splitName in $page.data.user.splits) {
+        if ($page.data.user !== undefined && splitName in $page.data.user?.splits) {
             errors.push('Split already exists');
         }
         if (uniqueWorkouts.size === 0) {
@@ -138,7 +138,7 @@
     </div>
     <button
         type="submit"
-        class="btn normal-case lg:btn-lg btn-primary w-full text-base lg:text-lg"
+        class="footer-button"
         on:click={createSchedule}
         data-test-id="create-schedule-button"
     >

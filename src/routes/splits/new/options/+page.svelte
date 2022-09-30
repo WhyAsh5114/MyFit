@@ -175,7 +175,7 @@
     </div>
 </div>
 <button
-    class="btn normal-case lg:btn-lg btn-primary w-full text-base lg:text-lg mt-auto"
+    class="footer-button mt-auto"
     on:click={createSplit}
 >
     Create split

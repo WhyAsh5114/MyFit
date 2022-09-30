@@ -22,7 +22,7 @@
     let splitName = split.name;
     let splitSchedule: string[] = JSON.parse(JSON.stringify(split.schedule));
     let progressionValue = split.progressiveOverload;
-    let thisActive = user.activeSplit === split.name;
+    let thisActive = user?.activeSplit === split.name;
     let changeStatus = 'Back';
 
     const uniqueWorkoutsIndices: number[] = [];
@@ -95,11 +95,11 @@
                 `Overload value\n${split.progressiveOverload}% -> ${progressionValue}%\n\t`
             );
         }
-        if (thisActive !== (user.activeSplit === split.name)) {
+        if (thisActive !== (user?.activeSplit === split.name)) {
             if (thisActive) {
-                changes.push(`Active split\n${user.activeSplit} -> ${splitName}\n\t`);
+                changes.push(`Active split\n${user?.activeSplit} -> ${splitName}\n\t`);
             } else {
-                changes.push(`Active split\n${user.activeSplit} -> None\n\t`);
+                changes.push(`Active split\n${user?.activeSplit} -> None\n\t`);
             }
         }
         if (changes.length > 0) {
@@ -144,7 +144,7 @@
     function editWorkout(name: string) {
         $EditingWorkoutName = name;
         $EditingWorkout = JSON.parse(JSON.stringify(split.splitWorkouts[name]));
-        goto(`/records/splits/${split.name}/workout`);
+        goto(`/records/splits/${split.name}/${name}`);
     }
 
     function createWorkout(name: string) {}
@@ -265,7 +265,7 @@
 </div>
 {#key changeStatus}
     <button
-        class="btn normal-case lg:btn-lg btn-primary w-full text-base lg:text-lg"
+        class="footer-button"
         on:click={reviewChanges}
     >
         {changeStatus}

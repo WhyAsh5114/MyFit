@@ -160,7 +160,7 @@
     />
 </div>
 <button
-    class="basis-10 normal-case text-base btn lg:btn-lg lg:text-lg btn-primary w-full"
+    class="basis-10 footer-button"
     on:click={saveSplit}
 >
     Set split options

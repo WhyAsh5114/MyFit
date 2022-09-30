@@ -9,3 +9,7 @@ body {
     height: 100vh;
     overflow-x: hidden;
 }
+
+.footer-button {
+    @apply btn btn-primary normal-case lg:btn-lg w-full text-base lg:text-lg
+}
