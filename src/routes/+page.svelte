@@ -1,7 +1,5 @@
 <script lang="ts">
-    import LoginButton from '$lib/LoginButton.svelte';
     import MenuButton from '../lib/MenuButton.svelte';
-    import RegisterButton from '$lib/RegisterButton.svelte';
     import { page } from '$app/stores';
 </script>
 
@@ -21,8 +19,8 @@
         </h3>
         <div class="w-full h-px bg-white" />
         <div class="flex flex-col gap-2 justify-evenly w-1/2">
-            <LoginButton classes="btn btn-sm btn-secondary" />
-            <RegisterButton classes="btn btn-sm btn-secondary" />
+            <a href="/profile/login?page={$page.url.pathname}" class="btn btn-sm btn-secondary">Login</a>
+            <a href="/profile/register?page={$page.url.pathname}" class="btn btn-sm btn-secondary">Register</a>
         </div>
     {/if}
 </div>

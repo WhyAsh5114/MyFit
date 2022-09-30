@@ -1,7 +1,5 @@
 <script lang="ts">
     import { page } from '$app/stores';
-    import LoginButton from '$lib/LoginButton.svelte';
-    import RegisterButton from '$lib/RegisterButton.svelte';
     import '../app.css';
 </script>
 
@@ -35,8 +33,8 @@
                 <li><a href="/profile/settings">Settings</a></li>
                 <li><a href="/profile/logout">Logout</a></li>
             {:else}
-                <li><LoginButton /></li>
-                <li><RegisterButton /></li>
+                <li><a href="/profile/login?page={$page.url.pathname}">Login</a></li>
+                <li><a href="/profile/register?page={$page.url.pathname}">Register</a></li>
             {/if}
         </ul>
     </div>
