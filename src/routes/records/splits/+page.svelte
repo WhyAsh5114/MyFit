@@ -6,7 +6,7 @@
 
     const user = $page.data.user;
     // Reverse to sort by creation time
-    const splits = Object.values(user.splits).reverse() as Split[];
+    const splits = Object.values(user?.splits as Record<string, Split>).reverse() as Split[];
 </script>
 
 <Breadcrumbs>
@@ -20,7 +20,7 @@
     {#each splits as split}
         <a
             class="flex flex-col w-full gap-1 bg-primary rounded-lg p-3 active:scale-95 hover:bg-opacity-50 transition-all border-2 {split.name ===
-            user.activeSplit
+            user?.activeSplit
                 ? 'border-accent'
                 : 'border-base-100'}"
             in:scale

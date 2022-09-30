@@ -38,8 +38,8 @@
                 })
             });
             if (res.ok) {
-                await goto(`${page}`);
                 await invalidateAll();
+                await goto(`${page}`);
             } else {
                 const body = await res.text();
                 modalTexts = [body];
