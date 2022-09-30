@@ -1,6 +1,6 @@
 <script>
     import MenuButtonGrid from '$lib/MenuButtonGrid.svelte';
-    import ListButton from '$lib/ListButton.svelte';
+    import MenuButton from '$lib/MenuButton.svelte';
 </script>
 
 <svelte:head>
@@ -14,37 +14,37 @@
     </ul>
 </div>
 <MenuButtonGrid>
-    <ListButton
+    <MenuButton
         imagePath="/calendar.svg"
         title="Splits records"
         description="Check and modify created splits"
         link="/records/splits"
     />
-    <ListButton
+    <MenuButton
         imagePath="/dumbbell.png"
         title="Workout records"
         description="Check and modify performed workouts"
         link="/records/workouts"
     />
-    <ListButton
+    <MenuButton
         imagePath="/heart.svg"
         title="Cardio records"
         description="Check and modify performed cardio workouts"
         link="/records/cardio"
     />
-    <ListButton
+    <MenuButton
         imagePath="/moon.svg"
         title="Sleep records"
         description="Check and edit sleep logs"
         link="/records/sleep"
     />
-    <ListButton
+    <MenuButton
         imagePath="/bowl.svg"
         title="Nutritional records"
         description="Check and edit nutrition logs"
         link="/records/nutrition"
     />
-    <ListButton
+    <MenuButton
         imagePath="/scale.svg"
         title="Nutritional records"
         description="Check and edit body metrics"

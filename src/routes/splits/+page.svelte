@@ -1,5 +1,5 @@
 <script lang="ts">
-    import ListButton from '$lib/ListButton.svelte';
+    import MenuButton from '$lib/MenuButton.svelte';
     import MenuButtonGrid from '$lib/MenuButtonGrid.svelte';
 </script>
 
@@ -13,25 +13,25 @@
     </ul>
 </div>
 <MenuButtonGrid>
-    <ListButton
+    <MenuButton
         imagePath="/calendar_plus.svg"
         title="New split"
         description="Create a weekly routine from scratch"
         link="/splits/new"
     />
-    <ListButton
+    <MenuButton
         imagePath="/calendar_PPL.svg"
         title="Common splits"
         description="Adjust and use common splits"
         link="/"
     />
-    <ListButton
+    <MenuButton
         imagePath="/calendar_gear.svg"
         title="Modify split"
         description="Modify current split's exercises, progression"
         link="/"
     />
-    <ListButton
+    <MenuButton
         imagePath="/record.svg"
         title="Splits records"
         description="View, copy and adjust previous splits"

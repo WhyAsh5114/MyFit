@@ -1,5 +1,5 @@
 <script lang="ts">
-    import MenuButton from '../lib/MenuButton.svelte';
+    import HomepageButton from '../lib/HomepageButton.svelte';
     import { page } from '$app/stores';
 </script>
 
@@ -25,8 +25,8 @@
     {/if}
 </div>
 <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 w-full">
-    <MenuButton title="Splits" imagePath="/calendar.svg" link="/splits" />
-    <MenuButton title="Logging" imagePath="/pencil.svg" link="/logging" />
-    <MenuButton title="Records" imagePath="/record.svg" link="/records" />
-    <MenuButton title="Tracking" imagePath="/graph.svg" link="/tracking" />
+    <HomepageButton title="Splits" imagePath="/calendar.svg" link="/splits" />
+    <HomepageButton title="Logging" imagePath="/pencil.svg" link="/logging" />
+    <HomepageButton title="Records" imagePath="/record.svg" link="/records" />
+    <HomepageButton title="Tracking" imagePath="/graph.svg" link="/tracking" />
 </div>

@@ -1,37 +1,37 @@
 <script>
     import MenuButtonGrid from '$lib/MenuButtonGrid.svelte';
-    import ListButton from '$lib/ListButton.svelte';
+    import MenuButton from '$lib/MenuButton.svelte';
 </script>
 
 <svelte:head>
     <title>MyFit | Logging</title>
 </svelte:head>
 <MenuButtonGrid>
-    <ListButton
+    <MenuButton
         imagePath="/dumbbell.png"
         title="Log workout"
         description="Reps, sets, load, duration, calories burned"
         link="/logging/workouts"
     />
-    <ListButton
+    <MenuButton
         imagePath="/heart.svg"
         title="Log cardio"
         description="Duration, calories burned, average heart rate"
         link="/logging/cardio"
     />
-    <ListButton
+    <MenuButton
         imagePath="/moon.svg"
         title="Sleep records"
         description="Duration, quality, tiredness, wake up time"
         link="/logging/sleep"
     />
-    <ListButton
+    <MenuButton
         imagePath="/bowl.svg"
         title="Nutritional records"
         description="Calorie intake, macronutrients, foods"
         link="/logging/nutrition"
     />
-    <ListButton
+    <MenuButton
         imagePath="/scale.svg"
         title="Nutritional records"
         description="Steps, weight, height, fat percentage"
