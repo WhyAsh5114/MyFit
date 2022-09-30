@@ -1,6 +1,5 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import Breadcrumbs from '$lib/Breadcrumbs.svelte';
     import MyModal from '$lib/MyModal.svelte';
     import { onMount } from 'svelte';
     import { SplitName, SplitSchedule, SplitWorkouts } from '../splitStore';
@@ -91,13 +90,13 @@
     <title>MyFit | New split</title>
 </svelte:head>
 
-<Breadcrumbs>
+<div class="breadcrumbs-container">
     <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/splits">Splits</a></li>
         <li>New</li>
     </ul>
-</Breadcrumbs>
+</div>
 <MyModal {modalTexts} {modalTitle} bind:modalOpen />
 <form on:submit|preventDefault class="flex flex-col flex-grow w-full justify-center items-center">
     <div class="flex flex-col gap-10 justify-center items-center max-w-xs flex-grow">

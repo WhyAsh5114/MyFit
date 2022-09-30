@@ -1,19 +1,18 @@
 <script>
     import MenuButtonGrid from '$lib/MenuButtonGrid.svelte';
     import ListButton from '$lib/ListButton.svelte';
-    import Breadcrumbs from '$lib/Breadcrumbs.svelte';
 </script>
 
 <svelte:head>
     <title>MyFit | Records</title>
 </svelte:head>
 
-<Breadcrumbs>
+<div class="breadcrumbs-container">
     <ul>
         <li><a href="/">Home</a></li>
         <li>Records</li>
     </ul>
-</Breadcrumbs>
+</div>
 <MenuButtonGrid>
     <ListButton
         imagePath="/calendar.svg"

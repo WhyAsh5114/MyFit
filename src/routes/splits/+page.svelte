@@ -1,5 +1,4 @@
 <script lang="ts">
-    import Breadcrumbs from '$lib/Breadcrumbs.svelte';
     import ListButton from '$lib/ListButton.svelte';
     import MenuButtonGrid from '$lib/MenuButtonGrid.svelte';
 </script>
@@ -7,12 +6,12 @@
 <svelte:head>
     <title>MyFit | Splits</title>
 </svelte:head>
-<Breadcrumbs>
+<div class="breadcrumbs-container">
     <ul>
         <li><a href="/">Home</a></li>
         <li>Splits</li>
     </ul>
-</Breadcrumbs>
+</div>
 <MenuButtonGrid>
     <ListButton
         imagePath="/calendar_plus.svg"

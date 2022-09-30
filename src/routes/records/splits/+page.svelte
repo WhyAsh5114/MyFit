@@ -1,5 +1,4 @@
 <script lang="ts">
-    import Breadcrumbs from '$lib/Breadcrumbs.svelte';
     import { getFormattedDate } from '$lib/usefulFunctions';
     import { scale } from 'svelte/transition';
     import { page } from '$app/stores';
@@ -9,13 +8,13 @@
     const splits = Object.values(user?.splits as Record<string, Split>).reverse() as Split[];
 </script>
 
-<Breadcrumbs>
+<div class="breadcrumbs-container">
     <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/records">Records</a></li>
         <li>Splits</li>
     </ul>
-</Breadcrumbs>
+</div>
 <div class="flex flex-col w-full max-w-md gap-2 items-center justify-center flex-grow">
     {#each splits as split}
         <a
