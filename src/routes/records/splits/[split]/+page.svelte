@@ -165,12 +165,12 @@
                         </h4>
                         <input
                             class="w-full text-center py-1"
-                            bind:value={splitSchedule[i]}
-                            on:focusout={function focusout() {
-                                if (this.value.trim() === '') {
-                                    this.value = 'Rest';
+                            on:focusout={function focusout({ currentTarget }) {
+                                if (currentTarget.value.trim() === '') {
+                                    splitSchedule[i] = 'Rest';
                                 }
                             }}
+                            bind:value={splitSchedule[i]}
                         />
                         {#key splitSchedule[i]}
                             <div class="basis-24 flex-shrink-0 text-center">
