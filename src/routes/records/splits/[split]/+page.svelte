@@ -172,7 +172,13 @@
                                 {#if workoutChanged(i)}
                                     <p class="px-2 bg-warning py-1">Changed</p>
                                 {:else if !uniqueWorkouts.has(splitSchedule[i]) && splitSchedule[i] !== 'Rest'}
-                                    <p class="px-2 bg-success py-1">New</p>
+                                    {#if splitSchedule.indexOf(splitSchedule[i]) === i}
+                                        <p class="px-2 bg-success py-1">New</p>
+                                    {:else}
+                                        <p class="px-2 bg-success py-1">
+                                            {days[splitSchedule.indexOf(splitSchedule[i])]}
+                                        </p>
+                                    {/if}
                                 {/if}
                             </div>
                         {/key}
@@ -189,12 +195,14 @@
                             {:else if uniqueWorkouts.has(splitSchedule[i]) || splitSchedule[i] === 'Rest'}
                                 <div />
                             {:else}
-                                <button
-                                    on:click={() => createWorkout(splitSchedule[i])}
-                                    in:scale|local={{ duration: 200 }}
-                                >
-                                    Make
-                                </button>
+                                {#if splitSchedule.indexOf(splitSchedule[i]) === i}
+                                    <button
+                                        on:click={() => createWorkout(splitSchedule[i])}
+                                        in:scale|local={{ duration: 200 }}
+                                    >
+                                        Make
+                                    </button>
+                                {/if}
                             {/if}
                         </div>
                     </div>
@@ -252,10 +260,7 @@
     </div>
 </div>
 {#key changeStatus}
-    <button
-        class="footer-button"
-        on:click={reviewChanges}
-    >
+    <button class="footer-button" on:click={reviewChanges}>
         {changeStatus}
     </button>
 {/key}
