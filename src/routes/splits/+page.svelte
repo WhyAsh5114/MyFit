@@ -34,6 +34,6 @@
         imagePath="/record.svg"
         title="Splits records"
         description="View, copy and adjust previous splits"
-        link="/"
+        link="/records/splits"
     />
 </div>
