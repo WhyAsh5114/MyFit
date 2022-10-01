@@ -2,7 +2,7 @@
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
     import MyModal from '$lib/MyModal.svelte';
-    import { areArraysIdentical, getFormattedDate } from '$lib/usefulFunctions';
+    import { areArraysIdentical, getFormattedDate, colors } from '$lib/usefulFunctions';
     import { fly, scale } from 'svelte/transition';
     import {
         EditingWorkout,
@@ -40,20 +40,8 @@
     const freqMultiplier: Record<string, number> = { '/month': 0.5, '/week': 1, '/session': 1.5 };
     let meanOverload: number;
     $: meanOverload = freqMultiplier[frequency] * progressionValue;
-    const colors = new Map<number, string>([
-        [0, 'text-white'],
-        [2.5, 'text-green-300'],
-        [5, 'text-green-400'],
-        [7.5, 'text-lime-500'],
-        [10, 'text-yellow-400'],
-        [12.5, 'text-amber-500'],
-        [15, 'text-orange-500'],
-        [17.5, 'text-red-500'],
-        [20, 'text-red-500'],
-        [22.5, 'text-red-500'],
-        [25, 'text-red-600']
-    ]);
     let textColor = 'text-white';
+
     $: if (meanOverload !== undefined) {
         let closestColors = colors.get(25);
         if (closestColors) {
@@ -63,7 +51,7 @@
                     break;
                 }
             }
-            textColor = closestColors;
+            textColor = closestColors[0];
         }
     }
 
