@@ -163,27 +163,32 @@
                         >
                             {day}
                         </h4>
-                        <input class="w-full text-center py-1" bind:value={splitSchedule[i]} />
+                        <input
+                            class="w-full text-center py-1"
+                            bind:value={splitSchedule[i]}
+                            on:focusout={function focusout() {
+                                if (this.value.trim() === '') {
+                                    this.value = 'Rest';
+                                }
+                            }}
+                        />
                         {#key splitSchedule[i]}
-                            <div
-                                class="basis-24 flex-shrink-0 text-center"
-                                in:scale|local={{ duration: 200 }}
-                            >
+                            <div class="basis-24 flex-shrink-0 text-center">
                                 {#if workoutChanged(i)}
                                     <p class="px-2 bg-warning py-1">Changed</p>
-                                {:else if !uniqueWorkouts.has(splitSchedule[i]) && splitSchedule[i] !== 'Rest'}
+                                {:else if !uniqueWorkouts.has(splitSchedule[i]) && splitSchedule[i] !== 'Rest' && splitSchedule[i].trim() !== ''}
                                     {#if splitSchedule.indexOf(splitSchedule[i]) === i}
                                         <p class="px-2 bg-success py-1">New</p>
                                     {:else}
                                         <p class="px-2 bg-success py-1">
-                                            {days[splitSchedule.indexOf(splitSchedule[i])]}
+                                            ({days[splitSchedule.indexOf(splitSchedule[i])]})
                                         </p>
                                     {/if}
                                 {/if}
                             </div>
                         {/key}
                         <div
-                            class="basis-14 flex-shrink-0 bg-base-100 text-center text-white rounded-r-lg py-1"
+                            class="basis-16 flex-shrink-0 bg-base-100 text-center text-white rounded-r-lg py-1"
                         >
                             {#if (uniqueWorkouts.has(splitSchedule[i]) || splitSchedule[i] === 'Rest') && uniqueWorkoutsIndices.includes(i)}
                                 <button
@@ -192,17 +197,15 @@
                                 >
                                     Edit
                                 </button>
-                            {:else if uniqueWorkouts.has(splitSchedule[i]) || splitSchedule[i] === 'Rest'}
+                            {:else if uniqueWorkouts.has(splitSchedule[i]) || splitSchedule[i] === 'Rest' || splitSchedule[i].trim() === ''}
                                 <div />
-                            {:else}
-                                {#if splitSchedule.indexOf(splitSchedule[i]) === i}
-                                    <button
-                                        on:click={() => createWorkout(splitSchedule[i])}
-                                        in:scale|local={{ duration: 200 }}
-                                    >
-                                        Make
-                                    </button>
-                                {/if}
+                            {:else if splitSchedule.indexOf(splitSchedule[i]) === i}
+                                <button
+                                    on:click={() => createWorkout(splitSchedule[i])}
+                                    in:scale|local={{ duration: 200 }}
+                                >
+                                    Create
+                                </button>
                             {/if}
                         </div>
                     </div>
