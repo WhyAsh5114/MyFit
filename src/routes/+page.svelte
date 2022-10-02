@@ -19,8 +19,12 @@
         </h3>
         <div class="w-full h-px bg-white" />
         <div class="flex flex-col gap-2 justify-evenly w-1/2">
-            <a href="/profile/login?page={$page.url.pathname}" class="btn btn-sm btn-secondary">Login</a>
-            <a href="/profile/register?page={$page.url.pathname}" class="btn btn-sm btn-secondary">Register</a>
+            <a href="/profile/login?page={$page.url.pathname}" class="btn btn-sm btn-secondary"
+                >Login</a
+            >
+            <a href="/profile/register?page={$page.url.pathname}" class="btn btn-sm btn-secondary"
+                >Register</a
+            >
         </div>
     {/if}
 </div>

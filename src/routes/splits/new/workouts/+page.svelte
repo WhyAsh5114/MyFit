@@ -158,9 +158,4 @@
         bind:cancelAction
     />
 </div>
-<button
-    class="basis-10 footer-button"
-    on:click={saveSplit}
->
-    Set split options
-</button>
+<button class="basis-10 footer-button" on:click={saveSplit}> Set split options </button>

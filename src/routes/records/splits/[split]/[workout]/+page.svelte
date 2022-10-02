@@ -20,7 +20,7 @@
 
     async function modifyWorkout() {
         if (workout.length === 0) {
-            modalTexts = ["Should have at least one exercise"];
+            modalTexts = ['Should have at least one exercise'];
             modalOpen = true;
             return;
         }
