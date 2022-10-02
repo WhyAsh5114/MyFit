@@ -1,6 +1,6 @@
 <script>
-    import { invalidateAll } from "$app/navigation";
-    invalidateAll()
+    import { invalidateAll } from '$app/navigation';
+    invalidateAll();
 </script>
 
 <div class="flex flex-grow flex-col w-full items-center justify-center gap-5">

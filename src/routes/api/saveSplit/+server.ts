@@ -3,7 +3,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { parse } from 'cookie';
 
 export const POST: RequestHandler = async ({ request }) => {
-    const { split, user }: { split: Split, user: User } = await request.json();
+    const { split, user }: { split: Split; user: User } = await request.json();
 
     // Get sessionID
     const sessionID = parse(request.headers.get('cookie') || '').sessionID;
@@ -13,13 +13,13 @@ export const POST: RequestHandler = async ({ request }) => {
     if (!user || !sessionID) {
         return new Response('Not logged in, locals empty', {
             status: 403
-        })
+        });
     }
 
     if (split.name in user.splits) {
         return new Response('Split already exists', {
             status: 409
-        })
+        });
     }
 
     // Add the split to userData

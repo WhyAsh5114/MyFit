@@ -17,7 +17,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
             await fetch('/api/aut/logout', {
                 method: 'GET'
             });
-            return { user: undefined }
+            return { user: undefined };
         }
     } catch (err) {
         return { user: undefined };
