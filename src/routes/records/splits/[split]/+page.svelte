@@ -8,7 +8,8 @@
         EditingWorkout,
         EditingWorkoutName,
         CurrentSplit,
-        EditedWorkouts
+        EditedWorkouts,
+        SplitSchedule
     } from './editSplitStore';
     const user = $page.data.user;
 
@@ -24,6 +25,10 @@
     let progressionValue = split.progressiveOverload;
     let thisActive = user?.activeSplit === split.name;
     let changeStatus = 'Back';
+
+    if ($SplitSchedule) {
+        splitSchedule = $SplitSchedule;
+    }
 
     const uniqueWorkoutsIndices: number[] = [];
     const uniqueWorkouts = new Set<string>();
@@ -74,6 +79,7 @@
                 }
             }
             changes.push(changeString + '\t');
+            $SplitSchedule = splitSchedule;
         }
         if (frequency !== split.overloadFrequency) {
             changes.push(`Overload frequency\n${split.overloadFrequency} -> ${frequency}\n\t`);
@@ -175,7 +181,13 @@
                         {#key splitSchedule[i]}
                             <div class="basis-24 flex-shrink-0 text-center">
                                 {#if workoutChanged(i)}
-                                    <p class="px-2 bg-warning py-1">Changed</p>
+                                    {#if splitSchedule.indexOf(splitSchedule[i]) === i}
+                                        <p class="px-2 bg-warning py-1">Changed</p>
+                                    {:else}
+                                        <p class="px-2 bg-warning py-1">
+                                            ({days[splitSchedule.indexOf(splitSchedule[i])]})
+                                        </p>
+                                    {/if}
                                 {:else if !uniqueWorkouts.has(splitSchedule[i]) && splitSchedule[i] !== 'Rest' && splitSchedule[i].trim() !== ''}
                                     {#if splitSchedule.indexOf(splitSchedule[i]) === i}
                                         <p class="px-2 bg-success py-1">New</p>
@@ -203,8 +215,9 @@
                                 <button
                                     on:click={() => createWorkout(splitSchedule[i])}
                                     in:scale|local={{ duration: 200 }}
+                                    class="w-full"
                                 >
-                                    Create
+                                    +
                                 </button>
                             {/if}
                         </div>
