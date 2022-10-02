@@ -3,7 +3,7 @@
     import ExerciseTable from '$lib/ExerciseTable.svelte';
     import MyModal from '$lib/MyModal.svelte';
     import { onMount } from 'svelte';
-    import { SplitSchedule, SplitWorkouts, SplitName } from '../editSplitStore';
+    import { SplitSchedule, SplitWorkouts, SplitName, CurrentSplit } from '../editSplitStore';
 
     let modalTitle: string;
     let modalTexts: string[];
@@ -12,7 +12,6 @@
 
     let scheduleElements: Record<string, HTMLDivElement> = {};
     let selectedUniqueWorkout: string;
-    let splitWorkouts = $SplitWorkouts;
 
     onMount(() => {
         if ($SplitName === '' || $SplitSchedule === emptySchedule) {
@@ -82,7 +81,38 @@
         modalOpen = true;
     }
 
-    function modifyWorkouts() {}
+    onMount(() => {
+        for (const [name, exercises] of Object.entries($SplitWorkouts)) {
+            if (exercises.length === 0) {
+                for (let [day, workout] of Object.entries($SplitSchedule)) {
+                    if (workout === name) {
+                        scheduleElements[day].classList.add('animate-pulse');
+                    }
+                }
+            }
+        }
+    });
+
+    function modifyWorkouts() {
+        let errors: string[] = [];
+        for (const [name, exercises] of Object.entries($SplitWorkouts)) {
+            if (exercises.length === 0) {
+                errors.push(`Add at least one exercise in ${name}`);
+                for (let [day, workout] of Object.entries($SplitSchedule)) {
+                    if (workout === name) {
+                        scheduleElements[day].classList.add('animate-pulse');
+                    }
+                }
+            }
+        }
+        if (errors.length > 0) {
+            modalTitle = 'Error';
+            modalTexts = errors;
+            modalOpen = true;
+            return;
+        }
+        goto(`/records/splits/${$CurrentSplit.name}`);
+    }
 </script>
 
 <MyModal {modalTexts} {modalTitle} bind:modalOpen />
@@ -122,7 +152,7 @@
 <div class="flex justify-center w-full flex-1">
     <ExerciseTable
         workoutName={selectedUniqueWorkout}
-        bind:exercises={splitWorkouts[selectedUniqueWorkout]}
+        bind:exercises={$SplitWorkouts[selectedUniqueWorkout]}
         bind:cancelAction
     />
 </div>
