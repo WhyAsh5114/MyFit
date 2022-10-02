@@ -9,7 +9,8 @@
         EditingWorkoutName,
         CurrentSplit,
         EditedWorkouts,
-        SplitSchedule
+        SplitSchedule,
+        CreatedWorkouts
     } from './editSplitStore';
     const user = $page.data.user;
 
@@ -141,7 +142,10 @@
         goto(`/records/splits/${split.name}/${name}`);
     }
 
-    function createWorkout(name: string) {}
+    async function createWorkout(name: string) {
+        $CreatedWorkouts[name] = [];
+        await goto(`/records/splits/${split.name}/${name}?new=true`);
+    }
 </script>
 
 <svelte:head>
@@ -206,6 +210,7 @@
                                 <button
                                     on:click={() => editWorkout(splitSchedule[i])}
                                     in:scale|local={{ duration: 200 }}
+                                    class="w-full"
                                 >
                                     Edit
                                 </button>
