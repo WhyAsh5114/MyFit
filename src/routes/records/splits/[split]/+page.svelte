@@ -179,7 +179,7 @@
     </div>
     <div class="grid md:grid-cols-2 w-full gap-2 md:gap-10 mb-2">
         <div class="flex flex-col justify-center bg-primary rounded-lg p-4">
-            <h3 class="font-semibold text-xl ml-2 mb-1">Schedule</h3>
+            <h3 class="font-semibold text-xl ml-2 mb-2">Schedule</h3>
             <div class="flex flex-col gap-2 flex-grow justify-center text-base">
                 {#each days as day, i}
                     <div class="flex text-black bg-secondary rounded-lg">
