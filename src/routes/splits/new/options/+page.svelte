@@ -59,7 +59,7 @@
             timeCreated: +new Date()
         };
 
-        const res = await fetch('/api/saveSplit', {
+        const res = await fetch('/api/splits/saveSplit', {
             method: 'POST',
             body: JSON.stringify({ split: newSplit, user: $page.data.user })
         });
