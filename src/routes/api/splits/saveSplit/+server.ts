@@ -1,4 +1,4 @@
-import { ErrorResponse, setUser } from '../_db';
+import { ErrorResponse, setUser } from '../../_db';
 import type { RequestHandler } from '@sveltejs/kit';
 import { parse } from 'cookie';
 
