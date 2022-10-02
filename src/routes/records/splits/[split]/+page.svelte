@@ -6,20 +6,23 @@
     import { fly } from 'svelte/transition';
     import {
         CurrentSplit,
-        EditedWorkouts,
         SplitSchedule,
         SplitName,
-        SplitWorkouts
+        SplitWorkouts,
+        CurrentSplitActive
     } from './editSplitStore';
     const user = $page.data.user;
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const split = $page.data.user?.splits[$page.params.split] as Split;
+    let modifyWorkoutsButton: HTMLButtonElement;
 
     if (!split) {
         goto('/records/splits');
     }
-    $CurrentSplit = JSON.parse(JSON.stringify(split));
+    if (!$CurrentSplit) {
+        $CurrentSplit = JSON.parse(JSON.stringify(split));
+    }
 
     if ($SplitName === '') {
         $SplitName = split.name;
@@ -29,8 +32,10 @@
         splitSchedule[element] = split.schedule[i];
     });
 
-    let progressionValue = split.progressiveOverload;
-    let thisActive = user?.activeSplit === split.name;
+    let progressionValue = $CurrentSplit.progressiveOverload;
+    if ($CurrentSplitActive === undefined) {
+        $CurrentSplitActive = user?.activeSplit === split.name;
+    }
     let changeStatus = 'Back';
 
     let splitModified = false;
@@ -54,7 +59,7 @@
     }
 
     // Progression stuff
-    let frequency: '/week' | '/month' | '/session' = split.overloadFrequency;
+    let frequency: '/week' | '/month' | '/session' = $CurrentSplit.overloadFrequency;
     const freqMultiplier: Record<string, number> = { '/month': 0.5, '/week': 1, '/session': 1.5 };
     let meanOverload: number;
     $: meanOverload = freqMultiplier[frequency] * progressionValue;
@@ -77,14 +82,14 @@
     let modalTexts: string[];
     let modalOpen = false;
 
-    $: updateChanges($SplitName, frequency, progressionValue, thisActive, splitSchedule);
+    $: updateChanges($SplitName, frequency, progressionValue, $CurrentSplitActive, splitSchedule);
 
     function updateChanges(..._args: any[]) {
         let changes = [];
         if ($SplitName !== split.name) {
             changes.push(`Name\n${split.name} -> ${$SplitName}\n\t`);
         }
-        if (!areArraysIdentical(Object.keys(splitSchedule), split.schedule)) {
+        if (!areArraysIdentical(Object.values(splitSchedule), split.schedule)) {
             let changeString = 'Schedule\n';
             for (let i = 0; i < 7; i++) {
                 if (split.schedule[i] !== splitSchedule[days[i]]) {
@@ -98,14 +103,16 @@
         }
         if (frequency !== split.overloadFrequency) {
             changes.push(`Overload frequency\n${split.overloadFrequency} -> ${frequency}\n\t`);
+            $CurrentSplit.overloadFrequency = frequency;
         }
         if (progressionValue !== split.progressiveOverload) {
             changes.push(
                 `Overload value\n${split.progressiveOverload}% -> ${progressionValue}%\n\t`
             );
+            $CurrentSplit.progressiveOverload = progressionValue;
         }
-        if (thisActive !== (user?.activeSplit === split.name)) {
-            if (thisActive) {
+        if ($CurrentSplitActive !== (user?.activeSplit === split.name)) {
+            if ($CurrentSplitActive) {
                 changes.push(`Active split\n${user?.activeSplit} -> ${$SplitName}\n\t`);
             } else {
                 changes.push(`Active split\n${user?.activeSplit} -> None\n\t`);
@@ -114,12 +121,48 @@
         if (changes.length > 0) {
             changeStatus = 'Review changes';
         } else {
-            changeStatus = 'Save';
+            changeStatus = 'Back';
         }
         return changes;
     }
 
+    function saveChanges() {
+        let emptyWorkouts: string[] = [];
+        $SplitSchedule = splitSchedule;
+
+        // Add workouts not originally present in the split
+        Object.values($SplitSchedule).forEach((element) => {
+            if (!Object.keys($SplitWorkouts).includes(element) && element !== 'Rest') {
+                $SplitWorkouts[element] = [];
+            }
+        });
+        Object.keys($SplitWorkouts).forEach((workoutName) => {
+            if (!Object.values($SplitSchedule).includes(workoutName)) {
+                delete $SplitWorkouts[workoutName];
+                return;
+            }
+            if ($SplitWorkouts[workoutName].length === 0) {
+                emptyWorkouts.push(workoutName);
+            }
+        });
+
+        if (emptyWorkouts.length > 0) {
+            modalTitle = 'Error';
+            modalTexts = [];
+            emptyWorkouts.forEach((workoutName) => {
+                modalTexts.push(`Add at least one exercise in ${workoutName}`);
+            });
+            modalOpen = true;
+            modifyWorkoutsButton.classList.add('animate-pulse');
+            return;
+        }
+    }
+
     function reviewChanges() {
+        if (changeStatus === 'Save changes') {
+            saveChanges();
+            return;
+        }
         let changes = updateChanges();
         if (changes.length > 0) {
             // Remove newline on last change (looks better)
@@ -127,6 +170,7 @@
             modalTitle = 'Review changes';
             modalTexts = changes;
             modalOpen = true;
+            changeStatus = 'Save changes';
         } else {
             goto('/records/splits');
         }
@@ -135,8 +179,9 @@
     function workoutChanged(i: number) {
         const workout = splitSchedule[days[i]];
         const originalWorkout = split.splitWorkouts[workout];
-        const editedWorkout = $EditedWorkouts[workout];
-        if (!editedWorkout) {
+        const editedWorkout = $SplitWorkouts[workout];
+
+        if (!editedWorkout || !Object.values(split.schedule).includes(workout)) {
             return false;
         }
         if (originalWorkout.length !== editedWorkout.length) {
@@ -151,8 +196,13 @@
     }
 
     function modifyWorkouts() {
-        $SplitSchedule = splitSchedule;
-        $SplitWorkouts = JSON.parse(JSON.stringify(split.splitWorkouts));
+        const emptySchedule = { Mon: '', Tue: '', Wed: '', Thu: '', Fri: '', Sat: '', Sun: '' };
+        if (JSON.stringify($SplitSchedule) === JSON.stringify(emptySchedule)) {
+            $SplitSchedule = splitSchedule;
+        }
+        if (JSON.stringify($SplitWorkouts) === JSON.stringify({})) {
+            $SplitWorkouts = JSON.parse(JSON.stringify(split.splitWorkouts));
+        }
 
         Object.values($SplitSchedule).forEach((element) => {
             if (!Object.keys($SplitWorkouts).includes(element) && element !== 'Rest') {
@@ -205,7 +255,7 @@
                                     {:else}
                                         <p class="px-2 bg-warning py-1 rounded-r-lg">
                                             ({days[
-                                                Object.keys(splitSchedule).indexOf(
+                                                Object.values(splitSchedule).indexOf(
                                                     splitSchedule[day]
                                                 )
                                             ]})
@@ -235,8 +285,13 @@
                     </div>
                 {/each}
             </div>
-            <button class="btn btn-sm mt-5 normal-case text-base bg-black" on:click={modifyWorkouts}
-                >Modify workouts</button
+            <button
+                class="btn btn-sm mt-5 normal-case text-base bg-black"
+                on:click={modifyWorkouts}
+                on:mouseenter={function removeAnimation({ currentTarget }) {
+                    currentTarget.classList.remove('animate-pulse');
+                }}
+                bind:this={modifyWorkoutsButton}>Modify workouts</button
             >
         </div>
         <div class="flex flex-col gap-2 md:gap-4 grow justify-between">
@@ -245,7 +300,7 @@
                     <div class="stat-figure">
                         <select class="select select-sm w-28" bind:value={frequency}>
                             <option>/session</option>
-                            <option selected>/week</option>
+                            <option>/week</option>
                             <option>/month</option>
                         </select>
                     </div>
@@ -271,10 +326,10 @@
             </div>
             <div class="stat bg-primary rounded-xl">
                 <div class="stat-figure text-secondary">
-                    <input type="checkbox" class="toggle" bind:checked={thisActive} />
+                    <input type="checkbox" class="toggle" bind:checked={$CurrentSplitActive} />
                 </div>
                 <div class="stat-title opacity-95 font-semibold">Status</div>
-                {#if thisActive}
+                {#if $CurrentSplitActive}
                     <div class="stat-value text-success">Active</div>
                 {:else}
                     <div class="stat-value">Inactive</div>
