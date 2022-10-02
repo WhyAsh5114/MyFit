@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
+    import { goto, invalidateAll } from '$app/navigation';
     import { page } from '$app/stores';
     import MyModal from '$lib/MyModal.svelte';
     import { areArraysIdentical, getFormattedDate, colors } from '$lib/usefulFunctions';
@@ -81,6 +81,7 @@
     let modalTitle: string;
     let modalTexts: string[];
     let modalOpen = false;
+    let onClose: () => void = () => {};
 
     $: updateChanges($SplitName, frequency, progressionValue, $CurrentSplitActive, splitSchedule);
 
@@ -88,6 +89,7 @@
         let changes = [];
         if ($SplitName !== split.name) {
             changes.push(`Name\n${split.name} -> ${$SplitName}\n\t`);
+            $CurrentSplit.name = $SplitName;
         }
         if (!areArraysIdentical(Object.values(splitSchedule), split.schedule)) {
             let changeString = 'Schedule\n';
@@ -126,7 +128,7 @@
         return changes;
     }
 
-    function saveChanges() {
+    async function saveChanges() {
         let emptyWorkouts: string[] = [];
         $SplitSchedule = splitSchedule;
 
@@ -155,6 +157,31 @@
             modalOpen = true;
             modifyWorkoutsButton.classList.add('animate-pulse');
             return;
+        }
+
+        console.log($CurrentSplit);
+
+        const res = await fetch('/api/splits/modifySplit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                thisActive: $CurrentSplitActive,
+                oldSplitName: split.name,
+                user: $page.data.user,
+                split: $CurrentSplit
+            })
+        });
+        const body = await res.text();
+        if (res.ok) {
+            modalTitle = 'Success';
+            modalTexts = [body];
+            onClose = async () => {
+                await invalidateAll();
+                await goto('/records/splits');
+            }
+            modalOpen = true;
         }
     }
 
@@ -216,7 +243,7 @@
 <svelte:head>
     <title>MyFit | Split records</title>
 </svelte:head>
-<MyModal bind:modalOpen {modalTitle} {modalTexts} />
+<MyModal bind:modalOpen {modalTitle} {modalTexts} bind:onClose />
 <div class="flex flex-col flex-grow justify-center w-full items-center max-w-5xl">
     <div class="flex items-center w-full max-w-md mb-2 md:mb-8 lg:mb-12">
         <h2 class="text-lg py-1 bg-primary text-center rounded-l-md w-fit px-8 font-semibold">
