@@ -15,7 +15,7 @@
 
     onMount(() => {
         if ($SplitName === '' || $SplitSchedule === emptySchedule) {
-            goto('/splits/new');
+            goto('/records/splits');
             return;
         }
 
