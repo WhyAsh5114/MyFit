@@ -223,7 +223,7 @@
                                             ]})
                                         </p>
                                     {/if}
-                                {:else if Object.values(splitSchedule).indexOf(splitSchedule[day]) !== i}
+                                {:else if Object.values(splitSchedule).indexOf(splitSchedule[day]) !== i && splitSchedule[day] !== 'Rest'}
                                     <p class="px-2 py-1">
                                         ({days[
                                             Object.values(splitSchedule).indexOf(splitSchedule[day])
