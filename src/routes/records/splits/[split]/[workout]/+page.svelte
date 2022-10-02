@@ -3,24 +3,25 @@
     import { page } from '$app/stores';
     import ExerciseTable from '$lib/ExerciseTable.svelte';
     import MyModal from '$lib/MyModal.svelte';
-    import { EditedWorkouts } from '../editSplitStore';
+    import { CreatedWorkouts, EditedWorkouts } from '../editSplitStore';
 
     let modalOpen = false;
     let modalTexts = [''];
 
-    let workout: Exercise[] = JSON.parse(
-        JSON.stringify(
-            $page.data.user?.splits[$page.params.split].splitWorkouts[$page.params.workout]
-        )
-    ) as Exercise[];
+    const splitWorkouts = $page.data.user?.splits[$page.params.split].splitWorkouts;
+    let workout: Exercise[] = [];
     if ($page.params.workout in $EditedWorkouts) {
         workout = $EditedWorkouts[$page.params.workout];
+    } else if ($page.params.workout in $CreatedWorkouts) {
+        workout = $CreatedWorkouts[$page.params.workout];
+    } else if (splitWorkouts && $page.params.workout in splitWorkouts) {
+        workout = JSON.parse(JSON.stringify(splitWorkouts[$page.params.workout]));
     }
-    const original_workout = JSON.parse(JSON.stringify(workout));
+    let original_workout = JSON.parse(JSON.stringify(workout));
 
     async function modifyWorkout() {
         if (workout.length === 0) {
-            modalTexts = ["Should have at least one exercise"];
+            modalTexts = ['Should have at least one exercise'];
             modalOpen = true;
             return;
         }
