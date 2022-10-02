@@ -3,31 +3,43 @@
     import { page } from '$app/stores';
     import MyModal from '$lib/MyModal.svelte';
     import { areArraysIdentical, getFormattedDate, colors } from '$lib/usefulFunctions';
-    import { fly, scale } from 'svelte/transition';
+    import { fly } from 'svelte/transition';
     import {
-        EditingWorkout,
-        EditingWorkoutName,
         CurrentSplit,
         EditedWorkouts,
         SplitSchedule,
-        CreatedWorkouts
+        SplitName,
+        SplitWorkouts
     } from './editSplitStore';
     const user = $page.data.user;
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const split = $page.data.user?.splits[$page.params.split] as Split;
+
     if (!split) {
         goto('/records/splits');
     }
     $CurrentSplit = JSON.parse(JSON.stringify(split));
 
-    let splitName = split.name;
-    let splitSchedule: string[] = JSON.parse(JSON.stringify(split.schedule));
+    if ($SplitName === '') {
+        $SplitName = split.name;
+    }
+    let splitSchedule: Record<string, string> = {};
+    days.forEach((element, i) => {
+        splitSchedule[element] = split.schedule[i];
+    });
+
     let progressionValue = split.progressiveOverload;
     let thisActive = user?.activeSplit === split.name;
     let changeStatus = 'Back';
 
-    if ($SplitSchedule) {
+    let splitModified = false;
+    Object.values($SplitSchedule).forEach((workout) => {
+        if (workout !== '') {
+            splitModified = true;
+        }
+    });
+    if (splitModified) {
         splitSchedule = $SplitSchedule;
     }
 
@@ -65,18 +77,20 @@
     let modalTexts: string[];
     let modalOpen = false;
 
-    $: updateChanges(splitName, frequency, progressionValue, thisActive, splitSchedule);
+    $: updateChanges($SplitName, frequency, progressionValue, thisActive, splitSchedule);
 
     function updateChanges(..._args: any[]) {
         let changes = [];
-        if (splitName !== split.name) {
-            changes.push(`Name\n${split.name} -> ${splitName}\n\t`);
+        if ($SplitName !== split.name) {
+            changes.push(`Name\n${split.name} -> ${$SplitName}\n\t`);
         }
-        if (!areArraysIdentical(splitSchedule, split.schedule)) {
+        if (!areArraysIdentical(Object.keys(splitSchedule), split.schedule)) {
             let changeString = 'Schedule\n';
             for (let i = 0; i < 7; i++) {
-                if (split.schedule[i] !== splitSchedule[i]) {
-                    changeString += `${days[i]}: ${split.schedule[i]} -> ${splitSchedule[i]}\n`;
+                if (split.schedule[i] !== splitSchedule[days[i]]) {
+                    changeString += `${days[i]}: ${split.schedule[i]} -> ${
+                        splitSchedule[days[i]]
+                    }\n`;
                 }
             }
             changes.push(changeString + '\t');
@@ -92,7 +106,7 @@
         }
         if (thisActive !== (user?.activeSplit === split.name)) {
             if (thisActive) {
-                changes.push(`Active split\n${user?.activeSplit} -> ${splitName}\n\t`);
+                changes.push(`Active split\n${user?.activeSplit} -> ${$SplitName}\n\t`);
             } else {
                 changes.push(`Active split\n${user?.activeSplit} -> None\n\t`);
             }
@@ -119,7 +133,7 @@
     }
 
     function workoutChanged(i: number) {
-        const workout = splitSchedule[i];
+        const workout = splitSchedule[days[i]];
         const originalWorkout = split.splitWorkouts[workout];
         const editedWorkout = $EditedWorkouts[workout];
         if (!editedWorkout) {
@@ -136,15 +150,16 @@
         return false;
     }
 
-    function editWorkout(name: string) {
-        $EditingWorkoutName = name;
-        $EditingWorkout = JSON.parse(JSON.stringify(split.splitWorkouts[name]));
-        goto(`/records/splits/${split.name}/${name}`);
-    }
+    function modifyWorkouts() {
+        $SplitSchedule = splitSchedule;
+        $SplitWorkouts = JSON.parse(JSON.stringify(split.splitWorkouts));
 
-    async function createWorkout(name: string) {
-        $CreatedWorkouts[name] = [];
-        await goto(`/records/splits/${split.name}/${name}?new=true`);
+        Object.values($SplitSchedule).forEach((element) => {
+            if (!Object.keys($SplitWorkouts).includes(element) && element !== 'Rest') {
+                $SplitWorkouts[element] = [];
+            }
+        });
+        goto(`/records/splits/${split.name}/workouts`);
     }
 </script>
 
@@ -159,11 +174,11 @@
         </h2>
         <input
             class="text-lg font-semibold py-1 bg-secondary text-black w-full text-center rounded-r-md"
-            bind:value={splitName}
+            bind:value={$SplitName}
         />
     </div>
     <div class="grid md:grid-cols-2 w-full gap-2 md:gap-10 mb-2">
-        <div class="flex flex-col justify-center bg-primary rounded-lg p-4 pb-7">
+        <div class="flex flex-col justify-center bg-primary rounded-lg p-4">
             <h3 class="font-semibold text-xl ml-2 mb-1">Schedule</h3>
             <div class="flex flex-col gap-2 flex-grow justify-center text-base">
                 {#each days as day, i}
@@ -177,60 +192,54 @@
                             class="w-full text-center py-1"
                             on:focusout={function focusout({ currentTarget }) {
                                 if (currentTarget.value.trim() === '') {
-                                    splitSchedule[i] = 'Rest';
+                                    splitSchedule[day] = 'Rest';
                                 }
                             }}
-                            bind:value={splitSchedule[i]}
+                            bind:value={splitSchedule[day]}
                         />
-                        {#key splitSchedule[i]}
+                        {#key splitSchedule[day]}
                             <div class="basis-24 flex-shrink-0 text-center">
                                 {#if workoutChanged(i)}
-                                    {#if splitSchedule.indexOf(splitSchedule[i]) === i}
-                                        <p class="px-2 bg-warning py-1">Changed</p>
+                                    {#if Object.values(splitSchedule).indexOf(splitSchedule[day]) === i}
+                                        <p class="px-2 bg-warning py-1 rounded-r-lg">Changed</p>
                                     {:else}
-                                        <p class="px-2 bg-warning py-1">
-                                            ({days[splitSchedule.indexOf(splitSchedule[i])]})
+                                        <p class="px-2 bg-warning py-1 rounded-r-lg">
+                                            ({days[
+                                                Object.keys(splitSchedule).indexOf(
+                                                    splitSchedule[day]
+                                                )
+                                            ]})
                                         </p>
                                     {/if}
-                                {:else if !uniqueWorkouts.has(splitSchedule[i]) && splitSchedule[i] !== 'Rest' && splitSchedule[i].trim() !== ''}
-                                    {#if splitSchedule.indexOf(splitSchedule[i]) === i}
-                                        <p class="px-2 bg-success py-1">New</p>
+                                {:else if !uniqueWorkouts.has(splitSchedule[day]) && splitSchedule[day] !== 'Rest' && splitSchedule[day].trim() !== ''}
+                                    {#if Object.values(splitSchedule).indexOf(splitSchedule[day]) === i}
+                                        <p class="px-2 bg-success py-1 rounded-r-lg">New</p>
                                     {:else}
-                                        <p class="px-2 bg-success py-1">
-                                            ({days[splitSchedule.indexOf(splitSchedule[i])]})
+                                        <p class="px-2 bg-success py-1 rounded-r-lg">
+                                            ({days[
+                                                Object.values(splitSchedule).indexOf(
+                                                    splitSchedule[day]
+                                                )
+                                            ]})
                                         </p>
                                     {/if}
+                                {:else if Object.values(splitSchedule).indexOf(splitSchedule[day]) !== i}
+                                    <p class="px-2 py-1">
+                                        ({days[
+                                            Object.values(splitSchedule).indexOf(splitSchedule[day])
+                                        ]})
+                                    </p>
                                 {/if}
                             </div>
                         {/key}
-                        <div
-                            class="basis-16 flex-shrink-0 bg-base-100 text-center text-white rounded-r-lg py-1"
-                        >
-                            {#if (uniqueWorkouts.has(splitSchedule[i]) || splitSchedule[i] === 'Rest') && uniqueWorkoutsIndices.includes(i)}
-                                <button
-                                    on:click={() => editWorkout(splitSchedule[i])}
-                                    in:scale|local={{ duration: 200 }}
-                                    class="w-full"
-                                >
-                                    Edit
-                                </button>
-                            {:else if uniqueWorkouts.has(splitSchedule[i]) || splitSchedule[i] === 'Rest' || splitSchedule[i].trim() === ''}
-                                <div />
-                            {:else if splitSchedule.indexOf(splitSchedule[i]) === i}
-                                <button
-                                    on:click={() => createWorkout(splitSchedule[i])}
-                                    in:scale|local={{ duration: 200 }}
-                                    class="w-full"
-                                >
-                                    +
-                                </button>
-                            {/if}
-                        </div>
                     </div>
                 {/each}
             </div>
+            <button class="btn btn-sm mt-5 normal-case text-base bg-black" on:click={modifyWorkouts}
+                >Modify workouts</button
+            >
         </div>
-        <div class="flex flex-col gap-2 md:gap-4">
+        <div class="flex flex-col gap-2 md:gap-4 grow justify-between">
             <div class="bg-primary rounded-xl">
                 <div class="stat">
                     <div class="stat-figure">
