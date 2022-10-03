@@ -13,39 +13,43 @@
     } from './editSplitStore';
     const user = $page.data.user;
 
+    let modalTitle: string;
+    let modalTexts: string[];
+    let modalOpen = false;
+    let onClose: () => void = () => {};
+
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const split = $page.data.user?.splits[$page.params.split] as Split;
-    let modifyWorkoutsButton: HTMLButtonElement;
 
+    let modifyWorkoutsButton: HTMLButtonElement;
+    let changeStatus = 'Back';
+
+    // Go back if split doesn't exist (invalid page params)
     if (!split) {
         goto('/records/splits');
     }
+
+    let splitSchedule: Record<string, string> = {};
+    days.forEach((day, i) => {
+        splitSchedule[day] = split.schedule[i];
+    });
+
+    // Load stores, if not loaded
     if (!$CurrentSplit) {
         $CurrentSplit = JSON.parse(JSON.stringify(split));
+        $SplitName = split.name;
+        $SplitWorkouts = JSON.parse(JSON.stringify(split.splitWorkouts));
+        $SplitSchedule = splitSchedule;
     }
 
-    if ($SplitName === '') {
-        $SplitName = split.name;
+    // Override schedule if already exists in store
+    if ($SplitSchedule) {
+        splitSchedule = $SplitSchedule;
     }
-    let splitSchedule: Record<string, string> = {};
-    days.forEach((element, i) => {
-        splitSchedule[element] = split.schedule[i];
-    });
 
     let progressionValue = $CurrentSplit.progressiveOverload;
     if ($CurrentSplitActive === undefined) {
         $CurrentSplitActive = user?.activeSplit === split.name;
-    }
-    let changeStatus = 'Back';
-
-    let splitModified = false;
-    Object.values($SplitSchedule).forEach((workout) => {
-        if (workout !== '') {
-            splitModified = true;
-        }
-    });
-    if (splitModified) {
-        splitSchedule = $SplitSchedule;
     }
 
     const uniqueWorkoutsIndices: number[] = [];
@@ -78,10 +82,34 @@
         }
     }
 
-    let modalTitle: string;
-    let modalTexts: string[];
-    let modalOpen = false;
-    let onClose: () => void = () => {};
+    function workoutChanged(i: number) {
+        const workout = splitSchedule[days[i]];
+        const originalWorkout = split.splitWorkouts[workout];
+        const editedWorkout = $SplitWorkouts[workout];
+
+        if (!editedWorkout || !Object.values(split.schedule).includes(workout)) {
+            return false;
+        }
+        if (originalWorkout.length !== editedWorkout.length) {
+            return true;
+        }
+        for (let i = 0; i < originalWorkout.length; i++) {
+            if (JSON.stringify(originalWorkout[i]) !== JSON.stringify(editedWorkout[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function modifyWorkouts() {
+        // Add newly created workouts to $SplitSchedule with empty Exercise[]
+        Object.values($SplitSchedule).forEach((element) => {
+            if (!Object.keys($SplitWorkouts).includes(element) && element !== 'Rest') {
+                $SplitWorkouts[element] = [];
+            }
+        });
+        goto(`/records/splits/${split.name}/workouts`);
+    }
 
     $: updateChanges($SplitName, frequency, progressionValue, $CurrentSplitActive, splitSchedule);
 
@@ -115,7 +143,8 @@
         }
         if ($CurrentSplitActive !== (user?.activeSplit === split.name)) {
             if ($CurrentSplitActive) {
-                changes.push(`Active split\n${user?.activeSplit} -> ${$SplitName}\n\t`);
+                let currentlyActiveSplit = user?.activeSplit || 'None';
+                changes.push(`Active split\n${currentlyActiveSplit} -> ${$SplitName}\n\t`);
             } else {
                 changes.push(`Active split\n${user?.activeSplit} -> None\n\t`);
             }
@@ -126,6 +155,24 @@
             changeStatus = 'Back';
         }
         return changes;
+    }
+
+    function reviewChanges() {
+        if (changeStatus === 'Save changes') {
+            saveChanges();
+            return;
+        }
+        let changes = updateChanges();
+        if (changes.length > 0) {
+            // Remove newline on last change (looks better)
+            changes[changes.length - 1] = changes[changes.length - 1].replace('\n\t', '');
+            modalTitle = 'Review changes';
+            modalTexts = changes;
+            modalOpen = true;
+            changeStatus = 'Save changes';
+        } else {
+            goto('/records/splits');
+        }
     }
 
     async function saveChanges() {
@@ -159,7 +206,11 @@
             return;
         }
 
-        console.log($CurrentSplit);
+        $CurrentSplit.name = $SplitName;
+        $CurrentSplit.splitWorkouts = $SplitWorkouts;
+        $CurrentSplit.overloadFrequency = frequency;
+        $CurrentSplit.schedule = Object.values($SplitSchedule);
+        $CurrentSplit.progressiveOverload = progressionValue;
 
         const res = await fetch('/api/splits/modifySplit', {
             method: 'POST',
@@ -183,60 +234,6 @@
             }
             modalOpen = true;
         }
-    }
-
-    function reviewChanges() {
-        if (changeStatus === 'Save changes') {
-            saveChanges();
-            return;
-        }
-        let changes = updateChanges();
-        if (changes.length > 0) {
-            // Remove newline on last change (looks better)
-            changes[changes.length - 1] = changes[changes.length - 1].replace('\n\t', '');
-            modalTitle = 'Review changes';
-            modalTexts = changes;
-            modalOpen = true;
-            changeStatus = 'Save changes';
-        } else {
-            goto('/records/splits');
-        }
-    }
-
-    function workoutChanged(i: number) {
-        const workout = splitSchedule[days[i]];
-        const originalWorkout = split.splitWorkouts[workout];
-        const editedWorkout = $SplitWorkouts[workout];
-
-        if (!editedWorkout || !Object.values(split.schedule).includes(workout)) {
-            return false;
-        }
-        if (originalWorkout.length !== editedWorkout.length) {
-            return true;
-        }
-        for (let i = 0; i < originalWorkout.length; i++) {
-            if (JSON.stringify(originalWorkout[i]) !== JSON.stringify(editedWorkout[i])) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    function modifyWorkouts() {
-        const emptySchedule = { Mon: '', Tue: '', Wed: '', Thu: '', Fri: '', Sat: '', Sun: '' };
-        if (JSON.stringify($SplitSchedule) === JSON.stringify(emptySchedule)) {
-            $SplitSchedule = splitSchedule;
-        }
-        if (JSON.stringify($SplitWorkouts) === JSON.stringify({})) {
-            $SplitWorkouts = JSON.parse(JSON.stringify(split.splitWorkouts));
-        }
-
-        Object.values($SplitSchedule).forEach((element) => {
-            if (!Object.keys($SplitWorkouts).includes(element) && element !== 'Rest') {
-                $SplitWorkouts[element] = [];
-            }
-        });
-        goto(`/records/splits/${split.name}/workouts`);
     }
 </script>
 
