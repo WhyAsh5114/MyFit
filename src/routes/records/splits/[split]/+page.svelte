@@ -24,11 +24,6 @@
     let modifyWorkoutsButton: HTMLButtonElement;
     let changeStatus = 'Back';
 
-    // Go back if split doesn't exist (invalid page params)
-    if (!split) {
-        goto('/records/splits');
-    }
-
     let splitSchedule: Record<string, string> = {};
     days.forEach((day, i) => {
         splitSchedule[day] = split.schedule[i];
@@ -102,6 +97,15 @@
     }
 
     function modifyWorkouts() {
+        let uniqueWorkouts = new Set(Object.values(splitSchedule));
+        if (uniqueWorkouts.has('Rest') && uniqueWorkouts.size === 1) {
+            modalTitle = 'Error';
+            modalTexts = ['Should have at least one unique workout'];
+            onClose = () => {};
+            modalOpen = true;
+            return;
+        }
+
         // Add newly created workouts to $SplitSchedule with empty Exercise[]
         Object.values($SplitSchedule).forEach((element) => {
             if (!Object.keys($SplitWorkouts).includes(element) && element !== 'Rest') {
@@ -111,8 +115,20 @@
         goto(`/records/splits/${split.name}/workouts`);
     }
 
-    $: updateChanges($SplitName, frequency, progressionValue, $CurrentSplitActive, splitSchedule);
+    function resetChanges() {
+        $SplitName = split.name;
+        $CurrentSplit = JSON.parse(JSON.stringify(split));
+        days.forEach((day, i) => {
+            splitSchedule[day] = split.schedule[i];
+        });
+        $SplitSchedule = splitSchedule;
+        $SplitWorkouts = JSON.parse(JSON.stringify(split.splitWorkouts));;
+        $CurrentSplitActive = user?.activeSplit === split.name;
+        frequency = split.overloadFrequency;
+        progressionValue = split.progressiveOverload;
+    }
 
+    $: updateChanges($SplitName, frequency, progressionValue, $CurrentSplitActive, splitSchedule);
     function updateChanges(..._args: any[]) {
         let changes = [];
         if ($SplitName !== split.name) {
@@ -231,7 +247,7 @@
             onClose = async () => {
                 await invalidateAll();
                 await goto('/records/splits');
-            }
+            };
             modalOpen = true;
         }
     }
@@ -242,6 +258,7 @@
 </svelte:head>
 <MyModal bind:modalOpen {modalTitle} {modalTexts} bind:onClose />
 <div class="flex flex-col flex-grow justify-center w-full items-center max-w-5xl">
+    <button class="btn btn-sm btn-primary mb-3" on:click={resetChanges}> Reset changes </button>
     <div class="flex items-center w-full max-w-md mb-2 md:mb-8 lg:mb-12">
         <h2 class="text-lg py-1 bg-primary text-center rounded-l-md w-fit px-8 font-semibold">
             Name
