@@ -15,7 +15,7 @@
 <div class="menu-button-grid">
     <MenuButton
         imagePath="/calendar.svg"
-        title="Splits records"
+        title="Split records"
         description="Check and modify created splits"
         link="/records/splits"
     />

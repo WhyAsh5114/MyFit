@@ -32,7 +32,7 @@
     />
     <MenuButton
         imagePath="/record.svg"
-        title="Splits records"
+        title="Split records"
         description="View, copy and adjust previous splits"
         link="/records/splits"
     />
