@@ -121,12 +121,13 @@
                 <div
                     class="stat-value text-4xl transition-colors {textColor} mb-1"
                     in:fly={{ duration: 150, y: 25 }}
+                    data-test-id="progressionValueDiv"
                 >
                     {progressionValue}%
                 </div>
             {/key}
             {#key message}
-                <div class="stat-desc text-white text-sm opacity-70" in:fade={{ duration: 150 }}>
+                <div class="stat-desc text-white text-sm opacity-70" in:fade={{ duration: 150 }} data-test-id="overloadMessageDiv">
                     {message}
                 </div>
             {/key}
@@ -138,8 +139,9 @@
                 max="25"
                 step="2.5"
                 bind:value={progressionValue}
+                data-test-id="progressionValueSlider"
             />
-            <select class="select select-sm w-44" bind:value={frequency}>
+            <select class="select select-sm w-44" bind:value={frequency} data-test-id="overloadFrequencySelector">
                 <option>/session</option>
                 <option selected>/week</option>
                 <option>/month</option>
