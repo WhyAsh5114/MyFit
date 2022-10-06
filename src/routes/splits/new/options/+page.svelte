@@ -93,6 +93,7 @@
 <MyModal bind:modalOpen {modalTitle} {modalTexts} bind:onClose />
 <div class="flex h-full justify-center w-full">
     <div
+        data-test-id="optionsBox"
         class="flex flex-col max-w-lg mx-2 p-2 lg:p-10 border-4 rounded-xl self-center w-full bg-primary bg-opacity-50 {borderColor} transition-colors"
     >
         <div class="stat">
@@ -103,6 +104,7 @@
                     fill="none"
                     class="{strokeColor} {fillColor} transition-colors"
                     xmlns="http://www.w3.org/2000/svg"
+                    data-test-id="graphIcon"
                 >
                     <line x1="10" x2="10" y2="358" stroke-width="15" />
                     <path
@@ -149,4 +151,4 @@
         </div>
     </div>
 </div>
-<button class="footer-button mt-auto" on:click={createSplit}> Create split </button>
+<button data-test-id="createSplitButton" class="footer-button mt-auto" on:click={createSplit}> Create split </button>
