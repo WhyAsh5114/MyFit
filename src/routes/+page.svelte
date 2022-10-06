@@ -10,7 +10,6 @@
         todaysWorkout = userData?.splits[userData?.activeSplit].schedule.at(
             new Date().getDay() - 1
         );
-        console.log(todaysWorkout);
     }
 </script>
 
@@ -20,20 +19,22 @@
 <div class="flex flex-col gap-3 w-5/6 md:w-2/3 max-w-sm justify-center items-center flex-grow">
     {#if userData}
         <p class="text-center">
+            <b>Hi <span class="text-accent">{userData.username}</span>!</b><br />
             {#if Object.keys(userData.splits).length === 0}
-                <b>Hi {userData.username}!</b><br /> You haven't created a schedule yet, create one
-                in <a href="/splits/new"><b>Splits > New split</b></a>
+                You haven't created a schedule yet, create one in <a href="/splits/new"
+                    ><b>Splits > New split</b></a
+                >
             {:else if !userData.activeSplit}
-                <b>Hi {userData.username}!</b><br />
-                You don't have an active split, you can select one from <a href="records/splits"><b>Records > Splits</b></a>
+                You don't have an active split, you can select one from <a href="records/splits"
+                    ><b>Records > Splits</b></a
+                >
                 or create a new one in <a href="/splits/new"><b>Splits > New split</b></a>
             {:else}
-                <b>Hi {userData.username}!</b><br />
                 Your currently active split is <b>{userData.activeSplit}</b><br />
                 {#if todaysWorkout !== 'Rest'}
                     Today you have <b>{todaysWorkout}</b> workout
                 {:else}
-                    Today you have a Rest day!
+                    Today you have a <b>Rest</b> day!
                 {/if}
             {/if}
         </p>
