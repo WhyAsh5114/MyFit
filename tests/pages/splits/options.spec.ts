@@ -79,7 +79,6 @@ test('should display appropriate values "/session"', async ({ splitWorkoutsLoade
                 break;
             }
         }
-        console.log(adjustedValue, adjustedColors);
         adjustedColors?.map((color) => {
             regexes.push(new RegExp(color));
         });
@@ -121,7 +120,6 @@ test('should display appropriate values "/month"', async ({ splitWorkoutsLoadedP
                 break;
             }
         }
-        console.log(adjustedValue, adjustedColors);
         adjustedColors?.map((color) => {
             regexes.push(new RegExp(color));
         });
