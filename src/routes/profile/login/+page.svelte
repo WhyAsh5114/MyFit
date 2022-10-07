@@ -46,6 +46,7 @@
                 modalOpen = true;
             }
         } catch (err) {
+            console.error(err);
             modalTexts = ['Check console for more information'];
             modalOpen = true;
         }
