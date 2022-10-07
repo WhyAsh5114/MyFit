@@ -14,39 +14,45 @@
 </div>
 <div class="menu-button-grid">
     <MenuButton
-        imagePath="/calendar.svg"
         title="Split records"
         description="Check and modify created splits"
         link="/records/splits"
-    />
+    >
+        <img src="$lib/assets/calendar.svg" alt="" class="responsive-image-menu-button" />
+    </MenuButton>
     <MenuButton
-        imagePath="/dumbbell.png"
         title="Workout records"
         description="Check and modify performed workouts"
         link="/records/workouts"
-    />
+    >
+        <img src="$lib/assets/dumbbell.svg" alt="" class="responsive-image-menu-button" />
+    </MenuButton>
     <MenuButton
-        imagePath="/heart.svg"
         title="Cardio records"
         description="Check and modify performed cardio workouts"
         link="/records/cardio"
-    />
+    >
+        <img src="$lib/assets/heart.svg" alt="" class="responsive-image-menu-button" />
+    </MenuButton>
     <MenuButton
-        imagePath="/moon.svg"
         title="Sleep records"
         description="Check and edit sleep logs"
         link="/records/sleep"
-    />
+    >
+        <img src="$lib/assets/moon.svg" alt="" class="responsive-image-menu-button" />
+    </MenuButton>
     <MenuButton
-        imagePath="/bowl.svg"
         title="Nutritional records"
         description="Check and edit nutrition logs"
         link="/records/nutrition"
-    />
+    >
+        <img src="$lib/assets/bowl.svg" alt="" class="responsive-image-menu-button" />
+    </MenuButton>
     <MenuButton
-        imagePath="/scale.svg"
         title="Nutritional records"
         description="Check and edit body metrics"
         link="/records/bodystats"
-    />
+    >
+        <img src="$lib/assets/scale.svg" alt="" class="responsive-image-menu-button" />
+    </MenuButton>
 </div>
