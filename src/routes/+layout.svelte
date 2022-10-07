@@ -8,7 +8,7 @@
         class="btn h-full normal-case text-xl md:text-2xl lg:text-4xl btn-primary flex-grow gap-2"
         href="/"
     >
-        <img src="/favicon.png" alt="logo" width="40" />
+        <img src="$lib/assets/favicon.webp" alt="logo" width="40" height="40" />
         MyFit
     </a>
     <div class="dropdown dropdown-end ml-auto h-full">
@@ -17,8 +17,8 @@
             class="btn btn-primary btn-square lg:px-1.5 h-full avatar lg:w-20"
             data-test-id="dropdown-button"
         >
-            <div class="rounded-full w-8 md:w-9 lg:w-12">
-                <img src="/profile.png" alt="profile-pic" />
+            <div class="rounded-full h-8 md:h-9 lg:h-12 w-8 md:w-9 lg:w-12">
+                <img src="$lib/assets/profile.webp" alt="profile-pic" />
             </div>
         </button>
         <ul
