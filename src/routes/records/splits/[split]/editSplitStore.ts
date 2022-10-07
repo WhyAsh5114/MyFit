@@ -13,3 +13,4 @@ export const SplitSchedule: Writable<Record<string, string>> = writable({
 });
 export const SplitWorkouts: Writable<Record<string, Exercise[]>> = writable({});
 export const CurrentSplitActive: Writable<boolean | undefined> = writable();
+export const CurrentSplitOriginalName: Writable<string | undefined> = writable();

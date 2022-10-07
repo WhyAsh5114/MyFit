@@ -9,7 +9,8 @@
         SplitSchedule,
         SplitName,
         SplitWorkouts,
-        CurrentSplitActive
+        CurrentSplitActive,
+        CurrentSplitOriginalName
     } from './editSplitStore';
     const user = $page.data.user;
 
@@ -17,6 +18,7 @@
     let modalTexts: string[];
     let modalOpen = false;
     let onClose: () => void = () => {};
+    let deletingSplit = false;
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const split = $page.data.user?.splits[$page.params.split] as Split;
@@ -30,11 +32,13 @@
     });
 
     // Load stores, if not loaded
-    if (!$CurrentSplit) {
+    if (!$CurrentSplit || !$CurrentSplitOriginalName) {
         $CurrentSplit = JSON.parse(JSON.stringify(split));
         $SplitName = split.name;
         $SplitWorkouts = JSON.parse(JSON.stringify(split.splitWorkouts));
         $SplitSchedule = splitSchedule;
+        $CurrentSplitActive = user?.activeSplit === split.name;
+        $CurrentSplitOriginalName = split.name;
     }
 
     // Override schedule if already exists in store
@@ -115,6 +119,43 @@
         goto(`/records/splits/${split.name}/workouts`);
     }
 
+    function confirmDeleteSplit() {
+        modalTitle = 'Warning';
+        modalTexts = [
+            'Are you sure you want to delete this split?',
+            'This action cannot be undone!'
+        ];
+        deletingSplit = true;
+        modalOpen = true;
+        onClose = () => {
+            deletingSplit = false;
+        };
+    }
+
+    async function deleteSplit() {
+        deletingSplit = false;
+        const res = await fetch('/api/splits/deleteSplit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                splitName: split.name,
+                user: $page.data.user
+            })
+        });
+        const body = await res.text();
+        if (res.ok) {
+            modalTitle = 'Success';
+            modalTexts = [body];
+            onClose = async () => {
+                await invalidateAll();
+                await goto('/records/splits');
+            };
+            modalOpen = true;
+        }
+    }
+
     function resetChanges() {
         $SplitName = split.name;
         $CurrentSplit = JSON.parse(JSON.stringify(split));
@@ -122,7 +163,7 @@
             splitSchedule[day] = split.schedule[i];
         });
         $SplitSchedule = splitSchedule;
-        $SplitWorkouts = JSON.parse(JSON.stringify(split.splitWorkouts));;
+        $SplitWorkouts = JSON.parse(JSON.stringify(split.splitWorkouts));
         $CurrentSplitActive = user?.activeSplit === split.name;
         frequency = split.overloadFrequency;
         progressionValue = split.progressiveOverload;
@@ -185,6 +226,7 @@
             modalTitle = 'Review changes';
             modalTexts = changes;
             modalOpen = true;
+            onClose = () => {};
             changeStatus = 'Save changes';
         } else {
             goto('/records/splits');
@@ -249,6 +291,10 @@
                 await goto('/records/splits');
             };
             modalOpen = true;
+        } else {
+            modalTitle = 'Error';
+            modalTexts = [body];
+            onClose = () => {};
         }
     }
 </script>
@@ -256,9 +302,23 @@
 <svelte:head>
     <title>MyFit | Split records</title>
 </svelte:head>
-<MyModal bind:modalOpen {modalTitle} {modalTexts} bind:onClose />
+<MyModal bind:modalOpen {modalTitle} {modalTexts} bind:onClose>
+    {#if deletingSplit}
+        <div class="flex justify-around">
+            <button class="btn btn-error text-white basis-36" on:click={deleteSplit}>Delete split</button>
+            <button class="btn btn-accent basis-36" on:click={() => {modalOpen = false}}>Cancel</button>
+        </div>
+    {/if}
+</MyModal>
 <div class="flex flex-col flex-grow justify-center w-full items-center max-w-5xl">
-    <button class="btn btn-sm btn-primary mb-3" on:click={resetChanges}> Reset changes </button>
+    <div class="flex justify-evenly w-full max-w-sm gap-5">
+        <button class="btn btn-sm btn-primary mb-3 basis-36" on:click={resetChanges}>
+            Reset changes
+        </button>
+        <button class="btn btn-sm btn-error mb-3 basis-36 text-white" on:click={confirmDeleteSplit}>
+            Delete split
+        </button>
+    </div>
     <div class="flex items-center w-full max-w-md mb-2 md:mb-8 lg:mb-12">
         <h2 class="text-lg py-1 bg-primary text-center rounded-l-md w-fit px-8 font-semibold">
             Name
