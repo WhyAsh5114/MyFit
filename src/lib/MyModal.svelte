@@ -1,3 +1,7 @@
+<!-- TODO: Refactor modal usage -->
+<!-- add a function in usefulFunctions to open and close modal with default and required arguments -->
+<!-- shouldn't always be a list, can also have a single statement in a paragraph tag -->
+
 <script lang="ts">
     export let modalOpen = false;
     export let modalTitle: string;
@@ -26,7 +30,7 @@
 <label
     for={modalName}
     class="modal modal-bottom md:modal-middle cursor-pointer"
-    on:click={() => {
+    on:click|self={() => {
         onClose();
     }}
     data-test-id="modal"
@@ -35,7 +39,10 @@
         <label
             for={modalName}
             class="btn btn-sm btn-circle absolute right-2 top-2"
-            data-test-id="close-modal-button">✕</label
+            data-test-id="close-modal-button"
+            on:click|self={() => {
+                onClose();
+            }}>✕</label
         >
         <h3 class="text-lg font-bold {modalTitleColor}" data-test-id="modal-title">{modalTitle}</h3>
         <ul class="py-4 list-disc pl-5" data-test-id="modal-messages-list">
@@ -43,5 +50,6 @@
                 <li class="whitespace-pre-wrap">{text}</li>
             {/each}
         </ul>
+        <slot />
     </label>
 </label>
