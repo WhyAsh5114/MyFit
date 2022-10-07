@@ -66,9 +66,11 @@
         if (res.ok) {
             modalTitle = 'Success';
             modalTexts = ['Split created successfully'];
-            onClose = () => goto('/');
+            onClose = async () => {
+                await invalidateAll();
+                await goto('/');
+            };
             modalOpen = true;
-            await invalidateAll();
         } else {
             const body = await res.text();
             modalTitle = 'Error';
