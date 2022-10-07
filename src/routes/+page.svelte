@@ -54,8 +54,32 @@
     {/if}
 </div>
 <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 w-full">
-    <HomepageButton title="Splits" imagePath="/calendar.svg" link="/splits" />
-    <HomepageButton title="Logging" imagePath="/pencil.svg" link="/logging" />
-    <HomepageButton title="Records" imagePath="/record.svg" link="/records" />
-    <HomepageButton title="Tracking" imagePath="/graph.svg" link="/tracking" />
+    <HomepageButton title="Splits" link="/splits">
+        <img
+            src="$lib/assets/calendar.svg"
+            alt="splits-calendar"
+            class="responsive-image"
+        />
+    </HomepageButton>
+    <HomepageButton title="Logging" link="/logging">
+        <img
+            src="$lib/assets/pencil.svg"
+            alt="logging-pencil"
+            class="responsive-image"
+        />
+    </HomepageButton>
+    <HomepageButton title="Records" link="/records">
+        <img
+            src="$lib/assets/record.svg"
+            alt="records-book"
+            class="responsive-image"
+        />
+    </HomepageButton>
+    <HomepageButton title="Tracking" link="/tracking">
+        <img
+            src="$lib/assets/graph.svg"
+            alt="tracking-graph"
+            class="responsive-image"
+        />
+    </HomepageButton>
 </div>
