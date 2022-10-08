@@ -23,7 +23,7 @@
     </ul>
 </div>
 <div
-    class="flex flex-col w-full max-w-md mt-2 gap-2 h-px flex-auto overflow-y-auto"
+    class="flex flex-col w-full max-w-md mt-2 px-3 gap-2 h-px flex-auto overflow-y-auto"
 >
     {#each splits as split}
         <a
@@ -35,8 +35,8 @@
             href="/records/splits/{split.name}"
             on:click={() => clearStores(split.name)}
         >
-            <h2 class="text-lg font-semibold">{split.name}</h2>
-            <h3 class="ml-auto">
+            <h2 class="text-lg font-semibold overflow-hidden text-ellipsis">{split.name}</h2>
+            <h3 class="ml-auto basis-28 text-right shrink-0">
                 {getFormattedDate(split.timeCreated)}
             </h3>
         </a>
