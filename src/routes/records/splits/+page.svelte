@@ -22,10 +22,12 @@
         <li>Splits</li>
     </ul>
 </div>
-<div class="flex flex-col w-full max-w-md gap-2 items-center justify-center flex-grow">
+<div
+    class="flex flex-col w-full max-w-md mt-2 gap-2 h-px flex-auto overflow-y-auto"
+>
     {#each splits as split}
         <a
-            class="flex flex-col w-full gap-1 bg-primary rounded-lg p-3 active:scale-95 hover:bg-opacity-50 transition-all border-2 {split.name ===
+            class="flex w-full bg-primary rounded-lg p-3 active:scale-95 hover:bg-opacity-50 transition-all border-2 {split.name ===
             user?.activeSplit
                 ? 'border-accent'
                 : 'border-base-100'}"
@@ -33,12 +35,10 @@
             href="/records/splits/{split.name}"
             on:click={() => clearStores(split.name)}
         >
-            <div class="flex w-full">
-                <h2 class="text-lg font-semibold">{split.name}</h2>
-                <h3 class="ml-auto">
-                    {getFormattedDate(split.timeCreated)}
-                </h3>
-            </div>
+            <h2 class="text-lg font-semibold">{split.name}</h2>
+            <h3 class="ml-auto">
+                {getFormattedDate(split.timeCreated)}
+            </h3>
         </a>
     {/each}
     {#if splits.length === 0}
