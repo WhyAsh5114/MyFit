@@ -2,8 +2,6 @@ import { ErrorResponse, setUser } from '../../_db';
 import type { RequestHandler } from '@sveltejs/kit';
 import { parse } from 'cookie';
 
-// TODO: playwright tests
-
 export const POST: RequestHandler = async ({ request }) => {
     const {
         thisActive,
