@@ -146,9 +146,9 @@
             entry.draggable = true;
             entry.classList.add('cursor-grab');
             entry.addEventListener('drag', handleNormalDrag);
-            entry.addEventListener('touchmove', handleTouchDrag);
+            entry.addEventListener('touchmove', handleTouchDrag, { passive: true });
             entry.addEventListener('dragend', removeHighlight);
-            entry.addEventListener('touchend', removeHighlight);
+            entry.addEventListener('touchend', removeHighlight, { passive: true });
         }
     }
 
