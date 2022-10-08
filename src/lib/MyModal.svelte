@@ -22,7 +22,7 @@
     }
 </script>
 
-<input type="checkbox" id={modalName} class="modal-toggle" bind:checked={modalOpen} />
+<input type="checkbox" id={modalName} class="modal-toggle" aria-label="modal-toggle" bind:checked={modalOpen} />
 <label
     for={modalName}
     class="modal modal-bottom md:modal-middle cursor-pointer"
