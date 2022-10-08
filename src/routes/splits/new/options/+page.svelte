@@ -131,7 +131,11 @@
                 </div>
             {/key}
             {#key message}
-                <div class="stat-desc text-white text-sm opacity-70" in:fade={{ duration: 150 }} data-test-id="overloadMessageDiv">
+                <div
+                    class="stat-desc text-white text-sm opacity-70"
+                    in:fade={{ duration: 150 }}
+                    data-test-id="overloadMessageDiv"
+                >
                     {message}
                 </div>
             {/key}
@@ -145,7 +149,11 @@
                 bind:value={progressionValue}
                 data-test-id="progressionValueSlider"
             />
-            <select class="select select-sm w-44" bind:value={frequency} data-test-id="overloadFrequencySelector">
+            <select
+                class="select select-sm w-44"
+                bind:value={frequency}
+                data-test-id="overloadFrequencySelector"
+            >
                 <option>/session</option>
                 <option selected>/week</option>
                 <option>/month</option>
@@ -153,4 +161,6 @@
         </div>
     </div>
 </div>
-<button data-test-id="createSplitButton" class="footer-button mt-auto" on:click={createSplit}> Create split </button>
+<button data-test-id="createSplitButton" class="footer-button mt-auto" on:click={createSplit}>
+    Create split
+</button>

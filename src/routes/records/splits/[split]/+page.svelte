@@ -118,7 +118,6 @@
         goto(`/records/splits/${split.name}/workouts`);
     }
 
-
     let deletingModalOpen = false;
     let deletingModalTitle = '';
     let deletingModalTexts: string[] = [];
@@ -298,23 +297,47 @@
     <title>MyFit | Split records</title>
 </svelte:head>
 <MyModal bind:modalOpen {modalTitle} {modalTexts} bind:onClose />
-<MyModal bind:modalOpen={deletingModalOpen} modalTitle={deletingModalTitle} modalTexts={deletingModalTexts} modalName="deletingModal">
+<MyModal
+    bind:modalOpen={deletingModalOpen}
+    modalTitle={deletingModalTitle}
+    modalTexts={deletingModalTexts}
+    modalName="deletingModal"
+>
     <div class="flex justify-around">
-        <button class="btn btn-error text-white basis-36" on:click={() => {deletingModalOpen = false; deleteSplit()}}
-            >Delete split</button
+        <button
+            class="btn btn-error text-white basis-36"
+            on:click={() => {
+                deletingModalOpen = false;
+                deleteSplit();
+            }}>Delete split</button
         >
         <button
             class="btn btn-accent basis-36"
-            on:click={() => {deletingModalOpen = false}}>Cancel</button
+            on:click={() => {
+                deletingModalOpen = false;
+            }}>Cancel</button
         >
     </div>
 </MyModal>
-<MyModal bind:modalOpen={modifyingModalOpen} modalTitle={modifyingModalTitle} modalTexts={modifyingModalTexts} modalName="modifyingModal">
+<MyModal
+    bind:modalOpen={modifyingModalOpen}
+    modalTitle={modifyingModalTitle}
+    modalTexts={modifyingModalTexts}
+    modalName="modifyingModal"
+>
     <div class="flex justify-around">
-        <button class="btn btn-accent basis-36" on:click={() => {modifyingModalOpen = false; saveChanges()}}>Save split</button>
+        <button
+            class="btn btn-accent basis-36"
+            on:click={() => {
+                modifyingModalOpen = false;
+                saveChanges();
+            }}>Save split</button
+        >
         <button
             class="btn btn-error basis-36 text-white"
-            on:click={() => {modifyingModalOpen = false}}>Cancel</button
+            on:click={() => {
+                modifyingModalOpen = false;
+            }}>Cancel</button
         >
     </div>
 </MyModal>
@@ -328,12 +351,16 @@
         </button>
     </div>
     <div class="flex items-center w-full max-w-md mb-2 md:mb-8 lg:mb-12">
-        <h2 class="text-lg py-1 bg-primary text-center rounded-l-md w-fit px-8 font-semibold">
+        <label
+            class="text-lg py-1 bg-primary text-center rounded-l-md w-fit px-8 font-semibold"
+            for="split-name-input"
+        >
             Name
-        </h2>
+        </label>
         <input
             class="text-lg font-semibold py-1 bg-secondary text-black w-full text-center rounded-r-md"
             bind:value={$SplitName}
+            id="split-name-input"
         />
     </div>
     <div class="grid md:grid-cols-2 w-full gap-2 md:gap-10 mb-2">
@@ -342,11 +369,12 @@
             <div class="flex flex-col gap-2 flex-grow justify-center text-base">
                 {#each days as day, i}
                     <div class="flex text-black bg-secondary rounded-lg">
-                        <h4
+                        <label
                             class="basis-14 flex-shrink-0 font-semibold pl-2.5 bg-accent rounded-l-lg py-1"
+                            for={`${day}-workout-input`}
                         >
                             {day}
-                        </h4>
+                        </label>
                         <input
                             class="w-full text-center py-1"
                             on:focusout={function focusout({ currentTarget }) {
@@ -355,6 +383,7 @@
                                 }
                             }}
                             bind:value={splitSchedule[day]}
+                            id={`${day}-workout-input`}
                         />
                         {#key splitSchedule[day]}
                             <div class="basis-24 flex-shrink-0 text-center">
@@ -413,7 +442,10 @@
                             <option>/month</option>
                         </select>
                     </div>
-                    <div class="stat-title font-semibold text-lg opacity-95">Progression</div>
+                    <label
+                        class="stat-title font-semibold text-lg opacity-95"
+                        for="progression-range-input">Progression</label
+                    >
                     {#key progressionValue}
                         <div
                             class="stat-value text-4xl transition-colors {textColor} mb-1"
@@ -429,15 +461,24 @@
                         class="range range-xs range-secondary"
                         max="25"
                         step="2.5"
+                        id="progression-range-input"
                         bind:value={progressionValue}
                     />
                 </div>
             </div>
             <div class="stat bg-primary rounded-xl">
                 <div class="stat-figure text-secondary">
-                    <input type="checkbox" class="toggle" bind:checked={$CurrentSplitActive} />
+                    <input
+                        type="checkbox"
+                        class="toggle"
+                        bind:checked={$CurrentSplitActive}
+                        id="split-status-input"
+                        aria-label="split-status-input"
+                    />
                 </div>
-                <div class="stat-title opacity-95 font-semibold">Status</div>
+                <label class="stat-title opacity-95 font-semibold" for="split-status-input"
+                    >Status</label
+                >
                 {#if $CurrentSplitActive}
                     <div class="stat-value text-success">Active</div>
                 {:else}

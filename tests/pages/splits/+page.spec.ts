@@ -20,10 +20,12 @@ test('should redirect to "/splits/new" if logged in "New split"', async ({ logge
     await loggedInPage.locator('h2', { hasText: 'New split' }).click();
     await loggedInPage.waitForNavigation();
     expect(loggedInPage.url()).toContain('/splits/new');
-})
+});
 
-test('should redirect to "/records/splits" if logged in "Split records"', async ({ loggedInPage }) => {
+test('should redirect to "/records/splits" if logged in "Split records"', async ({
+    loggedInPage
+}) => {
     await loggedInPage.locator('h2', { hasText: 'Split records' }).click();
     await loggedInPage.waitForNavigation();
     expect(loggedInPage.url()).toContain('/records/splits');
-})
+});

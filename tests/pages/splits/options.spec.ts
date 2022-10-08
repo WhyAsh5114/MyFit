@@ -146,9 +146,6 @@ test('should call saveSplit endpoint, show correct modal, and redirect to home a
     await expect(modalTitle).toHaveText('Success');
     expect(await modalTexts.allTextContents()).toEqual(['Split created successfully']);
 
-    await Promise.all([
-        modalCloseButton.click(),
-        page.waitForNavigation()
-    ]);
-    expect(page.url()).toBe('http://localhost:4173/')
+    await Promise.all([modalCloseButton.click(), page.waitForNavigation()]);
+    expect(page.url()).toBe('http://localhost:4173/');
 });

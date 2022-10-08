@@ -55,31 +55,15 @@
 </div>
 <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 w-full">
     <HomepageButton title="Splits" link="/splits">
-        <img
-            src="$lib/assets/calendar.svg"
-            alt=""
-            class="responsive-image-home-button"
-        />
+        <img src="$lib/assets/calendar.svg" alt="" class="responsive-image-home-button" />
     </HomepageButton>
     <HomepageButton title="Logging" link="/logging">
-        <img
-            src="$lib/assets/pencil.svg"
-            alt=""
-            class="responsive-image-home-button"
-        />
+        <img src="$lib/assets/pencil.svg" alt="" class="responsive-image-home-button" />
     </HomepageButton>
     <HomepageButton title="Records" link="/records">
-        <img
-            src="$lib/assets/record.svg"
-            alt=""
-            class="responsive-image-home-button"
-        />
+        <img src="$lib/assets/record.svg" alt="" class="responsive-image-home-button" />
     </HomepageButton>
     <HomepageButton title="Tracking" link="/tracking">
-        <img
-            src="$lib/assets/graph.svg"
-            alt=""
-            class="responsive-image-home-button"
-        />
+        <img src="$lib/assets/graph.svg" alt="" class="responsive-image-home-button" />
     </HomepageButton>
 </div>

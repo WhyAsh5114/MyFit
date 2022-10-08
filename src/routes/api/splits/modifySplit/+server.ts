@@ -2,6 +2,8 @@ import { ErrorResponse, setUser } from '../../_db';
 import type { RequestHandler } from '@sveltejs/kit';
 import { parse } from 'cookie';
 
+// TODO: playwright tests
+
 export const POST: RequestHandler = async ({ request }) => {
     const {
         thisActive,
@@ -15,7 +17,7 @@ export const POST: RequestHandler = async ({ request }) => {
     const sessionID = parse(request.headers.get('cookie') || '').sessionID;
 
     // Make sure user is logged in by checking if
-    // locals.user and sessionID are loaded
+    // sessionID is loaded
     if (!user || !sessionID) {
         return new Response('Not logged in, locals empty', {
             status: 403

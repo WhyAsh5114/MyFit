@@ -24,7 +24,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
     // Remove the split from userData
     delete user.splits[splitName];
-    
+
     // Make the activeSplit undefined if it was referring to the split being deleted
     if (user.activeSplit === splitName) {
         user.activeSplit = undefined;

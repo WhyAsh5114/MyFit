@@ -34,11 +34,7 @@
     >
         <img src="$lib/assets/heart.svg" alt="" class="responsive-image-menu-button" />
     </MenuButton>
-    <MenuButton
-        title="Sleep records"
-        description="Check and edit sleep logs"
-        link="/records/sleep"
-    >
+    <MenuButton title="Sleep records" description="Check and edit sleep logs" link="/records/sleep">
         <img src="$lib/assets/moon.svg" alt="" class="responsive-image-menu-button" />
     </MenuButton>
     <MenuButton

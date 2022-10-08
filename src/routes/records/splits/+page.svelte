@@ -25,9 +25,7 @@
         <li>Splits</li>
     </ul>
 </div>
-<div
-    class="flex flex-col w-full max-w-md mt-2 px-3 gap-2 h-px flex-auto overflow-y-auto"
->
+<div class="flex flex-col w-full max-w-md mt-2 px-3 gap-2 h-px flex-auto overflow-y-auto">
     {#each splits as split}
         <a
             class="flex w-full bg-primary rounded-lg p-3 active:scale-95 hover:bg-opacity-50 transition-all border-2 {split.name ===
