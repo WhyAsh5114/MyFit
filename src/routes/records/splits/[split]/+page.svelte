@@ -18,7 +18,6 @@
     let modalTexts: string[];
     let modalOpen = false;
     let onClose: () => void = () => {};
-    let deletingSplit = false;
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const split = $page.data.user?.splits[$page.params.split] as Split;
@@ -119,21 +118,20 @@
         goto(`/records/splits/${split.name}/workouts`);
     }
 
+
+    let deletingModalOpen = false;
+    let deletingModalTitle = '';
+    let deletingModalTexts: string[] = [];
     function confirmDeleteSplit() {
-        modalTitle = 'Warning';
-        modalTexts = [
+        deletingModalTitle = 'Warning';
+        deletingModalTexts = [
             'Are you sure you want to delete this split?',
             'This action cannot be undone!'
         ];
-        deletingSplit = true;
-        modalOpen = true;
-        onClose = () => {
-            deletingSplit = false;
-        };
+        deletingModalOpen = true;
     }
 
     async function deleteSplit() {
-        deletingSplit = false;
         const res = await fetch('/api/splits/deleteSplit', {
             method: 'POST',
             headers: {
@@ -214,20 +212,17 @@
         return changes;
     }
 
+    let modifyingModalOpen = false;
+    let modifyingModalTitle = '';
+    let modifyingModalTexts: string[] = [];
     function reviewChanges() {
-        if (changeStatus === 'Save changes') {
-            saveChanges();
-            return;
-        }
         let changes = updateChanges();
         if (changes.length > 0) {
             // Remove newline on last change (looks better)
             changes[changes.length - 1] = changes[changes.length - 1].replace('\n\t', '');
-            modalTitle = 'Review changes';
-            modalTexts = changes;
-            modalOpen = true;
-            onClose = () => {};
-            changeStatus = 'Save changes';
+            modifyingModalTitle = 'Review changes';
+            modifyingModalTexts = changes;
+            modifyingModalOpen = true;
         } else {
             goto('/records/splits');
         }
@@ -302,13 +297,26 @@
 <svelte:head>
     <title>MyFit | Split records</title>
 </svelte:head>
-<MyModal bind:modalOpen {modalTitle} {modalTexts} bind:onClose>
-    {#if deletingSplit}
-        <div class="flex justify-around">
-            <button class="btn btn-error text-white basis-36" on:click={deleteSplit}>Delete split</button>
-            <button class="btn btn-accent basis-36" on:click={() => {modalOpen = false}}>Cancel</button>
-        </div>
-    {/if}
+<MyModal bind:modalOpen {modalTitle} {modalTexts} bind:onClose />
+<MyModal bind:modalOpen={deletingModalOpen} modalTitle={deletingModalTitle} modalTexts={deletingModalTexts} modalName="deletingModal">
+    <div class="flex justify-around">
+        <button class="btn btn-error text-white basis-36" on:click={() => {deletingModalOpen = false; deleteSplit()}}
+            >Delete split</button
+        >
+        <button
+            class="btn btn-accent basis-36"
+            on:click={() => {deletingModalOpen = false}}>Cancel</button
+        >
+    </div>
+</MyModal>
+<MyModal bind:modalOpen={modifyingModalOpen} modalTitle={modifyingModalTitle} modalTexts={modifyingModalTexts} modalName="modifyingModal">
+    <div class="flex justify-around">
+        <button class="btn btn-accent basis-36" on:click={() => {modifyingModalOpen = false; saveChanges()}}>Save split</button>
+        <button
+            class="btn btn-error basis-36 text-white"
+            on:click={() => {modifyingModalOpen = false}}>Cancel</button
+        >
+    </div>
 </MyModal>
 <div class="flex flex-col flex-grow justify-center w-full items-center max-w-5xl">
     <div class="flex justify-evenly w-full max-w-sm gap-5">
