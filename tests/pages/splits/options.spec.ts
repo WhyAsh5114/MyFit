@@ -17,44 +17,14 @@ test('should load default values (color, message, freq, value)', async ({
     ).toEqual('/week');
 });
 
-test('should display appropriate values "/week"', async ({ splitWorkoutsLoadedPage }) => {
+test('should display appropriate values', async ({ splitWorkoutsLoadedPage }) => {
     const page = splitWorkoutsLoadedPage;
     const slider = page.locator('input[data-test-id="progressionValueSlider"]');
     const progressionValue = page.locator('div[data-test-id="progressionValueDiv"]');
     const overloadMessage = page.locator('div[data-test-id="overloadMessageDiv"]');
     const graphIcon = page.locator('[data-test-id="graphIcon"]');
     const optionsBox = page.locator('[data-test-id="optionsBox"]');
-
-    const check = async (inputValue: string, colors: RegExp[], message: string) => {
-        await slider.fill(inputValue);
-        await expect(progressionValue).toHaveText(`${inputValue}%`);
-        await expect(progressionValue).toHaveClass(colors[0]);
-        await expect(overloadMessage).toHaveText(message);
-        await expect(graphIcon).toHaveClass(colors[2]);
-        await expect(graphIcon).toHaveClass(colors[3]);
-        await expect(optionsBox).toHaveClass(colors[1]);
-    };
-
-    for (let i = 0; i <= 10; i++) {
-        const inputValue = i * 2.5;
-        let regexes: RegExp[] = [];
-        colors.get(inputValue)?.map((color) => {
-            regexes.push(new RegExp(color));
-        });
-        await check(inputValue.toString(), regexes, messages[inputValue]);
-    }
-});
-
-test('should display appropriate values "/session"', async ({ splitWorkoutsLoadedPage }) => {
-    const page = splitWorkoutsLoadedPage;
-    const slider = page.locator('input[data-test-id="progressionValueSlider"]');
-    const progressionValue = page.locator('div[data-test-id="progressionValueDiv"]');
-    const overloadMessage = page.locator('div[data-test-id="overloadMessageDiv"]');
-    const graphIcon = page.locator('[data-test-id="graphIcon"]');
-    const optionsBox = page.locator('[data-test-id="optionsBox"]');
-
     const frequencySelector = page.locator('[data-test-id="overloadFrequencySelector"]');
-    await frequencySelector.selectOption('/session');
 
     const check = async (inputValue: string, colorMatchers: RegExp[], message: string) => {
         await slider.fill(inputValue);
@@ -66,6 +36,16 @@ test('should display appropriate values "/session"', async ({ splitWorkoutsLoade
         await expect(optionsBox).toHaveClass(colorMatchers[1]);
     };
 
+    for (let i = 0; i <= 10; i++) {
+        const inputValue = i * 2.5;
+        let regexes: RegExp[] = [];
+        colors.get(inputValue)?.map((color) => {
+            regexes.push(new RegExp(color));
+        });
+        await check(inputValue.toString(), regexes, messages[inputValue]);
+    }
+
+    await frequencySelector.selectOption('/session');
     for (let i = 0; i <= 10; i++) {
         const inputValue = i * 2.5;
         let regexes: RegExp[] = [];
@@ -84,29 +64,8 @@ test('should display appropriate values "/session"', async ({ splitWorkoutsLoade
         });
         await check(inputValue.toString(), regexes, messages[adjustedValue]);
     }
-});
 
-test('should display appropriate values "/month"', async ({ splitWorkoutsLoadedPage }) => {
-    const page = splitWorkoutsLoadedPage;
-    const slider = page.locator('input[data-test-id="progressionValueSlider"]');
-    const progressionValue = page.locator('div[data-test-id="progressionValueDiv"]');
-    const overloadMessage = page.locator('div[data-test-id="overloadMessageDiv"]');
-    const graphIcon = page.locator('[data-test-id="graphIcon"]');
-    const optionsBox = page.locator('[data-test-id="optionsBox"]');
-
-    const frequencySelector = page.locator('[data-test-id="overloadFrequencySelector"]');
     await frequencySelector.selectOption('/month');
-
-    const check = async (inputValue: string, colorMatchers: RegExp[], message: string) => {
-        await slider.fill(inputValue);
-        await expect(progressionValue).toHaveText(`${inputValue}%`);
-        await expect(progressionValue).toHaveClass(colorMatchers[0]);
-        await expect(overloadMessage).toHaveText(message);
-        await expect(graphIcon).toHaveClass(colorMatchers[2]);
-        await expect(graphIcon).toHaveClass(colorMatchers[3]);
-        await expect(optionsBox).toHaveClass(colorMatchers[1]);
-    };
-
     for (let i = 0; i <= 10; i++) {
         const inputValue = i * 2.5;
         let regexes: RegExp[] = [];
