@@ -1,7 +1,3 @@
-<!-- TODO: Refactor modal usage -->
-<!-- add a function in usefulFunctions to open and close modal with default and required arguments -->
-<!-- shouldn't always be a list, can also have a single statement in a paragraph tag -->
-
 <script lang="ts">
     export let modalOpen = false;
     export let modalTitle: string;
