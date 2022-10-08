@@ -15,6 +15,9 @@
     }
 </script>
 
+<svelte:head>
+    <title>MyFit | Records</title>
+</svelte:head>
 <div class="breadcrumbs-container">
     <ul>
         <li><a href="/">Home</a></li>
