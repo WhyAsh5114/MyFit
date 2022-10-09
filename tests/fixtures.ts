@@ -22,6 +22,9 @@ type MyFixtures = {
     split: Split;
     splitStoreLoadedPage: Page;
     splitWorkoutsLoadedPage: Page;
+    splitCreatedPage: Page;
+    extraSplits: Split[];
+    extraSplitsCreatedPage: Page;
 };
 
 export const test = base.extend<MyFixtures>({
@@ -180,6 +183,140 @@ export const test = base.extend<MyFixtures>({
             await use(page);
         },
         { scope: 'test' }
+    ],
+    splitCreatedPage: [
+        async ({ splitWorkoutsLoadedPage, split }, use) => {
+            await splitWorkoutsLoadedPage
+                .locator('button', { hasText: 'Set split options' })
+                .click();
+
+            const page = splitWorkoutsLoadedPage;
+            const slider = page.locator('input[data-test-id="progressionValueSlider"]');
+            const progressionValue = page.locator('div[data-test-id="progressionValueDiv"]');
+            const frequencySelector = page.locator('[data-test-id="overloadFrequencySelector"]');
+
+            await slider.fill(split.progressiveOverload.toString());
+            await expect(progressionValue).toHaveText(`${split.progressiveOverload}%`);
+            await frequencySelector.selectOption(split.overloadFrequency);
+
+            const createSplitButton = page.locator('[data-test-id="createSplitButton"]');
+            await Promise.all([
+                createSplitButton.click(),
+                page.waitForRequest('/api/splits/saveSplit'),
+                page.waitForResponse((res) => res.ok())
+            ]);
+
+            const modalTitle = page.locator('[data-test-id="modal-title"]');
+            const modalTexts = page.locator('[data-test-id="modal-messages-list"] li');
+            const modalCloseButton = page.locator('[data-test-id="close-modal-button"]');
+
+            await expect(modalTitle).toHaveText('Success');
+            expect(await modalTexts.allTextContents()).toEqual(['Split created successfully']);
+
+            await Promise.all([modalCloseButton.click(), page.waitForNavigation()]);
+            expect(page.url()).toBe('http://localhost:4173/');
+
+            await use(page);
+        },
+        { scope: 'test' }
+    ],
+    extraSplits: [
+        async ({}, use) => {
+            const split2: Split = {
+                name: 'Upper Lower',
+                schedule: ['Upper 1', 'Lower 1', 'Rest', 'Upper 2', 'Lower 2', 'Rest', 'Rest'],
+                splitWorkouts: {
+                    'Upper 1': [
+                        { id: 1, name: 'Bench press', reps: 5, sets: 3, load: 25 },
+                        { id: 2, name: 'Lat pulldown', reps: 12, sets: 3, load: 15 },
+                        { id: 3, name: 'Incline dumbbell press', reps: 12, sets: 3, load: 15 },
+                        { id: 4, name: 'Seated row', reps: 12, sets: 3, load: 15 },
+                        { id: 5, name: 'Overhead press', reps: 12, sets: 3, load: 15 },
+                        { id: 6, name: 'Triceps pressdown', reps: 12, sets: 3, load: 10 }
+                    ],
+                    'Lower 1': [
+                        { id: 1, name: 'Squat', reps: 5, sets: 3, load: 25 },
+                        { id: 2, name: 'Romanian deadlift', reps: 12, sets: 3, load: 40 },
+                        { id: 3, name: 'Leg press', reps: 12, sets: 3, load: 75 },
+                        { id: 4, name: 'Seated leg curl', reps: 12, sets: 3, load: 15 },
+                        { id: 5, name: 'Standing calf raise', reps: 8, sets: 4, load: 15 }
+                    ],
+                    'Upper 2': [
+                        { id: 1, name: 'Dumbbell bench press', reps: 12, sets: 3, load: 15 },
+                        { id: 2, name: 'Chin up', reps: 12, sets: 3, load: 45 },
+                        { id: 3, name: 'Dumbbell fly', reps: 12, sets: 3, load: 10 },
+                        { id: 4, name: 'Dumbbell row', reps: 8, sets: 3, load: 15 },
+                        { id: 5, name: 'Lateral raise', reps: 12, sets: 3, load: 5 },
+                        { id: 6, name: 'Standing dumbbell curl', reps: 12, sets: 3, load: 10 },
+                        { id: 7, name: 'Skullcrushers', reps: 12, sets: 3, load: 5 }
+                    ],
+                    'Lower 2': [
+                        { id: 1, name: 'Deadlift', reps: 5, sets: 4, load: 50 },
+                        { id: 2, name: 'Leg press', reps: 12, sets: 4, load: 75 },
+                        { id: 3, name: 'Bulgarian split squat', reps: 12, sets: 3, load: 35 },
+                        { id: 4, name: 'Seated calf raise', reps: 15, sets: 4, load: 50 }
+                    ]
+                },
+                progressiveOverload: 7.5,
+                overloadFrequency: '/week',
+                timeCreated: +new Date()
+            };
+
+            const split3: Split = {
+                name: '3 Day Full Body',
+                schedule: ['Day 1', 'Rest', 'Day 2', 'Rest', 'Day 3', 'Rest', 'Rest'],
+                splitWorkouts: {
+                    'Day 1': [
+                        { id: 1, name: 'Squat', reps: 12, sets: 3, load: 35 },
+                        { id: 2, name: 'Bench press', reps: 12, sets: 3, load: 25 },
+                        { id: 3, name: 'Barbell row', reps: 12, sets: 3, load: 15 },
+                        { id: 4, name: 'Seated dumbbell press', reps: 12, sets: 3, load: 15 },
+                        { id: 5, name: 'Skullcrushers', reps: 12, sets: 3, load: 15 }
+                    ],
+                    'Day 2': [
+                        { id: 1, name: 'Deadlift', reps: 5, sets: 3, load: 45 },
+                        { id: 2, name: 'Tricep dips', reps: 12, sets: 3, load: 15 },
+                        { id: 3, name: 'Pull up', reps: 12, sets: 3, load: 25 },
+                        { id: 4, name: 'Military press', reps: 12, sets: 3, load: 15 },
+                        { id: 5, name: 'Crunches', reps: 12, sets: 4, load: 15 }
+                    ],
+                    'Day 3': [
+                        { id: 1, name: 'Leg press', reps: 12, sets: 3, load: 75 },
+                        { id: 2, name: 'Incline bench press', reps: 12, sets: 3, load: 25 },
+                        { id: 3, name: 'Dumbbell row', reps: 8, sets: 3, load: 15 },
+                        { id: 4, name: 'Upright row', reps: 12, sets: 3, load: 20 },
+                        { id: 5, name: 'Standing dumbbell curl', reps: 12, sets: 3, load: 10 },
+                        { id: 6, name: 'Skullcrushers', reps: 12, sets: 3, load: 5 }
+                    ]
+                },
+                progressiveOverload: 7.5,
+                overloadFrequency: '/week',
+                timeCreated: +new Date()
+            };
+
+            const extraSplits = [split2, split3];
+            await use(extraSplits);
+        },
+        { scope: 'test' }
+    ],
+    extraSplitsCreatedPage: [
+        async ({ splitCreatedPage, extraSplits }, use) => {
+            const page = splitCreatedPage;
+            const res1 = await page.request.post('/api/splits/saveSplit', {
+                data: {
+                    split: extraSplits[0]
+                }
+            });
+            expect(res1.status()).toBe(200);
+            const res2 = await page.request.post('/api/splits/saveSplit', {
+                data: {
+                    split: extraSplits[1]
+                }
+            });
+            expect(res2.status()).toBe(200);
+            await use(page);
+        },
+        { scope: 'test' }
     ]
 });
 
@@ -210,5 +347,16 @@ export const colors = new Map<number, Array<string>>([
     [22.5, ['text-red-500', 'border-red-500', 'stroke-red-500', 'fill-red-500']],
     [25, ['text-red-600', 'border-red-600', 'stroke-red-600', 'fill-red-600']]
 ]);
+
+export function getFormattedDate(timestamp: number) {
+    const date = new Date(timestamp);
+    let day = date.getDate();
+    let month = (date.getMonth() + 1).toString();
+    if (Number(month) < 10) {
+        month = '0' + month;
+    }
+    let year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+}
 
 export { expect } from '@playwright/test';
