@@ -29,10 +29,10 @@ test('should show [profile, settings, logout] in dropdown when signed in', async
     await expect(loggedInPage).toHaveURL('/profile');
     await loggedInPage.goBack();
 
-    await loggedInPage.locator('button[data-test-id=dropdown-button]').click();
+    /*await loggedInPage.locator('button[data-test-id=dropdown-button]').click();
     await dropdown.nth(1).click();
     await expect(loggedInPage).toHaveURL('/profile/settings');
-    await loggedInPage.goBack();
+    await loggedInPage.goBack();*/
 
     await loggedInPage.locator('button[data-test-id=dropdown-button]').click();
     await dropdown.nth(2).click();
