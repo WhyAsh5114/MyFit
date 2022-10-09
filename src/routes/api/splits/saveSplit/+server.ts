@@ -2,9 +2,6 @@ import { ErrorResponse, getUserFromSession, setUser } from '../../_db';
 import type { RequestHandler } from '@sveltejs/kit';
 import { parse } from 'cookie';
 
-// TODO: user should not be a parameter to any POST request
-// use sessionID to authenticate, and get user
-
 export const POST: RequestHandler = async ({ request }) => {
     const { split }: { split: Split } = await request.json();
 
