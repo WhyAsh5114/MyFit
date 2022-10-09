@@ -361,6 +361,7 @@
             class="text-lg font-semibold py-1 bg-secondary text-black w-full text-center rounded-r-md"
             bind:value={$SplitName}
             id="split-name-input"
+            data-test-id="split-name-input"
         />
     </div>
     <div class="grid md:grid-cols-2 w-full gap-2 md:gap-10 mb-2">
@@ -368,7 +369,10 @@
             <h3 class="font-semibold text-xl ml-2 mb-2">Schedule</h3>
             <div class="flex flex-col gap-2 flex-grow justify-center text-base">
                 {#each days as day, i}
-                    <div class="flex text-black bg-secondary rounded-lg">
+                    <div
+                        class="flex text-black bg-secondary rounded-lg"
+                        data-test-id="schedule-inputs-container"
+                    >
                         <label
                             class="basis-14 flex-shrink-0 font-semibold pl-2.5 bg-accent rounded-l-lg py-1"
                             for={`${day}-workout-input`}
@@ -384,6 +388,7 @@
                             }}
                             bind:value={splitSchedule[day]}
                             id={`${day}-workout-input`}
+                            data-test-id={`${day}-workout-input`}
                         />
                         {#key splitSchedule[day]}
                             <div class="basis-24 flex-shrink-0 text-center">
@@ -462,6 +467,7 @@
                         max="25"
                         step="2.5"
                         id="progression-range-input"
+                        data-test-id="progression-range-input"
                         bind:value={progressionValue}
                     />
                 </div>
@@ -473,6 +479,7 @@
                         class="toggle"
                         bind:checked={$CurrentSplitActive}
                         id="split-status-input"
+                        data-test-id="split-status-input"
                         aria-label="split-status-input"
                     />
                 </div>
@@ -487,7 +494,7 @@
             </div>
             <div class="stat bg-primary rounded-xl">
                 <div class="stat-title opacity-95 font-semibold">Created on</div>
-                <div class="stat-value text-accent">
+                <div class="stat-value text-accent" data-test-id="date-created-div">
                     {getFormattedDate(split.timeCreated)}
                 </div>
             </div>
