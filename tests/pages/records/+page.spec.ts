@@ -5,7 +5,9 @@ test.beforeEach(async ({ loggedInPage }) => {
 });
 
 test('should redirect to split records', async ({ loggedInPage }) => {
-    await loggedInPage.locator('h2', { hasText: 'Split records' }).click();
-    await loggedInPage.waitForNavigation();
+    await Promise.all([
+        loggedInPage.locator('h2', { hasText: 'Split records' }).click(),
+        loggedInPage.waitForNavigation()
+    ])
     expect(loggedInPage.url()).toContain('/records/splits');
 });
