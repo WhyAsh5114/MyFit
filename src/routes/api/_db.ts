@@ -82,6 +82,13 @@ export const getUsernameFromSession = async (sessionID: string): Promise<string>
     return Promise.resolve(username);
 };
 
+export const getUserFromSession = async (sessionID: string): Promise<User> => {
+    const username = await getUsernameFromSession(sessionID);
+    const user = await getUser(username);
+    delete user.password;
+    return user;
+}
+
 export const removeSession = async (sessionID: string): Promise<string> => {
     const username = await db.get(sessionID);
     if (!username) {

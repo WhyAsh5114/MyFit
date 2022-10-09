@@ -1,4 +1,4 @@
-import { ErrorResponse, setUser } from '../../_db';
+import { ErrorResponse, getUserFromSession, setUser } from '../../_db';
 import type { RequestHandler } from '@sveltejs/kit';
 import { parse } from 'cookie';
 
@@ -6,9 +6,8 @@ export const POST: RequestHandler = async ({ request }) => {
     const {
         thisActive,
         oldSplitName,
-        split,
-        user
-    }: { thisActive: boolean; oldSplitName: string; split: Split; user: User } =
+        split
+    }: { thisActive: boolean; oldSplitName: string; split: Split } =
         await request.json();
 
     // Get sessionID
@@ -16,11 +15,25 @@ export const POST: RequestHandler = async ({ request }) => {
 
     // Make sure user is logged in by checking if
     // sessionID is loaded
-    if (!user || !sessionID) {
+    if (!sessionID) {
         return new Response('Not logged in, locals empty', {
             status: 403
         });
     }
+
+    let user: User;
+    try {
+        user = await getUserFromSession(sessionID);
+    } catch (err) {
+        if (err instanceof ErrorResponse) {
+            return new Response(err.message, {
+                status: err.status
+            });
+        }
+        return new Response(JSON.stringify(err), {
+            status: 500
+        });
+    }    
 
     // Check if old split exists
     if (!(oldSplitName in user.splits)) {
