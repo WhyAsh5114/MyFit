@@ -222,6 +222,8 @@ export const test = base.extend<MyFixtures>({
     ],
     extraSplits: [
         async ({}, use) => {
+            const split2Date = new Date();
+            split2Date.setDate(split2Date.getDate() - 1);
             const split2: Split = {
                 name: 'Upper Lower',
                 schedule: ['Upper 1', 'Lower 1', 'Rest', 'Upper 2', 'Lower 2', 'Rest', 'Rest'],
@@ -259,7 +261,7 @@ export const test = base.extend<MyFixtures>({
                 },
                 progressiveOverload: 7.5,
                 overloadFrequency: '/week',
-                timeCreated: +new Date()
+                timeCreated: +split2Date
             };
 
             const split3: Split = {
