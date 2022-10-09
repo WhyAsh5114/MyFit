@@ -31,7 +31,7 @@ export const POST: RequestHandler = async ({ request }) => {
         return new Response(JSON.stringify(err), {
             status: 500
         });
-    }    
+    }
 
     if (split.name in user.splits) {
         return new Response('Split already exists', {

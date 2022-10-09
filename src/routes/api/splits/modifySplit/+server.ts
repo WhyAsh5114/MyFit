@@ -7,8 +7,7 @@ export const POST: RequestHandler = async ({ request }) => {
         thisActive,
         oldSplitName,
         split
-    }: { thisActive: boolean; oldSplitName: string; split: Split } =
-        await request.json();
+    }: { thisActive: boolean; oldSplitName: string; split: Split } = await request.json();
 
     // Get sessionID
     const sessionID = parse(request.headers.get('cookie') || '').sessionID;
@@ -33,7 +32,7 @@ export const POST: RequestHandler = async ({ request }) => {
         return new Response(JSON.stringify(err), {
             status: 500
         });
-    }    
+    }
 
     // Check if old split exists
     if (!(oldSplitName in user.splits)) {

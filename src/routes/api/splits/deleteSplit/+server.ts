@@ -28,7 +28,7 @@ export const POST: RequestHandler = async ({ request }) => {
         return new Response(JSON.stringify(err), {
             status: 500
         });
-    }    
+    }
 
     if (!(splitName in user.splits)) {
         return new Response('Split does not exist', {

@@ -47,10 +47,8 @@
     {#if splits.length === 0}
         <div class="flex flex-grow flex-col justify-center items-center gap-3">
             <h2 class="text-center" data-test-id="no-split-label">No split created</h2>
-            <a
-                href="/splits/new"
-                class="btn btn-primary w-44"
-                data-test-id="create-split-button">Create split</a
+            <a href="/splits/new" class="btn btn-primary w-44" data-test-id="create-split-button"
+                >Create split</a
             >
         </div>
     {/if}
