@@ -1,7 +1,7 @@
 import { test, expect } from '../fixtures.js';
 
 test('should redirect back to requested page after login', async ({ page, registeredAccount }) => {
-    await page.goto('/random/page');
+    await page.goto('/records');
     const dropdown = page.locator('ul[data-test-id=profile-options-dropdown] li');
     const options = await dropdown.allTextContents();
     expect(options).toStrictEqual(['Login', 'Register']);
@@ -10,7 +10,7 @@ test('should redirect back to requested page after login', async ({ page, regist
     await Promise.all([dropdown.first().click(), page.waitForNavigation()]);
     expect(page.url()).toContain('/profile/login');
 
-    await expect(page).toHaveURL('/profile/login?page=/random/page');
+    await expect(page).toHaveURL('/profile/login?page=/records');
     await page.fill('input[placeholder=Username]', registeredAccount.username);
     await page.fill('input[placeholder=Password]', registeredAccount.password);
     await Promise.all([
@@ -20,14 +20,14 @@ test('should redirect back to requested page after login', async ({ page, regist
         page.locator('button', { hasText: 'Submit' }).click()
     ]);
 
-    await expect(page).toHaveURL('/random/page');
+    await expect(page).toHaveURL('/records');
 });
 
 test('should redirect back to requested page after register & login', async ({
     page,
     creatableUsername
 }) => {
-    await page.goto('/random/page');
+    await page.goto('/records');
     const dropdown = page.locator('ul[data-test-id=profile-options-dropdown] li');
     const options = await dropdown.allTextContents();
     expect(options).toStrictEqual(['Login', 'Register']);
@@ -36,7 +36,7 @@ test('should redirect back to requested page after register & login', async ({
     await Promise.all([dropdown.nth(1).click(), page.waitForNavigation()]);
     expect(page.url()).toContain('/profile/register');
 
-    await expect(page).toHaveURL('/profile/register?page=/random/page');
+    await expect(page).toHaveURL('/profile/register?page=/records');
     await page.fill('input[placeholder=Username]', creatableUsername);
     await page.fill('input[placeholder=Password]', 'password');
     await page.fill('input[placeholder="Confirm Password"]', 'password');
@@ -48,7 +48,7 @@ test('should redirect back to requested page after register & login', async ({
     ]);
 
     await page.locator('[data-test-id=close-modal-button]').click();
-    await expect(page).toHaveURL('/profile/login?page=/random/page');
+    await expect(page).toHaveURL('/profile/login?page=/records');
     await page.fill('input[placeholder=Username]', creatableUsername);
     await page.fill('input[placeholder=Password]', 'password');
     await Promise.all([
@@ -58,5 +58,5 @@ test('should redirect back to requested page after register & login', async ({
         page.locator('button', { hasText: 'Submit' }).click()
     ]);
 
-    await expect(page).toHaveURL('/random/page');
+    await expect(page).toHaveURL('/records');
 });
