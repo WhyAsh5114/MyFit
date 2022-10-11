@@ -49,7 +49,7 @@ export const POST: RequestHandler = async ({ request }) => {
     if (thisActive) {
         user.activeSplit = split.name;
     } else {
-        if (user.activeSplit === split.name) {
+        if (user.activeSplit !== split.name) {
             user.activeSplit = undefined;
         }
     }
