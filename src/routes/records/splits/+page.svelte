@@ -2,14 +2,17 @@
     import { getFormattedDate } from '$lib/usefulFunctions';
     import { scale } from 'svelte/transition';
     import { page } from '$app/stores';
-    import { CurrentSplitOriginalName } from './[split]/editSplitStore';
+    import { CurrentSplit, CurrentSplitOriginalName } from './[split]/editSplitStore';
 
     const user = $page.data.user;
     // Reverse to sort by creation time
     const splits = Object.values(user?.splits as Record<string, Split>).reverse() as Split[];
 
     function clearStores(name: string) {
-        if ($CurrentSplitOriginalName !== name) {
+        if (
+            $CurrentSplitOriginalName !== name ||
+            $CurrentSplit.timeCreated !== $page.data.user?.splits[name].timeCreated
+        ) {
             $CurrentSplitOriginalName = undefined;
         }
     }
