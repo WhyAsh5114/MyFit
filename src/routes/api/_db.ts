@@ -1,8 +1,12 @@
 import { createClient } from 'redis';
 import { v4 as uuid } from 'uuid';
 import { compare, hash } from 'bcrypt';
+import dotenv from 'dotenv';
 
-const db = createClient();
+dotenv.config();
+const db = createClient({
+    url: process.env.REDIS_URL
+});
 db.connect();
 
 // ! Whenever returning Promise<User>, delete password property first
