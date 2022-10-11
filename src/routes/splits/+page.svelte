@@ -1,5 +1,8 @@
 <script lang="ts">
     import MenuButton from '$lib/MenuButton.svelte';
+    import { page } from '$app/stores';
+    console.log($page.data.user?.activeSplit);
+    
 </script>
 
 <svelte:head>
@@ -23,9 +26,10 @@
         <img src="$lib/assets/calendar_PPL.svg" alt="" class="responsive-image-menu-button" />
     </MenuButton>
     <MenuButton
-        title="Modify split"
+        title="Modify active split"
         description="Modify current split's exercises, progression"
-        link="/"
+        link={`/records/splits/${$page.data.user?.activeSplit}`}
+        disabled={$page.data.user?.activeSplit === undefined}
     >
         <img src="$lib/assets/calendar_gear.svg" alt="" class="responsive-image-menu-button" />
     </MenuButton>
