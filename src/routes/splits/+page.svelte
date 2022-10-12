@@ -1,8 +1,6 @@
 <script lang="ts">
     import MenuButton from '$lib/MenuButton.svelte';
-    import { page } from '$app/stores';
-    console.log($page.data.user?.activeSplit);
-    
+    import { page } from '$app/stores'; 
 </script>
 
 <svelte:head>
