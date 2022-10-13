@@ -25,7 +25,7 @@ test('should load split data correctly', async ({ extraSplitsCreatedPage, split 
     await expect(dateCreatedDiv).toHaveText(getFormattedDate(split.timeCreated));
 });
 
-test('should open correct modals', async ({ extraSplitsCreatedPage, extraSplits, split }) => {
+test('should open correct modals', async ({ extraSplitsCreatedPage, extraSplits }) => {
     const page = extraSplitsCreatedPage;
     await page.goto('/records/splits');
 
@@ -33,7 +33,7 @@ test('should open correct modals', async ({ extraSplitsCreatedPage, extraSplits,
         page.locator('h2', { hasText: extraSplits[0].name }).click(),
         page.waitForNavigation()
     ]);
-    expect(page.url()).toContain(`/records/splits/${extraSplits[0].name.replaceAll(" ", "%20")}`)
+    expect(page.url()).toContain(`/records/splits/${extraSplits[0].name.replaceAll(' ', '%20')}`);
 
     const progressionRangeInput = page.locator('[data-test-id=progression-range-input]');
     let progressionValue = parseFloat(await progressionRangeInput.inputValue());
@@ -49,7 +49,7 @@ test('should open correct modals', async ({ extraSplitsCreatedPage, extraSplits,
     await expect(saveSplitModalButton).not.toBeVisible();
 
     const saveButton = page.locator('[data-test-id=save-button]');
-    await expect(saveButton).toHaveText('Review changes')
+    await expect(saveButton).toHaveText('Review changes');
     await saveButton.click();
 
     await expect(saveSplitModalButton).toBeVisible();
@@ -59,7 +59,7 @@ test('should open correct modals', async ({ extraSplitsCreatedPage, extraSplits,
     const deleteButton = page.locator('[data-test-id=delete-split-button]');
     const deleteSplitModalButton = page.locator('[data-test-id=delete-split-modal-button]');
     const cancelDeleteModalButton = page.locator('[data-test-id=cancel-delete-modal-button]');
-    
+
     await expect(deleteSplitModalButton).not.toBeVisible();
     await deleteButton.click();
     await expect(deleteSplitModalButton).toBeVisible();
@@ -68,7 +68,31 @@ test('should open correct modals', async ({ extraSplitsCreatedPage, extraSplits,
     await expect(cancelDeleteModalButton).not.toBeVisible();
 });
 
+test('should delete split (extraSplits[1])', async ({ extraSplitsCreatedPage, extraSplits }) => {
+    const page = extraSplitsCreatedPage;
+    await page.goto(`/records/splits/${extraSplits[1].name}`);
 
+    const deleteButton = page.locator('[data-test-id=delete-split-button]');
+    await deleteButton.click();
+
+    const deleteSplitModalButton = page.locator('[data-test-id=delete-split-modal-button]');
+    await Promise.all([
+        deleteSplitModalButton.click(),
+        page.waitForRequest('/api/splits/deleteSplit'),
+        page.waitForResponse((res) => res.ok() === true)
+    ]);
+
+    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Success');
+    await expect(page.locator('li', { hasText: 'Split deleted successfully' })).toBeVisible();
+
+    await Promise.all([
+        page.locator('[data-test-id=close-modal-button]').click(),
+        page.waitForNavigation()
+    ]);
+    expect(page.url()).toContain('/records/splits');
+    const splitButtons = page.locator('ul[data-test-id=splits-list] a h2');
+    expect(await splitButtons.allTextContents()).not.toContain(extraSplits[1].name);
+});
 
 // TODO
 /*
