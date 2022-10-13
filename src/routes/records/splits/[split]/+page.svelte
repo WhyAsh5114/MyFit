@@ -306,6 +306,7 @@
     <div class="flex justify-around">
         <button
             class="btn btn-error text-white basis-36"
+            data-test-id="delete-split-modal-button"
             on:click={() => {
                 deletingModalOpen = false;
                 deleteSplit();
@@ -313,6 +314,7 @@
         >
         <button
             class="btn btn-accent basis-36"
+            data-test-id="cancel-delete-modal-button"
             on:click={() => {
                 deletingModalOpen = false;
             }}>Cancel</button
@@ -328,6 +330,7 @@
     <div class="flex justify-around">
         <button
             class="btn btn-accent basis-36"
+            data-test-id="save-split-modal-button"
             on:click={() => {
                 modifyingModalOpen = false;
                 saveChanges();
@@ -335,6 +338,7 @@
         >
         <button
             class="btn btn-error basis-36 text-white"
+            data-test-id="cancel-save-modal-button"
             on:click={() => {
                 modifyingModalOpen = false;
             }}>Cancel</button
@@ -346,7 +350,11 @@
         <button class="btn btn-sm btn-primary mb-3 basis-36" on:click={resetChanges}>
             Reset changes
         </button>
-        <button class="btn btn-sm btn-error mb-3 basis-36 text-white" on:click={confirmDeleteSplit}>
+        <button
+            class="btn btn-sm btn-error mb-3 basis-36 text-white"
+            data-test-id="delete-split-button"
+            on:click={confirmDeleteSplit}
+        >
             Delete split
         </button>
     </div>
@@ -502,7 +510,7 @@
     </div>
 </div>
 {#key changeStatus}
-    <button class="footer-button" on:click={reviewChanges}>
+    <button class="footer-button" on:click={reviewChanges} data-test-id="save-button">
         {changeStatus}
     </button>
 {/key}

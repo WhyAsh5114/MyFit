@@ -1,6 +1,6 @@
 import { test, expect, getFormattedDate } from '../../../../fixtures.js';
 
-test('should load split data correctly', async ({ extraSplitsCreatedPage, extraSplits, split }) => {
+test('should load split data correctly', async ({ extraSplitsCreatedPage, split }) => {
     const page = extraSplitsCreatedPage;
     await page.goto('/records/splits');
 
@@ -24,6 +24,51 @@ test('should load split data correctly', async ({ extraSplitsCreatedPage, extraS
     expect(await splitStatusInput.isChecked()).toStrictEqual(false);
     await expect(dateCreatedDiv).toHaveText(getFormattedDate(split.timeCreated));
 });
+
+test('should open correct modals', async ({ extraSplitsCreatedPage, extraSplits, split }) => {
+    const page = extraSplitsCreatedPage;
+    await page.goto('/records/splits');
+
+    await Promise.all([
+        page.locator('h2', { hasText: extraSplits[0].name }).click(),
+        page.waitForNavigation()
+    ]);
+    expect(page.url()).toContain(`/records/splits/${extraSplits[0].name.replaceAll(" ", "%20")}`)
+
+    const progressionRangeInput = page.locator('[data-test-id=progression-range-input]');
+    let progressionValue = parseFloat(await progressionRangeInput.inputValue());
+    if (progressionValue < 25) {
+        progressionValue += 2.5;
+    } else {
+        progressionValue -= 2.5;
+    }
+    await progressionRangeInput.fill(progressionValue.toString());
+
+    const saveSplitModalButton = page.locator('[data-test-id=save-split-modal-button]');
+    const cancelSaveModalButton = page.locator('[data-test-id=cancel-save-modal-button]');
+    await expect(saveSplitModalButton).not.toBeVisible();
+
+    const saveButton = page.locator('[data-test-id=save-button]');
+    await expect(saveButton).toHaveText('Review changes')
+    await saveButton.click();
+
+    await expect(saveSplitModalButton).toBeVisible();
+    await cancelSaveModalButton.click();
+    await expect(cancelSaveModalButton).not.toBeVisible();
+
+    const deleteButton = page.locator('[data-test-id=delete-split-button]');
+    const deleteSplitModalButton = page.locator('[data-test-id=delete-split-modal-button]');
+    const cancelDeleteModalButton = page.locator('[data-test-id=cancel-delete-modal-button]');
+    
+    await expect(deleteSplitModalButton).not.toBeVisible();
+    await deleteButton.click();
+    await expect(deleteSplitModalButton).toBeVisible();
+
+    await cancelDeleteModalButton.click();
+    await expect(cancelDeleteModalButton).not.toBeVisible();
+});
+
+
 
 // TODO
 /*
