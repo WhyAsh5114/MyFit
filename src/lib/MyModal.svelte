@@ -3,7 +3,7 @@
     export let modalTitle: string;
     export let modalTexts: string[] = [];
     export let onClose: () => void = () => {};
-    export let modalName = 'my-modal';
+    export let modalName = 'modal';
 
     let modalTitleColor = 'text-white';
 
@@ -35,19 +35,19 @@
     on:click|self={() => {
         onClose();
     }}
-    data-test-id="modal"
+    data-test-id={`${modalName}`}
 >
     <label class="modal-box relative bg-primary" for="">
         <label
             for={modalName}
             class="btn btn-sm btn-circle absolute right-2 top-2"
-            data-test-id="close-modal-button"
+            data-test-id={`close-${modalName}-button`}
             on:click|self={() => {
                 onClose();
             }}>✕</label
         >
-        <h3 class="text-lg font-bold {modalTitleColor}" data-test-id="modal-title">{modalTitle}</h3>
-        <ul class="py-4 list-disc pl-5" data-test-id="modal-messages-list">
+        <h3 class="text-lg font-bold {modalTitleColor}" data-test-id={`${modalName}-title`}>{modalTitle}</h3>
+        <ul class="py-4 list-disc pl-5" data-test-id={`${modalName}-messages-list`}>
             {#each modalTexts as text}
                 <li class="whitespace-pre-wrap">{text}</li>
             {/each}
