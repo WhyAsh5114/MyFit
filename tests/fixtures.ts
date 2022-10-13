@@ -1,6 +1,8 @@
 import { test as base, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { createClient } from 'redis';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const Days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -31,7 +33,9 @@ export const test = base.extend<MyFixtures>({
     creatableUsername: [
         // eslint-disable-next-line no-empty-pattern
         async ({}, use) => {
-            const client = createClient();
+            const client = createClient({
+                url: process.env.REDIS_URL
+            });
             await client.connect();
 
             // Generate an unused username
