@@ -3,6 +3,7 @@
     export let description: string;
     export let link: string;
     export let disabled = false;
+    export let onClick = () => {};
 </script>
 
 <a
@@ -10,6 +11,7 @@
         disabled ? 'pointer-events-none brightness-50' : ''
     }`}
     href={link}
+    on:click={onClick}
 >
     <div class="flex w-1/3 lg:w-2/5 justify-center items-center py-4">
         <slot />
