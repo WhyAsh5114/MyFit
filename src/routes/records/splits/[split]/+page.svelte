@@ -231,6 +231,15 @@
         let emptyWorkouts: string[] = [];
         $SplitSchedule = splitSchedule;
 
+        let uniqueWorkouts = new Set(Object.values(splitSchedule));
+        if (uniqueWorkouts.has('Rest') && uniqueWorkouts.size === 1) {
+            modalTitle = 'Error';
+            modalTexts = ['Should have at least one unique workout'];
+            onClose = () => {};
+            modalOpen = true;
+            return;
+        }
+
         // Add workouts not originally present in the split
         Object.values($SplitSchedule).forEach((element) => {
             if (!Object.keys($SplitWorkouts).includes(element) && element !== 'Rest') {
