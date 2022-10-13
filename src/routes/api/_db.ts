@@ -2,7 +2,6 @@ import { createClient } from 'redis';
 import { v4 as uuid } from 'uuid';
 import { compare, hash } from 'bcrypt';
 
-
 const db = createClient();
 db.connect();
 

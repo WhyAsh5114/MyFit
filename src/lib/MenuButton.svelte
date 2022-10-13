@@ -6,7 +6,9 @@
 </script>
 
 <a
-    class={`flex btn p-0 normal-case cursor-pointer rounded-xl w-full bg-primary hover:bg-neutral shadow-xl transition-colors h-full pr-2 ${disabled ? 'pointer-events-none brightness-50' : ''}`}
+    class={`flex btn p-0 normal-case cursor-pointer rounded-xl w-full bg-primary hover:bg-neutral shadow-xl transition-colors h-full pr-2 ${
+        disabled ? 'pointer-events-none brightness-50' : ''
+    }`}
     href={link}
 >
     <div class="flex w-1/3 lg:w-2/5 justify-center items-center py-4">

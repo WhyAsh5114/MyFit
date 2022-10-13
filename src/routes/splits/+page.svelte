@@ -1,6 +1,6 @@
 <script lang="ts">
     import MenuButton from '$lib/MenuButton.svelte';
-    import { page } from '$app/stores'; 
+    import { page } from '$app/stores';
 </script>
 
 <svelte:head>

@@ -46,7 +46,9 @@
                 onClose();
             }}>✕</label
         >
-        <h3 class="text-lg font-bold {modalTitleColor}" data-test-id={`${modalName}-title`}>{modalTitle}</h3>
+        <h3 class="text-lg font-bold {modalTitleColor}" data-test-id={`${modalName}-title`}>
+            {modalTitle}
+        </h3>
         <ul class="py-4 list-disc pl-5" data-test-id={`${modalName}-messages-list`}>
             {#each modalTexts as text}
                 <li class="whitespace-pre-wrap">{text}</li>
