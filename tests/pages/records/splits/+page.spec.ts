@@ -6,7 +6,7 @@ test('should show "No split created" on new account', async ({ loggedInPage }) =
     const createSplitButton = loggedInPage.locator('[data-test-id="create-split-button"]');
 
     await expect(noSplitLabel).toHaveText('No split created');
-    await Promise.all([await createSplitButton.click(), await loggedInPage.waitForNavigation()]);
+    await Promise.all([createSplitButton.click(), loggedInPage.waitForNavigation()]);
     expect(loggedInPage.url()).toContain('/splits/new');
 });
 
