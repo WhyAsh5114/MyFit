@@ -5,7 +5,7 @@ test.beforeEach(async ({ loggedInPage }) => {
 });
 
 test('should show help modal when clicked on help', async ({ loggedInPage }) => {
-    await loggedInPage.locator('div[data-test-id=help-button]').click();
+    await loggedInPage.locator('[data-test-id=help-button]').click();
     const messages = loggedInPage.locator('ul[data-test-id=modal-messages-list] li');
     expect(await messages.allTextContents()).toStrictEqual([
         'Use different names if workouts are going to be different',

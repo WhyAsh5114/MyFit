@@ -35,6 +35,9 @@
     on:click|self={() => {
         onClose();
     }}
+    on:keydown|self={() => {
+        onClose();
+    }}
     data-test-id={`${modalName}`}
 >
     <label class="modal-box relative bg-primary" for="">
@@ -43,6 +46,9 @@
             class="btn btn-sm btn-circle absolute right-2 top-2"
             data-test-id={`close-${modalName}-button`}
             on:click|self={() => {
+                onClose();
+            }}
+            on:keydown|self={() => {
                 onClose();
             }}>✕</label
         >

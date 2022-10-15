@@ -357,7 +357,7 @@
             data-test-id="exercise-grid"
         >
             {#each exercises as exercise (exercise.id)}
-                <div
+                <button
                     class="flex w-full bg-secondary text-black transition-colors"
                     animate:flip
                     in:slide
@@ -385,7 +385,7 @@
                     <p class="basis-8 text-center border-x border-black">{exercise.reps}</p>
                     <p class="basis-8 text-center border-x border-black">{exercise.sets}</p>
                     <p class="basis-8 text-center border-l border-black">{exercise.load}</p>
-                </div>
+                </button>
             {/each}
         </div>
     {/key}

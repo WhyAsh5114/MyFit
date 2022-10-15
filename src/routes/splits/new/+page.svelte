@@ -100,13 +100,13 @@
 <MyModal {modalTexts} {modalTitle} bind:modalOpen />
 <form on:submit|preventDefault class="flex flex-col flex-grow w-full justify-center items-center">
     <div class="flex flex-col gap-10 justify-center items-center max-w-xs flex-grow">
-        <div
+        <button
             class="rounded-full mr-1 border-2 border-accent w-fit px-3 font-semibold -my-7 hover:bg-black cursor-pointer place-self-end transition-colors"
             on:click={openHelpModal}
             data-test-id="help-button"
         >
             ?
-        </div>
+        </button>
         <label class="input-group input-group-vertical shadow-black shadow-lg">
             <p class="text-center bg-primary py-1 font-semibold">Split name</p>
             <input

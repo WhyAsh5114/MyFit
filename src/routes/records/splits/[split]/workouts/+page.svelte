@@ -10,7 +10,7 @@
     let modalOpen = false;
     let cancelAction: () => void;
 
-    let scheduleElements: Record<string, HTMLDivElement> = {};
+    let scheduleElements: Record<string, HTMLButtonElement> = {};
     let selectedUniqueWorkout: string;
 
     onMount(() => {
@@ -121,7 +121,7 @@
     data-test-id="calendar"
 >
     {#each Object.keys($SplitSchedule) as day}
-        <div
+        <button
             class="flex flex-col w-full normal-case text-base font-normal rounded-xl cursor-pointer border-base-100 border-4"
             bind:this={scheduleElements[day]}
             on:click={() => changeSelectedUniqueWorkout(day)}
@@ -134,20 +134,20 @@
                 {day}
             </p>
             <p
-                class="text-center bg-secondary text-black rounded-b-lg py-0.5"
+                class="text-center bg-secondary text-black rounded-b-lg py-0.5 w-full"
                 data-test-id={'workout-' + day}
             >
                 {$SplitSchedule[day]}
             </p>
-        </div>
+        </button>
     {/each}
-    <div
+    <button
         class="rounded-full border-2 border-accent w-fit px-3 font-semibold hover:bg-black cursor-pointer transition-colors lg:col-span-full lg:mt-2"
         on:click={openHelpModal}
         data-test-id="help-button"
     >
         ?
-    </div>
+    </button>
 </div>
 <div class="flex justify-center w-full flex-1">
     <ExerciseTable

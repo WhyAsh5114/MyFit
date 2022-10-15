@@ -30,9 +30,7 @@ test('should load the split schedule into calendar', async ({ split, splitStoreL
 test('should highlight first unique workout on load', async ({ split, splitStoreLoadedPage }) => {
     const firstUniqueWorkout = split.schedule.find((workout) => workout !== 'Rest') as string;
     for (let i = 0; i < Days.length; i++) {
-        const calendarElement = splitStoreLoadedPage.locator(
-            `[data-test-id=calendar-${Days[i]}]`
-        );
+        const calendarElement = splitStoreLoadedPage.locator(`[data-test-id=calendar-${Days[i]}]`);
         if (split.schedule[i] === firstUniqueWorkout) {
             await expect(calendarElement).toHaveClass(/border-accent/);
             await expect(calendarElement).not.toHaveClass(/border-base-100/);
@@ -48,9 +46,7 @@ test('should darken Rest days and make them kinda disabled', async ({
     splitStoreLoadedPage
 }) => {
     for (let i = 0; i < Days.length; i++) {
-        const calendarElement = splitStoreLoadedPage.locator(
-            `[data-test-id=calendar-${Days[i]}]`
-        );
+        const calendarElement = splitStoreLoadedPage.locator(`[data-test-id=calendar-${Days[i]}]`);
         if (split.schedule[i] === 'Rest') {
             await expect(calendarElement).toHaveClass(/opacity-50/);
             await expect(calendarElement).not.toHaveClass(/cursor-pointer/);
@@ -76,18 +72,14 @@ test('should select other unique workout and highlight its instances', async ({
         throw new Error('No 2nd unique workout found, only one unique workout?');
     }
     for (let i = 0; i < Days.length; i++) {
-        const calendarElement = splitStoreLoadedPage.locator(
-            `[data-test-id=calendar-${Days[i]}]`
-        );
+        const calendarElement = splitStoreLoadedPage.locator(`[data-test-id=calendar-${Days[i]}]`);
         if (split.schedule[i] === secondUniqueWorkout) {
             await calendarElement.click();
             break;
         }
     }
     for (let i = 0; i < Days.length; i++) {
-        const calendarElement = splitStoreLoadedPage.locator(
-            `[data-test-id=calendar-${Days[i]}]`
-        );
+        const calendarElement = splitStoreLoadedPage.locator(`[data-test-id=calendar-${Days[i]}]`);
         if (split.schedule[i] === secondUniqueWorkout) {
             await expect(calendarElement).toHaveClass(/border-accent/);
             await expect(calendarElement).not.toHaveClass(/border-base-100/);
@@ -122,7 +114,7 @@ test('should change exercise list when changing workout', async ({
 
         for (const exercise of split.splitWorkouts[workout]) {
             const exerciseData = await page
-                .locator(`div[data-test-id=entry-${exercise.id}] p`)
+                .locator(`[data-test-id=entry-${exercise.id}] p`)
                 .allTextContents();
             expect(Number(exerciseData[0])).toStrictEqual(exercise.id);
             expect(exerciseData[1]).toStrictEqual(exercise.name);
