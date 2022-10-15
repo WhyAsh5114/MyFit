@@ -174,7 +174,7 @@ test('should reset changes appropriately', async ({
     await expect(page.locator('[data-test-id=save-button]')).toHaveText('Back');
 });
 
-test('should change activeSplit correctly', async ({ extraSplitsCreatedPage, extraSplits }) => {
+test('should change activeSplit correctly', async ({ extraSplitsCreatedPage, extraSplits, split }) => {
     const page = extraSplitsCreatedPage;
     await page.goto(`/records/splits/${extraSplits[1].name}`);
 
@@ -186,7 +186,6 @@ test('should change activeSplit correctly', async ({ extraSplitsCreatedPage, ext
     expect(await splitStatusInput.isChecked()).toBe(true);
     await splitStatusInput.uncheck();
     await saveButton.click();
-
     expect(await modifyingModalMessages.allTextContents()).toStrictEqual([
         `Active split\n${extraSplits[1].name} -> None`
     ]);
@@ -194,13 +193,11 @@ test('should change activeSplit correctly', async ({ extraSplitsCreatedPage, ext
         saveSplitModalButton.click(),
         page.waitForResponse('/api/splits/modifySplit')
     ]);
-
     await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Success');
     await Promise.all([
         page.locator('[data-test-id=close-modal-button]').click(),
         page.waitForNavigation()
     ]);
-
     await page.goto('/profile');
     await expect(page.locator('[data-test-id=no-active-split]')).toHaveText('No active split');
 
@@ -211,10 +208,85 @@ test('should change activeSplit correctly', async ({ extraSplitsCreatedPage, ext
     expect(await modifyingModalMessages.allTextContents()).toStrictEqual([
         `Active split\nNone -> ${extraSplits[0].name}`
     ]);
+    await saveSplitModalButton.click();
+    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Success')
+    expect(
+        await page.locator('[data-test-id=modal-messages-list] li').allTextContents()
+    ).toStrictEqual(['Split saved successfully']);
+    await page.locator('[data-test-id=close-modal-button]').click();
+    await page.goto('/profile');
+    await expect(page.locator('[data-test-id=active-split]')).toHaveText(extraSplits[0].name);
 
-    // no split to this
-    // other split to this
-    // change name and check all above again
+    await page.goto(`/records/splits/${split.name}`);
+    expect(await splitStatusInput.isChecked()).toBe(false);
+    await splitStatusInput.check();
+    await saveButton.click();
+    expect(await modifyingModalMessages.allTextContents()).toStrictEqual([
+        `Active split\n${extraSplits[0].name} -> ${split.name}`
+    ]);
+    await saveSplitModalButton.click();
+    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Success')
+    expect(
+        await page.locator('[data-test-id=modal-messages-list] li').allTextContents()
+    ).toStrictEqual(['Split saved successfully']);
+    await page.locator('[data-test-id=close-modal-button]').click();
+    await page.goto('/profile');
+    await expect(page.locator('[data-test-id=active-split]')).toHaveText(split.name);
+
+    const splitNameInput = page.locator('[data-test-id=split-name-input]');
+
+    await page.goto(`/records/splits/${split.name}`);
+    await splitNameInput.fill(`${split.name} v2`);
+    expect(await splitStatusInput.isChecked()).toBe(true);
+    await splitStatusInput.uncheck();
+    await saveButton.click();
+    await expect(page.locator('[data-test-id=modifyingModal-title]')).toHaveText('Review changes');
+    expect(await modifyingModalMessages.allTextContents()).toStrictEqual([
+        `Name\n${split.name} -> ${split.name} v2\n\t`,
+        `Active split\n${split.name} -> None`
+    ]);
+    await saveSplitModalButton.click();
+    await page.locator('[data-test-id=close-modal-button]').click();
+    await page.goto('/profile');
+    await expect(page.locator('[data-test-id=no-active-split]')).toHaveText('No active split');
+
+    await page.goto('/records/splits');
+    const splitButtons = page.locator('ul[data-test-id=splits-list] a h2');
+    expect((await splitButtons.allTextContents()).includes(`${split.name} v2`)).toBe(true);
+
+    await page.goto(`/records/splits/${extraSplits[0].name}`);
+    await splitNameInput.fill(`${extraSplits[0].name} v2`);
+    expect(await splitStatusInput.isChecked()).toBe(false);
+    await splitStatusInput.check();
+    await saveButton.click();
+    expect(await modifyingModalMessages.allTextContents()).toStrictEqual([
+        `Name\n${extraSplits[0].name} -> ${extraSplits[0].name} v2\n\t`,
+        `Active split\nNone -> ${extraSplits[0].name} v2`
+    ]);
+    await saveSplitModalButton.click();
+    await page.locator('[data-test-id=close-modal-button]').click();
+    await page.goto('/profile');
+    await expect(page.locator('[data-test-id=active-split]')).toHaveText(`${extraSplits[0].name} v2`);
+
+    await page.goto('/records/splits');
+    expect((await splitButtons.allTextContents()).includes(`${extraSplits[0].name} v2`)).toBe(true);
+
+    await page.goto(`/records/splits/${extraSplits[1].name}`);
+    await splitNameInput.fill(`${extraSplits[1].name} v2`);
+    expect(await splitStatusInput.isChecked()).toBe(false);
+    await splitStatusInput.check();
+    await saveButton.click();
+    expect(await modifyingModalMessages.allTextContents()).toStrictEqual([
+        `Name\n${extraSplits[1].name} -> ${extraSplits[1].name} v2\n\t`,
+        `Active split\n${extraSplits[0].name} v2 -> ${extraSplits[1].name} v2`
+    ]);
+    await saveSplitModalButton.click();
+    await page.locator('[data-test-id=close-modal-button]').click();
+    await page.goto('/profile');
+    await expect(page.locator('[data-test-id=active-split]')).toHaveText(`${extraSplits[1].name} v2`);
+
+    await page.goto('/records/splits');
+    expect((await splitButtons.allTextContents()).includes(`${extraSplits[1].name} v2`)).toBe(true);
 });
 
 test('should save split correctly', async ({ extraSplitsCreatedPage, extraSplits }) => {
