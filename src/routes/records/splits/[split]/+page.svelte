@@ -227,6 +227,8 @@
         }
     }
 
+    // TODO: shouldn't change splitName to a split which already exists (conflict 409)
+
     async function saveChanges() {
         let emptyWorkouts: string[] = [];
         $SplitSchedule = splitSchedule;
@@ -458,7 +460,7 @@
             <div class="bg-primary rounded-xl">
                 <div class="stat">
                     <div class="stat-figure">
-                        <select class="select select-sm w-28" bind:value={frequency}>
+                        <select class="select select-sm w-28" bind:value={frequency} data-test-id="overload-frequency-selector">
                             <option>/session</option>
                             <option>/week</option>
                             <option>/month</option>
