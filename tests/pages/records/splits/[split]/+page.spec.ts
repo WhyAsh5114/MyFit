@@ -76,14 +76,11 @@ test('should delete split (extraSplits[1])', async ({ extraSplitsCreatedPage, ex
     await deleteButton.click();
 
     const deleteSplitModalButton = page.locator('[data-test-id=delete-split-modal-button]');
-    await Promise.all([
-        deleteSplitModalButton.click(),
-        page.waitForRequest('/api/splits/deleteSplit'),
-        page.waitForResponse((res) => res.ok() === true)
-    ]);
+    await deleteSplitModalButton.click();
 
-    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Success');
-    await expect(page.locator('li', { hasText: 'Split deleted successfully' })).toBeVisible();
+    expect(
+        await page.locator('[data-test-id=modal-messages-list] li').allTextContents()
+    ).toStrictEqual(['Split deleted successfully']);
 
     await Promise.all([
         page.locator('[data-test-id=close-modal-button]').click(),
@@ -94,16 +91,165 @@ test('should delete split (extraSplits[1])', async ({ extraSplitsCreatedPage, ex
     expect(await splitButtons.allTextContents()).not.toContain(extraSplits[1].name);
 });
 
+test('should give error and not save split if all rest days', async ({
+    extraSplitsCreatedPage,
+    extraSplits
+}) => {
+    const page = extraSplitsCreatedPage;
+    await page.goto(`/records/splits/${extraSplits[1].name}`);
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    for (let i = 0; i < 7; i++) {
+        const dayWorkoutInput = page.locator(`[data-test-id=${days[i]}-workout-input]`);
+        await expect(dayWorkoutInput).toBeEditable();
+        await dayWorkoutInput.fill('');
+    }
+    const saveButton = page.locator('[data-test-id=save-button]');
+    await saveButton.click();
+
+    await expect(page.locator('[data-test-id=modifyingModal-title]')).toHaveText('Review changes');
+    const saveSplitModalButton = page.locator('[data-test-id=save-split-modal-button]');
+    await saveSplitModalButton.click();
+
+    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Error');
+    expect(await page.locator('[data-test-id=modal-messages-list] li').allTextContents()).toEqual([
+        'Should have at least one unique workout'
+    ]);
+});
+
+test('should reset changes appropriately', async ({
+    extraSplitsCreatedPage,
+    extraSplits,
+    split
+}) => {
+    const page = extraSplitsCreatedPage;
+    await page.goto(`/records/splits/${split.name}`);
+
+    const splitNameInput = page.locator('[data-test-id=split-name-input]');
+    const overloadFrequencySelector = page.locator('[data-test-id=overload-frequency-selector]');
+    const progressionRangeInput = page.locator('[data-test-id=progression-range-input]');
+    const splitStatusInput = page.locator('[data-test-id=split-status-input]');
+
+    await expect(splitNameInput).toBeEditable();
+    await splitNameInput.fill('Random split name');
+    await overloadFrequencySelector.selectOption('/month');
+    await progressionRangeInput.fill(
+        (parseFloat(await progressionRangeInput.inputValue()) + 2.5).toString()
+    );
+    await splitStatusInput.check();
+
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    for (let i = 0; i < 7; i++) {
+        const dayWorkoutInput = page.locator(`[data-test-id=${days[i]}-workout-input]`);
+        await expect(dayWorkoutInput).toBeEditable();
+        await dayWorkoutInput.fill(`Random${i}`);
+    }
+    let scheduleChangeString = 'Schedule\n';
+    for (let i = 0; i < 7; i++) {
+        scheduleChangeString += `${days[i]}: ${split.schedule[i]} -> Random${i}\n`;
+    }
+
+    await page.locator('[data-test-id=save-button]').click();
+    expect(
+        await page.locator('[data-test-id=modifyingModal-messages-list] li').allTextContents()
+    ).toEqual([
+        `Name\n${split.name} -> Random split name\n\t`,
+        scheduleChangeString + '\t',
+        `Overload frequency\n${split.overloadFrequency} -> /month\n\t`,
+        `Overload value\n${split.progressiveOverload}% -> ${split.progressiveOverload + 2.5}%\n\t`,
+        `Active split\n${extraSplits[1].name} -> Random split name`
+    ]);
+
+    await page.locator('[data-test-id=cancel-save-modal-button]').click();
+    await page.locator('[data-test-id=reset-changes-button]').click();
+
+    expect(await splitNameInput.inputValue()).toBe(split.name);
+    expect(await overloadFrequencySelector.inputValue()).toBe(split.overloadFrequency);
+    expect(await progressionRangeInput.inputValue()).toBe(split.progressiveOverload.toString());
+    expect(await splitStatusInput.isChecked()).toBe(false);
+    for (let i = 0; i < 7; i++) {
+        const dayWorkoutInput = page.locator(`[data-test-id=${days[i]}-workout-input]`);
+        expect(await dayWorkoutInput.inputValue()).toBe(split.schedule[i]);
+    }
+
+    await expect(page.locator('[data-test-id=save-button]')).toHaveText('Back');
+});
+
+test('should change activeSplit correctly', async ({ extraSplitsCreatedPage, extraSplits }) => {
+    const page = extraSplitsCreatedPage;
+    await page.goto(`/records/splits/${extraSplits[1].name}`);
+
+    const splitStatusInput = page.locator('[data-test-id=split-status-input]');
+    const saveButton = page.locator('[data-test-id=save-button]');
+    const modifyingModalMessages = page.locator('[data-test-id=modifyingModal-messages-list] li');
+    const saveSplitModalButton = page.locator('[data-test-id=save-split-modal-button]');
+
+    expect(await splitStatusInput.isChecked()).toBe(true);
+    await splitStatusInput.uncheck();
+    await saveButton.click();
+
+    expect(await modifyingModalMessages.allTextContents()).toStrictEqual([
+        `Active split\n${extraSplits[1].name} -> None`
+    ]);
+    await Promise.all([
+        saveSplitModalButton.click(),
+        page.waitForResponse('/api/splits/modifySplit')
+    ]);
+
+    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Success');
+    await Promise.all([
+        page.locator('[data-test-id=close-modal-button]').click(),
+        page.waitForNavigation()
+    ]);
+
+    await page.goto('/profile');
+    await expect(page.locator('[data-test-id=no-active-split]')).toHaveText('No active split');
+
+    await page.goto(`/records/splits/${extraSplits[0].name}`);
+    expect(await splitStatusInput.isChecked()).toBe(false);
+    await splitStatusInput.check();
+    await saveButton.click();
+    expect(await modifyingModalMessages.allTextContents()).toStrictEqual([
+        `Active split\nNone -> ${extraSplits[0].name}`
+    ]);
+
+    // no split to this
+    // other split to this
+    // change name and check all above again
+});
+
+test('should save split correctly', async ({ extraSplitsCreatedPage, extraSplits }) => {
+    // make some basic changes then save
+    // check after reloading
+});
+
+test('should give error after adding new workout (add at least one exercise)', async ({
+    extraSplitsCreatedPage,
+    extraSplits
+}) => {
+    // error modal check
+    // check animate-pulse in modify workouts as well
+});
+
+test('should make changed workout indicator yellow', async ({
+    extraSplitsCreatedPage,
+    extraSplits
+}) => {
+    // also check day being showed if repeating changed workout
+});
+
+test('should make new workouts indicators green', async ({
+    extraSplitsCreatedPage,
+    extraSplits
+}) => {
+    // also check day being showed if repeating changed workout
+});
+
 // TODO
 /*
-    modal checks (save and delete)
-    reset changes checks
     activeSplit changes checks
-    workouts check
     modify workouts check
-    all rest days not allowed check
-    success modal (split modified successfully)
-    recheck split saved or not
+    success modal (split modified and SAVED successfully)
     change workouts
     go in modify workouts and cross check workout data
+    should give error if splitName changed to something which already exists
 */

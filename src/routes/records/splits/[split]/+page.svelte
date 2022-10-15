@@ -358,7 +358,11 @@
 </MyModal>
 <div class="flex flex-col flex-grow justify-center w-full items-center max-w-5xl">
     <div class="flex justify-evenly w-full max-w-sm gap-5">
-        <button class="btn btn-sm btn-primary mb-3 basis-36" on:click={resetChanges}>
+        <button
+            class="btn btn-sm btn-primary mb-3 basis-36"
+            on:click={resetChanges}
+            data-test-id="reset-changes-button"
+        >
             Reset changes
         </button>
         <button
@@ -460,7 +464,11 @@
             <div class="bg-primary rounded-xl">
                 <div class="stat">
                     <div class="stat-figure">
-                        <select class="select select-sm w-28" bind:value={frequency} data-test-id="overload-frequency-selector">
+                        <select
+                            class="select select-sm w-28"
+                            bind:value={frequency}
+                            data-test-id="overload-frequency-selector"
+                        >
                             <option>/session</option>
                             <option>/week</option>
                             <option>/month</option>
