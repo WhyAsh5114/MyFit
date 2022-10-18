@@ -483,6 +483,19 @@ test('should reset only changed workouts when clicking reset changed workouts', 
     expect(await exercises.count()).toBe(4);
 });
 
+test('should disable reset changes if no changes to reset', async ({
+    extraSplitsCreatedPage,
+    split
+}) => {
+    const page = extraSplitsCreatedPage;
+    await page.goto(`/records/splits/${split.name}`);
+
+    const resetChangesButton = page.locator('[data-test-id=reset-changes-button]')
+    await expect(resetChangesButton).toHaveClass(/my-disabled-button/);
+    await page.locator('[data-test-id=split-name-input]').fill('Random split name');
+    await expect(resetChangesButton).not.toHaveClass(/my-disabled-button/);
+});
+
 test('should make changed workout indicator yellow', async ({
     extraSplitsCreatedPage,
     extraSplits

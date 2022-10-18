@@ -408,13 +408,17 @@
 <!-- TODO: Reset changes should be disabled and darkened if no changes to be reset -->
 <div class="flex flex-col flex-grow justify-center w-full items-center max-w-5xl mt-3">
     <div class="flex justify-evenly w-full max-w-sm gap-5">
-        <button
-            class="btn btn-sm btn-primary mb-3 basis-36"
-            on:click={resetChanges}
-            data-test-id="reset-changes-button"
-        >
-            Reset changes
-        </button>
+        {#key changeStatus}
+            <button
+                class={`btn btn-sm btn-primary mb-3 basis-36 ${
+                    updateChanges().length === 0 ? 'my-disabled-button' : ''
+                }`}
+                on:click={resetChanges}
+                data-test-id="reset-changes-button"
+            >
+                Reset changes
+            </button>
+        {/key}
         <button
             class="btn btn-sm btn-error mb-3 basis-36 text-white"
             data-test-id="delete-split-button"
@@ -464,7 +468,10 @@
                             data-test-id={`${day}-workout-input`}
                         />
                         {#key splitSchedule[day] && $SplitWorkouts}
-                            <div class="basis-24 flex-shrink-0 text-center" data-test-id={`${day}-workout-status`}>
+                            <div
+                                class="basis-24 flex-shrink-0 text-center"
+                                data-test-id={`${day}-workout-status`}
+                            >
                                 {#if workoutChanged(i)}
                                     {#if Object.values(splitSchedule).indexOf(splitSchedule[day]) === i}
                                         <p class="px-2 bg-warning py-1 rounded-r-lg">Changed</p>
