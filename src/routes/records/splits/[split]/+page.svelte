@@ -154,8 +154,6 @@
     }
 
     function resetChanges() {
-        // TODO: Reset modified workouts as well...
-        // or have a different button to reset workouts
         $SplitName = split.name;
         $CurrentSplit = JSON.parse(JSON.stringify(split));
         days.forEach((day, i) => {
@@ -168,8 +166,16 @@
         progressionValue = split.progressiveOverload;
     }
 
-    $: updateChanges($SplitName, frequency, progressionValue, $CurrentSplitActive, splitSchedule);
+    $: updateChanges(
+        $SplitName,
+        frequency,
+        progressionValue,
+        $CurrentSplitActive,
+        splitSchedule,
+        $SplitWorkouts
+    );
     function updateChanges(..._args: any[]) {
+        // TODO: also truncate user inputted strings here (long str...) for workout names, and split names
         let changes = [];
         if ($SplitName !== split.name) {
             changes.push(`Name\n${split.name} -> ${$SplitName}\n\t`);
@@ -187,8 +193,20 @@
             changes.push(changeString + '\t');
             $SplitSchedule = splitSchedule;
         }
-        // Check for each individual workout as well
-        // if workout was modified, have it displayed in Review changes modal
+        let workoutsChangedString = 'Workouts\n';
+        for (let i = 0; i < 7; i++) {
+            if (
+                workoutChanged(i) &&
+                !workoutsChangedString.includes(`${$SplitSchedule[days[i]]}, `)
+            ) {
+                workoutsChangedString += `${$SplitSchedule[days[i]]}, `;
+            }
+        }
+        if (workoutsChangedString !== 'Workouts\n') {
+            changes.push(
+                workoutsChangedString.substring(0, workoutsChangedString.length - 2) + '\n\t'
+            );
+        }
         if (frequency !== split.overloadFrequency) {
             changes.push(`Overload frequency\n${split.overloadFrequency} -> ${frequency}\n\t`);
             $CurrentSplit.overloadFrequency = frequency;
@@ -232,6 +250,7 @@
     }
 
     // TODO: shouldn't change splitName to a split which already exists (conflict 409)
+    // TODO: give warning even when resetting changes
 
     async function saveChanges() {
         let emptyWorkouts: string[] = [];
@@ -306,6 +325,17 @@
             onClose = () => {};
         }
     }
+
+    function resetWorkouts() {
+        for (let i = 0; i < 7; i++) {
+            if (workoutChanged(i)) {
+                $SplitWorkouts[$SplitSchedule[days[i]]] = JSON.parse(
+                    JSON.stringify(split.splitWorkouts[$SplitSchedule[days[i]]])
+                );
+            }
+        }
+        updateChanges();
+    }
 </script>
 
 <svelte:head>
@@ -317,7 +347,10 @@
         <li><a href="/records">Records</a></li>
         <li><a href="/records/splits" data-test-id="records-splits-redirect">Splits</a></li>
         <li>
-            <p class="text-ellipsis overflow-hidden w-fit whitespace-nowrap" style="max-width: 3rem;">
+            <p
+                class="text-ellipsis overflow-hidden w-fit whitespace-nowrap"
+                style="max-width: 3rem;"
+            >
                 {$CurrentSplitOriginalName}
             </p>
         </li>
@@ -373,7 +406,7 @@
     </div>
 </MyModal>
 <!-- TODO: Reset changes should be disabled and darkened if no changes to be reset -->
-<div class="flex flex-col flex-grow justify-center w-full items-center max-w-5xl">
+<div class="flex flex-col flex-grow justify-center w-full items-center max-w-5xl mt-3">
     <div class="flex justify-evenly w-full max-w-sm gap-5">
         <button
             class="btn btn-sm btn-primary mb-3 basis-36"
@@ -430,8 +463,8 @@
                             id={`${day}-workout-input`}
                             data-test-id={`${day}-workout-input`}
                         />
-                        {#key splitSchedule[day]}
-                            <div class="basis-24 flex-shrink-0 text-center">
+                        {#key splitSchedule[day] && $SplitWorkouts}
+                            <div class="basis-24 flex-shrink-0 text-center" data-test-id={`${day}-workout-status`}>
                                 {#if workoutChanged(i)}
                                     {#if Object.values(splitSchedule).indexOf(splitSchedule[day]) === i}
                                         <p class="px-2 bg-warning py-1 rounded-r-lg">Changed</p>
@@ -462,6 +495,8 @@
                                             Object.values(splitSchedule).indexOf(splitSchedule[day])
                                         ]})
                                     </p>
+                                {:else}
+                                    <p />
                                 {/if}
                             </div>
                         {/key}
@@ -469,7 +504,7 @@
                 {/each}
             </div>
             <button
-                class="btn btn-sm mt-5 normal-case text-base bg-black"
+                class="btn btn-sm normal-case text-base bg-warning text-black mt-3.5 hover:bg-yellow-600"
                 data-test-id="modify-workouts-button"
                 on:click={modifyWorkouts}
                 on:mouseenter={function removeAnimation({ currentTarget }) {
@@ -477,6 +512,13 @@
                 }}
                 bind:this={modifyWorkoutsButton}>Modify workouts</button
             >
+            <button
+                class="btn btn-sm normal-case text-base bg-base-100 mt-2"
+                data-test-id="reset-changed-workouts-button"
+                on:click={resetWorkouts}
+            >
+                Reset changed workouts
+            </button>
         </div>
         <div class="flex flex-col gap-2 md:gap-4 grow justify-between">
             <div class="bg-primary rounded-xl">
