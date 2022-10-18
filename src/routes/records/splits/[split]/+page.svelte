@@ -311,6 +311,16 @@
 <svelte:head>
     <title>MyFit | Split records</title>
 </svelte:head>
+<div class="breadcrumbs-container">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/records">Records</a></li>
+        <li><a href="/records/splits" data-test-id="records-splits-redirect">Splits</a></li>
+        <li>
+            <p class="text-ellipsis overflow-hidden w-fit" style="max-width: 3rem;">{$CurrentSplitOriginalName}</p>
+        </li>
+    </ul>
+</div>
 <MyModal bind:modalOpen {modalTitle} {modalTexts} bind:onClose />
 <MyModal
     bind:modalOpen={deletingModalOpen}
