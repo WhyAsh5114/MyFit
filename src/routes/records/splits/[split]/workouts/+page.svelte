@@ -3,7 +3,7 @@
     import ExerciseTable from '$lib/ExerciseTable.svelte';
     import MyModal from '$lib/MyModal.svelte';
     import { onMount } from 'svelte';
-    import { SplitSchedule, SplitWorkouts, SplitName, CurrentSplit } from '../editSplitStore';
+    import { SplitSchedule, SplitWorkouts, SplitName, CurrentSplit, CurrentSplitOriginalName } from '../editSplitStore';
 
     let modalTitle: string;
     let modalTexts: string[];
@@ -111,7 +111,7 @@
             modalOpen = true;
             return;
         }
-        goto(`/records/splits/${$CurrentSplit.name}`);
+        goto(`/records/splits/${$CurrentSplitOriginalName}`, { replaceState: false });
     }
 </script>
 
@@ -156,4 +156,4 @@
         bind:cancelAction
     />
 </div>
-<button class="basis-10 footer-button" on:click={modifyWorkouts}> Modify workouts </button>
+<button class="basis-10 footer-button" on:click={modifyWorkouts} data-test-id="modify-workouts-save-button"> Modify workouts </button>

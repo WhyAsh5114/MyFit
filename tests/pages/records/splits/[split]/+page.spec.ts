@@ -78,6 +78,7 @@ test('should delete split (extraSplits[1])', async ({ extraSplitsCreatedPage, ex
     const deleteSplitModalButton = page.locator('[data-test-id=delete-split-modal-button]');
     await deleteSplitModalButton.click();
 
+    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Success');
     expect(
         await page.locator('[data-test-id=modal-messages-list] li').allTextContents()
     ).toStrictEqual(['Split deleted successfully']);
@@ -298,7 +299,6 @@ test('should change activeSplit correctly', async ({
 });
 
 test('should save split correctly', async ({ extraSplitsCreatedPage, split, extraSplits }) => {
-    // make some basic changes then save
     const page = extraSplitsCreatedPage;
     await page.goto(`/records/splits/${split.name}`);
 
@@ -326,6 +326,32 @@ test('should save split correctly', async ({ extraSplitsCreatedPage, split, extr
         scheduleChangeString += `${days[i]}: ${split.schedule[i]} -> Random${i}\n`;
     }
 
+    const modifyWorkoutsButton = page.locator('[data-test-id=modify-workouts-button]');
+    await Promise.all([modifyWorkoutsButton.click(), page.waitForNavigation()]);
+    expect(page.url().endsWith(`/records/splits/${split.name}/workouts`)).toBe(true);
+    for (let i = 0; i < 7; i++) {
+        const day = days[i];
+        const calendarElement = page.locator(`[data-test-id=calendar-${day}]`);
+        await calendarElement.click();
+        const addButton = page.locator('[data-test-id=add-button]');
+        await addButton.click();
+
+        const nameInput = page.locator('[data-test-id=name-input]');
+        const repsInput = page.locator('[data-test-id=reps-input]');
+        const setsInput = page.locator('[data-test-id=sets-input]');
+        const loadInput = page.locator('[data-test-id=load-input]');
+        await nameInput.fill(`random-exercise-${day}`);
+        await repsInput.fill('1');
+        await setsInput.fill('2');
+        await loadInput.fill('3');
+
+        const saveButton = page.locator('[data-test-id=save-button]');
+        await saveButton.click();
+    }
+    const modifyWorkoutsSaveButton = page.locator('[data-test-id=modify-workouts-save-button]');
+    await Promise.all([modifyWorkoutsSaveButton.click(), page.waitForNavigation()]);
+    expect(page.url().endsWith(`/records/splits/${split.name}`));
+
     await page.locator('[data-test-id=save-button]').click();
     expect(
         await page.locator('[data-test-id=modifyingModal-messages-list] li').allTextContents()
@@ -336,9 +362,9 @@ test('should save split correctly', async ({ extraSplitsCreatedPage, split, extr
         `Overload value\n${split.progressiveOverload}% -> ${split.progressiveOverload + 2.5}%\n\t`,
         `Active split\n${extraSplits[1].name} -> Random split name`
     ]);
-    // need to add workouts to each random workout....
+
     await page.locator('[data-test-id=save-split-modal-button]').click();
-    await expect(page.locator('[data-test-id-modal-title]')).toHaveText('Success');
+    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Success');
     expect(
         await page.locator('[data-test-id=modal-messages-list]').allTextContents()
     ).toStrictEqual(['Split saved successfully']);
@@ -350,17 +376,15 @@ test('should save split correctly', async ({ extraSplitsCreatedPage, split, extr
     expect(page.url().endsWith('/records/splits')).toBe(true);
     const splitButtons = page.locator('[data-test-id=splits-list] a h2');
     expect((await splitButtons.allTextContents()).includes('Random split name')).toBe(true);
-    await page.goto(`/records/splits/Random%20Split%20Name`);
+    await page.goto(`/records/splits/Random%20split%20name`);
     await page.reload();
 
     const workoutNames = page.locator('[data-test-id=schedule-inputs-container] input');
     await expect(splitNameInput).toHaveValue('Random split name');
     for (let i = 0; i < 7; i++) {
-        await expect(workoutNames.nth(i)).toHaveText(`Random${i}`);
+        expect(await workoutNames.nth(i).inputValue()).toBe(`Random${i}`);
     }
-    await expect(progressionRangeInput).toHaveValue(
-        (parseFloat(await progressionRangeInput.inputValue()) + 2.5).toString()
-    );
+    await expect(progressionRangeInput).toHaveValue((split.progressiveOverload + 2.5).toString());
     expect(await splitStatusInput.isChecked()).toStrictEqual(true);
 });
 
@@ -376,6 +400,9 @@ test('should give error after adding new workout (add at least one exercise)', a
     const saveButton = page.locator('[data-test-id=save-button]');
     await saveButton.click();
 
+    const modifyWorkoutsButton = page.locator('[data-test-id=modify-workouts-button]');
+    await expect(modifyWorkoutsButton).not.toHaveClass(/animate-pulse/);
+
     const saveSplitModalButton = page.locator('[data-test-id=save-split-modal-button]');
     await expect(saveSplitModalButton).toBeVisible();
     await saveSplitModalButton.click();
@@ -384,6 +411,8 @@ test('should give error after adding new workout (add at least one exercise)', a
     expect(
         await page.locator('[data-test-id=modal-messages-list] li').allTextContents()
     ).toStrictEqual(['Add at least one exercise in Random new workout']);
+
+    await expect(modifyWorkoutsButton).toHaveClass(/animate-pulse/);
 });
 
 test('should make changed workout indicator yellow', async ({

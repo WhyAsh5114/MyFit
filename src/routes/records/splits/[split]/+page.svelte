@@ -457,6 +457,7 @@
             </div>
             <button
                 class="btn btn-sm mt-5 normal-case text-base bg-black"
+                data-test-id="modify-workouts-button"
                 on:click={modifyWorkouts}
                 on:mouseenter={function removeAnimation({ currentTarget }) {
                     currentTarget.classList.remove('animate-pulse');
