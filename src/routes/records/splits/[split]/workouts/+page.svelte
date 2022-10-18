@@ -120,9 +120,26 @@
     }
 </script>
 
+<div class="breadcrumbs-container">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/records">Records</a></li>
+        <li><a href="/records/splits" data-test-id="records-splits-redirect">Splits</a></li>
+        <li>
+            <a
+                class="text-ellipsis overflow-hidden w-fit whitespace-nowrap"
+                style="max-width: 3rem;"
+                href={`/records/splits/${$CurrentSplitOriginalName}`}
+                data-test-id="records-splits-name-redirect"
+            >
+                {$CurrentSplitOriginalName}
+            </a>
+        </li>
+    </ul>
+</div>
 <MyModal {modalTexts} {modalTitle} bind:modalOpen />
 <div
-    class="grid grid-cols-4 lg:grid-cols-7 gap-1 w-full max-w-xl place-items-center"
+    class="grid mt-2 grid-cols-4 lg:grid-cols-7 gap-1 w-full max-w-xl place-items-center"
     data-test-id="calendar"
 >
     {#each Object.keys($SplitSchedule) as day}
