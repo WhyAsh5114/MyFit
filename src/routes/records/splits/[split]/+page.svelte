@@ -21,6 +21,7 @@
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const split = $page.data.user?.splits[$page.params.split] as Split;
+    const allSplits = Object.keys($page.data.user?.splits || []);
 
     let modifyWorkoutsButton: HTMLButtonElement;
     let changeStatus = 'Back';
@@ -292,6 +293,14 @@
             return;
         }
 
+        // If name was changed, and already exists
+        if ($SplitName !== split.name && allSplits.includes($SplitName)) {
+            modalTitle = 'Error';
+            modalTexts = [`Split ${$SplitName} already exists, choose a different name`];
+            modalOpen = true;
+            return;
+        }
+
         $CurrentSplit.name = $SplitName;
         $CurrentSplit.splitWorkouts = $SplitWorkouts;
         $CurrentSplit.overloadFrequency = frequency;
@@ -405,7 +414,6 @@
         >
     </div>
 </MyModal>
-<!-- TODO: Reset changes should be disabled and darkened if no changes to be reset -->
 <div class="flex flex-col flex-grow justify-center w-full items-center max-w-5xl mt-3">
     <div class="flex justify-evenly w-full max-w-sm gap-5">
         {#key changeStatus}

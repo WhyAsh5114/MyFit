@@ -516,13 +516,24 @@ test('should give error if split name changed to something which already exists'
 }) => {
     // change name to already existing split
     // should give error here
+    const page = extraSplitsCreatedPage;
+    await page.goto(`/records/splits/${extraSplits[0].name}`);
+
+    const splitNameInput = page.locator('[data-test-id=split-name-input]');
+    await splitNameInput.fill(extraSplits[1].name);
+    await page.locator('[data-test-id=save-button]').click();
+    await page.locator('[data-test-id=save-split-modal-button]').click();
+
+    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Error');
+    expect(await page.locator('[data-test-id=modal-messages-list] li').allTextContents()).toStrictEqual([
+        `Split ${extraSplits[1].name} already exists, choose a different name`
+    ])
+    // DOING DOING
 });
 
-// TODO
 /*
-    modify workouts check
-    success modal (split modified and SAVED successfully)
-    change workouts
-    go in modify workouts and cross check workout data
-    should give error if splitName changed to something which already exists
+    TODO: test - modify workouts check
+    TODO: test - success modal (split modified and SAVED successfully)
+    TODO: test - change workouts
+    TODO: test - go in modify workouts and cross check workout data
 */
