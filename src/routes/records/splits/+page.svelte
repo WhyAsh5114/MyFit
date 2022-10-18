@@ -3,9 +3,14 @@
     import { scale } from 'svelte/transition';
     import { page } from '$app/stores';
     import { CurrentSplit, CurrentSplitOriginalName } from './[split]/editSplitStore';
+    import MyModal from '$lib/MyModal.svelte';
+
+    let modalTitle = '';
+    let modalTexts: string[] = [];
+    let modalOpen = false;
 
     const user = $page.data.user;
-    // Reverse to sort by creation time
+    // Reverse to sort by creation time (or last update time)
     const splits = Object.values(user?.splits as Record<string, Split>).reverse() as Split[];
 
     function clearStores(name: string) {
@@ -16,6 +21,28 @@
             $CurrentSplitOriginalName = undefined;
         }
     }
+
+    let modifiedSplit: string;
+    if ($CurrentSplitOriginalName) {
+        if (
+            JSON.stringify($page.data.user?.splits[$CurrentSplitOriginalName]) !==
+            JSON.stringify($CurrentSplit)
+        ) {
+            modifiedSplit = $CurrentSplitOriginalName;
+        }
+    }
+
+    function openHelpModal() {
+        modalTitle = 'Help';
+        modalTexts = [
+            'A split with a blue border is the active split',
+            'A split with yellow and underlined text has unsaved changes',
+            'Unsaved changes to a split will be lost when refreshing the page or going to a different split'
+        ];
+        modalOpen = true;
+    }
+    // TODO: alert users if going to different split, causing loss of unsaved changes
+    // reference link: https://thewebdev.info/2021/03/06/how-to-warn-user-before-leaving-a-web-page-with-unsaved-changes/
 </script>
 
 <svelte:head>
@@ -28,6 +55,14 @@
         <li>Splits</li>
     </ul>
 </div>
+<button
+    class="rounded-full mr-1 border-2 border-accent w-fit h-fit px-3 my-2 font-semibold hover:bg-black cursor-pointer transition-colors"
+    on:click={openHelpModal}
+    data-test-id="help-button"
+>
+    ?
+</button>
+<MyModal {modalTitle} {modalTexts} bind:modalOpen />
 <div class="flex flex-col w-full max-w-md px-3 h-px flex-auto overflow-y-auto">
     <ul data-test-id="splits-list" class="my-auto">
         {#each splits as split}
@@ -40,7 +75,15 @@
                 href="/records/splits/{split.name}"
                 on:click={() => clearStores(split.name)}
             >
-                <h2 class="text-lg font-semibold overflow-hidden text-ellipsis">{split.name}</h2>
+                <h2
+                    class={`text-lg font-semibold overflow-hidden text-ellipsis ${
+                        modifiedSplit === split.name
+                            ? 'text-yellow-400 underline underline-offset-4'
+                            : ''
+                    }`}
+                >
+                    {split.name}
+                </h2>
                 <h3 class="ml-auto basis-28 text-right shrink-0">
                     {getFormattedDate(split.timeCreated)}
                 </h3>
