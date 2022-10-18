@@ -370,11 +370,20 @@ test('should give error after adding new workout (add at least one exercise)', a
 }) => {
     const page = extraSplitsCreatedPage;
     await page.goto(`/records/splits/${extraSplits[0].name}`);
+
     const workoutNames = page.locator('[data-test-id=schedule-inputs-container] input');
     await workoutNames.first().fill('Random new workout');
     const saveButton = page.locator('[data-test-id=save-button]');
     await saveButton.click();
-    
+
+    const saveSplitModalButton = page.locator('[data-test-id=save-split-modal-button]');
+    await expect(saveSplitModalButton).toBeVisible();
+    await saveSplitModalButton.click();
+
+    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Error');
+    expect(
+        await page.locator('[data-test-id=modal-messages-list] li').allTextContents()
+    ).toStrictEqual(['Add at least one exercise in Random new workout']);
 });
 
 test('should make changed workout indicator yellow', async ({
