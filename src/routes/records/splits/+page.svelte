@@ -76,7 +76,7 @@
                 on:click={() => clearStores(split.name)}
             >
                 <h2
-                    class={`text-lg font-semibold overflow-hidden text-ellipsis ${
+                    class={`text-lg font-semibold overflow-hidden text-ellipsis whitespace-nowrap ${
                         modifiedSplit === split.name
                             ? 'text-yellow-400 underline underline-offset-4'
                             : ''

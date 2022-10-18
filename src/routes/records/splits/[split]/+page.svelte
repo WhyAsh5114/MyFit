@@ -317,7 +317,9 @@
         <li><a href="/records">Records</a></li>
         <li><a href="/records/splits" data-test-id="records-splits-redirect">Splits</a></li>
         <li>
-            <p class="text-ellipsis overflow-hidden w-fit" style="max-width: 3rem;">{$CurrentSplitOriginalName}</p>
+            <p class="text-ellipsis overflow-hidden w-fit whitespace-nowrap" style="max-width: 3rem;">
+                {$CurrentSplitOriginalName}
+            </p>
         </li>
     </ul>
 </div>
@@ -370,6 +372,7 @@
         >
     </div>
 </MyModal>
+<!-- TODO: Reset changes should be disabled and darkened if no changes to be reset -->
 <div class="flex flex-col flex-grow justify-center w-full items-center max-w-5xl">
     <div class="flex justify-evenly w-full max-w-sm gap-5">
         <button
