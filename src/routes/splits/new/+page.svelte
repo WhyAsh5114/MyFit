@@ -84,6 +84,9 @@
 
         await goto('/splits/new/workouts');
     }
+
+    // TODO: all user inputs (and their displaying elements) should have text-wrap with text-ellipsis
+    // use in all pages
 </script>
 
 <svelte:head>
