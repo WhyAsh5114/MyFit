@@ -81,3 +81,46 @@ test('should show correct dates', async ({ extraSplitsCreatedPage, extraSplits, 
         expect(getFormattedDate(split.timeCreated)).toStrictEqual(splitDateCreated);
     }
 });
+
+test('should underline split which is currently being modified', async ({
+    extraSplitsCreatedPage,
+    extraSplits,
+    split
+}) => {
+    const page = extraSplitsCreatedPage;
+    await page.goto(`/records/splits/${extraSplits[1].name}`);
+
+    const splitName = page.locator('[data-test-id=split-name-input]');
+    await splitName.fill('changed value');
+    await page.locator('[data-test-id=records-splits-redirect]').click();
+
+    const modifiedSplit = page.locator('ul[data-test-id=splits-list] a h2', {
+        hasText: extraSplits[1].name
+    });
+    await expect(modifiedSplit).toHaveClass(/text-yellow-400 underline underline-offset-4/);
+
+    await page.goto(`/records/splits/${split.name}`);
+    await splitName.fill('changed value');
+    await page.locator('[data-test-id=records-splits-redirect]').click();
+
+    const modifiedSplit2 = page.locator('ul[data-test-id=splits-list] a h2', {
+        hasText: split.name
+    });
+    await expect(modifiedSplit).not.toHaveClass(/text-yellow-400 underline underline-offset-4/);
+    await expect(modifiedSplit2).toHaveClass(/text-yellow-400 underline underline-offset-4/);
+});
+
+test('should open help modal', async ({ splitCreatedPage }) => {
+    const page = splitCreatedPage;
+    await page.goto('/records/splits');
+    await page.locator('[data-test-id=help-button]').click();
+
+    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Info');
+    expect(
+        await page.locator('[data-test-id=modal-messages-list] li').allTextContents()
+    ).toStrictEqual([
+        'A split with a blue border is the active split',
+        'A split with yellow and underlined text has unsaved changes',
+        'Unsaved changes to a split will be lost when refreshing the page or going to a different split'
+    ]);
+});
