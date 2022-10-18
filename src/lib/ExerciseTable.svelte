@@ -370,6 +370,7 @@
                             class="bg-error basis-8 font-semibold hover:brightness-90 active:brightness-75 transition-all"
                             on:click={() => deleteEntry(exercise.id)}
                             in:scale={{ duration: 200 }}
+                            data-test-id={`delete-button-${exercise.id}`}
                         >
                             X
                         </button>
@@ -377,14 +378,15 @@
                         <p
                             class="basis-8 text-center border-r border-black"
                             in:fade={{ duration: 200 }}
+                            data-test-id={`exercise-${exercise.id}-id`}
                         >
                             {exercise.id}
                         </p>
                     {/if}
-                    <p class="flex-grow text-center border-x border-black">{exercise.name}</p>
-                    <p class="basis-8 text-center border-x border-black">{exercise.reps}</p>
-                    <p class="basis-8 text-center border-x border-black">{exercise.sets}</p>
-                    <p class="basis-8 text-center border-l border-black">{exercise.load}</p>
+                    <p class="flex-grow text-center border-x border-black" data-test-id={`exercise-${exercise.id}-name`}>{exercise.name}</p>
+                    <p class="basis-8 text-center border-x border-black" data-test-id={`exercise-${exercise.id}-reps`}>{exercise.reps}</p>
+                    <p class="basis-8 text-center border-x border-black" data-test-id={`exercise-${exercise.id}-sets`}>{exercise.sets}</p>
+                    <p class="basis-8 text-center border-l border-black" data-test-id={`exercise-${exercise.id}-load`}>{exercise.load}</p>
                 </button>
             {/each}
         </div>
