@@ -29,3 +29,7 @@ body {
 .responsive-image-menu-button {
     @apply h-16 md:h-20 lg:h-24 xl:h-28 w-16 md:w-20 lg:w-24 xl:w-28;
 }
+
+.my-disabled-button {
+    @apply pointer-events-none brightness-50;
+}

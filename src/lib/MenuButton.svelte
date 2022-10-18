@@ -8,7 +8,7 @@
 
 <a
     class={`flex btn p-0 normal-case cursor-pointer rounded-xl w-full bg-primary hover:bg-neutral shadow-xl transition-colors h-full pr-2 ${
-        disabled ? 'pointer-events-none brightness-50' : ''
+        disabled ? 'my-disabled-button' : ''
     }`}
     href={link}
     on:click={onClick}
