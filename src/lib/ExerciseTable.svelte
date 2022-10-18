@@ -383,10 +383,30 @@
                             {exercise.id}
                         </p>
                     {/if}
-                    <p class="flex-grow text-center border-x border-black" data-test-id={`exercise-${exercise.id}-name`}>{exercise.name}</p>
-                    <p class="basis-8 text-center border-x border-black" data-test-id={`exercise-${exercise.id}-reps`}>{exercise.reps}</p>
-                    <p class="basis-8 text-center border-x border-black" data-test-id={`exercise-${exercise.id}-sets`}>{exercise.sets}</p>
-                    <p class="basis-8 text-center border-l border-black" data-test-id={`exercise-${exercise.id}-load`}>{exercise.load}</p>
+                    <p
+                        class="flex-grow text-center border-x border-black"
+                        data-test-id={`exercise-${exercise.id}-name`}
+                    >
+                        {exercise.name}
+                    </p>
+                    <p
+                        class="basis-8 text-center border-x border-black"
+                        data-test-id={`exercise-${exercise.id}-reps`}
+                    >
+                        {exercise.reps}
+                    </p>
+                    <p
+                        class="basis-8 text-center border-x border-black"
+                        data-test-id={`exercise-${exercise.id}-sets`}
+                    >
+                        {exercise.sets}
+                    </p>
+                    <p
+                        class="basis-8 text-center border-l border-black"
+                        data-test-id={`exercise-${exercise.id}-load`}
+                    >
+                        {exercise.load}
+                    </p>
                 </button>
             {/each}
         </div>

@@ -490,7 +490,7 @@ test('should disable reset changes if no changes to reset', async ({
     const page = extraSplitsCreatedPage;
     await page.goto(`/records/splits/${split.name}`);
 
-    const resetChangesButton = page.locator('[data-test-id=reset-changes-button]')
+    const resetChangesButton = page.locator('[data-test-id=reset-changes-button]');
     await expect(resetChangesButton).toHaveClass(/my-disabled-button/);
     await page.locator('[data-test-id=split-name-input]').fill('Random split name');
     await expect(resetChangesButton).not.toHaveClass(/my-disabled-button/);
@@ -514,8 +514,6 @@ test('should give error if split name changed to something which already exists'
     extraSplitsCreatedPage,
     extraSplits
 }) => {
-    // change name to already existing split
-    // should give error here
     const page = extraSplitsCreatedPage;
     await page.goto(`/records/splits/${extraSplits[0].name}`);
 
@@ -525,10 +523,9 @@ test('should give error if split name changed to something which already exists'
     await page.locator('[data-test-id=save-split-modal-button]').click();
 
     await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Error');
-    expect(await page.locator('[data-test-id=modal-messages-list] li').allTextContents()).toStrictEqual([
-        `Split ${extraSplits[1].name} already exists, choose a different name`
-    ])
-    // DOING DOING
+    expect(
+        await page.locator('[data-test-id=modal-messages-list] li').allTextContents()
+    ).toStrictEqual([`Split ${extraSplits[1].name} already exists, choose a different name`]);
 });
 
 /*
