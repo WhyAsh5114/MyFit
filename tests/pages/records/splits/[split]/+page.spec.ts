@@ -527,10 +527,3 @@ test('should give error if split name changed to something which already exists'
         await page.locator('[data-test-id=modal-messages-list] li').allTextContents()
     ).toStrictEqual([`Split ${extraSplits[1].name} already exists, choose a different name`]);
 });
-
-/*
-    TODO: test - modify workouts check
-    TODO: test - success modal (split modified and SAVED successfully)
-    TODO: test - change workouts
-    TODO: test - go in modify workouts and cross check workout data
-*/
