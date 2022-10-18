@@ -154,6 +154,8 @@
     }
 
     function resetChanges() {
+        // TODO: Reset modified workouts as well...
+        // or have a different button to reset workouts
         $SplitName = split.name;
         $CurrentSplit = JSON.parse(JSON.stringify(split));
         days.forEach((day, i) => {
@@ -185,6 +187,8 @@
             changes.push(changeString + '\t');
             $SplitSchedule = splitSchedule;
         }
+        // Check for each individual workout as well
+        // if workout was modified, have it displayed in Review changes modal
         if (frequency !== split.overloadFrequency) {
             changes.push(`Overload frequency\n${split.overloadFrequency} -> ${frequency}\n\t`);
             $CurrentSplit.overloadFrequency = frequency;

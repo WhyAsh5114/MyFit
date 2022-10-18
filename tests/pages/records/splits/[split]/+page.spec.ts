@@ -174,7 +174,11 @@ test('should reset changes appropriately', async ({
     await expect(page.locator('[data-test-id=save-button]')).toHaveText('Back');
 });
 
-test('should change activeSplit correctly', async ({ extraSplitsCreatedPage, extraSplits, split }) => {
+test('should change activeSplit correctly', async ({
+    extraSplitsCreatedPage,
+    extraSplits,
+    split
+}) => {
     const page = extraSplitsCreatedPage;
     await page.goto(`/records/splits/${extraSplits[1].name}`);
 
@@ -209,7 +213,7 @@ test('should change activeSplit correctly', async ({ extraSplitsCreatedPage, ext
         `Active split\nNone -> ${extraSplits[0].name}`
     ]);
     await saveSplitModalButton.click();
-    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Success')
+    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Success');
     expect(
         await page.locator('[data-test-id=modal-messages-list] li').allTextContents()
     ).toStrictEqual(['Split saved successfully']);
@@ -225,7 +229,7 @@ test('should change activeSplit correctly', async ({ extraSplitsCreatedPage, ext
         `Active split\n${extraSplits[0].name} -> ${split.name}`
     ]);
     await saveSplitModalButton.click();
-    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Success')
+    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Success');
     expect(
         await page.locator('[data-test-id=modal-messages-list] li').allTextContents()
     ).toStrictEqual(['Split saved successfully']);
@@ -266,7 +270,9 @@ test('should change activeSplit correctly', async ({ extraSplitsCreatedPage, ext
     await saveSplitModalButton.click();
     await page.locator('[data-test-id=close-modal-button]').click();
     await page.goto('/profile');
-    await expect(page.locator('[data-test-id=active-split]')).toHaveText(`${extraSplits[0].name} v2`);
+    await expect(page.locator('[data-test-id=active-split]')).toHaveText(
+        `${extraSplits[0].name} v2`
+    );
 
     await page.goto('/records/splits');
     expect((await splitButtons.allTextContents()).includes(`${extraSplits[0].name} v2`)).toBe(true);
@@ -283,23 +289,92 @@ test('should change activeSplit correctly', async ({ extraSplitsCreatedPage, ext
     await saveSplitModalButton.click();
     await page.locator('[data-test-id=close-modal-button]').click();
     await page.goto('/profile');
-    await expect(page.locator('[data-test-id=active-split]')).toHaveText(`${extraSplits[1].name} v2`);
+    await expect(page.locator('[data-test-id=active-split]')).toHaveText(
+        `${extraSplits[1].name} v2`
+    );
 
     await page.goto('/records/splits');
     expect((await splitButtons.allTextContents()).includes(`${extraSplits[1].name} v2`)).toBe(true);
 });
 
-test('should save split correctly', async ({ extraSplitsCreatedPage, extraSplits }) => {
+test('should save split correctly', async ({ extraSplitsCreatedPage, split, extraSplits }) => {
     // make some basic changes then save
-    // check after reloading
+    const page = extraSplitsCreatedPage;
+    await page.goto(`/records/splits/${split.name}`);
+
+    const splitNameInput = page.locator('[data-test-id=split-name-input]');
+    const overloadFrequencySelector = page.locator('[data-test-id=overload-frequency-selector]');
+    const progressionRangeInput = page.locator('[data-test-id=progression-range-input]');
+    const splitStatusInput = page.locator('[data-test-id=split-status-input]');
+
+    await expect(splitNameInput).toBeEditable();
+    await splitNameInput.fill('Random split name');
+    await overloadFrequencySelector.selectOption('/month');
+    await progressionRangeInput.fill(
+        (parseFloat(await progressionRangeInput.inputValue()) + 2.5).toString()
+    );
+    await splitStatusInput.check();
+
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    for (let i = 0; i < 7; i++) {
+        const dayWorkoutInput = page.locator(`[data-test-id=${days[i]}-workout-input]`);
+        await expect(dayWorkoutInput).toBeEditable();
+        await dayWorkoutInput.fill(`Random${i}`);
+    }
+    let scheduleChangeString = 'Schedule\n';
+    for (let i = 0; i < 7; i++) {
+        scheduleChangeString += `${days[i]}: ${split.schedule[i]} -> Random${i}\n`;
+    }
+
+    await page.locator('[data-test-id=save-button]').click();
+    expect(
+        await page.locator('[data-test-id=modifyingModal-messages-list] li').allTextContents()
+    ).toEqual([
+        `Name\n${split.name} -> Random split name\n\t`,
+        scheduleChangeString + '\t',
+        `Overload frequency\n${split.overloadFrequency} -> /month\n\t`,
+        `Overload value\n${split.progressiveOverload}% -> ${split.progressiveOverload + 2.5}%\n\t`,
+        `Active split\n${extraSplits[1].name} -> Random split name`
+    ]);
+    // need to add workouts to each random workout....
+    await page.locator('[data-test-id=save-split-modal-button]').click();
+    await expect(page.locator('[data-test-id-modal-title]')).toHaveText('Success');
+    expect(
+        await page.locator('[data-test-id=modal-messages-list]').allTextContents()
+    ).toStrictEqual(['Split saved successfully']);
+
+    await Promise.all([
+        page.locator('[data-test-id=close-modal-button]').click(),
+        page.waitForNavigation()
+    ]);
+    expect(page.url().endsWith('/records/splits')).toBe(true);
+    const splitButtons = page.locator('[data-test-id=splits-list] a h2');
+    expect((await splitButtons.allTextContents()).includes('Random split name')).toBe(true);
+    await page.goto(`/records/splits/Random%20Split%20Name`);
+    await page.reload();
+
+    const workoutNames = page.locator('[data-test-id=schedule-inputs-container] input');
+    await expect(splitNameInput).toHaveValue('Random split name');
+    for (let i = 0; i < 7; i++) {
+        await expect(workoutNames.nth(i)).toHaveText(`Random${i}`);
+    }
+    await expect(progressionRangeInput).toHaveValue(
+        (parseFloat(await progressionRangeInput.inputValue()) + 2.5).toString()
+    );
+    expect(await splitStatusInput.isChecked()).toStrictEqual(true);
 });
 
 test('should give error after adding new workout (add at least one exercise)', async ({
     extraSplitsCreatedPage,
     extraSplits
 }) => {
-    // error modal check
-    // check animate-pulse in modify workouts as well
+    const page = extraSplitsCreatedPage;
+    await page.goto(`/records/splits/${extraSplits[0].name}`);
+    const workoutNames = page.locator('[data-test-id=schedule-inputs-container] input');
+    await workoutNames.first().fill('Random new workout');
+    const saveButton = page.locator('[data-test-id=save-button]');
+    await saveButton.click();
+    
 });
 
 test('should make changed workout indicator yellow', async ({
@@ -316,9 +391,16 @@ test('should make new workouts indicators green', async ({
     // also check day being showed if repeating changed workout
 });
 
+test('should give error if split name changed to something which already exists', async ({
+    extraSplitsCreatedPage,
+    extraSplits
+}) => {
+    // change name to already existing split
+    // should give error here
+});
+
 // TODO
 /*
-    activeSplit changes checks
     modify workouts check
     success modal (split modified and SAVED successfully)
     change workouts
