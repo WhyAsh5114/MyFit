@@ -415,6 +415,74 @@ test('should give error after adding new workout (add at least one exercise)', a
     await expect(modifyWorkoutsButton).toHaveClass(/animate-pulse/);
 });
 
+test('should reset only changed workouts when clicking reset changed workouts', async ({
+    extraSplitsCreatedPage,
+    extraSplits
+}) => {
+    const page = extraSplitsCreatedPage;
+    await page.goto(`/records/splits/${extraSplits[0].name}`);
+
+    const sundayWorkout = page.locator('[data-test-id=Sun-workout-input]');
+    await expect(sundayWorkout).toBeEditable();
+    await sundayWorkout.fill('Core');
+    const modifyWorkoutsButton = page.locator('[data-test-id=modify-workouts-button]');
+    await modifyWorkoutsButton.click();
+
+    // New workout changes
+    const sundayCalendar = page.locator('[data-test-id=calendar-Sun]');
+    await sundayCalendar.click();
+    const addButton = page.locator('[data-test-id=add-button]');
+    await addButton.click();
+    const nameInput = page.locator('[data-test-id=name-input]');
+    const repsInput = page.locator('[data-test-id=reps-input]');
+    const setsInput = page.locator('[data-test-id=sets-input]');
+    const loadInput = page.locator('[data-test-id=load-input]');
+    await nameInput.fill('New exercise');
+    await repsInput.fill('1');
+    await setsInput.fill('2');
+    await loadInput.fill('3');
+    await page.locator('[data-test-id=save-button]').click();
+
+    // Modified workout changes
+    const fridayCalendar = page.locator('[data-test-id=calendar-Fri]');
+    await fridayCalendar.click();
+    await page.locator('[data-test-id=delete-button]').click();
+    const deleteFirstExercise = page.locator('[data-test-id=delete-button-1]');
+    await deleteFirstExercise.click();
+    const exercises = page.locator('[data-test-id=exercise-grid] button');
+    await page.locator('[data-test-id=save-button]').click();
+
+    // Save all workout changes
+    const modifyWorkoutsSaveButton = page.locator('[data-test-id=modify-workouts-save-button]');
+    await modifyWorkoutsSaveButton.click();
+
+    // New workout status should be green with text 'New'
+    const sundayStatus = page.locator('[data-test-id=Sun-workout-status] p');
+    await expect(sundayStatus).toHaveClass(/bg-success/);
+    await expect(sundayStatus).toHaveText('New');
+
+    // Modified workout status should be yellow with text 'Changed'
+    const fridayStatus = page.locator('[data-test-id=Fri-workout-status] p');
+    await expect(fridayStatus).toHaveText('Changed');
+    await expect(fridayStatus).toHaveClass(/bg-warning/);
+
+    // Reset changed workouts should only affect "Changed" workouts
+    const resetChangedWorkoutsButton = page.locator('[data-test-id=reset-changed-workouts-button]');
+    await resetChangedWorkoutsButton.click();
+    await expect(sundayStatus).toHaveClass(/bg-success/);
+    await expect(sundayStatus).toHaveText('New');
+    expect(await fridayStatus.textContent()).toStrictEqual('');
+    await expect(fridayStatus).not.toHaveClass(/bg-warning/);
+
+    // Confirm in workouts
+    await modifyWorkoutsButton.click();
+    await sundayCalendar.click();
+    await expect(page.locator('[data-test-id=exercise-1-name]')).toHaveText('New exercise');
+
+    await fridayCalendar.click();
+    expect(await exercises.count()).toBe(4);
+});
+
 test('should make changed workout indicator yellow', async ({
     extraSplitsCreatedPage,
     extraSplits
