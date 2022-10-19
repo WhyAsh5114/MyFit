@@ -316,6 +316,11 @@ export const test = base.extend<MyFixtures>({
                 }
             });
             expect(res2.status()).toBe(200);
+
+            // Force invalidateAll()
+            await page.goto('/');
+            await page.reload();
+            
             await use(page);
         },
         { scope: 'test' }

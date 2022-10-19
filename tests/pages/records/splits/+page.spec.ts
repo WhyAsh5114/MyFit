@@ -115,7 +115,7 @@ test('should open help modal', async ({ splitCreatedPage }) => {
     await page.goto('/records/splits');
     await page.locator('[data-test-id=help-button]').click();
 
-    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Info');
+    await expect(page.locator('[data-test-id=modal-title]')).toHaveText('Help');
     expect(
         await page.locator('[data-test-id=modal-messages-list] li').allTextContents()
     ).toStrictEqual([
