@@ -33,3 +33,7 @@ body {
 .my-disabled-button {
     @apply pointer-events-none brightness-50;
 }
+
+.modal-help-button {
+    @apply rounded-full border-2 border-accent w-fit h-fit px-3 font-semibold hover:bg-black cursor-pointer transition-colors;
+}

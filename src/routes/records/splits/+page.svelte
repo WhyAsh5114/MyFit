@@ -54,7 +54,7 @@
     </ul>
 </div>
 <button
-    class="rounded-full mr-1 border-2 border-accent w-fit h-fit px-3 my-2 font-semibold hover:bg-black cursor-pointer transition-colors"
+    class="modal-help-button mr-1 my-2"
     on:click={openHelpModal}
     data-test-id="help-button"
 >

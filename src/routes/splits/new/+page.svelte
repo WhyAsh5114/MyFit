@@ -101,7 +101,7 @@
 <form on:submit|preventDefault class="flex flex-col flex-grow w-full justify-center items-center">
     <div class="flex flex-col gap-10 justify-center items-center max-w-xs flex-grow">
         <button
-            class="rounded-full mr-1 border-2 border-accent w-fit px-3 font-semibold -my-7 hover:bg-black cursor-pointer place-self-end transition-colors"
+            class="mr-1 -my-7 place-self-end modal-help-button"
             on:click={openHelpModal}
             data-test-id="help-button"
         >
