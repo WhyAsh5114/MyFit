@@ -5,7 +5,7 @@
     import { onMount } from 'svelte';
     import { fly, fade } from 'svelte/transition';
     import { SplitSchedule, SplitName, SplitWorkouts } from '../../splitStore';
-    import { colors, messages } from '$lib/usefulFunctions';
+    import { colors, messages, truncate } from '$lib/usefulFunctions';
 
     let progressionValue = 5;
     let frequency: '/week' | '/month' | '/session' = '/week';
@@ -88,7 +88,7 @@
     <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/splits">Splits</a></li>
-        <li>New ({$SplitName})</li>
+        <li>New ({truncate($SplitName, 10)})</li>
         <li>Options</li>
     </ul>
 </div>

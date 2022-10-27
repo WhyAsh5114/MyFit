@@ -84,9 +84,6 @@
 
         await goto('/splits/new/workouts');
     }
-
-    // TODO: all user inputs (and their displaying elements) should have text-wrap with text-ellipsis
-    // use in all pages
 </script>
 
 <svelte:head>
@@ -115,7 +112,7 @@
             <input
                 type="text"
                 name="split-name"
-                class="input bg-secondary input-sm border-2 text-lg text-black col-span-2 text-center"
+                class="input bg-secondary input-sm border-2 text-lg text-black col-span-2 text-center text-ellipsis"
                 bind:value={splitName}
                 data-test-id="split-name-input"
                 required
@@ -129,7 +126,7 @@
                         type="text"
                         name={day}
                         data-test-id={day}
-                        class="input input-bordered w-full text-base bg-secondary text-black input-sm col-span-2 text-center"
+                        class="input input-bordered text-ellipsis w-full text-base bg-secondary text-black input-sm col-span-2 text-center"
                         bind:value={daysInput[day]}
                         on:input={updateWorkouts}
                         on:focus={updateWorkouts}

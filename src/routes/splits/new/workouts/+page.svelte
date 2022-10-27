@@ -2,6 +2,7 @@
     import { goto } from '$app/navigation';
     import ExerciseTable from '$lib/ExerciseTable.svelte';
     import MyModal from '$lib/MyModal.svelte';
+    import { truncate } from '$lib/usefulFunctions';
     import { onMount } from 'svelte';
     import { SplitName, SplitSchedule, SplitWorkouts } from '../../splitStore';
 
@@ -113,7 +114,7 @@
     <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/splits">Splits</a></li>
-        <li>New ({$SplitName})</li>
+        <li>New ({truncate($SplitName, 8)})</li>
         <li>Workouts</li>
     </ul>
 </div>
@@ -139,7 +140,7 @@
                 class="text-center bg-secondary text-black rounded-b-lg py-0.5 w-full"
                 data-test-id={'workout-' + day}
             >
-                {$SplitSchedule[day]}
+                {truncate($SplitSchedule[day], 7)}
             </p>
         </button>
     {/each}

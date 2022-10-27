@@ -2,6 +2,7 @@
     import MyModal from './MyModal.svelte';
     import { slide, scale, fade } from 'svelte/transition';
     import { flip } from 'svelte/animate';
+    import { truncate } from './usefulFunctions';
 
     export let workoutName: string;
     export let exercises: Exercise[] = [];
@@ -348,7 +349,7 @@
         class="w-full text-center text-xl font-bold bg-accent text-black rounded-t-xl pt-1 animate"
         data-test-id="workout-name"
     >
-        {workoutName}
+        {truncate(workoutName, 25)}
     </h3>
     {#key workoutName}
         <div
@@ -387,25 +388,25 @@
                         class="flex-grow text-center border-x border-black"
                         data-test-id={`exercise-${exercise.id}-name`}
                     >
-                        {exercise.name}
+                        {truncate(exercise.name, 25)}
                     </p>
                     <p
-                        class="basis-8 text-center border-x border-black"
+                        class="basis-9 text-center border-x border-black"
                         data-test-id={`exercise-${exercise.id}-reps`}
                     >
-                        {exercise.reps}
+                        {truncate(exercise.reps.toString(), 3)}
                     </p>
                     <p
-                        class="basis-8 text-center border-x border-black"
+                        class="basis-9 text-center border-x border-black"
                         data-test-id={`exercise-${exercise.id}-sets`}
                     >
-                        {exercise.sets}
+                        {truncate(exercise.sets.toString(), 3)}
                     </p>
                     <p
-                        class="basis-8 text-center border-l border-black"
+                        class="basis-9 text-center border-l border-black"
                         data-test-id={`exercise-${exercise.id}-load`}
                     >
-                        {exercise.load}
+                        {truncate(exercise.load.toString(), 3)}
                     </p>
                 </button>
             {/each}
