@@ -81,6 +81,11 @@
         }
     }
 
+    function truncate(str: string | undefined, n = 17) {
+        if (!str) return '';
+        return str.length > n ? str.slice(0, n - 1) + '...' : str;
+    }
+
     function workoutChanged(i: number) {
         const workout = splitSchedule[days[i]];
         const originalWorkout = split.splitWorkouts[workout];
@@ -179,15 +184,15 @@
         // TODO: also truncate user inputted strings here (long str...) for workout names, and split names
         let changes = [];
         if ($SplitName !== split.name) {
-            changes.push(`Name\n${split.name} -> ${$SplitName}\n\t`);
+            changes.push(`Name\n${truncate(split.name)} -> ${truncate($SplitName)}\n\t`);
             $CurrentSplit.name = $SplitName;
         }
         if (!areArraysIdentical(Object.values(splitSchedule), split.schedule)) {
             let changeString = 'Schedule\n';
             for (let i = 0; i < 7; i++) {
                 if (split.schedule[i] !== splitSchedule[days[i]]) {
-                    changeString += `${days[i]}: ${split.schedule[i]} -> ${
-                        splitSchedule[days[i]]
+                    changeString += `${days[i]}: ${truncate(split.schedule[i], 10)} -> ${
+                        truncate(splitSchedule[days[i]], 10)
                     }\n`;
                 }
             }
@@ -200,7 +205,7 @@
                 workoutChanged(i) &&
                 !workoutsChangedString.includes(`${$SplitSchedule[days[i]]}, `)
             ) {
-                workoutsChangedString += `${$SplitSchedule[days[i]]}, `;
+                workoutsChangedString += `${truncate($SplitSchedule[days[i]], 10)}, `;
             }
         }
         if (workoutsChangedString !== 'Workouts\n') {
@@ -221,9 +226,9 @@
         if ($CurrentSplitActive !== (user?.activeSplit === split.name)) {
             if ($CurrentSplitActive) {
                 let currentlyActiveSplit = user?.activeSplit || 'None';
-                changes.push(`Active split\n${currentlyActiveSplit} -> ${$SplitName}\n\t`);
+                changes.push(`Active split\n${truncate(currentlyActiveSplit)} -> ${truncate($SplitName)}\n\t`);
             } else {
-                changes.push(`Active split\n${user?.activeSplit} -> None\n\t`);
+                changes.push(`Active split\n${truncate(user?.activeSplit)} -> None\n\t`);
             }
         }
         if (changes.length > 0) {
