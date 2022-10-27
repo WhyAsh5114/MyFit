@@ -439,7 +439,7 @@
             Name
         </label>
         <input
-            class="text-lg font-semibold py-1 bg-secondary text-black w-full text-center rounded-r-md"
+            class="text-lg font-semibold py-1 bg-secondary text-black w-full text-center rounded-r-md text-ellipsis px-2"
             bind:value={$SplitName}
             id="split-name-input"
             data-test-id="split-name-input"
@@ -461,7 +461,7 @@
                             {day}
                         </label>
                         <input
-                            class="w-full text-center py-1"
+                            class="w-full text-center py-1 text-ellipsis px-2"
                             on:focusout={function focusout({ currentTarget }) {
                                 if (currentTarget.value.trim() === '') {
                                     splitSchedule[day] = 'Rest';

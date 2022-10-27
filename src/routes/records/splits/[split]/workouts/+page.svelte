@@ -2,6 +2,7 @@
     import { goto } from '$app/navigation';
     import ExerciseTable from '$lib/ExerciseTable.svelte';
     import MyModal from '$lib/MyModal.svelte';
+    import { truncate } from '$lib/usefulFunctions';
     import { onMount } from 'svelte';
     import {
         SplitSchedule,
@@ -127,12 +128,10 @@
         <li><a href="/records/splits" data-test-id="records-splits-redirect">Splits</a></li>
         <li>
             <a
-                class="text-ellipsis overflow-hidden w-fit whitespace-nowrap"
-                style="max-width: 3rem;"
                 href={`/records/splits/${$CurrentSplitOriginalName}`}
                 data-test-id="records-splits-name-redirect"
             >
-                {$CurrentSplitOriginalName}
+                {truncate($CurrentSplitOriginalName, 8)}
             </a>
         </li>
     </ul>
@@ -159,7 +158,7 @@
                 class="text-center bg-secondary text-black rounded-b-lg py-0.5 w-full"
                 data-test-id={'workout-' + day}
             >
-                {$SplitSchedule[day]}
+                {truncate($SplitSchedule[day], 7)}
             </p>
         </button>
     {/each}
