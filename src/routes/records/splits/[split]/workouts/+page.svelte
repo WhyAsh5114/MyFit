@@ -155,10 +155,10 @@
                 {day}
             </p>
             <p
-                class="text-center bg-secondary text-black rounded-b-lg py-0.5 w-full"
+                class="text-center bg-secondary text-black rounded-b-lg p-0.5 w-full text-ellipsis overflow-clip"
                 data-test-id={'workout-' + day}
             >
-                {truncate($SplitSchedule[day], 7)}
+                {$SplitSchedule[day]}
             </p>
         </button>
     {/each}

@@ -2,7 +2,6 @@
     import MyModal from './MyModal.svelte';
     import { slide, scale, fade } from 'svelte/transition';
     import { flip } from 'svelte/animate';
-    import { truncate } from './usefulFunctions';
 
     export let workoutName: string;
     export let exercises: Exercise[] = [];
@@ -346,10 +345,10 @@
 <MyModal modalName="table-modal" {modalTitle} {modalTexts} bind:modalOpen />
 <div class="flex flex-col w-full flex-1 rounded-xl my-2.5 bg-primary max-w-xl">
     <h3
-        class="w-full text-center text-xl font-bold bg-accent text-black rounded-t-xl pt-1 animate"
+        class="w-full text-center text-xl font-bold bg-accent text-black rounded-t-xl pt-1 animate text-ellipsis px-3 overflow-clip"
         data-test-id="workout-name"
     >
-        {truncate(workoutName, 25)}
+        {workoutName}
     </h3>
     {#key workoutName}
         <div
@@ -368,7 +367,7 @@
                 >
                     {#if mode === 'deleting'}
                         <button
-                            class="bg-error basis-8 font-semibold hover:brightness-90 active:brightness-75 transition-all"
+                            class="bg-error shrink-0 basis-8 font-semibold hover:brightness-90 active:brightness-75 transition-all"
                             on:click={() => deleteEntry(exercise.id)}
                             in:scale={{ duration: 200 }}
                             data-test-id={`delete-button-${exercise.id}`}
@@ -377,7 +376,7 @@
                         </button>
                     {:else}
                         <p
-                            class="basis-8 text-center border-r border-black"
+                            class="basis-8 shrink-0 text-center border-r border-black"
                             in:fade={{ duration: 200 }}
                             data-test-id={`exercise-${exercise.id}-id`}
                         >
@@ -385,28 +384,28 @@
                         </p>
                     {/if}
                     <p
-                        class="flex-grow text-center border-x border-black"
+                        class="flex-grow text-center border-x border-black text-ellipsis overflow-hidden px-2"
                         data-test-id={`exercise-${exercise.id}-name`}
                     >
-                        {truncate(exercise.name, 25)}
+                        {exercise.name}
                     </p>
                     <p
-                        class="basis-9 text-center border-x border-black"
+                        class="basis-9 shrink-0 text-center border-x border-black text-ellipsis overflow-clip"
                         data-test-id={`exercise-${exercise.id}-reps`}
                     >
-                        {truncate(exercise.reps.toString(), 3)}
+                        {exercise.reps}
                     </p>
                     <p
-                        class="basis-9 text-center border-x border-black"
+                        class="basis-9 shrink-0 text-center border-x border-black text-ellipsis overflow-clip"
                         data-test-id={`exercise-${exercise.id}-sets`}
                     >
-                        {truncate(exercise.sets.toString(), 3)}
+                        {exercise.sets}
                     </p>
                     <p
-                        class="basis-9 text-center border-l border-black"
+                        class="basis-9 shrink-0 text-center border-l border-black text-ellipsis overflow-clip"
                         data-test-id={`exercise-${exercise.id}-load`}
                     >
-                        {truncate(exercise.load.toString(), 3)}
+                        {exercise.load}
                     </p>
                 </button>
             {/each}
