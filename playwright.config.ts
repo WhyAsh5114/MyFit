@@ -1,4 +1,4 @@
-import type { PlaywrightTestConfig } from '@playwright/test';
+import { devices, type PlaywrightTestConfig } from '@playwright/test';
 
 const config: PlaywrightTestConfig = {
     testDir: './tests',
@@ -13,7 +13,17 @@ const config: PlaywrightTestConfig = {
     use: {
         baseURL: 'http://localhost:4173',
         video: 'retain-on-failure'
-    }
+    },
+    projects: [
+        {
+            name: 'chromium',
+            use: { ...devices['Desktop Chrome'] }
+        },
+        {
+            name: 'firefox',
+            use: { ...devices['Desktop Firefox'] }
+        }
+    ]
 };
 
 export default config;
