@@ -15,7 +15,7 @@ interface User {
     username: string;
     password?: string;
     splits: Record<string, Split>;
-    workouts?: Record<string, Array<Exercise>>;
+    workouts?: Record<string, Workout>;
     activeSplit?: string;
 }
 
@@ -26,6 +26,12 @@ interface Split {
     progressiveOverload: number;
     overloadFrequency: '/session' | '/week' | '/month';
     timeCreated: number;
+}
+
+interface Workout {
+    exercises: Exercise[];
+    belongsToSplit: string;
+    exhaustionRating: number;
 }
 
 interface Exercise {
