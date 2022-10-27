@@ -185,9 +185,10 @@
             let changeString = 'Schedule\n';
             for (let i = 0; i < 7; i++) {
                 if (split.schedule[i] !== splitSchedule[days[i]]) {
-                    changeString += `${days[i]}: ${truncate(split.schedule[i], 10)} -> ${
-                        truncate(splitSchedule[days[i]], 10)
-                    }\n`;
+                    changeString += `${days[i]}: ${truncate(split.schedule[i], 10)} -> ${truncate(
+                        splitSchedule[days[i]],
+                        10
+                    )}\n`;
                 }
             }
             changes.push(changeString + '\t');
@@ -220,7 +221,9 @@
         if ($CurrentSplitActive !== (user?.activeSplit === split.name)) {
             if ($CurrentSplitActive) {
                 let currentlyActiveSplit = user?.activeSplit || 'None';
-                changes.push(`Active split\n${truncate(currentlyActiveSplit)} -> ${truncate($SplitName)}\n\t`);
+                changes.push(
+                    `Active split\n${truncate(currentlyActiveSplit)} -> ${truncate($SplitName)}\n\t`
+                );
             } else {
                 changes.push(`Active split\n${truncate(user?.activeSplit)} -> None\n\t`);
             }

@@ -320,7 +320,7 @@ export const test = base.extend<MyFixtures>({
             // Force invalidateAll()
             await page.goto('/');
             await page.reload();
-            
+
             await use(page);
         },
         { scope: 'test' }

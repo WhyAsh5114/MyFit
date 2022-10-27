@@ -10,6 +10,4 @@ test("should display today's workout type", async ({ splitCreatedPage, split }) 
 
 test('should disable split template button if Rest or no active split', async ({ page }) => {
     await page.goto('/logging/workouts');
-
-    
-})
+});
