@@ -2,7 +2,7 @@
     import { goto, invalidateAll } from '$app/navigation';
     import { page } from '$app/stores';
     import MyModal from '$lib/MyModal.svelte';
-    import { areArraysIdentical, getFormattedDate, colors } from '$lib/usefulFunctions';
+    import { areArraysIdentical, getFormattedDate, colors, truncate } from '$lib/usefulFunctions';
     import { fly } from 'svelte/transition';
     import {
         CurrentSplit,
@@ -79,11 +79,6 @@
             }
             textColor = closestColors[0];
         }
-    }
-
-    function truncate(str: string | undefined, n = 17) {
-        if (!str) return '';
-        return str.length > n ? str.slice(0, n - 1) + '...' : str;
     }
 
     function workoutChanged(i: number) {

@@ -21,6 +21,11 @@ export function getFormattedDate(timestamp: number) {
     return `${day}-${month}-${year}`;
 }
 
+export function truncate(str: string | undefined, n = 17) {
+    if (!str) return '';
+    return str.length > n ? str.slice(0, n - 1) + '...' : str;
+}
+
 export const messages: Record<number, string> = {
     0: 'Why so low?',
     2.5: 'Not bad',
