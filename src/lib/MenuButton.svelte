@@ -1,6 +1,6 @@
 <script lang="ts">
     export let title: string;
-    export let description: string;
+    export let description: string | undefined = undefined;
     export let link: string;
     export let disabled = false;
     export let onClick = () => {};
@@ -18,6 +18,11 @@
     </div>
     <div class="flex flex-col justify-center p-2.5 sm:p-3 md:p-3.5 w-2/3 lg:w-3/5">
         <h2 class="card-title text-lg md:text-xl lg:text-2xl">{title}</h2>
-        <p class="text-sm text-left font-normal md:text-lg lg:text-xl h-fit">{description}</p>
+        <p class="text-sm text-left font-normal md:text-lg lg:text-xl h-fit">
+            {#if description}
+                {description}
+            {/if}
+            <slot name="description" />
+        </p>
     </div>
 </a>
