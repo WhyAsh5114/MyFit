@@ -496,20 +496,6 @@ test('should disable reset changes if no changes to reset', async ({
     await expect(resetChangesButton).not.toHaveClass(/my-disabled-button/);
 });
 
-test('should make changed workout indicator yellow', async ({
-    extraSplitsCreatedPage,
-    extraSplits
-}) => {
-    // also check day being showed if repeating changed workout
-});
-
-test('should make new workouts indicators green', async ({
-    extraSplitsCreatedPage,
-    extraSplits
-}) => {
-    // also check day being showed if repeating changed workout
-});
-
 test('should give error if split name changed to something which already exists', async ({
     extraSplitsCreatedPage,
     extraSplits
