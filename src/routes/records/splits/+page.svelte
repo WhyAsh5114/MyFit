@@ -41,8 +41,6 @@
         ];
         modalOpen = true;
     }
-    // TODO: alert users if going to different split, causing loss of unsaved changes
-    // reference link: https://thewebdev.info/2021/03/06/how-to-warn-user-before-leaving-a-web-page-with-unsaved-changes/
 </script>
 
 <svelte:head>
