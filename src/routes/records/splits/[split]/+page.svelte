@@ -181,7 +181,6 @@
         $SplitWorkouts
     );
     function updateChanges(..._args: any[]) {
-        // TODO: also truncate user inputted strings here (long str...) for workout names, and split names
         let changes = [];
         if ($SplitName !== split.name) {
             changes.push(`Name\n${truncate(split.name)} -> ${truncate($SplitName)}\n\t`);
@@ -254,9 +253,6 @@
             goto('/records/splits');
         }
     }
-
-    // TODO: shouldn't change splitName to a split which already exists (conflict 409)
-    // TODO: give warning even when resetting changes
 
     async function saveChanges() {
         let emptyWorkouts: string[] = [];
