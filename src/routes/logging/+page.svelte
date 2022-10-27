@@ -5,6 +5,12 @@
 <svelte:head>
     <title>MyFit | Logging</title>
 </svelte:head>
+<div class="breadcrumbs-container">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li>Logging</li>
+    </ul>
+</div>
 <div class="menu-button-grid">
     <MenuButton
         title="Log workout"
