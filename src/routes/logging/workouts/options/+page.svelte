@@ -40,7 +40,7 @@
     let addingToSplit = $page.data.user?.activeSplit !== undefined;
     let selectedSplit = $page.data.user?.activeSplit;
 
-    let uniqueWorkouts: string[];
+    let uniqueWorkouts: string[] = [];
     $: if (selectedSplit) {
         uniqueWorkouts =
             Array.from(new Set($page.data.user?.splits[selectedSplit]?.schedule)) || [];
@@ -48,7 +48,7 @@
     }
 
     let selectedWorkout: string;
-    $: if (selectedSplit && addingToSplit) {
+    if (selectedSplit && addingToSplit) {
         selectedWorkout = $page.data.user?.splits[selectedSplit].schedule.at(
             new Date().getDay() - 1
         ) as string;
