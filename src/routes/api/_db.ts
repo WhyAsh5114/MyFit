@@ -45,7 +45,8 @@ export const registerUser = async (credentials: AccountDetails): Promise<User> =
     const newUser: User = {
         username: credentials.username,
         password: hashedPassword,
-        splits: {}
+        splits: {},
+        workouts: {}
     };
 
     await db.set(newUser.username, JSON.stringify(newUser));

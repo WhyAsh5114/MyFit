@@ -15,7 +15,7 @@ interface User {
     username: string;
     password?: string;
     splits: Record<string, Split>;
-    workouts?: Record<string, Workout>;
+    workouts: Record<string, Workout>;
     activeSplit?: string;
 }
 
