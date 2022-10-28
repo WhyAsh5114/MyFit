@@ -170,7 +170,7 @@
     modalTexts={[]}
     bind:modalOpen={modalOpen3}
 >
-    <input type="date" class="bg-base-100 rounded-lg p-2" bind:value={startDateValue} />
+    <input type="date" class="bg-base-100 rounded-lg p-2 text-accent font-semibold" bind:value={startDateValue} />
     <div class="grid grid-cols-2 gap-3 mt-5 w-full">
         <input type="submit" value="Save" on:click={saveDate} class="btn btn-accent btn-sm" />
         <button class="btn btn-error text-white btn-sm" on:click={() => (modalOpen3 = false)}
