@@ -53,11 +53,7 @@
         <li>Splits</li>
     </ul>
 </div>
-<button
-    class="modal-help-button mr-1 my-2"
-    on:click={openHelpModal}
-    data-test-id="help-button"
->
+<button class="modal-help-button mr-1 my-2" on:click={openHelpModal} data-test-id="help-button">
     ?
 </button>
 <MyModal {modalTitle} {modalTexts} bind:modalOpen />
