@@ -8,7 +8,7 @@
     let exercises: Exercise[] = [];
 
     const now = new Date();
-    if ($WorkoutCreatedDate) {
+    if ($WorkoutCreatedDate && JSON.stringify($WorkoutCreatedDate) !== JSON.stringify(new Date(0))) {
         now.setTime(+$WorkoutCreatedDate);
     }
     let mins = now.getMinutes().toString();
@@ -20,12 +20,12 @@
         hours = '0' + hours;
     }
     let workoutName: string;
-    if ($WorkoutName) {
+    if ($WorkoutName && $WorkoutName !== '') {
         workoutName = $WorkoutName;
     } else {
         workoutName = getFormattedDate(+now) + ` -> ${hours}:${mins}`;
     }
-    if ($WorkoutExercises) {
+    if ($WorkoutExercises && JSON.stringify($WorkoutExercises) !== JSON.stringify([])) {
         exercises = JSON.parse(JSON.stringify($WorkoutExercises));
     }
 
@@ -95,6 +95,14 @@
     }
 </script>
 
+<div class="breadcrumbs-container">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/logging">Logging</a></li>
+        <li><a href="/logging/workouts">Workouts</a></li>
+        <li>New</li>
+    </ul>
+</div>
 <svelte:head>
     <title>MyFit | Log workout</title>
 </svelte:head>
