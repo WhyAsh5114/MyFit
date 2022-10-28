@@ -13,7 +13,7 @@
         <p data-test-id="no-active-split">No active split</p>
     {/if}
     <a
-        class="btn btn-sm normal-case btn-error w-fit"
+        class="btn btn-sm normal-case btn-error w-fit text-white"
         href="/profile/logout"
         data-test-id="profile-logout-button">Logout</a
     >
