@@ -29,21 +29,23 @@
     </MenuButton>
     <MenuButton
         title="Use split template"
-        link="/logging/workouts/overload?split=true"
-        disabled={!todaysWorkout}
+        link="/logging/workouts/select_split_workout"
+        disabled={Object.keys($page.data.user?.splits || {}).length === 0}
     >
         <img src="$lib/assets/calendar.svg" alt="" class="responsive-image-menu-button" />
         <p slot="description">
             {#if todaysWorkout === 'Rest'}
                 Today is a <b class="text-accent">Rest</b> day according to your
                 <b class="text-accent">{$page.data.user?.activeSplit}</b> split
-            {:else if !$page.data.user?.activeSplit}
-                <p class="text-error font-semibold">No active split</p>
-            {:else}
+            {:else if Object.keys($page.data.user?.splits || {}).length === 0}
+                <p class="text-error font-semibold">No split found</p>
+            {:else if todaysWorkout}
                 Template from latest split workout performed. Today is <b
                     class="text-accent"
                     data-test-id="todays-workout">{todaysWorkout}</b
                 >
+            {:else}
+                <p>Use split workouts as a template</p>
             {/if}
         </p>
     </MenuButton>
