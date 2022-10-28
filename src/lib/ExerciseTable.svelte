@@ -514,7 +514,7 @@
                 {/if}
             </button>
             <button
-                class="btn btn-sm no-animation btn-error rounded-t-none rounded-bl-none hover:brightness-75"
+                class="btn btn-sm no-animation btn-error rounded-t-none rounded-bl-none hover:brightness-75 text-white"
                 on:click={() => callAction('cancel')}
                 data-test-id="cancel-button">CANCEL</button
             >

@@ -29,9 +29,13 @@ interface Split {
 }
 
 interface Workout {
+    name: string;
+    createdDate: Date;
     exercises: Exercise[];
-    belongsToSplit: string;
+    belongsToSplit: string | undefined;
+    workoutType: string | undefined;
     exhaustionRating: number;
+    duration: number;
 }
 
 interface Exercise {
