@@ -81,6 +81,9 @@
             })
         });
         if (res.ok) {
+            $WorkoutName = "";
+            $WorkoutCreatedDate = new Date(0);
+            $WorkoutExercises = [];
             modalTitle = 'Success';
             modalTexts = ['Workout saved successfully'];
             onClose = async () => {
