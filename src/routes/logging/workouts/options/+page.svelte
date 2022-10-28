@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
+    import { goto, invalidateAll } from '$app/navigation';
     import { page } from '$app/stores';
+    import MyModal from '$lib/MyModal.svelte';
     import { onMount } from 'svelte';
     import { slide } from 'svelte/transition';
     import { WorkoutName, WorkoutCreatedDate, WorkoutExercises } from '../newWorkoutStore';
@@ -41,7 +42,8 @@
 
     let uniqueWorkouts: string[];
     $: if (selectedSplit) {
-        uniqueWorkouts = Array.from(new Set($page.data.user?.splits[selectedSplit].schedule)) || [];
+        uniqueWorkouts =
+            Array.from(new Set($page.data.user?.splits[selectedSplit]?.schedule)) || [];
         uniqueWorkouts = uniqueWorkouts.filter((workout) => workout !== 'Rest');
     }
 
@@ -55,7 +57,11 @@
         }
     }
 
-    function saveWorkout() {
+    let modalOpen = false;
+    let modalTitle = '';
+    let modalTexts: string[] = [];
+    let onClose = () => {};
+    async function saveWorkout() {
         let workout: Workout = {
             name: $WorkoutName,
             createdDate: $WorkoutCreatedDate,
@@ -65,7 +71,30 @@
             exhaustionRating: currentRating,
             duration: hours * 60 + mins
         };
-        console.log(workout);
+        const res = await fetch('/api/workouts/saveWorkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                workout
+            })
+        });
+        if (res.ok) {
+            modalTitle = 'Success';
+            modalTexts = ['Workout saved successfully'];
+            onClose = async () => {
+                await invalidateAll();
+                await goto('/');
+            };
+            modalOpen = true;
+        } else {
+            const body = await res.text();
+            modalTitle = 'Error';
+            modalTexts = [body];
+            modalOpen = true;
+            onClose = () => {};
+        }
     }
 </script>
 
@@ -78,6 +107,7 @@
         <li>Options</li>
     </ul>
 </div>
+<MyModal bind:modalOpen {modalTitle} {modalTexts} {onClose} />
 <div class="flex flex-col my-auto items-center gap-2 w-full max-w-xs">
     <div class="stat bg-primary rounded-xl gap-2">
         <div class="stat-title opacity-100 font-semibold">Difficulty rating</div>
