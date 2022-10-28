@@ -81,7 +81,7 @@
             })
         });
         if (res.ok) {
-            $WorkoutName = "";
+            $WorkoutName = '';
             $WorkoutCreatedDate = new Date(0);
             $WorkoutExercises = [];
             modalTitle = 'Success';

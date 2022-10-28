@@ -8,7 +8,10 @@
     let exercises: Exercise[] = [];
 
     const now = new Date();
-    if ($WorkoutCreatedDate && JSON.stringify($WorkoutCreatedDate) !== JSON.stringify(new Date(0))) {
+    if (
+        $WorkoutCreatedDate &&
+        JSON.stringify($WorkoutCreatedDate) !== JSON.stringify(new Date(0))
+    ) {
         now.setTime(+$WorkoutCreatedDate);
     }
     let mins = now.getMinutes().toString();

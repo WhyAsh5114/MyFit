@@ -52,7 +52,7 @@
         if (splitName === '') {
             errors.push('Enter split name');
         }
-        if ($page.data.user !== undefined && splitName in $page.data.user?.splits) {
+        if ($page.data.user !== undefined && splitName in $page.data.user.splits) {
             errors.push('Split already exists');
         }
         if (uniqueWorkouts.size === 0) {

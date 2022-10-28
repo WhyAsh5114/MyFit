@@ -1,7 +1,7 @@
 import { ErrorResponse, removeSession } from '../../_db';
 import type { RequestHandler } from '@sveltejs/kit';
 
-export const GET: RequestHandler = async ({ request, cookies }) => {
+export const GET: RequestHandler = async ({ cookies }) => {
     // Check if cookie exists, if yes, remove it from DB
     const sessionID = cookies.get('sessionID');
 

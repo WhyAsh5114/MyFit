@@ -357,12 +357,15 @@ export const colors = new Map<number, Array<string>>([
 
 export function getFormattedDate(timestamp: number) {
     const date = new Date(timestamp);
-    let day = date.getDate();
+    let day = date.getDate().toString();
     let month = (date.getMonth() + 1).toString();
+    if (Number(day) < 10) {
+        day = '0' + day;
+    }
     if (Number(month) < 10) {
         month = '0' + month;
     }
-    let year = date.getFullYear();
+    const year = date.getFullYear();
     return `${day}-${month}-${year}`;
 }
 

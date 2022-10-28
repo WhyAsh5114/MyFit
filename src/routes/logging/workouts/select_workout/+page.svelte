@@ -29,7 +29,10 @@
                     </h2>
                     <div class="flex">
                         {#if $page.data.user?.workouts[workout].belongsToSplit}
-                            <p class="font-semibold text-accent">{$page.data.user?.workouts[workout].belongsToSplit} -> {$page.data.user?.workouts[workout].workoutType}</p>
+                            <p class="font-semibold text-accent">
+                                {$page.data.user?.workouts[workout].belongsToSplit} -> {$page.data
+                                    .user?.workouts[workout].workoutType}
+                            </p>
                         {:else}
                             <p class="font-semibold">N/A</p>
                         {/if}

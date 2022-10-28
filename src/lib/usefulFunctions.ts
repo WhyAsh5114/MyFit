@@ -20,7 +20,7 @@ export function getFormattedDate(timestamp: number) {
     if (Number(month) < 10) {
         month = '0' + month;
     }
-    let year = date.getFullYear();
+    const year = date.getFullYear();
     return `${day}-${month}-${year}`;
 }
 

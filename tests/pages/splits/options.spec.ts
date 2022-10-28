@@ -38,7 +38,7 @@ test('should display appropriate values', async ({ splitWorkoutsLoadedPage }) =>
 
     for (let i = 0; i <= 10; i++) {
         const inputValue = i * 2.5;
-        let regexes: RegExp[] = [];
+        const regexes: RegExp[] = [];
         colors.get(inputValue)?.map((color) => {
             regexes.push(new RegExp(color));
         });
@@ -48,11 +48,11 @@ test('should display appropriate values', async ({ splitWorkoutsLoadedPage }) =>
     await frequencySelector.selectOption('/session');
     for (let i = 0; i <= 10; i++) {
         const inputValue = i * 2.5;
-        let regexes: RegExp[] = [];
+        const regexes: RegExp[] = [];
 
         let adjustedValue = 25;
         let adjustedColors = colors.get(25);
-        for (let [value, maybeColors] of colors) {
+        for (const [value, maybeColors] of colors) {
             if (value >= inputValue * 1.5) {
                 adjustedValue = value;
                 adjustedColors = maybeColors;
@@ -68,11 +68,11 @@ test('should display appropriate values', async ({ splitWorkoutsLoadedPage }) =>
     await frequencySelector.selectOption('/month');
     for (let i = 0; i <= 10; i++) {
         const inputValue = i * 2.5;
-        let regexes: RegExp[] = [];
+        const regexes: RegExp[] = [];
 
         let adjustedValue = 25;
         let adjustedColors = colors.get(25);
-        for (let [value, maybeColors] of colors) {
+        for (const [value, maybeColors] of colors) {
             if (value >= inputValue * 0.5) {
                 adjustedValue = value;
                 adjustedColors = maybeColors;
