@@ -1,0 +1,127 @@
+<script lang="ts">
+    import { page } from '$app/stores';
+    import { getFormattedDate } from '$lib/usefulFunctions';
+    import { scale, fly, slide } from 'svelte/transition';
+
+    const user = $page.data.user;
+    // Reverse to sort by creation time (or last update time)
+    const splits = Object.values(user?.splits as Record<string, Split>).reverse() as Split[];
+
+    let currentSplit: string;
+    let selectingWorkouts = false;
+
+    let todaysWorkout: string;
+</script>
+
+<div class="breadcrumbs-container">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/logging">Logging</a></li>
+        <li><a href="/logging/workouts">Workouts</a></li>
+        <li>Template</li>
+    </ul>
+</div>
+<div class="btn-group grid grid-cols-2 my-3">
+    <button
+        class="font-semibold btn btn-sm normal-case {selectingWorkouts ? '' : 'btn-active'}"
+        on:click={() => {
+            selectingWorkouts = false;
+        }}>1. Select split</button
+    >
+    <button class="font-semibold btn btn-sm normal-case {selectingWorkouts ? 'btn-active' : ''}"
+        >2. Select workout</button
+    >
+</div>
+{#if !selectingWorkouts}
+    <div
+        class="flex flex-col w-full max-w-md px-3 h-px flex-auto overflow-y-auto"
+        in:fly|local={{ x: -200 }}
+    >
+        <ul data-test-id="splits-list" class="my-auto">
+            {#each splits as split}
+                <button
+                    class="flex w-full bg-primary rounded-lg p-3 my-1.5 active:scale-95 hover:bg-opacity-50 transition-all border-2 {split.name ===
+                    user?.activeSplit
+                        ? 'border-accent'
+                        : 'border-base-100'}"
+                    in:scale|local
+                    on:click={() => {
+                        currentSplit = split.name;
+                        selectingWorkouts = true;
+                        todaysWorkout =
+                            $page.data.user?.splits[currentSplit]?.schedule.at(
+                                new Date().getDay() - 1
+                            ) || '';
+                    }}
+                >
+                    <h2
+                        class="text-lg font-semibold overflow-hidden text-ellipsis whitespace-nowrap"
+                    >
+                        {split.name}
+                    </h2>
+                    <h3 class="ml-auto basis-28 text-right shrink-0">
+                        {getFormattedDate(split.timeCreated)}
+                    </h3>
+                </button>
+            {/each}
+        </ul>
+        {#if splits.length === 0}
+            <div class="flex flex-grow flex-col justify-center items-center gap-3">
+                <h2 class="text-center" data-test-id="no-split-label">No split created</h2>
+                <a
+                    href="/splits/new"
+                    class="btn btn-primary w-full"
+                    data-test-id="create-split-button">Create split</a
+                >
+            </div>
+        {/if}
+    </div>
+{:else}
+    <div
+        in:fly|local={{ x: 200 }}
+        class="flex flex-col w-full max-w-md px-3 h-px flex-auto overflow-y-auto"
+    >
+        <div class="stat bg-primary rounded-xl gap-2">
+            <div class="stat-title opacity-100">
+                Select workout from <b class="text-accent">{currentSplit}</b>
+            </div>
+            <select class="select select-sm" bind:value={todaysWorkout}>
+                {#each Array.from(new Set($page.data.user?.splits[currentSplit].schedule)).filter((item) => item !== 'Rest') || [] as workout}
+                    <option>{workout}</option>
+                {/each}
+            </select>
+        </div>
+        <ul class="my-auto flex flex-col">
+            <a
+                class="flex w-full bg-primary rounded-lg px-3 py-2 my-1.5 active:scale-95 hover:bg-opacity-50 transition-all"
+                href="/logging/workouts/overload?split={currentSplit}&type={todaysWorkout}"
+            >
+                <h2 class="text-lg">
+                    {currentSplit} -> {todaysWorkout}
+                </h2>
+                <p class="font-semibold ml-auto">Base split workout</p>
+            </a>
+            {#each Object.keys($page.data.user?.workouts || {})
+                .sort()
+                .reverse() as workout}
+                {#if $page.data.user?.workouts[workout].belongsToSplit === currentSplit && $page.data.user?.workouts[workout].workoutType === todaysWorkout}
+                    <a
+                        class="flex flex-col w-full bg-primary rounded-lg px-3 py-2 my-1.5 active:scale-95 hover:bg-opacity-50 transition-all"
+                        in:slide|local
+                        href="/logging/workouts/overload?template={workout}"
+                    >
+                        <h2 class="text-lg">
+                            {workout}
+                        </h2>
+                        <div class="flex">
+                            <p class="font-semibold text-accent">
+                                {$page.data.user?.workouts[workout].belongsToSplit} -> {$page.data
+                                    .user?.workouts[workout].workoutType}
+                            </p>
+                        </div>
+                    </a>
+                {/if}
+            {/each}
+        </ul>
+    </div>
+{/if}
