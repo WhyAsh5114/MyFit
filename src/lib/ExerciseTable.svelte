@@ -5,6 +5,7 @@
 
     export let workoutName: string;
     export let exercises: Exercise[] = [];
+    export let readonly = false;
 
     let mode: 'normal' | 'adding' | 'deleting' | 'editing' | 'reordering' | 'selecting' = 'normal';
     $: mode = workoutName ? 'normal' : 'normal';
@@ -384,25 +385,25 @@
                         </p>
                     {/if}
                     <p
-                        class="flex-grow text-center border-x border-black text-ellipsis overflow-hidden px-2"
+                        class="flex-grow text-center border-x border-black text-ellipsis overflow-clip px-2 whitespace-nowrap"
                         data-test-id={`exercise-${exercise.id}-name`}
                     >
                         {exercise.name}
                     </p>
                     <p
-                        class="basis-9 shrink-0 text-center border-x border-black text-ellipsis overflow-clip"
+                        class="basis-12 shrink-0 text-center border-x border-black text-ellipsis overflow-clip"
                         data-test-id={`exercise-${exercise.id}-reps`}
                     >
                         {exercise.reps}
                     </p>
                     <p
-                        class="basis-9 shrink-0 text-center border-x border-black text-ellipsis overflow-clip"
+                        class="basis-12 shrink-0 text-center border-x border-black text-ellipsis overflow-clip"
                         data-test-id={`exercise-${exercise.id}-sets`}
                     >
                         {exercise.sets}
                     </p>
                     <p
-                        class="basis-9 shrink-0 text-center border-l border-black text-ellipsis overflow-clip"
+                        class="basis-12 shrink-0 text-center border-l border-black text-ellipsis overflow-clip"
                         data-test-id={`exercise-${exercise.id}-load`}
                     >
                         {exercise.load}
@@ -473,7 +474,7 @@
             </div>
         </div>
     {/if}
-    {#if mode === 'normal'}
+    {#if mode === 'normal' && !readonly}
         <div class="grid grid-cols-4 gap-1" in:fade={{ duration: 300 }}>
             <button
                 class="btn btn-sm bg-accent text-black flex-grow rounded-t-none rounded-br-none hover:bg-accent hover:brightness-75 no-animation"
@@ -500,7 +501,7 @@
                 on:click={enterReorderingMode}>REORDER</button
             >
         </div>
-    {:else}
+    {:else if !readonly}
         <div class="grid grid-cols-2 gap-1" in:fade={{ duration: 300 }}>
             <button
                 class="btn btn-sm no-animation btn-accent rounded-t-none rounded-br-none hover:brightness-75"
