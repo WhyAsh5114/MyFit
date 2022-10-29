@@ -1,11 +1,28 @@
 <script lang="ts">
     import { page } from '$app/stores';
     import MenuButton from '$lib/MenuButton.svelte';
+    import {
+        WorkoutName,
+        WorkoutExercises,
+        WorkoutCreatedDate,
+        OldWorkoutExercises,
+        SetSplit,
+        SetWorkoutType
+    } from './newWorkoutStore';
 
     let todaysWorkout: string | undefined;
     $: if ($page.data.user?.activeSplit) {
         const activeSplit = $page.data.user?.splits[$page.data.user?.activeSplit];
         todaysWorkout = activeSplit.schedule.at(new Date().getDay() - 1);
+    }
+
+    function clearStores() {
+        $WorkoutName = '';
+        $WorkoutExercises = [];
+        $WorkoutCreatedDate = new Date(0);
+        $OldWorkoutExercises = [];
+        $SetSplit = '';
+        $SetWorkoutType = '';
     }
 </script>
 
@@ -24,6 +41,7 @@
         title="New workout"
         description="Log a new workout from scratch"
         link="/logging/workouts/new"
+        onClick={clearStores}
     >
         <img src="$lib/assets/calendar_plus.svg" alt="" class="responsive-image-menu-button" />
     </MenuButton>
@@ -31,6 +49,7 @@
         title="Use split template"
         link="/logging/workouts/select_split_workout"
         disabled={Object.keys($page.data.user?.splits || {}).length === 0}
+        onClick={clearStores}
     >
         <img src="$lib/assets/calendar.svg" alt="" class="responsive-image-menu-button" />
         <p slot="description">
@@ -53,6 +72,7 @@
         title="Use workout template"
         description="Template from already performed workout"
         link="/logging/workouts/select_workout"
+        onClick={clearStores}
     >
         <img src="$lib/assets/calendar_dumbbell.svg" alt="" class="responsive-image-menu-button" />
     </MenuButton>
