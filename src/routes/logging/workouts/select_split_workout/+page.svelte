@@ -77,10 +77,7 @@
         {/if}
     </div>
 {:else}
-    <div
-        in:fly|local={{ x: 200 }}
-        class="flex flex-col w-full max-w-md px-3 h-px flex-auto overflow-y-auto"
-    >
+    <div class="flex flex-col w-full max-w-md px-3">
         <div class="stat bg-primary rounded-xl gap-2">
             <div class="stat-title opacity-100">
                 Select workout from <b class="text-accent">{currentSplit}</b>
@@ -91,16 +88,21 @@
                 {/each}
             </select>
         </div>
+        <a
+            class="flex w-full bg-primary rounded-lg px-3 py-2 my-1.5 active:scale-95 hover:bg-opacity-50 transition-all"
+            href="/logging/workouts/overload?split={currentSplit}&type={todaysWorkout}"
+        >
+            <h2 class="text-lg">
+                {currentSplit} -> {todaysWorkout}
+            </h2>
+            <p class="font-semibold ml-auto">Base split workout</p>
+        </a>
+    </div>
+    <div
+        in:fly|local={{ x: 200 }}
+        class="flex flex-col w-full max-w-md px-3 h-px flex-auto overflow-y-auto"
+    >
         <ul class="my-auto flex flex-col">
-            <a
-                class="flex w-full bg-primary rounded-lg px-3 py-2 my-1.5 active:scale-95 hover:bg-opacity-50 transition-all"
-                href="/logging/workouts/overload?split={currentSplit}&type={todaysWorkout}"
-            >
-                <h2 class="text-lg">
-                    {currentSplit} -> {todaysWorkout}
-                </h2>
-                <p class="font-semibold ml-auto">Base split workout</p>
-            </a>
             {#each Object.keys($page.data.user?.workouts || {})
                 .sort()
                 .reverse() as workout}
@@ -108,7 +110,7 @@
                     <a
                         class="flex flex-col w-full bg-primary rounded-lg px-3 py-2 my-1.5 active:scale-95 hover:bg-opacity-50 transition-all"
                         in:slide|local
-                        href="/logging/workouts/overload?template={workout}"
+                        href="/logging/workouts/overload?template={workout}&split={currentSplit}&type={todaysWorkout}"
                     >
                         <h2 class="text-lg">
                             {workout}
