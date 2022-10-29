@@ -2,8 +2,8 @@
     import { page } from '$app/stores';
     import MyModal from '$lib/MyModal.svelte';
     import { getFormattedDate } from '$lib/usefulFunctions';
-    import { onMount } from 'svelte';
     import { scale, fly, slide } from 'svelte/transition';
+    import { SetSplit, SetWorkoutType } from '../newWorkoutStore';
 
     const user = $page.data.user;
     // Reverse to sort by creation time (or last update time)
@@ -131,6 +131,10 @@
         <a
             class="flex w-full bg-primary rounded-lg px-3 py-2 my-1.5 active:scale-95 hover:bg-opacity-50 transition-all"
             href="/logging/workouts/overload?split={currentSplit}&type={todaysWorkout}"
+            on:click={() => {
+                $SetSplit = currentSplit;
+                $SetWorkoutType = todaysWorkout || '';
+            }}
         >
             <h2 class="text-lg">
                 {currentSplit} -> {todaysWorkout}
@@ -152,6 +156,10 @@
                             class="flex flex-col w-full bg-primary rounded-lg px-3 py-2 my-1.5 active:scale-95 hover:bg-opacity-50 transition-all"
                             in:slide|local
                             href="/logging/workouts/overload?template={workout}&split={currentSplit}&type={todaysWorkout}"
+                            on:click={() => {
+                                $SetSplit = currentSplit;
+                                $SetWorkoutType = todaysWorkout || '';
+                            }}
                         >
                             <h2 class="text-lg">
                                 {workout}

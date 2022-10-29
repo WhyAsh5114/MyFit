@@ -1,6 +1,7 @@
 <script lang="ts">
     import { page } from '$app/stores';
     import { scale } from 'svelte/transition';
+    import { SetSplit, SetWorkoutType } from '../newWorkoutStore';
 </script>
 
 <div class="breadcrumbs-container">
@@ -25,6 +26,10 @@
                     href="/logging/workouts/overload?template={workout}"
                     class="flex flex-col w-full bg-primary rounded-lg px-3 py-2 my-1.5 active:scale-95 hover:bg-opacity-50 transition-all"
                     in:scale
+                    on:click={() => {
+                        $SetSplit = $page.data.user?.workouts[workout].belongsToSplit || '';
+                        $SetWorkoutType = $page.data.user?.workouts[workout].workoutType || '';
+                    }}
                 >
                     <h2 class="text-lg">
                         {workout}
