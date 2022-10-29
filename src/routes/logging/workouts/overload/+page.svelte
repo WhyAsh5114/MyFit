@@ -6,12 +6,12 @@
     import { colors } from '$lib/usefulFunctions';
     import { onMount } from 'svelte';
     import { fly } from 'svelte/transition';
-    import { WorkoutExercises } from '../newWorkoutStore';
+    import { OldWorkoutExercises, WorkoutExercises } from '../newWorkoutStore';
 
     let currentWorkout: Exercise[];
     let newWorkout: Exercise[];
     let workoutName: string;
-    let avgOverload: string;
+    let overload: string;
 
     let splitName: string | null;
     let splitWorkout: string | null;
@@ -172,19 +172,28 @@
             }
             allOverloads.push(closestPercentage || 0);
         });
-        let sumOverload = 0;
-        allOverloads.forEach((overload) => (sumOverload += overload));
-        avgOverload = (sumOverload / allOverloads.length).toFixed(2);
-        avgOverload = isNaN(parseFloat(avgOverload)) ? '0' : avgOverload;
+        let newVolume = 0;
+        newWorkout.forEach(exercise => {
+            newVolume += exercise.reps * exercise.sets * exercise.load;
+        });
+
+        let oldVolume = 0;
+        currentWorkout.forEach(exercise => {
+            oldVolume += exercise.reps * exercise.sets * exercise.load;
+        })
+
+        overload = ((newVolume / oldVolume) * 100 - 100).toFixed(2);
     }
 
     function applyOverload() {
         $WorkoutExercises = JSON.parse(JSON.stringify(newWorkout));
+        $OldWorkoutExercises = JSON.parse(JSON.stringify(currentWorkout));
         goto('/logging/workouts/new');
     }
 
     function dontOverload() {
         $WorkoutExercises = JSON.parse(JSON.stringify(currentWorkout));
+        $OldWorkoutExercises = JSON.parse(JSON.stringify(currentWorkout));
         goto('/logging/workouts/new');
     }
 
@@ -228,7 +237,7 @@
 <div class="flex flex-col md:flex-row h-full w-full md:gap-3 justify-center">
     <ExerciseTable workoutName="Original" readonly={true} bind:exercises={currentWorkout} />
     <ExerciseTable
-        workoutName="With overload ({avgOverload}%)"
+        workoutName="With overload ({overload}%)"
         readonly={true}
         bind:exercises={newWorkout}
     />
