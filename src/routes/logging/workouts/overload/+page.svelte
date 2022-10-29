@@ -242,13 +242,14 @@
         bind:exercises={newWorkout}
     />
 </div>
+<!-- TODO: Suggest overloading according to split specifics... -->
 <div class="grid grid-cols-2 gap-4 w-full">
     <button
-        class="btn btn-primary grow text-lg normal-case bg-accent text-black"
+        class="btn btn-primary grow md:text-lg normal-case bg-accent text-black"
         on:click={applyOverload}>Apply overload</button
     >
     <button
-        class="btn btn-primary grow text-lg normal-case bg-error text-white"
+        class="btn btn-primary grow md:text-lg normal-case bg-error text-white"
         on:click={dontOverload}>Don't overload</button
     >
 </div>
