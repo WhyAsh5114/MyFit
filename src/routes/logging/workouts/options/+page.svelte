@@ -4,7 +4,7 @@
     import MyModal from '$lib/MyModal.svelte';
     import { onMount } from 'svelte';
     import { slide } from 'svelte/transition';
-    import { WorkoutName, WorkoutCreatedDate, WorkoutExercises } from '../newWorkoutStore';
+    import { WorkoutName, WorkoutCreatedDate, WorkoutExercises, SetSplit, SetWorkoutType } from '../newWorkoutStore';
 
     onMount(() => {
         if (!$WorkoutName || !$WorkoutCreatedDate || !WorkoutExercises) {
@@ -39,6 +39,9 @@
 
     let addingToSplit = $page.data.user?.activeSplit !== undefined;
     let selectedSplit = $page.data.user?.activeSplit;
+    if ($SetSplit !== '' && $SetSplit) {
+        selectedSplit = $SetSplit;
+    }
 
     let uniqueWorkouts: string[] = [];
     $: if (selectedSplit) {
@@ -48,7 +51,9 @@
     }
 
     let selectedWorkout: string;
-    if (selectedSplit && addingToSplit) {
+    if ($SetWorkoutType !== '' && $SetWorkoutType) {
+        selectedWorkout = $SetWorkoutType;
+    } else if (selectedSplit && addingToSplit) {
         selectedWorkout = $page.data.user?.splits[selectedSplit].schedule.at(
             new Date().getDay() - 1
         ) as string;
