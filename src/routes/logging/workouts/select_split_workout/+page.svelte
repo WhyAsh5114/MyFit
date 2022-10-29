@@ -1,6 +1,8 @@
 <script lang="ts">
     import { page } from '$app/stores';
+    import MyModal from '$lib/MyModal.svelte';
     import { getFormattedDate } from '$lib/usefulFunctions';
+    import { onMount } from 'svelte';
     import { scale, fly, slide } from 'svelte/transition';
 
     const user = $page.data.user;
@@ -10,9 +12,39 @@
     let currentSplit: string;
     let selectingWorkouts = false;
 
-    let todaysWorkout: string;
+    let todaysWorkout: string | undefined;
+    let workoutWithType: string[];
+    $: workoutWithType = Object.keys($page.data.user?.workouts || {}).filter((workoutName) => {
+        const workout = $page.data.user?.workouts[workoutName];
+        return workout?.workoutType === todaysWorkout && workout?.belongsToSplit === currentSplit;
+    });
+    
+    $: changeTodaysWorkout(currentSplit);
+    function changeTodaysWorkout(splitName: string) {
+        const split = $page.data.user?.splits[splitName];
+        if (split) {
+            todaysWorkout = split.schedule.at(new Date().getDay() - 1);
+            if (todaysWorkout === 'Rest') {
+                todaysWorkout = undefined;
+            }
+        }
+    }
+
+    let modalOpen = false;
+    let modalTitle = 'Help';
+    let modalTexts: string[];
+    $: modalTexts = selectingWorkouts
+        ? [
+              'Base split workout is the workout which was set when you created the split',
+              'The workouts below it are workouts performed with the same split and workout type'
+          ]
+        : [
+              'First select the split which you want to perform',
+              'Active split will be highlighted with a blue border'
+          ];
 </script>
 
+<MyModal bind:modalOpen {modalTitle} {modalTexts} />
 <div class="breadcrumbs-container">
     <ul>
         <li><a href="/">Home</a></li>
@@ -21,16 +53,24 @@
         <li>Template</li>
     </ul>
 </div>
-<div class="btn-group grid grid-cols-2 my-3">
+<div class="flex flex-col items-center">
     <button
-        class="font-semibold btn btn-sm normal-case {selectingWorkouts ? '' : 'btn-active'}"
+        class="modal-help-button"
         on:click={() => {
-            selectingWorkouts = false;
-        }}>1. Select split</button
+            modalOpen = true;
+        }}>?</button
     >
-    <button class="font-semibold btn btn-sm normal-case {selectingWorkouts ? 'btn-active' : ''}"
-        >2. Select workout</button
-    >
+    <div class="btn-group grid grid-cols-2 my-3">
+        <button
+            class="font-semibold btn btn-sm normal-case {selectingWorkouts ? '' : 'btn-active'}"
+            on:click={() => {
+                selectingWorkouts = false;
+            }}>1. Select split</button
+        >
+        <button class="font-semibold btn btn-sm normal-case {selectingWorkouts ? 'btn-active' : ''}"
+            >2. Select workout</button
+        >
+    </div>
 </div>
 {#if !selectingWorkouts}
     <div
@@ -102,28 +142,35 @@
         in:fly|local={{ x: 200 }}
         class="flex flex-col w-full max-w-md px-3 h-px flex-auto overflow-y-auto"
     >
-        <ul class="my-auto flex flex-col">
-            {#each Object.keys($page.data.user?.workouts || {})
-                .sort()
-                .reverse() as workout}
-                {#if $page.data.user?.workouts[workout].belongsToSplit === currentSplit && $page.data.user?.workouts[workout].workoutType === todaysWorkout}
-                    <a
-                        class="flex flex-col w-full bg-primary rounded-lg px-3 py-2 my-1.5 active:scale-95 hover:bg-opacity-50 transition-all"
-                        in:slide|local
-                        href="/logging/workouts/overload?template={workout}&split={currentSplit}&type={todaysWorkout}"
-                    >
-                        <h2 class="text-lg">
-                            {workout}
-                        </h2>
-                        <div class="flex">
-                            <p class="font-semibold text-accent">
-                                {$page.data.user?.workouts[workout].belongsToSplit} -> {$page.data
-                                    .user?.workouts[workout].workoutType}
-                            </p>
-                        </div>
-                    </a>
-                {/if}
-            {/each}
-        </ul>
+        {#if workoutWithType.length > 0}
+            <ul class="my-auto flex flex-col">
+                {#each Object.keys($page.data.user?.workouts || {})
+                    .sort()
+                    .reverse() as workout}
+                    {#if $page.data.user?.workouts[workout].belongsToSplit === currentSplit && $page.data.user?.workouts[workout].workoutType === todaysWorkout}
+                        <a
+                            class="flex flex-col w-full bg-primary rounded-lg px-3 py-2 my-1.5 active:scale-95 hover:bg-opacity-50 transition-all"
+                            in:slide|local
+                            href="/logging/workouts/overload?template={workout}&split={currentSplit}&type={todaysWorkout}"
+                        >
+                            <h2 class="text-lg">
+                                {workout}
+                            </h2>
+                            <div class="flex">
+                                <p class="font-semibold text-accent">
+                                    {$page.data.user?.workouts[workout].belongsToSplit} -> {$page
+                                        .data.user?.workouts[workout].workoutType}
+                                </p>
+                            </div>
+                        </a>
+                    {/if}
+                {/each}
+            </ul>
+        {:else}
+            <p class="m-auto">
+                No workout with type <span class="text-accent font-semibold">{todaysWorkout}</span> belonging to
+                split <span class="text-accent font-semibold">{currentSplit}</span> found
+            </p>
+        {/if}
     </div>
 {/if}
