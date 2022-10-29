@@ -3,7 +3,12 @@
     import ExerciseTable from '$lib/ExerciseTable.svelte';
     import MyModal from '$lib/MyModal.svelte';
     import { getFormattedDate } from '$lib/usefulFunctions';
-    import { WorkoutExercises, WorkoutName, WorkoutCreatedDate } from '../newWorkoutStore';
+    import {
+        WorkoutExercises,
+        WorkoutName,
+        WorkoutCreatedDate,
+        OldWorkoutExercises
+    } from '../newWorkoutStore';
 
     let exercises: Exercise[] = [];
 
@@ -96,6 +101,26 @@
         $WorkoutCreatedDate = now;
         goto('/logging/workouts/options');
     }
+
+    function calculateCurrentOverload() {
+        const oldWorkout = $OldWorkoutExercises;
+        const currentWorkout = exercises;
+
+        if (!oldWorkout) {
+            return null;
+        }
+
+        let oldVolume = 0;
+        oldWorkout.forEach((exercise) => {
+            oldVolume += exercise.reps * exercise.sets * exercise.load;
+        });
+
+        let newVolume = 0;
+        currentWorkout.forEach((exercise) => {
+            newVolume += exercise.reps * exercise.sets * exercise.load;
+        });
+        return ((newVolume / oldVolume) * 100 - 100).toFixed(2);
+    }
 </script>
 
 <div class="breadcrumbs-container">
@@ -170,7 +195,11 @@
     modalTexts={[]}
     bind:modalOpen={modalOpen3}
 >
-    <input type="date" class="bg-base-100 rounded-lg p-2 text-accent font-semibold" bind:value={startDateValue} />
+    <input
+        type="date"
+        class="bg-base-100 rounded-lg p-2 text-accent font-semibold"
+        bind:value={startDateValue}
+    />
     <div class="grid grid-cols-2 gap-3 mt-5 w-full">
         <input type="submit" value="Save" on:click={saveDate} class="btn btn-accent btn-sm" />
         <button class="btn btn-error text-white btn-sm" on:click={() => (modalOpen3 = false)}
@@ -189,5 +218,15 @@
         }}>Change start date</button
     >
 </div>
+{#if !(calculateCurrentOverload() === null || calculateCurrentOverload() === 'NaN')}
+    <div class="stat flex items-center w-72 justify-center bg-primary rounded-xl mt-3 p-3">
+        <div class="stat-title opacity-100 text-base font-semibold">Current overload</div>
+        {#key exercises}
+            <div class="stat-value text-accent font-bold text-2xl">
+                {calculateCurrentOverload()}%
+            </div>
+        {/key}
+    </div>
+{/if}
 <ExerciseTable bind:workoutName bind:exercises />
 <button class="footer-button" on:click={setWorkoutOptions}> Set workout options </button>
