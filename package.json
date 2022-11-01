@@ -40,6 +40,6 @@
         "daisyui": "^2.19.1",
         "redis": "^4.2.0",
         "svelte-preprocess-import-assets": "^0.2.1",
-        "uuid": "^8.3.2"
+        "uuid": "^9.0.0"
     }
 }

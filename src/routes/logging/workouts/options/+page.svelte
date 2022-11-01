@@ -25,8 +25,10 @@
     let mins: number;
     if ($WorkoutCreatedDate) {
         const now = new Date();
-        hours = now.getHours() - $WorkoutCreatedDate.getHours();
-        mins = now.getMinutes() - $WorkoutCreatedDate.getMinutes();
+        let diff = new Date(now.getTime() - $WorkoutCreatedDate.getTime());
+        mins = Math.floor(diff.getTime() / 60000);
+        hours = Math.floor(mins / 60);
+        mins = mins % 60;
         if (hours < 0 || mins < 0) {
             hours = 0;
             mins = 0;
