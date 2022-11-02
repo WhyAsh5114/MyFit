@@ -2,6 +2,14 @@
     import { page } from '$app/stores';
     import { scale } from 'svelte/transition';
     import { SetSplit, SetWorkoutType } from '../newWorkoutStore';
+
+    const ratingColors = [
+        'text-green-500',
+        'text-lime-500',
+        'text-yellow-500',
+        'text-orange-500',
+        'text-red-500'
+    ];
 </script>
 
 <div class="breadcrumbs-container">
@@ -24,25 +32,38 @@
             {#each Object.keys($page.data.user?.workouts || {}).reverse() as workout}
                 <a
                     href="/logging/workouts/overload?template={workout}"
-                    class="flex flex-col w-full bg-primary rounded-lg px-3 py-2 my-1.5 active:scale-95 hover:bg-opacity-50 transition-all"
+                    class="flex w-full bg-primary rounded-lg px-3 py-2 my-1.5 active:scale-95 hover:bg-opacity-50 transition-all"
                     in:scale
                     on:click={() => {
                         $SetSplit = $page.data.user?.workouts[workout].belongsToSplit || '';
                         $SetWorkoutType = $page.data.user?.workouts[workout].workoutType || '';
                     }}
                 >
-                    <h2 class="text-lg">
-                        {workout}
-                    </h2>
-                    <div class="flex">
-                        {#if $page.data.user?.workouts[workout].belongsToSplit}
-                            <p class="font-semibold text-accent">
-                                {$page.data.user?.workouts[workout].belongsToSplit} -> {$page.data
-                                    .user?.workouts[workout].workoutType}
-                            </p>
-                        {:else}
-                            <p class="font-semibold">N/A</p>
-                        {/if}
+                    <div class="flex flex-col">
+                        <h2 class="text-lg">
+                            {workout}
+                        </h2>
+                        <div class="flex">
+                            {#if $page.data.user?.workouts[workout].belongsToSplit}
+                                <p class="font-semibold text-accent">
+                                    {$page.data.user?.workouts[workout].belongsToSplit} -> {$page
+                                        .data.user?.workouts[workout].workoutType}
+                                </p>
+                            {:else}
+                                <p class="font-semibold">N/A</p>
+                            {/if}
+                        </div>
+                    </div>
+                    <div
+                        class="flex items-center ml-auto text-xl font-semibold {$page.data.user
+                            ?.workouts[workout].exhaustionRating
+                            ? ratingColors.at(
+                                  $page.data.user?.workouts[workout].exhaustionRating - 1
+                              )
+                            : 'text-white'}"
+                    >
+                        <span class="text-2xl">★&nbsp;</span>
+                        {$page.data.user?.workouts[workout].exhaustionRating}
                     </div>
                 </a>
             {/each}
