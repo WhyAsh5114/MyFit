@@ -27,21 +27,21 @@
         <img src="$lib/assets/heart.svg" alt="" class="responsive-image-menu-button" />
     </MenuButton>
     <MenuButton
-        title="Sleep records"
+        title="Log sleep"
         description="Duration, quality, tiredness, wake up time"
         link="/logging/sleep"
     >
         <img src="$lib/assets/moon.svg" alt="" class="responsive-image-menu-button" />
     </MenuButton>
     <MenuButton
-        title="Nutritional records"
+        title="Log nutrition"
         description="Calorie intake, macronutrients, foods"
         link="/logging/nutrition"
     >
         <img src="$lib/assets/bowl.svg" alt="" class="responsive-image-menu-button" />
     </MenuButton>
     <MenuButton
-        title="Nutritional records"
+        title="Log body metrics"
         description="Steps, weight, height, fat percentage"
         link="/logging/bodystats"
     >

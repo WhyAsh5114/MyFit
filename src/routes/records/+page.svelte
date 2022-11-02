@@ -45,7 +45,7 @@
         <img src="$lib/assets/bowl.svg" alt="" class="responsive-image-menu-button" />
     </MenuButton>
     <MenuButton
-        title="Nutritional records"
+        title="Body metrics records"
         description="Check and edit body metrics"
         link="/records/bodystats"
     >
