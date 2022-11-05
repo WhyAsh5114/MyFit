@@ -220,7 +220,7 @@
                             isNaN(parseInt(currentTarget.value)) ||
                             parseInt(currentTarget.value) < 0
                         ) {
-                            currentTarget.value = hours.toString();
+                            currentTarget.value = "0";
                         }
                     }}
                 />
@@ -238,7 +238,7 @@
                             parseInt(currentTarget.value) < 0 ||
                             parseInt(currentTarget.value) > 59
                         ) {
-                            currentTarget.value = mins.toString();
+                            currentTarget.value = "0";
                         }
                     }}
                 />
