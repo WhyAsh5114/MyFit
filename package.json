@@ -2,10 +2,10 @@
     "name": "myfit",
     "version": "0.0.1",
     "scripts": {
-        "dev": "vite dev",
-        "build": "vite build",
+        "dev": "sudo service redis-server start && vite dev",
+        "build": "sudo service redis-server start && vite build",
         "package": "svelte-kit package",
-        "preview": "vite preview",
+        "preview": "sudo service redis-server start &&  vite preview",
         "test": "playwright test",
         "check": "svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
