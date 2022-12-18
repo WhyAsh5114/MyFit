@@ -5,7 +5,7 @@
         "dev": "sudo service redis-server start && vite dev",
         "build": "sudo service redis-server start && vite build",
         "package": "svelte-kit package",
-        "preview": "sudo service redis-server start &&  vite preview",
+        "preview": "sudo service redis-server start && vite preview",
         "test": "playwright test",
         "check": "svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
@@ -31,7 +31,7 @@
         "tailwindcss": "^3.1.6",
         "tslib": "^2.3.1",
         "typescript": "^4.8.4",
-        "vite": "^3.0.0"
+        "vite": "^4.0.0"
     },
     "type": "module",
     "dependencies": {
