@@ -52,6 +52,7 @@
           ];
 </script>
 
+<!-- TODO: Sort workouts by date -->
 <MyModal bind:modalOpen {modalTitle} {modalTexts} />
 <div class="breadcrumbs-container">
     <ul>

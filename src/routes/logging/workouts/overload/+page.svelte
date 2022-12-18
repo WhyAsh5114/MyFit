@@ -243,6 +243,8 @@
     />
 </div>
 <!-- TODO: Suggest overloading according to split specifics... -->
+<!-- TODO: Have the options to not change reps/sets/load -->
+<!-- TODO: Have the options to only increase/decrease reps/sets/load -->
 <div class="grid grid-cols-2 gap-4 w-full">
     <button
         class="btn btn-primary grow md:text-lg normal-case bg-accent text-black"

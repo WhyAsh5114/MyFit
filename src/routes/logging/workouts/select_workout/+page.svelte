@@ -12,6 +12,7 @@
     ];
 </script>
 
+<!-- TODO: Sort workouts by date -->
 <div class="breadcrumbs-container">
     <ul>
         <li><a href="/">Home</a></li>

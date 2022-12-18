@@ -346,6 +346,8 @@
     }
 </script>
 
+<!-- TODO: Change workout types when changing split name -->
+<!-- TODO: Update split loads after each workout of said split type -->
 <svelte:head>
     <title>MyFit | Split records</title>
 </svelte:head>
