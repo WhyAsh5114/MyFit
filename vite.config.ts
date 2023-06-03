@@ -6,7 +6,7 @@ export default defineConfig({
 	plugins: [
 		sveltekit(),
 		SvelteKitPWA({
-			srcDir: './src',
+			srcDir: 'src',
 			registerType: 'prompt',
 			strategies: 'injectManifest',
 			scope: '/',
