@@ -51,7 +51,6 @@
 {#if !isInstalled}
 	<li>
 		<button
-			class="text-accent"
 			on:click={() => {
 				// Not standard API yet, so need this ignore
 				// @ts-ignore
@@ -64,7 +63,6 @@
 		<MyModal title="Updating">
 			<button
                 slot="openButton"
-				class="text-accent"
 				on:click={() => {
 					updateSW();
 					updateAvailable = false;
