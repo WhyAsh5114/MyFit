@@ -37,6 +37,9 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"daisyui": "^3.0.1"
+		"@auth/core": "^0.8.1",
+		"@auth/sveltekit": "^0.3.1",
+		"daisyui": "^3.0.1",
+		"mongodb": "^5.6.0"
 	}
 }
