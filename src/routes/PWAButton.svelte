@@ -62,16 +62,16 @@
 	<li>
 		<MyModal title="Updating">
 			<button
-                slot="openButton"
+				slot="openButton"
 				on:click={() => {
 					updateSW();
 					updateAvailable = false;
 				}}>Update</button
 			>
-            <button class="btn btn-accent normal-case" slot="content">
-                <span class="loading loading-spinner"></span>
-                Please wait
-              </button>
+			<button class="btn btn-accent normal-case" slot="content">
+				<span class="loading loading-spinner" />
+				Please wait
+			</button>
 		</MyModal>
 	</li>
 {/if}
