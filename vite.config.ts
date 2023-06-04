@@ -8,9 +8,10 @@ export default defineConfig({
 		SvelteKitPWA({
 			srcDir: 'src',
 			registerType: 'prompt',
-			strategies: 'generateSW',
+			strategies: 'injectManifest',
 			scope: '/',
 			base: '/',
+			filename: 'sw.ts',
 			manifest: {
 				name: 'MyFit',
 				short_name: 'MyFit',
