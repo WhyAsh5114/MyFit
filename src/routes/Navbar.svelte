@@ -6,8 +6,15 @@
 	import { signOut } from '@auth/sveltekit/client';
 
 	let logoutModal: HTMLDialogElement;
+	let updatingModal: HTMLDialogElement;
 </script>
 
+<MyModal title="Updating" bind:dialogElement={updatingModal}>
+	<button class="btn btn-accent normal-case">
+		<span class="loading loading-spinner" />
+		Please wait
+	</button>
+</MyModal>
 <div class="navbar bg-primary">
 	<div class="flex-1">
 		<img src="/favicon.png" alt="" width="40" height="40" />
@@ -33,7 +40,7 @@
 			<ul
 				class="menu dropdown-content mt-3 p-2 shadow bg-secondary text-black font-semibold rounded-box"
 			>
-				<PWAButton />
+				<PWAButton bind:updatingModal />
 				{#if $page.data.session}
 					<li><a href="/profile">Profile</a></li>
 					<li><a href="/settings">Settings</a></li>

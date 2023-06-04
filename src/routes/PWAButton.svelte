@@ -1,7 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
 	import { onMount } from 'svelte';
-	import MyModal from '../lib/MyModal.svelte';
 	import { useRegisterSW } from 'virtual:pwa-register/svelte';
 	import type { Writable } from 'svelte/store';
 
@@ -39,15 +38,10 @@
 		}));
 	});
 
-	let updatingModal: HTMLDialogElement;
+	export let updatingModal: HTMLDialogElement;
 </script>
 
-<MyModal title="Updating" bind:dialogElement={updatingModal}>
-	<button class="btn btn-accent normal-case">
-		<span class="loading loading-spinner" />
-		Please wait
-	</button>
-</MyModal>
+
 {#if !isInstalled}
 	<li>
 		<button
@@ -58,6 +52,7 @@
 			}}>Install</button
 		>
 	</li>
+	
 {:else if $needRefresh}
 	<li>
 		<button
