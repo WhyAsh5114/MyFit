@@ -2,6 +2,10 @@
 	import '../app.postcss';
 	import PWAButton from './PWAButton.svelte';
 	import { page } from '$app/stores';
+	import MyModal from '$lib/MyModal.svelte';
+	import { signOut } from '@auth/sveltekit/client';
+
+	let logoutModal: HTMLDialogElement;
 </script>
 
 <div class="navbar bg-primary">
@@ -35,7 +39,14 @@
 					<li><a href="/settings">Settings</a></li>
 				{/if}
 				{#if $page.data.session}
-					<li><a href="/logout">Logout</a></li>
+					<li>
+						<button
+							on:click={() => {
+								logoutModal.show();
+								signOut();
+							}}>Logout</button
+						>
+					</li>
 				{:else}
 					<li><a href="/login">Login</a></li>
 				{/if}
@@ -43,3 +54,9 @@
 		</div>
 	</div>
 </div>
+<MyModal title="Logout" titleColor="text-error" bind:dialogElement={logoutModal}>
+	<button class="btn btn-error normal-case">
+		<span class="loading loading-spinner" />
+		Please wait
+	</button>
+</MyModal>

@@ -46,8 +46,16 @@
 			isInstalled = false;
 		});
 	});
+
+	let updatingModal: HTMLDialogElement;
 </script>
 
+<MyModal title="Updating" bind:dialogElement={updatingModal}>
+	<button class="btn btn-accent normal-case">
+		<span class="loading loading-spinner" />
+		Please wait
+	</button>
+</MyModal>
 {#if !isInstalled}
 	<li>
 		<button
@@ -59,18 +67,12 @@
 	</li>
 {:else if updateAvailable}
 	<li>
-		<MyModal title="Updating">
-			<button
-				slot="openButton"
-				on:click={() => {
-					updateSW();
-					updateAvailable = false;
-				}}>Update</button
-			>
-			<button class="btn btn-accent normal-case" slot="content">
-				<span class="loading loading-spinner" />
-				Please wait
-			</button>
-		</MyModal>
+		<button
+			on:click={() => {
+				updatingModal.show();
+				updateSW();
+				updateAvailable = false;
+			}}>Update</button
+		>
 	</li>
 {/if}
