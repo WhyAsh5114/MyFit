@@ -19,7 +19,7 @@
 <div class="navbar bg-primary">
 	<div class="flex-1">
 		<img src="/favicon.png" alt="" width="40" height="40" />
-		<a class="btn btn-ghost normal-case text-2xl text-white" href="/">MyFit</a>
+		<h1><a class="btn btn-ghost normal-case text-2xl text-white" href="/">MyFit</a></h1>
 	</div>
 	<div class="flex-none">
 		<div class="dropdown dropdown-end">

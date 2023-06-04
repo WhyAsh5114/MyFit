@@ -1,1 +1,1 @@
-<h1 class="text-accent">Hi</h1>
+<a href="/mesocycles" class="btn btn-primary">Mesocycles</a>

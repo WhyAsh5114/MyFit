@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import MyModal from '$lib/MyModal.svelte';
 	import { signIn } from '@auth/sveltekit/client';
 
@@ -21,7 +22,7 @@
     class="btn gap-2 btn-primary normal-case w-full"
     on:click={() => {
       redirectingModal.show();
-      signIn('google');
+      signIn('google', { callbackUrl: $page.url.searchParams.get('callbackURL') || '' });
     }}
   >
     <img src="/google_logo.png" alt="Google logo" height="30" width="30" />
