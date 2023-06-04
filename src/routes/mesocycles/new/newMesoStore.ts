@@ -1,5 +1,5 @@
-import { writable } from "svelte/store";
+import { writable, type Writable } from "svelte/store";
 
-export const mesoName = writable();
+export const mesoName: Writable<string> = writable();
 export const duration = writable(6);
-export const startRIR = writable(3);
+export const startRIR: Writable<number> = writable();
