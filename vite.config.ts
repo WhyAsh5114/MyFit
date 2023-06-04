@@ -11,7 +11,6 @@ export default defineConfig({
 			strategies: 'generateSW',
 			scope: '/',
 			base: '/',
-			filename: 'sw.ts',
 			manifest: {
 				name: 'MyFit',
 				short_name: 'MyFit',
