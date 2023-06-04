@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import MyModal from '$lib/MyModal.svelte';
 	import { signOut } from '@auth/sveltekit/client';
+	import ProfilePicture from './ProfilePicture.svelte';
 
 	let logoutModal: HTMLDialogElement;
 	let updatingModal: HTMLDialogElement;
@@ -22,21 +23,7 @@
 	</div>
 	<div class="flex-none">
 		<div class="dropdown dropdown-end">
-			<button class="btn btn-ghost btn-circle avatar">
-				<div class="w-10 rounded-full">
-					{#if $page.data.session}
-						<img
-							src={$page.data.session.user?.image}
-							referrerpolicy="no-referrer"
-							alt="profile"
-							width="40"
-							height="40"
-						/>
-					{:else}
-						<img src="/profile.webp" alt="profile" />
-					{/if}
-				</div>
-			</button>
+				<ProfilePicture />
 			<ul
 				class="menu dropdown-content mt-3 p-2 shadow bg-secondary text-black font-semibold rounded-box"
 			>
