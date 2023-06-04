@@ -23,7 +23,7 @@
 	</div>
 	<div class="flex-none">
 		<div class="dropdown dropdown-end">
-				<ProfilePicture />
+			<ProfilePicture />
 			<ul
 				class="menu dropdown-content mt-3 p-2 shadow bg-secondary text-black font-semibold rounded-box"
 			>

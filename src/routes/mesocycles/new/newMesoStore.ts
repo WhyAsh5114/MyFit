@@ -1,4 +1,4 @@
-import { writable, type Writable } from "svelte/store";
+import { writable, type Writable } from 'svelte/store';
 
 export const mesoName: Writable<string> = writable();
 export const duration = writable(6);

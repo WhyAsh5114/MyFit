@@ -40,9 +40,8 @@
 	});
 
 	export let updatingModal: HTMLDialogElement;
-	$: ShowIndicator.set($needRefresh || (!isInstalled));
+	$: ShowIndicator.set($needRefresh || !isInstalled);
 </script>
-
 
 {#if !isInstalled}
 	<li>
@@ -54,7 +53,6 @@
 			}}>Install</button
 		>
 	</li>
-	
 {:else if $needRefresh}
 	<li>
 		<button
