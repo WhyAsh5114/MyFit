@@ -16,7 +16,7 @@
 		Please wait
 	</button>
 </MyModal>
-<div class="navbar bg-primary">
+<div class="navbar bg-primary z-10">
 	<div class="flex-1">
 		<img src="/favicon.png" alt="" width="40" height="40" />
 		<h1><a class="btn btn-ghost normal-case text-2xl text-white" href="/">MyFit</a></h1>

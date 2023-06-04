@@ -12,6 +12,6 @@
 </svelte:head>
 
 <Navbar />
-<main class="flex flex-col h-full justify-center items-center">
+<main class="flex flex-col h-full justify-center items-center m-3">
 	<slot />
 </main>
