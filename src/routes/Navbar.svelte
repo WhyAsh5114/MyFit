@@ -1,7 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
 	import PWAButton from './PWAButton.svelte';
-	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
 </script>
 

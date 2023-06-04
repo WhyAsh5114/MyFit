@@ -4,7 +4,7 @@
 	import { registerSW } from 'virtual:pwa-register';
 	import MyModal from '../lib/MyModal.svelte';
 
-	function callImmediatelyAndThenSetInterval(func: Function, interval: number) {
+	function callImmediatelyAndThenSetInterval(func: () => void, interval: number) {
 		func();
 		return setInterval(func, interval);
 	}
@@ -52,8 +52,7 @@
 	<li>
 		<button
 			on:click={() => {
-				// Not standard API yet, so need this ignore
-				// @ts-ignore
+				// @ts-expect-error Not standard API yet, so need this ignore
 				deferredPrompt.prompt();
 			}}>Install</button
 		>
