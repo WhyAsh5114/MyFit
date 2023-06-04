@@ -1,1 +1,1 @@
-<a href="/mesocycles/new" class="btn btn-primary">Create new mesocycle</a>
+<a href="/mesocycles/new/basics" class="btn btn-primary">Create new mesocycle</a>
