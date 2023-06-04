@@ -1,6 +1,37 @@
-<script>
+<script lang="ts">
+	import MyModal from '$lib/MyModal.svelte';
 	import { duration, mesoName, startRIR } from '../newMesoStore';
+
+	let durationHelpModal: HTMLDialogElement;
+	let startRIRHelpModal: HTMLDialogElement;
 </script>
+
+<MyModal title="Mesocycle duration" titleColor="text-accent" bind:dialogElement={durationHelpModal}>
+	<p>
+		The ideal range of a mesocycle duration is between 4 and 16 weeks. It depends on various factors
+		like:
+	</p>
+	<ul class="ml-5 list-disc mt-2">
+		<li>Start RIR (higher the RIR, longer the mesocycle can be)</li>
+		<li>Caloric balance (a surplus can sustain longer mesocycles)</li>
+	</ul>
+</MyModal>
+
+<MyModal
+	title="Start Reps In Reserve"
+	titleColor="text-accent"
+	bind:dialogElement={startRIRHelpModal}
+>
+	<p>The RIR to begin the mesocycle with, or the RIR for the first microcycle.</p>
+	<p>The recommended RIR for the beginning of a meso is around 3 RIR.</p>
+	<ul class="ml-5 list-disc mt-2">
+		<li>Going much lower can bring in excessive fatigue when you are fresh from a deload</li>
+		<li>
+			Going much higher can result in wasted workouts which weren't stimulative enough for
+			hypertrophy
+		</li>
+	</ul>
+</MyModal>
 
 <div class="flex flex-col bg-primary p-5 rounded-lg w-full mb-5">
 	<h3 class="card-title">Mesocycle name</h3>
@@ -11,7 +42,7 @@
 <div class="flex flex-col bg-primary p-5 rounded-lg w-full mb-5">
 	<div class="flex justify-between">
 		<h3 class="card-title">Mesocycle duration</h3>
-		<button class="help-button">?</button>
+		<button class="help-button" on:click={() => durationHelpModal.show()}>?</button>
 	</div>
 	<div class="h-0.5 bg-black mt-1 mb-4" />
 	<div class="flex items-center gap-2">
@@ -31,7 +62,7 @@
 <div class="flex flex-col bg-primary p-5 rounded-lg w-full">
 	<div class="flex justify-between">
 		<h3 class="card-title">Start Reps In Reserve</h3>
-		<button class="help-button">?</button>
+		<button class="help-button" on:click={() => startRIRHelpModal.show()}>?</button>
 	</div>
 	<div class="h-0.5 bg-black mt-1 mb-4" />
 	<select class="select select-sm select-bordered w-full" bind:value={$startRIR}>
