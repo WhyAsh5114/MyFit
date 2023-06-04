@@ -6,5 +6,3 @@ export const load: Load = async ({ parent }) => {
 		throw redirect(307, '/profile');
 	}
 };
-
-export const prerender = true;
