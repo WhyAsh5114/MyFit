@@ -37,8 +37,7 @@ export const handle: Handle = sequence(
 			}
 		},
 		pages: {
-			signIn: '/login',
-			signOut: '/logout'
+			signIn: '/login'
 		}
 	}),
 	authorization
