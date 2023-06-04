@@ -1,1 +1,1 @@
-<h1 class="text-red-500">Hi</h1>
+<h1 class="text-accent">Hi</h1>

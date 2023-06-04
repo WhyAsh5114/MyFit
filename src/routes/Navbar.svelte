@@ -55,7 +55,7 @@
 	</div>
 </div>
 <MyModal title="Logout" titleColor="text-error" bind:dialogElement={logoutModal}>
-	<button class="btn btn-error normal-case">
+	<button class="btn btn-error normal-case text-black">
 		<span class="loading loading-spinner" />
 		Please wait
 	</button>
