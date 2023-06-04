@@ -38,7 +38,8 @@ export const handle: Handle = sequence(
 		},
 		pages: {
 			signIn: '/login'
-		}
+		},
+		trustHost: true
 	}),
 	authorization
 );

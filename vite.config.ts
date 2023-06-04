@@ -8,7 +8,7 @@ export default defineConfig({
 		SvelteKitPWA({
 			srcDir: 'src',
 			registerType: 'prompt',
-			strategies: 'injectManifest',
+			strategies: 'generateSW',
 			scope: '/',
 			base: '/',
 			filename: 'sw.ts',
