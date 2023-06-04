@@ -24,8 +24,7 @@
 	{/each}
 </ul>
 <slot />
-
-<div class="join w-full gap-1">
+<div class="join w-full gap-1 mt-auto">
 	<button
 		class="btn btn-primary join-item w-1/2 {currentStepIndex === 0
 			? 'btn-disabled opacity-25'
