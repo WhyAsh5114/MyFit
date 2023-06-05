@@ -44,7 +44,7 @@
 <div class="join w-full gap-1 mt-auto">
 	<button
 		class="btn btn-primary join-item w-1/2 {currentStepIndex === 0
-			? 'btn-disabled opacity-25'
+			? 'btn-disabled opacity-50'
 			: ''}"
 		on:click={goPrev}>Previous</button
 	>
