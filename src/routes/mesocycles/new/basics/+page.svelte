@@ -1,9 +1,24 @@
 <script lang="ts">
 	import MyModal from '$lib/MyModal.svelte';
-	import { duration, mesoName, startRIR } from '../newMesoStore';
+	import { onMount } from 'svelte';
+	import { duration, mesoName, startRIR, errorMsgs, isValid } from '../newMesoStore';
+
+	function isBasicsValid() {
+		if ($mesoName === '') {
+			$errorMsgs = ['Please enter a mesocycle name'];
+			mesoNameInput.classList.add('ring-2', 'ring-error', 'animate-pulse');
+			return false;
+		}
+		return true;
+	}
+
+	onMount(() => {
+		$isValid = isBasicsValid;
+	});
 
 	let durationHelpModal: HTMLDialogElement;
 	let startRIRHelpModal: HTMLDialogElement;
+	let mesoNameInput: HTMLInputElement;
 </script>
 
 <MyModal title="Mesocycle duration" titleColor="text-accent" bind:dialogElement={durationHelpModal}>
@@ -36,7 +51,14 @@
 <div class="flex flex-col bg-primary p-5 rounded-lg w-full mb-5">
 	<h3 class="card-title">Mesocycle name</h3>
 	<div class="h-0.5 bg-black mt-1 mb-4" />
-	<input type="text" placeholder="Type here" class="input input-sm w-full" bind:value={$mesoName} />
+	<input
+		type="text"
+		placeholder="Type here"
+		class="input input-sm w-full"
+		bind:value={$mesoName}
+		bind:this={mesoNameInput}
+		on:click={() => {mesoNameInput.classList.remove('ring-2', 'ring-error', 'animate-pulse')}}
+	/>
 </div>
 
 <div class="flex flex-col bg-primary p-5 rounded-lg w-full mb-5">
@@ -66,9 +88,9 @@
 	</div>
 	<div class="h-0.5 bg-black mt-1 mb-4" />
 	<select class="select select-sm select-bordered w-full" bind:value={$startRIR}>
-		<option class="text-success" value="4">4 RIR</option>
-		<option class="text-warning" value="3" selected>3 RIR</option>
-		<option class="text-error" value="2">2 RIR</option>
-		<option class="text-error" value="1">1 RIR</option>
+		<option value="4">4 RIR</option>
+		<option value="3" selected>3 RIR</option>
+		<option value="2">2 RIR</option>
+		<option value="1">1 RIR</option>
 	</select>
 </div>

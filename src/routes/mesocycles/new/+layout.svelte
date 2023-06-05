@@ -1,25 +1,42 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import MyModal from '$lib/MyModal.svelte';
+	import { isValid, errorMsgs } from './newMesoStore';
 
 	const steps = ['basics', 'split', 'exercises', 'volume'];
 	$: currentStepIndex = steps.indexOf($page.url.pathname.split('/').at(-1) as string);
 
 	function goNext() {
+		if (!$isValid()) {
+			invalidDataOnPageModal.show();
+			return false;
+		}
 		goto($page.url.pathname.replace(steps[currentStepIndex], steps[currentStepIndex + 1]));
 	}
 
 	function goPrev() {
 		goto($page.url.pathname.replace(steps[currentStepIndex], steps[currentStepIndex - 1]));
 	}
+
+	let invalidDataOnPageModal: HTMLDialogElement;
 </script>
 
+<MyModal title="Error" titleColor="text-error" bind:dialogElement={invalidDataOnPageModal}>
+	<ul class="list-disc ml-5">
+		{#each $errorMsgs as msg}
+			<li>{msg}</li>
+		{/each}
+	</ul>
+</MyModal>
 <ul class="steps bg-primary rounded-md w-full py-1.5 mb-auto">
 	{#each steps as step}
 		{#if steps.indexOf(step) <= currentStepIndex}
-			<li class="step step-accent capitalize">{step}</li>
+			<li class="step step-accent uppercase text-sm font-semibold">
+				<a href="/mesocycles/new/{step}">{step}</a>
+			</li>
 		{:else}
-			<li class="step capitalize">{step}</li>
+			<li class="step uppercase text-sm font-semibold">{step}</li>
 		{/if}
 	{/each}
 </ul>
