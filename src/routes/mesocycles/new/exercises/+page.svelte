@@ -50,9 +50,9 @@
 			}
 		}
 		if (invalidDays.length !== 0) {
-			$errorMsgs[1] = "Remaining days: ";
-			invalidDays.forEach(day => {
-				$errorMsgs[1] += day + ", ";
+			$errorMsgs[1] = 'Remaining days: ';
+			invalidDays.forEach((day) => {
+				$errorMsgs[1] += day + ', ';
 			});
 			$errorMsgs[1] = $errorMsgs[1].substring(0, $errorMsgs[1].length - 2);
 			return false;
@@ -64,6 +64,21 @@
 	});
 
 	let copiedExercises: SplitExercise[];
+	function copyExercises() {
+		let todaysExercises = $splitExercises[days.indexOf(currentDay)];
+		if (todaysExercises.length > 0) {
+			copiedExercises = JSON.parse(JSON.stringify(todaysExercises));
+		}
+	}
+
+	function pasteExercises() {
+		$splitExercises[days.indexOf(currentDay)] = JSON.parse(JSON.stringify(copiedExercises));
+	}
+
+	function cutExercises() {
+		copyExercises();
+		$splitExercises[days.indexOf(currentDay)] = [];
+	}
 </script>
 
 <AddExerciseModal bind:addExerciseModal bind:currentDay />
@@ -121,8 +136,8 @@
 				<li
 					class="flex flex-col bg-secondary w-full rounded-lg text-black p-3 h-fit"
 					animate:flip={{ duration: 200 }}
-					in:slide|local
-					out:scale|local
+					in:slide|local={{ duration: 200 }}
+					out:scale|local={{ duration: 200 }}
 				>
 					<div class="flex justify-between">
 						<h5 class="text-lg font-bold">{exercise.name}</h5>
@@ -161,8 +176,16 @@
 	{/key}
 </section>
 
-<div class="join w-full my-2 grid grid-cols-2">
-	<button class="btn btn-sm btn-primary join-item">Copy Exercises</button>
+<div class="join w-full my-2 grid grid-cols-2 gap-1">
+	<div class="join grid grid-cols-3 gap-0.5">
+		<button class="btn btn-sm btn-primary join-item" on:click={copyExercises}>Copy</button>
+		<button
+			on:click={pasteExercises}
+			class="btn btn-sm btn-primary join-item {copiedExercises ? '' : 'btn-disabled opacity-50'}"
+			>Paste</button
+		>
+		<button class="btn btn-sm btn-primary join-item" on:click={cutExercises}>Cut</button>
+	</div>
 	<button class="btn btn-sm btn-accent join-item" on:click={() => addExerciseModal.show()}>
 		Add Exercise
 	</button>
