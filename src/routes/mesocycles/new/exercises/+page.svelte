@@ -6,10 +6,17 @@
 	import type { SplitExercise } from '../../../../../types/global';
 	import DeleteExerciseModal from './DeleteExerciseModal.svelte';
 	import { flip } from 'svelte/animate';
-	import { fade, scale, slide, blur, fly } from 'svelte/transition';
+	import { scale, slide, fly } from 'svelte/transition';
 
 	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-	let currentDay = 'Mon';
+	let firstValidDayIndex = 0;
+	for (let i = 0; i < 7; i++) {
+		if ($splitSchedule[i] !== '') {
+			firstValidDayIndex = i;
+			break;
+		}
+	}
+	let currentDay = days[firstValidDayIndex];
 
 	let addExerciseModal: HTMLDialogElement;
 
@@ -47,24 +54,34 @@
 />
 
 <div class="join w-full justify-between my-2">
-	{#each days as day}
-		<input
-			class="join-item btn btn-square"
-			type="radio"
-			name="day"
-			aria-label={day}
-			bind:group={currentDay}
-			value={day}
-		/>
+	{#each days as day, i}
+		{#if $splitSchedule[i] === ''}
+			<input
+				class="join-item btn btn-square"
+				type="radio"
+				name="day"
+				aria-label={day}
+				bind:group={currentDay}
+				value={day}
+				disabled
+			/>
+		{:else}
+			<input
+				class="join-item btn btn-square border border-white"
+				type="radio"
+				name="day"
+				aria-label={day}
+				bind:group={currentDay}
+				value={day}
+			/>
+		{/if}
 	{/each}
 </div>
 <section class="flex flex-col w-full h-full">
-	<h4
-		class="bg-accent text-black text-center text-lg font-semibold rounded-t-lg"
-	>
-		{$splitSchedule[days.indexOf(currentDay)]}
+	<h4 class="bg-accent text-black text-center text-lg font-semibold rounded-t-lg">
+		{$splitSchedule[days.indexOf(currentDay)]} ({currentDay})
 	</h4>
-	{#key $splitSchedule[days.indexOf(currentDay)]}
+	{#key currentDay}
 		<ul
 			class="flex flex-col h-px grow bg-primary rounded-b-lg p-2 gap-3 overflow-y-auto"
 			in:fly={{ duration: 200, y: 10, opacity: 0 }}
@@ -72,7 +89,7 @@
 			{#each $splitExercises[days.indexOf(currentDay)] as exercise, i (exercise.name)}
 				<li
 					class="flex flex-col bg-secondary w-full rounded-lg text-black p-3 h-fit"
-					animate:flip="{{duration: 200}}"
+					animate:flip={{ duration: 200 }}
 					in:slide|local
 					out:scale|local
 				>
