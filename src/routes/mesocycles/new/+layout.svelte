@@ -29,7 +29,7 @@
 		{/each}
 	</ul>
 </MyModal>
-<ul class="steps bg-primary rounded-md w-full py-1.5 mb-auto">
+<ul class="steps bg-primary rounded-md w-full py-1.5 mb-auto shrink-0">
 	{#each steps as step}
 		{#if steps.indexOf(step) <= currentStepIndex}
 			<li class="step step-accent uppercase text-sm font-semibold">
