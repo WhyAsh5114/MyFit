@@ -2,6 +2,7 @@
 	import MyModal from '$lib/MyModal.svelte';
 	import { onMount } from 'svelte';
 	import { errorMsgs, isValid, splitSchedule } from '../newMesoStore';
+	import { commonSplits } from '$lib/commonDB';
 
 	function isSplitValid() {
 		let totalWorkouts = 0;
@@ -27,12 +28,6 @@
 
 	let selectSplitModal: HTMLDialogElement;
 	let selectedCommonSplit: string;
-	const splitToSchedule: Record<string, string[]> = {
-		'Push-Pull-Legs': ['Push', 'Pull', 'Legs', 'Push', 'Pull', 'Legs', ''],
-		'Pull-Push-Legs': ['Pull', 'Push', 'Legs', 'Pull', 'Push', 'Legs', ''],
-		'Upper-Lower': ['Upper', 'Lower', '', 'Upper', 'Lower', '', ''],
-		'Full body': ['Full body', '', '', 'Full body', '', '', '']
-	};
 
 	let splitHelpModal: HTMLDialogElement;
 </script>
@@ -45,15 +40,14 @@
 	<div class="flex gap-2 items-center">
 		<select class="select select-bordered grow" bind:value={selectedCommonSplit}>
 			<option disabled selected>Choose a common split</option>
-			<option>Push-Pull-Legs</option>
-			<option>Pull-Push-Legs</option>
-			<option>Upper-Lower</option>
-			<option>Full body</option>
+			{#each Object.keys(commonSplits) as split}
+				<option>{split}</option>
+			{/each}
 		</select>
 		<button
 			class="btn btn-accent btn-sm"
 			on:click={() => {
-				$splitSchedule = splitToSchedule[selectedCommonSplit];
+				$splitSchedule = commonSplits[selectedCommonSplit];
 			}}>Select</button
 		>
 	</div>
