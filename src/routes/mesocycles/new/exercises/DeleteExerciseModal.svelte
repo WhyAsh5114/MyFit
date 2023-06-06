@@ -10,7 +10,7 @@
 
 	function deleteExercise() {
 		$splitExercises[days.indexOf(currentDay)].splice(indexOfExerciseToDelete, 1);
-        $splitExercises[days.indexOf(currentDay)] = $splitExercises[days.indexOf(currentDay)];
+		$splitExercises[days.indexOf(currentDay)] = $splitExercises[days.indexOf(currentDay)];
 	}
 </script>
 

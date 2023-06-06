@@ -90,7 +90,7 @@
 				/>
 			</div>
 			<select class="select w-2/3 select-sm" bind:value={oldExercise.setType} required>
-				<option disabled selected value=''>Set type</option>
+				<option disabled selected value="">Set type</option>
 				<option value="straight">Normal sets</option>
 				<option value="drop">Drop sets</option>
 				<option value="down">Down sets</option>
@@ -120,7 +120,7 @@
 			/>
 		</div>
 		<select class="select select-sm" required bind:value={oldExercise.muscleTarget}>
-			<option disabled selected value=''>Choose primary muscle target</option>
+			<option disabled selected value="">Choose primary muscle target</option>
 			{#each commonMuscleGroups as muscleGroup}
 				<option>{muscleGroup}</option>
 			{/each}
@@ -133,4 +133,3 @@
 		{/each}
 	</ul>
 </MyModal>
-

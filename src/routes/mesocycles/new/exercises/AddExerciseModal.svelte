@@ -73,7 +73,13 @@
 	}
 </script>
 
-<MyModal title="Add Exercise" bind:dialogElement={addExerciseModal} onClose={() => {errorMsgs = []}}>
+<MyModal
+	title="Add Exercise"
+	bind:dialogElement={addExerciseModal}
+	onClose={() => {
+		errorMsgs = [];
+	}}
+>
 	<form class="flex flex-col gap-3" on:submit|preventDefault={addExercise}>
 		<div class="join mx-auto w-full">
 			<p class="btn join-item btn-sm no-animation btn-secondary w-14">Name</p>

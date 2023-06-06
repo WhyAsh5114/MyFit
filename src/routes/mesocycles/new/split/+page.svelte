@@ -47,7 +47,7 @@
 		<button
 			class="btn btn-accent"
 			on:click={() => {
-				$splitSchedule = commonSplits[selectedCommonSplit];
+				$splitSchedule = JSON.parse(JSON.stringify(commonSplits[selectedCommonSplit]));
 			}}>Select</button
 		>
 	</div>
