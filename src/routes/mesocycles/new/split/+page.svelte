@@ -23,7 +23,7 @@
 	}
 	onMount(() => {
 		if (!$isBasicsValidStore || !$isBasicsValidStore()) {
-			goto('/mesocycles/new/split')
+			goto('/mesocycles/new/basics')
 		}
 		$isSplitValidStore = isSplitValid;
 	});
