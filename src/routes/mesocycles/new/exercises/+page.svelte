@@ -1,12 +1,13 @@
 <script lang="ts">
 	import AddExerciseModal from './AddExerciseModal.svelte';
-	import { splitExercises, splitSchedule } from '../newMesoStore';
+	import { splitExercises, splitSchedule, isExercisesValidStore, errorMsgs } from '../newMesoStore';
 	import IoIosMenu from 'svelte-icons/io/IoIosMenu.svelte';
 	import EditExerciseModal from './EditExerciseModal.svelte';
 	import type { SplitExercise } from '../../../../../types/global';
 	import DeleteExerciseModal from './DeleteExerciseModal.svelte';
 	import { flip } from 'svelte/animate';
 	import { scale, slide, fly } from 'svelte/transition';
+	import { onMount } from 'svelte';
 
 	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 	let firstValidDayIndex = 0;
@@ -33,10 +34,36 @@
 	let deletingExerciseName: string;
 	let indexOfExerciseToDelete: number;
 	function deleteExercise(i: number) {
-		deletingExerciseName = $splitExercises[days.indexOf(currentDay)][i].name;
+		deletingExerciseName = $splitExercises[days.indexOf(currentDay)][i].name as string;
 		indexOfExerciseToDelete = i;
 		deleteExerciseModal.show();
 	}
+
+	let weeklyCalendar: HTMLInputElement[] = [];
+	function isExercisesValid() {
+		let invalidDays: string[] = [];
+		for (let i = 0; i < 7; i++) {
+			if ($splitExercises[i].length === 0 && $splitSchedule[i] !== '') {
+				$errorMsgs = ['Add at least one exercise to each non rest day'];
+				weeklyCalendar[i].classList.add('animate-pulse');
+				invalidDays.push(days[i]);
+			}
+		}
+		if (invalidDays.length !== 0) {
+			$errorMsgs[1] = "Remaining days: ";
+			invalidDays.forEach(day => {
+				$errorMsgs[1] += day + ", ";
+			});
+			$errorMsgs[1] = $errorMsgs[1].substring(0, $errorMsgs[1].length - 2);
+			return false;
+		}
+		return true;
+	}
+	onMount(() => {
+		$isExercisesValidStore = isExercisesValid;
+	});
+
+	let copiedExercises: SplitExercise[];
 </script>
 
 <AddExerciseModal bind:addExerciseModal bind:currentDay />
@@ -73,6 +100,10 @@
 				aria-label={day}
 				bind:group={currentDay}
 				value={day}
+				on:click={() => {
+					weeklyCalendar[i].classList.remove('animate-pulse');
+				}}
+				bind:this={weeklyCalendar[i]}
 			/>
 		{/if}
 	{/each}
@@ -130,6 +161,9 @@
 	{/key}
 </section>
 
-<button class="btn btn-sm btn-accent my-2 btn-block" on:click={() => addExerciseModal.show()}>
-	Add Exercise
-</button>
+<div class="join w-full my-2 grid grid-cols-2">
+	<button class="btn btn-sm btn-primary join-item">Copy Exercises</button>
+	<button class="btn btn-sm btn-accent join-item" on:click={() => addExerciseModal.show()}>
+		Add Exercise
+	</button>
+</div>
