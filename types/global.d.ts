@@ -1,4 +1,4 @@
-import type { commonMuscleGroups } from "$lib/commonDB";
+import type { commonMuscleGroups } from '$lib/commonDB';
 
 type SplitExercise = {
 	name: string | undefined;

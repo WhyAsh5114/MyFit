@@ -57,7 +57,9 @@
 		class="input input-sm w-full"
 		bind:value={$mesoName}
 		bind:this={mesoNameInput}
-		on:click={() => {mesoNameInput.classList.remove('ring-2', 'ring-error', 'animate-pulse')}}
+		on:click={() => {
+			mesoNameInput.classList.remove('ring-2', 'ring-error', 'animate-pulse');
+		}}
 	/>
 </div>
 

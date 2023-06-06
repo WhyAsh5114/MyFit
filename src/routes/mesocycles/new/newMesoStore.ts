@@ -7,6 +7,6 @@ export const isValid: Writable<() => boolean> = writable();
 
 export const splitSchedule: Writable<string[]> = writable(['', '', '', '', '', '', '']);
 
-export const splitExercises: Writable<SplitExercise[][]> = writable([[], [], [], [], [], [], []])
+export const splitExercises: Writable<SplitExercise[][]> = writable([[], [], [], [], [], [], []]);
 
 export const errorMsgs: Writable<string[]> = writable([]);
