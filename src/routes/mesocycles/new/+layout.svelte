@@ -2,13 +2,24 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import MyModal from '$lib/MyModal.svelte';
-	import { isValid, errorMsgs } from './newMesoStore';
+	import {
+		isBasicsValidStore,
+		isSplitValidStore,
+		isExercisesValidStore,
+		errorMsgs
+	} from './newMesoStore';
 
 	const steps = ['basics', 'split', 'exercises', 'volume'];
 	$: currentStepIndex = steps.indexOf($page.url.pathname.split('/').at(-1) as string);
 
 	function goNext() {
-		if (!$isValid()) {
+		if (currentStepIndex === 0 && !$isBasicsValidStore()) {
+			invalidDataOnPageModal.show();
+			return false;
+		} else if (currentStepIndex === 1 && !$isSplitValidStore()) {
+			invalidDataOnPageModal.show();
+			return false;
+		} else if (currentStepIndex === 2 && !$isExercisesValidStore()) {
 			invalidDataOnPageModal.show();
 			return false;
 		}
@@ -41,16 +52,16 @@
 	{/each}
 </ul>
 <slot />
-<div class="join w-full gap-1 mt-auto">
+<div class="join w-full gap-1 mt-auto grid grid-cols-2">
 	<button
-		class="btn btn-primary join-item w-1/2 {currentStepIndex === 0
+		class="btn btn-primary join-item {currentStepIndex === 0
 			? 'btn-disabled opacity-50'
 			: ''}"
 		on:click={goPrev}>Previous</button
 	>
 	{#if currentStepIndex !== 3}
-		<button class="btn btn-primary join-item w-1/2" on:click={goNext}>Next</button>
+		<button class="btn btn-primary join-item" on:click={goNext}>Next</button>
 	{:else}
-		<button class="btn btn-accent join-item w-1/2">Save</button>
+		<button class="btn btn-accent join-item">Save</button>
 	{/if}
 </div>

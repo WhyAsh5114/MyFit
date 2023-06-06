@@ -1,7 +1,7 @@
 <script lang="ts">
 	import MyModal from '$lib/MyModal.svelte';
 	import { onMount } from 'svelte';
-	import { errorMsgs, isValid, splitSchedule } from '../newMesoStore';
+	import { errorMsgs, isSplitValidStore, splitSchedule } from '../newMesoStore';
 	import { commonSplits } from '$lib/commonDB';
 
 	function isSplitValid() {
@@ -21,7 +21,7 @@
 		return false;
 	}
 	onMount(() => {
-		$isValid = isSplitValid;
+		$isSplitValidStore = isSplitValid;
 	});
 
 	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];

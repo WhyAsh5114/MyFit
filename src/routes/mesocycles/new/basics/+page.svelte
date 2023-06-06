@@ -1,7 +1,7 @@
 <script lang="ts">
 	import MyModal from '$lib/MyModal.svelte';
 	import { onMount } from 'svelte';
-	import { duration, mesoName, startRIR, errorMsgs, isValid } from '../newMesoStore';
+	import { duration, mesoName, startRIR, errorMsgs, isBasicsValidStore } from '../newMesoStore';
 
 	function isBasicsValid() {
 		if ($mesoName === '') {
@@ -13,7 +13,7 @@
 	}
 
 	onMount(() => {
-		$isValid = isBasicsValid;
+		$isBasicsValidStore = isBasicsValid;
 	});
 
 	let durationHelpModal: HTMLDialogElement;
