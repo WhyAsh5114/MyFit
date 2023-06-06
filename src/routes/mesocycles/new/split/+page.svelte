@@ -45,7 +45,7 @@
 			{/each}
 		</select>
 		<button
-			class="btn btn-accent btn-sm"
+			class="btn btn-accent"
 			on:click={() => {
 				$splitSchedule = commonSplits[selectedCommonSplit];
 			}}>Select</button
