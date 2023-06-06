@@ -67,7 +67,7 @@
 			/>
 		{:else}
 			<input
-				class="join-item btn btn-square border border-white"
+				class="join-item btn btn-square btn-secondary"
 				type="radio"
 				name="day"
 				aria-label={day}
