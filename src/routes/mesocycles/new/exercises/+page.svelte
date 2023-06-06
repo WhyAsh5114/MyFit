@@ -1,6 +1,12 @@
 <script lang="ts">
 	import AddExerciseModal from './AddExerciseModal.svelte';
-	import { splitExercises, splitSchedule, isExercisesValidStore, errorMsgs } from '../newMesoStore';
+	import {
+		splitExercises,
+		splitSchedule,
+		isExercisesValidStore,
+		errorMsgs,
+		isSplitValidStore
+	} from '../newMesoStore';
 	import IoIosMenu from 'svelte-icons/io/IoIosMenu.svelte';
 	import EditExerciseModal from './EditExerciseModal.svelte';
 	import type { SplitExercise } from '../../../../../types/global';
@@ -8,6 +14,7 @@
 	import { flip } from 'svelte/animate';
 	import { scale, slide, fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 
 	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 	let firstValidDayIndex = 0;
@@ -60,6 +67,9 @@
 		return true;
 	}
 	onMount(() => {
+		if (!$isSplitValidStore || !$isSplitValidStore()) {
+			goto('/mesocycles/new/split')
+		}
 		$isExercisesValidStore = isExercisesValid;
 	});
 

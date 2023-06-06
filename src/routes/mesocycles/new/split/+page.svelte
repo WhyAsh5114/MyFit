@@ -1,8 +1,9 @@
 <script lang="ts">
 	import MyModal from '$lib/MyModal.svelte';
 	import { onMount } from 'svelte';
-	import { errorMsgs, isSplitValidStore, splitSchedule } from '../newMesoStore';
+	import { errorMsgs, isSplitValidStore, splitSchedule, isBasicsValidStore } from '../newMesoStore';
 	import { commonSplits } from '$lib/commonDB';
+	import { goto } from '$app/navigation';
 
 	function isSplitValid() {
 		let totalWorkouts = 0;
@@ -21,6 +22,9 @@
 		return false;
 	}
 	onMount(() => {
+		if (!$isBasicsValidStore || !$isBasicsValidStore()) {
+			goto('/mesocycles/new/split')
+		}
 		$isSplitValidStore = isSplitValid;
 	});
 
