@@ -9,7 +9,7 @@
 		errorMsgs
 	} from './newMesoStore';
 
-	const steps = ['basics', 'split', 'exercises', 'volume'];
+	const steps = ['basics', 'split', 'exercises', 'overview'];
 	$: currentStepIndex = steps.indexOf($page.url.pathname.split('/').at(-1) as string);
 
 	function goNext() {
