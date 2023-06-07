@@ -7,7 +7,6 @@
 		errorMsgs,
 		isSplitValidStore
 	} from '../newMesoStore';
-	import IoIosMenu from 'svelte-icons/io/IoIosMenu.svelte';
 	import EditExerciseModal from './EditExerciseModal.svelte';
 	import type { SplitExercise } from '../../../../../types/global';
 	import DeleteExerciseModal from './DeleteExerciseModal.svelte';
@@ -153,7 +152,7 @@
 						<h5 class="text-lg font-bold">{exercise.name}</h5>
 						<div class="dropdown dropdown-end w-5">
 							<button>
-								<IoIosMenu />
+								<img src="/HamburgerMenu.svg" alt="menu">
 							</button>
 							<ul class="menu dropdown-content p-2 shadow-black bg-base-100 rounded-md shadow-md">
 								<li>
