@@ -1,4 +1,4 @@
-import type { commonMuscleGroups } from '$lib/commonDB';
+import type { commonMuscleGroups } from '../src/lib/commonDB';
 
 type SplitExercise = {
 	name: string | undefined;
@@ -13,6 +13,14 @@ type Mesocycle = {
 	name: string;
 	duration: number;
 	startRIR: number;
-	splitSchedule: string[];
-	splitExercises: SplitExercise[][];
-}
+	splitSchedule: [string, string, string, string, string, string, string];
+	splitExercises: [
+		SplitExercise[],
+		SplitExercise[],
+		SplitExercise[],
+		SplitExercise[],
+		SplitExercise[],
+		SplitExercise[],
+		SplitExercise[]
+	];
+};
