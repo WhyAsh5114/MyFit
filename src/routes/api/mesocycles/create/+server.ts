@@ -21,7 +21,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			status: 400
 		});
 	}
-	console.log(meso);
 
 	const client = await clientPromise;
 	try {
