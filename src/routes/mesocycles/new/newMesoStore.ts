@@ -3,7 +3,7 @@ import type { SplitExercise } from '../../../../types/global';
 
 export const mesoName: Writable<string> = writable('');
 export const duration = writable(6);
-export const startRIR: Writable<number> = writable();
+export const startRIR: Writable<number> = writable(3);
 export const isBasicsValidStore: Writable<() => boolean> = writable();
 
 export const splitSchedule: Writable<[string, string, string, string, string, string, string]> =

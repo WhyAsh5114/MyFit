@@ -38,7 +38,9 @@
 
 	let invalidDataOnPageModal: HTMLDialogElement;
 
+	let callingEndpoint = false;
 	async function createMesocycle() {
+		callingEndpoint = true;
 		const meso: Mesocycle = {
 			name: $mesoName,
 			duration: $duration,
@@ -47,16 +49,40 @@
 			splitExercises: $splitExercises
 		};
 		const response = await fetch('/api/mesocycles/create', {
-            method: 'POST',
-            body: JSON.stringify(meso),
-            headers: {
-                'content-type': 'application/json'
-            }
-        });
-		console.log(await response.json());
+			method: 'POST',
+			body: JSON.stringify(meso),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+		callingEndpoint = false;
+
+		if (response.ok) {
+			successModal.show();
+		} else {
+			$errorMsgs = [await response.text()];
+			invalidDataOnPageModal.show();
+		}
 	}
+	let successModal: HTMLDialogElement;
 </script>
 
+<MyModal
+	title="Success"
+	titleColor="text-success"
+	bind:dialogElement={successModal}
+	onClose={() => {
+		goto('/');
+		// Clear stores
+		$mesoName = '';
+		$duration = 6;
+		$startRIR = 3;
+		$splitSchedule = ['', '', '', '', '', '', ''];
+		$splitExercises = [[], [], [], [], [], [], []];
+	}}
+>
+	<p>Mesocycle <span class="font-semibold">{$mesoName}</span> created successfully</p>
+</MyModal>
 <MyModal title="Error" titleColor="text-error" bind:dialogElement={invalidDataOnPageModal}>
 	<ul class="list-disc ml-5">
 		{#each $errorMsgs as msg}
@@ -84,6 +110,14 @@
 	{#if currentStepIndex !== 3}
 		<button class="btn btn-primary join-item" on:click={goNext}>Next</button>
 	{:else}
-		<button class="btn btn-accent join-item" on:click={createMesocycle}>Create</button>
+		<button
+			class="btn btn-accent join-item {callingEndpoint ? 'disabled' : ''}"
+			on:click={createMesocycle}
+		>
+			{#if callingEndpoint}
+				<span class="loading loading-spinner" />
+			{/if}
+			Create
+		</button>
 	{/if}
 </div>
