@@ -84,8 +84,7 @@
 		$splitExercises[days.indexOf(currentDay)] = JSON.parse(JSON.stringify(copiedExercises));
 	}
 
-	function cutExercises() {
-		copyExercises();
+	function clearExercises() {
 		$splitExercises[days.indexOf(currentDay)] = [];
 	}
 </script>
@@ -193,7 +192,7 @@
 			class="btn btn-sm btn-primary join-item {copiedExercises ? '' : 'btn-disabled opacity-50'}"
 			>Paste</button
 		>
-		<button class="btn btn-sm btn-primary join-item" on:click={cutExercises}>Cut</button>
+		<button class="btn btn-sm btn-primary join-item" on:click={clearExercises}>Clear</button>
 	</div>
 	<button class="btn btn-sm btn-accent join-item" on:click={() => addExerciseModal.show()}>
 		Add Exercise
