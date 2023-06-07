@@ -8,3 +8,11 @@ type SplitExercise = {
 	repRangeStart: number | undefined;
 	repRangeEnd: number | undefined;
 };
+
+type Mesocycle = {
+	name: string;
+	duration: number;
+	startRIR: number;
+	splitSchedule: string[];
+	splitExercises: SplitExercise[][];
+}

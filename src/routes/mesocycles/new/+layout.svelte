@@ -2,11 +2,17 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import MyModal from '$lib/MyModal.svelte';
+	import type { Mesocycle } from '../../../../types/global';
 	import {
 		isBasicsValidStore,
 		isSplitValidStore,
 		isExercisesValidStore,
-		errorMsgs
+		errorMsgs,
+		mesoName,
+		duration,
+		startRIR,
+		splitSchedule,
+		splitExercises
 	} from './newMesoStore';
 
 	const steps = ['basics', 'split', 'exercises', 'overview'];
@@ -31,6 +37,16 @@
 	}
 
 	let invalidDataOnPageModal: HTMLDialogElement;
+	
+	function createMesocycle() {
+		const meso: Mesocycle = {
+			name: $mesoName,
+			duration: $duration,
+			startRIR: $startRIR,
+			splitSchedule: $splitSchedule,
+			splitExercises: $splitExercises
+		}
+	}
 </script>
 
 <MyModal title="Error" titleColor="text-error" bind:dialogElement={invalidDataOnPageModal}>
@@ -62,6 +78,6 @@
 	{#if currentStepIndex !== 3}
 		<button class="btn btn-primary join-item" on:click={goNext}>Next</button>
 	{:else}
-		<button class="btn btn-accent join-item">Save</button>
+		<button class="btn btn-accent join-item" on:click={createMesocycle}>Create</button>
 	{/if}
 </div>
