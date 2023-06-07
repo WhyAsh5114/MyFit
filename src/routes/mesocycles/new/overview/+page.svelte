@@ -4,6 +4,8 @@
 	import { isExercisesValidStore, splitExercises } from '../newMesoStore';
 	import { volumeLandmarks, commonMuscleGroups } from '$lib/commonDB';
 	import VolumeProgress from './VolumeProgress.svelte';
+	import MyModal from '$lib/MyModal.svelte';
+	import MuscleGroupComponent from './MuscleGroupComponent.svelte';
 
 	onMount(() => {
 		// if (!$isExercisesValidStore || !$isExercisesValidStore()) {
@@ -25,33 +27,56 @@
 			muscleFrequency[muscleGroup]++;
 		});
 	});
+
+	let volumeOverviewModal: HTMLDialogElement;
 </script>
 
+<MyModal
+	title="Volume Overview Help"
+	titleColor="text-accent"
+	bind:dialogElement={volumeOverviewModal}
+>
+	<div class="carousel w-full">
+		<div id="item1" class="carousel-item w-full">
+			<div class="flex flex-col">
+				<p>
+					The volume overview provides a brief overview of the volume of the exercises and frequency
+				</p>
+				<VolumeProgress
+					volumeLandmark={volumeLandmarks['Chest']}
+					volume={muscleVolume[8]}
+					frequency={muscleFrequency[2]}
+				/>
+			</div>
+		</div>
+		<div id="item2" class="carousel-item w-full">
+			<p />
+		</div>
+		<div id="item3" class="carousel-item w-full">
+			<p />
+		</div>
+		<div id="item4" class="carousel-item w-full">
+			<p />
+		</div>
+	</div>
+	<div class="flex justify-center w-full py-2 gap-2">
+		<a href="#item1" class="btn btn-xs">1</a>
+		<a href="#item2" class="btn btn-xs">2</a>
+		<a href="#item3" class="btn btn-xs">3</a>
+		<a href="#item4" class="btn btn-xs">4</a>
+	</div>
+</MyModal>
 <div class="flex flex-col gap-1 w-full p-1 rounded-md">
 	<div class="flex justify-between items-center">
 		<h3 class="font-semibold text-xl p-1">Volume overview</h3>
-		<button class="help-button">?</button>
+		<button class="help-button" on:click={() => volumeOverviewModal.show()}>?</button>
 	</div>
 	{#each commonMuscleGroups as muscleGroup}
-		<div class="flex w-full bg-primary font-semibold rounded-md px-2 py-0.5">
-			<h4 class="shrink-0 basis-24">{muscleGroup}</h4>
-			<VolumeProgress
-				volumeLandmark={volumeLandmarks[muscleGroup]}
-				volume={muscleVolume[muscleGroup]}
-				frequency={muscleFrequency[muscleGroup]}
-			/>
-			{#if muscleFrequency[muscleGroup] < volumeLandmarks[muscleGroup].freqStart || muscleFrequency[muscleGroup] > volumeLandmarks[muscleGroup].freqEnd}
-				{#if (muscleFrequency[muscleGroup] < 2 && volumeLandmarks[muscleGroup].MV > 0) || muscleFrequency[muscleGroup] === 7}
-					<p class="ml-auto text-error">{muscleFrequency[muscleGroup]}x</p>
-				{:else if volumeLandmarks[muscleGroup].MEV === 0}
-					<p class="ml-auto">{muscleFrequency[muscleGroup]}x</p>
-				{:else}
-					<p class="ml-auto text-warning">{muscleFrequency[muscleGroup]}x</p>
-				{/if}
-			{:else}
-				<p class="ml-auto text-success">{muscleFrequency[muscleGroup]}x</p>
-			{/if}
-		</div>
+		<MuscleGroupComponent
+			{muscleGroup}
+			volumeLandmark={volumeLandmarks[muscleGroup]}
+			freq={muscleFrequency[muscleGroup]}
+			volume={muscleVolume[muscleGroup]}
+		/>
 	{/each}
 </div>
-
