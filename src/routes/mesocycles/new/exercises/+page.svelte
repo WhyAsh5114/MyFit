@@ -67,7 +67,7 @@
 	}
 	onMount(() => {
 		if (!$isSplitValidStore || !$isSplitValidStore()) {
-			goto('/mesocycles/new/split')
+			goto('/mesocycles/new/split');
 		}
 		$isExercisesValidStore = isExercisesValid;
 	});
@@ -151,7 +151,7 @@
 						<h5 class="text-lg font-bold">{exercise.name}</h5>
 						<div class="dropdown dropdown-end w-5">
 							<button>
-								<img src="/HamburgerMenu.svg" alt="menu">
+								<img src="/HamburgerMenu.svg" alt="menu" />
 							</button>
 							<ul class="menu dropdown-content p-2 shadow-black bg-base-100 rounded-md shadow-md">
 								<li>

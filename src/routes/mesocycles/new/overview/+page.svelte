@@ -7,9 +7,9 @@
 	import MuscleGroupComponent from './MuscleGroupComponent.svelte';
 
 	onMount(() => {
-		// if (!$isExercisesValidStore || !$isExercisesValidStore()) {
-		// 	goto('/mesocycles/new/split')
-		// }
+		if (!$isExercisesValidStore || !$isExercisesValidStore()) {
+			goto('/mesocycles/new/split')
+		}
 	});
 
 	let muscleFrequency = Object.fromEntries(
