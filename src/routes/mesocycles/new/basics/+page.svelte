@@ -90,9 +90,9 @@
 	</div>
 	<div class="h-0.5 bg-black mt-1 mb-4" />
 	<select class="select select-sm select-bordered w-full" bind:value={$startRIR}>
-		<option value="4">4 RIR</option>
-		<option value="3" selected>3 RIR</option>
-		<option value="2">2 RIR</option>
-		<option value="1">1 RIR</option>
+		<option value={4}>4 RIR</option>
+		<option value={3} selected>3 RIR</option>
+		<option value={2}>2 RIR</option>
+		<option value={1}>1 RIR</option>
 	</select>
 </div>
