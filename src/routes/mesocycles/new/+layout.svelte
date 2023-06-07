@@ -38,7 +38,7 @@
 
 	let invalidDataOnPageModal: HTMLDialogElement;
 
-	function createMesocycle() {
+	async function createMesocycle() {
 		const meso: Mesocycle = {
 			name: $mesoName,
 			duration: $duration,
@@ -46,6 +46,14 @@
 			splitSchedule: $splitSchedule,
 			splitExercises: $splitExercises
 		};
+		const response = await fetch('/api/mesocycles/create', {
+            method: 'POST',
+            body: JSON.stringify(meso),
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
+		console.log(await response.json());
 	}
 </script>
 
