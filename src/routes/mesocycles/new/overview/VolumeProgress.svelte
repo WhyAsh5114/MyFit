@@ -6,7 +6,7 @@
 	export let frequency: number;
 </script>
 
-<div class="w-52 relative flex items-center">
+<div class="grow relative flex items-center">
 	{#if frequency >= 2 && frequency <= 6}
 		{#if volume < volumeLandmark.MEV}
 			<progress
