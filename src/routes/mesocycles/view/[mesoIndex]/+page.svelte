@@ -2,6 +2,8 @@
 	import { goto } from '$app/navigation';
 	import MyModal from '$lib/MyModal.svelte';
 
+	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 	export let data;
 
 	let confirmDeleteModal: HTMLDialogElement;
@@ -84,6 +86,23 @@
 		<div class="stat">
 			<div class="opacity-75">Start RIR</div>
 			<div class="text-2xl font-bold text-white">{data.meso?.startRIR} RIR</div>
+		</div>
+	</div>
+	<div class="stats bg-primary">
+		<div class="stat">
+			<div class="opacity-75">Split</div>
+			<div class="flex flex-col gap-1.5 mt-3">
+				{#each data.meso?.splitSchedule as splitDay, i}
+					<div class="join">
+						<p class="join-item pl-2 basis-14 text-black shrink-0 font-semibold bg-secondary">
+							{days[i]}
+						</p>
+						<p class="join-item grow text-center bg-black">
+							{splitDay}
+						</p>
+					</div>
+				{/each}
+			</div>
 		</div>
 	</div>
 </div>
