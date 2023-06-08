@@ -3,7 +3,7 @@
 	import { volumeLandmarks } from '$lib/commonDB';
 	import VolumeProgress from './VolumeProgress.svelte';
 
-	export let bgColorClass = "bg-primary";
+	export let bgColorClass = 'bg-primary';
 	export let muscleGroup: (typeof commonMuscleGroups)[number];
 	export let volume: number;
 	export let freq: number;
