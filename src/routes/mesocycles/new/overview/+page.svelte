@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { isExercisesValidStore, splitExercises } from '../newMesoStore';
 	import { commonMuscleGroups } from '$lib/commonDB';
-	import MuscleGroupComponent from './MuscleGroupComponent.svelte';
+	import MuscleGroupComponent from '$lib/MuscleGroupComponent.svelte';
 
 	onMount(() => {
 		if (!$isExercisesValidStore || !$isExercisesValidStore()) {
