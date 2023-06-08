@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SplitExercisesTable from './SplitExercisesTable.svelte';
+	import SplitExercisesTable from '$lib/SplitExercisesTable.svelte';
 	import AddExerciseModal from './AddExerciseModal.svelte';
 	import {
 		splitExercises,
