@@ -33,6 +33,8 @@
 		{/each}
 	</ul>
 {:else}
-	<p>You haven't created any mesocycles</p>
+	<div class="grow flex items-center">
+		<p>You haven't created any mesocycles</p>
+	</div>
 {/if}
-<a href="/mesocycles/new/basics" class="btn btn-accent mt-auto btn-block">Create new mesocycle</a>
+<a href="/mesocycles/new/basics" class="btn btn-accent btn-block mt-auto">Create new mesocycle</a>
