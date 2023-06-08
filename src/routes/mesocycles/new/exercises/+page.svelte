@@ -14,8 +14,8 @@
 	import { scale, slide, fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { days } from '$lib/commonDB';
 
-	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 	let firstValidDayIndex = 0;
 	for (let i = 0; i < 7; i++) {
 		if ($splitSchedule[i] !== '') {

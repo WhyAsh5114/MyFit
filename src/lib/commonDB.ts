@@ -1,3 +1,5 @@
+export const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 export const commonSplits: Record<string, string[]> = {
 	'Push Pull Legs': ['Push', 'Pull', 'Legs', 'Push', 'Pull', 'Legs', ''],
 	'Upper Lower': ['Upper', 'Lower', '', 'Upper', 'Lower', '', ''],

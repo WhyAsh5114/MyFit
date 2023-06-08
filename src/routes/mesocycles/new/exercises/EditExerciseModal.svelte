@@ -1,10 +1,9 @@
 <script lang="ts">
 	import MyModal from '$lib/MyModal.svelte';
-	import { commonMuscleGroups } from '$lib/commonDB';
+	import { commonMuscleGroups, days } from '$lib/commonDB';
 	import type { SplitExercise } from '../../../../../types/global';
 	import { splitExercises } from '../newMesoStore';
 
-	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 	export let currentDay = 'Mon';
 
 	export let editExerciseModal: HTMLDialogElement;

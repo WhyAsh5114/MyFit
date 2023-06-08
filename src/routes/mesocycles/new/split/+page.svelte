@@ -2,7 +2,7 @@
 	import MyModal from '$lib/MyModal.svelte';
 	import { onMount } from 'svelte';
 	import { errorMsgs, isSplitValidStore, splitSchedule, isBasicsValidStore } from '../newMesoStore';
-	import { commonSplits } from '$lib/commonDB';
+	import { commonSplits, days } from '$lib/commonDB';
 	import { goto } from '$app/navigation';
 
 	function isSplitValid() {
@@ -27,8 +27,6 @@
 		}
 		$isSplitValidStore = isSplitValid;
 	});
-
-	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 	let selectSplitModal: HTMLDialogElement;
 	let selectedCommonSplit: string;

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import MyModal from '$lib/MyModal.svelte';
 	import { splitExercises } from '../newMesoStore';
+	import { days } from '$lib/commonDB';
 
 	export let deleteExerciseModal: HTMLDialogElement;
 	export let exerciseName: string;
 	export let currentDay: string;
 	export let indexOfExerciseToDelete: number;
-	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 	function deleteExercise() {
 		$splitExercises[days.indexOf(currentDay)].splice(indexOfExerciseToDelete, 1);

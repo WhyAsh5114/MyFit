@@ -2,9 +2,7 @@
 	import { goto } from '$app/navigation';
 	import MuscleGroupComponent from '$lib/MuscleGroupComponent.svelte';
 	import MyModal from '$lib/MyModal.svelte';
-	import { commonMuscleGroups } from '$lib/commonDB.js';
-
-	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+	import { commonMuscleGroups, days } from '$lib/commonDB';
 
 	export let data;
 
