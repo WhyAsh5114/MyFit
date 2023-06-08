@@ -131,7 +131,7 @@
 			<div class="flex flex-col gap-1 mt-3">
 				{#each commonMuscleGroups as muscleGroup}
 					<MuscleGroupComponent
-                    bgColorClass="bg-black"
+						bgColorClass="bg-black"
 						{muscleGroup}
 						freq={muscleFrequency[muscleGroup]}
 						volume={muscleVolume[muscleGroup]}
@@ -151,5 +151,5 @@
 	>
 		Delete
 	</button>
-	<button class="join-item btn btn-primary"> Edit </button>
+	<a href="/mesocycles/edit/{data.ind}" class="join-item btn btn-primary"> Edit </a>
 </div>
