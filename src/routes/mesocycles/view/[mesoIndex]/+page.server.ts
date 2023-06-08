@@ -13,6 +13,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     const userData = await client.db().collection('users').findOne({ email: session.user?.email });
 
     return {
-        meso: userData?.mesocycles[params.mesoIndex] as Mesocycle | null
+        meso: userData?.mesocycles[params.mesoIndex] as Mesocycle | null,
+        ind: params.mesoIndex
     }
 }
