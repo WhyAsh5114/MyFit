@@ -1,14 +1,21 @@
 <script>
+	import { navigating } from '$app/stores';
+
 	export let data;
 </script>
 
 {#if data.mesocycles}
-	<ul class="flex flex-col gap-2 h-px grow w-full overflow-y-auto mb-2">
+	<ul class="flex flex-col gap-2 h-px grow w-full overflow-y-auto overflow-x-hidden mb-2">
 		{#each data.mesocycles as meso, i}
 			<a
-				class="btn flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-3"
+				class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-3"
 				href="/mesocycles/view/{i}"
 			>
+				{#if $navigating?.to?.url.pathname === `/mesocycles/view/${i}`}
+					<div class="absolute h-full w-full bg-black bg-opacity-75 grid place-items-center">
+						<span class="loading loading-spinner loading-lg" />
+					</div>
+				{/if}
 				<div class="flex justify-between items-center w-full">
 					<h3 class="text-lg">{meso.name}</h3>
 					<p class="badge badge-secondary ml-auto">{meso.duration} weeks</p>
@@ -18,7 +25,7 @@
 						{#if workout !== ''}
 							<p class="font-normal badge w-fit">{workout}</p>
 						{:else}
-							<p class="font-normal badge badge-accent"></p>
+							<p class="font-normal badge badge-accent" />
 						{/if}
 					{/each}
 				</div>
