@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import MuscleGroupComponent from '$lib/MuscleGroupComponent.svelte';
 	import MyModal from '$lib/MyModal.svelte';
+	import { commonMuscleGroups } from '$lib/commonDB.js';
 
 	const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -33,6 +35,23 @@
 
 	let deletionSuccessfulModal: HTMLDialogElement;
 	let deletionErrorModal: HTMLDialogElement;
+
+	let muscleFrequency = Object.fromEntries(
+		commonMuscleGroups.map((muscleGroup) => [muscleGroup, 0])
+	);
+	let muscleVolume = Object.fromEntries(commonMuscleGroups.map((muscleGroup) => [muscleGroup, 0]));
+	data.meso.splitExercises.forEach((workout) => {
+		let targetedMusclesOnDay: Set<string> = new Set();
+		workout.forEach((exercise) => {
+			muscleVolume[exercise.muscleTarget] += exercise.sets as number;
+			targetedMusclesOnDay.add(exercise.muscleTarget);
+		});
+		targetedMusclesOnDay.forEach((muscleGroup) => {
+			muscleFrequency[muscleGroup]++;
+		});
+	});
+
+	let volumeOverviewModal: HTMLDialogElement;
 </script>
 
 <MyModal title="Delete Mesocycle" titleColor="text-error" bind:dialogElement={confirmDeleteModal}>
@@ -65,14 +84,15 @@
 <MyModal title="Error" titleColor="text-error" bind:dialogElement={deletionErrorModal}>
 	<p>{errorMsg}</p>
 </MyModal>
-<div class="flex flex-col w-full gap-2">
-	<div class="stats bg-primary">
+
+<div class="flex flex-col w-full gap-2 grow overflow-y-auto h-px mb-3">
+	<div class="stats bg-primary shrink-0">
 		<div class="stat">
 			<div class="opacity-75">Name</div>
 			<div class="text-2xl font-bold text-white">{data.meso?.name}</div>
 		</div>
 	</div>
-	<div class="stats bg-primary">
+	<div class="stats bg-primary shrink-0">
 		<div class="stat">
 			<div class="opacity-75">Duration</div>
 			<div class="text-2xl font-bold text-white">
@@ -88,7 +108,7 @@
 			<div class="text-2xl font-bold text-white">{data.meso?.startRIR} RIR</div>
 		</div>
 	</div>
-	<div class="stats bg-primary">
+	<div class="stats bg-primary shrink-0">
 		<div class="stat">
 			<div class="opacity-75">Split</div>
 			<div class="flex flex-col gap-1.5 mt-3">
@@ -101,6 +121,21 @@
 							{splitDay}
 						</p>
 					</div>
+				{/each}
+			</div>
+		</div>
+	</div>
+	<div class="stats bg-primary shrink-0">
+		<div class="stat">
+			<div class="opacity-75">Volume</div>
+			<div class="flex flex-col gap-1 mt-3">
+				{#each commonMuscleGroups as muscleGroup}
+					<MuscleGroupComponent
+                    bgColorClass="bg-black"
+						{muscleGroup}
+						freq={muscleFrequency[muscleGroup]}
+						volume={muscleVolume[muscleGroup]}
+					/>
 				{/each}
 			</div>
 		</div>
