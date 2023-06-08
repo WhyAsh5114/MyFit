@@ -49,8 +49,6 @@
 			muscleFrequency[muscleGroup]++;
 		});
 	});
-
-	let volumeOverviewModal: HTMLDialogElement;
 </script>
 
 <MyModal title="Delete Mesocycle" titleColor="text-error" bind:dialogElement={confirmDeleteModal}>
