@@ -1,6 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import Ajv from 'ajv';
-import MesocycleType from './Mesocycle.json';
+import MesocycleType from '../Mesocycle.json';
 import clientPromise from '$lib/mongodb';
 
 const ajv = new Ajv({ removeAdditional: true });
