@@ -13,9 +13,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	const userData = await client.db().collection('users').findOne({ email: session.user?.email });
 	const meso = userData?.mesocycles[params.mesoIndex] as Mesocycle | null;
 
-    if (!meso) {
+	if (!meso) {
 		throw error(404, 'Mesocycle not found');
-    }
+	}
 
 	return {
 		meso,

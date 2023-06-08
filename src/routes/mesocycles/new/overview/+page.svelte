@@ -8,7 +8,7 @@
 
 	onMount(() => {
 		if (!$isExercisesValidStore || !$isExercisesValidStore()) {
-			goto('/mesocycles/new/split')
+			goto('/mesocycles/new/split');
 		}
 	});
 

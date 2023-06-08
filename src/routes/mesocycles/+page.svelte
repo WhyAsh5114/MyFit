@@ -13,7 +13,9 @@
 					href="/mesocycles/view/{i}"
 				>
 					{#if $navigating?.to?.url.pathname === `/mesocycles/view/${i}`}
-						<div class="absolute h-full w-full bg-black bg-opacity-75 grid place-items-center rounded-lg">
+						<div
+							class="absolute h-full w-full bg-black bg-opacity-75 grid place-items-center rounded-lg"
+						>
 							<span class="loading loading-spinner loading-lg" />
 						</div>
 					{/if}
