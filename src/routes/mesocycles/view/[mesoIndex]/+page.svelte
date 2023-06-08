@@ -15,7 +15,7 @@
 		const response = await fetch('/api/mesocycles/delete', {
 			method: 'POST',
 			body: JSON.stringify({
-				ind: data.ind
+				mesoIndex: data.mesoIndex
 			}),
 			headers: {
 				'content-type': 'application/json'
@@ -149,5 +149,5 @@
 	>
 		Delete
 	</button>
-	<a href="/mesocycles/edit/{data.ind}" class="join-item btn btn-primary"> Edit </a>
+	<a href="/mesocycles/edit/{data.mesoIndex}" class="join-item btn btn-primary"> Edit </a>
 </div>

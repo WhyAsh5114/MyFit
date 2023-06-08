@@ -19,6 +19,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	return {
 		meso,
-		ind: params.mesoIndex
+		mesoIndex: params.mesoIndex
 	};
 };

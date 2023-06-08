@@ -106,7 +106,7 @@
 						{splitDay}
 					</p>
 					{#if splitDay !== ''}
-						<a class="join-item h-full bg-secondary flex items-center" href="/mesocycles/edit/{data.ind}/workouts/{i}">
+						<a class="join-item h-full bg-secondary flex items-center" href="/mesocycles/edit/{data.mesoIndex}/workouts/{i}">
 							<img src="/pencil.svg" alt="Edit icon" class="px-2" />
 						</a>
 					{/if}

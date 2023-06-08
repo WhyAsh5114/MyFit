@@ -9,13 +9,13 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { ind } = await request.json();
+	const { mesoIndex } = await request.json();
 	const client = await clientPromise;
 	try {
 		await client
 			.db()
 			.collection('users')
-			.updateOne({ email: session.user?.email }, { $set: { [`mesocycles.${ind}`]: null } });
+			.updateOne({ email: session.user?.email }, { $set: { [`mesocycles.${mesoIndex}`]: null } });
 
 		return new Response('Mesocycle deleted successfully', {
 			status: 200

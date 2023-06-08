@@ -50,7 +50,7 @@
 
 		if (
 			$splitExercises[days.indexOf(currentDay)].find(
-				(exercise, ind) => exercise.name === oldExercise.name && ind !== i
+				(exercise, exerciseIndex) => exercise.name === oldExercise.name && exerciseIndex !== i
 			) !== undefined
 		) {
 			errorMsgs.push('Exercise already exists in this workout, please choose a different name');
