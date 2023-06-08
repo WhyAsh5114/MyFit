@@ -81,7 +81,7 @@
 		$splitExercises = [[], [], [], [], [], [], []];
 	}}
 >
-	<p>Mesocycle <span class="font-semibold">{$mesoName}</span> created successfully</p>
+	<p>Mesocycle <span class="font-semibold italic">{$mesoName}</span> created successfully</p>
 </MyModal>
 <MyModal title="Error" titleColor="text-error" bind:dialogElement={invalidDataOnPageModal}>
 	<ul class="list-disc ml-5">

@@ -20,7 +20,7 @@
 					<h3 class="ml-2 text-lg">{meso.name}</h3>
 					<p class="badge badge-secondary ml-auto">{meso.duration} weeks</p>
 				</div>
-				<div class="flex w-full gap-0.5 overflow-x-auto">
+				<div class="flex w-full gap-1 flex-wrap">
 					{#each meso.splitSchedule as workout}
 						{#if workout !== ''}
 							<p class="font-normal badge w-fit">{workout}</p>
