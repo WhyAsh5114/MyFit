@@ -96,19 +96,19 @@
 	<div class="flex flex-col bg-primary p-5 rounded-lg w-full">
 		<h3 class="card-title">Split</h3>
 		<div class="h-0.5 bg-black mt-1 mb-4" />
-		<div class="flex flex-col gap-2.5 w-full">
+		<div class="flex flex-col gap-1.5 w-full">
 			{#each data.meso?.splitSchedule as splitDay, i}
 				<div class="join">
-					<p class="join-item pl-2 basis-12 text-black shrink-0 font-semibold bg-secondary">
+					<p class="join-item pl-2 basis-14 text-black shrink-0 font-semibold bg-secondary">
 						{days[i]}
 					</p>
 					<p class="join-item grow text-center bg-black">
 						{splitDay}
 					</p>
 					{#if splitDay !== ''}
-						<button class="join-item btn btn-xs px-0 bg-white basis-8 shrink-0">
-							<img src="/pencil.svg" alt="Edit icon" />
-						</button>
+						<a class="join-item h-full bg-secondary flex items-center" href="/mesocycles/edit/{data.ind}/workouts/{i}">
+							<img src="/pencil.svg" alt="Edit icon" class="px-2" />
+						</a>
 					{/if}
 				</div>
 			{/each}
