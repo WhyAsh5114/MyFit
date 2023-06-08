@@ -1,5 +1,5 @@
 <script lang="ts">
-	import VolumeOverviewHelpModal from './VolumeOverviewHelpModal.svelte';
+	import VolumeOverviewHelpModal from '$lib/VolumeOverviewHelpModal.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { isExercisesValidStore, splitExercises } from '../newMesoStore';
