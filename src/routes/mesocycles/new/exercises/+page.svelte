@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SplitExercisesTable from './SplitExercisesTable.svelte';
 	import AddExerciseModal from './AddExerciseModal.svelte';
 	import {
 		splitExercises,
@@ -10,8 +11,6 @@
 	import EditExerciseModal from './EditExerciseModal.svelte';
 	import type { SplitExercise } from '$lib/global';
 	import DeleteExerciseModal from './DeleteExerciseModal.svelte';
-	import { flip } from 'svelte/animate';
-	import { scale, slide, fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { days } from '$lib/commonDB';
@@ -131,58 +130,13 @@
 		{/if}
 	{/each}
 </div>
-<section class="flex flex-col w-full h-full">
-	<h4 class="bg-accent text-black text-center text-lg font-semibold rounded-t-lg">
-		{$splitSchedule[days.indexOf(currentDay)]} ({currentDay})
-	</h4>
-	{#key currentDay}
-		<ul
-			class="flex flex-col h-px grow bg-primary rounded-b-lg p-2 gap-3 overflow-y-auto"
-			in:fly={{ duration: 200, y: 10, opacity: 0 }}
-		>
-			{#each $splitExercises[days.indexOf(currentDay)] as exercise, i (exercise.name)}
-				<li
-					class="flex flex-col bg-secondary w-full rounded-lg text-black p-3 h-fit"
-					animate:flip={{ duration: 200 }}
-					in:slide|local={{ duration: 200 }}
-					out:scale|local={{ duration: 200 }}
-				>
-					<div class="flex justify-between">
-						<h5 class="text-lg font-bold">{exercise.name}</h5>
-						<div class="dropdown dropdown-end w-5">
-							<button>
-								<img src="/HamburgerMenu.svg" alt="menu" />
-							</button>
-							<ul class="menu dropdown-content p-2 shadow-black bg-base-100 rounded-md shadow-md">
-								<li>
-									<button
-										class="text-white uppercase font-semibold"
-										on:click={() => {
-											editExercise(i, exercise);
-										}}>Edit</button
-									>
-								</li>
-								<li>
-									<button
-										class="text-error uppercase font-semibold"
-										on:click={() => {
-											deleteExercise(i);
-										}}>Delete</button
-									>
-								</li>
-							</ul>
-						</div>
-					</div>
-					<h6 class="capitalize text-sm font-semibold italic">{exercise.setType} sets</h6>
-					<div class="flex justify-between mt-2.5 text-sm">
-						<p>{exercise.sets} sets of {exercise.repRangeStart} to {exercise.repRangeEnd} reps</p>
-						<span class="badge badge-error text-white">{exercise.muscleTarget}</span>
-					</div>
-				</li>
-			{/each}
-		</ul>
-	{/key}
-</section>
+<SplitExercisesTable
+	bind:currentDay
+	bind:workoutName={$splitSchedule[days.indexOf(currentDay)]}
+	bind:splitExercises={$splitExercises[days.indexOf(currentDay)]}
+	{editExercise}
+	{deleteExercise}
+/>
 
 <div class="join w-full my-2 grid grid-cols-2 gap-1">
 	<div class="join grid grid-cols-3 gap-0.5">
