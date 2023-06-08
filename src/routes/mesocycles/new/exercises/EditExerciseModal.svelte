@@ -1,7 +1,7 @@
 <script lang="ts">
 	import MyModal from '$lib/MyModal.svelte';
 	import { commonMuscleGroups, days } from '$lib/commonDB';
-	import type { SplitExercise } from '../../../../../types/global';
+	import type { SplitExercise } from '$lib/global';
 	import { splitExercises } from '../newMesoStore';
 
 	export let currentDay = 'Mon';

@@ -8,7 +8,7 @@
 		isSplitValidStore
 	} from '../newMesoStore';
 	import EditExerciseModal from './EditExerciseModal.svelte';
-	import type { SplitExercise } from '../../../../../types/global';
+	import type { SplitExercise } from '$lib/global';
 	import DeleteExerciseModal from './DeleteExerciseModal.svelte';
 	import { flip } from 'svelte/animate';
 	import { scale, slide, fly } from 'svelte/transition';

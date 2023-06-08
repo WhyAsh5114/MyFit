@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import clientPromise from '$lib/mongodb';
 import { error } from '@sveltejs/kit';
-import type { Mesocycle } from '../../../types/global';
+import type { Mesocycle } from '$lib/global';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.getSession();

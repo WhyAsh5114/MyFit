@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import MyModal from '$lib/MyModal.svelte';
-	import type { Mesocycle } from '../../../../types/global';
+	import type { Mesocycle } from '$lib/global';
 	import {
 		isBasicsValidStore,
 		isSplitValidStore,
