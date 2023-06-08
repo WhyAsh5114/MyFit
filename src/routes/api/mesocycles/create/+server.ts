@@ -29,7 +29,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			.collection('users')
 			.updateOne({ email: session.user?.email }, { $push: { mesocycles: meso } });
 
-		return new Response('Settings saved successfully', {
+		return new Response('Mesocycle created successfully', {
 			status: 200
 		});
 	} catch (e) {
