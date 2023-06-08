@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/stores';
 	import MuscleGroupComponent from '$lib/MuscleGroupComponent.svelte';
 	import MyModal from '$lib/MyModal.svelte';
 	import { commonMuscleGroups, days } from '$lib/commonDB';
@@ -149,5 +150,10 @@
 	>
 		Delete
 	</button>
-	<a href="/mesocycles/edit/{data.mesoIndex}" class="join-item btn btn-primary"> Edit </a>
+	<a href="/mesocycles/edit/{data.mesoIndex}" class="join-item btn btn-primary">
+		{#if $navigating?.to?.url.pathname === `/mesocycles/edit/${data.mesoIndex}`}
+			<span class="loading loading-spinner" />
+		{/if}
+		Edit
+	</a>
 </div>

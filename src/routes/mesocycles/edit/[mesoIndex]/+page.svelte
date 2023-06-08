@@ -2,6 +2,7 @@
 	import MyModal from '$lib/MyModal.svelte';
 	import { duration, mesoName, splitExercises, splitSchedule, startRIR } from './editMesoStore';
 	import { days } from '$lib/commonDB';
+	import { navigating } from '$app/stores';
 	export let data;
 
 	const meso = data.meso;
@@ -106,7 +107,10 @@
 						{splitDay}
 					</p>
 					{#if splitDay !== ''}
-						<a class="join-item h-full bg-secondary flex items-center" href="/mesocycles/edit/{data.mesoIndex}/workouts/{i}">
+						<a
+							class="join-item h-full bg-secondary flex items-center"
+							href="/mesocycles/edit/{data.mesoIndex}/workouts/{i}"
+						>
 							<img src="/pencil.svg" alt="Edit icon" class="px-2" />
 						</a>
 					{/if}
@@ -117,6 +121,11 @@
 </div>
 
 <div class="join w-full grid grid-cols-2 mt-2">
-	<button class="join-item btn btn-primary"> Cancel </button>
+	<a class="join-item btn btn-primary" href="/mesocycles/view/{data.mesoIndex}">
+		{#if $navigating?.to?.url.pathname === `/mesocycles/view/${data.mesoIndex}`}
+			<span class="loading loading-spinner" />
+		{/if}
+		Cancel
+	</a>
 	<button class="join-item btn btn-accent"> Save </button>
 </div>
