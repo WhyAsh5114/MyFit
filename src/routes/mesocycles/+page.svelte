@@ -17,7 +17,7 @@
 					</div>
 				{/if}
 				<div class="flex justify-between items-center w-full">
-					<h3 class="text-lg">{meso.name}</h3>
+					<h3 class="ml-2 text-lg">{meso.name}</h3>
 					<p class="badge badge-secondary ml-auto">{meso.duration} weeks</p>
 				</div>
 				<div class="flex w-full gap-0.5 overflow-x-auto">
