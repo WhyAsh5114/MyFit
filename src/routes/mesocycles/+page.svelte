@@ -4,10 +4,10 @@
 
 {#if data.mesocycles}
 	<ul class="flex flex-col gap-2 h-px grow w-full overflow-y-auto mb-2">
-		{#each data.mesocycles as meso}
+		{#each data.mesocycles as meso, i}
 			<a
 				class="btn flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-3"
-				href="/mesocycles/view/{meso.name}"
+				href="/mesocycles/view/{i}"
 			>
 				<div class="flex justify-between items-center w-full">
 					<h3 class="text-lg">{meso.name}</h3>
