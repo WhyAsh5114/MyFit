@@ -16,9 +16,9 @@
 				<div class="flex w-full gap-0.5 overflow-x-auto">
 					{#each meso.splitSchedule as workout}
 						{#if workout !== ''}
-							<p class="font-normal badge">{workout}</p>
+							<p class="font-normal badge w-fit">{workout}</p>
 						{:else}
-							<p class="font-normal badge badge-accent badge-outline">Rest</p>
+							<p class="font-normal badge badge-accent"></p>
 						{/if}
 					{/each}
 				</div>
