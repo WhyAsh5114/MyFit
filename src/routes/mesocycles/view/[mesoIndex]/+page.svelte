@@ -13,11 +13,10 @@
 	async function deleteMesocycle() {
 		callingEndpoint = true;
 		errorMsg = '';
+		const reqJSON: APIMesocyclesDelete = { mesoIndex: parseInt(data.mesoIndex) };
 		const response = await fetch('/api/mesocycles/delete', {
 			method: 'POST',
-			body: JSON.stringify({
-				mesoIndex: data.mesoIndex
-			}),
+			body: JSON.stringify(reqJSON),
 			headers: {
 				'content-type': 'application/json'
 			}

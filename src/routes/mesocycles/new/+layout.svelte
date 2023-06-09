@@ -48,9 +48,10 @@
 			splitSchedule: $splitSchedule,
 			splitExercises: $splitExercises
 		};
+		const reqJSON: APIMesocyclesCreate = { meso };
 		const response = await fetch('/api/mesocycles/create', {
 			method: 'POST',
-			body: JSON.stringify(meso),
+			body: JSON.stringify(reqJSON),
 			headers: {
 				'content-type': 'application/json'
 			}
