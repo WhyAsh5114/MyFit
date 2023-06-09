@@ -73,8 +73,10 @@
 	</a>
 	<button class="join-item btn btn-accent" on:click={saveWorkout}>
 		{#if callingEndpoint}
-			<span class="loading loading-spinner" />
+			<span class="loading loading-spinner loading-sm" />
+			Saving
+		{:else}
+			Save Workout
 		{/if}
-		Save Workout
 	</button>
 </div>
