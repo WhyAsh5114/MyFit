@@ -108,10 +108,14 @@
 					</p>
 					{#if splitDay !== ''}
 						<a
-							class="join-item h-full bg-secondary flex items-center"
+							class="join-item h-full bg-secondary flex items-center justify-center basis-8 shrink-0 grow-0"
 							href="/mesocycles/edit/{data.mesoIndex}/workouts/{i}"
 						>
-							<img src="/pencil.svg" alt="Edit icon" class="px-2" />
+							{#if $navigating?.to?.url.pathname === `/mesocycles/edit/${data.mesoIndex}/workouts/${i}`}
+								<span class="loading loading-spinner text-black loading-sm" />
+							{:else}
+								<img src="/pencil.svg" alt="Edit icon" class="px-2" />
+							{/if}
 						</a>
 					{/if}
 				</div>
