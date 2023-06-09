@@ -27,6 +27,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		splitSchedule: meso.splitSchedule,
 		splitExercises: meso.splitExercises[workoutIndex],
 		workoutIndex,
-		mesoIndex: params.mesoIndex
+		mesoIndex: parseInt(params.mesoIndex)
 	};
 };
