@@ -14,7 +14,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const meso = await request.json();
+	const meso: APIMesocyclesCreate = await request.json();
 	const valid = validate(meso);
 	if (!valid) {
 		return new Response('Invalid JSON format for mesocycle', {

@@ -9,7 +9,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { mesoIndex } = await request.json();
+	const { mesoIndex }: APIMesocyclesDelete = await request.json();
 	const client = await clientPromise;
 	try {
 		await client
