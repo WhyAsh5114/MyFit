@@ -27,7 +27,7 @@
 			{/if}
 		</select>
 		{#if selectedMesocycle && selectedMesocycle !== data.activeMesoIndex}
-			<button class="btn btn-sm btn-accent"> Activate </button>
+			<button class="btn btn-sm btn-accent"> Start </button>
 		{/if}
 	</div>
 </div>
