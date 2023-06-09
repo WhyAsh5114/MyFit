@@ -14,10 +14,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const meso: APIMesocyclesCreate = await request.json();
+	const { meso }: APIMesocyclesCreate = await request.json();
 	const valid = validate(meso);
 	if (!valid) {
-		return new Response('Invalid JSON format for mesocycle', {
+		return new Response(`Invalid JSON format for mesocycle: ${ajv.errorsText(validate.errors)}`, {
 			status: 400
 		});
 	}
