@@ -45,11 +45,7 @@
 			errorMsgs.push('Rep range end should be higher than rep range start');
 		}
 
-		if (
-			splitExercises.find(
-				(exercise) => exercise.name === newExercise.name
-			) !== undefined
-		) {
+		if (splitExercises.find((exercise) => exercise.name === newExercise.name) !== undefined) {
 			errorMsgs.push('Exercise already exists in this workout, please choose a different name');
 		}
 

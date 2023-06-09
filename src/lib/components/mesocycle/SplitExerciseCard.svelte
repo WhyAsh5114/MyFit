@@ -6,7 +6,7 @@
 	import DeleteExerciseModal from './DeleteExerciseModal.svelte';
 
 	export let splitExercises: SplitExercise[];
-	
+
 	let editExerciseModal: HTMLDialogElement;
 	let currentlyEditingExerciseNumber: number;
 	let currentlyEditingExercise: SplitExercise;

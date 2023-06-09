@@ -14,6 +14,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	return {
 		mesocycles: userData?.mesocycles as (Mesocycle | null)[] | null,
-        activeMesoIndex: userData?.activeMesoIndex as number | null
+		activeMesoIndex: userData?.activeMesoIndex as number | null
 	};
 };
