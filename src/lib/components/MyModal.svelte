@@ -18,7 +18,7 @@
 		<h3 class="font-bold text-lg {titleColor} mb-5">{title}</h3>
 		<slot />
 	</form>
-	<form method="dialog" class="modal-backdrop">
+	<form method="dialog" class="modal-backdrop bg-black bg-opacity-50">
 		<button>close</button>
 	</form>
 </dialog>
