@@ -26,7 +26,7 @@
 				{/each}
 			{/if}
 		</select>
-		{#if selectedMesocycle && selectedMesocycle !== data.activeMesoIndex}
+		{#if selectedMesocycle !== undefined && selectedMesocycle !== data.activeMesoIndex}
 			<button class="btn btn-sm btn-accent"> Start </button>
 		{/if}
 	</div>
