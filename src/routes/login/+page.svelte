@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import MyModal from '$lib/MyModal.svelte';
+	import MyModal from '$lib/components/MyModal.svelte';
 	import { signIn } from '@auth/sveltekit/client';
 
 	let redirectingModal: HTMLDialogElement;

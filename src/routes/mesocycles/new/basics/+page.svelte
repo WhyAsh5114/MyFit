@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MyModal from '$lib/MyModal.svelte';
+	import MyModal from '$lib/components/MyModal.svelte';
 	import { onMount } from 'svelte';
 	import { duration, mesoName, startRIR, errorMsgs, isBasicsValidStore } from '../newMesoStore';
 

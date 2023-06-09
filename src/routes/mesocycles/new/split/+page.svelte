@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MyModal from '$lib/MyModal.svelte';
+	import MyModal from '$lib/components/MyModal.svelte';
 	import { onMount } from 'svelte';
 	import { errorMsgs, isSplitValidStore, splitSchedule, isBasicsValidStore } from '../newMesoStore';
 	import { commonSplits, days } from '$lib/commonDB';

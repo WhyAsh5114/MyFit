@@ -2,12 +2,42 @@
 	import type { SplitExercise } from '$lib/global';
 	import { flip } from 'svelte/animate';
 	import { scale, slide } from 'svelte/transition';
+	import EditExerciseModal from './EditExerciseModal.svelte';
+	import DeleteExerciseModal from './DeleteExerciseModal.svelte';
 
 	export let splitExercises: SplitExercise[];
-	export let editExercise: (i: number, exercise: SplitExercise) => void;
-	export let deleteExercise: (i: number) => void;
+	
+	let editExerciseModal: HTMLDialogElement;
+	let currentlyEditingExerciseNumber: number;
+	let currentlyEditingExercise: SplitExercise;
+	function editExercise(i: number, exercise: SplitExercise) {
+		currentlyEditingExerciseNumber = i;
+		currentlyEditingExercise = exercise;
+		editExerciseModal.show();
+	}
+
+	let deleteExerciseModal: HTMLDialogElement;
+	let deletingExerciseName: string;
+	let indexOfExerciseToDelete: number;
+	function deleteExercise(i: number) {
+		deletingExerciseName = splitExercises[i].name as string;
+		indexOfExerciseToDelete = i;
+		deleteExerciseModal.show();
+	}
 </script>
 
+<EditExerciseModal
+	bind:editExerciseModal
+	bind:splitExercises
+	bind:oldExercise={currentlyEditingExercise}
+	bind:i={currentlyEditingExerciseNumber}
+/>
+<DeleteExerciseModal
+	bind:deleteExerciseModal
+	bind:exerciseName={deletingExerciseName}
+	bind:splitExercises
+	bind:indexOfExerciseToDelete
+/>
 {#each splitExercises as exercise, i (exercise.name)}
 	<li
 		class="flex flex-col bg-secondary w-full rounded-lg text-black p-3 h-fit"

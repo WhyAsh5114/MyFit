@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MyModal from '$lib/MyModal.svelte';
+	import MyModal from '$lib/components/MyModal.svelte';
 	import { duration, mesoName, splitExercises, splitSchedule, startRIR } from './editMesoStore';
 	import { days } from '$lib/commonDB';
 	import { navigating } from '$app/stores';

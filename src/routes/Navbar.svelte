@@ -2,7 +2,7 @@
 	import '../app.postcss';
 	import PWAButton from './PWAButton.svelte';
 	import { page } from '$app/stores';
-	import MyModal from '$lib/MyModal.svelte';
+	import MyModal from '$lib/components/MyModal.svelte';
 	import { signOut } from '@auth/sveltekit/client';
 	import ProfilePicture from './ProfilePicture.svelte';
 

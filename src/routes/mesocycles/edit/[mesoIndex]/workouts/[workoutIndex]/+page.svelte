@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SplitExercisesTable from '$lib/SplitExercisesTable.svelte';
+	import SplitExercisesTable from '$lib/components/mesocycle/SplitExercisesTable.svelte';
 	import { days } from '$lib/commonDB.js';
 
 	export let data;

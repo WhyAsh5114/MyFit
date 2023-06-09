@@ -1,11 +1,9 @@
 <script lang="ts">
-	import MyModal from '$lib/MyModal.svelte';
-	import { commonMuscleGroups, days } from '$lib/commonDB';
+	import MyModal from '$lib/components/MyModal.svelte';
+	import { commonMuscleGroups } from '$lib/commonDB';
 	import type { SplitExercise } from '$lib/global';
-	import { splitExercises } from '../newMesoStore';
 
-	export let currentDay = 'Mon';
-
+	export let splitExercises: SplitExercise[];
 	export let addExerciseModal: HTMLDialogElement;
 	let newExercise: SplitExercise = {
 		name: undefined,
@@ -48,7 +46,7 @@
 		}
 
 		if (
-			$splitExercises[days.indexOf(currentDay)].find(
+			splitExercises.find(
 				(exercise) => exercise.name === newExercise.name
 			) !== undefined
 		) {
@@ -56,9 +54,9 @@
 		}
 
 		if (errorMsgs.length === 0) {
-			$splitExercises[days.indexOf(currentDay)].push(newExercise);
+			splitExercises.push(newExercise);
 			// Re-assignment for updating DOM
-			$splitExercises[days.indexOf(currentDay)] = $splitExercises[days.indexOf(currentDay)];
+			splitExercises = splitExercises;
 			addExerciseModal.close();
 			newExercise = {
 				name: undefined,

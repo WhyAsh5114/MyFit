@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { navigating } from '$app/stores';
-	import MuscleGroupComponent from '$lib/MuscleGroupComponent.svelte';
-	import MyModal from '$lib/MyModal.svelte';
+	import MuscleGroupComponent from '$lib/components/mesocycle/MuscleGroupComponent.svelte';
+	import MyModal from '$lib/components/MyModal.svelte';
 	import { commonMuscleGroups, days } from '$lib/commonDB';
 
 	export let data;

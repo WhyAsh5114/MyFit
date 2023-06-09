@@ -1,10 +1,10 @@
 <script lang="ts">
-	import VolumeOverviewHelpModal from '$lib/VolumeOverviewHelpModal.svelte';
+	import VolumeOverviewHelpModal from '$lib/components/mesocycle/VolumeOverviewHelpModal.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { isExercisesValidStore, splitExercises } from '../newMesoStore';
 	import { commonMuscleGroups } from '$lib/commonDB';
-	import MuscleGroupComponent from '$lib/MuscleGroupComponent.svelte';
+	import MuscleGroupComponent from '$lib/components/mesocycle/MuscleGroupComponent.svelte';
 
 	onMount(() => {
 		if (!$isExercisesValidStore || !$isExercisesValidStore()) {

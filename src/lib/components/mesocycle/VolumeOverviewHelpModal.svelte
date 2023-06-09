@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MyModal from '$lib/MyModal.svelte';
+	import MyModal from '$lib/components/MyModal.svelte';
 	import MuscleGroupComponent from './MuscleGroupComponent.svelte';
 
 	export let volumeOverviewModal: HTMLDialogElement;
