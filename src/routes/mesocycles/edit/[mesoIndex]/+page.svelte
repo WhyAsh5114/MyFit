@@ -3,6 +3,8 @@
 	import { duration, mesoName, splitExercises, splitSchedule, startRIR } from './editMesoStore';
 	import { days } from '$lib/commonDB';
 	import { navigating } from '$app/stores';
+	import { goto } from '$app/navigation';
+	import type { Mesocycle } from '$lib/global';
 	export let data;
 
 	const meso = data.meso;
@@ -15,7 +17,58 @@
 	let durationHelpModal: HTMLDialogElement;
 	let startRIRHelpModal: HTMLDialogElement;
 	let mesoNameInput: HTMLInputElement;
+
+	let callingEndpoint = false;
+	let errorMsg = '';
+	async function saveMesocycle() {
+		callingEndpoint = true;
+		const newMesocycle: Mesocycle = {
+			name: $mesoName,
+			duration: $duration,
+			startRIR: $startRIR,
+			splitSchedule: $splitSchedule,
+			splitExercises: $splitExercises
+		};
+		const reqJSON: APIMesocyclesUpdate = {
+			mesoIndex: parseInt(data.mesoIndex),
+			meso: newMesocycle
+		};
+		const response = await fetch('/api/mesocycles/update', {
+			method: 'POST',
+			body: JSON.stringify(reqJSON),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+		callingEndpoint = false;
+		if (response.ok) {
+			successModal.show();
+		} else {
+			errorMsg = await response.text();
+			errorModal.show();
+		}
+	}
+
+	let successModal: HTMLDialogElement;
+	let errorModal: HTMLDialogElement;
 </script>
+
+<MyModal
+	title="Success"
+	titleColor="text-success"
+	bind:dialogElement={successModal}
+	onClose={() => {
+		goto(`/mesocycles/view/${data.mesoIndex}`);
+	}}
+>
+	<p>
+		Mesocycle <span class="font-semibold italic">{data.meso.name}</span> has been updated successfully
+	</p>
+</MyModal>
+
+<MyModal title="Error" titleColor="text-error" bind:dialogElement={errorModal}>
+	<p>{errorMsg}</p>
+</MyModal>
 
 <MyModal title="Mesocycle duration" titleColor="text-accent" bind:dialogElement={durationHelpModal}>
 	<p>
@@ -131,5 +184,10 @@
 		{/if}
 		Cancel
 	</a>
-	<button class="join-item btn btn-accent"> Save </button>
+	<button class="join-item btn btn-accent" on:click={saveMesocycle}>
+		{#if callingEndpoint}
+			<span class="loading loading-spinner" />
+		{/if}
+		Save
+	</button>
 </div>
