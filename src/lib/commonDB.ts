@@ -6,6 +6,7 @@ export const commonSplits: Record<string, string[]> = {
 	'Full body': ['Full body', '', '', 'Full body', '', '', '']
 };
 
+// * Ensure the type matches in global.d.ts
 export const commonMuscleGroups = [
 	'Chest',
 	'Front delts',

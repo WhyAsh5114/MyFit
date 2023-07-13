@@ -1,3 +1,4 @@
+// * Ensure the type matches in commonDB.ts
 const commonMuscleGroups = [
 	'Chest',
 	'Front delts',
