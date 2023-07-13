@@ -9,8 +9,14 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
+	// TODO: cannot delete active mesocycle (and in UI), highlight active mesocycle when browsing mesocycles
 	const { mesoIndex }: APIMesocyclesDelete = await request.json();
 	const client = await clientPromise;
+
+	const userData = await client.db().collection('users').findOne({ email: session.user?.email });
+	if (userData?.activeMesocycle?.mesoID === mesoIndex) {
+		return new Response('Cannot delete an active mesocycle', { status: 400 });
+	}
 	try {
 		await client
 			.db()
