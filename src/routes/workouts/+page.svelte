@@ -106,7 +106,9 @@
 			<button
 				class="btn btn-sm btn-accent"
 				on:click={() => {
-					startMesocycle();
+					if (!callingEndpoint) {
+						startMesocycle();
+					}
 				}}
 			>
 				{#if callingEndpoint}
