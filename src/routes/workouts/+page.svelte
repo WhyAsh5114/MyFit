@@ -58,10 +58,10 @@
 			</span>
 			?
 		</p>
-		<div class="join w-full mt-4">
-			<button class="btn join-item w-1/2">No</button>
+		<div class="join w-full mt-4 grid grid-cols-2">
+			<button class="btn join-item">No</button>
 			<button
-				class="btn btn-warning join-item w-1/2"
+				class="btn btn-warning join-item"
 				on:click={() => {
 					startMesocycle(true);
 				}}>Yes</button

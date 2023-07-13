@@ -57,7 +57,7 @@
 	</p>
 	<div class="join grid grid-cols-2 w-full mt-4">
 		<form on:submit|preventDefault class="join-item">
-			<button class="btn btn-error text-black w-full" on:click={() => {if (!callingEndpoint) {deleteMesocycle()}}}>
+			<button class="join-item btn btn-error text-black w-full" on:click={() => {if (!callingEndpoint) {deleteMesocycle()}}}>
 				{#if callingEndpoint}
 					<span class="loading loading-spinner" />
 				{/if}
