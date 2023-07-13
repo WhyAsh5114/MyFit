@@ -1,13 +1,50 @@
-<script>
+<script lang="ts">
 	import { navigating } from '$app/stores';
 
 	export let data;
+	let activeMesocycle: Mesocycle | null = null;
+	$: if (data.mesocycles && data.activeMesocycle) {
+		activeMesocycle = data.mesocycles[data.activeMesocycle.mesoID];
+	}
 </script>
 
 {#if data.mesocycles}
+	<h3 class="text-left w-full text-xl font-bold text-accent mb-2">Active</h3>
+	{#if data.activeMesocycle && activeMesocycle}
+		<a
+			class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-3"
+			href="/mesocycles/view/{data.activeMesocycle.mesoID}"
+		>
+			{#if $navigating?.to?.url.pathname === `/mesocycles/view/${data.activeMesocycle.mesoID}`}
+				<div
+					class="absolute h-full w-full bg-black bg-opacity-75 grid place-items-center rounded-lg"
+				>
+					<span class="loading loading-spinner loading-lg" />
+				</div>
+			{/if}
+			<div class="flex justify-between items-center w-full">
+				<h3 class="ml-2 text-lg text-ellipsis">
+					{activeMesocycle.name}
+				</h3>
+				<p class="badge badge-secondary ml-auto">
+					{activeMesocycle.duration} weeks
+				</p>
+			</div>
+			<div class="flex w-full gap-1 flex-wrap">
+				{#each activeMesocycle.splitSchedule as workout}
+					{#if workout !== ''}
+						<p class="font-normal badge w-fit">{workout}</p>
+					{:else}
+						<p class="font-normal badge badge-accent" />
+					{/if}
+				{/each}
+			</div>
+		</a>
+	{/if}
+	<h3 class="text-left w-full text-xl font-bold mt-6 mb-2">Others</h3>
 	<ul class="flex flex-col gap-2 h-px grow w-full overflow-y-auto overflow-x-hidden mb-2">
 		{#each data.mesocycles as meso, i}
-			{#if meso}
+			{#if meso && i !== data.activeMesocycle?.mesoID}
 				<a
 					class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-3"
 					href="/mesocycles/view/{i}"
