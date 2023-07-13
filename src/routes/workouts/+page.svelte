@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { invalidate, invalidateAll } from '$app/navigation';
+	import { invalidateAll } from '$app/navigation';
 	import MyModal from '$lib/components/MyModal.svelte';
 
 	export let data;
@@ -68,7 +68,7 @@
 		</div>
 	{/if}
 </MyModal>
-<MyModal title="Success" titleColor="text-success" bind:dialogElement={successModal} onClose={() => {invalidateAll(); console.log("invalidated")}}>
+<MyModal title="Success" titleColor="text-success" bind:dialogElement={successModal} onClose={() => {invalidateAll();}}>
 	{#if data.mesocycles && selectedMesocycle !== undefined}
 		<p>
 			Mesocycle <span class="italic font-semibold">{data.mesocycles[selectedMesocycle]?.name}</span>
