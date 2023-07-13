@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { navigating } from '$app/stores';
 	import MuscleGroupComponent from '$lib/components/mesocycle/MuscleGroupComponent.svelte';
 	import MyModal from '$lib/components/MyModal.svelte';
@@ -48,8 +48,84 @@
 			muscleFrequency[muscleGroup]++;
 		});
 	});
+
+	let callingNewActiveMesocycleEndpoint = false;
+	let anotherMesoActiveModal: HTMLDialogElement;
+	let successModal: HTMLDialogElement;
+	let errorModal: HTMLDialogElement;
+	async function startMesocycle(endActiveMeso = false) {
+		const mesoID = parseInt(data.mesoIndex);
+		if (mesoID < 0 || Number.isNaN(mesoID)) {
+			return;
+		}
+		if (data.activeMesocycle && !endActiveMeso) {
+			anotherMesoActiveModal.show();
+			return;
+		}
+		const reqJSON: APIActiveMesocycleCreate = {
+			activeMesocycle: {
+				mesoID,
+				startDate: +new Date(),
+				workouts: []
+			}
+		};
+		callingNewActiveMesocycleEndpoint = true;
+		const response = await fetch('/api/activeMesocycle/create', {
+			method: 'POST',
+			body: JSON.stringify(reqJSON),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+		if (response.ok) {
+			await invalidateAll();
+			successModal.show();
+		} else {
+			errorMsg = await response.text();
+			errorModal.show();
+		}
+		callingNewActiveMesocycleEndpoint = false;
+	}
+
+	let callingStopActiveMesocycleEndpoint = false;
+	async function stopMesocycle() {
+
+	}
 </script>
 
+<MyModal
+	title="Another mesocycle is already active"
+	titleColor="text-warning"
+	bind:dialogElement={anotherMesoActiveModal}
+>
+	{#if data.activeMesocycle}
+		<p>
+			Would you like to end
+			<span class="italic font-semibold">
+				{data.activeMesocycle.name}
+			</span>
+			?
+		</p>
+		<div class="join w-full mt-4 grid grid-cols-2">
+			<button class="btn join-item">No</button>
+			<button
+				class="btn btn-warning join-item"
+				on:click={() => {
+					startMesocycle(true);
+				}}>Yes</button
+			>
+		</div>
+	{/if}
+</MyModal>
+<MyModal title="Success" titleColor="text-success" bind:dialogElement={successModal}>
+	<p>
+		Mesocycle <span class="italic font-semibold">{data.meso.name}</span>
+		has been activated
+	</p>
+</MyModal>
+<MyModal title="Error" titleColor="text-error" bind:dialogElement={errorModal}>
+	<p>{errorMsg}</p>
+</MyModal>
 <MyModal title="Delete Mesocycle" titleColor="text-error" bind:dialogElement={confirmDeleteModal}>
 	<p>
 		Are you sure you want to delete mesocycle
@@ -57,7 +133,14 @@
 	</p>
 	<div class="join grid grid-cols-2 w-full mt-4">
 		<form on:submit|preventDefault class="join-item">
-			<button class="join-item btn btn-error text-black w-full" on:click={() => {if (!callingEndpoint) {deleteMesocycle()}}}>
+			<button
+				class="join-item btn btn-error text-black w-full"
+				on:click={() => {
+					if (!callingEndpoint) {
+						deleteMesocycle();
+					}
+				}}
+			>
 				{#if callingEndpoint}
 					<span class="loading loading-spinner" />
 				{/if}
@@ -84,7 +167,12 @@
 <div class="flex flex-col w-full gap-2 grow overflow-y-auto h-px mb-3">
 	<div class="stats bg-primary shrink-0">
 		<div class="stat">
-			<div class="opacity-75">Name</div>
+			<div class="flex justify-between">
+				<div class="opacity-75">Name</div>
+				{#if data.activeMesocycleIndex === parseInt(data.mesoIndex)}
+					<span class="badge badge-accent font-semibold">Active</span>
+				{/if}
+			</div>
 			<div class="text-2xl font-bold text-white">{data.meso?.name}</div>
 		</div>
 	</div>
@@ -138,7 +226,7 @@
 	</div>
 </div>
 
-<div class="join grid grid-cols-2 w-full mt-auto">
+<div class="join grid grid-cols-3 w-full mt-auto">
 	<button
 		class="join-item btn btn-error text-black"
 		on:click={() => {
@@ -153,4 +241,33 @@
 		{/if}
 		Edit
 	</a>
+	{#if data.activeMesocycleIndex !== parseInt(data.mesoIndex)}
+		<button
+			class="join-item btn btn-accent"
+			on:click={() => {
+				if (!callingNewActiveMesocycleEndpoint) {
+					startMesocycle();
+				}
+			}}
+		>
+			{#if callingNewActiveMesocycleEndpoint}
+				<span class="loading loading-spinner" />
+			{/if}
+			Start
+		</button>
+	{:else}
+		<button
+			class="join-item btn btn-warning"
+			on:click={() => {
+				if (!callingStopActiveMesocycleEndpoint) {
+					stopMesocycle();
+				}
+			}}
+		>
+			{#if callingStopActiveMesocycleEndpoint}
+				<span class="loading loading-spinner" />
+			{/if}
+			Stop
+		</button>
+	{/if}
 </div>
