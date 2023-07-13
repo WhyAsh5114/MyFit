@@ -112,7 +112,11 @@
 	{:else}
 		<button
 			class="btn btn-accent join-item {callingEndpoint ? 'disabled' : ''}"
-			on:click={createMesocycle}
+			on:click={() => {
+				if (!callingEndpoint) {
+					createMesocycle();
+				}
+			}}
 		>
 			{#if callingEndpoint}
 				<span class="loading loading-spinner" />
