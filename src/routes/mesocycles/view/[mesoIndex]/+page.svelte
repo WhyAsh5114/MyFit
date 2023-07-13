@@ -88,8 +88,20 @@
 	}
 
 	let callingStopActiveMesocycleEndpoint = false;
+	let stopSuccessModal: HTMLDialogElement;
 	async function stopMesocycle() {
-
+		callingStopActiveMesocycleEndpoint = true;
+		const response = await fetch('/api/activeMesocycle/delete', {
+			method: 'POST'
+		});
+		if (response.ok) {
+			stopSuccessModal.show();
+			await invalidateAll();
+		} else {
+			errorMsg = await response.text();
+			errorModal.show();
+		}
+		callingStopActiveMesocycleEndpoint = false;
 	}
 </script>
 
@@ -162,6 +174,9 @@
 </MyModal>
 <MyModal title="Error" titleColor="text-error" bind:dialogElement={deletionErrorModal}>
 	<p>{errorMsg}</p>
+</MyModal>
+<MyModal title="Success" titleColor="text-success" bind:dialogElement={stopSuccessModal}>
+	<p>Mesocycle {data.meso.name} has been stopped</p>
 </MyModal>
 
 <div class="flex flex-col w-full gap-2 grow overflow-y-auto h-px mb-3">
