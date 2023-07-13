@@ -40,6 +40,15 @@
 				{/each}
 			</div>
 		</a>
+	{:else}
+		<div
+			class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-3"
+		>
+			<h3 class="text-lg w-full text-left text-warning">No mesocycle active</h3>
+			<p class="font-normal text-left leading-snug">
+				You can start one by opening one from the list below and clicking start
+			</p>
+		</div>
 	{/if}
 	<h3 class="text-left w-full text-xl font-bold mt-6 mb-2">Others</h3>
 	<ul class="flex flex-col gap-2 h-px grow w-full overflow-y-auto overflow-x-hidden mb-2">
