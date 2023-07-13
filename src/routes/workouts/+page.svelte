@@ -1,85 +1,9 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
-	import MyModal from '$lib/components/MyModal.svelte';
-
 	export let data;
 
 	let selectedMesocycle: undefined | number;
-
-	let anotherMesoActiveModal: HTMLDialogElement;
-	let successModal: HTMLDialogElement;
-	let errorModal: HTMLDialogElement;
-	let callingEndpoint = false;
-	let errorMsg = '';
-	async function startMesocycle(endActiveMeso = false) {
-		if (selectedMesocycle === undefined) {
-			return;
-		}
-		if (data.activeMesocycle && !endActiveMeso) {
-			anotherMesoActiveModal.show();
-			return;
-		}
-		const reqJSON: APIActiveMesocycleCreate = {
-			activeMesocycle: {
-				mesoID: selectedMesocycle,
-				startDate: +new Date(),
-				workouts: []
-			}
-		};
-		callingEndpoint = true;
-		const response = await fetch('/api/activeMesocycle/create', {
-			method: 'POST',
-			body: JSON.stringify(reqJSON),
-			headers: {
-				'content-type': 'application/json'
-			}
-		});
-		if (response.ok) {
-			await invalidateAll();
-			successModal.show();
-		} else {
-			errorMsg = await response.text();
-			errorModal.show();
-		}
-		callingEndpoint = false;
-	}
 </script>
 
-<MyModal
-	title="Another mesocycle is already active"
-	titleColor="text-warning"
-	bind:dialogElement={anotherMesoActiveModal}
->
-	{#if data.mesocycles && data.activeMesocycle}
-		<p>
-			Would you like to end
-			<span class="italic font-semibold">
-				{data.mesocycles[data.activeMesocycle.mesoID]?.name}
-			</span>
-			?
-		</p>
-		<div class="join w-full mt-4 grid grid-cols-2">
-			<button class="btn join-item">No</button>
-			<button
-				class="btn btn-warning join-item"
-				on:click={() => {
-					startMesocycle(true);
-				}}>Yes</button
-			>
-		</div>
-	{/if}
-</MyModal>
-<MyModal title="Success" titleColor="text-success" bind:dialogElement={successModal}>
-	{#if data.mesocycles && selectedMesocycle !== undefined}
-		<p>
-			Mesocycle <span class="italic font-semibold">{data.mesocycles[selectedMesocycle]?.name}</span>
-			has been activated
-		</p>
-	{/if}
-</MyModal>
-<MyModal title="Error" titleColor="text-error" bind:dialogElement={errorModal}>
-	<p>{errorMsg}</p>
-</MyModal>
 <div class="flex flex-col bg-primary p-5 rounded-lg w-full">
 	<h3 class="card-title">Current Mesocycle</h3>
 	<div class="h-0.5 bg-black mt-1 mb-4" />
@@ -102,21 +26,5 @@
 				{/each}
 			{/if}
 		</select>
-		{#if selectedMesocycle !== undefined && selectedMesocycle !== data.activeMesocycle?.mesoID}
-			<button
-				class="btn btn-sm btn-accent"
-				on:click={() => {
-					if (!callingEndpoint) {
-						startMesocycle();
-					}
-				}}
-			>
-				{#if callingEndpoint}
-					<span class="loading loading-spinner" />
-				{:else}
-					Start
-				{/if}
-			</button>
-		{/if}
 	</div>
 </div>
