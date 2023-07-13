@@ -34,7 +34,6 @@
 				'content-type': 'application/json'
 			}
 		});
-		callingEndpoint = false;
 		if (response.ok) {
 			await invalidateAll();
 			successModal.show();
@@ -42,6 +41,7 @@
 			errorMsg = await response.text();
 			errorModal.show();
 		}
+		callingEndpoint = false;
 	}
 </script>
 
