@@ -42,7 +42,7 @@
 		</a>
 	{:else}
 		<div
-			class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-3"
+			class="btn no-animation relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-3"
 		>
 			<h3 class="text-lg w-full text-left text-warning">No mesocycle active</h3>
 			<p class="font-normal text-left leading-snug">
