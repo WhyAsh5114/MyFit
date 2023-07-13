@@ -1,6 +1,5 @@
 <script lang="ts">
 	import MyModal from '$lib/components/MyModal.svelte';
-	import type { SplitExercise } from '$lib/global';
 
 	export let deleteExerciseModal: HTMLDialogElement;
 	export let exerciseName: string;

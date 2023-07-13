@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { SplitExercise } from '$lib/global';
 	import AddExerciseModal from './AddExerciseModal.svelte';
 	import SplitExerciseCard from './SplitExerciseCard.svelte';
 	import { fly } from 'svelte/transition';

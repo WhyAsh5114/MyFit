@@ -1,7 +1,6 @@
 <script lang="ts">
 	import MyModal from '$lib/components/MyModal.svelte';
 	import { commonMuscleGroups } from '$lib/commonDB';
-	import type { SplitExercise } from '$lib/global';
 
 	export let splitExercises: SplitExercise[];
 	export let editExerciseModal: HTMLDialogElement;

@@ -1,5 +1,4 @@
 import { writable, type Writable } from 'svelte/store';
-import type { SplitExercise } from '$lib/global';
 
 export const mesoName: Writable<string> = writable('');
 export const duration = writable(6);

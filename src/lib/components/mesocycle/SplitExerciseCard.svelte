@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { SplitExercise } from '$lib/global';
 	import { flip } from 'svelte/animate';
 	import { scale, slide } from 'svelte/transition';
 	import EditExerciseModal from './EditExerciseModal.svelte';

@@ -4,7 +4,6 @@
 	import { days } from '$lib/commonDB';
 	import { navigating } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import type { Mesocycle } from '$lib/global';
 	export let data;
 
 	const meso = data.meso;
