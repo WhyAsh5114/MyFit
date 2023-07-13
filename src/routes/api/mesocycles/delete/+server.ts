@@ -9,7 +9,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	// TODO: cannot delete active mesocycle (and in UI), highlight active mesocycle when browsing mesocycles
 	const { mesoIndex }: APIMesocyclesDelete = await request.json();
 	const client = await clientPromise;
 
