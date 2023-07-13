@@ -24,3 +24,13 @@ type Mesocycle = {
 		SplitExercise[]
 	];
 };
+
+type ActiveMesocycle = {
+	mesoID: number;
+	startDate: EpochTimeStamp;
+	workouts: number[];
+}
+
+interface PerformedMesocycle extends ActiveMesocycle {
+	endDate: EpochTimeStamp;
+}
