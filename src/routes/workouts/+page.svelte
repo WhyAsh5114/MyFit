@@ -36,6 +36,7 @@
 		});
 		callingEndpoint = false;
 		if (response.ok) {
+			await invalidateAll();
 			successModal.show();
 		} else {
 			errorMsg = await response.text();
@@ -68,7 +69,7 @@
 		</div>
 	{/if}
 </MyModal>
-<MyModal title="Success" titleColor="text-success" bind:dialogElement={successModal} onClose={() => {invalidateAll();}}>
+<MyModal title="Success" titleColor="text-success" bind:dialogElement={successModal}>
 	{#if data.mesocycles && selectedMesocycle !== undefined}
 		<p>
 			Mesocycle <span class="italic font-semibold">{data.mesocycles[selectedMesocycle]?.name}</span>
@@ -110,8 +111,9 @@
 			>
 				{#if callingEndpoint}
 					<span class="loading loading-spinner" />
+				{:else}
+					Start
 				{/if}
-				Start
 			</button>
 		{/if}
 	</div>
