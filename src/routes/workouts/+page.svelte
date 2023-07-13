@@ -28,3 +28,9 @@
 		</select>
 	</div>
 </div>
+<div class="grow border w-full my-2">
+
+</div>
+<a class="btn btn-block btn-accent" href="/workouts/new">
+	Log new workout
+</a>
