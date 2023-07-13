@@ -8,7 +8,6 @@ export const handle = SvelteKitAuth({
 	// @ts-expect-error in beta
 	adapter: MongoDBAdapter(clientPromise),
 	providers: [
-		// @ts-expect-error in experimental phase, no documentation available
 		GoogleProvider({
 			clientId: GOOGLE_CLIENT_ID as string,
 			clientSecret: GOOGLE_CLIENT_SECRET as string
