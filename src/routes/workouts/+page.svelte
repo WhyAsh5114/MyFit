@@ -78,7 +78,7 @@
 	{/if}
 </MyModal>
 <MyModal title="Error" titleColor="text-error" bind:dialogElement={errorModal}>
-	<p></p>
+	<p>{errorMsg}</p>
 </MyModal>
 <div class="flex flex-col bg-primary p-5 rounded-lg w-full">
 	<h3 class="card-title">Current Mesocycle</h3>
