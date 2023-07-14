@@ -1,11 +1,34 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate';
 	import { scale, slide } from 'svelte/transition';
+	import ExerciseFeedbackModal from './ExerciseFeedbackModal.svelte';
 
 	export let workoutExercises: WorkoutExercise[];
+	let exerciseFeedbackModal: HTMLDialogElement;
+
+	let setsPerformed: number[] = Array(workoutExercises.length).fill(0);
+	let repSelectElements: HTMLSelectElement[][] = [];
+    for (let i = 0; i < workoutExercises.length; i++) {
+        repSelectElements.push(new Array());
+    }
+	function performSet(exerciseNumber: number, setNumber: number) {
+        console.log(repSelectElements, exerciseNumber, setNumber)
+		if (workoutExercises[exerciseNumber].repsLoadRIR[setNumber][0] === undefined) {
+			repSelectElements[exerciseNumber][setNumber].classList.add('animate-pulse');
+			return;
+		}
+		setsPerformed[exerciseNumber]++;
+	}
+
+	$: workoutExercises.forEach((exercise, i) => {
+		if (exercise.repsLoadRIR.length === setsPerformed[i]) {
+			exerciseFeedbackModal.show();
+		}
+	});
 </script>
 
-{#each workoutExercises as exercise, i (exercise.name)}
+<ExerciseFeedbackModal bind:exerciseFeedbackModal />
+{#each workoutExercises as exercise, exerciseNumber (exercise.name)}
 	<li
 		class="flex flex-col bg-secondary w-full rounded-lg text-black p-3 h-fit"
 		animate:flip={{ duration: 200 }}
@@ -30,48 +53,66 @@
 			</div>
 		</div>
 		<div class="h-px w-full bg-black my-2" />
-		<div class="grid grid-cols-4 place-items-center gap-y-2" id="workout-card-grid">
+		<div
+			class="grid grid-cols-4 place-items-center gap-y-2 gap-x-1 overflow-x-auto"
+			id="workout-card-grid"
+		>
 			<p class="text-sm -mb-1">Reps</p>
 			<p class="text-sm -mb-1">Load</p>
 			<p class="text-sm -mb-1">RIR</p>
 			<p />
-			{#each exercise.repsLoadRIR as repsLoadRIR}
-				<select class="select select-sm text-white rounded-none">
-					<option value="" disabled selected>?</option>
+			{#each exercise.repsLoadRIR as repLoadRIR, setNumber}
+				<select
+					class="select select-sm text-white rounded-none disabled:text-opacity-75"
+					bind:value={repLoadRIR[0]}
+					bind:this={repSelectElements[exerciseNumber][setNumber]}
+					disabled={setNumber < setsPerformed[exerciseNumber]}
+					on:click={() => {
+						repSelectElements[exerciseNumber][setNumber].classList.remove('animate-pulse');
+					}}
+				>
+					<option value={undefined} disabled selected>?</option>
 					{#each Array.from(Array(100).keys()) as i}
-						{#if repsLoadRIR[0] === i + 1}
-							<option selected>{i + 1}</option>
-						{:else}
-							<option>{i + 1}</option>
-						{/if}
+						<option>{i + 1}</option>
 					{/each}
 				</select>
-				<select class="select select-sm text-white rounded-none">
+				<select
+					class="select select-sm text-white rounded-none disabled:text-opacity-75"
+					bind:value={repLoadRIR[1]}
+					disabled={setNumber < setsPerformed[exerciseNumber]}
+				>
 					{#each Array.from(Array(100).keys()) as i}
-						{#if repsLoadRIR[1] === (i + 1) * 2.5}
-							<option selected>{(i + 1) * 2.5} kg</option>
-						{:else}
-							<option>{(i + 1) * 2.5} kg</option>
-						{/if}
+						<option value={(i + 1) * 2.5}>{(i + 1) * 2.5} kg</option>
 					{/each}
 				</select>
-				<select class="select select-sm text-white rounded-none">
+				<select
+					class="select select-sm text-white rounded-none disabled:text-opacity-75"
+					bind:value={repLoadRIR[2]}
+					disabled={setNumber < setsPerformed[exerciseNumber]}
+				>
 					{#each Array.from(Array(5).keys()) as i}
-						{#if repsLoadRIR[2] === i}
-							<option selected>{i} RIR</option>
-						{:else}
-							<option>{i} RIR</option>
-						{/if}
+						<option value={i}>{i} RIR</option>
 					{/each}
 				</select>
-                <button class="btn btn-sm btn-success btn-square text-white rounded-none">✓</button>
+				{#if setsPerformed[exerciseNumber] > setNumber}
+					<button class="btn btn-sm btn-ghost btn-square text-black rounded-none">✓</button>
+				{:else if setsPerformed[exerciseNumber] === setNumber}
+					<button
+						class="btn btn-sm btn-success border-none btn-square text-white rounded-none"
+						on:click={() => performSet(exerciseNumber, setNumber)}>✓</button
+					>
+				{:else}
+					<button class="btn btn-sm bg-gray-400 border-none btn-square text-white rounded-none"
+						>✓</button
+					>
+				{/if}
 			{/each}
 		</div>
 	</li>
 {/each}
 
 <style>
-    #workout-card-grid {
-        grid-template-columns: auto auto auto auto;
-    }
+	#workout-card-grid {
+		grid-template-columns: auto auto auto auto;
+	}
 </style>
