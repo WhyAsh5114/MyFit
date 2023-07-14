@@ -21,15 +21,17 @@
 	}
 
     let feedbackTaken: boolean[] = Array(workoutExercises.length).fill(false);
+    let selectedExercise: WorkoutExercise;
 	$: workoutExercises.forEach((exercise, i) => {
 		if (!feedbackTaken[i] && exercise.repsLoadRIR.length === setsPerformed[i]) {
+            selectedExercise = exercise;
 			exerciseFeedbackModal.show();
             feedbackTaken[i] = true;
 		}
 	});
 </script>
 
-<ExerciseFeedbackModal bind:exerciseFeedbackModal />
+<ExerciseFeedbackModal bind:exerciseFeedbackModal bind:selectedExercise />
 {#each workoutExercises as exercise, exerciseNumber (exercise.name)}
 	<li
 		class="flex flex-col bg-secondary w-full rounded-lg text-black p-3 h-fit"
