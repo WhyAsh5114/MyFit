@@ -33,14 +33,20 @@
         </div>
         <div class="flex flex-col gap-2">
             <div class="h-px w-full bg-black mt-2"></div>
+            <div class="flex justify-around">
+                <p>Reps</p>
+                <p>Load</p>
+                <p>RIR</p>
+            </div>
             {#each exercise.repsLoadRIR as repsLoadRIR}
                 <div class="flex justify-around">
                     <select class="select select-sm text-white">
+                        <option value="" disabled selected>?</option>
                         {#each Array.from(Array(100).keys()) as i}
-                            {#if repsLoadRIR[0] === i}
-                                <option selected>{i}</option>
+                            {#if repsLoadRIR[0] === (i + 1)}
+                                <option selected>{i + 1}</option>
                             {:else}
-                                <option>{i}</option>
+                                <option>{i + 1}</option>
                             {/if}
                         {/each}
                     </select>
