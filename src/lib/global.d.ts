@@ -62,7 +62,7 @@ type Workout = {
 
 type WorkoutExercise = {
 	name: string;
-	repsAndRIR: [number | undefined, number][];
+	repsLoadRIR: [number | undefined, number | undefined, number][];
 	repRangeStart: number;
 	repRangeEnd: number;
 	muscleTarget: (typeof commonMuscleGroups)[number];

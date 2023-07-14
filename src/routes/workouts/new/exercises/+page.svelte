@@ -9,6 +9,7 @@
 		referenceWorkout
 	} from '../newWorkoutStore';
 	import { goto } from '$app/navigation';
+	import WorkoutExerciseCard from '$lib/components/workout/WorkoutExerciseCard.svelte';
 	export let data;
 
 	onMount(() => {
@@ -35,15 +36,15 @@
 			pumpRating: undefined,
 			disruptionRating: undefined,
 			mindMuscleConnectionRating: undefined,
-			repsAndRIR: Array(splitEx.sets as number).fill([undefined, $plannedRIR])
+			repsLoadRIR: Array(splitEx.sets as number).fill([undefined, undefined, $plannedRIR])
 		};
 		return workoutExercise;
 	}
 
-	let templateExercises: WorkoutExercise[] = [];
-	if ($referenceWorkout === null && data.parentMesocycle.splitSchedule[$workoutDay] !== '') {
+	let workoutExercises: WorkoutExercise[] = [];
+	if ($referenceWorkout === null && data.parentMesocycle.splitExercises[$workoutDay]) {
 		data.parentMesocycle.splitExercises[$workoutDay].forEach((exercise) => {
-			templateExercises.push(splitExerciseToWorkoutExercise(exercise));
+			workoutExercises.push(splitExerciseToWorkoutExercise(exercise));
 		});
 	} else {
         // TODO: template from old workout and apply appropriate volume changes
@@ -63,12 +64,8 @@
 			{/each}
 		</div>
 	</div>
-	<ul class="h-px grow w-full overflow-y-auto">
-		{#each templateExercises as exercise}
-			<li>
-                {exercise.name}
-            </li>
-		{/each}
+	<ul class="h-px grow w-full overflow-y-auto my-2">
+		<WorkoutExerciseCard bind:workoutExercises />
 	</ul>
 </div>
 <button class="btn btn-block btn-accent mt-3"> Finish Workout </button>
