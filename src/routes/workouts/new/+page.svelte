@@ -69,7 +69,7 @@
 			<div class="flex justify-between">
 				<div class="opacity-90">Muscle targets</div>
 			</div>
-			<div class="flex flex-wrap mt-2">
+			<div class="flex flex-wrap mt-2 gap-1">
 				{#each Object.keys(muscleTargets) as muscleTarget}
 					<span class="badge text-white">{muscleTarget} x {muscleTargets[muscleTarget]}</span>
 				{/each}
