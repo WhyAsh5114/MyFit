@@ -13,13 +13,16 @@
 
 	$: workoutExercises = data.parentMesocycle.splitExercises[selectedWorkoutTemplate];
 	let muscleTargets: Record<string, number> = {};
-	$: workoutExercises.forEach((exercise) => {
-		if (muscleTargets[exercise.muscleTarget]) {
-			muscleTargets[exercise.muscleTarget] += exercise.sets as number;
-		} else {
-			muscleTargets[exercise.muscleTarget] = exercise.sets as number;
-		}
-	});
+	$: {
+        muscleTargets = {};
+		workoutExercises.forEach((exercise) => {
+			if (muscleTargets[exercise.muscleTarget]) {
+				muscleTargets[exercise.muscleTarget] += exercise.sets as number;
+			} else {
+				muscleTargets[exercise.muscleTarget] = exercise.sets as number;
+			}
+		});
+	}
 </script>
 
 <form class="flex flex-col w-full gap-2 h-full">
