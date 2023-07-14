@@ -30,13 +30,13 @@
 			</div>
 		</div>
 		<div class="h-px w-full bg-black my-2" />
-		<div class="grid grid-cols-4 place-items-center gap-y-1" id="workout-card-grid">
-			<p class="text-sm">Reps</p>
-			<p class="text-sm">Load</p>
-			<p class="text-sm">RIR</p>
+		<div class="grid grid-cols-4 place-items-center gap-2" id="workout-card-grid">
+			<p class="text-sm -mb-1">Reps</p>
+			<p class="text-sm -mb-1">Load</p>
+			<p class="text-sm -mb-1">RIR</p>
 			<p />
 			{#each exercise.repsLoadRIR as repsLoadRIR}
-				<select class="select select-sm text-white rounded-md">
+				<select class="select select-sm text-white rounded-none">
 					<option value="" disabled selected>?</option>
 					{#each Array.from(Array(100).keys()) as i}
 						{#if repsLoadRIR[0] === i + 1}
@@ -46,7 +46,7 @@
 						{/if}
 					{/each}
 				</select>
-				<select class="select select-sm text-white rounded-md">
+				<select class="select select-sm text-white rounded-none">
 					{#each Array.from(Array(100).keys()) as i}
 						{#if repsLoadRIR[1] === (i + 1) * 2.5}
 							<option selected>{(i + 1) * 2.5} kg</option>
@@ -55,7 +55,7 @@
 						{/if}
 					{/each}
 				</select>
-				<select class="select select-sm text-white rounded-md">
+				<select class="select select-sm text-white rounded-none">
 					{#each Array.from(Array(5).keys()) as i}
 						{#if repsLoadRIR[2] === i}
 							<option selected>{i} RIR</option>
