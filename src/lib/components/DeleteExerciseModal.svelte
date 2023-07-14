@@ -4,11 +4,11 @@
 	export let deleteExerciseModal: HTMLDialogElement;
 	export let exerciseName: string;
 	export let indexOfExerciseToDelete: number;
-	export let splitExercises: SplitExercise[];
+	export let exercises: any[];
 
 	function deleteExercise() {
-		splitExercises.splice(indexOfExerciseToDelete, 1);
-		splitExercises = splitExercises;
+		exercises.splice(indexOfExerciseToDelete, 1);
+		exercises = exercises;
 	}
 </script>
 
