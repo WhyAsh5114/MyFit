@@ -1,20 +1,23 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { navigating } from '$app/stores';
 	import { days } from '$lib/commonDB';
+	import { workoutDay, plannedRIR } from './newWorkoutStore.js';
 	export let data;
 
 	let date = new Date();
 	let todaysDay = days[date.getDay()];
-	let selectedWorkoutTemplate = date.getDay();
+	$workoutDay = date.getDay();
 
 	let weekNumber = Math.ceil((+date - data.activeMesocycle.startDate) / (1000 * 60 * 60 * 24 * 7));
-	let plannedRIR =
+	$plannedRIR =
 		data.parentMesocycle.startRIR -
 		Math.floor((weekNumber * data.parentMesocycle.startRIR) / data.parentMesocycle.duration);
 
-	$: workoutExercises = data.parentMesocycle.splitExercises[selectedWorkoutTemplate];
+	$: workoutExercises = data.parentMesocycle.splitExercises[$workoutDay];
 	let muscleTargets: Record<string, number> = {};
 	$: {
-        muscleTargets = {};
+		muscleTargets = {};
 		workoutExercises.forEach((exercise) => {
 			if (muscleTargets[exercise.muscleTarget]) {
 				muscleTargets[exercise.muscleTarget] += exercise.sets as number;
@@ -25,7 +28,12 @@
 	}
 </script>
 
-<form class="flex flex-col w-full gap-2 h-full">
+<form
+	class="flex flex-col w-full gap-2 h-full"
+	on:submit|preventDefault={() => {
+		goto('/workouts/new/exercises');
+	}}
+>
 	<div class="stats bg-primary shrink-0 w-full">
 		<div class="stat">
 			<div class="flex justify-between">
@@ -41,12 +49,12 @@
 			</div>
 			<div class="flex w-full items-center justify-between mt-1.5 gap-4">
 				<p class="text-xl font-bold text-white">{todaysDay}</p>
-				<select class="select select-sm select-bordered grow" bind:value={selectedWorkoutTemplate}>
+				<select class="select select-sm select-bordered grow" bind:value={$workoutDay} required>
 					{#each data.parentMesocycle.splitSchedule as workoutName, i}
 						{#if workoutName}
 							<option value={i}>{workoutName}</option>
 						{:else}
-							<option value={i} disabled class="opacity-50">Rest</option>
+							<option value="" disabled class="opacity-50">Rest</option>
 						{/if}
 					{/each}
 				</select>
@@ -58,7 +66,7 @@
 			<div class="flex justify-between">
 				<div class="opacity-90">Planned RIR</div>
 			</div>
-			<select class="select select-sm select-bordered mt-1.5" bind:value={plannedRIR}>
+			<select class="select select-sm select-bordered mt-1.5" bind:value={$plannedRIR}>
 				<option value={4}>4 RIR</option>
 				<option value={3}>3 RIR</option>
 				<option value={2}>2 RIR</option>
@@ -79,5 +87,10 @@
 			</div>
 		</div>
 	</div>
-	<button class="btn btn-block btn-accent mt-auto">Start logging</button>
+	<button class="btn btn-block btn-accent mt-auto">
+		{#if $navigating?.to?.url.pathname === '/workouts/new/exercises'}
+			<span class="loading loading-spinner" />
+		{/if}
+		Start logging
+	</button>
 </form>
