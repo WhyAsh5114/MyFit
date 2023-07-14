@@ -58,7 +58,7 @@
 		if (mesoID < 0 || Number.isNaN(mesoID)) {
 			return;
 		}
-		if (data.activeMesocycle && !endActiveMeso) {
+		if (data.parentMesocycle && !endActiveMeso) {
 			anotherMesoActiveModal.show();
 			return;
 		}
@@ -110,11 +110,11 @@
 	titleColor="text-warning"
 	bind:dialogElement={anotherMesoActiveModal}
 >
-	{#if data.activeMesocycle}
+	{#if data.parentMesocycle}
 		<p>
 			Would you like to end
 			<span class="italic font-semibold">
-				{data.activeMesocycle.name}
+				{data.parentMesocycle.name}
 			</span>
 			?
 		</p>
@@ -184,7 +184,7 @@
 		<div class="stat">
 			<div class="flex justify-between">
 				<div class="opacity-75">Name</div>
-				{#if data.activeMesocycleIndex === parseInt(data.mesoIndex)}
+				{#if data.parentMesocycleIndex === parseInt(data.mesoIndex)}
 					<span class="badge badge-accent font-semibold">Active</span>
 				{/if}
 			</div>
@@ -256,7 +256,7 @@
 		{/if}
 		Edit
 	</a>
-	{#if data.activeMesocycleIndex !== parseInt(data.mesoIndex)}
+	{#if data.parentMesocycleIndex !== parseInt(data.mesoIndex)}
 		<button
 			class="join-item btn btn-accent"
 			on:click={() => {
