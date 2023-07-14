@@ -2,15 +2,15 @@
 	import { navigating } from '$app/stores';
 
 	export let data;
-	let activeMesocycle: Mesocycle | null = null;
+	let parentMesocycle: Mesocycle | null = null;
 	$: if (data.mesocycles && data.activeMesocycle) {
-		activeMesocycle = data.mesocycles[data.activeMesocycle.mesoID];
+		parentMesocycle = data.mesocycles[data.activeMesocycle.mesoID];
 	}
 </script>
 
 {#if data.mesocycles && data.mesocycles.length > 0}
 	<h3 class="text-left w-full text-xl font-bold text-accent mb-2">Active</h3>
-	{#if data.activeMesocycle && activeMesocycle}
+	{#if data.activeMesocycle && parentMesocycle}
 		<a
 			class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-3"
 			href="/mesocycles/view/{data.activeMesocycle.mesoID}"
@@ -24,14 +24,14 @@
 			{/if}
 			<div class="flex justify-between items-center w-full">
 				<h3 class="ml-2 text-lg text-ellipsis">
-					{activeMesocycle.name}
+					{parentMesocycle.name}
 				</h3>
 				<p class="badge badge-secondary ml-auto">
-					{activeMesocycle.duration} weeks
+					{parentMesocycle.duration} weeks
 				</p>
 			</div>
 			<div class="flex w-full gap-1 flex-wrap">
-				{#each activeMesocycle.splitSchedule as workout}
+				{#each parentMesocycle.splitSchedule as workout}
 					{#if workout !== ''}
 						<p class="font-normal badge w-fit">{workout}</p>
 					{:else}
