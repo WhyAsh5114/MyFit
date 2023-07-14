@@ -2,27 +2,26 @@
 	import { goto } from '$app/navigation';
 	import { navigating } from '$app/stores';
 	import { days } from '$lib/commonDB';
-	import { workoutDay, plannedRIR } from './newWorkoutStore.js';
+	import { workoutDay, plannedRIR, muscleTargetsAndSets, weekNumber } from './newWorkoutStore.js';
 	export let data;
 
 	let date = new Date();
 	let todaysDay = days[date.getDay()];
 	$workoutDay = date.getDay();
 
-	let weekNumber = Math.ceil((+date - data.activeMesocycle.startDate) / (1000 * 60 * 60 * 24 * 7));
+	$weekNumber = Math.ceil((+date - data.activeMesocycle.startDate) / (1000 * 60 * 60 * 24 * 7));
 	$plannedRIR =
 		data.parentMesocycle.startRIR -
-		Math.floor((weekNumber * data.parentMesocycle.startRIR) / data.parentMesocycle.duration);
+		Math.floor(($weekNumber * data.parentMesocycle.startRIR) / data.parentMesocycle.duration);
 
 	$: workoutExercises = data.parentMesocycle.splitExercises[$workoutDay];
-	let muscleTargets: Record<string, number> = {};
 	$: {
-		muscleTargets = {};
+		$muscleTargetsAndSets = {};
 		workoutExercises.forEach((exercise) => {
-			if (muscleTargets[exercise.muscleTarget]) {
-				muscleTargets[exercise.muscleTarget] += exercise.sets as number;
+			if ($muscleTargetsAndSets[exercise.muscleTarget]) {
+				$muscleTargetsAndSets[exercise.muscleTarget] += exercise.sets as number;
 			} else {
-				muscleTargets[exercise.muscleTarget] = exercise.sets as number;
+				$muscleTargetsAndSets[exercise.muscleTarget] = exercise.sets as number;
 			}
 		});
 	}
@@ -81,8 +80,8 @@
 				<div class="opacity-90">Muscle targets</div>
 			</div>
 			<div class="flex flex-wrap mt-2 gap-1">
-				{#each Object.keys(muscleTargets) as muscleTarget}
-					<span class="badge text-white">{muscleTarget} x {muscleTargets[muscleTarget]}</span>
+				{#each Object.keys($muscleTargetsAndSets) as muscleTarget}
+					<span class="badge text-white">{muscleTarget} x {$muscleTargetsAndSets[muscleTarget]}</span>
 				{/each}
 			</div>
 		</div>
