@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { days } from '$lib/commonDB';
 	import { onMount } from 'svelte';
-	import { workoutDay, plannedRIR, weekNumber, muscleTargetsAndSets } from '../newWorkoutStore';
+	import {
+		workoutDay,
+		plannedRIR,
+		weekNumber,
+		muscleTargetsAndSets,
+		referenceWorkout
+	} from '../newWorkoutStore';
 	import { goto } from '$app/navigation';
 	export let data;
 
@@ -12,30 +18,39 @@
 			$weekNumber === undefined ||
 			Object.keys($muscleTargetsAndSets).length === 0
 		) {
-            goto('/workouts/new')
+			goto('/workouts/new');
 		}
 	});
 
 	let todaysDay = days[new Date().getDay()];
-    
-    function splitExerciseToWorkoutExercise(splitEx: SplitExercise) {
-        const workoutExercise: WorkoutExercise = {
-            name: splitEx.name as string,
-            repRangeStart: splitEx.repRangeStart as number,
-            repRangeEnd: splitEx.repRangeEnd as number,
-            muscleTarget: splitEx.muscleTarget as (typeof commonMuscleGroups)[number],
-            setType: splitEx.setType as Exclude<SplitExercise["setType"], ''>,
-            jointPainRating: undefined,
-            pumpRating: undefined,
-            disruptionRating: undefined,
-            mindMuscleConnectionRating: undefined,
-            repsAndRIR: Array(splitEx.sets as number).fill([undefined, $plannedRIR])
-        };
-        return workoutExercise;
+
+	function splitExerciseToWorkoutExercise(splitEx: SplitExercise) {
+		const workoutExercise: WorkoutExercise = {
+			name: splitEx.name as string,
+			repRangeStart: splitEx.repRangeStart as number,
+			repRangeEnd: splitEx.repRangeEnd as number,
+			muscleTarget: splitEx.muscleTarget as (typeof commonMuscleGroups)[number],
+			setType: splitEx.setType as Exclude<SplitExercise['setType'], ''>,
+			jointPainRating: undefined,
+			pumpRating: undefined,
+			disruptionRating: undefined,
+			mindMuscleConnectionRating: undefined,
+			repsAndRIR: Array(splitEx.sets as number).fill([undefined, $plannedRIR])
+		};
+		return workoutExercise;
+	}
+
+	let templateExercises: WorkoutExercise[] = [];
+	if ($referenceWorkout === null && data.parentMesocycle.splitSchedule[$workoutDay] !== '') {
+		data.parentMesocycle.splitExercises[$workoutDay].forEach((exercise) => {
+			templateExercises.push(splitExerciseToWorkoutExercise(exercise));
+		});
+	} else {
+        // TODO: template from old workout and apply appropriate volume changes
     }
 </script>
 
-<div class="grow w-full bg-primary rounded-md">
+<div class="grow w-full bg-primary rounded-md flex flex-col">
 	<div class="flex flex-col w-full rounded-t-md bg-secondary text-black p-2">
 		<div class="flex justify-between items-center">
 			<h2 class="text-xl font-bold">{data.parentMesocycle.splitSchedule[$workoutDay]}</h2>
@@ -48,6 +63,12 @@
 			{/each}
 		</div>
 	</div>
-	<ul class="h-px w-full overflow-y-auto" />
+	<ul class="h-px grow w-full overflow-y-auto">
+		{#each templateExercises as exercise}
+			<li>
+                {exercise.name}
+            </li>
+		{/each}
+	</ul>
 </div>
 <button class="btn btn-block btn-accent mt-3"> Finish Workout </button>
