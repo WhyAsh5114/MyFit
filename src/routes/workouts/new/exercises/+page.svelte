@@ -57,7 +57,7 @@
 		<div class="collapse-title p-1.5 min-h-0 flex justify-between items-center">
 			<h2 class="text-xl font-bold">{data.parentMesocycle.splitSchedule[$workoutDay]} ({days[$workoutDay]})</h2>
 		</div>
-		<div class="collapse-content backdrop-brightness-75">
+		<div class="collapse-content backdrop-brightness-90">
 			<div class="flex justify-between mt-2">
 				<h3 class="font-semibold">Week {$weekNumber}, {todaysDay}</h3>
 				<span class="badge font-semibold">{$plannedRIR} RIR</span>
