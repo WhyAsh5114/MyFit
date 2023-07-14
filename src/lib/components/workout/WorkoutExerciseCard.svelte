@@ -7,7 +7,7 @@
 
 {#each workoutExercises as exercise, i (exercise.name)}
 	<li
-		class="flex flex-col bg-secondary w-full text-black p-3 h-fit"
+		class="flex flex-col bg-secondary w-full rounded-lg text-black p-3 h-fit"
 		animate:flip={{ duration: 200 }}
 		in:slide|local={{ duration: 200 }}
 		out:scale|local={{ duration: 200 }}
