@@ -49,3 +49,24 @@ type ActiveMesocycle = {
 interface PerformedMesocycle extends ActiveMesocycle {
 	endDate: EpochTimeStamp;
 }
+
+type Workout = {
+	timestamp: EpochTimeStamp;
+	mesoID: number;
+	difficultyRating: 1 | 2 | 3 | 4 | 5;
+	exercisesPerformed: WorkoutExercise[];
+	muscleGroupWorkloads: Record<(typeof commonMuscleGroups)[number], 'low' | 'moderate' | 'high'>;
+};
+
+type WorkoutExercise = {
+	name: string;
+	repsAndRIR: [number, number][];
+	repRangeStart: number;
+	repRangeEnd: number;
+	muscleTarget: (typeof commonMuscleGroups)[number];
+	setType: 'straight' | 'drop' | 'down' | 'top' | 'myorep' | 'myorep match' | 'giant';
+	jointPainRating: 'none' | 'moderate' | 'high';
+	pumpRating: 'none' | 'moderate' | 'high';
+	disruptionRating: 'none' | 'moderate' | 'high';
+	mindMuscleConnectionRating: 'none' | 'moderate' | 'high';
+};
