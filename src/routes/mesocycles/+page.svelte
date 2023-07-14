@@ -8,7 +8,7 @@
 	}
 </script>
 
-{#if data.mesocycles}
+{#if data.mesocycles && data.mesocycles.length > 0}
 	<h3 class="text-left w-full text-xl font-bold text-accent mb-2">Active</h3>
 	{#if data.activeMesocycle && activeMesocycle}
 		<a
