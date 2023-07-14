@@ -62,13 +62,13 @@ type Workout = {
 
 type WorkoutExercise = {
 	name: string;
-	repsAndRIR: [number, number][];
+	repsAndRIR: [number | undefined, number][];
 	repRangeStart: number;
 	repRangeEnd: number;
 	muscleTarget: (typeof commonMuscleGroups)[number];
 	setType: 'straight' | 'drop' | 'down' | 'top' | 'myorep' | 'myorep match' | 'giant';
-	jointPainRating: 'none' | 'moderate' | 'high';
-	pumpRating: 'none' | 'moderate' | 'high';
-	disruptionRating: 'none' | 'moderate' | 'high';
-	mindMuscleConnectionRating: 'none' | 'moderate' | 'high';
+	jointPainRating: 'none' | 'moderate' | 'high' | undefined;
+	pumpRating: 'none' | 'moderate' | 'high' | undefined;
+	disruptionRating: 'none' | 'moderate' | 'high' | undefined;
+	mindMuscleConnectionRating: 'none' | 'moderate' | 'high' | undefined;
 };
