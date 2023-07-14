@@ -2,7 +2,7 @@
 	import { flip } from 'svelte/animate';
 	import { scale, slide } from 'svelte/transition';
 	import EditExerciseModal from './EditExerciseModal.svelte';
-	import DeleteExerciseModal from '../DeleteExerciseModal.svelte';
+	import DeleteExerciseModal from './DeleteExerciseModal.svelte';
 
 	export let splitExercises: SplitExercise[];
 
@@ -34,7 +34,7 @@
 <DeleteExerciseModal
 	bind:deleteExerciseModal
 	bind:exerciseName={deletingExerciseName}
-	bind:exercises={splitExercises}
+	bind:splitExercises
 	bind:indexOfExerciseToDelete
 />
 {#each splitExercises as exercise, i (exercise.name)}
