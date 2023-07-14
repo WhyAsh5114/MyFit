@@ -47,21 +47,26 @@
 			workoutExercises.push(splitExerciseToWorkoutExercise(exercise));
 		});
 	} else {
-        // TODO: template from old workout and apply appropriate volume changes
-    }
+		// TODO: template from old workout and apply appropriate volume changes
+	}
 </script>
 
 <div class="grow w-full bg-primary rounded-md flex flex-col">
-	<div class="flex flex-col w-full rounded-t-md bg-accent text-black p-2">
-		<div class="flex justify-between items-center">
-			<h2 class="text-xl font-bold">{data.parentMesocycle.splitSchedule[$workoutDay]}</h2>
-			<span class="badge font-semibold">{$plannedRIR} RIR</span>
+	<div class="collapse collapse-arrow rounded-t-md bg-accent rounded-b-none text-black">
+		<input type="checkbox" class="p-0 min-h-0" checked />
+		<div class="collapse-title p-1.5 min-h-0 flex justify-between items-center">
+			<h2 class="text-xl font-bold">{data.parentMesocycle.splitSchedule[$workoutDay]} ({days[$workoutDay]})</h2>
 		</div>
-		<h3>Week {$weekNumber}, {todaysDay}</h3>
-		<div class="flex flex-wrap gap-1 mt-2">
-			{#each Object.keys($muscleTargetsAndSets) as muscleTarget}
-				<span class="badge badge-error text-white">{muscleTarget}</span>
-			{/each}
+		<div class="collapse-content backdrop-brightness-75">
+			<div class="flex justify-between mt-2">
+				<h3 class="font-semibold">Week {$weekNumber}, {todaysDay}</h3>
+				<span class="badge font-semibold">{$plannedRIR} RIR</span>
+			</div>
+			<div class="flex flex-wrap gap-1 mt-1">
+				{#each Object.keys($muscleTargetsAndSets) as muscleTarget}
+					<span class="badge badge-error text-white">{muscleTarget}</span>
+				{/each}
+			</div>
 		</div>
 	</div>
 	<ul class="h-px grow w-full overflow-y-auto p-2 gap-3 flex flex-col">

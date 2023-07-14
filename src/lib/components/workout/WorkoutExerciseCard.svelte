@@ -36,7 +36,7 @@
 			<p class="text-sm">RIR</p>
 			<p />
 			{#each exercise.repsLoadRIR as repsLoadRIR}
-				<select class="select select-sm text-white rounded-none">
+				<select class="select select-sm text-white rounded-md">
 					<option value="" disabled selected>?</option>
 					{#each Array.from(Array(100).keys()) as i}
 						{#if repsLoadRIR[0] === i + 1}
@@ -46,7 +46,7 @@
 						{/if}
 					{/each}
 				</select>
-				<select class="select select-sm text-white rounded-none">
+				<select class="select select-sm text-white rounded-md">
 					{#each Array.from(Array(100).keys()) as i}
 						{#if repsLoadRIR[1] === (i + 1) * 2.5}
 							<option selected>{(i + 1) * 2.5} kg</option>
@@ -55,7 +55,7 @@
 						{/if}
 					{/each}
 				</select>
-				<select class="select select-sm text-white rounded-none">
+				<select class="select select-sm text-white rounded-md">
 					{#each Array.from(Array(5).keys()) as i}
 						{#if repsLoadRIR[2] === i}
 							<option selected>{i} RIR</option>
@@ -72,6 +72,6 @@
 
 <style>
     #workout-card-grid {
-        grid-template-columns: 1fr 1.5fr 1.2fr 0.5fr;
+        grid-template-columns: auto auto auto auto;
     }
 </style>
