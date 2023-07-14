@@ -183,7 +183,7 @@
 	<div class="stats bg-primary shrink-0">
 		<div class="stat">
 			<div class="flex justify-between">
-				<div class="opacity-75">Name</div>
+				<div class="opacity-90">Name</div>
 				{#if data.parentMesocycleIndex === parseInt(data.mesoIndex)}
 					<span class="badge badge-accent font-semibold">Active</span>
 				{/if}
@@ -193,7 +193,7 @@
 	</div>
 	<div class="stats bg-primary shrink-0">
 		<div class="stat">
-			<div class="opacity-75">Duration</div>
+			<div class="opacity-90">Duration</div>
 			<div class="text-2xl font-bold text-white">
 				{#if data.meso?.duration && data.meso?.duration >= 4 && data.meso?.duration <= 16}
 					{data.meso?.duration} weeks
@@ -203,13 +203,13 @@
 			</div>
 		</div>
 		<div class="stat">
-			<div class="opacity-75">Start RIR</div>
+			<div class="opacity-90">Start RIR</div>
 			<div class="text-2xl font-bold text-white">{data.meso?.startRIR} RIR</div>
 		</div>
 	</div>
 	<div class="stats bg-primary shrink-0">
 		<div class="stat">
-			<div class="opacity-75">Split</div>
+			<div class="opacity-90">Split</div>
 			<div class="flex flex-col gap-1.5 mt-3">
 				{#each data.meso?.splitSchedule as splitDay, i}
 					<div class="join">
@@ -226,7 +226,7 @@
 	</div>
 	<div class="stats bg-primary shrink-0">
 		<div class="stat">
-			<div class="opacity-75">Volume</div>
+			<div class="opacity-90">Volume</div>
 			<div class="flex flex-col gap-1 mt-3">
 				{#each commonMuscleGroups as muscleGroup}
 					<MuscleGroupComponent
