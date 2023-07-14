@@ -52,7 +52,7 @@
 </script>
 
 <div class="grow w-full bg-primary rounded-md flex flex-col">
-	<div class="flex flex-col w-full rounded-t-md bg-secondary text-black p-2">
+	<div class="flex flex-col w-full rounded-t-md bg-accent text-black p-2">
 		<div class="flex justify-between items-center">
 			<h2 class="text-xl font-bold">{data.parentMesocycle.splitSchedule[$workoutDay]}</h2>
 			<span class="badge font-semibold">{$plannedRIR} RIR</span>

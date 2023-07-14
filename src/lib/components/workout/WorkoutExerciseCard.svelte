@@ -7,7 +7,7 @@
 
 {#each workoutExercises as exercise, i (exercise.name)}
 	<li
-		class="flex flex-col bg-secondary w-full rounded-lg text-black p-3 h-fit"
+		class="flex flex-col bg-secondary w-full text-black p-3 h-fit"
 		animate:flip={{ duration: 200 }}
 		in:slide|local={{ duration: 200 }}
 		out:scale|local={{ duration: 200 }}
@@ -30,10 +30,10 @@
 			</div>
 		</div>
 		<div class="h-px w-full bg-black my-2" />
-		<div class="grid grid-cols-4 place-items-center gap-y-2" id="workout-card-grid">
-			<p class="text-sm -mb-1">Reps</p>
-			<p class="text-sm -mb-1">Load</p>
-			<p class="text-sm -mb-1">RIR</p>
+		<div class="grid grid-cols-4 place-items-center gap-y-1" id="workout-card-grid">
+			<p class="text-sm">Reps</p>
+			<p class="text-sm">Load</p>
+			<p class="text-sm">RIR</p>
 			<p />
 			{#each exercise.repsLoadRIR as repsLoadRIR}
 				<select class="select select-sm text-white rounded-none">
