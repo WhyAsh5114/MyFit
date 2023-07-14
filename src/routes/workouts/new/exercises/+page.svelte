@@ -64,7 +64,7 @@
 			{/each}
 		</div>
 	</div>
-	<ul class="h-px grow w-full overflow-y-auto mt-2 px-1 gap-2 flex flex-col">
+	<ul class="h-px grow w-full overflow-y-auto p-2 gap-2 flex flex-col">
 		<WorkoutExerciseCard bind:workoutExercises />
 	</ul>
 </div>
