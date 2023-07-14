@@ -36,8 +36,11 @@
 			pumpRating: undefined,
 			disruptionRating: undefined,
 			mindMuscleConnectionRating: undefined,
-			repsLoadRIR: Array(splitEx.sets as number).fill([undefined, undefined, $plannedRIR])
+			repsLoadRIR: []
 		};
+		for (let i = 0; i < (splitEx.sets as number); i++) {
+			workoutExercise.repsLoadRIR.push([undefined, undefined, $plannedRIR]);
+		}
 		return workoutExercise;
 	}
 
@@ -52,7 +55,7 @@
 </script>
 
 <div class="grow w-full bg-primary rounded-md flex flex-col">
-	<div class="collapse collapse-arrow rounded-t-md bg-accent rounded-b-none text-black">
+	<div class="collapse collapse-arrow rounded-t-md bg-accent rounded-b-none text-black shadow-md shadow-black">
 		<input type="checkbox" class="p-0 min-h-0" checked />
 		<div class="collapse-title p-1.5 min-h-0 flex justify-between items-center">
 			<h2 class="text-xl font-bold">{data.parentMesocycle.splitSchedule[$workoutDay]} ({days[$workoutDay]})</h2>
