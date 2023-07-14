@@ -57,6 +57,7 @@ type Workout = {
 	difficultyRating: 1 | 2 | 3 | 4 | 5;
 	exercisesPerformed: WorkoutExercise[];
 	muscleGroupWorkloads: Record<(typeof commonMuscleGroups)[number], 'low' | 'moderate' | 'high'>;
+	plannedRIR: number;
 };
 
 type WorkoutExercise = {
