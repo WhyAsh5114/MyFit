@@ -20,9 +20,11 @@
 		setsPerformed[exerciseNumber]++;
 	}
 
+    let feedbackTaken: boolean[] = Array(workoutExercises.length).fill(false);
 	$: workoutExercises.forEach((exercise, i) => {
-		if (exercise.repsLoadRIR.length === setsPerformed[i]) {
+		if (!feedbackTaken[i] && exercise.repsLoadRIR.length === setsPerformed[i]) {
 			exerciseFeedbackModal.show();
+            feedbackTaken[i] = true;
 		}
 	});
 </script>
