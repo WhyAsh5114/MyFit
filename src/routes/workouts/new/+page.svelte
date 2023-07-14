@@ -80,9 +80,35 @@
 				<div class="opacity-90">Muscle targets</div>
 			</div>
 			<div class="flex flex-wrap mt-2 gap-1">
-				{#each Object.keys($muscleTargetsAndSets) as muscleTarget}
-					<span class="badge text-white">{muscleTarget} x {$muscleTargetsAndSets[muscleTarget]}</span>
-				{/each}
+				{#if data.parentMesocycle.splitSchedule[$workoutDay] !== ''}
+					{#each Object.keys($muscleTargetsAndSets) as muscleTarget}
+						<span class="badge text-white"
+							>{muscleTarget} x {$muscleTargetsAndSets[muscleTarget]}</span
+						>
+					{/each}
+				{:else}
+					<p class="text-sm leading-tight text-white">Select workout from workout template</p>
+				{/if}
+			</div>
+		</div>
+	</div>
+	<div class="stats bg-primary shrink-0 w-full">
+		<div class="stat">
+			<div class="flex justify-between">
+				<div class="opacity-90">Reference workout</div>
+			</div>
+			<div class="mt-2">
+				{#if data.parentMesocycle.splitSchedule[$workoutDay] === ''}
+					<p class="text-sm leading-tight text-white">Select workout from workout template</p>
+				{:else}
+					<p class="text-white">
+						No reference workout found for
+					</p>
+					<p class="text-accent font-semibold">
+						{data.parentMesocycle.splitSchedule[$workoutDay]}
+						({days[$workoutDay]})
+					</p>
+				{/if}
 			</div>
 		</div>
 	</div>
