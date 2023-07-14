@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { navigating } from '$app/stores';
+
 	export let data;
 
 	let selectedMesocycle: undefined | number;
@@ -29,8 +31,17 @@
 	</div>
 </div>
 <div class="grow border w-full my-2">
+	<!-- Active section (show only if meso is active) -->
+	<!-- TODO: if meso is active, for active section's date range, just show start date, loop over activeMesocycle.workouts and show them as cards -->
 
+	<!-- Older sections (with dates) -->
+	<!-- TODO: loop over data.performedMesocycles and if performedMesocycle.mesoID == selectedMesocycle -->
+	<!-- TODO: show section with heading of date range (startDate - endDate) -->
+	<!-- TODO: loop over the performedMesocycle.workouts and show them as cards -->
 </div>
 <a class="btn btn-block btn-accent" href="/workouts/new">
+	{#if $navigating?.to?.url.pathname === '/workouts/new'}
+		<span class="loading loading-spinner" />
+	{/if}
 	Log new workout
 </a>
