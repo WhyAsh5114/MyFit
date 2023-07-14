@@ -19,57 +19,53 @@
 					<img src="/HamburgerMenu.svg" alt="menu" />
 				</button>
 				<ul class="menu dropdown-content p-2 shadow-black bg-base-100 rounded-md shadow-md">
-					<li>
-						
-					</li>
+					<li />
 				</ul>
 			</div>
 		</div>
 		<div class="flex justify-between items-end -mt-2">
-            <h6 class="capitalize text-sm font-semibold italic">{exercise.setType} sets</h6>
-            <div class="flex justify-between mt-2.5 text-sm">
-                <span class="badge badge-error text-white">{exercise.muscleTarget}</span>
-            </div>
-        </div>
-        <div class="flex flex-col gap-2">
-            <div class="h-px w-full bg-black mt-2"></div>
-            <div class="flex justify-around">
-                <p>Reps</p>
-                <p>Load</p>
-                <p>RIR</p>
-            </div>
-            {#each exercise.repsLoadRIR as repsLoadRIR}
-                <div class="flex justify-around">
-                    <select class="select select-sm text-white">
-                        <option value="" disabled selected>?</option>
-                        {#each Array.from(Array(100).keys()) as i}
-                            {#if repsLoadRIR[0] === (i + 1)}
-                                <option selected>{i + 1}</option>
-                            {:else}
-                                <option>{i + 1}</option>
-                            {/if}
-                        {/each}
-                    </select>
-                    <select class="select select-sm text-white">
-                        {#each Array.from(Array(100).keys()) as i}
-                            {#if repsLoadRIR[1] === (i + 1) * 2.5}
-                                <option selected>{(i + 1) * 2.5} kg</option>
-                            {:else}
-                                <option>{(i + 1) * 2.5} kg</option>
-                            {/if}
-                        {/each}
-                    </select>
-                    <select class="select select-sm text-white">
-                        {#each Array.from(Array(5).keys()) as i}
-                            {#if repsLoadRIR[2] === i}
-                                <option selected>{i} RIR</option>
-                            {:else}
-                                <option>{i} RIR</option>
-                            {/if}
-                        {/each}
-                    </select>
-                </div>
-            {/each}
-        </div>
+			<h6 class="capitalize text-sm font-semibold italic">{exercise.setType} sets</h6>
+			<div class="flex justify-between mt-2.5 text-sm">
+				<span class="badge badge-error text-white">{exercise.muscleTarget}</span>
+			</div>
+		</div>
+		<div class="h-px w-full bg-black mt-2" />
+		<div class="grid grid-cols-4 place-items-center gap-x-2">
+			<p>Reps</p>
+			<p>Load</p>
+			<p>RIR</p>
+			<p />
+			{#each exercise.repsLoadRIR as repsLoadRIR}
+				<select class="select select-sm text-white">
+					<option value="" disabled selected>?</option>
+					{#each Array.from(Array(100).keys()) as i}
+						{#if repsLoadRIR[0] === i + 1}
+							<option selected>{i + 1}</option>
+						{:else}
+							<option>{i + 1}</option>
+						{/if}
+					{/each}
+				</select>
+				<select class="select select-sm text-white">
+					{#each Array.from(Array(100).keys()) as i}
+						{#if repsLoadRIR[1] === (i + 1) * 2.5}
+							<option selected>{(i + 1) * 2.5} kg</option>
+						{:else}
+							<option>{(i + 1) * 2.5} kg</option>
+						{/if}
+					{/each}
+				</select>
+				<select class="select select-sm text-white">
+					{#each Array.from(Array(5).keys()) as i}
+						{#if repsLoadRIR[2] === i}
+							<option selected>{i} RIR</option>
+						{:else}
+							<option>{i} RIR</option>
+						{/if}
+					{/each}
+				</select>
+                <button class="btn btn-sm btn-success btn-square text-white">✓</button>
+			{/each}
+		</div>
 	</li>
 {/each}
