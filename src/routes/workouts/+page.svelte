@@ -42,21 +42,23 @@
 				Active ({dateFormatter(data.activeMesocycle?.startDate)})
 			</h3>
 			{#each data.activeMesocycle.workouts.reverse() as workoutIndex}
-				<a
-					class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-1 items-start"
-					href="/workouts/view/{workoutIndex}"
-				>
-					{#if data.mesocycles && data.workouts}
-						<h3 class="font-semibold text-left w-full text-base text-secondary">
-							{dateFormatter(data.workouts[workoutIndex || 0]?.startTimestamp)}
-						</h3>
-						<h4 class="font-normal text-base">
-							{data.mesocycles[data.workouts[workoutIndex]?.mesoID || 0]?.splitSchedule[
-								data.workouts[workoutIndex]?.dayNumber || 0
-							]}
-						</h4>
-					{/if}
-				</a>
+				{#if data.workouts && data.workouts[workoutIndex]}
+					<a
+						class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-1 items-start"
+						href="/workouts/view/{workoutIndex}"
+					>
+						{#if data.mesocycles && data.workouts}
+							<h3 class="font-semibold text-left w-full text-base text-secondary">
+								{dateFormatter(data.workouts[workoutIndex || 0]?.startTimestamp)}
+							</h3>
+							<h4 class="font-normal text-base">
+								{data.mesocycles[data.workouts[workoutIndex]?.mesoID || 0]?.splitSchedule[
+									data.workouts[workoutIndex]?.dayNumber || 0
+								]}
+							</h4>
+						{/if}
+					</a>
+				{/if}
 			{/each}
 		</div>
 	{/if}
