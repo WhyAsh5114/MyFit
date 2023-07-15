@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { days } from '$lib/commonDB.js';
+	import MyModal from '$lib/components/MyModal.svelte';
 
 	export let data;
 
@@ -33,7 +35,81 @@
 			}
 		});
 	}
+
+	let confirmDeleteModal: HTMLDialogElement;
+	let deletionSuccessfulModal: HTMLDialogElement;
+	let deletionErrorModal: HTMLDialogElement;
+	let callingEndpoint = false;
+	let errorMsg = '';
+	async function deleteWorkout() {
+		callingEndpoint = true;
+		errorMsg = '';
+		const reqJSON: APIWorkoutDelete = { workoutIndex: data.workoutIndex };
+		const response = await fetch('/api/workout/delete', {
+			method: 'POST',
+			body: JSON.stringify(reqJSON),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+		confirmDeleteModal.close();
+		callingEndpoint = false;
+		if (response.ok) {
+			deletionSuccessfulModal.show();
+		} else {
+			errorMsg = await response.text();
+			deletionErrorModal.show();
+		}
+	}
 </script>
+
+<MyModal title="Delete Mesocycle" titleColor="text-error" bind:dialogElement={confirmDeleteModal}>
+	<p>
+		Are you sure you want to delete workout
+		<span class="font-semibold italic"
+			>{data.parentMesocycle?.splitSchedule[data.workout.dayNumber]} ({days[
+				data.workout.dayNumber
+			]})</span
+		>?
+	</p>
+	<div class="join grid grid-cols-2 w-full mt-4">
+		<form on:submit|preventDefault class="join-item">
+			<button
+				class="join-item btn btn-error text-black w-full"
+				on:click={() => {
+					if (!callingEndpoint) {
+						deleteWorkout();
+					}
+				}}
+			>
+				{#if callingEndpoint}
+					<span class="loading loading-spinner" />
+				{/if}
+				Yes
+			</button>
+		</form>
+		<button class="join-item btn btn-secondary"> No </button>
+	</div>
+</MyModal>
+<MyModal
+	title="Success"
+	titleColor="text-success"
+	bind:dialogElement={deletionSuccessfulModal}
+	onClose={async () => {
+		await goto('/mesocycles');
+	}}
+>
+	<p>
+		Workout <span class="font-semibold italic"
+			>{data.parentMesocycle?.splitSchedule[data.workout.dayNumber]} ({days[
+				data.workout.dayNumber
+			]})</span
+		> deleted successfully
+	</p>
+</MyModal>
+<MyModal title="Error" titleColor="text-error" bind:dialogElement={deletionErrorModal}>
+	<p>{errorMsg}</p>
+</MyModal>
 
 <div class="flex flex-col h-px grow gap-2 w-full overflow-y-auto">
 	<div class="stats bg-primary w-full">
@@ -106,6 +182,11 @@
 	</div>
 </div>
 <div class="join grid grid-cols-2 w-full">
-	<button class="join-item btn btn-error text-black">Delete</button>
+	<button
+		class="join-item btn btn-error text-black"
+		on:click={() => {
+			confirmDeleteModal.show();
+		}}>Delete</button
+	>
 	<button class="join-item btn btn-primary">Edit</button>
 </div>
