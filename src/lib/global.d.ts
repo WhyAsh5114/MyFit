@@ -68,6 +68,7 @@ type Workout = {
 		undefined | 'none' | 'low' | 'high'
 	>;
 	weekNumber: number;
+	deload?: boolean;
 };
 
 type WorkoutExercise = {
