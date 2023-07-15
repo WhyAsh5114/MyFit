@@ -4,6 +4,19 @@
 	export let data;
 
 	let selectedMesocycle: undefined | number;
+	let workoutsOfActiveMesocycleWithIndex: [Workout, number][] = [];
+
+	$: {
+		workoutsOfActiveMesocycleWithIndex = [];
+		if (selectedMesocycle && selectedMesocycle === data.activeMesocycle?.mesoID) {
+			data.activeMesocycle.workouts.forEach((workoutIndex) => {
+				if (data.workouts) {
+					workoutsOfActiveMesocycleWithIndex.push([data.workouts[workoutIndex], workoutIndex]);
+				}
+			});
+		}
+		workoutsOfActiveMesocycleWithIndex = workoutsOfActiveMesocycleWithIndex;
+	}
 </script>
 
 <div class="flex flex-col bg-primary p-5 rounded-lg w-full">
@@ -31,21 +44,24 @@
 	</div>
 </div>
 <ul class="grow w-full my-2 flex flex-col gap-2">
-	<!-- Active section (show only if meso is active) -->
-	<!-- TODO: if meso is active, for active section's date range, just show start date, loop over activeMesocycle.workouts and show them as cards -->
-	{#if data.workouts && data.mesocycles}
-		{#each data.workouts as workout}
-			<button class="w-full btn-primary rounded-md p-2 flex flex-col">
+	{#if workoutsOfActiveMesocycleWithIndex.length > 0 && data.activeMesocycle}
+		<h3 class="text-accent font-bold text-xl">
+			Active ({new Date(data.activeMesocycle?.startDate).toLocaleDateString()})
+		</h3>
+		{#each workoutsOfActiveMesocycleWithIndex as workout}
+			<a
+				class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-1 items-start"
+				href="/workouts/view/{workout[1]}"
+			>
 				<h3 class="font-semibold text-left w-full text-base">
-					{new Date(workout.startTimestamp).toLocaleString()}
+					{new Date(workout[0].startTimestamp).toLocaleString()}
 				</h3>
-				<h4>{data.mesocycles[workout.mesoID]?.splitSchedule[workout.dayNumber]}</h4>
-				<div>
-					{#each workout.exercisesPerformed as exercise}
-						<span />
-					{/each}
-				</div>
-			</button>
+				{#if data.mesocycles && data.workouts}
+					<h4 class="font-normal text-base">
+						{data.mesocycles[workout[0].mesoID]?.splitSchedule[workout[0].dayNumber]}
+					</h4>
+				{/if}
+			</a>
 		{/each}
 	{/if}
 
@@ -53,6 +69,17 @@
 	<!-- TODO: loop over data.performedMesocycles and if performedMesocycle.mesoID == selectedMesocycle -->
 	<!-- TODO: show section with heading of date range (startDate - endDate) -->
 	<!-- TODO: loop over the performedMesocycle.workouts and show them as cards -->
+	{#if data.performedMesocycles}
+		{#each data.performedMesocycles as performedMesocycle}
+			{#if performedMesocycle.mesoID === selectedMesocycle}
+				<h3 class="text-accent font-bold text-xl">
+					{new Date(performedMesocycle.startDate).toLocaleDateString()} - {new Date(
+						performedMesocycle.endDate
+					).toLocaleDateString()}
+				</h3>
+			{/if}
+		{/each}
+	{/if}
 </ul>
 <a class="btn btn-block btn-accent" href="/workouts/new">
 	{#if $navigating?.to?.url.pathname === '/workouts/new'}
