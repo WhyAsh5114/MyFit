@@ -65,6 +65,12 @@
 		console.log($muscleTargetsAndSets);
 	}
 
+	// TODO: soreness calculation
+	// iterate through workouts of activeMesocycle, and only use workouts which are less than 7 days older
+	// if musclesGroups overlap found, someList.push({muscleTarget: 'Triceps', workoutID: 9})
+	// whenever asking for workload feedback, also ask for soreness feedback.
+
+	// Updater for totalSets (used in progress bar)
 	$: totalSets = Object.values($muscleTargetsAndSets).reduce(
 		(partialSum, sets) => partialSum + sets,
 		0
