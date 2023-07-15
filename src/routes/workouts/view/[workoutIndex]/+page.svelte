@@ -45,7 +45,7 @@
 		callingEndpoint = true;
 		errorMsg = '';
 		const reqJSON: APIWorkoutDelete = { workoutIndex: data.workoutIndex };
-		const response = await fetch('/api/workout/delete', {
+		const response = await fetch('/api/workouts/delete', {
 			method: 'POST',
 			body: JSON.stringify(reqJSON),
 			headers: {
@@ -96,7 +96,7 @@
 	titleColor="text-success"
 	bind:dialogElement={deletionSuccessfulModal}
 	onClose={async () => {
-		await goto('/mesocycles');
+		await goto('/workouts');
 	}}
 >
 	<p>
