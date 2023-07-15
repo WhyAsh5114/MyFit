@@ -62,7 +62,6 @@
 				$muscleTargetsAndSets[exercise.muscleTarget] = exercise.repsLoadRIR.length;
 			}
 		});
-		console.log($muscleTargetsAndSets);
 	}
 
 	// TODO: soreness calculation
