@@ -1,3 +1,3 @@
 type APIWorkoutCreate = {
-    workout: Workout
-}
+	workout: Workout;
+};
