@@ -1,0 +1,3 @@
+type APIWorkoutCreate = {
+    workout: Workout
+}

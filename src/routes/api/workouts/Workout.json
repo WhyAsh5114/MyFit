@@ -1,0 +1,244 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"additionalProperties": false,
+	"definitions": {
+		"Record<\"Chest\"|\"Frontdelts\"|\"Sidedelts\"|\"Reardelts\"|\"Back\"|\"Traps\"|\"Triceps\"|\"Biceps\"|\"Forearms\"|\"Quads\"|\"Hamstrings\"|\"Glutes\"|\"Calves\",\"high\"|\"low\"|\"moderate\">": {
+			"additionalProperties": false,
+			"properties": {
+				"Back": {
+					"enum": ["high", "low", "moderate"],
+					"type": "string"
+				},
+				"Biceps": {
+					"enum": ["high", "low", "moderate"],
+					"type": "string"
+				},
+				"Calves": {
+					"enum": ["high", "low", "moderate"],
+					"type": "string"
+				},
+				"Chest": {
+					"enum": ["high", "low", "moderate"],
+					"type": "string"
+				},
+				"Forearms": {
+					"enum": ["high", "low", "moderate"],
+					"type": "string"
+				},
+				"Front delts": {
+					"enum": ["high", "low", "moderate"],
+					"type": "string"
+				},
+				"Glutes": {
+					"enum": ["high", "low", "moderate"],
+					"type": "string"
+				},
+				"Hamstrings": {
+					"enum": ["high", "low", "moderate"],
+					"type": "string"
+				},
+				"Quads": {
+					"enum": ["high", "low", "moderate"],
+					"type": "string"
+				},
+				"Rear delts": {
+					"enum": ["high", "low", "moderate"],
+					"type": "string"
+				},
+				"Side delts": {
+					"enum": ["high", "low", "moderate"],
+					"type": "string"
+				},
+				"Traps": {
+					"enum": ["high", "low", "moderate"],
+					"type": "string"
+				},
+				"Triceps": {
+					"enum": ["high", "low", "moderate"],
+					"type": "string"
+				}
+			},
+			"type": "object"
+		},
+		"Record<\"Chest\"|\"Frontdelts\"|\"Sidedelts\"|\"Reardelts\"|\"Back\"|\"Traps\"|\"Triceps\"|\"Biceps\"|\"Forearms\"|\"Quads\"|\"Hamstrings\"|\"Glutes\"|\"Calves\",\"none\"|\"high\"|\"low\">": {
+			"additionalProperties": false,
+			"properties": {
+				"Back": {
+					"enum": ["high", "low", "none"],
+					"type": "string"
+				},
+				"Biceps": {
+					"enum": ["high", "low", "none"],
+					"type": "string"
+				},
+				"Calves": {
+					"enum": ["high", "low", "none"],
+					"type": "string"
+				},
+				"Chest": {
+					"enum": ["high", "low", "none"],
+					"type": "string"
+				},
+				"Forearms": {
+					"enum": ["high", "low", "none"],
+					"type": "string"
+				},
+				"Front delts": {
+					"enum": ["high", "low", "none"],
+					"type": "string"
+				},
+				"Glutes": {
+					"enum": ["high", "low", "none"],
+					"type": "string"
+				},
+				"Hamstrings": {
+					"enum": ["high", "low", "none"],
+					"type": "string"
+				},
+				"Quads": {
+					"enum": ["high", "low", "none"],
+					"type": "string"
+				},
+				"Rear delts": {
+					"enum": ["high", "low", "none"],
+					"type": "string"
+				},
+				"Side delts": {
+					"enum": ["high", "low", "none"],
+					"type": "string"
+				},
+				"Traps": {
+					"enum": ["high", "low", "none"],
+					"type": "string"
+				},
+				"Triceps": {
+					"enum": ["high", "low", "none"],
+					"type": "string"
+				}
+			},
+			"type": "object"
+		}
+	},
+	"properties": {
+		"dayNumber": {
+			"type": "number"
+		},
+		"difficultyRating": {
+			"enum": [1, 2, 3, 4, 5],
+			"type": "number"
+		},
+		"endTimestamp": {
+			"type": "number"
+		},
+		"exercisesPerformed": {
+			"items": {
+				"additionalProperties": false,
+				"properties": {
+					"disruptionRating": {
+						"enum": ["high", "moderate", "none"],
+						"type": "string"
+					},
+					"jointPainRating": {
+						"enum": ["high", "moderate", "none"],
+						"type": "string"
+					},
+					"mindMuscleConnectionRating": {
+						"enum": ["high", "moderate", "none"],
+						"type": "string"
+					},
+					"muscleTarget": {
+						"enum": [
+							"Back",
+							"Biceps",
+							"Calves",
+							"Chest",
+							"Forearms",
+							"Front delts",
+							"Glutes",
+							"Hamstrings",
+							"Quads",
+							"Rear delts",
+							"Side delts",
+							"Traps",
+							"Triceps"
+						],
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"pumpRating": {
+						"enum": ["high", "moderate", "none"],
+						"type": "string"
+					},
+					"repRangeEnd": {
+						"type": "number"
+					},
+					"repRangeStart": {
+						"type": "number"
+					},
+					"repsLoadRIR": {
+						"items": {
+							"items": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							],
+							"maxItems": 3,
+							"minItems": 3,
+							"type": "array"
+						},
+						"type": "array"
+					},
+					"setType": {
+						"enum": ["down", "drop", "giant", "myorep", "myorep match", "straight", "top"],
+						"type": "string"
+					}
+				},
+				"required": [
+					"muscleTarget",
+					"name",
+					"repRangeEnd",
+					"repRangeStart",
+					"repsLoadRIR",
+					"setType"
+				],
+				"type": "object"
+			},
+			"type": "array"
+		},
+		"mesoID": {
+			"type": "number"
+		},
+		"muscleGroupWorkloads": {
+			"$ref": "#/definitions/Record<\"Chest\"|\"Frontdelts\"|\"Sidedelts\"|\"Reardelts\"|\"Back\"|\"Traps\"|\"Triceps\"|\"Biceps\"|\"Forearms\"|\"Quads\"|\"Hamstrings\"|\"Glutes\"|\"Calves\",\"high\"|\"low\"|\"moderate\">"
+		},
+		"muscleSorenessToNextWorkout": {
+			"$ref": "#/definitions/Record<\"Chest\"|\"Frontdelts\"|\"Sidedelts\"|\"Reardelts\"|\"Back\"|\"Traps\"|\"Triceps\"|\"Biceps\"|\"Forearms\"|\"Quads\"|\"Hamstrings\"|\"Glutes\"|\"Calves\",\"none\"|\"high\"|\"low\">"
+		},
+		"plannedRIR": {
+			"type": "number"
+		},
+		"startTimestamp": {
+			"type": "number"
+		}
+	},
+	"required": [
+		"dayNumber",
+		"difficultyRating",
+		"endTimestamp",
+		"exercisesPerformed",
+		"mesoID",
+		"muscleGroupWorkloads",
+		"muscleSorenessToNextWorkout",
+		"plannedRIR",
+		"startTimestamp"
+	],
+	"type": "object"
+}
