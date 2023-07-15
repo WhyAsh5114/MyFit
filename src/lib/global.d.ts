@@ -56,7 +56,7 @@ type Workout = {
 	mesoID: number;
 	difficultyRating: 1 | 2 | 3 | 4 | 5;
 	exercisesPerformed: WorkoutExercise[];
-	muscleGroupWorkloads: Record<(typeof commonMuscleGroups)[number], 'low' | 'moderate' | 'high'>;
+	muscleGroupWorkloads: Record<(typeof commonMuscleGroups)[number], undefined | 'low' | 'moderate' | 'high'>;
 	plannedRIR: number;
 };
 
