@@ -1,8 +1,11 @@
 <script lang="ts">
 	import MyModal from '../MyModal.svelte';
 
+	export let workoutExercises: WorkoutExercise[];
+	export let feedbackTaken: boolean[];
 	export let exerciseFeedbackModal: HTMLDialogElement;
 	export let selectedExercise: WorkoutExercise | undefined;
+	export let muscleWorkloads: Workout['muscleGroupWorkloads'];
 
 	const ratingMap: Record<number, string> = { 0: 'none', 1: 'moderate', 2: 'high' };
 
@@ -23,10 +26,30 @@
 		'Disruption rating': undefined,
 		'Mind muscle connection rating': undefined
 	};
+
+	function openWorkloadModal() {
+		let totalExercisesForTargetMuscle: number[] = [];
+		workoutExercises.forEach((exercise, i) => {
+			if (exercise.muscleTarget === selectedExercise?.muscleTarget) {
+				totalExercisesForTargetMuscle.push(i);
+			}
+		});
+		let feedbacksRemainingForTargetMuscle = totalExercisesForTargetMuscle.length;
+		totalExercisesForTargetMuscle.forEach((exerciseIdx) => {
+			if (feedbackTaken[exerciseIdx]) {
+				feedbacksRemainingForTargetMuscle--;
+			}
+		});
+		if (feedbacksRemainingForTargetMuscle === 0) {
+			workloadFeedbackModal.show();
+		}
+	}
+
 	function submitFeedback() {
 		if (!selectedExercise) {
 			return;
 		}
+
 		selectedExercise.jointPainRating = feedbackValues['Joint pain rating'];
 		selectedExercise.pumpRating = feedbackValues['Pump rating'];
 		selectedExercise.disruptionRating = feedbackValues['Disruption rating'];
@@ -36,13 +59,47 @@
 		Object.keys(feedbackValues).forEach((value) => {
 			feedbackValues[value] = undefined;
 		});
+
+		openWorkloadModal();
 	}
+
+	let workloadFeedbackModal: HTMLDialogElement;
 </script>
+
+{#if selectedExercise}
+	<MyModal
+		bind:dialogElement={workloadFeedbackModal}
+		title={`${selectedExercise?.muscleTarget} workload rating`}
+		titleColor="text-accent"
+	>
+		<p>How much was the workload for the {selectedExercise.muscleTarget} in this workout?</p>
+		<form class="flex flex-col gap-2" on:submit|preventDefault={submitFeedback}>
+			<div class="flex flex-col">
+				<h3 class="font-semibold">Workload rating</h3>
+				<div class="grid grid-cols-3 gap-1 mt-1">
+					{#each [''] as choice, i}
+						<input
+							class="btn"
+							type="radio"
+							name="Workload rating"
+							aria-label={choice}
+							bind:group={muscleWorkloads[selectedExercise.muscleTarget]}
+							value={ratingMap[i]}
+							required
+						/>
+					{/each}
+				</div>
+			</div>
+			<button class="btn btn-block mt-2 btn-accent"> Submit feedback </button>
+		</form>
+	</MyModal>
+{/if}
 
 <MyModal
 	bind:dialogElement={exerciseFeedbackModal}
 	title="Exercise feedback"
 	titleColor="text-accent"
+	onClose={openWorkloadModal}
 >
 	<p>
 		Rate <span class="font-semibold italic">{selectedExercise?.name}</span> for appropriate adjustments

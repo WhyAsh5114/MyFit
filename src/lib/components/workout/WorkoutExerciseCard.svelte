@@ -8,11 +8,10 @@
 
 	let setsPerformed: number[] = Array(workoutExercises.length).fill(0);
 	let repSelectElements: HTMLSelectElement[][] = [];
-    for (let i = 0; i < workoutExercises.length; i++) {
-        repSelectElements.push(new Array());
-    }
+	for (let i = 0; i < workoutExercises.length; i++) {
+		repSelectElements.push(new Array());
+	}
 	function performSet(exerciseNumber: number, setNumber: number) {
-        console.log(repSelectElements, exerciseNumber, setNumber)
 		if (workoutExercises[exerciseNumber].repsLoadRIR[setNumber][0] === undefined) {
 			repSelectElements[exerciseNumber][setNumber].classList.add('animate-pulse');
 			return;
@@ -20,18 +19,40 @@
 		setsPerformed[exerciseNumber]++;
 	}
 
-    let feedbackTaken: boolean[] = Array(workoutExercises.length).fill(false);
-    let selectedExercise: WorkoutExercise;
+	let feedbackTaken: boolean[] = Array(workoutExercises.length).fill(false);
+	let selectedExercise: WorkoutExercise;
 	$: workoutExercises.forEach((exercise, i) => {
 		if (!feedbackTaken[i] && exercise.repsLoadRIR.length === setsPerformed[i]) {
-            selectedExercise = exercise;
+			selectedExercise = exercise;
 			exerciseFeedbackModal.show();
-            feedbackTaken[i] = true;
+			feedbackTaken[i] = true;
 		}
 	});
+
+	let muscleWorkloads: Workout['muscleGroupWorkloads'] = {
+		Chest: undefined,
+		'Front delts': undefined,
+		'Side delts': undefined,
+		'Rear delts': undefined,
+		Back: undefined,
+		Traps: undefined,
+		Triceps: undefined,
+		Biceps: undefined,
+		Forearms: undefined,
+		Quads: undefined,
+		Hamstrings: undefined,
+		Glutes: undefined,
+		Calves: undefined
+	};
 </script>
 
-<ExerciseFeedbackModal bind:exerciseFeedbackModal bind:selectedExercise />
+<ExerciseFeedbackModal
+	bind:exerciseFeedbackModal
+	bind:workoutExercises
+	bind:selectedExercise
+	bind:feedbackTaken
+	bind:muscleWorkloads
+/>
 {#each workoutExercises as exercise, exerciseNumber (exercise.name)}
 	<li
 		class="flex flex-col bg-secondary w-full rounded-lg text-black p-3 h-fit"
