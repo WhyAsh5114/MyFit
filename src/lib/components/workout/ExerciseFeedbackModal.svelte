@@ -135,7 +135,7 @@
 	</form>
 </MyModal>
 
-<style>
+<style lang="postcss">
 	#good-btn:checked {
 		@apply bg-success text-black;
 	}
