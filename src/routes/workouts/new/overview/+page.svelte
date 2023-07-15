@@ -14,7 +14,7 @@
 	export let data;
 
 	onMount(() => {
-		if (!$startTimestamp || !$workoutExercises) {
+		if (!$startTimestamp || $workoutExercises.length === 0) {
 			goto('/workouts/new');
 		}
 	});
@@ -65,6 +65,7 @@
 			}
 		});
 		if (response.ok) {
+			$workoutExercises = [];
 			successModal.show();
 		} else {
 			errorMsg = await response.text();

@@ -20,6 +20,7 @@
 			$workoutDay === undefined ||
 			$plannedRIR === undefined ||
 			$weekNumber === undefined ||
+			$workoutExercises.length === 0 ||
 			Object.keys($muscleTargetsAndSets).length === 0
 		) {
 			goto('/workouts/new');
