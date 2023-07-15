@@ -227,6 +227,12 @@
 		},
 		"startTimestamp": {
 			"type": "number"
+		},
+		"weekNumber": {
+			"type": "number"
+		},
+		"referenceWorkout": {
+			"type": ["number", "null"]
 		}
 	},
 	"required": [
@@ -238,7 +244,9 @@
 		"muscleGroupWorkloads",
 		"muscleSorenessToNextWorkout",
 		"plannedRIR",
-		"startTimestamp"
+		"startTimestamp",
+		"weekNumber",
+		"referenceWorkout"
 	],
 	"type": "object"
 }

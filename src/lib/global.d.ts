@@ -67,6 +67,7 @@ type Workout = {
 		(typeof commonMuscleGroups)[number],
 		undefined | 'none' | 'low' | 'high'
 	>;
+	weekNumber: number;
 };
 
 type WorkoutExercise = {
