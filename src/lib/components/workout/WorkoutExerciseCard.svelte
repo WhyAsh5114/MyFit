@@ -6,7 +6,7 @@
 	export let workoutExercises: WorkoutExercise[];
 	let exerciseFeedbackModal: HTMLDialogElement;
 
-	let setsPerformed: number[] = Array(workoutExercises.length).fill(0);
+	export let setsPerformedPerExercise: number[] = Array(workoutExercises.length).fill(0);
 	let repSelectElements: HTMLSelectElement[][] = [];
 	for (let i = 0; i < workoutExercises.length; i++) {
 		repSelectElements.push(new Array());
@@ -16,13 +16,13 @@
 			repSelectElements[exerciseNumber][setNumber].classList.add('animate-pulse');
 			return;
 		}
-		setsPerformed[exerciseNumber]++;
+		setsPerformedPerExercise[exerciseNumber]++;
 	}
 
 	let feedbackTaken: boolean[] = Array(workoutExercises.length).fill(false);
 	let selectedExercise: WorkoutExercise;
 	$: workoutExercises.forEach((exercise, i) => {
-		if (!feedbackTaken[i] && exercise.repsLoadRIR.length === setsPerformed[i]) {
+		if (!feedbackTaken[i] && exercise.repsLoadRIR.length === setsPerformedPerExercise[i]) {
 			selectedExercise = exercise;
 			exerciseFeedbackModal.show();
 			feedbackTaken[i] = true;
@@ -91,7 +91,7 @@
 					class="select select-sm text-white rounded-none disabled:text-opacity-75"
 					bind:value={repLoadRIR[0]}
 					bind:this={repSelectElements[exerciseNumber][setNumber]}
-					disabled={setNumber < setsPerformed[exerciseNumber]}
+					disabled={setNumber < setsPerformedPerExercise[exerciseNumber]}
 					on:click={() => {
 						repSelectElements[exerciseNumber][setNumber].classList.remove('animate-pulse');
 					}}
@@ -104,7 +104,7 @@
 				<select
 					class="select select-sm text-white rounded-none disabled:text-opacity-75"
 					bind:value={repLoadRIR[1]}
-					disabled={setNumber < setsPerformed[exerciseNumber]}
+					disabled={setNumber < setsPerformedPerExercise[exerciseNumber]}
 				>
 					{#each Array.from(Array(100).keys()) as i}
 						<option value={(i + 1) * 2.5}>{(i + 1) * 2.5} kg</option>
@@ -113,15 +113,15 @@
 				<select
 					class="select select-sm text-white rounded-none disabled:text-opacity-75"
 					bind:value={repLoadRIR[2]}
-					disabled={setNumber < setsPerformed[exerciseNumber]}
+					disabled={setNumber < setsPerformedPerExercise[exerciseNumber]}
 				>
 					{#each Array.from(Array(5).keys()) as i}
 						<option value={i}>{i} RIR</option>
 					{/each}
 				</select>
-				{#if setsPerformed[exerciseNumber] > setNumber}
+				{#if setsPerformedPerExercise[exerciseNumber] > setNumber}
 					<button class="btn btn-sm btn-ghost btn-square text-black rounded-none">✓</button>
-				{:else if setsPerformed[exerciseNumber] === setNumber}
+				{:else if setsPerformedPerExercise[exerciseNumber] === setNumber}
 					<button
 						class="btn btn-sm btn-success border-none btn-square text-white rounded-none"
 						on:click={() => performSet(exerciseNumber, setNumber)}>✓</button
