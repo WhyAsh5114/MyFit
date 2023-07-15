@@ -56,7 +56,8 @@
 			plannedRIR: $plannedRIR,
 			muscleGroupWorkloads: $muscleWorkloads,
 			muscleSorenessToNextWorkout: $muscleSorenessToNextWorkout,
-			referenceWorkout: $referenceWorkout
+			referenceWorkout: $referenceWorkout,
+			weekNumber: $weekNumber
 		};
 		const reqBody: APIWorkoutCreate = { workout: thisWorkout };
 		const response = await fetch('/api/workouts/create', {
