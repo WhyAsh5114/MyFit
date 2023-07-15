@@ -14,6 +14,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {
 		mesocycles: userData?.mesocycles as (Mesocycle | null)[] | null,
 		activeMesocycle: userData?.activeMesocycle as ActiveMesocycle | null,
-		workouts: userData?.workouts as Workout[] | null
+		workouts: userData?.workouts as Workout[] | null,
+		performedMesocycles: userData?.performedMesocycles as PerformedMesocycle[] | null
 	};
 };
