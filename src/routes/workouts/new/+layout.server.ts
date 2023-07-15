@@ -1,6 +1,6 @@
-import { error } from "@sveltejs/kit";
-import type { LayoutServerLoad } from "./$types";
-import clientPromise from "$lib/mongodb";
+import { error } from '@sveltejs/kit';
+import type { LayoutServerLoad } from './$types';
+import clientPromise from '$lib/mongodb';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	const session = await locals.getSession();
@@ -10,13 +10,13 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 
 	const client = await clientPromise;
 	const userData = await client.db().collection('users').findOne({ email: session.user?.email });
-    if (!userData?.activeMesocycle) {
-        throw error(400, 'No active mesocycle, start one from the Mesocycles page')
-    }
-    const parentMesocycleID = userData.activeMesocycle.mesoID;
+	if (!userData?.activeMesocycle) {
+		throw error(400, 'No active mesocycle, start one from the Mesocycles page');
+	}
+	const parentMesocycleID = userData.activeMesocycle.mesoID;
 
 	return {
 		parentMesocycle: userData.mesocycles[parentMesocycleID] as Mesocycle,
-        activeMesocycle: userData.activeMesocycle as ActiveMesocycle
+		activeMesocycle: userData.activeMesocycle as ActiveMesocycle
 	};
 };

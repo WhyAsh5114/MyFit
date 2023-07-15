@@ -71,12 +71,14 @@
 <button
 	class="btn btn-block btn-accent mt-3 flex flex-col disabled:bg-accent disabled:text-black"
 	disabled={totalSetsPerformed !== totalSets}
-	on:click={() => {goto('/workouts/new/overview')}}
+	on:click={() => {
+		goto('/workouts/new/overview');
+	}}
 >
 	{#if totalSetsPerformed === totalSets}
 		Finish workout
 	{:else}
-		{Math.round(totalSetsPerformed / totalSets * 100)}%
+		{Math.round((totalSetsPerformed / totalSets) * 100)}%
 		<progress
 			class="progress w-full bg-secondary progress-primary"
 			value={totalSetsPerformed}

@@ -77,7 +77,12 @@
 			How much was the workload for the {selectedExercise.muscleTarget} muscles in this workout?
 		</p>
 		<div class="h-px w-full bg-secondary mt-2 mb-4" />
-		<form class="flex flex-col gap-2" on:submit|preventDefault={() => {workloadFeedbackModal.close()}}>
+		<form
+			class="flex flex-col gap-2"
+			on:submit|preventDefault={() => {
+				workloadFeedbackModal.close();
+			}}
+		>
 			<div class="flex flex-col">
 				<h3 class="font-semibold mt-2">Workload rating</h3>
 				<div class="grid grid-cols-3 gap-1 mt-1">
