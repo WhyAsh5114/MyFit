@@ -30,15 +30,30 @@
 		</select>
 	</div>
 </div>
-<div class="grow border w-full my-2">
+<ul class="grow w-full my-2 flex flex-col gap-2">
 	<!-- Active section (show only if meso is active) -->
 	<!-- TODO: if meso is active, for active section's date range, just show start date, loop over activeMesocycle.workouts and show them as cards -->
+	{#if data.workouts && data.mesocycles}
+		{#each data.workouts as workout}
+			<button class="w-full btn-primary rounded-md p-2 flex flex-col">
+				<h3 class="font-semibold text-left w-full text-base">
+					{new Date(workout.startTimestamp).toLocaleString()}
+				</h3>
+				<h4>{data.mesocycles[workout.mesoID]?.splitSchedule[workout.dayNumber]}</h4>
+				<div>
+					{#each workout.exercisesPerformed as exercise}
+						<span />
+					{/each}
+				</div>
+			</button>
+		{/each}
+	{/if}
 
 	<!-- Older sections (with dates) -->
 	<!-- TODO: loop over data.performedMesocycles and if performedMesocycle.mesoID == selectedMesocycle -->
 	<!-- TODO: show section with heading of date range (startDate - endDate) -->
 	<!-- TODO: loop over the performedMesocycle.workouts and show them as cards -->
-</div>
+</ul>
 <a class="btn btn-block btn-accent" href="/workouts/new">
 	{#if $navigating?.to?.url.pathname === '/workouts/new'}
 		<span class="loading loading-spinner" />
