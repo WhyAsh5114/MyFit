@@ -7,7 +7,9 @@
 		weekNumber,
 		muscleTargetsAndSets,
 		referenceWorkout,
-		workoutExercises
+		workoutExercises,
+		muscleWorkloads,
+		muscleSorenessToNextWorkout
 	} from '../newWorkoutStore';
 	import { goto } from '$app/navigation';
 	import WorkoutExerciseCard from '$lib/components/workout/WorkoutExerciseCard.svelte';
@@ -65,7 +67,12 @@
 		</div>
 	</div>
 	<ul class="h-px grow w-full overflow-y-auto p-2 gap-3 flex flex-col">
-		<WorkoutExerciseCard bind:workoutExercises={$workoutExercises} bind:setsPerformedPerExercise />
+		<WorkoutExerciseCard
+			bind:workoutExercises={$workoutExercises}
+			bind:setsPerformedPerExercise
+			bind:muscleWorkloads={$muscleWorkloads}
+			bind:muscleSorenessToNextWorkout={$muscleSorenessToNextWorkout}
+		/>
 	</ul>
 </div>
 <button
