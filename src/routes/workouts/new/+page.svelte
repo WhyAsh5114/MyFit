@@ -9,7 +9,8 @@
 		muscleTargetsAndSets,
 		weekNumber,
 		workoutExercises,
-		referenceWorkout
+		referenceWorkout,
+		startTimestamp
 	} from './newWorkoutStore.js';
 	export let data;
 
@@ -73,6 +74,7 @@
 <form
 	class="flex flex-col w-full gap-2 h-full"
 	on:submit|preventDefault={() => {
+		$startTimestamp = +new Date();
 		goto('/workouts/new/exercises');
 	}}
 >
