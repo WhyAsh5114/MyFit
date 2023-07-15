@@ -53,7 +53,7 @@ interface PerformedMesocycle extends ActiveMesocycle {
 type Workout = {
 	startTimestamp: EpochTimeStamp;
 	endTimestamp: EpochTimeStamp;
-	dayNumber: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+	dayNumber: number;
 	mesoID: number;
 	difficultyRating: 1 | 2 | 3 | 4 | 5;
 	exercisesPerformed: WorkoutExercise[];
