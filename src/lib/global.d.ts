@@ -62,6 +62,10 @@ type Workout = {
 		undefined | 'low' | 'moderate' | 'high'
 	>;
 	plannedRIR: number;
+	muscleSorenessToNextWorkout: Record<
+		(typeof commonMuscleGroups)[number],
+		undefined | 'none' | 'low' | 'high'
+	>;
 };
 
 type WorkoutExercise = {
