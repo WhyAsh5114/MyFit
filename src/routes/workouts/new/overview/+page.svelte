@@ -7,7 +7,8 @@
 		weekNumber,
 		workoutDay,
 		muscleWorkloads,
-		muscleSorenessToNextWorkout
+		muscleSorenessToNextWorkout,
+		referenceWorkout
 	} from '../newWorkoutStore.js';
 	import { goto } from '$app/navigation';
 	import MyModal from '$lib/components/MyModal.svelte';
@@ -54,7 +55,8 @@
 			exercisesPerformed: $workoutExercises,
 			plannedRIR: $plannedRIR,
 			muscleGroupWorkloads: $muscleWorkloads,
-			muscleSorenessToNextWorkout: $muscleSorenessToNextWorkout
+			muscleSorenessToNextWorkout: $muscleSorenessToNextWorkout,
+			referenceWorkout: $referenceWorkout
 		};
 		const reqBody: APIWorkoutCreate = { workout: thisWorkout };
 		const response = await fetch('/api/workouts/create', {

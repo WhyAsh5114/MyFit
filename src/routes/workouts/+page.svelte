@@ -4,7 +4,8 @@
 	export let data;
 
 	let selectedMesocycle: undefined | number;
-	function dateFormatter(timestamp: number) {
+	function dateFormatter(timestamp: number | undefined) {
+		if (!timestamp) return;
 		const date = new Date(timestamp);
 		return date.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
 	}
@@ -47,11 +48,11 @@
 				>
 					{#if data.mesocycles && data.workouts}
 						<h3 class="font-semibold text-left w-full text-base text-secondary">
-							{dateFormatter(data.workouts[workoutIndex].startTimestamp)}
+							{dateFormatter(data.workouts[workoutIndex || 0]?.startTimestamp)}
 						</h3>
 						<h4 class="font-normal text-base">
-							{data.mesocycles[data.workouts[workoutIndex].mesoID]?.splitSchedule[
-								data.workouts[workoutIndex].dayNumber
+							{data.mesocycles[data.workouts[workoutIndex]?.mesoID || 0]?.splitSchedule[
+								data.workouts[workoutIndex]?.dayNumber || 0
 							]}
 						</h4>
 					{/if}
@@ -79,12 +80,12 @@
 							href="/workouts/view/{workoutIndex}"
 						>
 							<h3 class="font-semibold text-left w-full text-base text-secondary">
-								{dateFormatter(data.workouts[workoutIndex].startTimestamp)}
+								{dateFormatter(data.workouts[workoutIndex]?.startTimestamp)}
 							</h3>
 							{#if data.mesocycles && data.workouts}
 								<h4 class="font-normal text-base">
-									{data.mesocycles[data.workouts[workoutIndex].mesoID]?.splitSchedule[
-										data.workouts[workoutIndex].dayNumber
+									{data.mesocycles[data.workouts[workoutIndex]?.mesoID || 0]?.splitSchedule[
+										data.workouts[workoutIndex]?.dayNumber || 0
 									]}
 								</h4>
 							{/if}
