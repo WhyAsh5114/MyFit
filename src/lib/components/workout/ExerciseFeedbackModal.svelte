@@ -74,7 +74,8 @@
 		titleColor="text-accent"
 	>
 		<p>
-			How much was the workload for the {selectedExercise.muscleTarget} muscles in this workout?
+			How much was the workload for the
+			<span class="font-semibold italic">{selectedExercise.muscleTarget}</span> muscles in this workout?
 		</p>
 		<div class="h-px w-full bg-secondary mt-2 mb-4" />
 		<form
