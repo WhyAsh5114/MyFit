@@ -10,6 +10,7 @@
 		muscleSorenessToNextWorkout
 	} from '../newWorkoutStore.js';
 	import { goto } from '$app/navigation';
+	import MyModal from '$lib/components/MyModal.svelte';
 	export let data;
 
 	onMount(() => {
@@ -40,7 +41,10 @@
 	}
 
 	let difficultyRating: 1 | 2 | 3 | 4 | 5 = 2;
-	function saveWorkout() {
+	let callingEndpoint = false;
+	let errorMsg = '';
+	async function saveWorkout() {
+		callingEndpoint = true;
 		const thisWorkout: Workout = {
 			startTimestamp: $startTimestamp,
 			endTimestamp: $startTimestamp + diff,
@@ -52,9 +56,41 @@
 			muscleGroupWorkloads: $muscleWorkloads,
 			muscleSorenessToNextWorkout: $muscleSorenessToNextWorkout
 		};
-		
+		const reqBody: APIWorkoutCreate = { workout: thisWorkout };
+		const response = await fetch('/api/workouts/create', {
+			method: 'POST',
+			body: JSON.stringify(reqBody),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+		if (response.ok) {
+			successModal.show();
+		} else {
+			errorMsg = await response.text();
+			errorModal.show();
+		}
+		callingEndpoint = false;
 	}
+
+	let successModal: HTMLDialogElement;
+	let errorModal: HTMLDialogElement;
 </script>
+
+<MyModal
+	bind:dialogElement={successModal}
+	title="Success"
+	titleColor="text-success"
+	onClose={() => {
+		goto('/workouts');
+	}}
+>
+	<p>Workout saved successfully</p>
+</MyModal>
+
+<MyModal bind:dialogElement={errorModal} title="Error" titleColor="text-error">
+	<p>{errorMsg}</p>
+</MyModal>
 
 <div class="flex flex-col h-px grow overflow-y-auto w-full gap-2">
 	<div class="stats bg-primary grid-cols-2">
@@ -118,4 +154,9 @@
 		</div>
 	</div>
 </div>
-<button class="btn btn-block btn-accent" on:click={saveWorkout}> Save workout </button>
+<button class="btn btn-block btn-accent" on:click={saveWorkout}>
+	{#if callingEndpoint}
+		<span class="loading loading-spinner" />
+	{/if}
+	Save workout
+</button>
