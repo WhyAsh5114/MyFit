@@ -8,6 +8,7 @@
 	export let muscleWorkloads: Workout['muscleGroupWorkloads'];
 
 	const ratingMap: Record<number, string> = { 0: 'none', 1: 'moderate', 2: 'high' };
+	const workloadMap: Record<number, string> = { 0: 'low', 1: 'moderate', 2: 'high' };
 
 	let feedbackSystem: Record<string, Record<string, 'good-btn' | 'ok-btn' | 'bad-btn'>> = {
 		'Joint pain rating': { 'No pain': 'good-btn', 'Some pain': 'ok-btn', 'That hurt': 'bad-btn' },
@@ -72,19 +73,23 @@
 		title={`${selectedExercise?.muscleTarget} workload rating`}
 		titleColor="text-accent"
 	>
-		<p>How much was the workload for the {selectedExercise.muscleTarget} in this workout?</p>
-		<form class="flex flex-col gap-2" on:submit|preventDefault={submitFeedback}>
+		<p>
+			How much was the workload for the {selectedExercise.muscleTarget} muscles in this workout?
+		</p>
+		<div class="h-px w-full bg-secondary mt-2 mb-4" />
+		<form class="flex flex-col gap-2" on:submit|preventDefault={() => {workloadFeedbackModal.close()}}>
 			<div class="flex flex-col">
-				<h3 class="font-semibold">Workload rating</h3>
+				<h3 class="font-semibold mt-2">Workload rating</h3>
 				<div class="grid grid-cols-3 gap-1 mt-1">
-					{#each [''] as choice, i}
+					{#each [["Could've done more", 'ok-btn'], ['Just right', 'good-btn'], ['Too much work', 'bad-btn']] as choice, i}
 						<input
 							class="btn"
 							type="radio"
 							name="Workload rating"
-							aria-label={choice}
+							aria-label={choice[0]}
 							bind:group={muscleWorkloads[selectedExercise.muscleTarget]}
-							value={ratingMap[i]}
+							value={workloadMap[i]}
+							id={choice[1]}
 							required
 						/>
 					{/each}
