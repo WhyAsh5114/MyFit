@@ -26,34 +26,6 @@
 
 	let todaysDay = days[new Date().getDay()];
 
-	function splitExerciseToWorkoutExercise(splitEx: SplitExercise) {
-		const workoutExercise: WorkoutExercise = {
-			name: splitEx.name as string,
-			repRangeStart: splitEx.repRangeStart as number,
-			repRangeEnd: splitEx.repRangeEnd as number,
-			muscleTarget: splitEx.muscleTarget as (typeof commonMuscleGroups)[number],
-			setType: splitEx.setType as Exclude<SplitExercise['setType'], ''>,
-			jointPainRating: undefined,
-			pumpRating: undefined,
-			disruptionRating: undefined,
-			mindMuscleConnectionRating: undefined,
-			repsLoadRIR: []
-		};
-		for (let i = 0; i < (splitEx.sets as number); i++) {
-			workoutExercise.repsLoadRIR.push([undefined, undefined, $plannedRIR]);
-		}
-		return workoutExercise;
-	}
-
-	$workoutExercises = [];
-	if ($referenceWorkout === null && data.parentMesocycle.splitExercises[$workoutDay]) {
-		data.parentMesocycle.splitExercises[$workoutDay].forEach((exercise) => {
-			$workoutExercises.push(splitExerciseToWorkoutExercise(exercise));
-		});
-	} else {
-		// TODO: template from old workout and apply appropriate volume changes
-	}
-
 	let totalSets = 0;
 	$: {
 		totalSets = 0;
