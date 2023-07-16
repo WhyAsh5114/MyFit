@@ -15,7 +15,7 @@
 			<div class="flex flex-col gap-1 bg-base-100 p-4 rounded-lg">
 				<MuscleGroupComponent muscleGroup="Glutes" freq={2} volume={8} />
 				<div class="flex w-full bg-primary italic rounded-md px-2 py-0.5">
-					<h4 class="basis-24 shrink-0">Muscle</h4>
+					<p class="basis-24 shrink-0">Muscle</p>
 					<p>Volume range <br /> (0 -&gt; MRV)</p>
 					<p class="ml-auto justify-self-end">Frequency</p>
 				</div>

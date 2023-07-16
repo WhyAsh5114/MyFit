@@ -11,13 +11,13 @@
 </script>
 
 <div class="flex w-full {bgColorClass} font-semibold rounded-md px-2 py-0.5">
-	<p class="shrink-0 basis-24">{muscleGroup}</p>
+	<p class="shrink-0 basis-24 text-white">{muscleGroup}</p>
 	<VolumeProgress {volumeLandmark} {volume} frequency={freq} />
 	{#if freq < volumeLandmark.freqStart || freq > volumeLandmark.freqEnd}
 		{#if (freq < 2 && volumeLandmark.MV > 0) || freq === 7}
 			<p class="ml-4 text-error">{freq}x</p>
 		{:else if volumeLandmark.MEV === 0}
-			<p class="ml-4">{freq}x</p>
+			<p class="ml-4 text-white">{freq}x</p>
 		{:else}
 			<p class="ml-4 text-warning">{freq}x</p>
 		{/if}
