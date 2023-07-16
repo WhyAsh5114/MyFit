@@ -49,7 +49,7 @@
 			out:scale|local={{ duration: 200 }}
 		>
 			<div class="flex justify-between">
-				<h5 class="text-lg font-bold">{exercise.name}</h5>
+				<h3 class="text-lg font-bold">{exercise.name}</h3>
 				<div class="dropdown dropdown-end w-5">
 					<button>
 						<img src="/HamburgerMenu.svg" alt="menu" />
@@ -74,10 +74,10 @@
 					</ul>
 				</div>
 			</div>
-			<h6 class="capitalize text-sm font-semibold italic">{exercise.setType} sets</h6>
+			<i class="capitalize text-sm font-semibold">{exercise.setType} sets</i>
 			<div class="flex justify-between mt-2.5 text-sm">
 				<p>{exercise.sets} sets of {exercise.repRangeStart} to {exercise.repRangeEnd} reps</p>
-				<span class="badge badge-error text-white">{exercise.muscleTarget}</span>
+				<span class="badge badge-error text-black">{exercise.muscleTarget}</span>
 			</div>
 		</li>
 	{/each}
