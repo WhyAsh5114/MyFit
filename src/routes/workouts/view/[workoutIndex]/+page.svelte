@@ -128,9 +128,9 @@
 			<h3>Average RIR</h3>
 			<p class="text-secondary font-bold text-2xl">{averageRIR}</p>
 			{#if averageRIR < data.workout.plannedRIR - 0.5}
-				<div class="stat-desc text-sm text-error">You went too easy</div>
-			{:else if averageRIR > data.workout.plannedRIR + 0.5}
 				<div class="stat-desc text-sm text-error">You went too hard</div>
+			{:else if averageRIR > data.workout.plannedRIR + 0.5}
+				<div class="stat-desc text-sm text-error">You went too easy</div>
 			{:else}
 				<div class="stat-desc text-sm">RIR matched with plan</div>
 			{/if}
