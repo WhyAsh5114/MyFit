@@ -79,7 +79,12 @@
 <div class="flex flex-col bg-primary p-5 rounded-lg w-full">
 	<div class="flex justify-between">
 		<h3 class="card-title">Current Mesocycle</h3>
-		<input type="checkbox" class="toggle toggle-secondary" bind:checked={filterByMesocycles} />
+		<input
+			type="checkbox"
+			class="toggle toggle-secondary"
+			aria-label="filter-by-mesocycle"
+			bind:checked={filterByMesocycles}
+		/>
 	</div>
 	<div class="h-0.5 bg-black mt-1 mb-4" />
 	<div class="flex gap-2">
@@ -109,28 +114,32 @@
 		</select>
 	</div>
 </div>
-<ul class="grow w-full my-2 flex flex-col gap-2">
+<div class="grow w-full my-2 flex flex-col gap-2">
 	{#if filterByMesocycles && data.workouts}
 		{#if activeMesocycleWorkouts.length > 0}
 			<div class="flex flex-col gap-1">
 				<h3 class="text-accent font-bold text-xl">
 					Active ({dateFormatter(data.activeMesocycle?.startDate)})
 				</h3>
-				{#each activeMesocycleWorkouts as { id, workout }}
-					<a
-						class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-1 items-start"
-						href="/workouts/view/{id}"
-					>
-						<h3 class="font-semibold text-left w-full text-base text-secondary">
-							{dateFormatter(workout.startTimestamp)}
-						</h3>
-						<h4 class="font-normal text-base">
-							{#if data.mesocycles}
-								{data.mesocycles[workout.mesoID]?.splitSchedule[workout.dayNumber]}
-							{/if}
-						</h4>
-					</a>
-				{/each}
+				<ul class="flex flex-col gap-1">
+					{#each activeMesocycleWorkouts as { id, workout }}
+						<li>
+							<a
+								class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-1 items-start"
+								href="/workouts/view/{id}"
+							>
+								<h3 class="font-semibold text-left w-full text-base text-secondary">
+									{dateFormatter(workout.startTimestamp)}
+								</h3>
+								<h4 class="font-normal text-base">
+									{#if data.mesocycles}
+										{data.mesocycles[workout.mesoID]?.splitSchedule[workout.dayNumber]}
+									{/if}
+								</h4>
+							</a>
+						</li>
+					{/each}
+				</ul>
 			</div>
 		{/if}
 		{#each performedMesocyclesWorkouts as performedMesocycleWorkouts}
@@ -140,43 +149,51 @@
 						performedMesocycleWorkouts.endTimestamp
 					)}
 				</h3>
-				{#each performedMesocycleWorkouts.workouts as { id, workout }}
-					<a
-						class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-1 items-start"
-						href="/workouts/view/{id}"
-					>
-						<h3 class="font-semibold text-left w-full text-base text-secondary">
-							{dateFormatter(workout.startTimestamp)}
-						</h3>
-						{#if data.mesocycles && data.workouts}
-							<h4 class="font-normal text-base">
-								{data.mesocycles[workout.mesoID]?.splitSchedule[workout.dayNumber]}
-							</h4>
-						{/if}
-					</a>
-				{/each}
+				<ul class="flex flex-col gap-1">
+					{#each performedMesocycleWorkouts.workouts as { id, workout }}
+						<li>
+							<a
+								class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-1 items-start"
+								href="/workouts/view/{id}"
+							>
+								<h3 class="font-semibold text-left w-full text-base text-secondary">
+									{dateFormatter(workout.startTimestamp)}
+								</h3>
+								{#if data.mesocycles && data.workouts}
+									<h4 class="font-normal text-base">
+										{data.mesocycles[workout.mesoID]?.splitSchedule[workout.dayNumber]}
+									</h4>
+								{/if}
+							</a>
+						</li>
+					{/each}
+				</ul>
 			</div>
 		{/each}
 	{:else if data.workouts}
-		{#each data.workouts.slice(0).reverse() as workout, workoutIndex}
-			{#if workout}
-				<a
-					class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-1 items-start"
-					href="/workouts/view/{data.workouts.length - 1 - workoutIndex}"
-				>
-					<h3 class="font-semibold text-left w-full text-base text-secondary">
-						{dateFormatter(workout.startTimestamp)}
-					</h3>
-					{#if data.mesocycles && data.workouts}
-						<h4 class="font-normal text-base">
-							{data.mesocycles[workout.mesoID]?.splitSchedule[workout.dayNumber]}
-						</h4>
-					{/if}
-				</a>
-			{/if}
-		{/each}
+		<ul class="flex flex-col gap-1">
+			{#each data.workouts.slice(0).reverse() as workout, workoutIndex}
+				{#if workout}
+					<li>
+						<a
+							class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-1 items-start"
+							href="/workouts/view/{data.workouts.length - 1 - workoutIndex}"
+						>
+							<h3 class="font-semibold text-left w-full text-base text-secondary">
+								{dateFormatter(workout.startTimestamp)}
+							</h3>
+							{#if data.mesocycles && data.workouts}
+								<h4 class="font-normal text-base">
+									{data.mesocycles[workout.mesoID]?.splitSchedule[workout.dayNumber]}
+								</h4>
+							{/if}
+						</a>
+					</li>
+				{/if}
+			{/each}
+		</ul>
 	{/if}
-</ul>
+</div>
 <a class="btn btn-block btn-accent" href="/workouts/new">
 	{#if $navigating?.to?.url.pathname === '/workouts/new'}
 		<span class="loading loading-spinner" />
