@@ -185,7 +185,7 @@
 	<div class="stats bg-primary w-full">
 		<div class="stat">
 			<h3>Muscle targets</h3>
-			<div class="flex flex-wrap mt-1.5">
+			<div class="flex flex-wrap mt-1.5 gap-1">
 				{#each Object.keys(muscleTargetsAndSets) as muscleTarget}
 					<span class="badge">{muscleTarget} x {muscleTargetsAndSets[muscleTarget]}</span>
 				{/each}
