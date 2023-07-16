@@ -80,11 +80,12 @@
 <div class="bg-primary flex flex-col gap-3 p-5 rounded-lg w-full max-w-xs">
 	{#each days as day, i}
 		<div class="join bg-secondary items-center">
-			<label for={day} class="join-item shrink-0 basis-12 pl-2 text-black font-semibold"
+			<label for={`${day}day-workout`} class="join-item shrink-0 basis-12 pl-2 text-black font-semibold"
 				>{day}</label
 			>
 			<input
 				type="text"
+				id={`${day}day-workout`}
 				class="join-item input input-sm text-base text-center w-full"
 				bind:value={$splitSchedule[i]}
 			/>
