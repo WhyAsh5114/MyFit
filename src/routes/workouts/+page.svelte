@@ -74,11 +74,6 @@
 	}
 
 	let filterByMesocycles = true;
-	$: if (filterByMesocycles) {
-		console.log(data.workouts);
-	} else {
-		console.log(data.workouts);
-	}
 </script>
 
 <div class="flex flex-col bg-primary p-5 rounded-lg w-full">
