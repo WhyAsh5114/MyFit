@@ -196,7 +196,7 @@
 							type="radio"
 							name="difficulty-rating"
 							value={i + 1}
-							class="mask mask-star bg-warning"
+							class="mask mask-star bg-warning h-7 w-7"
 							bind:group={data.workout.difficultyRating}
 							aria-labelledby="diff-rating-heading"
 							disabled
