@@ -51,7 +51,7 @@
 				{#each exercise.repsLoadRIR as repLoadRIR}
 					<p class="w-10 text-center py-1.5 font-semibold bg-black text-sm text-white">{repLoadRIR[0]}</p>
 					<p class="w-16 text-center py-1.5 font-semibold bg-black text-sm text-white">{repLoadRIR[1]} kg</p>
-					<p class="w-12 text-center py-1.5 font-semibold bg-black text-sm text-white">{repLoadRIR[2]} RIR</p>
+					<p class="w-14 text-center py-1.5 font-semibold bg-black text-sm text-white">{repLoadRIR[2]} RIR</p>
 				{/each}
 			</div>
 		</li>
