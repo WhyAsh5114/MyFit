@@ -177,7 +177,7 @@
 			{:else if averageRIR > data.workout.plannedRIR + 0.5}
 				<div class=" text-sm text-error">You went too easy</div>
 			{:else}
-				<div class=" text-sm">RIR matched with plan</div>
+				<div class=" text-sm">Matched with plan</div>
 			{/if}
 		</div>
 		<div class="stat">
@@ -196,7 +196,7 @@
 							type="radio"
 							name="difficulty-rating"
 							value={i + 1}
-							class="mask mask-star bg-warning h-7 w-7"
+							class="mask mask-star bg-warning"
 							bind:group={data.workout.difficultyRating}
 							aria-labelledby="diff-rating-heading"
 							disabled

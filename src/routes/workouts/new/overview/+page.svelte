@@ -122,7 +122,7 @@
 			{:else if averageRIR > $plannedRIR + 0.5}
 				<div class="text-sm text-error">Go harder</div>
 			{:else}
-				<div class="text-sm">RIR matched with plan</div>
+				<div class="text-sm">Matched with plan</div>
 			{/if}
 		</div>
 		<div class="stat">
@@ -148,7 +148,7 @@
 							name="difficulty-rating"
 							bind:group={difficultyRating}
 							value={i + 1}
-							class="mask mask-star bg-warning h-7 w-7"
+							class="mask mask-star bg-warning"
 							aria-labelledby="diff-rating-label"
 						/>
 					{/each}
