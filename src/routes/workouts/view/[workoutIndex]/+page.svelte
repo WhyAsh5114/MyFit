@@ -119,7 +119,7 @@
 </MyModal>
 
 <div class="flex flex-col h-px grow gap-2 w-full overflow-y-auto">
-	<div class="stats bg-primary w-full stats-vertical">
+	<div class="stats bg-primary w-full stats-vertical shrink-0">
 		<div class="stat">
 			<h3>Template</h3>
 			<p class="text-secondary font-bold text-xl">
@@ -136,7 +136,7 @@
 			</p>
 		</div>
 	</div>
-	<div class="stats bg-primary w-full grid-cols-2 grid">
+	<div class="stats bg-primary w-full grid-cols-2 grid shrink-0">
 		<div class="stat">
 			<h3>Average RIR</h3>
 			<p class="text-secondary font-bold text-2xl">{averageRIR}</p>
@@ -154,7 +154,7 @@
 			<p class="stat-desc text-sm">Week {data.workout.weekNumber}</p>
 		</div>
 	</div>
-	<div class="stats bg-primary w-full grid grid-cols-2 place-items-start">
+	<div class="stats bg-primary w-full grid grid-cols-2 place-items-start shrink-0">
 		<div class="stat">
 			<h3>Difficulty rating</h3>
 			<div class="font-bold text-2xl text-secondary">
@@ -183,7 +183,7 @@
 			</p>
 		</div>
 	</div>
-	<div class="stats bg-primary w-full">
+	<div class="stats bg-primary w-full shrink-0">
 		<div class="stat">
 			<h3>Muscle targets</h3>
 			<div class="flex flex-wrap mt-1.5 gap-1">
@@ -193,15 +193,9 @@
 			</div>
 		</div>
 	</div>
-	<div class="collapse collapse-arrow bg-primary py-2">
-		<input type="checkbox" class=" p-0 min-h-0 pb-2" />
-		<div class="collapse-title p-0 min-h-0 pl-7 pb-2">Exercises</div>
-		<div class="collapse-content">
-			<WorkoutExerciseCard bind:workoutExercises={data.workout.exercisesPerformed} />
-		</div>
-	</div>
+	<WorkoutExerciseCard bind:workoutExercises={data.workout.exercisesPerformed} />
 </div>
-<div class="join grid grid-cols-2 w-full">
+<div class="join grid grid-cols-2 w-full mt-3">
 	<button
 		class="join-item btn btn-error text-black"
 		on:click={() => {
