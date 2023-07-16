@@ -43,7 +43,11 @@
 	}
 
 	$workoutExercises = [];
-	$: if ($referenceWorkout === null && data.parentMesocycle.splitExercises[$workoutDay]) {
+	$: if (
+		$referenceWorkout === null &&
+		data.parentMesocycle.splitExercises[$workoutDay] &&
+		$plannedRIR
+	) {
 		$workoutExercises = [];
 		data.parentMesocycle.splitExercises[$workoutDay].forEach((exercise) => {
 			$workoutExercises.push(splitExerciseToWorkoutExercise(exercise));
