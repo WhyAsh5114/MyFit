@@ -21,77 +21,77 @@
 	titleColor="text-accent"
 	bind:dialogElement={exerciseDetailModal}
 >
-	<div class="stats stats-vertical w-full">
+	<dl class="stats stats-vertical w-full">
 		<div class="stat py-2">
-			<h4>Name</h4>
-			<p class="stat-value text-xl">{viewingExercise?.name}</p>
+			<dt>Name</dt>
+			<dd class="stat-value text-xl">{viewingExercise?.name}</dd>
 		</div>
 		<div class="stat py-2">
-			<h4>Sets</h4>
-			<p class="stat-value text-xl">
+			<dt>Sets</dt>
+			<dd class="stat-value text-xl">
 				{viewingExercise?.repsLoadRIR.length}
 				{viewingExercise?.setType} sets
-			</p>
+			</dd>
 		</div>
 		<div class="stat py-2">
-			<h4>Rep range</h4>
-			<p class="stat-value text-xl">
+			<dt>Rep range</dt>
+			<dd class="stat-value text-xl">
 				{viewingExercise?.repRangeStart} to {viewingExercise?.repRangeEnd}
-			</p>
+			</dd>
 		</div>
 		<div class="stat py-2">
-			<h4>Muscle target</h4>
-			<p class="stat-value text-xl text-error">
+			<dt>Muscle target</dt>
+			<dd class="stat-value text-xl text-error">
 				{viewingExercise?.muscleTarget}
-			</p>
+			</dd>
 		</div>
 		{#if viewingExercise?.jointPainRating}
 			<div class="stat py-2">
-				<h4>Joint pain rating</h4>
-				<p
+				<dt>Joint pain rating</dt>
+				<dd
 					class="stat-value text-xl capitalize {colorMap.jointPainRating[
 						viewingExercise?.jointPainRating
 					]}"
 				>
 					{viewingExercise?.jointPainRating}
-				</p>
+				</dd>
 			</div>
 		{/if}
 		{#if viewingExercise?.pumpRating}
 			<div class="stat py-2">
-				<h4>Pump rating</h4>
-				<p
+				<dt>Pump rating</dt>
+				<dd
 					class="stat-value text-xl capitalize {colorMap.stimulusRating[
 						viewingExercise?.pumpRating
 					]}"
 				>
 					{viewingExercise?.pumpRating}
-				</p>
+				</dd>
 			</div>
 		{/if}
 		{#if viewingExercise?.disruptionRating}
 			<div class="stat py-2">
-				<h4>Disruption rating</h4>
-				<p
+				<dt>Disruption rating</dt>
+				<dd
 					class="stat-value text-xl capitalize {colorMap.stimulusRating[
 						viewingExercise?.disruptionRating
 					]}"
 				>
 					{viewingExercise?.disruptionRating}
-				</p>
+				</dd>
 			</div>
 		{/if}
 		{#if viewingExercise?.mindMuscleConnectionRating}
 			<div class="stat py-2">
-				<h4>Mind muscle connection rating</h4>
-				<p
+				<dt>Mind muscle connection rating</dt>
+				<dd
 					class="stat-value text-xl capitalize {colorMap.stimulusRating[
 						viewingExercise?.mindMuscleConnectionRating
 					]}"
 				>
 					{viewingExercise?.mindMuscleConnectionRating}
-				</p>
+				</dd>
 			</div>
 		{/if}
-	</div>
+	</dl>
 </MyModal>
