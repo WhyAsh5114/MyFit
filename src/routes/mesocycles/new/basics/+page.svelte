@@ -49,10 +49,11 @@
 </MyModal>
 
 <div class="flex flex-col bg-primary p-5 rounded-lg w-full mb-5">
-	<h3 class="card-title">Mesocycle name</h3>
+	<label for="meso-name" class="card-title">Mesocycle name</label>
 	<div class="h-0.5 bg-black mt-1 mb-4" />
 	<input
 		type="text"
+		id="meso-name"
 		placeholder="Type here"
 		class="input input-sm w-full"
 		bind:value={$mesoName}
@@ -86,11 +87,11 @@
 
 <div class="flex flex-col bg-primary p-5 rounded-lg w-full">
 	<div class="flex justify-between">
-		<h3 class="card-title">Start Reps In Reserve</h3>
+		<label for="meso-RIR" class="card-title">Start Reps In Reserve</label>
 		<button class="help-button" on:click={() => startRIRHelpModal.show()}>?</button>
 	</div>
 	<div class="h-0.5 bg-black mt-1 mb-4" />
-	<select class="select select-sm select-bordered w-full" bind:value={$startRIR}>
+	<select class="select select-sm select-bordered w-full" bind:value={$startRIR} id="meso-RIR">
 		<option value={4}>4 RIR</option>
 		<option value={3} selected>3 RIR</option>
 		<option value={2}>2 RIR</option>
