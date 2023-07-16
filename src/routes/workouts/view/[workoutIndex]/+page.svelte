@@ -68,6 +68,38 @@
 		const date = new Date(timestamp);
 		return date.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
 	}
+
+	let SFRList: { exercise: WorkoutExercise; SFR: number }[] = [];
+	const ratingMap = { none: 0.5, moderate: 1, high: 1.5 };
+	const fatigueMap = { none: 1, moderate: 1.5, high: 2 };
+	data.workout.exercisesPerformed.forEach((exercise) => {
+		let stimulus = 0,
+			fatigue = 0;
+		if (!exercise.jointPainRating) return;
+		if (exercise.pumpRating) {
+			stimulus += ratingMap[exercise.pumpRating];
+			fatigue += fatigueMap[exercise.jointPainRating];
+		}
+		if (exercise.disruptionRating) {
+			stimulus += ratingMap[exercise.disruptionRating];
+			fatigue += fatigueMap[exercise.jointPainRating];
+		}
+		if (exercise.mindMuscleConnectionRating) {
+			stimulus += ratingMap[exercise.mindMuscleConnectionRating];
+			fatigue += fatigueMap[exercise.jointPainRating];
+		}
+		if (stimulus === 0) return;
+		SFRList.push({ exercise, SFR: stimulus / fatigue });
+	});
+	SFRList.sort((a, b) => {
+		return b.SFR - a.SFR;
+	});
+
+	function getSFRColor(sfr: number) {
+		if (sfr < 0.5) return 'text-warning'
+		if (sfr < 0.75) return 'text-success'
+		return 'text-accent'
+	}
 </script>
 
 <MyModal title="Delete Mesocycle" titleColor="text-error" bind:dialogElement={confirmDeleteModal}>
@@ -194,6 +226,21 @@
 		</div>
 	</div>
 	<CompletedWorkoutExerciseCard bind:workoutExercises={data.workout.exercisesPerformed} />
+	{#if SFRList.length > 0}
+		<div class="stats bg-primary shrink-0 w-full">
+			<div class="stat">
+				<h3>Highest SFRs</h3>
+				<div class="flex flex-col mt-2">
+					{#each SFRList as { exercise, SFR }}
+						<div class="flex justify-between text-secondary">
+							{exercise.name}
+							<p class="font-semibold {getSFRColor(SFR)}">{SFR.toFixed(2)}</p>
+						</div>
+					{/each}
+				</div>
+			</div>
+		</div>
+	{/if}
 </div>
 <div class="join grid grid-cols-2 w-full mt-3">
 	<button
