@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { days } from '$lib/commonDB.js';
 	import MyModal from '$lib/components/MyModal.svelte';
-	import CompletedWorkoutExerciseCard from '$lib/components/workout/CompletedWorkoutExerciseCard.svelte';
+	import ViewExerciseCard from '$lib/components/workout/ViewExerciseCard.svelte';
 
 	export let data;
 
@@ -225,7 +225,7 @@
 			</div>
 		</div>
 	</div>
-	<CompletedWorkoutExerciseCard bind:workoutExercises={data.workout.exercisesPerformed} />
+	<ViewExerciseCard bind:workoutExercises={data.workout.exercisesPerformed} />
 	{#if SFRList.length > 0}
 		<div class="stats bg-primary shrink-0 w-full">
 			<div class="stat">

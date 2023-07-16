@@ -76,7 +76,7 @@
                                 viewingExercise = exercise;
                             }}>Details</button
                         >
-                        <li class="btn btn-sm btn-error text-black">Delete</li>
+                        <button class="btn btn-sm btn-error text-black">Delete</button>
                     </div>
 
 					<li class="text-secondary flex flex-row items-center gap-2">
@@ -84,15 +84,15 @@
 						<span class="h-px p-0 grow bg-white" />
 					</li>
 					<div class="grid grid-cols-2 gap-1">
-						<li class="btn btn-sm btn-primary">Add</li>
-						<li class="btn btn-sm btn-primary">Remove</li>
+						<button class="btn btn-sm btn-primary">Add</button>
+						<button class="btn btn-sm btn-primary">Remove</button>
 					</div>
 					<li class="text-secondary flex flex-row items-center gap-2">
 						Feedback
 						<span class="h-px p-0 grow bg-white" />
 					</li>
-					<li class="btn btn-sm btn-primary">Stimulus & fatigue</li>
-					<li class="btn btn-sm btn-primary">Workload & soreness</li>
+					<button class="btn btn-sm btn-primary">Stimulus & fatigue</button>
+					<button class="btn btn-sm btn-primary">Workload & soreness</button>
 				</ul>
 			</div>
 		</div>
