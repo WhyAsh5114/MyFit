@@ -98,44 +98,48 @@
 
 <div class="flex flex-col h-px grow overflow-y-auto w-full gap-2">
 	<div class="stats bg-primary grid-cols-2">
-		<div class="stat">
-			<div>Duration</div>
-			<div class="font-bold text-2xl text-secondary">
+		<dl class="stat">
+			<dt>Duration</dt>
+			<dd class="font-bold text-2xl text-secondary">
 				{Math.floor(diff / 1000 / 3600)} hr {Math.floor(diff / 1000 / 60) % 60} m
-			</div>
-		</div>
-		<div class="stat">
-			<div>Volume</div>
-			<div class="font-bold text-2xl text-secondary">{totalSets} sets</div>
-		</div>
+			</dd>
+		</dl>
+		<dl class="stat">
+			<dt>Volume</dt>
+			<dd class="font-bold text-2xl text-secondary">{totalSets} sets</dd>
+		</dl>
 	</div>
 	<div class="stats bg-primary grid-cols-2 place-items-start">
 		<div class="stat">
-			<div>Average RIR</div>
-			<div class="font-bold text-2xl text-secondary">
-				{averageRIR} RIR
-			</div>
+			<dl>
+				<dt>Average RIR</dt>
+				<dd class="font-bold text-2xl text-secondary">
+					{averageRIR} RIR
+				</dd>
+			</dl>
 			{#if averageRIR < $plannedRIR - 0.5}
-				<div class=" text-sm text-error">Go easier</div>
+				<div class="text-sm text-error">Go easier</div>
 			{:else if averageRIR > $plannedRIR + 0.5}
-				<div class=" text-sm text-error">Go harder</div>
+				<div class="text-sm text-error">Go harder</div>
 			{:else}
-				<div class="">RIR matched with plan</div>
+				<div class="text-sm">RIR matched with plan</div>
 			{/if}
 		</div>
 		<div class="stat">
-			<div>Planned RIR</div>
-			<div class="font-bold text-2xl text-secondary">
-				{$plannedRIR} RIR
-			</div>
-			<div class="">
+			<dl>
+				<dt>Planned RIR</dt>
+				<dd class="font-bold text-2xl text-secondary">
+					{$plannedRIR} RIR
+				</dd>
+			</dl>
+			<div class="text-sm">
 				Week {$weekNumber}
 			</div>
 		</div>
 	</div>
 	<div class="stats bg-primary grid-cols-2">
 		<div class="stat">
-			<div>Difficulty rating</div>
+			<div id="diff-rating-label">Difficulty rating</div>
 			<div class="font-bold text-2xl text-secondary">
 				<div class="rating mt-1">
 					{#each Array(5).fill(0) as num, i}
@@ -144,18 +148,19 @@
 							name="difficulty-rating"
 							bind:group={difficultyRating}
 							value={i + 1}
-							class="mask mask-star bg-warning"
+							class="mask mask-star bg-warning h-7 w-7"
+							aria-labelledby="diff-rating-label"
 						/>
 					{/each}
 				</div>
 			</div>
 		</div>
-		<div class="stat">
-			<div>Workout type</div>
-			<div class="font-semibold text-secondary">
+		<dl class="stat">
+			<dt>Workout type</dt>
+			<dd class="font-semibold text-secondary">
 				{data.parentMesocycle.splitSchedule[$workoutDay]}
-			</div>
-		</div>
+			</dd>
+		</dl>
 	</div>
 </div>
 <button class="btn btn-block btn-accent" on:click={saveWorkout}>

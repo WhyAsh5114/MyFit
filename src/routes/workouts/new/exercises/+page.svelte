@@ -62,19 +62,19 @@
 			</div>
 			<div class="flex flex-wrap gap-1 mt-1">
 				{#each Object.keys($muscleTargetsAndSets) as muscleTarget}
-					<span class="badge badge-error text-white">{muscleTarget}</span>
+					<span class="badge badge-error text-black">{muscleTarget}</span>
 				{/each}
 			</div>
 		</div>
 	</div>
-	<ul class="h-px grow w-full overflow-y-auto p-2 gap-3 flex flex-col">
+	<div class="h-px grow w-full overflow-y-auto p-2">
 		<WorkoutExerciseCard
 			bind:workoutExercises={$workoutExercises}
 			bind:setsPerformedPerExercise
 			bind:muscleWorkloads={$muscleWorkloads}
 			bind:muscleSorenessToNextWorkout={$muscleSorenessToNextWorkout}
 		/>
-	</ul>
+	</div>
 </div>
 <button
 	class="btn btn-block btn-accent mt-3 flex flex-col disabled:bg-accent disabled:text-black"
