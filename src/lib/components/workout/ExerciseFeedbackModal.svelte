@@ -96,7 +96,6 @@
 							bind:group={muscleWorkloads[selectedExercise.muscleTarget]}
 							value={workloadMap[i]}
 							id={choice[1]}
-							required
 						/>
 					{/each}
 				</div>
@@ -131,7 +130,6 @@
 							id={feedbackSystem[item][choice]}
 							bind:group={feedbackValues[item]}
 							value={ratingMap[i]}
-							required
 						/>
 					{/each}
 				</div>
