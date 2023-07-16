@@ -112,7 +112,8 @@
 		<button class="btn btn-primary join-item" on:click={goNext}>Next</button>
 	{:else}
 		<button
-			class="btn btn-accent join-item {callingEndpoint ? 'disabled' : ''}"
+			class="btn btn-accent join-item"
+			disabled={callingEndpoint}
 			on:click={() => {
 				if (!callingEndpoint) {
 					createMesocycle();
