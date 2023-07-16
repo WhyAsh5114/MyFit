@@ -104,7 +104,8 @@
 <slot />
 <div class="join w-full gap-1 mt-auto grid grid-cols-2">
 	<button
-		class="btn btn-primary join-item {currentStepIndex === 0 ? 'btn-disabled opacity-50' : ''}"
+		class="btn btn-primary join-item disabled:text-opacity-75"
+		disabled={currentStepIndex === 0}
 		on:click={goPrev}>Previous</button
 	>
 	{#if currentStepIndex !== 3}

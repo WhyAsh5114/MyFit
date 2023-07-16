@@ -65,7 +65,7 @@
 
 <div class="flex flex-col bg-primary p-5 rounded-lg w-full mb-5">
 	<div class="flex justify-between">
-		<h3 class="card-title">Mesocycle duration</h3>
+		<label for="meso-duration" class="card-title">Mesocycle duration</label>
 		<button class="help-button" on:click={() => durationHelpModal.show()}>?</button>
 	</div>
 	<div class="h-0.5 bg-black mt-1 mb-4" />
@@ -73,6 +73,7 @@
 		<p class="text-center basis-28 bg-black rounded-md text-sm py-1">{$duration} weeks</p>
 		<input
 			type="range"
+			id="meso-duration"
 			min="2"
 			max="20"
 			bind:value={$duration}
