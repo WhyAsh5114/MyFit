@@ -61,6 +61,12 @@
 			deletionErrorModal.show();
 		}
 	}
+
+	function dateFormatter(timestamp: number | undefined) {
+		if (!timestamp) return;
+		const date = new Date(timestamp);
+		return date.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+	}
 </script>
 
 <MyModal title="Delete Mesocycle" titleColor="text-error" bind:dialogElement={confirmDeleteModal}>
@@ -112,15 +118,21 @@
 </MyModal>
 
 <div class="flex flex-col h-px grow gap-2 w-full overflow-y-auto">
-	<div class="stats bg-primary w-full">
+	<div class="stats bg-primary w-full stats-vertical">
 		<div class="stat">
-			<h3>Workout template</h3>
-			<p class="text-secondary font-bold text-2xl">
+			<h3>Template</h3>
+			<p class="text-secondary font-bold text-xl">
 				{data.parentMesocycle?.splitSchedule[data.workout.dayNumber]} ({days[
 					data.workout.dayNumber
 				]})
 			</p>
 			<p class="stat-desc text-sm">{data.parentMesocycle?.name}</p>
+		</div>
+		<div class="stat">
+			<h3>Date</h3>
+			<p class="text-secondary font-bold text-xl">
+				{dateFormatter(data.workout.startTimestamp)}
+			</p>
 		</div>
 	</div>
 	<div class="stats bg-primary w-full grid-cols-2 grid">
@@ -160,7 +172,7 @@
 			</div>
 		</div>
 		<div class="stat">
-			<h3>Reference workout</h3>
+			<h3>Ref. workout</h3>
 			<p class="text-secondary font-bold text-2xl">
 				{#if data.referenceWorkout}
 					{data.referenceWorkout.startTimestamp}
