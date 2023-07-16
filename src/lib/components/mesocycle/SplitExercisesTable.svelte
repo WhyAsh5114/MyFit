@@ -40,8 +40,7 @@
 		<button
 			on:click={pasteExercises}
 			class="btn btn-sm btn-primary join-item disabled:text-opacity-75"
-			disabled={copiedExercises ? false : true}
-			>Paste</button
+			disabled={copiedExercises ? false : true}>Paste</button
 		>
 		<button class="btn btn-sm btn-primary join-item" on:click={clearExercises}>Clear</button>
 	</div>

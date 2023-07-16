@@ -116,11 +116,11 @@
 				{averageRIR} RIR
 			</div>
 			{#if averageRIR < $plannedRIR - 0.5}
-				<div class="stat-desc text-sm text-error">Go easier</div>
+				<div class=" text-sm text-error">Go easier</div>
 			{:else if averageRIR > $plannedRIR + 0.5}
-				<div class="stat-desc text-sm text-error">Go harder</div>
+				<div class=" text-sm text-error">Go harder</div>
 			{:else}
-				<div class="stat-desc">RIR matched with plan</div>
+				<div class="">RIR matched with plan</div>
 			{/if}
 		</div>
 		<div class="stat">
@@ -128,7 +128,7 @@
 			<div class="font-bold text-2xl text-secondary">
 				{$plannedRIR} RIR
 			</div>
-			<div class="stat-desc">
+			<div class="">
 				Week {$weekNumber}
 			</div>
 		</div>

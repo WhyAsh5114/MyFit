@@ -159,7 +159,7 @@
 					data.workout.dayNumber
 				]})
 			</p>
-			<p class="stat-desc text-sm">{data.parentMesocycle?.name}</p>
+			<p class=" text-sm">{data.parentMesocycle?.name}</p>
 		</div>
 		<div class="stat">
 			<h3>Date</h3>
@@ -173,22 +173,22 @@
 			<h3>Average RIR</h3>
 			<p class="text-secondary font-bold text-2xl">{averageRIR}</p>
 			{#if averageRIR < data.workout.plannedRIR - 0.5}
-				<div class="stat-desc text-sm text-error">You went too hard</div>
+				<div class=" text-sm text-error">You went too hard</div>
 			{:else if averageRIR > data.workout.plannedRIR + 0.5}
-				<div class="stat-desc text-sm text-error">You went too easy</div>
+				<div class=" text-sm text-error">You went too easy</div>
 			{:else}
-				<div class="stat-desc text-sm">RIR matched with plan</div>
+				<div class=" text-sm">RIR matched with plan</div>
 			{/if}
 		</div>
 		<div class="stat">
 			<h3>Planned RIR</h3>
 			<p class="text-secondary font-bold text-2xl">{data.workout.plannedRIR}</p>
-			<p class="stat-desc text-sm">Week {data.workout.weekNumber}</p>
+			<p class=" text-sm">Week {data.workout.weekNumber}</p>
 		</div>
 	</div>
 	<div class="stats bg-primary w-full grid grid-cols-2 place-items-start shrink-0">
 		<div class="stat">
-			<h3>Difficulty rating</h3>
+			<h3 id="diff-rating-heading">Difficulty rating</h3>
 			<div class="font-bold text-2xl text-secondary">
 				<div class="rating mt-1">
 					{#each Array(5).fill(0) as num, i}
@@ -198,6 +198,7 @@
 							value={i + 1}
 							class="mask mask-star bg-warning"
 							bind:group={data.workout.difficultyRating}
+							aria-labelledby="diff-rating-heading"
 							disabled
 						/>
 					{/each}

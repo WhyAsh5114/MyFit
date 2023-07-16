@@ -79,7 +79,7 @@
 							>
 							<button class="btn btn-sm btn-error text-black">Delete</button>
 						</div>
-	
+
 						<li class="text-secondary flex flex-row items-center gap-2">
 							Sets
 							<span class="h-px p-0 grow bg-white" />
