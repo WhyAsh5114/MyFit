@@ -83,6 +83,8 @@
 		>
 			{#if data.mesocycles === null || data.mesocycles.length === 0}
 				<option value={undefined}>No mesocycle created</option>
+			{:else if !filterByMesocycles}
+				<option value={undefined}>Showing all workouts</option>
 			{:else}
 				{#if !data.activeMesocycle}
 					<option selected disabled value={undefined}>No active mesocycle</option>
@@ -153,7 +155,7 @@
 			{#if workout}
 				<a
 					class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-1 items-start"
-					href="/workouts/view/{workoutIndex}"
+					href="/workouts/view/{data.workouts.length - 1 - workoutIndex}"
 				>
 					<h3 class="font-semibold text-left w-full text-base text-secondary">
 						{dateFormatter(workout.startTimestamp)}
