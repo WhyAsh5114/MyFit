@@ -15,7 +15,7 @@
 >
 	<form method="dialog" class="modal-box bg-primary text-white">
 		<button class="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
-		<h3 class="font-bold text-lg {titleColor} mb-5">{title}</h3>
+		<h2 class="font-bold text-lg {titleColor} mb-5">{title}</h2>
 		<slot />
 	</form>
 	<form method="dialog" class="modal-backdrop bg-black bg-opacity-50">
