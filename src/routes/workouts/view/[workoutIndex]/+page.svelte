@@ -96,9 +96,9 @@
 	});
 
 	function getSFRColor(sfr: number) {
-		if (sfr < 0.5) return 'text-warning'
-		if (sfr < 0.75) return 'text-success'
-		return 'text-accent'
+		if (sfr < 0.5) return 'text-warning';
+		if (sfr < 0.75) return 'text-success';
+		return 'text-accent';
 	}
 </script>
 

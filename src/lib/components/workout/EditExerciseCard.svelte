@@ -70,14 +70,14 @@
 					class="menu gap-1 dropdown-content p-2 shadow-black bg-base-100 w-52 rounded-md shadow-md border border-primary z-10"
 				>
 					<div class="grid grid-cols-2 gap-1">
-                        <button
-                            class="btn btn-sm btn-accent"
-                            on:click={() => {
-                                viewingExercise = exercise;
-                            }}>Details</button
-                        >
-                        <button class="btn btn-sm btn-error text-black">Delete</button>
-                    </div>
+						<button
+							class="btn btn-sm btn-accent"
+							on:click={() => {
+								viewingExercise = exercise;
+							}}>Details</button
+						>
+						<button class="btn btn-sm btn-error text-black">Delete</button>
+					</div>
 
 					<li class="text-secondary flex flex-row items-center gap-2">
 						Sets

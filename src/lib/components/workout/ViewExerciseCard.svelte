@@ -48,9 +48,9 @@
 			<p class="text-sm -mb-1">Load</p>
 			<p class="text-sm -mb-1">RIR</p>
 			{#each exercise.repsLoadRIR as repLoadRIR}
-                <p class="px-4 py-1.5 font-semibold bg-black text-sm text-white">{repLoadRIR[0]}</p>
-                <p class="px-4 py-1.5 font-semibold bg-black text-sm text-white">{repLoadRIR[1]} kg</p>
-                <p class="px-4 py-1.5 font-semibold bg-black text-sm text-white">{repLoadRIR[2]} RIR</p>
+				<p class="px-4 py-1.5 font-semibold bg-black text-sm text-white">{repLoadRIR[0]}</p>
+				<p class="px-4 py-1.5 font-semibold bg-black text-sm text-white">{repLoadRIR[1]} kg</p>
+				<p class="px-4 py-1.5 font-semibold bg-black text-sm text-white">{repLoadRIR[2]} RIR</p>
 			{/each}
 		</div>
 	</li>

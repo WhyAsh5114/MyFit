@@ -8,9 +8,9 @@
 	}
 
 	let totalMesocycles = 0;
-	$: data.mesocycles?.forEach(meso => {
+	$: data.mesocycles?.forEach((meso) => {
 		if (meso) totalMesocycles++;
-	})
+	});
 </script>
 
 {#if data.mesocycles && totalMesocycles > 0}

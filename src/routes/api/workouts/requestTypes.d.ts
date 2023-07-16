@@ -4,4 +4,4 @@ type APIWorkoutCreate = {
 
 type APIWorkoutDelete = {
 	workoutIndex: number;
-}
+};
