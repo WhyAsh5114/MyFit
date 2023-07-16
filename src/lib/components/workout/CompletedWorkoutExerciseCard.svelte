@@ -7,28 +7,8 @@
 	export let workoutExercises: WorkoutExercise[];
 	let exerciseFeedbackModal: HTMLDialogElement;
 
-	export let setsPerformedPerExercise: number[] = Array(workoutExercises.length).fill(0);
-	let repSelectElements: HTMLSelectElement[][] = [];
-	for (let i = 0; i < workoutExercises.length; i++) {
-		repSelectElements.push(new Array());
-	}
-	function performSet(exerciseNumber: number, setNumber: number) {
-		if (workoutExercises[exerciseNumber].repsLoadRIR[setNumber][0] === undefined) {
-			repSelectElements[exerciseNumber][setNumber].classList.add('animate-pulse');
-			return;
-		}
-		setsPerformedPerExercise[exerciseNumber]++;
-	}
-
 	let feedbackTaken: boolean[] = Array(workoutExercises.length).fill(false);
 	let selectedExercise: WorkoutExercise;
-	$: workoutExercises.forEach((exercise, i) => {
-		if (!feedbackTaken[i] && exercise.repsLoadRIR.length === setsPerformedPerExercise[i]) {
-			selectedExercise = exercise;
-			exerciseFeedbackModal.show();
-			feedbackTaken[i] = true;
-		}
-	});
 
 	export let muscleWorkloads: Workout['muscleGroupWorkloads'] = {
 		Chest: undefined,
@@ -130,15 +110,10 @@
 			<p class="text-sm -mb-1">Reps</p>
 			<p class="text-sm -mb-1">Load</p>
 			<p class="text-sm -mb-1">RIR</p>
-			{#each exercise.repsLoadRIR as repLoadRIR, setNumber}
+			{#each exercise.repsLoadRIR as repLoadRIR}
 				<select
 					class="select select-sm text-white rounded-none disabled:text-opacity-75"
 					bind:value={repLoadRIR[0]}
-					bind:this={repSelectElements[exerciseNumber][setNumber]}
-					disabled={setNumber < setsPerformedPerExercise[exerciseNumber]}
-					on:click={() => {
-						repSelectElements[exerciseNumber][setNumber].classList.remove('animate-pulse');
-					}}
 				>
 					<option value={undefined} disabled selected>?</option>
 					{#each Array.from(Array(100).keys()) as i}
@@ -148,7 +123,6 @@
 				<select
 					class="select select-sm text-white rounded-none disabled:text-opacity-75"
 					bind:value={repLoadRIR[1]}
-					disabled={setNumber < setsPerformedPerExercise[exerciseNumber]}
 				>
 					{#each Array.from(Array(100).keys()) as i}
 						<option value={(i + 1) * 2.5}>{(i + 1) * 2.5} kg</option>
@@ -157,7 +131,6 @@
 				<select
 					class="select select-sm text-white rounded-none disabled:text-opacity-75"
 					bind:value={repLoadRIR[2]}
-					disabled={setNumber < setsPerformedPerExercise[exerciseNumber]}
 				>
 					{#each Array.from(Array(5).keys()) as i}
 						<option value={i}>{i} RIR</option>
