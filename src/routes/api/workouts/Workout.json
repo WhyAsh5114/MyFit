@@ -233,6 +233,9 @@
 		},
 		"referenceWorkout": {
 			"type": ["number", "null"]
+		},
+		"deload": {
+			"type": "boolean"
 		}
 	},
 	"required": [
