@@ -15,8 +15,8 @@
 	export let data;
 
 	let date = new Date();
-	let todaysDay = days[date.getDay()];
-	$workoutDay = date.getDay();
+	let todaysDay = days.at(date.getDay() - 1);
+	$workoutDay = date.getDay() - 1 >= 0 ? date.getDay() - 1 : 6;
 
 	$weekNumber = Math.ceil((+date - data.activeMesocycle.startDate) / (1000 * 60 * 60 * 24 * 7));
 	$plannedRIR =
