@@ -12,7 +12,7 @@
 
 	let colorMap = {
 		jointPainRating: { none: 'text-accent', moderate: 'text-warning', high: 'text-error' },
-		pumpRating: { none: 'text-error', moderate: 'text-warning', high: 'text-success' }
+		stimulusRating: { none: 'text-error', moderate: 'text-warning', high: 'text-success' }
 	};
 </script>
 
@@ -60,7 +60,11 @@
 		{#if viewingExercise?.pumpRating}
 			<div class="stat py-2">
 				<h4>Pump rating</h4>
-				<p class="stat-value text-xl capitalize {colorMap.pumpRating[viewingExercise?.pumpRating]}">
+				<p
+					class="stat-value text-xl capitalize {colorMap.stimulusRating[
+						viewingExercise?.pumpRating
+					]}"
+				>
 					{viewingExercise?.pumpRating}
 				</p>
 			</div>
@@ -69,11 +73,11 @@
 			<div class="stat py-2">
 				<h4>Disruption rating</h4>
 				<p
-					class="stat-value text-xl capitalize {colorMap.pumpRating[
+					class="stat-value text-xl capitalize {colorMap.stimulusRating[
 						viewingExercise?.disruptionRating
 					]}"
 				>
-					{viewingExercise?.pumpRating}
+					{viewingExercise?.disruptionRating}
 				</p>
 			</div>
 		{/if}
@@ -81,7 +85,7 @@
 			<div class="stat py-2">
 				<h4>Mind muscle connection rating</h4>
 				<p
-					class="stat-value text-xl capitalize {colorMap.pumpRating[
+					class="stat-value text-xl capitalize {colorMap.stimulusRating[
 						viewingExercise?.mindMuscleConnectionRating
 					]}"
 				>
