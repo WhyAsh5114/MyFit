@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { days } from '$lib/commonDB.js';
 	import MyModal from '$lib/components/MyModal.svelte';
-	import WorkoutExerciseCard from '$lib/components/workout/WorkoutExerciseCard.svelte';
+	import CompletedWorkoutExerciseCard from '$lib/components/workout/CompletedWorkoutExerciseCard.svelte';
 
 	export let data;
 
@@ -193,7 +193,7 @@
 			</div>
 		</div>
 	</div>
-	<WorkoutExerciseCard bind:workoutExercises={data.workout.exercisesPerformed} />
+	<CompletedWorkoutExerciseCard bind:workoutExercises={data.workout.exercisesPerformed} />
 </div>
 <div class="join grid grid-cols-2 w-full mt-3">
 	<button
