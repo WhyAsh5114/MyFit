@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { days } from '$lib/commonDB.js';
 	import MyModal from '$lib/components/MyModal.svelte';
+	import WorkoutExerciseCard from '$lib/components/workout/WorkoutExerciseCard.svelte';
 
 	export let data;
 
@@ -190,6 +191,13 @@
 					<span class="badge">{muscleTarget} x {muscleTargetsAndSets[muscleTarget]}</span>
 				{/each}
 			</div>
+		</div>
+	</div>
+	<div class="collapse collapse-arrow bg-primary py-2">
+		<input type="checkbox" class=" p-0 min-h-0 pb-2" />
+		<div class="collapse-title p-0 min-h-0 pl-7 pb-2">Exercises</div>
+		<div class="collapse-content">
+			<WorkoutExerciseCard bind:workoutExercises={data.workout.exercisesPerformed} />
 		</div>
 	</div>
 </div>
