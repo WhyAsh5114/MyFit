@@ -6,9 +6,14 @@
 	$: if (data.mesocycles && data.activeMesocycle) {
 		parentMesocycle = data.mesocycles[data.activeMesocycle.mesoID];
 	}
+
+	let totalMesocycles = 0;
+	$: data.mesocycles?.forEach(meso => {
+		if (meso) totalMesocycles++;
+	})
 </script>
 
-{#if data.mesocycles && data.mesocycles.length > 0}
+{#if data.mesocycles && totalMesocycles > 0}
 	<h3 class="text-left w-full text-xl font-bold text-accent mb-2">Active</h3>
 	{#if data.activeMesocycle && parentMesocycle}
 		<a
@@ -84,7 +89,7 @@
 	</ul>
 {:else}
 	<div class="grow flex items-center">
-		<p>You haven't created any mesocycles</p>
+		<p class="font-semibold text-lg">You haven't created any mesocycles</p>
 	</div>
 {/if}
 <a href="/mesocycles/new/basics" class="btn btn-accent btn-block mt-auto">Create new mesocycle</a>
