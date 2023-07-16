@@ -23,6 +23,10 @@
 				}
 			});
 		}
+		// Sort the workouts (latest first)
+		activeMesocycleWorkouts.sort((a, b) => {
+			return b.workout.startTimestamp - a.workout.startTimestamp;
+		});
 	}
 
 	type PerformedMesocycleWorkouts = {
@@ -52,11 +56,19 @@
 				};
 				performedMesocyclesWorkouts.push(mesoDataStructure);
 			});
+			// Only keep mesos with at least 1 workout
 			performedMesocyclesWorkouts = performedMesocyclesWorkouts.filter(
-				(obj) => Object.keys(obj.workouts).length
+				(obj) => obj.workouts.length
 			);
+			// Sort the mesocycles by date (latest first)
 			performedMesocyclesWorkouts = performedMesocyclesWorkouts.sort((a, b) => {
 				return b.startTimestamp - a.startTimestamp;
+			});
+			// Sort the workouts of each meso by date (latest first)
+			performedMesocyclesWorkouts.forEach((mesoWorkouts) => {
+				mesoWorkouts.workouts.sort((a, b) => {
+					return b.workout.startTimestamp - a.workout.startTimestamp;
+				});
 			});
 		}
 	}
