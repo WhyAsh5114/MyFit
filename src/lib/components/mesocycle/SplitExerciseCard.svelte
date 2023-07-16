@@ -50,7 +50,7 @@
 				<button>
 					<img src="/HamburgerMenu.svg" alt="menu" />
 				</button>
-				<ul class="menu dropdown-content p-2 shadow-black bg-base-100 rounded-md shadow-md">
+				<ul class="menu dropdown-content p-2 shadow-black bg-base-100 rounded-md shadow-md z-10">
 					<li>
 						<button
 							class="text-white uppercase font-semibold"

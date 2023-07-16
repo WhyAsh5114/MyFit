@@ -22,31 +22,31 @@
 	bind:dialogElement={exerciseDetailModal}
 >
 	<div class="stats stats-vertical w-full">
-		<div class="stat">
+		<div class="stat py-2">
 			<h4>Name</h4>
 			<p class="stat-value text-xl">{viewingExercise?.name}</p>
 		</div>
-		<div class="stat">
+		<div class="stat py-2">
 			<h4>Sets</h4>
 			<p class="stat-value text-xl">
 				{viewingExercise?.repsLoadRIR.length}
 				{viewingExercise?.setType} sets
 			</p>
 		</div>
-		<div class="stat">
+		<div class="stat py-2">
 			<h4>Rep range</h4>
 			<p class="stat-value text-xl">
 				{viewingExercise?.repRangeStart} to {viewingExercise?.repRangeEnd}
 			</p>
 		</div>
-		<div class="stat">
+		<div class="stat py-2">
 			<h4>Muscle target</h4>
 			<p class="stat-value text-xl text-error">
 				{viewingExercise?.muscleTarget}
 			</p>
 		</div>
 		{#if viewingExercise?.jointPainRating}
-			<div class="stat">
+			<div class="stat py-2">
 				<h4>Joint pain rating</h4>
 				<p
 					class="stat-value text-xl capitalize {colorMap.jointPainRating[
@@ -58,7 +58,7 @@
 			</div>
 		{/if}
 		{#if viewingExercise?.pumpRating}
-			<div class="stat">
+			<div class="stat py-2">
 				<h4>Pump rating</h4>
 				<p class="stat-value text-xl capitalize {colorMap.pumpRating[viewingExercise?.pumpRating]}">
 					{viewingExercise?.pumpRating}
@@ -66,10 +66,26 @@
 			</div>
 		{/if}
 		{#if viewingExercise?.disruptionRating}
-			<div class="stat">
+			<div class="stat py-2">
 				<h4>Disruption rating</h4>
-				<p class="stat-value text-xl capitalize {colorMap.pumpRating[viewingExercise?.disruptionRating]}">
+				<p
+					class="stat-value text-xl capitalize {colorMap.pumpRating[
+						viewingExercise?.disruptionRating
+					]}"
+				>
 					{viewingExercise?.pumpRating}
+				</p>
+			</div>
+		{/if}
+		{#if viewingExercise?.mindMuscleConnectionRating}
+			<div class="stat py-2">
+				<h4>Mind muscle connection rating</h4>
+				<p
+					class="stat-value text-xl capitalize {colorMap.pumpRating[
+						viewingExercise?.mindMuscleConnectionRating
+					]}"
+				>
+					{viewingExercise?.mindMuscleConnectionRating}
 				</p>
 			</div>
 		{/if}

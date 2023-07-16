@@ -87,27 +87,32 @@
 					<img src="/HamburgerMenu.svg" alt="menu" />
 				</button>
 				<ul
-					class="menu gap-1 dropdown-content p-2 shadow-black bg-base-100 w-52 rounded-md shadow-md border border-primary"
+					class="menu gap-1 dropdown-content p-2 shadow-black bg-base-100 w-52 rounded-md shadow-md border border-primary z-10"
 				>
-					<button
-						class="btn btn-sm btn-accent"
-						on:click={() => {
-							viewingExercise = exercise;
-						}}>View all details</button
-					>
+					<div class="grid grid-cols-2 gap-1">
+                        <button
+                            class="btn btn-sm btn-accent"
+                            on:click={() => {
+                                viewingExercise = exercise;
+                            }}>Details</button
+                        >
+                        <li class="btn btn-sm btn-error text-black">Delete</li>
+                    </div>
+
 					<li class="text-secondary flex flex-row items-center gap-2">
 						Sets
 						<span class="h-px p-0 grow bg-white" />
 					</li>
-					<li class="btn btn-sm btn-primary">Add</li>
-					<li class="btn btn-sm btn-primary">Remove</li>
+					<div class="grid grid-cols-2 gap-1">
+						<li class="btn btn-sm btn-primary">Add</li>
+						<li class="btn btn-sm btn-primary">Remove</li>
+					</div>
 					<li class="text-secondary flex flex-row items-center gap-2">
 						Feedback
 						<span class="h-px p-0 grow bg-white" />
 					</li>
 					<li class="btn btn-sm btn-primary">Stimulus & fatigue</li>
 					<li class="btn btn-sm btn-primary">Workload & soreness</li>
-					<li class="btn btn-sm btn-error text-black">Delete</li>
 				</ul>
 			</div>
 		</div>
