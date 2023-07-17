@@ -20,8 +20,8 @@
 	<div class="flex-1">
 		<div class="h-10 w-10 relative">
 			{#if $navigating?.to}
-				<div class="bg-primary w-10 h-10 absolute z-20">
-					<span class="loading loading-spinner text-accent w-full h-full" />
+				<div class="bg-primary w-10 h-10 absolute z-20 grid place-items-center">
+					<span class="loading loading-spinner text-accent" />
 				</div>
 			{/if}
 			<img src="/favicon.png" alt="" class="absolute" width="40" height="40" />
