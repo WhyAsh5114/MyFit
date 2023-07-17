@@ -64,55 +64,55 @@
 			"additionalProperties": false,
 			"properties": {
 				"Back": {
-					"enum": ["interfered with workout", "just recovered", "none"],
+					"enum": ["interfered with workout", "recovered on time", "none"],
 					"type": "string"
 				},
 				"Biceps": {
-					"enum": ["interfered with workout", "just recovered", "none"],
+					"enum": ["interfered with workout", "recovered on time", "none"],
 					"type": "string"
 				},
 				"Calves": {
-					"enum": ["interfered with workout", "just recovered", "none"],
+					"enum": ["interfered with workout", "recovered on time", "none"],
 					"type": "string"
 				},
 				"Chest": {
-					"enum": ["interfered with workout", "just recovered", "none"],
+					"enum": ["interfered with workout", "recovered on time", "none"],
 					"type": "string"
 				},
 				"Forearms": {
-					"enum": ["interfered with workout", "just recovered", "none"],
+					"enum": ["interfered with workout", "recovered on time", "none"],
 					"type": "string"
 				},
 				"Front delts": {
-					"enum": ["interfered with workout", "just recovered", "none"],
+					"enum": ["interfered with workout", "recovered on time", "none"],
 					"type": "string"
 				},
 				"Glutes": {
-					"enum": ["interfered with workout", "just recovered", "none"],
+					"enum": ["interfered with workout", "recovered on time", "none"],
 					"type": "string"
 				},
 				"Hamstrings": {
-					"enum": ["interfered with workout", "just recovered", "none"],
+					"enum": ["interfered with workout", "recovered on time", "none"],
 					"type": "string"
 				},
 				"Quads": {
-					"enum": ["interfered with workout", "just recovered", "none"],
+					"enum": ["interfered with workout", "recovered on time", "none"],
 					"type": "string"
 				},
 				"Rear delts": {
-					"enum": ["interfered with workout", "just recovered", "none"],
+					"enum": ["interfered with workout", "recovered on time", "none"],
 					"type": "string"
 				},
 				"Side delts": {
-					"enum": ["interfered with workout", "just recovered", "none"],
+					"enum": ["interfered with workout", "recovered on time", "none"],
 					"type": "string"
 				},
 				"Traps": {
-					"enum": ["interfered with workout", "just recovered", "none"],
+					"enum": ["interfered with workout", "recovered on time", "none"],
 					"type": "string"
 				},
 				"Triceps": {
-					"enum": ["interfered with workout", "just recovered", "none"],
+					"enum": ["interfered with workout", "recovered on time", "none"],
 					"type": "string"
 				}
 			},
@@ -205,12 +205,8 @@
 					}
 				},
 				"required": [
-					"disruptionRating",
-					"jointPainRating",
-					"mindMuscleConnectionRating",
 					"muscleTarget",
 					"name",
-					"pumpRating",
 					"repRangeEnd",
 					"repRangeStart",
 					"repsLoadRIR",
@@ -233,7 +229,7 @@
 			"type": "number"
 		},
 		"referenceWorkout": {
-			"type": "number"
+			"type": ["number", "null"]
 		},
 		"startTimestamp": {
 			"type": "number"
