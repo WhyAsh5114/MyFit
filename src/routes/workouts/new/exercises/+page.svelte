@@ -9,6 +9,7 @@
 		referenceWorkout,
 		workoutExercises,
 		muscleWorkloads,
+		musclesTargetedPreviously,
 	} from '../newWorkoutStore';
 	import { goto } from '$app/navigation';
 	import WorkoutExerciseCard from '$lib/components/workout/WorkoutExerciseCard.svelte';
@@ -71,6 +72,7 @@
 			bind:workoutExercises={$workoutExercises}
 			bind:setsPerformedPerExercise
 			bind:muscleWorkloads={$muscleWorkloads}
+			bind:musclesTargetedPreviously={$musclesTargetedPreviously}
 		/>
 	</div>
 </div>

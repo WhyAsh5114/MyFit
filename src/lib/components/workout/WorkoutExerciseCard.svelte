@@ -44,6 +44,8 @@
 		Glutes: undefined,
 		Calves: undefined
 	};
+
+	export let musclesTargetedPreviously: MuscleSorenessData[];
 </script>
 
 <ExerciseFeedbackModal
@@ -52,6 +54,7 @@
 	bind:selectedExercise
 	bind:feedbackTaken
 	bind:muscleWorkloads
+	bind:musclesTargetedPreviously
 />
 <ul class="flex flex-col gap-2">
 	{#each workoutExercises as exercise, exerciseNumber (exercise.name)}
