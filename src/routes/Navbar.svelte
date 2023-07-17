@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.postcss';
 	import PWAButton from './PWAButton.svelte';
-	import { page } from '$app/stores';
+	import { navigating, page } from '$app/stores';
 	import MyModal from '$lib/components/MyModal.svelte';
 	import { signOut } from '@auth/sveltekit/client';
 	import ProfilePicture from './ProfilePicture.svelte';
@@ -18,7 +18,14 @@
 </MyModal>
 <div class="navbar bg-primary z-10">
 	<div class="flex-1">
-		<img src="/favicon.png" alt="" width="40" height="40" />
+		<div class="h-10 w-10 relative">
+			{#if $navigating?.to}
+				<div class="bg-primary w-10 h-10 absolute z-20">
+					<span class="loading loading-spinner text-accent w-full h-full" />
+				</div>
+			{/if}
+			<img src="/favicon.png" alt="" class="absolute" width="40" height="40" />
+		</div>
 		<h1><a class="btn btn-ghost normal-case text-2xl text-white" href="/">MyFit</a></h1>
 	</div>
 	<div class="flex-none">
