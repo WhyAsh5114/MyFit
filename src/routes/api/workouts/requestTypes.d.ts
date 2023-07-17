@@ -1,10 +1,6 @@
 type APIWorkoutCreate = {
 	workout: Workout;
-	sorenessValues?: {
-		muscleTarget: (typeof commonMuscleGroups)[number];
-		sorenessRating: undefined;
-		fromWorkoutID: number;
-	};
+	sorenessValues: MuscleSorenessData[];
 };
 
 type APIWorkoutDelete = {
