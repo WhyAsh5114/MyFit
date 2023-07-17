@@ -119,7 +119,7 @@
 								name="Soreness rating"
 								aria-label={choice[0]}
 								bind:group={sorenessDataField.sorenessRating}
-								value={workloadMap[i]}
+								value={choice[0]}
 								id={choice[1]}
 							/>
 						{/each}
