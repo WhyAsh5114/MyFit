@@ -114,7 +114,7 @@
 				<div class="flex flex-col">
 					<h3 class="font-semibold mt-2">Soreness rating</h3>
 					<div class="grid grid-cols-3 gap-1 mt-1">
-						{#each [["none", 'ok-btn'], ['recovered on time', 'good-btn'], ['interfered with workout', 'bad-btn']] as choice, i}
+						{#each [['none', 'ok-btn'], ['recovered on time', 'good-btn'], ['interfered with workout', 'bad-btn']] as choice, i}
 							<input
 								class="btn"
 								type="radio"

@@ -29,7 +29,7 @@
 	let viewingExercise: WorkoutExercise;
 </script>
 
-<ExerciseFeedbackModal
+<!-- <ExerciseFeedbackModal
 	bind:exerciseFeedbackModal
 	bind:workoutExercises
 	bind:selectedExercise
@@ -125,7 +125,7 @@
 			</div>
 		</li>
 	{/each}
-</ul>
+</ul> -->
 
 <style>
 	#workout-card-grid {

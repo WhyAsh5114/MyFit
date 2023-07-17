@@ -9,7 +9,7 @@
 		referenceWorkout,
 		workoutExercises,
 		muscleWorkloads,
-		musclesTargetedPreviously,
+		musclesTargetedPreviously
 	} from '../newWorkoutStore';
 	import { goto } from '$app/navigation';
 	import WorkoutExerciseCard from '$lib/components/workout/WorkoutExerciseCard.svelte';
