@@ -27,10 +27,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			return new Response('No workouts created', { status: 400 });
 		}
 
-		type MuscleToLastWorkout = {
-			muscleTarget: (typeof commonMuscleGroups)[number];
-			workoutIndex: number | undefined;
-		};
 		const muscleToLastWorkoutMap: MuscleToLastWorkout[] = [];
 		muscleTargets.forEach((muscleTarget) => {
 			muscleToLastWorkoutMap.push({ muscleTarget, workoutIndex: undefined });
@@ -72,9 +68,9 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 				// Find the object with same muscleTarget in muscleToLastWorkoutMap
 				const muscleAndWorkout = muscleToLastWorkoutMap.find(
 					(muscleAndWorkout) => muscleAndWorkout.muscleTarget === exercise.muscleTarget
-				) as MuscleToLastWorkout;
+				);
 				// If object's workoutIndex is undefined (not matched), match it
-				if (!muscleAndWorkout.workoutIndex) {
+				if (muscleAndWorkout && muscleAndWorkout.workoutIndex === undefined) {
 					muscleAndWorkout.workoutIndex = i;
 					musclesLeftToMatch--;
 				}

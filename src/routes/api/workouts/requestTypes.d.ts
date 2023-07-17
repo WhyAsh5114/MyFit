@@ -15,3 +15,8 @@ type APIWorkoutGetPreviouslyTargetedWorkouts = {
 	muscleTargets: (typeof commonMuscleGroups)[number][];
 	workoutIndex?: number;
 }
+
+type MuscleToLastWorkout = {
+	muscleTarget: (typeof commonMuscleGroups)[number];
+	workoutIndex: number | undefined;
+};
