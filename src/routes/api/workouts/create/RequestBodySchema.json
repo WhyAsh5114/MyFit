@@ -25,13 +25,13 @@
 				},
 				"sorenessRating": {
 					"enum": ["interfered with workout", "none", "recovered on time"],
-					"type": "string"
+					"type": ["string"]
 				},
 				"workoutIndex": {
 					"type": "number"
 				}
 			},
-			"required": ["muscleTarget", "sorenessRating", "workoutIndex"],
+			"required": ["muscleTarget", "workoutIndex"],
 			"type": "object"
 		},
 		"Record<\"Chest\"|\"Frontdelts\"|\"Sidedelts\"|\"Reardelts\"|\"Back\"|\"Traps\"|\"Triceps\"|\"Biceps\"|\"Forearms\"|\"Quads\"|\"Hamstrings\"|\"Glutes\"|\"Calves\",\"high\"|\"low\"|\"moderate\">": {
