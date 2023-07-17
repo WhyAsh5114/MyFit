@@ -83,3 +83,7 @@ type WorkoutExercise = {
 	disruptionRating: 'none' | 'moderate' | 'high' | undefined;
 	mindMuscleConnectionRating: 'none' | 'moderate' | 'high' | undefined;
 };
+
+interface MuscleSorenessData extends MuscleToLastWorkout {
+	sorenessRating: Workout['muscleSorenessToNextWorkout'][(typeof commonMuscleGroups)[number]];
+}

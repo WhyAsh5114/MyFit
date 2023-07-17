@@ -92,7 +92,12 @@
 			}
 		});
 		const resBody: MuscleToLastWorkout[] = JSON.parse(await response.text());
-		$musclesTargetedPreviously = resBody;
+
+		const muscleSorenessData: MuscleSorenessData[] = [];
+		resBody.forEach((muscleAndWorkout) => {
+			muscleSorenessData.push({ ...muscleAndWorkout, sorenessRating: undefined });
+		});
+		$musclesTargetedPreviously = muscleSorenessData;
 	}
 </script>
 
