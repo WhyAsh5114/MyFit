@@ -4,7 +4,7 @@
 	import { dateFormatter } from '$lib/commonDB';
 
 	export let data;
-	let selectedMesocycle: undefined | number;
+	let selectedMesocycle = data.activeMesocycle?.mesoID;
 
 	let activeMesocycleWorkouts: { id: number; workout: Workout }[] = [];
 	$: {
@@ -91,19 +91,12 @@
 		>
 			{#if data.mesocycles === null || data.mesocycles.length === 0}
 				<option value={undefined}>No mesocycle created</option>
-			{:else if !filterByMesocycles}
-				<option value={undefined}>Showing all workouts</option>
+			{:else if !data.activeMesocycle}
+				<option disabled value={undefined}>No active mesocycle</option>
 			{:else}
-				{#if !data.activeMesocycle}
-					<option selected disabled value={undefined}>No active mesocycle</option>
-				{/if}
 				{#each data.mesocycles as meso, i}
 					{#if meso}
-						{#if data.activeMesocycle?.mesoID === i}
-							<option selected value={i}>{meso.name}</option>
-						{:else}
-							<option value={i}>{meso.name}</option>
-						{/if}
+						<option value={i}>{meso.name}</option>
 					{/if}
 				{/each}
 			{/if}
