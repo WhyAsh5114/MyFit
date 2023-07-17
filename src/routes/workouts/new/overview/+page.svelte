@@ -7,7 +7,8 @@
 		weekNumber,
 		workoutDay,
 		muscleWorkloads,
-		referenceWorkout
+		referenceWorkout,
+		musclesTargetedPreviously
 	} from '../newWorkoutStore.js';
 	import { goto } from '$app/navigation';
 	import MyModal from '$lib/components/MyModal.svelte';
@@ -72,7 +73,7 @@
 			referenceWorkout: $referenceWorkout,
 			weekNumber: $weekNumber
 		};
-		const reqBody: APIWorkoutCreate = { workout: thisWorkout };
+		const reqBody: APIWorkoutCreate = { workout: thisWorkout, sorenessValues: $musclesTargetedPreviously };
 		const response = await fetch('/api/workouts/create', {
 			method: 'POST',
 			body: JSON.stringify(reqBody),
@@ -92,6 +93,7 @@
 
 	let successModal: HTMLDialogElement;
 	let errorModal: HTMLDialogElement;
+	console.log($musclesTargetedPreviously);
 </script>
 
 <MyModal
