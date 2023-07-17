@@ -94,6 +94,21 @@
 		if (sfr < 0.75) return 'text-success';
 		return 'text-accent';
 	}
+
+	// Convert object to list for easier UI integration
+	let sorenessData: {
+		muscleTarget: (typeof commonMuscleGroups)[number];
+		sorenessValue: Workout['muscleSorenessToNextWorkout'][(typeof commonMuscleGroups)[number]];
+	}[] = [];
+	for (const [muscleTarget, sorenessValue] of Object.entries(data.workout.muscleSorenessToNextWorkout)) {
+		if (!sorenessValue) continue;
+		sorenessData.push({ muscleTarget: muscleTarget as (typeof commonMuscleGroups)[number], sorenessValue });
+	}
+	const sorenessToColorMap = {
+		none: 'text-warning',
+		'recovered on time': 'text-success',
+		'interfered with workout': 'text-error'
+	};
 </script>
 
 <MyModal title="Delete Mesocycle" titleColor="text-error" bind:dialogElement={confirmDeleteModal}>
@@ -219,14 +234,33 @@
 		<div class="stats bg-primary shrink-0 w-full">
 			<div class="stat">
 				<h3>Highest SFRs</h3>
-				<div class="flex flex-col mt-2">
+				<div class="h-px w-full bg-secondary my-0.5" />
+				<ul class="flex flex-col mt-2">
 					{#each SFRList as { exercise, SFR }}
-						<div class="flex justify-between text-secondary">
+						<li class="flex justify-between text-secondary">
 							{exercise.name}
 							<p class="font-semibold {getSFRColor(SFR)}">{SFR.toFixed(2)}</p>
-						</div>
+						</li>
 					{/each}
-				</div>
+				</ul>
+			</div>
+		</div>
+	{/if}
+	{#if sorenessData.length > 0}
+		<div class="stats bg-primary shrink-0 w-full">
+			<div class="stat">
+				<h3>Soreness carryover to next workouts</h3>
+				<div class="h-px w-full bg-secondary my-0.5" />
+				<ul class="flex flex-col mt-2">
+					{#each sorenessData as { muscleTarget, sorenessValue }}
+						<li class="flex justify-between text-secondary">
+							{muscleTarget}
+							<p class="capitalize font-semibold {sorenessValue ? sorenessToColorMap[sorenessValue] : ''}">
+								{sorenessValue}
+							</p>
+						</li>
+					{/each}
+				</ul>
 			</div>
 		</div>
 	{/if}
