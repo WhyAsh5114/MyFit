@@ -7,7 +7,6 @@
 		weekNumber,
 		workoutDay,
 		muscleWorkloads,
-		muscleSorenessToNextWorkout,
 		referenceWorkout
 	} from '../newWorkoutStore.js';
 	import { goto } from '$app/navigation';
@@ -55,7 +54,21 @@
 			exercisesPerformed: $workoutExercises,
 			plannedRIR: $plannedRIR,
 			muscleGroupWorkloads: $muscleWorkloads,
-			muscleSorenessToNextWorkout: $muscleSorenessToNextWorkout,
+			muscleSorenessToNextWorkout: {
+				Chest: undefined,
+				'Front delts': undefined,
+				'Side delts': undefined,
+				'Rear delts': undefined,
+				Back: undefined,
+				Traps: undefined,
+				Triceps: undefined,
+				Biceps: undefined,
+				Forearms: undefined,
+				Quads: undefined,
+				Hamstrings: undefined,
+				Glutes: undefined,
+				Calves: undefined
+			},
 			referenceWorkout: $referenceWorkout,
 			weekNumber: $weekNumber
 		};

@@ -8,5 +8,4 @@ export const weekNumber: Writable<number> = writable();
 export const referenceWorkout: Writable<null | number> = writable(null);
 export const workoutExercises: Writable<WorkoutExercise[]> = writable([]);
 export const muscleWorkloads: Writable<Workout['muscleGroupWorkloads']> = writable();
-export const muscleSorenessToNextWorkout: Writable<Workout['muscleSorenessToNextWorkout']> =
-	writable();
+export const musclesTargetedPreviously: Writable<MuscleToLastWorkout[]> = writable();
