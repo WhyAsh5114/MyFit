@@ -1,10 +1,10 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import Ajv from 'ajv';
-import WorkoutType from '../Workout.json';
+import RequestBodyType from './RequestBodySchema.json';
 import clientPromise from '$lib/mongodb';
 
 const ajv = new Ajv({ removeAdditional: true });
-const validate = ajv.compile(WorkoutType);
+const validate = ajv.compile(RequestBodyType);
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const session = await locals.getSession();
@@ -14,8 +14,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { workout }: APIWorkoutCreate = await request.json();
-	const valid = validate(workout);
+	const { workout, sorenessValues }: APIWorkoutCreate = await request.json();
+	const valid = validate({ workout, sorenessValues });
 	if (!valid) {
 		return new Response(`Invalid JSON format for workout: ${ajv.errorsText(validate.errors)}`, {
 			status: 400
@@ -31,10 +31,40 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 		const userData = await client.db().collection('users').findOne({ email: session.user?.email });
 
+		// Add workout ID to activeMesocycle.workouts
 		await client
 			.db()
 			.collection('users')
 			.updateOne({ email: session.user?.email }, { $push: { 'activeMesocycle.workouts': userData?.workouts.length - 1 } });
+
+		// Group soreness values by workout ID
+		type GroupedMuscleSorenessData = {
+			workoutIndex: number;
+			muscleTargets: (typeof commonMuscleGroups)[number][];
+			sorenessRatings: Workout['muscleSorenessToNextWorkout'][(typeof commonMuscleGroups)[number]][];
+		};
+		const groupedSorenessValues = sorenessValues.reduce((arr: GroupedMuscleSorenessData[], record) => {
+			const index = arr.findIndex((inside: GroupedMuscleSorenessData) => inside.workoutIndex === record.workoutIndex);
+			if (index === -1) {
+				arr.push({
+					workoutIndex: record.workoutIndex as number,
+					muscleTargets: [record.muscleTarget],
+					sorenessRatings: [record.sorenessRating]
+				});
+			} else {
+				arr[index].muscleTargets.push(record.muscleTarget);
+				arr[index].sorenessRatings.push(record.sorenessRating);
+			}
+			return arr;
+		}, []);
+
+		groupedSorenessValues.forEach((sorenessValues) => {
+			sorenessValues.muscleTargets.forEach(async (muscleTarget, i) => {
+				await client.db().collection('users').updateOne({ email: session.user?.email }, { $set: {
+					[`workouts.${sorenessValues.workoutIndex}.muscleSorenessToNextWorkout.${muscleTarget}`] : sorenessValues.sorenessRatings[i]
+				}});
+			});
+		});
 
 		return new Response('Workout created successfully', {
 			status: 200
