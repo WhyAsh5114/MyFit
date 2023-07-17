@@ -1,14 +1,10 @@
 <script lang="ts">
+	import WorkoutCard from './WorkoutCard.svelte';
 	import { navigating } from '$app/stores';
+	import { dateFormatter } from '$lib/commonDB';
 
 	export let data;
-
 	let selectedMesocycle: undefined | number;
-	function dateFormatter(timestamp: number | undefined) {
-		if (!timestamp) return;
-		const date = new Date(timestamp);
-		return date.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
-	}
 
 	let activeMesocycleWorkouts: { id: number; workout: Workout }[] = [];
 	$: {
@@ -123,21 +119,7 @@
 				</h3>
 				<ul class="flex flex-col gap-1">
 					{#each activeMesocycleWorkouts as { id, workout }}
-						<li>
-							<a
-								class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-1 items-start"
-								href="/workouts/view/{id}"
-							>
-								<h3 class="font-semibold text-left w-full text-base text-secondary">
-									{dateFormatter(workout.startTimestamp)}
-								</h3>
-								<h4 class="font-normal text-base">
-									{#if data.mesocycles}
-										{data.mesocycles[workout.mesoID]?.splitSchedule[workout.dayNumber]}
-									{/if}
-								</h4>
-							</a>
-						</li>
+						<WorkoutCard {workout} workoutIndex={id} mesocycles={data.mesocycles} />
 					{/each}
 				</ul>
 			</div>
@@ -151,21 +133,7 @@
 				</h3>
 				<ul class="flex flex-col gap-1">
 					{#each performedMesocycleWorkouts.workouts as { id, workout }}
-						<li>
-							<a
-								class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-1 items-start"
-								href="/workouts/view/{id}"
-							>
-								<h3 class="font-semibold text-left w-full text-base text-secondary">
-									{dateFormatter(workout.startTimestamp)}
-								</h3>
-								{#if data.mesocycles && data.workouts}
-									<h4 class="font-normal text-base">
-										{data.mesocycles[workout.mesoID]?.splitSchedule[workout.dayNumber]}
-									</h4>
-								{/if}
-							</a>
-						</li>
+						<WorkoutCard {workout} workoutIndex={id} mesocycles={data.mesocycles} />
 					{/each}
 				</ul>
 			</div>
@@ -174,21 +142,11 @@
 		<ul class="flex flex-col gap-1">
 			{#each data.workouts.slice(0).reverse() as workout, workoutIndex}
 				{#if workout}
-					<li>
-						<a
-							class="btn relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-1 items-start"
-							href="/workouts/view/{data.workouts.length - 1 - workoutIndex}"
-						>
-							<h3 class="font-semibold text-left w-full text-base text-secondary">
-								{dateFormatter(workout.startTimestamp)}
-							</h3>
-							{#if data.mesocycles && data.workouts}
-								<h4 class="font-normal text-base">
-									{data.mesocycles[workout.mesoID]?.splitSchedule[workout.dayNumber]}
-								</h4>
-							{/if}
-						</a>
-					</li>
+					<WorkoutCard
+						{workout}
+						workoutIndex={data.workouts.length - workoutIndex}
+						mesocycles={data.mesocycles}
+					/>
 				{/if}
 			{/each}
 		</ul>

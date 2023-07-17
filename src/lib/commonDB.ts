@@ -109,3 +109,9 @@ export const volumeLandmarks: VolumeLandmarks = {
 	},
 	Calves: { MV: 6, MEV: 8, freqStart: 3, freqEnd: 6, MRV: { 2: 16, 3: 20, 4: 25, 5: 30, 6: 35 } }
 };
+
+export function dateFormatter(timestamp: number | undefined) {
+	if (!timestamp) return;
+	const date = new Date(timestamp);
+	return date.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+}

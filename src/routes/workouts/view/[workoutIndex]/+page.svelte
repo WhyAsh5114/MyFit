@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { days } from '$lib/commonDB.js';
+	import { dateFormatter, days } from '$lib/commonDB.js';
 	import MyModal from '$lib/components/MyModal.svelte';
 	import ViewExerciseCard from '$lib/components/workout/ViewExerciseCard.svelte';
 
@@ -61,12 +61,6 @@
 			errorMsg = await response.text();
 			deletionErrorModal.show();
 		}
-	}
-
-	function dateFormatter(timestamp: number | undefined) {
-		if (!timestamp) return;
-		const date = new Date(timestamp);
-		return date.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
 	}
 
 	let SFRList: { exercise: WorkoutExercise; SFR: number }[] = [];
