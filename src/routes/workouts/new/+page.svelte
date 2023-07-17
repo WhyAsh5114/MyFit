@@ -10,7 +10,8 @@
 		weekNumber,
 		workoutExercises,
 		referenceWorkout,
-		startTimestamp
+		startTimestamp,
+		musclesTargetedPreviously
 	} from './newWorkoutStore.js';
 	export let data;
 
@@ -78,12 +79,28 @@
 		(partialSum, sets) => partialSum + sets,
 		0
 	);
+
+	async function getMuscleTargetsLastPerformed() {
+		const reqBody: APIWorkoutGetPreviouslyTargetedWorkouts = {
+			muscleTargets: Object.keys($muscleTargetsAndSets) as (typeof commonMuscleGroups)[number][]
+		};
+		const response = await fetch('/api/workouts/getPreviouslyTargetedWorkouts', {
+			method: 'POST',
+			body: JSON.stringify(reqBody),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+		const resBody: MuscleToLastWorkout[] = JSON.parse(await response.text());
+		$musclesTargetedPreviously = resBody;
+	}
 </script>
 
 <form
 	class="flex flex-col w-full gap-2 h-full"
-	on:submit|preventDefault={() => {
+	on:submit|preventDefault={async () => {
 		$startTimestamp = +new Date();
+		await getMuscleTargetsLastPerformed();
 		goto('/workouts/new/exercises');
 	}}
 >
