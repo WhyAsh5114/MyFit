@@ -60,59 +60,59 @@
 			},
 			"type": "object"
 		},
-		"Record<\"Chest\"|\"Frontdelts\"|\"Sidedelts\"|\"Reardelts\"|\"Back\"|\"Traps\"|\"Triceps\"|\"Biceps\"|\"Forearms\"|\"Quads\"|\"Hamstrings\"|\"Glutes\"|\"Calves\",\"none\"|\"high\"|\"low\">": {
+		"Record<\"Chest\"|\"Frontdelts\"|\"Sidedelts\"|\"Reardelts\"|\"Back\"|\"Traps\"|\"Triceps\"|\"Biceps\"|\"Forearms\"|\"Quads\"|\"Hamstrings\"|\"Glutes\"|\"Calves\",\"none\"|\"justrecovered\"|\"interferedwithworkout\">": {
 			"additionalProperties": false,
 			"properties": {
 				"Back": {
-					"enum": ["high", "low", "none"],
+					"enum": ["interfered with workout", "just recovered", "none"],
 					"type": "string"
 				},
 				"Biceps": {
-					"enum": ["high", "low", "none"],
+					"enum": ["interfered with workout", "just recovered", "none"],
 					"type": "string"
 				},
 				"Calves": {
-					"enum": ["high", "low", "none"],
+					"enum": ["interfered with workout", "just recovered", "none"],
 					"type": "string"
 				},
 				"Chest": {
-					"enum": ["high", "low", "none"],
+					"enum": ["interfered with workout", "just recovered", "none"],
 					"type": "string"
 				},
 				"Forearms": {
-					"enum": ["high", "low", "none"],
+					"enum": ["interfered with workout", "just recovered", "none"],
 					"type": "string"
 				},
 				"Front delts": {
-					"enum": ["high", "low", "none"],
+					"enum": ["interfered with workout", "just recovered", "none"],
 					"type": "string"
 				},
 				"Glutes": {
-					"enum": ["high", "low", "none"],
+					"enum": ["interfered with workout", "just recovered", "none"],
 					"type": "string"
 				},
 				"Hamstrings": {
-					"enum": ["high", "low", "none"],
+					"enum": ["interfered with workout", "just recovered", "none"],
 					"type": "string"
 				},
 				"Quads": {
-					"enum": ["high", "low", "none"],
+					"enum": ["interfered with workout", "just recovered", "none"],
 					"type": "string"
 				},
 				"Rear delts": {
-					"enum": ["high", "low", "none"],
+					"enum": ["interfered with workout", "just recovered", "none"],
 					"type": "string"
 				},
 				"Side delts": {
-					"enum": ["high", "low", "none"],
+					"enum": ["interfered with workout", "just recovered", "none"],
 					"type": "string"
 				},
 				"Traps": {
-					"enum": ["high", "low", "none"],
+					"enum": ["interfered with workout", "just recovered", "none"],
 					"type": "string"
 				},
 				"Triceps": {
-					"enum": ["high", "low", "none"],
+					"enum": ["interfered with workout", "just recovered", "none"],
 					"type": "string"
 				}
 			},
@@ -122,6 +122,9 @@
 	"properties": {
 		"dayNumber": {
 			"type": "number"
+		},
+		"deload": {
+			"type": "boolean"
 		},
 		"difficultyRating": {
 			"enum": [1, 2, 3, 4, 5],
@@ -202,8 +205,12 @@
 					}
 				},
 				"required": [
+					"disruptionRating",
+					"jointPainRating",
+					"mindMuscleConnectionRating",
 					"muscleTarget",
 					"name",
+					"pumpRating",
 					"repRangeEnd",
 					"repRangeStart",
 					"repsLoadRIR",
@@ -220,9 +227,12 @@
 			"$ref": "#/definitions/Record<\"Chest\"|\"Frontdelts\"|\"Sidedelts\"|\"Reardelts\"|\"Back\"|\"Traps\"|\"Triceps\"|\"Biceps\"|\"Forearms\"|\"Quads\"|\"Hamstrings\"|\"Glutes\"|\"Calves\",\"high\"|\"low\"|\"moderate\">"
 		},
 		"muscleSorenessToNextWorkout": {
-			"$ref": "#/definitions/Record<\"Chest\"|\"Frontdelts\"|\"Sidedelts\"|\"Reardelts\"|\"Back\"|\"Traps\"|\"Triceps\"|\"Biceps\"|\"Forearms\"|\"Quads\"|\"Hamstrings\"|\"Glutes\"|\"Calves\",\"none\"|\"high\"|\"low\">"
+			"$ref": "#/definitions/Record<\"Chest\"|\"Frontdelts\"|\"Sidedelts\"|\"Reardelts\"|\"Back\"|\"Traps\"|\"Triceps\"|\"Biceps\"|\"Forearms\"|\"Quads\"|\"Hamstrings\"|\"Glutes\"|\"Calves\",\"none\"|\"justrecovered\"|\"interferedwithworkout\">"
 		},
 		"plannedRIR": {
+			"type": "number"
+		},
+		"referenceWorkout": {
 			"type": "number"
 		},
 		"startTimestamp": {
@@ -230,12 +240,6 @@
 		},
 		"weekNumber": {
 			"type": "number"
-		},
-		"referenceWorkout": {
-			"type": ["number", "null"]
-		},
-		"deload": {
-			"type": "boolean"
 		}
 	},
 	"required": [
@@ -247,9 +251,9 @@
 		"muscleGroupWorkloads",
 		"muscleSorenessToNextWorkout",
 		"plannedRIR",
+		"referenceWorkout",
 		"startTimestamp",
-		"weekNumber",
-		"referenceWorkout"
+		"weekNumber"
 	],
 	"type": "object"
 }

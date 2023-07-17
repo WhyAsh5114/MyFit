@@ -65,7 +65,7 @@ type Workout = {
 	plannedRIR: number;
 	muscleSorenessToNextWorkout: Record<
 		(typeof commonMuscleGroups)[number],
-		undefined | 'none' | 'low' | 'high'
+		undefined | 'none' | 'just recovered' | 'interfered with workout'
 	>;
 	weekNumber: number;
 	deload?: boolean;
