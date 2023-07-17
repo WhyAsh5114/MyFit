@@ -1,18 +1,24 @@
 import type { RequestHandler } from '@sveltejs/kit';
+import Ajv from 'ajv';
+import RequestBodySchema from './RequestBodySchema.json';
 import clientPromise from '$lib/mongodb';
 
-export const GET: RequestHandler = async ({ url, locals }) => {
+const ajv = new Ajv({ removeAdditional: true });
+const validate = ajv.compile(RequestBodySchema);
+
+export const POST: RequestHandler = async ({ request, locals }) => {
 	const session = await locals.getSession();
 	if (!session) {
 		return new Response('Invalid session', { status: 403 });
 	}
 
-	const workoutIndexRaw = url.searchParams.get('workoutIndex');
-	if (!workoutIndexRaw) {
-		return new Response('No workout index provided', { status: 400 });
+	const { muscleTargets, workoutIndex }: APIWorkoutGetPreviouslyTargetedWorkouts =
+		await request.json();
+	const valid = validate({ muscleTargets, workoutIndex });
+	if (!valid) {
+		return new Response('Invalid JSON format for muscleTargets', { status: 400 });
 	}
 
-    const workoutIndex = parseInt(workoutIndexRaw);
 	const client = await clientPromise;
 	try {
 		const userData = await client.db().collection('users').findOne({ email: session.user?.email });
@@ -21,34 +27,30 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			return new Response('No workouts created', { status: 400 });
 		}
 
-		const currentWorkout = workoutsList[workoutIndex];
-		if (!currentWorkout) {
-			return new Response('Workout not found', { status: 400 });
-		}
-
-		const musclesTargetedInCurrentWorkout: Set<(typeof commonMuscleGroups)[number]> = new Set();
-		currentWorkout.exercisesPerformed.forEach((exercise) => {
-			musclesTargetedInCurrentWorkout.add(exercise.muscleTarget);
-		});
-
 		type MuscleToLastWorkout = {
 			muscleTarget: (typeof commonMuscleGroups)[number];
 			workoutIndex: number | undefined;
 		};
 		const muscleToLastWorkoutMap: MuscleToLastWorkout[] = [];
-		musclesTargetedInCurrentWorkout.forEach((muscleTarget) => {
+		muscleTargets.forEach((muscleTarget) => {
 			muscleToLastWorkoutMap.push({ muscleTarget, workoutIndex: undefined });
 		});
 
-		const olderWorkoutsList = workoutsList.slice(0, workoutIndex);
-		for (let i = workoutIndex - 1; i >= 0; i--) {
+		let olderWorkoutsList;
+		let currentWorkout: Workout | undefined;
+		if (workoutIndex) {
+			currentWorkout = userData?.workouts[workoutIndex];
+			if (!currentWorkout) {
+				return new Response('Current workout not found', { status: 404 });
+			}
+			olderWorkoutsList = workoutsList.slice(0, workoutIndex);
+		} else {
+			olderWorkoutsList = workoutsList;
+		}
+
+		let musclesLeftToMatch = muscleToLastWorkoutMap.length;
+		for (let i = olderWorkoutsList.length - 1; i >= 0; i--) {
 			// If all muscleTargets have been found in previous workouts, end loop
-			let musclesLeftToMatch = 0;
-			muscleToLastWorkoutMap.forEach((muscleToLastWorkout) => {
-				if (!muscleToLastWorkout.workoutIndex) {
-					musclesLeftToMatch++;
-				}
-			});
 			if (musclesLeftToMatch === 0) {
 				break;
 			}
@@ -58,17 +60,23 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			if (!olderWorkout) continue;
 
 			// Don't look for workouts older than a week
-			const timeDiff = currentWorkout.startTimestamp - olderWorkout.startTimestamp;
-			if (timeDiff / 1000 / 60 / 60 / 24 > 7) {
-				break;
+			if (currentWorkout) {
+				const timeDiff = currentWorkout.startTimestamp - olderWorkout.startTimestamp;
+				if (timeDiff / 1000 / 60 / 60 / 24 > 7) {
+					break;
+				}
 			}
 
+			// Loop over each exercise in this older workout
 			olderWorkout.exercisesPerformed.forEach((exercise) => {
+				// Find the object with same muscleTarget in muscleToLastWorkoutMap
 				const muscleAndWorkout = muscleToLastWorkoutMap.find(
 					(muscleAndWorkout) => muscleAndWorkout.muscleTarget === exercise.muscleTarget
 				) as MuscleToLastWorkout;
+				// If object's workoutIndex is undefined (not matched), match it
 				if (!muscleAndWorkout.workoutIndex) {
 					muscleAndWorkout.workoutIndex = i;
+					musclesLeftToMatch--;
 				}
 			});
 		}
