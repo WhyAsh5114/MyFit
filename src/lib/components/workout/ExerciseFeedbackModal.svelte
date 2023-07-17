@@ -82,7 +82,7 @@
 		titleColor="text-accent"
 	>
 		<p>
-			How much was the workload for the
+			How much was the workload & soreness for the
 			<span class="font-semibold italic">{selectedExercise.muscleTarget}</span> muscles in this workout?
 		</p>
 		<div class="h-px w-full bg-secondary mt-2 mb-4" />
