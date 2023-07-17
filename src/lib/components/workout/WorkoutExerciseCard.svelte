@@ -44,22 +44,6 @@
 		Glutes: undefined,
 		Calves: undefined
 	};
-
-	export let muscleSorenessToNextWorkout: Workout['muscleSorenessToNextWorkout'] = {
-		Chest: undefined,
-		'Front delts': undefined,
-		'Side delts': undefined,
-		'Rear delts': undefined,
-		Back: undefined,
-		Traps: undefined,
-		Triceps: undefined,
-		Biceps: undefined,
-		Forearms: undefined,
-		Quads: undefined,
-		Hamstrings: undefined,
-		Glutes: undefined,
-		Calves: undefined
-	};
 </script>
 
 <ExerciseFeedbackModal

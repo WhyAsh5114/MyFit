@@ -72,7 +72,6 @@
 			bind:workoutExercises={$workoutExercises}
 			bind:setsPerformedPerExercise
 			bind:muscleWorkloads={$muscleWorkloads}
-			bind:muscleSorenessToNextWorkout={$muscleSorenessToNextWorkout}
 		/>
 	</div>
 </div>
