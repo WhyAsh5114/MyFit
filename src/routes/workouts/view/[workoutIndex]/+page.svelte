@@ -100,9 +100,7 @@
 	<p>
 		Are you sure you want to delete workout
 		<span class="font-semibold italic"
-			>{data.parentMesocycle?.splitSchedule[data.workout.dayNumber]} ({days[
-				data.workout.dayNumber
-			]})</span
+			>{data.parentMesocycle?.splitSchedule[data.workout.dayNumber]} ({days[data.workout.dayNumber]})</span
 		>?
 	</p>
 	<div class="join grid grid-cols-2 w-full mt-4">
@@ -134,9 +132,7 @@
 >
 	<p>
 		Workout <span class="font-semibold italic"
-			>{data.parentMesocycle?.splitSchedule[data.workout.dayNumber]} ({days[
-				data.workout.dayNumber
-			]})</span
+			>{data.parentMesocycle?.splitSchedule[data.workout.dayNumber]} ({days[data.workout.dayNumber]})</span
 		> deleted successfully
 	</p>
 </MyModal>
@@ -149,9 +145,7 @@
 		<div class="stat">
 			<h3>Template</h3>
 			<p class="text-secondary font-bold text-xl">
-				{data.parentMesocycle?.splitSchedule[data.workout.dayNumber]} ({days[
-					data.workout.dayNumber
-				]})
+				{data.parentMesocycle?.splitSchedule[data.workout.dayNumber]} ({days[data.workout.dayNumber]})
 			</p>
 			<p class=" text-sm">{data.parentMesocycle?.name}</p>
 		</div>

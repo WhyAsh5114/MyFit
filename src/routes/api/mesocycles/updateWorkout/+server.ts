@@ -31,8 +31,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 				{ email: session.user?.email },
 				{
 					$set: {
-						[`mesocycles.${body.mesoIndex}.splitExercises.${body.workoutIndex}`]:
-							body.splitExercises
+						[`mesocycles.${body.mesoIndex}.splitExercises.${body.workoutIndex}`]: body.splitExercises
 					}
 				}
 			);

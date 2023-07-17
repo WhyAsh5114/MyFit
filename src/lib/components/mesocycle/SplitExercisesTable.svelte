@@ -44,7 +44,5 @@
 		>
 		<button class="btn btn-sm btn-primary join-item" on:click={clearExercises}>Clear</button>
 	</div>
-	<button class="btn btn-sm btn-accent join-item" on:click={() => addExerciseModal.show()}>
-		Add Exercise
-	</button>
+	<button class="btn btn-sm btn-accent join-item" on:click={() => addExerciseModal.show()}> Add Exercise </button>
 </div>

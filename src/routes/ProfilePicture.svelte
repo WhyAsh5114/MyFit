@@ -13,13 +13,7 @@
 	{/if}
 	<div class="w-10 rounded-full">
 		{#if $page.data.session}
-			<img
-				src={$page.data.session.user?.image}
-				referrerpolicy="no-referrer"
-				alt="profile"
-				width="40"
-				height="40"
-			/>
+			<img src={$page.data.session.user?.image} referrerpolicy="no-referrer" alt="profile" width="40" height="40" />
 		{:else}
 			<img src="/profile.webp" alt="profile" width="40" height="40" />
 		{/if}

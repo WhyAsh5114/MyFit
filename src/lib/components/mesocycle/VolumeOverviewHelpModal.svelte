@@ -5,11 +5,7 @@
 	export let volumeOverviewModal: HTMLDialogElement;
 </script>
 
-<MyModal
-	title="Volume Overview Help"
-	titleColor="text-accent"
-	bind:dialogElement={volumeOverviewModal}
->
+<MyModal title="Volume Overview Help" titleColor="text-accent" bind:dialogElement={volumeOverviewModal}>
 	<div class="carousel w-full">
 		<div id="item1" class="carousel-item w-full flex-col gap-2 px-0.5 justify-center">
 			<div class="flex flex-col gap-1 bg-base-100 p-4 rounded-lg">
@@ -87,9 +83,7 @@
 				<ul class="list-disc ml-5 mb-2">
 					<li>Extreme frequency is okay since there is generally overlap from other muscles</li>
 				</ul>
-				<p class=" italic">
-					Front delts are trained enough during pressing movements and will grow with just them
-				</p>
+				<p class=" italic">Front delts are trained enough during pressing movements and will grow with just them</p>
 			</div>
 		</div>
 	</div>

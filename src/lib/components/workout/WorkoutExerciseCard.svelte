@@ -82,10 +82,7 @@
 				</div>
 			</div>
 			<div class="h-px w-full bg-black my-2" />
-			<div
-				class="grid grid-cols-4 place-items-center gap-y-2 gap-x-1 overflow-x-auto"
-				id="workout-card-grid"
-			>
+			<div class="grid grid-cols-4 place-items-center gap-y-2 gap-x-1 overflow-x-auto" id="workout-card-grid">
 				<p class="text-sm -mb-1">Reps</p>
 				<p class="text-sm -mb-1">Load</p>
 				<p class="text-sm -mb-1">RIR</p>
@@ -131,9 +128,7 @@
 							on:click={() => performSet(exerciseNumber, setNumber)}>✓</button
 						>
 					{:else}
-						<button class="btn btn-sm bg-gray-400 border-none btn-square text-white rounded-none"
-							>✓</button
-						>
+						<button class="btn btn-sm bg-gray-400 border-none btn-square text-white rounded-none">✓</button>
 					{/if}
 				{/each}
 			</div>

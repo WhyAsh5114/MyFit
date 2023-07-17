@@ -12,8 +12,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		return new Response('Invalid session', { status: 403 });
 	}
 
-	const { muscleTargets, workoutIndex }: APIWorkoutGetPreviouslyTargetedWorkouts =
-		await request.json();
+	const { muscleTargets, workoutIndex }: APIWorkoutGetPreviouslyTargetedWorkouts = await request.json();
 	const valid = validate({ muscleTargets, workoutIndex });
 	if (!valid) {
 		return new Response('Invalid JSON format for muscleTargets', { status: 400 });

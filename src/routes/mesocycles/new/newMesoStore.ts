@@ -5,20 +5,19 @@ export const duration = writable(6);
 export const startRIR: Writable<number> = writable(3);
 export const isBasicsValidStore: Writable<() => boolean> = writable();
 
-export const splitSchedule: Writable<[string, string, string, string, string, string, string]> =
-	writable(['', '', '', '', '', '', '']);
+export const splitSchedule: Writable<[string, string, string, string, string, string, string]> = writable([
+	'',
+	'',
+	'',
+	'',
+	'',
+	'',
+	''
+]);
 export const isSplitValidStore: Writable<() => boolean> = writable();
 
 export const splitExercises: Writable<
-	[
-		SplitExercise[],
-		SplitExercise[],
-		SplitExercise[],
-		SplitExercise[],
-		SplitExercise[],
-		SplitExercise[],
-		SplitExercise[]
-	]
+	[SplitExercise[], SplitExercise[], SplitExercise[], SplitExercise[], SplitExercise[], SplitExercise[], SplitExercise[]]
 > = writable([[], [], [], [], [], [], []]);
 export const isExercisesValidStore: Writable<() => boolean> = writable();
 

@@ -53,9 +53,7 @@
 				performedMesocyclesWorkouts.push(mesoDataStructure);
 			});
 			// Only keep mesos with at least 1 workout
-			performedMesocyclesWorkouts = performedMesocyclesWorkouts.filter(
-				(obj) => obj.workouts.length
-			);
+			performedMesocyclesWorkouts = performedMesocyclesWorkouts.filter((obj) => obj.workouts.length);
 			// Sort the mesocycles by date (latest first)
 			performedMesocyclesWorkouts = performedMesocyclesWorkouts.sort((a, b) => {
 				return b.startTimestamp - a.startTimestamp;
@@ -84,11 +82,7 @@
 	</div>
 	<div class="h-0.5 bg-black mt-1 mb-4" />
 	<div class="flex gap-2">
-		<select
-			class="select select-sm select-bordered grow"
-			bind:value={selectedMesocycle}
-			disabled={!filterByMesocycles}
-		>
+		<select class="select select-sm select-bordered grow" bind:value={selectedMesocycle} disabled={!filterByMesocycles}>
 			{#if data.mesocycles === null || data.mesocycles.length === 0}
 				<option value={undefined}>No mesocycle created</option>
 			{:else if !data.activeMesocycle}
@@ -135,11 +129,7 @@
 		<ul class="flex flex-col gap-1">
 			{#each data.workouts.slice(0).reverse() as workout, workoutIndex}
 				{#if workout}
-					<WorkoutCard
-						{workout}
-						workoutIndex={data.workouts.length - 1 - workoutIndex}
-						mesocycles={data.mesocycles}
-					/>
+					<WorkoutCard {workout} workoutIndex={data.workouts.length - 1 - workoutIndex} mesocycles={data.mesocycles} />
 				{/if}
 			{/each}
 		</ul>

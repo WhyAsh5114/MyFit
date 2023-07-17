@@ -46,9 +46,7 @@
 </script>
 
 <div class="grow w-full bg-primary rounded-md flex flex-col">
-	<div
-		class="collapse collapse-arrow rounded-t-md bg-accent rounded-b-none text-black shadow-md shadow-black"
-	>
+	<div class="collapse collapse-arrow rounded-t-md bg-accent rounded-b-none text-black shadow-md shadow-black">
 		<input type="checkbox" class="p-0 min-h-0" checked />
 		<div class="collapse-title p-1.5 min-h-0 flex justify-between items-center">
 			<h2 class="text-xl font-bold">
@@ -87,11 +85,7 @@
 		Finish workout
 	{:else}
 		{Math.round((totalSetsPerformed / totalSets) * 100)}%
-		<progress
-			class="progress w-full bg-secondary progress-primary"
-			value={totalSetsPerformed}
-			max={totalSets}
-		/>
+		<progress class="progress w-full bg-secondary progress-primary" value={totalSetsPerformed} max={totalSets} />
 	{/if}
 </button>
 

@@ -1,12 +1,6 @@
 <script lang="ts">
 	import SplitExercisesTable from '$lib/components/mesocycle/SplitExercisesTable.svelte';
-	import {
-		splitExercises,
-		splitSchedule,
-		isExercisesValidStore,
-		errorMsgs,
-		isSplitValidStore
-	} from '../newMesoStore';
+	import { splitExercises, splitSchedule, isExercisesValidStore, errorMsgs, isSplitValidStore } from '../newMesoStore';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { days } from '$lib/commonDB';

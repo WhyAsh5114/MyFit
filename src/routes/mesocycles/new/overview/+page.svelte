@@ -12,9 +12,7 @@
 		}
 	});
 
-	let muscleFrequency = Object.fromEntries(
-		commonMuscleGroups.map((muscleGroup) => [muscleGroup, 0])
-	);
+	let muscleFrequency = Object.fromEntries(commonMuscleGroups.map((muscleGroup) => [muscleGroup, 0]));
 	let muscleVolume = Object.fromEntries(commonMuscleGroups.map((muscleGroup) => [muscleGroup, 0]));
 	$splitExercises.forEach((workout) => {
 		let targetedMusclesOnDay: Set<string> = new Set();
@@ -37,10 +35,6 @@
 		<button class="help-button" on:click={() => volumeOverviewModal.show()}>?</button>
 	</div>
 	{#each commonMuscleGroups as muscleGroup}
-		<MuscleGroupComponent
-			{muscleGroup}
-			freq={muscleFrequency[muscleGroup]}
-			volume={muscleVolume[muscleGroup]}
-		/>
+		<MuscleGroupComponent {muscleGroup} freq={muscleFrequency[muscleGroup]} volume={muscleVolume[muscleGroup]} />
 	{/each}
 </div>

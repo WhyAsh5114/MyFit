@@ -44,9 +44,7 @@
 			}
 		});
 
-		sorenessDataField = musclesTargetedPreviously.find(
-			(x) => x.muscleTarget === selectedExercise?.muscleTarget
-		);
+		sorenessDataField = musclesTargetedPreviously.find((x) => x.muscleTarget === selectedExercise?.muscleTarget);
 		if (sorenessDataField?.workoutIndex === undefined) {
 			sorenessDataField = undefined;
 		}
@@ -140,8 +138,7 @@
 	onClose={openWorkloadAndSorenessModal}
 >
 	<p>
-		Rate <span class="font-semibold italic">{selectedExercise?.name}</span> for appropriate adjustments
-		in the next week
+		Rate <span class="font-semibold italic">{selectedExercise?.name}</span> for appropriate adjustments in the next week
 	</p>
 	<div class="h-px w-full bg-secondary mt-2 mb-4" />
 	<form class="flex flex-col gap-2" on:submit|preventDefault={submitFeedback}>

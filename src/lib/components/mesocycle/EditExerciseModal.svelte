@@ -29,26 +29,17 @@
 		if (oldExercise.muscleTarget === undefined) {
 			errorMsgs.push('Please choose a primary muscle target');
 		}
-		if (
-			oldExercise.repRangeStart === undefined ||
-			oldExercise.repRangeStart < 1 ||
-			oldExercise.repRangeStart % 1 !== 0
-		) {
+		if (oldExercise.repRangeStart === undefined || oldExercise.repRangeStart < 1 || oldExercise.repRangeStart % 1 !== 0) {
 			errorMsgs.push('Rep range start should be a positive whole number');
-		} else if (
-			oldExercise.repRangeEnd === undefined ||
-			oldExercise.repRangeEnd < 1 ||
-			oldExercise.repRangeEnd % 1 !== 0
-		) {
+		} else if (oldExercise.repRangeEnd === undefined || oldExercise.repRangeEnd < 1 || oldExercise.repRangeEnd % 1 !== 0) {
 			errorMsgs.push('Rep range end should be a positive whole number');
 		} else if (oldExercise.repRangeEnd <= oldExercise.repRangeStart) {
 			errorMsgs.push('Rep range end should be higher than rep range start');
 		}
 
 		if (
-			splitExercises.find(
-				(exercise, exerciseIndex) => exercise.name === oldExercise.name && exerciseIndex !== i
-			) !== undefined
+			splitExercises.find((exercise, exerciseIndex) => exercise.name === oldExercise.name && exerciseIndex !== i) !==
+			undefined
 		) {
 			errorMsgs.push('Exercise already exists in this workout, please choose a different name');
 		}
@@ -66,12 +57,7 @@
 	<form class="flex flex-col gap-3" on:submit|preventDefault={editExercise}>
 		<div class="join mx-auto w-full">
 			<p class="btn join-item btn-sm no-animation btn-secondary w-14">Name</p>
-			<input
-				class="input join-item input-sm w-full"
-				placeholder="Type here"
-				bind:value={oldExercise.name}
-				required
-			/>
+			<input class="input join-item input-sm w-full" placeholder="Type here" bind:value={oldExercise.name} required />
 		</div>
 		<div class="flex gap-2">
 			<div class="join w-1/3">

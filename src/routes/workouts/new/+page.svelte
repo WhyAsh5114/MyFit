@@ -44,11 +44,7 @@
 	}
 
 	$workoutExercises = [];
-	$: if (
-		$referenceWorkout === null &&
-		data.parentMesocycle.splitExercises[$workoutDay] &&
-		$plannedRIR
-	) {
+	$: if ($referenceWorkout === null && data.parentMesocycle.splitExercises[$workoutDay] && $plannedRIR) {
 		$workoutExercises = [];
 		data.parentMesocycle.splitExercises[$workoutDay].forEach((exercise) => {
 			$workoutExercises.push(splitExerciseToWorkoutExercise(exercise));
@@ -75,10 +71,7 @@
 	// whenever asking for workload feedback, also ask for soreness feedback.
 
 	// Updater for totalSets (used in progress bar)
-	$: totalSets = Object.values($muscleTargetsAndSets).reduce(
-		(partialSum, sets) => partialSum + sets,
-		0
-	);
+	$: totalSets = Object.values($muscleTargetsAndSets).reduce((partialSum, sets) => partialSum + sets, 0);
 
 	async function getMuscleTargetsLastPerformed() {
 		const reqBody: APIWorkoutGetPreviouslyTargetedWorkouts = {
@@ -170,9 +163,7 @@
 					{#key $workoutDay}
 						<div class="flex flex-wrap mt-2 gap-1" in:fly={{ y: -10 }}>
 							{#each Object.keys($muscleTargetsAndSets) as muscleTarget}
-								<span class="badge text-white"
-									>{muscleTarget} x {$muscleTargetsAndSets[muscleTarget]}</span
-								>
+								<span class="badge text-white">{muscleTarget} x {$muscleTargetsAndSets[muscleTarget]}</span>
 							{/each}
 						</div>
 					{/key}

@@ -31,9 +31,7 @@
 	<div class="flex-none">
 		<div class="dropdown dropdown-end">
 			<ProfilePicture />
-			<ul
-				class="menu dropdown-content mt-3 p-2 shadow bg-secondary text-black font-semibold rounded-box"
-			>
+			<ul class="menu dropdown-content mt-3 p-2 shadow bg-secondary text-black font-semibold rounded-box">
 				<PWAButton bind:updatingModal />
 				{#if $page.data.session}
 					<li><a href="/profile">Profile</a></li>

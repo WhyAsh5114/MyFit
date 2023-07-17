@@ -34,10 +34,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		await client
 			.db()
 			.collection('users')
-			.updateOne(
-				{ email: session.user?.email },
-				{ $push: { 'activeMesocycle.workouts': userData?.workouts.length - 1 } }
-			);
+			.updateOne({ email: session.user?.email }, { $push: { 'activeMesocycle.workouts': userData?.workouts.length - 1 } });
 
 		return new Response('Workout created successfully', {
 			status: 200

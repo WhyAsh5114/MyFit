@@ -13,9 +13,7 @@
 		href="/workouts/view/{workoutIndex}"
 	>
 		{#if $navigating?.to?.url.pathname === `/workouts/view/${workoutIndex}`}
-			<div
-				class="absolute h-full w-full bg-black bg-opacity-75 grid place-items-center rounded-lg left-0 right-0"
-			>
+			<div class="absolute h-full w-full bg-black bg-opacity-75 grid place-items-center rounded-lg left-0 right-0">
 				<span class="loading loading-spinner loading-lg" />
 			</div>
 		{/if}

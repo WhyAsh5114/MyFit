@@ -21,9 +21,7 @@
 			href="/mesocycles/view/{data.activeMesocycle.mesoID}"
 		>
 			{#if $navigating?.to?.url.pathname === `/mesocycles/view/${data.activeMesocycle.mesoID}`}
-				<div
-					class="absolute h-full w-full bg-black bg-opacity-75 grid place-items-center rounded-lg"
-				>
+				<div class="absolute h-full w-full bg-black bg-opacity-75 grid place-items-center rounded-lg">
 					<span class="loading loading-spinner loading-lg" />
 				</div>
 			{/if}
@@ -46,9 +44,7 @@
 			</div>
 		</a>
 	{:else}
-		<div
-			class="btn no-animation relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-3"
-		>
+		<div class="btn no-animation relative flex-col btn-primary normal-case rounded-lg w-full p-2 flex-nowrap h-fit gap-3">
 			<h3 class="text-lg w-full text-left text-warning">No mesocycle active</h3>
 			<p class="font-normal text-left leading-snug">
 				You can start one by opening one from the list below and clicking start
@@ -65,9 +61,7 @@
 						href="/mesocycles/view/{i}"
 					>
 						{#if $navigating?.to?.url.pathname === `/mesocycles/view/${i}`}
-							<div
-								class="absolute h-full w-full bg-black bg-opacity-75 grid place-items-center rounded-lg"
-							>
+							<div class="absolute h-full w-full bg-black bg-opacity-75 grid place-items-center rounded-lg">
 								<span class="loading loading-spinner loading-lg" />
 							</div>
 						{/if}

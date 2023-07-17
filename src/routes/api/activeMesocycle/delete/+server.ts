@@ -21,10 +21,7 @@ export const POST: RequestHandler = async ({ locals }) => {
 			await client
 				.db()
 				.collection('users')
-				.updateOne(
-					{ email: session.user?.email },
-					{ $push: { performedMesocycles: performedMesocycle } }
-				);
+				.updateOne({ email: session.user?.email }, { $push: { performedMesocycles: performedMesocycle } });
 		}
 
 		await client

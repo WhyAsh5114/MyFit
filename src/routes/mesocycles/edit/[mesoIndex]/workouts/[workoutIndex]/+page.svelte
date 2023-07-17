@@ -49,8 +49,7 @@
 	}}
 >
 	<p>
-		Workout <span class="font-semibold italic">{data.splitSchedule[data.workoutIndex]}</span> has been
-		updated successfully
+		Workout <span class="font-semibold italic">{data.splitSchedule[data.workoutIndex]}</span> has been updated successfully
 	</p>
 </MyModal>
 

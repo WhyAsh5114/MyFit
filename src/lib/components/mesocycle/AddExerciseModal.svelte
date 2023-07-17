@@ -28,17 +28,9 @@
 		if (newExercise.muscleTarget === undefined) {
 			errorMsgs.push('Please choose a primary muscle target');
 		}
-		if (
-			newExercise.repRangeStart === undefined ||
-			newExercise.repRangeStart < 1 ||
-			newExercise.repRangeStart % 1 !== 0
-		) {
+		if (newExercise.repRangeStart === undefined || newExercise.repRangeStart < 1 || newExercise.repRangeStart % 1 !== 0) {
 			errorMsgs.push('Rep range start should be a positive whole number');
-		} else if (
-			newExercise.repRangeEnd === undefined ||
-			newExercise.repRangeEnd < 1 ||
-			newExercise.repRangeEnd % 1 !== 0
-		) {
+		} else if (newExercise.repRangeEnd === undefined || newExercise.repRangeEnd < 1 || newExercise.repRangeEnd % 1 !== 0) {
 			errorMsgs.push('Rep range end should be a positive whole number');
 		} else if (newExercise.repRangeEnd <= newExercise.repRangeStart) {
 			errorMsgs.push('Rep range end should be higher than rep range start');
@@ -75,12 +67,7 @@
 	<form class="flex flex-col gap-3" on:submit|preventDefault={addExercise}>
 		<div class="join mx-auto w-full">
 			<p class="btn join-item btn-sm no-animation btn-secondary w-14">Name</p>
-			<input
-				class="input join-item input-sm w-full"
-				placeholder="Type here"
-				bind:value={newExercise.name}
-				required
-			/>
+			<input class="input join-item input-sm w-full" placeholder="Type here" bind:value={newExercise.name} required />
 		</div>
 		<div class="flex gap-2">
 			<div class="join w-1/3">

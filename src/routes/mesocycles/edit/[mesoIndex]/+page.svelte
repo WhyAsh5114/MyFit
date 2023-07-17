@@ -70,29 +70,19 @@
 </MyModal>
 
 <MyModal title="Mesocycle duration" titleColor="text-accent" bind:dialogElement={durationHelpModal}>
-	<p>
-		The ideal range of a mesocycle duration is between 4 and 16 weeks. It depends on various factors
-		like:
-	</p>
+	<p>The ideal range of a mesocycle duration is between 4 and 16 weeks. It depends on various factors like:</p>
 	<ul class="ml-5 list-disc mt-2">
 		<li>Start RIR (higher the RIR, longer the mesocycle can be)</li>
 		<li>Caloric balance (a surplus can sustain longer mesocycles)</li>
 	</ul>
 </MyModal>
 
-<MyModal
-	title="Start Reps In Reserve"
-	titleColor="text-accent"
-	bind:dialogElement={startRIRHelpModal}
->
+<MyModal title="Start Reps In Reserve" titleColor="text-accent" bind:dialogElement={startRIRHelpModal}>
 	<p>The RIR to begin the mesocycle with, or the RIR for the first microcycle.</p>
 	<p>The recommended RIR for the beginning of a meso is around 3 RIR.</p>
 	<ul class="ml-5 list-disc mt-2">
 		<li>Going much lower can bring in excessive fatigue when you are fresh from a deload</li>
-		<li>
-			Going much higher can result in wasted workouts which weren't stimulative enough for
-			hypertrophy
-		</li>
+		<li>Going much higher can result in wasted workouts which weren't stimulative enough for hypertrophy</li>
 	</ul>
 </MyModal>
 
@@ -125,9 +115,7 @@
 				min="2"
 				max="20"
 				bind:value={$duration}
-				class="range range-xs {$duration >= 4 && $duration <= 16
-					? 'range-secondary'
-					: 'range-warning'}"
+				class="range range-xs {$duration >= 4 && $duration <= 16 ? 'range-secondary' : 'range-warning'}"
 			/>
 		</div>
 	</div>

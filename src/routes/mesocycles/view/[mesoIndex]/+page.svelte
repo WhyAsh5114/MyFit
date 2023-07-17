@@ -34,9 +34,7 @@
 	let deletionSuccessfulModal: HTMLDialogElement;
 	let deletionErrorModal: HTMLDialogElement;
 
-	let muscleFrequency = Object.fromEntries(
-		commonMuscleGroups.map((muscleGroup) => [muscleGroup, 0])
-	);
+	let muscleFrequency = Object.fromEntries(commonMuscleGroups.map((muscleGroup) => [muscleGroup, 0]));
 	let muscleVolume = Object.fromEntries(commonMuscleGroups.map((muscleGroup) => [muscleGroup, 0]));
 	data.meso.splitExercises.forEach((workout) => {
 		let targetedMusclesOnDay: Set<string> = new Set();
@@ -105,11 +103,7 @@
 	}
 </script>
 
-<MyModal
-	title="Another mesocycle is already active"
-	titleColor="text-warning"
-	bind:dialogElement={anotherMesoActiveModal}
->
+<MyModal title="Another mesocycle is already active" titleColor="text-warning" bind:dialogElement={anotherMesoActiveModal}>
 	{#if data.parentMesocycle}
 		<p>
 			Would you like to end

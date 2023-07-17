@@ -16,11 +16,7 @@
 	};
 </script>
 
-<MyModal
-	title={`${viewingExercise?.name} details`}
-	titleColor="text-accent"
-	bind:dialogElement={exerciseDetailModal}
->
+<MyModal title={`${viewingExercise?.name} details`} titleColor="text-accent" bind:dialogElement={exerciseDetailModal}>
 	<dl class="stats stats-vertical w-full">
 		<div class="stat py-2">
 			<dt>Name</dt>
@@ -48,11 +44,7 @@
 		{#if viewingExercise?.jointPainRating}
 			<div class="stat py-2">
 				<dt>Joint pain rating</dt>
-				<dd
-					class="stat-value text-xl capitalize {colorMap.jointPainRating[
-						viewingExercise?.jointPainRating
-					]}"
-				>
+				<dd class="stat-value text-xl capitalize {colorMap.jointPainRating[viewingExercise?.jointPainRating]}">
 					{viewingExercise?.jointPainRating}
 				</dd>
 			</div>
@@ -60,11 +52,7 @@
 		{#if viewingExercise?.pumpRating}
 			<div class="stat py-2">
 				<dt>Pump rating</dt>
-				<dd
-					class="stat-value text-xl capitalize {colorMap.stimulusRating[
-						viewingExercise?.pumpRating
-					]}"
-				>
+				<dd class="stat-value text-xl capitalize {colorMap.stimulusRating[viewingExercise?.pumpRating]}">
 					{viewingExercise?.pumpRating}
 				</dd>
 			</div>
@@ -72,11 +60,7 @@
 		{#if viewingExercise?.disruptionRating}
 			<div class="stat py-2">
 				<dt>Disruption rating</dt>
-				<dd
-					class="stat-value text-xl capitalize {colorMap.stimulusRating[
-						viewingExercise?.disruptionRating
-					]}"
-				>
+				<dd class="stat-value text-xl capitalize {colorMap.stimulusRating[viewingExercise?.disruptionRating]}">
 					{viewingExercise?.disruptionRating}
 				</dd>
 			</div>
@@ -84,11 +68,7 @@
 		{#if viewingExercise?.mindMuscleConnectionRating}
 			<div class="stat py-2">
 				<dt>Mind muscle connection rating</dt>
-				<dd
-					class="stat-value text-xl capitalize {colorMap.stimulusRating[
-						viewingExercise?.mindMuscleConnectionRating
-					]}"
-				>
+				<dd class="stat-value text-xl capitalize {colorMap.stimulusRating[viewingExercise?.mindMuscleConnectionRating]}">
 					{viewingExercise?.mindMuscleConnectionRating}
 				</dd>
 			</div>

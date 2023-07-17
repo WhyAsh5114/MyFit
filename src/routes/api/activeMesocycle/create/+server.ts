@@ -17,20 +17,14 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	const { activeMesocycle }: APIActiveMesocycleCreate = await request.json();
 	const valid = validate(activeMesocycle);
 	if (!valid) {
-		return new Response(
-			`Invalid JSON format for active mesocycle: ${ajv.errorsText(validate.errors)}`,
-			{
-				status: 400
-			}
-		);
+		return new Response(`Invalid JSON format for active mesocycle: ${ajv.errorsText(validate.errors)}`, {
+			status: 400
+		});
 	}
 
 	const client = await clientPromise;
 	try {
-		await client
-			.db()
-			.collection('users')
-			.updateOne({ email: session.user?.email }, { $set: { activeMesocycle } });
+		await client.db().collection('users').updateOne({ email: session.user?.email }, { $set: { activeMesocycle } });
 
 		return new Response('Mesocycle created successfully', {
 			status: 200

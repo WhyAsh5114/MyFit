@@ -7,12 +7,7 @@
 	};
 </script>
 
-<dialog
-	id={title}
-	class="modal modal-bottom sm:modal-middle"
-	bind:this={dialogElement}
-	on:close={onClose}
->
+<dialog id={title} class="modal modal-bottom sm:modal-middle" bind:this={dialogElement} on:close={onClose}>
 	<form method="dialog" class="modal-box bg-primary text-white">
 		<button class="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
 		<h2 class="font-bold text-lg {titleColor} mb-5">{title}</h2>
