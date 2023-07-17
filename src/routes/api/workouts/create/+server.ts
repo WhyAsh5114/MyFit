@@ -60,9 +60,18 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 		groupedSorenessValues.forEach((sorenessValues) => {
 			sorenessValues.muscleTargets.forEach(async (muscleTarget, i) => {
-				await client.db().collection('users').updateOne({ email: session.user?.email }, { $set: {
-					[`workouts.${sorenessValues.workoutIndex}.muscleSorenessToNextWorkout.${muscleTarget}`] : sorenessValues.sorenessRatings[i]
-				}});
+				await client
+					.db()
+					.collection('users')
+					.updateOne(
+						{ email: session.user?.email },
+						{
+							$set: {
+								[`workouts.${sorenessValues.workoutIndex}.muscleSorenessToNextWorkout.${muscleTarget}`]:
+									sorenessValues.sorenessRatings[i]
+							}
+						}
+					);
 			});
 		});
 
