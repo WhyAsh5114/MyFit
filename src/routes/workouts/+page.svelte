@@ -137,7 +137,7 @@
 				{#if workout}
 					<WorkoutCard
 						{workout}
-						workoutIndex={data.workouts.length - workoutIndex}
+						workoutIndex={data.workouts.length - 1 - workoutIndex}
 						mesocycles={data.mesocycles}
 					/>
 				{/if}
