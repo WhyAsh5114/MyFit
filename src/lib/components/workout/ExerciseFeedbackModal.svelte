@@ -29,7 +29,8 @@
 		'Mind muscle connection rating': undefined
 	};
 
-	function openWorkloadModal() {
+	let sorenessDataField: MuscleSorenessData | undefined;
+	function openWorkloadAndSorenessModal() {
 		let totalExercisesForTargetMuscle: number[] = [];
 		workoutExercises.forEach((exercise, i) => {
 			if (exercise.muscleTarget === selectedExercise?.muscleTarget) {
@@ -42,8 +43,16 @@
 				feedbacksRemainingForTargetMuscle--;
 			}
 		});
+
+		sorenessDataField = musclesTargetedPreviously.find(
+			(x) => x.muscleTarget === selectedExercise?.muscleTarget
+		);
+		if (sorenessDataField?.workoutIndex === undefined) {
+			sorenessDataField = undefined;
+		}
+
 		if (feedbacksRemainingForTargetMuscle === 0) {
-			workloadFeedbackModal.show();
+			workloadAndSorenessModal.show();
 		}
 	}
 
@@ -62,15 +71,15 @@
 			feedbackValues[value] = undefined;
 		});
 
-		openWorkloadModal();
+		openWorkloadAndSorenessModal();
 	}
 
-	let workloadFeedbackModal: HTMLDialogElement;
+	let workloadAndSorenessModal: HTMLDialogElement;
 </script>
 
 {#if selectedExercise}
 	<MyModal
-		bind:dialogElement={workloadFeedbackModal}
+		bind:dialogElement={workloadAndSorenessModal}
 		title={`${selectedExercise?.muscleTarget} workload rating`}
 		titleColor="text-accent"
 	>
@@ -82,7 +91,7 @@
 		<form
 			class="flex flex-col gap-2"
 			on:submit|preventDefault={() => {
-				workloadFeedbackModal.close();
+				workloadAndSorenessModal.close();
 			}}
 		>
 			<div class="flex flex-col">
@@ -101,6 +110,24 @@
 					{/each}
 				</div>
 			</div>
+			{#if sorenessDataField}
+				<div class="flex flex-col">
+					<h3 class="font-semibold mt-2">Soreness rating</h3>
+					<div class="grid grid-cols-3 gap-1 mt-1">
+						{#each [["none", 'ok-btn'], ['recovered on time', 'good-btn'], ['interfered with workout', 'bad-btn']] as choice, i}
+							<input
+								class="btn"
+								type="radio"
+								name="Soreness rating"
+								aria-label={choice[0]}
+								bind:group={sorenessDataField.sorenessRating}
+								value={workloadMap[i]}
+								id={choice[1]}
+							/>
+						{/each}
+					</div>
+				</div>
+			{/if}
 			<button class="btn btn-block mt-2 btn-accent"> Submit feedback </button>
 		</form>
 	</MyModal>
@@ -110,7 +137,7 @@
 	bind:dialogElement={exerciseFeedbackModal}
 	title="Exercise feedback"
 	titleColor="text-accent"
-	onClose={openWorkloadModal}
+	onClose={openWorkloadAndSorenessModal}
 >
 	<p>
 		Rate <span class="font-semibold italic">{selectedExercise?.name}</span> for appropriate adjustments
