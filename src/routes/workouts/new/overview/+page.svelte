@@ -93,7 +93,6 @@
 
 	let successModal: HTMLDialogElement;
 	let errorModal: HTMLDialogElement;
-	console.log($musclesTargetedPreviously);
 </script>
 
 <MyModal
