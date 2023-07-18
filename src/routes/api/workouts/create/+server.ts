@@ -39,7 +39,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 		// Group soreness values by workout ID
 		type GroupedMuscleSorenessData = {
-			workoutIndex: number;
+			workoutIndex: number | undefined;
 			muscleTargets: (typeof commonMuscleGroups)[number][];
 			sorenessRatings: Workout['muscleSorenessToNextWorkout'][(typeof commonMuscleGroups)[number]][];
 		};
@@ -58,8 +58,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			return arr;
 		}, []);
 
+		console.log(groupedSorenessValues);
 		groupedSorenessValues.forEach((sorenessValues) => {
 			sorenessValues.muscleTargets.forEach(async (muscleTarget, i) => {
+				if (sorenessValues.workoutIndex === undefined) return;
 				await client
 					.db()
 					.collection('users')

@@ -31,7 +31,7 @@
 					"type": "number"
 				}
 			},
-			"required": ["muscleTarget", "workoutIndex"],
+			"required": ["muscleTarget"],
 			"type": "object"
 		},
 		"Record<\"Chest\"|\"Frontdelts\"|\"Sidedelts\"|\"Reardelts\"|\"Back\"|\"Traps\"|\"Triceps\"|\"Biceps\"|\"Forearms\"|\"Quads\"|\"Hamstrings\"|\"Glutes\"|\"Calves\",\"high\"|\"low\"|\"moderate\">": {
