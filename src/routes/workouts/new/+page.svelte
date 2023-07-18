@@ -95,18 +95,17 @@
 		}
 		$musclesTargetedPreviously = muscleSorenessData;
 	}
-</script>
 
-<form
-	class="flex flex-col w-full gap-2 h-full"
-	on:submit|preventDefault={async () => {
-		$startTimestamp = +new Date();
+	async function startLogging() {
 		callingEndpoint = true;
 		await getMuscleTargetsLastPerformed();
 		callingEndpoint = false;
+		$startTimestamp = +new Date();
 		goto('/workouts/new/exercises');
-	}}
->
+	}
+</script>
+
+<div class="flex flex-col w-full gap-2 h-full">
 	<div class="flex flex-col h-px grow overflow-y-auto gap-2">
 		<div class="stats bg-primary shrink-0 w-full">
 			<div class="stat">
@@ -193,10 +192,34 @@
 			</div>
 		{/if}
 	</div>
-	<button class="btn btn-block btn-accent mt-auto">
-		{#if $navigating?.to?.url.pathname === '/workouts/new/exercises' || callingEndpoint}
-			<span class="loading loading-spinner" />
-		{/if}
-		Start logging
-	</button>
-</form>
+	{#if !$startTimestamp}
+		<button
+			class="btn btn-block btn-accent mt-auto"
+			on:click={() => {
+				if (!callingEndpoint) startLogging();
+			}}
+		>
+			{#if $navigating?.to?.url.pathname === '/workouts/new/exercises' || callingEndpoint}
+				<span class="loading loading-spinner" />
+			{/if}
+			Start logging
+		</button>
+	{:else}
+		<div class="join grid grid-cols-2">
+			<button class="join-item btn btn-error text-black" on:click={startLogging}>
+				{#if callingEndpoint}
+					<span class="loading loading-spinner" />
+				{:else}
+					Overwrite workout
+				{/if}
+			</button>
+			<button class="join-item btn btn-accent" on:click={() => goto('/workouts/new/exercises')}>
+				{#if $navigating?.to?.url.pathname === '/workouts/new/exercises'}
+					<span class="loading loading-spinner" />
+				{:else}
+					Back to workout
+				{/if}
+			</button>
+		</div>
+	{/if}
+</div>
