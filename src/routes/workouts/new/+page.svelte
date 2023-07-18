@@ -77,6 +77,7 @@
 		const reqBody: APIWorkoutGetPreviouslyTargetedWorkouts = {
 			muscleTargets: Object.keys($muscleTargetsAndSets) as (typeof commonMuscleGroups)[number][]
 		};
+		console.log(reqBody);
 		const response = await fetch('/api/workouts/getPreviouslyTargetedWorkouts', {
 			method: 'POST',
 			body: JSON.stringify(reqBody),
@@ -84,13 +85,16 @@
 				'content-type': 'application/json'
 			}
 		});
-		const resBody: MuscleToLastWorkout[] = JSON.parse(await response.text());
 
-		const muscleSorenessData: MuscleSorenessData[] = [];
-		resBody.forEach((muscleAndWorkout) => {
-			muscleSorenessData.push({ ...muscleAndWorkout, sorenessRating: undefined });
-		});
-		$musclesTargetedPreviously = muscleSorenessData;
+		if (response.ok) {
+			const resBody: MuscleToLastWorkout[] = JSON.parse(await response.text());
+
+			const muscleSorenessData: MuscleSorenessData[] = [];
+			resBody.forEach((muscleAndWorkout) => {
+				muscleSorenessData.push({ ...muscleAndWorkout, sorenessRating: undefined });
+			});
+			$musclesTargetedPreviously = muscleSorenessData;
+		}
 	}
 </script>
 
