@@ -57,8 +57,6 @@
 	function editSet(exerciseNumber: number, setNumber: number) {
 		setsPerformedPerExercise[exerciseNumber][setNumber] = false;
 	}
-
-	$: console.log(workoutExercises);
 </script>
 
 <ExerciseFeedbackModal

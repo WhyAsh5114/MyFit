@@ -58,7 +58,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			return arr;
 		}, []);
 
-		console.log(groupedSorenessValues);
 		groupedSorenessValues.forEach((sorenessValues) => {
 			sorenessValues.muscleTargets.forEach(async (muscleTarget, i) => {
 				if (sorenessValues.workoutIndex === undefined) return;

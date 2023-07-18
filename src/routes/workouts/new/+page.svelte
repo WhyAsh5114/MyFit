@@ -96,7 +96,6 @@
 		await getMuscleTargetsLastPerformed();
 		callingEndpoint = false;
 		$startTimestamp = +new Date();
-		console.log(tempWorkoutExercises);
 		$workoutExercises = structuredClone(tempWorkoutExercises);
 		$setsPerformedPerExercise = [];
 		goto('/workouts/new/exercises');
