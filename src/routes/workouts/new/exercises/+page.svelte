@@ -13,6 +13,8 @@
 	} from '../newWorkoutStore';
 	import { goto } from '$app/navigation';
 	import WorkoutExerciseCard from '$lib/components/workout/WorkoutExerciseCard.svelte';
+	import { tweened } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
 	export let data;
 
 	onMount(() => {
@@ -36,12 +38,18 @@
 			totalSets += exercise.repsLoadRIR.length;
 		});
 	}
-	let setsPerformedPerExercise: number[];
-	let totalSetsPerformed: number;
+	let setsPerformedPerExercise: boolean[][];
+	const totalSetsPerformed = tweened(0, {
+		duration: 400,
+		easing: cubicOut
+	});
 	$: try {
-		totalSetsPerformed = setsPerformedPerExercise.reduce((partialSum, num) => partialSum + num, 0);
+		$totalSetsPerformed = setsPerformedPerExercise.reduce(
+			(partialSum, setsPerformed) => partialSum + setsPerformed.filter((setPerformed) => setPerformed).length,
+			0
+		);
 	} catch {
-		totalSetsPerformed = 0;
+		$totalSetsPerformed = 0;
 	}
 </script>
 
@@ -76,24 +84,15 @@
 </div>
 <button
 	class="btn btn-block btn-accent mt-3 flex flex-col disabled:bg-accent disabled:text-black"
-	disabled={totalSetsPerformed !== totalSets}
+	disabled={$totalSetsPerformed !== totalSets}
 	on:click={() => {
 		goto('/workouts/new/overview');
 	}}
 >
-	{#if totalSetsPerformed === totalSets}
+	{#if $totalSetsPerformed === totalSets}
 		Finish workout
 	{:else}
-		{Math.round((totalSetsPerformed / totalSets) * 100)}%
-		<progress class="progress w-full bg-secondary progress-primary" value={totalSetsPerformed} max={totalSets} />
+		{Math.round(($totalSetsPerformed / totalSets) * 100)}%
+		<progress class="progress w-full bg-secondary progress-primary" value={$totalSetsPerformed} max={totalSets} />
 	{/if}
 </button>
-
-<style>
-	progress::-webkit-progress-value {
-		-webkit-transition: width 0.5s ease;
-		-moz-transition: width 0.5s ease;
-		-o-transition: width 0.5s ease;
-		transition: width 0.5s ease;
-	}
-</style>
