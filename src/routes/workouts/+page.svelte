@@ -83,7 +83,7 @@
 	<div class="h-0.5 bg-black mt-1 mb-4" />
 	<div class="flex gap-2">
 		<select class="select select-sm select-bordered grow" bind:value={selectedMesocycle} disabled={!filterByMesocycles}>
-			{#if data.mesocycles === null || data.mesocycles.length === 0}
+			{#if data.mesocycles === null || data.mesocycles?.length === 0}
 				<option value={undefined}>No mesocycle created</option>
 			{:else if !data.activeMesocycle}
 				<option disabled value={undefined}>No active mesocycle</option>
