@@ -11,7 +11,8 @@
 		workoutExercises,
 		referenceWorkout,
 		startTimestamp,
-		musclesTargetedPreviously
+		musclesTargetedPreviously,
+		setsPerformedPerExercise
 	} from './newWorkoutStore.js';
 	export let data;
 
@@ -97,6 +98,7 @@
 		$startTimestamp = +new Date();
 		console.log(tempWorkoutExercises);
 		$workoutExercises = structuredClone(tempWorkoutExercises);
+		$setsPerformedPerExercise = [];
 		goto('/workouts/new/exercises');
 	}
 </script>

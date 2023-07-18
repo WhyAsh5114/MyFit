@@ -43,7 +43,7 @@
 		duration: 400,
 		easing: cubicOut
 	});
-	$: if ($setsPerformedPerExercise) {
+	$: if ($setsPerformedPerExercise.length !== 0) {
 		$totalSetsPerformed = $setsPerformedPerExercise.reduce(
 			(partialSum, setsPerformed) => partialSum + setsPerformed.filter((setPerformed) => setPerformed).length,
 			0

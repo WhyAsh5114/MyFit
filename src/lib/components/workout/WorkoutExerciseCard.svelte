@@ -7,7 +7,7 @@
 	let exerciseFeedbackModal: HTMLDialogElement;
 
 	export let setsPerformedPerExercise: boolean[][];
-	if (!setsPerformedPerExercise) {
+	if (setsPerformedPerExercise.length === 0) {
 		setsPerformedPerExercise = [];
 		workoutExercises.forEach((exercise) => {
 			setsPerformedPerExercise.push(Array(exercise.repsLoadRIR.length).fill(false));
