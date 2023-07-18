@@ -9,3 +9,5 @@ export const referenceWorkout: Writable<null | number> = writable(null);
 export const workoutExercises: Writable<WorkoutExercise[]> = writable([]);
 export const muscleWorkloads: Writable<Workout['muscleGroupWorkloads']> = writable();
 export const musclesTargetedPreviously: Writable<MuscleSorenessData[]> = writable();
+
+export const setsPerformedPerExercise: Writable<boolean[][]> = writable();

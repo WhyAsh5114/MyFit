@@ -6,10 +6,13 @@
 	export let workoutExercises: WorkoutExercise[];
 	let exerciseFeedbackModal: HTMLDialogElement;
 
-	export let setsPerformedPerExercise: boolean[][] = [];
-	workoutExercises.forEach((exercise) => {
-		setsPerformedPerExercise.push(Array(exercise.repsLoadRIR.length).fill(false));
-	});
+	export let setsPerformedPerExercise: boolean[][];
+	if (!setsPerformedPerExercise) {
+		setsPerformedPerExercise = [];
+		workoutExercises.forEach((exercise) => {
+			setsPerformedPerExercise.push(Array(exercise.repsLoadRIR.length).fill(false));
+		});
+	}
 	let repSelectElements: HTMLSelectElement[][] = [];
 	for (let i = 0; i < workoutExercises.length; i++) {
 		repSelectElements.push(new Array());
@@ -24,12 +27,11 @@
 
 	let feedbackTaken: boolean[] = Array(workoutExercises.length).fill(false);
 	let selectedExercise: WorkoutExercise;
-	console.log(setsPerformedPerExercise);
 	$: workoutExercises.forEach((exercise, i) => {
 		let allSetsPerformed = setsPerformedPerExercise[i].every((setPerformed) => setPerformed);
 		if (!feedbackTaken[i] && allSetsPerformed) {
 			selectedExercise = exercise;
-			exerciseFeedbackModal.show();
+			if (exerciseFeedbackModal) exerciseFeedbackModal.show();
 			feedbackTaken[i] = true;
 		}
 	});
@@ -55,6 +57,8 @@
 	function editSet(exerciseNumber: number, setNumber: number) {
 		setsPerformedPerExercise[exerciseNumber][setNumber] = false;
 	}
+
+	$: console.log(workoutExercises);
 </script>
 
 <ExerciseFeedbackModal
@@ -106,7 +110,7 @@
 							repSelectElements[exerciseNumber][setNumber].classList.remove('animate-pulse');
 						}}
 					>
-						<option value={undefined} disabled selected>?</option>
+						<option value={undefined} disabled>?</option>
 						{#each Array.from(Array(100).keys()) as i}
 							<option>{i + 1}</option>
 						{/each}
@@ -138,7 +142,7 @@
 						>
 							<img src="/pencil.svg" alt="Edit icon" />
 						</button>
-					{:else if setsPerformedPerExercise[exerciseNumber].findIndex(setPerformed => !setPerformed) === setNumber}
+					{:else if setsPerformedPerExercise[exerciseNumber].findIndex((setPerformed) => !setPerformed) === setNumber}
 						<button
 							class="btn btn-sm btn-success border-none btn-square text-white rounded-none"
 							on:click={() => performSet(exerciseNumber, setNumber)}>✓</button

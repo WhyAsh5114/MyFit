@@ -43,20 +43,19 @@
 		return workoutExercise;
 	}
 
-	$workoutExercises = [];
+	let tempWorkoutExercises: WorkoutExercise[];
 	$: if ($referenceWorkout === null && data.parentMesocycle.splitExercises[$workoutDay] && $plannedRIR) {
-		$workoutExercises = [];
+		tempWorkoutExercises = [];
 		data.parentMesocycle.splitExercises[$workoutDay].forEach((exercise) => {
-			$workoutExercises.push(splitExerciseToWorkoutExercise(exercise));
+			tempWorkoutExercises.push(splitExerciseToWorkoutExercise(exercise));
 		});
-		$workoutExercises = $workoutExercises;
 	} else {
 		// TODO: template from old workout and apply appropriate volume changes
 	}
 
 	$: {
 		$muscleTargetsAndSets = {};
-		$workoutExercises.forEach((exercise) => {
+		tempWorkoutExercises.forEach((exercise) => {
 			if ($muscleTargetsAndSets[exercise.muscleTarget]) {
 				$muscleTargetsAndSets[exercise.muscleTarget] += exercise.repsLoadRIR.length;
 			} else {
@@ -64,11 +63,6 @@
 			}
 		});
 	}
-
-	// TODO: soreness calculation
-	// iterate through workouts of activeMesocycle, and only use workouts which are less than 7 days older
-	// if musclesGroups overlap found, someList.push({muscleTarget: 'Triceps', workoutID: 9})
-	// whenever asking for workload feedback, also ask for soreness feedback.
 
 	// Updater for totalSets (used in progress bar)
 	$: totalSets = Object.values($muscleTargetsAndSets).reduce((partialSum, sets) => partialSum + sets, 0);
@@ -101,6 +95,8 @@
 		await getMuscleTargetsLastPerformed();
 		callingEndpoint = false;
 		$startTimestamp = +new Date();
+		console.log(tempWorkoutExercises);
+		$workoutExercises = structuredClone(tempWorkoutExercises);
 		goto('/workouts/new/exercises');
 	}
 </script>

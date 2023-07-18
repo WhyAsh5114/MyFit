@@ -9,7 +9,8 @@
 		referenceWorkout,
 		workoutExercises,
 		muscleWorkloads,
-		musclesTargetedPreviously
+		musclesTargetedPreviously,
+		setsPerformedPerExercise
 	} from '../newWorkoutStore';
 	import { goto } from '$app/navigation';
 	import WorkoutExerciseCard from '$lib/components/workout/WorkoutExerciseCard.svelte';
@@ -38,13 +39,12 @@
 			totalSets += exercise.repsLoadRIR.length;
 		});
 	}
-	let setsPerformedPerExercise: boolean[][];
 	const totalSetsPerformed = tweened(0, {
 		duration: 400,
 		easing: cubicOut
 	});
-	$: if (setsPerformedPerExercise) {
-		$totalSetsPerformed = setsPerformedPerExercise.reduce(
+	$: if ($setsPerformedPerExercise) {
+		$totalSetsPerformed = $setsPerformedPerExercise.reduce(
 			(partialSum, setsPerformed) => partialSum + setsPerformed.filter((setPerformed) => setPerformed).length,
 			0
 		);
@@ -74,7 +74,7 @@
 	<div class="h-px grow w-full overflow-y-auto p-2">
 		<WorkoutExerciseCard
 			bind:workoutExercises={$workoutExercises}
-			bind:setsPerformedPerExercise
+			bind:setsPerformedPerExercise={$setsPerformedPerExercise}
 			bind:muscleWorkloads={$muscleWorkloads}
 			bind:musclesTargetedPreviously={$musclesTargetedPreviously}
 		/>
