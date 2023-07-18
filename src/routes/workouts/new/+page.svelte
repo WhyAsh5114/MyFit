@@ -73,6 +73,7 @@
 	// Updater for totalSets (used in progress bar)
 	$: totalSets = Object.values($muscleTargetsAndSets).reduce((partialSum, sets) => partialSum + sets, 0);
 
+	let callingEndpoint = false;
 	async function getMuscleTargetsLastPerformed() {
 		const reqBody: APIWorkoutGetPreviouslyTargetedWorkouts = {
 			muscleTargets: Object.keys($muscleTargetsAndSets) as (typeof commonMuscleGroups)[number][]
@@ -102,7 +103,9 @@
 	class="flex flex-col w-full gap-2 h-full"
 	on:submit|preventDefault={async () => {
 		$startTimestamp = +new Date();
+		callingEndpoint = true;
 		await getMuscleTargetsLastPerformed();
+		callingEndpoint = false;
 		goto('/workouts/new/exercises');
 	}}
 >
@@ -193,7 +196,7 @@
 		{/if}
 	</div>
 	<button class="btn btn-block btn-accent mt-auto">
-		{#if $navigating?.to?.url.pathname === '/workouts/new/exercises'}
+		{#if $navigating?.to?.url.pathname === '/workouts/new/exercises' || callingEndpoint}
 			<span class="loading loading-spinner" />
 		{/if}
 		Start logging
