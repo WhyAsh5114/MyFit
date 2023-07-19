@@ -9,8 +9,8 @@ export const handle = SvelteKitAuth({
 	adapter: MongoDBAdapter(clientPromise),
 	providers: [
 		GoogleProvider({
-			clientId: GOOGLE_CLIENT_ID as string,
-			clientSecret: GOOGLE_CLIENT_SECRET as string
+			clientId: GOOGLE_CLIENT_ID,
+			clientSecret: GOOGLE_CLIENT_SECRET
 		})
 	],
 	callbacks: {
