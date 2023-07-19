@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+
+	console.log($page.data.session)
 </script>
 
-<h3>Hello {$page.data.session?.user?.name}</h3>
+<p>Hello {$page.data.session?.user?.name}</p>
+<p>{$page.data.session?.user?.email}</p>

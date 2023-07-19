@@ -19,7 +19,7 @@
 <div class="flex flex-col items-center bg-secondary rounded-lg py-5 px-10 gap-3 w-full max-w-xs">
 	<h3 class="text-black font-semibold">Login to continue</h3>
 	<button
-		class="btn justify-around btn-primary normal-case w-full"
+		class="btn gap-2 btn-primary normal-case w-full"
 		on:click={() => {
 			redirectingModal.show();
 			signIn('google', { callbackUrl: $page.url.searchParams.get('callbackURL') || '' });
@@ -27,15 +27,5 @@
 	>
 		<img src="/google_logo.png" alt="Google logo" height="30" width="30" />
 		Sign in with Google
-	</button>
-	<button
-		class="btn justify-around btn-primary normal-case w-full"
-		on:click={() => {
-			redirectingModal.show();
-			signIn('github', { callbackUrl: $page.url.searchParams.get('callbackURL') || '' });
-		}}
-	>
-		<img src="/github-dark.svg" alt="Github logo" height="30" width="30" />
-		Sign in with Github
 	</button>
 </div>
