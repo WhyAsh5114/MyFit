@@ -1,5 +1,8 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { navigating } from '$app/stores';
 	import { dateFormatter, days } from '$lib/commonDB.js';
+	import MyModal from '$lib/components/MyModal.svelte';
 	import WorkoutExerciseCard from '$lib/components/workout/WorkoutExerciseCard.svelte';
 	export let data;
 
@@ -26,8 +29,48 @@
 		});
 		averageRIR = Math.round((averageRIR / totalSets) * 100) / 100;
 	}
+
+	let callingEndpoint = false;
+	let errorMsg = '';
+	async function updateWorkout() {
+		callingEndpoint = true;
+		const reqBody: APIWorkoutUpdate = {
+			workoutIndex: data.workoutIndex,
+			workout: data.workout,
+			sorenessValues: data.musclesTargetedPreviously
+		};
+		const response = await fetch('/api/workouts/update', {
+			method: 'POST',
+			body: JSON.stringify(reqBody),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+		if (response.ok) successModal.show();
+		else {
+			errorMsg = await response.text();
+			errorModal.show();
+		}
+		callingEndpoint = false;
+	}
+
+	let successModal: HTMLDialogElement;
+	let errorModal: HTMLDialogElement;
 </script>
 
+<MyModal
+	title="Success"
+	titleColor="text-success"
+	bind:dialogElement={successModal}
+	onClose={() => {
+		goto(`/workouts/view/${data.workoutIndex}`);
+	}}
+>
+	<p>Workout updated successfully</p>
+</MyModal>
+<MyModal title="Error" titleColor="text-error" bind:dialogElement={errorModal}>
+	<p>{errorMsg}</p>
+</MyModal>
 <div class="flex flex-col h-px grow gap-2 w-full overflow-y-auto">
 	<div class="stats bg-primary w-full stats-vertical shrink-0">
 		<div class="stat">
@@ -90,6 +133,21 @@
 	/>
 </div>
 <div class="join grid grid-cols-2 w-full">
-	<button class="join-item btn btn-primary">Cancel</button>
-	<button class="join-item btn btn-accent">Save</button>
+	<a class="join-item btn btn-primary" href="/workouts/view/{data.workoutIndex}">
+		{#if $navigating?.to?.url.pathname === `/workouts/view/${data.workoutIndex}`}
+			<span class="loading loading-spinner"></span>
+		{/if}
+		Cancel
+	</a>
+	<button
+		class="join-item btn btn-accent"
+		on:click={() => {
+			if (!callingEndpoint) updateWorkout();
+		}}
+	>
+		{#if callingEndpoint}
+			<span class="loading loading-spinner"></span>
+		{/if}
+		Save
+	</button>
 </div>
