@@ -35,7 +35,8 @@ export const load: PageServerLoad = async ({ locals, params, parent, fetch }) =>
 	});
 
 	const reqBody: APIWorkoutGetPreviouslyTargetedWorkouts = {
-		muscleTargets: Object.keys(muscleTargetsAndSets) as (typeof commonMuscleGroups)[number][]
+		muscleTargets: Object.keys(muscleTargetsAndSets) as (typeof commonMuscleGroups)[number][],
+		workoutIndex: parseInt(params.workoutIndex)
 	};
 	const response = await fetch('/api/workouts/getPreviouslyTargetedWorkouts', {
 		method: 'POST',
