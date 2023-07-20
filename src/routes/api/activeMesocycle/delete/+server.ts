@@ -11,7 +11,10 @@ export const POST: RequestHandler = async ({ locals }) => {
 
 	const client = await clientPromise;
 	try {
-		const userData = await client.db().collection('users').findOne({ email: session.user?.email });
+		const userData = await client
+			.db()
+			.collection('users')
+			.findOne({ email: session.user?.email });
 		if (userData?.activeMesocycle?.workouts.length > 0) {
 			const activeMesocycle: ActiveMesocycle = userData?.activeMesocycle;
 			const performedMesocycle: PerformedMesocycle = {

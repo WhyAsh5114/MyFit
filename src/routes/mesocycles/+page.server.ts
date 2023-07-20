@@ -9,7 +9,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 
 	const client = await clientPromise;
-	const userData = await client.db().collection('users').findOne({ email: session.user?.email });
+	const userData = await client
+		.db()
+		.collection('users')
+		.findOne({ email: session.user?.email });
 
 	return {
 		mesocycles: userData?.mesocycles as (Mesocycle | null)[] | null,

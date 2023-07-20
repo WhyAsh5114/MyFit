@@ -12,7 +12,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	const { mesoIndex }: APIMesocyclesDelete = await request.json();
 	const client = await clientPromise;
 
-	const userData = await client.db().collection('users').findOne({ email: session.user?.email });
+	const userData = await client
+		.db()
+		.collection('users')
+		.findOne({ email: session.user?.email });
 	if (userData?.activeMesocycle?.mesoID === mesoIndex) {
 		return new Response('Cannot delete an active mesocycle', { status: 400 });
 	}

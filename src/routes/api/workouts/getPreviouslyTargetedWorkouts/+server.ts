@@ -20,7 +20,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 	const client = await clientPromise;
 	try {
-		const userData = await client.db().collection('users').findOne({ email: session.user?.email });
+		const userData = await client
+			.db()
+			.collection('users')
+			.findOne({ email: session.user?.email });
 		const workoutsList = userData?.workouts as (Workout | null)[] | null;
 		if (!workoutsList) {
 			return new Response('No workouts created', { status: 400 });

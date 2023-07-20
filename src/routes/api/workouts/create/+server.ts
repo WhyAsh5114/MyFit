@@ -29,7 +29,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			.collection('users')
 			.updateOne({ email: session.user?.email }, { $push: { workouts: workout } });
 
-		const userData = await client.db().collection('users').findOne({ email: session.user?.email });
+		const userData = await client
+			.db()
+			.collection('users')
+			.findOne({ email: session.user?.email });
 
 		// Add workout ID to activeMesocycle.workouts
 		await client

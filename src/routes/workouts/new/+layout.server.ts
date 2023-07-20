@@ -9,7 +9,10 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	}
 
 	const client = await clientPromise;
-	const userData = await client.db().collection('users').findOne({ email: session.user?.email });
+	const userData = await client
+		.db()
+		.collection('users')
+		.findOne({ email: session.user?.email });
 	if (!userData?.activeMesocycle) {
 		throw error(400, 'No active mesocycle, start one from the Mesocycles page');
 	}

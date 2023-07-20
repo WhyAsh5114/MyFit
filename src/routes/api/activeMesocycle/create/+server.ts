@@ -24,7 +24,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 	const client = await clientPromise;
 	try {
-		await client.db().collection('users').updateOne({ email: session.user?.email }, { $set: { activeMesocycle } });
+		await client
+			.db()
+			.collection('users')
+			.updateOne({ email: session.user?.email }, { $set: { activeMesocycle } });
 
 		return new Response('Mesocycle created successfully', {
 			status: 200
