@@ -3,7 +3,6 @@
 	import { onMount } from 'svelte';
 	import { useRegisterSW } from 'virtual:pwa-register/svelte';
 	import type { Writable } from 'svelte/store';
-	import { ShowIndicator } from './homeStore';
 
 	function callImmediatelyAndThenSetInterval(func: () => void, interval: number) {
 		func();
@@ -40,7 +39,8 @@
 	});
 
 	export let updatingModal: HTMLDialogElement;
-	$: ShowIndicator.set($needRefresh || !isInstalled);
+	export let showIndicator: boolean;
+	$: showIndicator = $needRefresh || !isInstalled;
 </script>
 
 {#if !isInstalled}

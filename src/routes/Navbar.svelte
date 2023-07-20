@@ -4,10 +4,10 @@
 	import { navigating, page } from '$app/stores';
 	import MyModal from '$lib/components/MyModal.svelte';
 	import { signOut } from '@auth/sveltekit/client';
-	import ProfilePicture from './ProfilePicture.svelte';
 
 	let logoutModal: HTMLDialogElement;
 	let updatingModal: HTMLDialogElement;
+	let showIndicator = false;
 </script>
 
 <MyModal title="Updating" bind:dialogElement={updatingModal}>
@@ -30,9 +30,24 @@
 	</div>
 	<div class="flex-none">
 		<div class="dropdown dropdown-end">
-			<ProfilePicture />
+			<button
+				class="btn btn-ghost btn-circle avatar {showIndicator ? 'indicator' : ''}"
+				on:click={() => showIndicator = false}
+			>
+				{#if showIndicator}
+					<span class="indicator-item badge badge-accent badge-xs animate-pulse mx-1.5 my-1.5" />
+				{/if}
+				<div class="w-10 rounded-full">
+					{#if $page.data.session}
+						<img src={$page.data.session.user?.image} referrerpolicy="no-referrer" alt="profile" width="40" height="40" />
+					{:else}
+						<img src="/profile.webp" alt="profile" width="40" height="40" />
+					{/if}
+				</div>
+			</button>
+
 			<ul class="menu dropdown-content mt-3 p-2 shadow bg-secondary text-black font-semibold rounded-box">
-				<PWAButton bind:updatingModal />
+				<PWAButton bind:updatingModal bind:showIndicator />
 				{#if $page.data.session}
 					<li><a href="/profile">Profile</a></li>
 					<li><a href="/settings">Settings</a></li>
