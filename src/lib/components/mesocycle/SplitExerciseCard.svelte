@@ -23,6 +23,10 @@
 		indexOfExerciseToDelete = i;
 		deleteExerciseModal.show();
 	}
+
+	function swapExercises(a: number, b: number) {
+		[splitExercises[b], splitExercises[a]] = [splitExercises[a], splitExercises[b]];
+	}
 </script>
 
 <EditExerciseModal
@@ -70,6 +74,24 @@
 									deleteExercise(i);
 								}}>Delete</button
 							>
+						</li>
+						<li>
+							<div class="flex w-full">
+								<button
+									class="btn btn-primary btn-sm text-lg font-bold text-white grow"
+									disabled={i === 0}
+									on:click={() => {
+										swapExercises(i, i - 1);
+									}}>↑</button
+								>
+								<button
+									class="btn btn-primary btn-sm text-lg font-bold text-white grow"
+									disabled={i === splitExercises.length - 1}
+									on:click={() => {
+										swapExercises(i, i + 1);
+									}}>↓</button
+								>
+							</div>
 						</li>
 					</ul>
 				</div>
