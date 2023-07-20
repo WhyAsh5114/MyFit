@@ -85,6 +85,7 @@
 		bind:workoutExercises={data.workout.exercisesPerformed}
 		bind:setsPerformedPerExercise
 		bind:musclesTargetedPreviously={data.musclesTargetedPreviously}
+		workoutPerformed={true}
 	/>
 </div>
 <div class="join grid grid-cols-2 w-full">
