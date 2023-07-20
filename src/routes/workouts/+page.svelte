@@ -97,43 +97,45 @@
 		</select>
 	</div>
 </div>
-<div class="grow w-full my-2 flex flex-col gap-2">
-	{#if filterByMesocycles && data.workouts}
-		{#if activeMesocycleWorkouts.length > 0}
-			<div class="flex flex-col gap-1">
-				<h3 class="text-accent font-bold text-xl">
-					Active ({dateFormatter(data.activeMesocycle?.startDate)})
-				</h3>
-				<ul class="flex flex-col gap-1">
-					{#each activeMesocycleWorkouts as { id, workout }}
-						<WorkoutCard {workout} workoutIndex={id} mesocycles={data.mesocycles} />
-					{/each}
-				</ul>
-			</div>
-		{/if}
-		{#each performedMesocyclesWorkouts as performedMesocycleWorkouts}
-			<div class="flex flex-col gap-1">
-				<h3 class="font-bold text-xl">
-					{dateFormatter(performedMesocycleWorkouts.startTimestamp)} - {dateFormatter(
-						performedMesocycleWorkouts.endTimestamp
-					)}
-				</h3>
-				<ul class="flex flex-col gap-1">
-					{#each performedMesocycleWorkouts.workouts as { id, workout }}
-						<WorkoutCard {workout} workoutIndex={id} mesocycles={data.mesocycles} />
-					{/each}
-				</ul>
-			</div>
-		{/each}
-	{:else if data.workouts}
-		<ul class="flex flex-col gap-1">
-			{#each data.workouts.slice(0).reverse() as workout, workoutIndex}
-				{#if workout}
-					<WorkoutCard {workout} workoutIndex={data.workouts.length - 1 - workoutIndex} mesocycles={data.mesocycles} />
-				{/if}
+<div class="flex flex-col h-px grow overflow-y-auto w-full my-1">
+	<div class="w-full my-2 flex flex-col gap-2">
+		{#if filterByMesocycles && data.workouts}
+			{#if activeMesocycleWorkouts.length > 0}
+				<div class="flex flex-col gap-1">
+					<h3 class="text-accent font-bold text-xl">
+						Active ({dateFormatter(data.activeMesocycle?.startDate)})
+					</h3>
+					<ul class="flex flex-col gap-1">
+						{#each activeMesocycleWorkouts as { id, workout }}
+							<WorkoutCard {workout} workoutIndex={id} mesocycles={data.mesocycles} />
+						{/each}
+					</ul>
+				</div>
+			{/if}
+			{#each performedMesocyclesWorkouts as performedMesocycleWorkouts}
+				<div class="flex flex-col gap-1">
+					<h3 class="font-bold text-xl">
+						{dateFormatter(performedMesocycleWorkouts.startTimestamp)} - {dateFormatter(
+							performedMesocycleWorkouts.endTimestamp
+						)}
+					</h3>
+					<ul class="flex flex-col gap-1">
+						{#each performedMesocycleWorkouts.workouts as { id, workout }}
+							<WorkoutCard {workout} workoutIndex={id} mesocycles={data.mesocycles} />
+						{/each}
+					</ul>
+				</div>
 			{/each}
-		</ul>
-	{/if}
+		{:else if data.workouts}
+			<ul class="flex flex-col gap-1">
+				{#each data.workouts.slice(0).reverse() as workout, workoutIndex}
+					{#if workout}
+						<WorkoutCard {workout} workoutIndex={data.workouts.length - 1 - workoutIndex} mesocycles={data.mesocycles} />
+					{/if}
+				{/each}
+			</ul>
+		{/if}
+	</div>
 </div>
 <a class="btn btn-block btn-accent" href="/workouts/new">
 	{#if $navigating?.to?.url.pathname === '/workouts/new'}
