@@ -85,6 +85,7 @@
 		bind:workoutExercises={data.workout.exercisesPerformed}
 		bind:setsPerformedPerExercise
 		bind:musclesTargetedPreviously={data.musclesTargetedPreviously}
+		bind:muscleWorkloads={data.workout.muscleGroupWorkloads}
 		workoutPerformed={true}
 	/>
 </div>
