@@ -24,10 +24,10 @@
 	};
 
 	let feedbackValues: Record<string, 'none' | 'moderate' | 'high' | undefined> = {
-		'Joint pain rating': undefined,
-		'Pump rating': undefined,
-		'Disruption rating': undefined,
-		'Mind muscle connection rating': undefined
+		'Joint pain rating': selectedExercise?.jointPainRating,
+		'Pump rating': selectedExercise?.pumpRating,
+		'Disruption rating': selectedExercise?.disruptionRating,
+		'Mind muscle connection rating': selectedExercise?.mindMuscleConnectionRating
 	};
 
 	let sorenessDataField: MuscleSorenessData | undefined;
@@ -56,7 +56,7 @@
 		}
 	}
 
-	function submitFeedback() {
+	function syncExerciseFeedback() {
 		if (!selectedExercise) {
 			return;
 		}
@@ -65,13 +65,6 @@
 		selectedExercise.pumpRating = feedbackValues['Pump rating'];
 		selectedExercise.disruptionRating = feedbackValues['Disruption rating'];
 		selectedExercise.mindMuscleConnectionRating = feedbackValues['Mind muscle connection rating'];
-
-		exerciseFeedbackModal.close();
-		Object.keys(feedbackValues).forEach((value) => {
-			feedbackValues[value] = undefined;
-		});
-
-		openWorkloadAndSorenessModal();
 	}
 
 	let workloadAndSorenessModal: HTMLDialogElement;
@@ -143,7 +136,7 @@
 		Rate <span class="font-semibold italic">{selectedExercise?.name}</span> for appropriate adjustments in the next week
 	</p>
 	<div class="h-px w-full bg-secondary mt-2 mb-4" />
-	<form class="flex flex-col gap-2" on:submit|preventDefault={submitFeedback}>
+	<div class="flex flex-col gap-2">
 		{#each Object.keys(feedbackSystem) as item}
 			<div class="flex flex-col">
 				<h3 class="font-semibold">{item}</h3>
@@ -157,13 +150,14 @@
 							id={feedbackSystem[item][choice]}
 							bind:group={feedbackValues[item]}
 							value={ratingMap[i]}
+							on:change={syncExerciseFeedback}
 						/>
 					{/each}
 				</div>
 			</div>
 		{/each}
 		<button class="btn btn-block mt-2 btn-accent"> Submit feedback </button>
-	</form>
+	</div>
 </MyModal>
 
 <style lang="postcss">
