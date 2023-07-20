@@ -22,7 +22,7 @@
 					<button>
 						<img src="/HamburgerMenu.svg" alt="menu" />
 					</button>
-					<ul
+					<div
 						class="menu gap-1 dropdown-content p-2 shadow-black bg-base-100 rounded-md shadow-md border border-primary z-10"
 					>
 						<button
@@ -31,7 +31,7 @@
 								viewingExercise = exercise;
 							}}>Details</button
 						>
-					</ul>
+						</div>
 				</div>
 			</div>
 			<div class="flex justify-between items-end -mt-2">
