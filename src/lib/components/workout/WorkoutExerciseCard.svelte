@@ -2,7 +2,9 @@
 	import { flip } from 'svelte/animate';
 	import { scale, slide } from 'svelte/transition';
 	import ExerciseFeedbackModal from './ExerciseFeedbackModal.svelte';
+	import ExerciseDetailsModal from './ExerciseDetailsModal.svelte';
 
+	export let workoutPerformed = false;
 	export let workoutExercises: WorkoutExercise[];
 	let exerciseFeedbackModal: HTMLDialogElement;
 
@@ -57,8 +59,15 @@
 	function editSet(exerciseNumber: number, setNumber: number) {
 		setsPerformedPerExercise[exerciseNumber][setNumber] = false;
 	}
+
+	let viewingExercise: WorkoutExercise;
+
+	function swapExercises(a: number, b: number) {
+		[workoutExercises[b], workoutExercises[a]] = [workoutExercises[a], workoutExercises[b]];
+	}
 </script>
 
+<ExerciseDetailsModal bind:viewingExercise />
 <ExerciseFeedbackModal
 	bind:exerciseFeedbackModal
 	bind:workoutExercises
@@ -66,6 +75,7 @@
 	bind:feedbackTaken
 	bind:muscleWorkloads
 	bind:musclesTargetedPreviously
+	bind:workoutPerformed
 />
 <ul class="flex flex-col gap-2">
 	{#each workoutExercises as exercise, exerciseNumber (exercise.name)}
@@ -81,9 +91,66 @@
 					<button>
 						<img src="/HamburgerMenu.svg" alt="menu" />
 					</button>
-					<ul class="menu dropdown-content p-2 shadow-black bg-base-100 rounded-md shadow-md z-10">
-						<li />
-					</ul>
+					<div class="menu dropdown-content p-2 shadow-black bg-base-100 rounded-md shadow-md z-10 gap-1">
+						<button
+							class="btn btn-sm btn-accent"
+							on:click={() => {
+								viewingExercise = exercise;
+							}}>Details</button
+						>
+						<button
+							class="btn btn-sm btn-primary"
+							on:click={() => {
+								selectedExercise = exercise;
+								exerciseFeedbackModal.show();
+							}}>Feedback</button
+						>
+						<div class="text-white px-0 flex gap-1 items-center mb-1">
+							Move
+							<div class="h-px grow bg-white" />
+						</div>
+						<div class="grid grid-cols-2 gap-1 -mt-2">
+							<button
+								class="btn btn-primary btn-sm text-lg"
+								disabled={exerciseNumber === 0}
+								on:click={() => {
+									swapExercises(exerciseNumber, exerciseNumber - 1);
+								}}>↑</button
+							>
+							<button
+								class="btn btn-primary btn-sm text-lg"
+								disabled={exerciseNumber === workoutExercises.length - 1}
+								on:click={() => {
+									swapExercises(exerciseNumber, exerciseNumber + 1);
+								}}>↓</button
+							>
+						</div>
+						<div class="text-white px-0 flex gap-1 items-center mb-1">
+							Sets
+							<div class="h-px grow bg-white" />
+						</div>
+						<div class="grid grid-cols-2 gap-1 -mt-2">
+							<button
+								class="btn btn-primary btn-sm text-lg"
+								on:click={() => {
+									exercise.repsLoadRIR = [
+										...exercise.repsLoadRIR,
+										structuredClone(exercise.repsLoadRIR[exercise.repsLoadRIR.length - 1])
+									];
+									setsPerformedPerExercise[exerciseNumber] = [...setsPerformedPerExercise[exerciseNumber], false];
+								}}>+</button
+							>
+							<button
+								class="btn btn-primary btn-sm text-lg"
+								on:click={() => {
+									exercise.repsLoadRIR.pop();
+									exercise.repsLoadRIR = exercise.repsLoadRIR;
+									setsPerformedPerExercise[exerciseNumber].pop();
+									setsPerformedPerExercise[exerciseNumber] = setsPerformedPerExercise[exerciseNumber];
+								}}>-</button
+							>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="flex justify-between items-end -mt-2">
