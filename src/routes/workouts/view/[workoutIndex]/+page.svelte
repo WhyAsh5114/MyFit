@@ -266,7 +266,7 @@
 		</div>
 	{/if}
 </div>
-<div class="join grid grid-cols-2 w-full mt-3">
+<div class="join grid grid-cols-2 w-full mt-2">
 	<button
 		class="join-item btn btn-error text-black"
 		on:click={() => {

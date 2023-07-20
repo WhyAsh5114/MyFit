@@ -141,7 +141,7 @@
 		workoutPerformed={true}
 	/>
 </div>
-<div class="join grid grid-cols-2 w-full">
+<div class="join grid grid-cols-2 w-full mt-2">
 	<a class="join-item btn btn-primary" href="/workouts/view/{data.workoutIndex}">
 		{#if $navigating?.to?.url.pathname === `/workouts/view/${data.workoutIndex}`}
 			<span class="loading loading-spinner"></span>
