@@ -7,6 +7,7 @@
 	export let selectedExercise: WorkoutExercise | undefined;
 	export let muscleWorkloads: Workout['muscleGroupWorkloads'];
 	export let musclesTargetedPreviously: MuscleSorenessData[];
+	export let workoutPerformed = false;
 
 	const ratingMap: Record<number, string> = { 0: 'none', 1: 'moderate', 2: 'high' };
 	const workloadMap: Record<number, string> = { 0: 'low', 1: 'moderate', 2: 'high' };
@@ -44,6 +45,7 @@
 			}
 		});
 
+		if (workoutPerformed) return;
 		sorenessDataField = musclesTargetedPreviously.find((x) => x.muscleTarget === selectedExercise?.muscleTarget);
 		if (sorenessDataField?.workoutIndex === undefined) {
 			sorenessDataField = undefined;
