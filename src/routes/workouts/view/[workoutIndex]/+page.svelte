@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/stores';
 	import { dateFormatter, days } from '$lib/commonDB.js';
 	import MyModal from '$lib/components/MyModal.svelte';
 	import ViewExerciseCard from '$lib/components/workout/ViewExerciseCard.svelte';
@@ -272,5 +273,10 @@
 			confirmDeleteModal.show();
 		}}>Delete</button
 	>
-	<button class="join-item btn btn-primary">Edit</button>
+	<a class="join-item btn btn-primary" href="/workouts/edit/{data.workoutIndex}">
+		{#if $navigating?.to?.url.pathname === `/workouts/edit/${data.workoutIndex}`}
+			<span class="loading loading-spinner"></span>
+		{/if}
+		Edit
+	</a>
 </div>
