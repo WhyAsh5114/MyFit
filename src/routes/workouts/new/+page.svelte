@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { navigating } from '$app/stores';
-	import { days } from '$lib/commonDB';
+	import { dateFormatter, days } from '$lib/commonDB';
 	import { slide, fly } from 'svelte/transition';
 	import {
 		workoutDay,
@@ -14,6 +14,7 @@
 		musclesTargetedPreviously,
 		setsPerformedPerExercise
 	} from './newWorkoutStore.js';
+	import { applyWorkoutChanges } from '$lib/workoutChanges.js';
 	export let data;
 
 	let date = new Date();
@@ -44,14 +45,34 @@
 		return workoutExercise;
 	}
 
-	let tempWorkoutExercises: WorkoutExercise[];
+	$: findReferenceWorkout($workoutDay);
+	function findReferenceWorkout(dayNumber: number) {
+		let activeMesoWorkouts = structuredClone(data.activeMesocycle.workouts).reverse();
+		$referenceWorkout = null;
+		for (let i = 0; i < activeMesoWorkouts.length; i++) {
+			let workoutIndex = activeMesoWorkouts[i];
+			console.log(workoutIndex);
+			if (data.workouts && data.workouts[workoutIndex]?.dayNumber === dayNumber) {
+				$referenceWorkout = workoutIndex;
+				break;
+			}
+		}
+	}
+
+	let tempWorkoutExercises: WorkoutExercise[] = [];
 	$: if ($referenceWorkout === null && data.parentMesocycle.splitExercises[$workoutDay] && $plannedRIR) {
 		tempWorkoutExercises = [];
 		data.parentMesocycle.splitExercises[$workoutDay].forEach((exercise) => {
 			tempWorkoutExercises.push(splitExerciseToWorkoutExercise(exercise));
 		});
-	} else {
+	} else if (data.workouts && $referenceWorkout !== null) {
 		// TODO: template from old workout and apply appropriate volume changes
+		tempWorkoutExercises = [];
+		let referencedWorkout = data.workouts[$referenceWorkout];
+		if (referencedWorkout) {
+			referencedWorkout = applyWorkoutChanges(referencedWorkout);
+			tempWorkoutExercises = referencedWorkout.exercisesPerformed;
+		}
 	}
 
 	$: {
@@ -177,12 +198,15 @@
 					</div>
 					{#key $workoutDay}
 						<div class="mt-2" in:fly={{ y: -10 }}>
-							<!-- TODO: if reference workout, use referenceWorkout store -->
-							<p class="text-white">No reference workout found for</p>
-							<p class="text-accent font-semibold">
-								{data.parentMesocycle.splitSchedule[$workoutDay]}
-								({days[$workoutDay]})
-							</p>
+							{#if $referenceWorkout === null}
+								<p class="text-white">No reference workout found for</p>
+								<p class="text-accent font-semibold">
+									{data.parentMesocycle.splitSchedule[$workoutDay]}
+									({days[$workoutDay]})
+								</p>
+							{:else if data.workouts}
+								<p class="text-accent font-semibold">{dateFormatter(data.workouts[$referenceWorkout]?.startTimestamp)}</p>
+							{/if}
 						</div>
 					{/key}
 				</div>
