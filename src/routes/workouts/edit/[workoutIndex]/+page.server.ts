@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals, params, parent }) => {
+export const load: PageServerLoad = async ({ locals, params, parent, fetch }) => {
 	const session = await locals.getSession();
 	const { workouts, mesocycles } = await parent();
 
@@ -25,10 +25,40 @@ export const load: PageServerLoad = async ({ locals, params, parent }) => {
 		throw error(404, 'Workout not found');
 	}
 
+	const muscleTargetsAndSets: Record<string, number> = {};
+	workout.exercisesPerformed.forEach((exercise) => {
+		if (muscleTargetsAndSets[exercise.muscleTarget]) {
+			muscleTargetsAndSets[exercise.muscleTarget] += exercise.repsLoadRIR.length;
+		} else {
+			muscleTargetsAndSets[exercise.muscleTarget] = exercise.repsLoadRIR.length;
+		}
+	});
+
+	const reqBody: APIWorkoutGetPreviouslyTargetedWorkouts = {
+		muscleTargets: Object.keys(muscleTargetsAndSets) as (typeof commonMuscleGroups)[number][]
+	};
+	const response = await fetch('/api/workouts/getPreviouslyTargetedWorkouts', {
+		method: 'POST',
+		body: JSON.stringify(reqBody),
+		headers: {
+			'content-type': 'application/json'
+		}
+	});
+
+	const muscleSorenessData: MuscleSorenessData[] = [];
+	if (response.ok) {
+		const resBody: MuscleToLastWorkout[] = JSON.parse(await response.text());
+		resBody.forEach((muscleAndWorkout) => {
+			muscleSorenessData.push({ ...muscleAndWorkout, sorenessRating: undefined });
+		});
+	}
+	const musclesTargetedPreviously = muscleSorenessData;
+
 	return {
 		workout,
 		workoutIndex: parseInt(params.workoutIndex),
 		parentMesocycle: mesocycles[workout.mesoID] as Mesocycle | null,
-		referenceWorkout
+		referenceWorkout,
+		musclesTargetedPreviously
 	};
 };
