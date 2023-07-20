@@ -50,7 +50,11 @@ export const load: PageServerLoad = async ({ locals, params, parent, fetch }) =>
 	if (response.ok) {
 		const resBody: MuscleToLastWorkout[] = JSON.parse(await response.text());
 		resBody.forEach((muscleAndWorkout) => {
-			muscleSorenessData.push({ ...muscleAndWorkout, sorenessRating: undefined });
+			muscleSorenessData.push({
+				...muscleAndWorkout,
+				sorenessRating:
+					workouts[muscleAndWorkout.workoutIndex as number]?.muscleSorenessToNextWorkout[muscleAndWorkout.muscleTarget]
+			});
 		});
 	}
 	const musclesTargetedPreviously = muscleSorenessData;
