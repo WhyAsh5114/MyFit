@@ -3,6 +3,10 @@ type APIWorkoutCreate = {
 	sorenessValues: MuscleSorenessData[];
 };
 
+interface APIWorkoutUpdate extends APIWorkoutCreate {
+	workoutIndex: number;
+}
+
 type APIWorkoutDelete = {
 	workoutIndex: number;
 };
