@@ -36,7 +36,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 		let olderWorkoutsList;
 		let currentWorkout: Workout | undefined;
-		if (workoutIndex) {
+		if (workoutIndex !== undefined) {
 			currentWorkout = userData?.workouts[workoutIndex];
 			if (!currentWorkout) {
 				return new Response('Current workout not found', { status: 404 });
