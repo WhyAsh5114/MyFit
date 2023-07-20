@@ -65,6 +65,8 @@
 	function swapExercises(a: number, b: number) {
 		[workoutExercises[b], workoutExercises[a]] = [workoutExercises[a], workoutExercises[b]];
 	}
+
+	let openWorkloadAndSorenessModal: () => void;
 </script>
 
 <ExerciseDetailsModal bind:viewingExercise />
@@ -76,6 +78,7 @@
 	bind:muscleWorkloads
 	bind:musclesTargetedPreviously
 	bind:workoutPerformed
+	bind:openWorkloadAndSorenessModal
 />
 <ul class="flex flex-col gap-2">
 	{#each workoutExercises as exercise, exerciseNumber (exercise.name)}
@@ -98,13 +101,25 @@
 								viewingExercise = exercise;
 							}}>Details</button
 						>
+						<div class="text-white px-0 flex gap-1 items-center mb-1">
+							Feedback
+							<div class="h-px grow bg-white" />
+						</div>
+						<button
+							class="btn btn-sm btn-primary -mt-2"
+							disabled={!setsPerformedPerExercise[exerciseNumber].every(setPerformed => setPerformed)}
+							on:click={() => {
+								selectedExercise = exercise;
+								exerciseFeedbackModal.show();
+							}}>Stimulus</button
+						>
 						<button
 							class="btn btn-sm btn-primary"
 							disabled={!setsPerformedPerExercise[exerciseNumber].every(setPerformed => setPerformed)}
 							on:click={() => {
 								selectedExercise = exercise;
-								exerciseFeedbackModal.show();
-							}}>Feedback</button
+								openWorkloadAndSorenessModal();
+							}}>Workload</button
 						>
 						<div class="text-white px-0 flex gap-1 items-center mb-1">
 							Move
