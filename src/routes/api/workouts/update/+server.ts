@@ -16,7 +16,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 	const { workoutIndex, workout, sorenessValues }: APIWorkoutUpdate = await request.json();
 	const valid = validate({ workout, sorenessValues });
-	if (!valid || !(workoutIndex > 0)) {
+	if (!valid || !(workoutIndex >= 0)) {
 		return new Response(`Invalid JSON format for workout update: ${ajv.errorsText(validate.errors)}`, {
 			status: 400
 		});
