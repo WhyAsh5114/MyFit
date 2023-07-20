@@ -34,6 +34,15 @@
 	let errorMsg = '';
 	async function updateWorkout() {
 		callingEndpoint = true;
+		/* Have to do this, otherwise JSON serialization through load functions
+		 converts values to null which get preserved when calling endpoint
+		 That gives an error as it should be 'none' | 'just recovered' | 'interfered with workout' | undefined */
+		for (let [muscleTarget, sorenessValue] of Object.entries(data.workout.muscleSorenessToNextWorkout)) {
+			if (data.workout.muscleSorenessToNextWorkout[muscleTarget as (typeof commonMuscleGroups)[number]] === null) {
+				data.workout.muscleSorenessToNextWorkout[muscleTarget as (typeof commonMuscleGroups)[number]] = undefined;
+			}
+		}
+
 		const reqBody: APIWorkoutUpdate = {
 			workoutIndex: data.workoutIndex,
 			workout: data.workout,
