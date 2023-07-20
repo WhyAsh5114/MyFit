@@ -31,7 +31,7 @@
 	};
 
 	let sorenessDataField: MuscleSorenessData | undefined;
-	function openWorkloadAndSorenessModal() {
+	export function openWorkloadAndSorenessModal() {
 		let totalExercisesForTargetMuscle: number[] = [];
 		workoutExercises.forEach((exercise, i) => {
 			if (exercise.muscleTarget === selectedExercise?.muscleTarget) {
@@ -45,7 +45,6 @@
 			}
 		});
 
-		if (workoutPerformed) return;
 		sorenessDataField = musclesTargetedPreviously.find((x) => x.muscleTarget === selectedExercise?.muscleTarget);
 		if (sorenessDataField?.workoutIndex === undefined) {
 			sorenessDataField = undefined;
@@ -130,7 +129,7 @@
 	bind:dialogElement={exerciseFeedbackModal}
 	title="Exercise feedback"
 	titleColor="text-accent"
-	onClose={openWorkloadAndSorenessModal}
+	onClose={() => {if (!workoutPerformed) openWorkloadAndSorenessModal()}}
 >
 	<p>
 		Rate <span class="font-semibold italic">{selectedExercise?.name}</span> for appropriate adjustments in the next week
