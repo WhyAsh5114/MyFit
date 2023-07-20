@@ -112,7 +112,7 @@
 	};
 </script>
 
-<MyModal title="Delete Mesocycle" titleColor="text-error" bind:dialogElement={confirmDeleteModal}>
+<MyModal title="Delete Workout" titleColor="text-error" bind:dialogElement={confirmDeleteModal}>
 	<p>
 		Are you sure you want to delete workout
 		<span class="font-semibold italic"
