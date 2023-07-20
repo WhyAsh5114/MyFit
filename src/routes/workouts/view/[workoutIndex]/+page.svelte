@@ -234,7 +234,7 @@
 	{#if SFRList.length > 0}
 		<div class="stats bg-primary shrink-0 w-full">
 			<div class="stat">
-				<h3>Highest SFRs</h3>
+				<h3>Stimulus to Fatigue Ratios</h3>
 				<div class="h-px w-full bg-secondary my-0.5" />
 				<ul class="flex flex-col mt-2">
 					{#each SFRList as { exercise, SFR }}
