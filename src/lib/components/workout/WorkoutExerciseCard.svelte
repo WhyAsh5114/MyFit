@@ -100,6 +100,7 @@
 						>
 						<button
 							class="btn btn-sm btn-primary"
+							disabled={!setsPerformedPerExercise[exerciseNumber].every(setPerformed => setPerformed)}
 							on:click={() => {
 								selectedExercise = exercise;
 								exerciseFeedbackModal.show();
