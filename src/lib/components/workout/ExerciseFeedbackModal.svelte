@@ -23,7 +23,8 @@
 		'Mind muscle connection rating': { None: 'bad-btn', Decent: 'ok-btn', Perfect: 'good-btn' }
 	};
 
-	let feedbackValues: Record<string, 'none' | 'moderate' | 'high' | undefined> = {
+	let feedbackValues: Record<string, 'none' | 'moderate' | 'high' | undefined>;
+	$: feedbackValues = {
 		'Joint pain rating': selectedExercise?.jointPainRating,
 		'Pump rating': selectedExercise?.pumpRating,
 		'Disruption rating': selectedExercise?.disruptionRating,
@@ -129,7 +130,9 @@
 	bind:dialogElement={exerciseFeedbackModal}
 	title="Exercise feedback"
 	titleColor="text-accent"
-	onClose={() => {if (!workoutPerformed) openWorkloadAndSorenessModal()}}
+	onClose={() => {
+		if (!workoutPerformed) openWorkloadAndSorenessModal();
+	}}
 >
 	<p>
 		Rate <span class="font-semibold italic">{selectedExercise?.name}</span> for appropriate adjustments in the next week
