@@ -24,12 +24,15 @@
 	};
 
 	let feedbackValues: Record<string, 'none' | 'moderate' | 'high' | undefined>;
-	$: feedbackValues = {
-		'Joint pain rating': selectedExercise?.jointPainRating,
-		'Pump rating': selectedExercise?.pumpRating,
-		'Disruption rating': selectedExercise?.disruptionRating,
-		'Mind muscle connection rating': selectedExercise?.mindMuscleConnectionRating
-	};
+	$: setFeedbackValues(selectedExercise);
+	function setFeedbackValues(selectedExercise: WorkoutExercise | undefined) {
+		feedbackValues = {
+			'Joint pain rating': selectedExercise?.jointPainRating,
+			'Pump rating': selectedExercise?.pumpRating,
+			'Disruption rating': selectedExercise?.disruptionRating,
+			'Mind muscle connection rating': selectedExercise?.mindMuscleConnectionRating
+		};
+	}
 
 	let sorenessDataField: MuscleSorenessData | undefined;
 	export function openWorkloadAndSorenessModal() {
@@ -138,7 +141,7 @@
 		Rate <span class="font-semibold italic">{selectedExercise?.name}</span> for appropriate adjustments in the next week
 	</p>
 	<div class="h-px w-full bg-secondary mt-2 mb-4" />
-	<div class="flex flex-col gap-2">
+	<form class="flex flex-col gap-2" on:submit|preventDefault={syncExerciseFeedback}>
 		{#each Object.keys(feedbackSystem) as item}
 			<div class="flex flex-col">
 				<h3 class="font-semibold">{item}</h3>
@@ -159,7 +162,7 @@
 			</div>
 		{/each}
 		<button class="btn btn-block mt-2 btn-accent"> Submit feedback </button>
-	</div>
+	</form>
 </MyModal>
 
 <style lang="postcss">
