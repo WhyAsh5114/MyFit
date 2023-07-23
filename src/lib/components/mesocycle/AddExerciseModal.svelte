@@ -7,7 +7,7 @@
 	let newExercise: SplitExercise = {
 		name: undefined,
 		sets: undefined,
-		setType: '',
+		setType: 'straight',
 		muscleTarget: '',
 		repRangeStart: undefined,
 		repRangeEnd: undefined
@@ -48,7 +48,7 @@
 			newExercise = {
 				name: undefined,
 				sets: undefined,
-				setType: '',
+				setType: 'straight',
 				muscleTarget: '',
 				repRangeStart: undefined,
 				repRangeEnd: undefined
