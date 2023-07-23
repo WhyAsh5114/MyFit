@@ -17,7 +17,7 @@
 	}
 	let repSelectElements: HTMLSelectElement[][] = [];
 	for (let i = 0; i < workoutExercises.length; i++) {
-		repSelectElements.push(new Array());
+		repSelectElements.push([]);
 	}
 	function performSet(exerciseNumber: number, setNumber: number) {
 		if (workoutExercises[exerciseNumber].repsLoadRIR[setNumber][0] === undefined) {
