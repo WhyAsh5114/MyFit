@@ -97,6 +97,9 @@
 				</div>
 			</div>
 			<i class="capitalize text-sm font-semibold">{exercise.setType} sets</i>
+			{#if exercise.note}
+				<p class="bg-warning bg-opacity-50 px-2 text-xs py-0.5 mt-1">{exercise.note}</p>
+			{/if}
 			<div class="flex justify-between mt-2.5 text-sm">
 				<p>{exercise.sets} sets of {exercise.repRangeStart} to {exercise.repRangeEnd} reps</p>
 				<span class="badge badge-error text-black">{exercise.muscleTarget}</span>

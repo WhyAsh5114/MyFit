@@ -117,6 +117,7 @@
 				<option>{muscleGroup}</option>
 			{/each}
 		</select>
+		<textarea placeholder="Notes" class="textarea textarea-bordered textarea-sm w-full resize-none" bind:value={newExercise.note}></textarea>
 		<button class="btn btn-accent btn-block mt-4">Add exercise</button>
 	</form>
 	<ul class="list-disc ml-5 mt-2 text-error font-semibold">

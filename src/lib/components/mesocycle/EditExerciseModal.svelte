@@ -7,7 +7,7 @@
 	export let oldExercise: SplitExercise = {
 		name: undefined,
 		sets: undefined,
-		setType: '',
+		setType: 'straight',
 		muscleTarget: '',
 		repRangeStart: undefined,
 		repRangeEnd: undefined
@@ -107,6 +107,7 @@
 				<option>{muscleGroup}</option>
 			{/each}
 		</select>
+		<textarea placeholder="Notes" class="textarea textarea-bordered textarea-sm w-full resize-none" bind:value={oldExercise.note}></textarea>
 		<button class="btn btn-accent btn-block mt-4">Edit exercise</button>
 	</form>
 	<ul class="list-disc ml-5 mt-2 text-error font-semibold">
