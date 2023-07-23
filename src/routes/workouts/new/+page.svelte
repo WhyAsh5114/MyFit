@@ -35,7 +35,8 @@
 			setType: splitEx.setType as Exclude<SplitExercise['setType'], ''>,
 			jointPainRating: undefined,
 			pumpRating: undefined,
-			repsLoadRIR: []
+			repsLoadRIR: [],
+			note: splitEx.note
 		};
 		for (let i = 0; i < (splitEx.sets as number); i++) {
 			workoutExercise.repsLoadRIR.push([undefined, undefined, $plannedRIR]);

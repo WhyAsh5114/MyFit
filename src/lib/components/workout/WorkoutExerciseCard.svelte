@@ -175,6 +175,9 @@
 					<span class="badge badge-error text-black">{exercise.muscleTarget}</span>
 				</div>
 			</div>
+			{#if exercise.note}
+				<p class="bg-warning bg-opacity-50 text-xs px-2 mt-1">{exercise.note}</p>
+			{/if}
 			<div class="h-px w-full bg-black my-2" />
 			<div class="grid grid-cols-4 place-items-center gap-y-2 gap-x-1 overflow-x-auto" id="workout-card-grid">
 				<p class="text-sm -mb-1">Reps</p>
