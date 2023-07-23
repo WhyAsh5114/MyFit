@@ -57,21 +57,5 @@
 				</dd>
 			</div>
 		{/if}
-		{#if viewingExercise?.disruptionRating}
-			<div class="stat py-2">
-				<dt>Disruption rating</dt>
-				<dd class="stat-value text-xl capitalize {colorMap.stimulusRating[viewingExercise?.disruptionRating]}">
-					{viewingExercise?.disruptionRating}
-				</dd>
-			</div>
-		{/if}
-		{#if viewingExercise?.mindMuscleConnectionRating}
-			<div class="stat py-2">
-				<dt>Mind muscle connection rating</dt>
-				<dd class="stat-value text-xl capitalize {colorMap.stimulusRating[viewingExercise?.mindMuscleConnectionRating]}">
-					{viewingExercise?.mindMuscleConnectionRating}
-				</dd>
-			</div>
-		{/if}
 	</dl>
 </MyModal>

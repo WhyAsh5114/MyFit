@@ -35,8 +35,6 @@
 			setType: splitEx.setType as Exclude<SplitExercise['setType'], ''>,
 			jointPainRating: undefined,
 			pumpRating: undefined,
-			disruptionRating: undefined,
-			mindMuscleConnectionRating: undefined,
 			repsLoadRIR: []
 		};
 		for (let i = 0; i < (splitEx.sets as number); i++) {

@@ -75,14 +75,6 @@
 			stimulus += ratingMap[exercise.pumpRating];
 			fatigue += fatigueMap[exercise.jointPainRating];
 		}
-		if (exercise.disruptionRating) {
-			stimulus += ratingMap[exercise.disruptionRating];
-			fatigue += fatigueMap[exercise.jointPainRating];
-		}
-		if (exercise.mindMuscleConnectionRating) {
-			stimulus += ratingMap[exercise.mindMuscleConnectionRating];
-			fatigue += fatigueMap[exercise.jointPainRating];
-		}
 		if (stimulus === 0) return;
 		SFRList.push({ exercise, SFR: stimulus / fatigue });
 	});

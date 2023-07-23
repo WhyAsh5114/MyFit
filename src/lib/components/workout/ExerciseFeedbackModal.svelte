@@ -28,9 +28,7 @@
 	function setFeedbackValues(selectedExercise: WorkoutExercise | undefined) {
 		feedbackValues = {
 			'Joint pain rating': selectedExercise?.jointPainRating,
-			'Pump rating': selectedExercise?.pumpRating,
-			'Disruption rating': selectedExercise?.disruptionRating,
-			'Mind muscle connection rating': selectedExercise?.mindMuscleConnectionRating
+			'Pump rating': selectedExercise?.pumpRating
 		};
 	}
 
@@ -66,8 +64,6 @@
 
 		selectedExercise.jointPainRating = feedbackValues['Joint pain rating'];
 		selectedExercise.pumpRating = feedbackValues['Pump rating'];
-		selectedExercise.disruptionRating = feedbackValues['Disruption rating'];
-		selectedExercise.mindMuscleConnectionRating = feedbackValues['Mind muscle connection rating'];
 	}
 
 	let workloadAndSorenessModal: HTMLDialogElement;
