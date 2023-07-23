@@ -14,13 +14,7 @@
 
 	let feedbackSystem: Record<string, Record<string, 'good-btn' | 'ok-btn' | 'bad-btn'>> = {
 		'Joint pain rating': { 'No pain': 'good-btn', 'Some pain': 'ok-btn', 'That hurt': 'bad-btn' },
-		'Pump rating': { 'No pump': 'bad-btn', 'Decent pump': 'ok-btn', 'Amazing pump': 'good-btn' },
-		'Disruption rating': {
-			'No disruption': 'bad-btn',
-			'Some disruption': 'ok-btn',
-			'Lots of disruption': 'good-btn'
-		},
-		'Mind muscle connection rating': { None: 'bad-btn', Decent: 'ok-btn', Perfect: 'good-btn' }
+		'Pump rating': { 'No pump': 'bad-btn', 'Decent pump': 'ok-btn', 'Amazing pump': 'good-btn' }
 	};
 
 	let feedbackValues: Record<string, 'none' | 'moderate' | 'high' | undefined>;
