@@ -178,15 +178,7 @@
 					"items": {
 						"additionalProperties": false,
 						"properties": {
-							"disruptionRating": {
-								"enum": ["high", "moderate", "none"],
-								"type": "string"
-							},
 							"jointPainRating": {
-								"enum": ["high", "moderate", "none"],
-								"type": "string"
-							},
-							"mindMuscleConnectionRating": {
 								"enum": ["high", "moderate", "none"],
 								"type": "string"
 							},
@@ -242,6 +234,9 @@
 							},
 							"setType": {
 								"enum": ["down", "drop", "giant", "myorep", "myorep match", "straight", "top"],
+								"type": "string"
+							},
+							"note": {
 								"type": "string"
 							}
 						},

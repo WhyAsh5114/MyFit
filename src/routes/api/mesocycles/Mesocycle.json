@@ -47,6 +47,9 @@
 							},
 							"sets": {
 								"type": "number"
+							},
+							"note": {
+								"type": "string"
 							}
 						},
 						"required": ["muscleTarget", "name", "repRangeEnd", "repRangeStart", "setType", "sets"],

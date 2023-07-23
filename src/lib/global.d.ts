@@ -22,6 +22,7 @@ type SplitExercise = {
 	muscleTarget: (typeof commonMuscleGroups)[number] | '';
 	repRangeStart: number | undefined;
 	repRangeEnd: number | undefined;
+	note?: string;
 };
 
 type Mesocycle = {
@@ -77,8 +78,7 @@ type WorkoutExercise = {
 	setType: 'straight' | 'drop' | 'down' | 'top' | 'myorep' | 'myorep match' | 'giant';
 	jointPainRating: 'none' | 'moderate' | 'high' | undefined;
 	pumpRating: 'none' | 'moderate' | 'high' | undefined;
-	disruptionRating: 'none' | 'moderate' | 'high' | undefined;
-	mindMuscleConnectionRating: 'none' | 'moderate' | 'high' | undefined;
+	note?: string;
 };
 
 interface MuscleSorenessData extends MuscleToLastWorkout {
