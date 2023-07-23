@@ -50,7 +50,6 @@
 		$referenceWorkout = null;
 		for (let i = 0; i < activeMesoWorkouts.length; i++) {
 			let workoutIndex = activeMesoWorkouts[i];
-			console.log(workoutIndex);
 			if (data.workouts && data.workouts[workoutIndex]?.dayNumber === dayNumber) {
 				$referenceWorkout = workoutIndex;
 				break;
@@ -67,9 +66,9 @@
 	} else if (data.workouts && $referenceWorkout !== null) {
 		// TODO: template from old workout and apply appropriate volume changes
 		tempWorkoutExercises = [];
-		let referencedWorkout = data.workouts[$referenceWorkout];
-		if (referencedWorkout) {
-			referencedWorkout = applyWorkoutChanges(referencedWorkout);
+		let referencedWorkout = structuredClone(data.workouts[$referenceWorkout]);
+		if (referencedWorkout && $plannedRIR) {
+			referencedWorkout = applyWorkoutChanges(referencedWorkout, $plannedRIR);
 			tempWorkoutExercises = referencedWorkout.exercisesPerformed;
 		}
 	}
