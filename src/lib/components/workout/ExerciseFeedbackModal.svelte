@@ -161,7 +161,14 @@
 				</div>
 			</div>
 		{/each}
-		<button class="btn btn-block mt-2 btn-accent"> Submit feedback </button>
+		<button
+			class="btn btn-block mt-2 btn-accent"
+			on:click={() => {
+				exerciseFeedbackModal.close();
+			}}
+		>
+			Submit feedback
+		</button>
 	</form>
 </MyModal>
 
