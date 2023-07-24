@@ -9,7 +9,7 @@ export function applyWorkoutChanges(workout: Workout, plannedRIR: number) {
 	// Rep changes per exercise
 	workout.exercisesPerformed.forEach((exercise) => {
 		// Increase or decrease load depending on rep range
-		const lastSet = exercise.repsLoadRIR[exercise.repsLoadRIR.length - 2] as [number, number, number];
+		const lastSet = exercise.repsLoadRIR[exercise.repsLoadRIR.length - 1] as [number, number, number];
 		if (lastSet[0] < exercise.repRangeStart) {
 			exercise.repsLoadRIR.forEach((repLoadRIR) => {
 				if (repLoadRIR[0] === undefined || repLoadRIR[1] === undefined) return;
