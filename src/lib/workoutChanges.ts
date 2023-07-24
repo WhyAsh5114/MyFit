@@ -3,8 +3,8 @@ export function applyWorkoutChanges(workout: Workout, plannedRIR: number) {
 	workout.exercisesPerformed.forEach((exercise) => {
 		exercise.repsLoadRIR.forEach((repLoadRIR) => {
 			repLoadRIR[2] = plannedRIR;
-		})
-	})
+		});
+	});
 
 	// Rep changes per exercise
 	workout.exercisesPerformed.forEach((exercise) => {
