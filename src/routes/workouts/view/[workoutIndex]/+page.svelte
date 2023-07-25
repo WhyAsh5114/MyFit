@@ -102,6 +102,20 @@
 		'recovered on time': 'text-success',
 		'interfered with workout': 'text-error'
 	};
+
+	let muscleGroupWorkloadsList: {
+		muscleGroup: (typeof commonMuscleGroups)[number];
+		workloadValue: 'low' | 'moderate' | 'high';
+	}[] = [];
+	for (const [muscleGroup, workloadValue] of Object.entries(data.workout.muscleGroupWorkloads)) {
+		if (!muscleGroup || !workloadValue) continue;
+		muscleGroupWorkloadsList.push({ muscleGroup: muscleGroup as (typeof commonMuscleGroups)[number], workloadValue });
+	}
+	const workloadToColorMap = {
+		low: 'text-warning',
+		moderate: 'text-success',
+		high: 'text-error'
+	};
 </script>
 
 <MyModal title="Delete Workout" titleColor="text-error" bind:dialogElement={confirmDeleteModal}>
@@ -205,7 +219,7 @@
 			<h3>Ref. workout</h3>
 			<p class="text-secondary font-bold text-2xl">
 				{#if data.referenceWorkout}
-					{data.referenceWorkout.startTimestamp}
+					{dateFormatter(data.referenceWorkout.startTimestamp)}
 				{:else}
 					<span class="text-error">Not found</span>
 				{/if}
@@ -250,6 +264,24 @@
 							{muscleTarget}
 							<p class="capitalize font-semibold {sorenessValue ? sorenessToColorMap[sorenessValue] : ''}">
 								{sorenessValue}
+							</p>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		</div>
+	{/if}
+	{#if muscleGroupWorkloadsList.length > 0}
+		<div class="stats bg-primary shrink-0 w-full">
+			<div class="stat">
+				<h3>Muscle workloads</h3>
+				<div class="h-px w-full bg-secondary my-0.5" />
+				<ul class="flex flex-col mt-2">
+					{#each muscleGroupWorkloadsList as { muscleGroup, workloadValue }}
+						<li class="flex justify-between text-secondary">
+							{muscleGroup}
+							<p class="capitalize font-semibold {workloadToColorMap[workloadValue]}">
+								{workloadValue}
 							</p>
 						</li>
 					{/each}
