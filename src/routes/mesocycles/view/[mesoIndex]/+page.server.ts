@@ -14,7 +14,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		.collection('users')
 		.findOne({ email: session.user?.email });
 	const meso = userData?.mesocycles[params.mesoIndex] as Mesocycle | null;
+	const activeMesocycle = userData?.activeMesocycle as ActiveMesocycle | null;
 	const parentMesocycle = userData?.mesocycles[userData?.activeMesocycle?.mesoID];
+	const performedMesocycles = userData?.performedMesocycles as PerformedMesocycle[] | undefined;
 
 	if (!meso) {
 		throw error(404, 'Mesocycle not found');
@@ -24,6 +26,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		meso,
 		mesoIndex: params.mesoIndex,
 		parentMesocycle: parentMesocycle as Mesocycle | null,
-		parentMesocycleIndex: userData?.activeMesocycle?.mesoID as number | null
+		parentMesocycleIndex: userData?.activeMesocycle?.mesoID as number | null,
+		performedMesocycles,
+		activeMesocycle
 	};
 };

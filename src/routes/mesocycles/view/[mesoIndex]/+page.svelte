@@ -3,7 +3,7 @@
 	import { navigating } from '$app/stores';
 	import MuscleGroupComponent from '$lib/components/mesocycle/MuscleGroupComponent.svelte';
 	import MyModal from '$lib/components/MyModal.svelte';
-	import { commonMuscleGroups, days } from '$lib/commonDB';
+	import { commonMuscleGroups, dateFormatter, days } from '$lib/commonDB';
 
 	export let data;
 
@@ -230,6 +230,25 @@
 						volume={muscleVolume[muscleGroup]}
 					/>
 				{/each}
+			</div>
+		</div>
+	</div>
+	<div class="stats bg-primary shrink-0">
+		<div class="stat">
+			<div class="opacity-90">Usages</div>
+			<div class="flex flex-col gap-1 mt-3 text-white">
+				{#if data.activeMesocycle && data.parentMesocycleIndex === parseInt(data.mesoIndex)}
+					<a class="btn text-accent font-semibold" href="/mesocycles/active">{dateFormatter(data.activeMesocycle.startDate)}</a>
+				{/if}
+				{#if data.performedMesocycles}
+					{#each data.performedMesocycles as performedMesocycle, i}
+						{#if performedMesocycle.mesoID === parseInt(data.mesoIndex)}
+							<a class="btn font-semibold" href="/mesocycles/performed/{i}">
+								{dateFormatter(performedMesocycle.startDate)} - {dateFormatter(performedMesocycle.endDate)}
+							</a>
+						{/if}
+					{/each}
+				{/if}
 			</div>
 		</div>
 	</div>
