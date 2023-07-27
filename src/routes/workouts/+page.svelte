@@ -85,9 +85,10 @@
 		<select class="select select-sm select-bordered grow" bind:value={selectedMesocycle} disabled={!filterByMesocycles}>
 			{#if data.mesocycles === null || data.mesocycles?.length === 0}
 				<option value={undefined}>No mesocycle created</option>
-			{:else if !data.activeMesocycle}
-				<option disabled value={undefined}>No active mesocycle</option>
 			{:else}
+				{#if !data.activeMesocycle}
+					<option disabled value={undefined}>No active mesocycle</option>
+				{/if}
 				{#each data.mesocycles as meso, i}
 					{#if meso}
 						<option value={i}>{meso.name}</option>
