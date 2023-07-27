@@ -30,7 +30,7 @@
 		}
 	});
 
-	let todaysDay = days[new Date().getDay()];
+	let todaysDay = days.at(new Date().getDay() - 1);
 
 	let totalSets = 0;
 	$: {
