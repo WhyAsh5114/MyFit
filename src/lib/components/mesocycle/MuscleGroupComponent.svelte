@@ -12,6 +12,7 @@
 
 <div class="flex w-full {bgColorClass} font-semibold rounded-md px-2 py-0.5">
 	<p class="shrink-0 basis-24 text-white">{muscleGroup}</p>
+	<p class="shrink-0 basis-16">{volume} sets</p>
 	<VolumeProgress {volumeLandmark} {volume} frequency={freq} />
 	{#if freq < volumeLandmark.freqStart || freq > volumeLandmark.freqEnd}
 		{#if (freq < 2 && volumeLandmark.MV > 0) || freq === 7}
