@@ -1,11 +1,12 @@
 <script lang="ts">
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
-	import { commonMuscleGroups, dateFormatter, days } from '$lib/commonDB';
+	import { days, getSFR } from '$lib/commonDB';
 	import { groupBy } from 'lodash';
 
 	export let workouts: (Workout | null)[];
 	let chartCanvas: HTMLCanvasElement;
+	let chartCanvas2: HTMLCanvasElement;
 
 	function dayAndMonth(timestamp: number) {
 		const date = new Date(timestamp);
@@ -69,6 +70,7 @@
 
 	Chart.defaults.color = '#ffffff';
 	let chart: Chart;
+	let chart2: Chart;
 	onMount(() => {
 		chart = new Chart(chartCanvas, {
 			data: {
@@ -90,6 +92,11 @@
 						}
 					}
 				}
+			}
+		});
+		chart2 = new Chart(chartCanvas2, {
+			data: {
+				datasets: []
 			}
 		});
 	});
@@ -120,9 +127,28 @@
 			yAxisID: 'y1'
 		};
 		chart.update();
+		chart2.data.labels = data.map((row) => dayAndMonth(row.timestamp));
+		chart2.data.datasets[0] = {
+			type: 'bar',
+			label: 'Sets',
+			data: exerciseInstances.map((exercise) => exercise.repsLoadRIR.length),
+			backgroundColor: '#ff474775',
+			order: 2
+		};
+		chart2.data.datasets[1] = {
+			type: 'line',
+			label: 'SFR',
+			data: exerciseInstances.map((exercise) => {
+				return getSFR(exercise) ?? 0;
+			}),
+			backgroundColor: '#30c9b5',
+			borderColor: '#000000',
+			order: 1
+		};
+		chart2.update();
 	}
 
-	let weekWise = false;
+	let weekWise = true;
 </script>
 
 <div class="stat">
@@ -147,4 +173,5 @@
 		</select>
 	{/if}
 	<canvas bind:this={chartCanvas}></canvas>
+	<canvas bind:this={chartCanvas2}></canvas>
 </div>
