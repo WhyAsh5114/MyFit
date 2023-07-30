@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { navigating } from '$app/stores';
-	import { dateFormatter, days, getSFR } from '$lib/commonDB.js';
+	import { dateFormatter, days, getSFR, getSFRColor } from '$lib/commonDB.js';
 	import MyModal from '$lib/components/MyModal.svelte';
 	import ViewExerciseCard from '$lib/components/workout/ViewExerciseCard.svelte';
 
@@ -73,12 +73,6 @@
 	SFRList.sort((a, b) => {
 		return b.SFR - a.SFR;
 	});
-
-	function getSFRColor(sfr: number) {
-		if (sfr < 1) return 'text-error';
-		if (sfr < 1.5) return 'text-warning';
-		return 'text-accent';
-	}
 
 	// Convert object to list for easier UI integration
 	let sorenessData: {

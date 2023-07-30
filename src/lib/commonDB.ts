@@ -124,3 +124,9 @@ export function getSFR(exercise: WorkoutExercise) {
 		return undefined;
 	}
 }
+
+export function getSFRColor(sfr: number) {
+	if (sfr < 1) return 'text-error';
+	if (sfr < 1.5) return 'text-warning';
+	return 'text-accent';
+}
