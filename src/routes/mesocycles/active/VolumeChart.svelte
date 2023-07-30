@@ -80,7 +80,7 @@
 				datasets: [
 					{
 						type: 'line',
-						label: 'Volume',
+						label: 'Sets',
 						data: data.map((row) => row.sets),
 						backgroundColor: '#30c9b5',
 						borderColor: '#000000',
