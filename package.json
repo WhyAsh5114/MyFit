@@ -18,6 +18,7 @@
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/adapter-vercel": "^3.0.1",
 		"@sveltejs/kit": "^1.5.0",
+		"@types/lodash": "^4.14.196",
 		"@typescript-eslint/eslint-plugin": "^6.0.0",
 		"@typescript-eslint/parser": "^6.0.0",
 		"@vite-pwa/sveltekit": "^0.2.2",
@@ -46,6 +47,7 @@
 		"chart.js": "^4.3.2",
 		"daisyui": "^3.0.1",
 		"dotenv": "^16.3.1",
+		"lodash": "^4.17.21",
 		"mongodb": "^5.6.0"
 	}
 }

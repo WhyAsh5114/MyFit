@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { dateFormatter, commonMuscleGroups } from '$lib/commonDB.js';
 	import MuscleGroupComponent from '$lib/components/mesocycle/MuscleGroupComponent.svelte';
+	import ExerciseChart from './ExerciseChart.svelte';
 	import VolumeChart from './VolumeChart.svelte';
 
 	export let data;
@@ -51,7 +52,7 @@
 			<p class="text-xl font-bold text-white">{data.parentMesocycle.name}</p>
 		</div>
 		<div class="stat">
-			<h2>Duration</h2>
+			<h2>Start date</h2>
 			<p class="text-xl font-bold text-white">
 				{dateFormatter(data.activeMesocycle.startDate)}
 			</p>
@@ -73,5 +74,8 @@
 	</div>
 	<div class="stats shrink-0 bg-primary w-full">
 		<VolumeChart {weeklyWorkoutData} />
+	</div>
+	<div class="stats shrink-0 bg-primary w-full">
+		<ExerciseChart workouts={performedMesoWorkouts} />
 	</div>
 </div>
