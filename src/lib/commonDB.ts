@@ -115,3 +115,12 @@ export function dateFormatter(timestamp: number | undefined) {
 	const date = new Date(timestamp);
 	return date.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
 }
+
+export function getSFR(exercise: WorkoutExercise) {
+	const ratingMap = { none: 1, moderate: 2, high: 3 };
+	if (exercise.jointPainRating && exercise.pumpRating) {
+		return ratingMap[exercise.pumpRating] / ratingMap[exercise.jointPainRating];
+	} else {
+		return undefined;
+	}
+}

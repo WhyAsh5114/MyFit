@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { navigating } from '$app/stores';
-	import { dateFormatter, days } from '$lib/commonDB.js';
+	import { dateFormatter, days, getSFR } from '$lib/commonDB.js';
 	import MyModal from '$lib/components/MyModal.svelte';
 	import ViewExerciseCard from '$lib/components/workout/ViewExerciseCard.svelte';
 
@@ -65,26 +65,18 @@
 	}
 
 	let SFRList: { exercise: WorkoutExercise; SFR: number }[] = [];
-	const ratingMap = { none: 0.5, moderate: 1, high: 1.5 };
-	const fatigueMap = { none: 1, moderate: 1.5, high: 2 };
 	data.workout.exercisesPerformed.forEach((exercise) => {
-		let stimulus = 0,
-			fatigue = 0;
-		if (!exercise.jointPainRating) return;
-		if (exercise.pumpRating) {
-			stimulus += ratingMap[exercise.pumpRating];
-			fatigue += fatigueMap[exercise.jointPainRating];
-		}
-		if (stimulus === 0) return;
-		SFRList.push({ exercise, SFR: stimulus / fatigue });
+		const SFR = getSFR(exercise);
+		if (!SFR) return;
+		SFRList.push({ exercise, SFR });
 	});
 	SFRList.sort((a, b) => {
 		return b.SFR - a.SFR;
 	});
 
 	function getSFRColor(sfr: number) {
-		if (sfr < 0.5) return 'text-warning';
-		if (sfr < 0.75) return 'text-success';
+		if (sfr < 1) return 'text-error';
+		if (sfr < 1.5) return 'text-warning';
 		return 'text-accent';
 	}
 
