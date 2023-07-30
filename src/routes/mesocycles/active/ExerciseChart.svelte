@@ -89,6 +89,12 @@
 						position: 'right',
 						grid: {
 							drawOnChartArea: false // only want the grid lines for one axis to show up
+						},
+						ticks: {
+							// Include kg in the ticks
+							callback: (value, index, ticks) => {
+								return value + 'kg';
+							}
 						}
 					}
 				}
@@ -97,6 +103,24 @@
 		chart2 = new Chart(chartCanvas2, {
 			data: {
 				datasets: []
+			},
+			options: {
+				scales: {
+					y: {
+						type: 'linear',
+						display: true,
+						position: 'left',
+						min: 0
+					},
+					y1: {
+						type: 'linear',
+						display: false,
+						position: 'right',
+						grid: {
+							drawOnChartArea: false // only want the grid lines for one axis to show up
+						}
+					}
+				}
 			}
 		});
 	});
@@ -144,6 +168,24 @@
 			backgroundColor: '#30c9b5',
 			borderColor: '#000000',
 			order: 1
+		};
+
+		const volumes = exerciseInstances.map((exercise) => {
+			return exercise.repsLoadRIR.reduce((totalVolume, repLoadRIR) => {
+				if (repLoadRIR[0] && repLoadRIR[1]) {
+					return totalVolume + repLoadRIR[0] * repLoadRIR[1];
+				}
+				return totalVolume;
+			}, 0) as number;
+		});
+		chart2.data.datasets[2] = {
+			type: 'line',
+			label: 'Volume',
+			data: volumes,
+			backgroundColor: '#ff0000',
+			borderColor: '#000000',
+			order: 1,
+			yAxisID: 'y1'
 		};
 		chart2.update();
 	}
