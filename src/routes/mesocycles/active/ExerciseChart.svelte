@@ -54,11 +54,12 @@
 
 	interface ExerciseWithDate extends WorkoutExercise {
 		startTimestamp: EpochTimeStamp;
+		dayNumber: number;
 	}
 	const allExercises: ExerciseWithDate[] = [];
 	workouts.forEach((workout) => {
 		workout?.exercisesPerformed.forEach((exercise) => {
-			allExercises.push({ ...exercise, startTimestamp: workout.startTimestamp });
+			allExercises.push({ ...exercise, startTimestamp: workout.startTimestamp, dayNumber: workout.dayNumber });
 		});
 	});
 	const groupedExercises = groupBy(allExercises, (exercise) => exercise.name);
@@ -94,7 +95,10 @@
 	});
 	$: if (chartCanvas && selectedExercise) {
 		const data: { timestamp: number; reps: number; load: number; volume: number }[] = [];
-		const exerciseInstances = groupedExercises[selectedExercise];
+		let exerciseInstances = groupedExercises[selectedExercise];
+		if (weekWise) {
+			exerciseInstances = exerciseInstances.filter((exercise) => exercise.dayNumber === selectedDay);
+		}
 		exerciseInstances.forEach((exercise) => {
 			data.push({ timestamp: exercise.startTimestamp, ...getAvgExerciseData(exercise.repsLoadRIR) });
 		});
@@ -105,7 +109,7 @@
 			data: data.map((row) => row.reps),
 			backgroundColor: '#ffc300',
 			borderColor: '#000000',
-      yAxisID: 'y'
+			yAxisID: 'y'
 		};
 		chart.data.datasets[1] = {
 			type: 'line',
@@ -113,29 +117,34 @@
 			data: data.map((row) => row.load),
 			backgroundColor: '#00ff15',
 			borderColor: '#000000',
-      yAxisID: 'y1'
+			yAxisID: 'y1'
 		};
 		chart.update();
-		console.log(groupedExercises[selectedExercise].map((exercise) => exercise.repsLoadRIR.length));
 	}
+
+	let weekWise = false;
 </script>
 
 <div class="stat">
 	<h2>Exercise progression</h2>
 	<div class="h-px bg-white w-full my-2"></div>
-	<div class="flex justify-between gap-2">
+	<div class="flex justify-between gap-2 items-center">
 		<select class="select select-sm mt-2" bind:value={selectedDay}>
 			{#each days as day, i}
 				<option value={i}>{day}</option>
 			{/each}
 		</select>
-		{#if exercisesByDayNumber[selectedDay]}
-			<select class="select select-sm mt-2" bind:value={selectedExercise}>
-				{#each exercisesByDayNumber[selectedDay] as exerciseName}
-					<option>{exerciseName}</option>
-				{/each}
-			</select>
-		{/if}
+		<div class="flex gap-2">
+			<p class="text-sm">Week wise</p>
+			<input type="checkbox" class="toggle" bind:checked={weekWise} />
+		</div>
 	</div>
+	{#if exercisesByDayNumber[selectedDay]}
+		<select class="select select-sm mt-2" bind:value={selectedExercise}>
+			{#each exercisesByDayNumber[selectedDay] as exerciseName}
+				<option>{exerciseName}</option>
+			{/each}
+		</select>
+	{/if}
 	<canvas bind:this={chartCanvas}></canvas>
 </div>
