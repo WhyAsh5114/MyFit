@@ -84,3 +84,10 @@ type WorkoutExercise = {
 interface MuscleSorenessData extends MuscleToLastWorkout {
 	sorenessRating: Workout['muscleSorenessToNextWorkout'][(typeof commonMuscleGroups)[number]];
 }
+
+type MuscleGroupData = { muscleGroup: (typeof commonMuscleGroups)[number]; volume: number; freq: number };
+
+type WorkoutDataByWeek = {
+	week: number;
+	allMuscleGroupData: MuscleGroupData[];
+};
