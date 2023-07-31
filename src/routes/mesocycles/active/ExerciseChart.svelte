@@ -2,7 +2,7 @@
 	import Chart from 'chart.js/auto';
 	import { onMount } from 'svelte';
 	import { days, getSFR } from '$lib/commonDB';
-	import { groupBy } from 'lodash';
+	import groupBy from 'lodash/groupBy';
 
 	export let workouts: (Workout | null)[];
 	let chartCanvas: HTMLCanvasElement;

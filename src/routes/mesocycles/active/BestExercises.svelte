@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getSFR, getSFRColor } from '$lib/commonDB';
-	import { groupBy } from 'lodash';
+	import groupBy from 'lodash/groupBy';
 
 	export let workouts: (Workout | null)[];
 
