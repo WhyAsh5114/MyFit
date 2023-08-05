@@ -42,7 +42,7 @@
 	});
 </script>
 
-<div class="join w-full justify-between my-2">
+<div class="join w-full justify-between my-2 gap-2 grid grid-cols-7">
 	{#each days as day, i}
 		{#if $splitSchedule[i] === ''}
 			<input
