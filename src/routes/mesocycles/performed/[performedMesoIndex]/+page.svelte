@@ -9,7 +9,7 @@
 	let currentWeek = 1;
 
 	let performedMesoWorkouts: (Workout | null)[] = [];
-	data.activeMesocycle.workouts.forEach((workoutIndex) => {
+	data.performedMesocycle.workouts.forEach((workoutIndex) => {
 		performedMesoWorkouts.push(data.workouts[workoutIndex]);
 	});
 
@@ -55,7 +55,7 @@
 		<div class="stat">
 			<h2>Start date</h2>
 			<p class="text-xl font-bold text-white">
-				{dateFormatter(data.activeMesocycle.startDate)}
+				{dateFormatter(data.performedMesocycle.startDate)} - {dateFormatter(data.performedMesocycle.endDate)}
 			</p>
 		</div>
 	</div>
