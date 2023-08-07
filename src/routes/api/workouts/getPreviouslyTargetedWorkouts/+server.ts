@@ -57,6 +57,9 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			const olderWorkout = olderWorkoutsList[i];
 			if (!olderWorkout) continue;
 
+			// Skip if workout isn't of active mesocycle
+			if (olderWorkout.mesoID !== userData?.activeMesocycle.mesoID) continue;
+
 			// Don't look for workouts older than a week
 			if (currentWorkout) {
 				const timeDiff = currentWorkout.startTimestamp - olderWorkout.startTimestamp;
