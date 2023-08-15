@@ -1,10 +1,5 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import Ajv from 'ajv';
-import RequestBodySchema from './RequestBodySchema.json';
 import clientPromise from '$lib/mongodb';
-
-const ajv = new Ajv({ removeAdditional: true });
-const validate = ajv.compile(RequestBodySchema);
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const session = await locals.getSession();
@@ -13,11 +8,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	}
 
 	const { muscleTargets, workoutIndex }: APIWorkoutGetPreviouslyTargetedWorkouts = await request.json();
-	const valid = validate({ muscleTargets, workoutIndex });
-	if (!valid) {
-		return new Response('Invalid JSON format for muscleTargets', { status: 400 });
-	}
-
 	const client = await clientPromise;
 	try {
 		const userData = await client

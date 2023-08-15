@@ -1,10 +1,5 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import Ajv from 'ajv';
-import RequestBodyType from './RequestBodySchema.json';
 import clientPromise from '$lib/mongodb';
-
-const ajv = new Ajv({ removeAdditional: true });
-const validate = ajv.compile(RequestBodyType);
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const session = await locals.getSession();
@@ -15,13 +10,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	}
 
 	const { workout, sorenessValues }: APIWorkoutCreate = await request.json();
-	const valid = validate({ workout, sorenessValues });
-	if (!valid) {
-		return new Response(`Invalid JSON format for workout: ${ajv.errorsText(validate.errors)}`, {
-			status: 400
-		});
-	}
-
 	const client = await clientPromise;
 	try {
 		await client
