@@ -66,7 +66,7 @@ type Workout = {
 		undefined | 'none' | 'recovered on time' | 'interfered with workout'
 	>;
 	weekNumber: number;
-	deload?: boolean;
+	deload: boolean;
 };
 
 type WorkoutExercise = {
@@ -79,6 +79,7 @@ type WorkoutExercise = {
 	jointPainRating: 'none' | 'moderate' | 'high' | undefined;
 	pumpRating: 'none' | 'moderate' | 'high' | undefined;
 	note?: string;
+	repeatForMeso: boolean;
 };
 
 interface MuscleSorenessData extends MuscleToLastWorkout {
