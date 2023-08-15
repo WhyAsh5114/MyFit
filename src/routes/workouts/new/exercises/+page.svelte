@@ -87,6 +87,7 @@
 			bind:setsPerformedPerExercise={$setsPerformedPerExercise}
 			bind:muscleWorkloads={$muscleWorkloads}
 			bind:musclesTargetedPreviously={$musclesTargetedPreviously}
+			bind:parentMesocycleName={data.parentMesocycle.name}
 		/>
 	</div>
 </div>

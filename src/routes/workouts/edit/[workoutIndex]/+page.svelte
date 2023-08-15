@@ -138,6 +138,7 @@
 		bind:setsPerformedPerExercise
 		bind:musclesTargetedPreviously={data.musclesTargetedPreviously}
 		bind:muscleWorkloads={data.workout.muscleGroupWorkloads}
+		parentMesocycleName={data.parentMesocycle?.name}
 		workoutPerformed={true}
 	/>
 </div>

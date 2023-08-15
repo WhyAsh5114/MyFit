@@ -71,7 +71,8 @@
 				Calves: undefined
 			},
 			referenceWorkout: $referenceWorkout,
-			weekNumber: $weekNumber
+			weekNumber: $weekNumber,
+			deload: false
 		};
 		const reqBody: APIWorkoutCreate = { workout: thisWorkout, sorenessValues: $musclesTargetedPreviously };
 		const response = await fetch('/api/workouts/create', {

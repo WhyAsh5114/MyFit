@@ -7,6 +7,7 @@
 
 	export let workoutPerformed = false;
 	export let workoutExercises: WorkoutExercise[];
+	export let parentMesocycleName: string | undefined;
 	let exerciseFeedbackModal: HTMLDialogElement;
 
 	export let setsPerformedPerExercise: boolean[][];
@@ -90,6 +91,7 @@
 	bind:oldExercise={editingExercise}
 	bind:i={editingExerciseNumber}
 	bind:editExerciseModal
+	bind:parentMesocycleName
 />
 <ul class="flex flex-col gap-2">
 	{#each workoutExercises as exercise, exerciseNumber (exercise.name)}

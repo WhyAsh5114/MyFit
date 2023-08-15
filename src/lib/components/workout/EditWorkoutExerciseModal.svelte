@@ -4,6 +4,7 @@
 
 	export let workoutExercises: WorkoutExercise[];
 	export let editExerciseModal: HTMLDialogElement;
+	export let parentMesocycleName: string | undefined;
 	export let oldExercise: WorkoutExercise = {
 		name: '',
 		setType: 'straight',
@@ -12,7 +13,8 @@
 		repRangeEnd: 10,
 		repsLoadRIR: [[undefined, undefined, 0]],
 		jointPainRating: undefined,
-		pumpRating: undefined
+		pumpRating: undefined,
+		repeatForMeso: true
 	};
 	export let i: number;
 
@@ -37,6 +39,8 @@
 			errorMsgs.push('Exercise already exists in this workout, please choose a different name');
 		}
 
+		oldExercise.repeatForMeso = repeatForMesocycle;
+
 		if (errorMsgs.length === 0) {
 			workoutExercises[i] = oldExercise;
 			// Re-assignment for updating DOM
@@ -44,6 +48,8 @@
 			editExerciseModal.close();
 		}
 	}
+
+	let repeatForMesocycle = false;
 </script>
 
 <MyModal title="Edit Exercise" bind:dialogElement={editExerciseModal}>
@@ -52,7 +58,7 @@
 			<p class="btn join-item btn-sm no-animation btn-secondary w-14">Name</p>
 			<input class="input join-item input-sm w-full" placeholder="Type here" bind:value={oldExercise.name} required />
 		</div>
-		<div class="flex gap-2">
+		<div class="grid grid-cols-2 gap-2">
 			<select class="select select-sm" bind:value={oldExercise.setType} required>
 				<option disabled selected value="">Set type</option>
 				<option value="straight">Normal sets</option>
@@ -61,6 +67,11 @@
 				<option value="top">Top sets</option>
 				<option value="myorep">Myorep sets</option>
 				<option value="myorep match">Myorep match sets</option>
+			</select>
+			<select class="select select-sm" required bind:value={oldExercise.muscleTarget}>
+				{#each commonMuscleGroups as muscleGroup}
+					<option>{muscleGroup}</option>
+				{/each}
 			</select>
 		</div>
 		<div class="join mx-auto w-full">
@@ -83,13 +94,23 @@
 				required
 			/>
 		</div>
-		<select class="select select-sm" required bind:value={oldExercise.muscleTarget}>
-			<option disabled selected value="">Choose primary muscle target</option>
-			{#each commonMuscleGroups as muscleGroup}
-				<option>{muscleGroup}</option>
-			{/each}
-		</select>
-		<textarea placeholder="Notes" class="textarea textarea-bordered textarea-sm w-full resize-none" bind:value={oldExercise.note}></textarea>
+		<textarea
+			placeholder="Notes"
+			class="textarea textarea-bordered textarea-sm w-full resize-none"
+			bind:value={oldExercise.note}
+		></textarea>
+		<div class="flex flex-col">
+			<label class="label cursor-pointer w-fit gap-2">
+				<input type="checkbox" class="toggle" bind:checked={repeatForMesocycle} />
+				<span class="">Repeat for active mesocycle</span>
+			</label>
+			{#if repeatForMesocycle}
+				<label class="label cursor-pointer w-fit gap-2">
+					<input type="checkbox" class="checkbox" />
+					<span class="label-text">Save change to <span class="font-semibold italic">{parentMesocycleName}</span></span>
+				</label>
+			{/if}
+		</div>
 		<button class="btn btn-accent btn-block mt-4">Edit exercise</button>
 	</form>
 	<ul class="list-disc ml-5 mt-2 text-error font-semibold">
