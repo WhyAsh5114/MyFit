@@ -1,13 +1,15 @@
 export function applyWorkoutChanges(workout: Workout, plannedRIR: number) {
-	// Set new plannedRIR to each set of each exercise
-	workout.exercisesPerformed.forEach((exercise) => {
-		exercise.repsLoadRIR.forEach((repLoadRIR) => {
-			repLoadRIR[2] = plannedRIR;
-		});
-	});
-
 	// Rep changes per exercise
 	workout.exercisesPerformed.forEach((exercise) => {
+		// Match reps with RIR
+		exercise.repsLoadRIR.forEach((repLoadRIR) => {
+			if (repLoadRIR[0] === undefined || repLoadRIR[1] === undefined) return;
+			if (repLoadRIR[2] !== plannedRIR) {
+				repLoadRIR[0] += repLoadRIR[2] - plannedRIR;
+				repLoadRIR[2] = plannedRIR;
+			}
+		});
+
 		// Increase or decrease load depending on rep range
 		const lastSet = exercise.repsLoadRIR[exercise.repsLoadRIR.length - 1] as [number, number, number];
 		if (lastSet[0] < exercise.repRangeStart) {
@@ -25,14 +27,6 @@ export function applyWorkoutChanges(workout: Workout, plannedRIR: number) {
 				repLoadRIR[0] = Math.round(volume / repLoadRIR[1]);
 			});
 		}
-
-		// Increase rep if RIR lesser with planned RIR
-		exercise.repsLoadRIR.forEach((repLoadRIR) => {
-			if (repLoadRIR[0] === undefined || repLoadRIR[1] === undefined) return;
-			if (repLoadRIR[2] > plannedRIR) {
-				repLoadRIR[0] += repLoadRIR[2] - plannedRIR;
-			}
-		});
 	});
 
 	// Set changes per muscle group
@@ -40,11 +34,11 @@ export function applyWorkoutChanges(workout: Workout, plannedRIR: number) {
 		if (workloadValue && workloadValue !== 'high') {
 			const muscleSoreness = workout.muscleSorenessToNextWorkout[muscleGroup as (typeof commonMuscleGroups)[number]];
 
+			const workloadMap = { low: 0, moderate: 1, high: 2 };
+			const sorenessMap = { none: 0, 'recovered on time': 1, 'interfered with workout': 2 };
+
 			if (muscleSoreness && muscleSoreness !== 'interfered with workout') {
-				if (
-					(workloadValue === 'low' && muscleSoreness === 'recovered on time') ||
-					(workloadValue === 'moderate' && muscleSoreness === 'none')
-				) {
+				if (workloadMap[workloadValue] + sorenessMap[muscleSoreness] < 2) {
 					const exercisesForMuscleGroup: WorkoutExercise[] = [];
 					workout.exercisesPerformed.forEach((exercise) => {
 						if (exercise.muscleTarget === muscleGroup) exercisesForMuscleGroup.push(exercise);
