@@ -3,6 +3,7 @@
 	import { scale, slide } from 'svelte/transition';
 	import ExerciseFeedbackModal from './ExerciseFeedbackModal.svelte';
 	import ExerciseDetailsModal from './ExerciseDetailsModal.svelte';
+	import EditWorkoutExerciseModal from './EditWorkoutExerciseModal.svelte';
 
 	export let workoutPerformed = false;
 	export let workoutExercises: WorkoutExercise[];
@@ -67,6 +68,10 @@
 	}
 
 	let openWorkloadAndSorenessModal: () => void;
+
+	let editingExercise: WorkoutExercise;
+	let editingExerciseNumber: number;
+	let editExerciseModal: HTMLDialogElement;
 </script>
 
 <ExerciseDetailsModal bind:viewingExercise />
@@ -79,6 +84,12 @@
 	bind:musclesTargetedPreviously
 	bind:workoutPerformed
 	bind:openWorkloadAndSorenessModal
+/>
+<EditWorkoutExerciseModal
+	bind:workoutExercises
+	bind:oldExercise={editingExercise}
+	bind:i={editingExerciseNumber}
+	bind:editExerciseModal
 />
 <ul class="flex flex-col gap-2">
 	{#each workoutExercises as exercise, exerciseNumber (exercise.name)}
@@ -101,13 +112,21 @@
 								viewingExercise = exercise;
 							}}>Details</button
 						>
+						<button
+							class="btn btn-sm btn-primary"
+							on:click={() => {
+								editingExercise = JSON.parse(JSON.stringify(exercise));
+								editingExerciseNumber = exerciseNumber;
+								editExerciseModal.show();
+							}}>Edit</button
+						>
 						<div class="text-white px-0 flex gap-1 items-center mb-1">
 							Feedback
 							<div class="h-px grow bg-white" />
 						</div>
 						<button
 							class="btn btn-sm btn-primary -mt-2"
-							disabled={!setsPerformedPerExercise[exerciseNumber].every(setPerformed => setPerformed)}
+							disabled={!setsPerformedPerExercise[exerciseNumber].every((setPerformed) => setPerformed)}
 							on:click={() => {
 								selectedExercise = exercise;
 								exerciseFeedbackModal.show();
@@ -115,7 +134,7 @@
 						>
 						<button
 							class="btn btn-sm btn-primary"
-							disabled={!setsPerformedPerExercise[exerciseNumber].every(setPerformed => setPerformed)}
+							disabled={!setsPerformedPerExercise[exerciseNumber].every((setPerformed) => setPerformed)}
 							on:click={() => {
 								selectedExercise = exercise;
 								openWorkloadAndSorenessModal();
@@ -194,7 +213,11 @@
 							repSelectElements[exerciseNumber][setNumber].classList.remove('animate-pulse');
 						}}
 					>
-						<option value={undefined} disabled>?</option>
+						{#if repLoadRIR[0] === undefined}
+							<option value={undefined} disabled>?</option>
+						{:else if repLoadRIR[0] === null}
+							<option value={null} disabled>?</option>
+						{/if}
 						{#each Array.from(Array(100).keys()) as i}
 							<option>{i + 1}</option>
 						{/each}
