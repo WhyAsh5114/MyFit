@@ -6,7 +6,6 @@
 		plannedRIR,
 		weekNumber,
 		muscleTargetsAndSets,
-		referenceWorkout,
 		workoutExercises,
 		muscleWorkloads,
 		musclesTargetedPreviously,
@@ -49,6 +48,17 @@
 			0
 		);
 	}
+
+	$: {
+		$muscleTargetsAndSets = {};
+		$workoutExercises.forEach((exercise) => {
+			if ($muscleTargetsAndSets[exercise.muscleTarget]) {
+				$muscleTargetsAndSets[exercise.muscleTarget] += exercise.repsLoadRIR.length;
+			} else {
+				$muscleTargetsAndSets[exercise.muscleTarget] = exercise.repsLoadRIR.length;
+			}
+		});
+	}
 </script>
 
 <div class="grow w-full bg-primary rounded-md flex flex-col">
@@ -80,17 +90,20 @@
 		/>
 	</div>
 </div>
-<button
-	class="btn btn-block btn-accent mt-3 flex flex-col disabled:bg-accent disabled:text-black"
-	disabled={$totalSetsPerformed !== totalSets}
-	on:click={() => {
-		goto('/workouts/new/overview');
-	}}
->
-	{#if $totalSetsPerformed === totalSets}
-		Finish workout
-	{:else}
-		{Math.round(($totalSetsPerformed / totalSets) * 100)}%
-		<progress class="progress w-full bg-secondary progress-primary" value={$totalSetsPerformed} max={totalSets} />
-	{/if}
-</button>
+<div class="join grid grid-cols-2 w-full place-items-center mt-3">
+	<button class="join-item btn btn-primary w-full">Add exercise</button>
+	<button
+		class="join-item btn btn-accent flex flex-col disabled:bg-accent disabled:text-black w-full"
+		disabled={$totalSetsPerformed !== totalSets}
+		on:click={() => {
+			goto('/workouts/new/overview');
+		}}
+	>
+		{#if $totalSetsPerformed === totalSets}
+			Finish workout
+		{:else}
+			{Math.round(($totalSetsPerformed / totalSets) * 100)}%
+			<progress class="progress w-full bg-secondary progress-primary" value={$totalSetsPerformed} max={totalSets} />
+		{/if}
+	</button>
+</div>
