@@ -1,0 +1,88 @@
+<script lang="ts">
+	import MyModal from '$lib/components/MyModal.svelte';
+	import { onMount } from 'svelte';
+	import { duration, mesoName, startRIR, errorMsgs, isBasicsValidStore } from '../newMesoStore';
+
+	function isBasicsValid() {
+		if ($mesoName === '') {
+			$errorMsgs = ['Please enter a mesocycle name'];
+			mesoNameInput.classList.add('ring-2', 'ring-error', 'animate-pulse');
+			return false;
+		}
+		return true;
+	}
+
+	onMount(() => {
+		$isBasicsValidStore = isBasicsValid;
+	});
+
+	let durationHelpModal: HTMLDialogElement;
+	let startRIRHelpModal: HTMLDialogElement;
+	let mesoNameInput: HTMLInputElement;
+</script>
+
+<MyModal title="Mesocycle duration" titleColor="text-accent" bind:dialogElement={durationHelpModal}>
+	<p>The ideal range of a mesocycle duration is between 4 and 16 weeks. It depends on various factors like:</p>
+	<ul class="ml-5 list-disc mt-2">
+		<li>Start RIR (higher the RIR, longer the mesocycle can be)</li>
+		<li>Caloric balance (a surplus can sustain longer mesocycles)</li>
+	</ul>
+</MyModal>
+
+<MyModal title="Start Reps In Reserve" titleColor="text-accent" bind:dialogElement={startRIRHelpModal}>
+	<p>The RIR to begin the mesocycle with, or the RIR for the first microcycle.</p>
+	<p>The recommended RIR for the beginning of a meso is around 3 RIR.</p>
+	<ul class="ml-5 list-disc mt-2">
+		<li>Going much lower can bring in excessive fatigue when you are fresh from a deload</li>
+		<li>Going much higher can result in wasted workouts which weren't stimulative enough for hypertrophy</li>
+	</ul>
+</MyModal>
+
+<div class="flex flex-col bg-primary p-5 rounded-lg w-full mb-5">
+	<label for="meso-name" class="card-title">Mesocycle name</label>
+	<div class="h-0.5 bg-black mt-1 mb-4" />
+	<input
+		type="text"
+		id="meso-name"
+		placeholder="Type here"
+		class="input input-sm w-full"
+		bind:value={$mesoName}
+		bind:this={mesoNameInput}
+		on:click={() => {
+			mesoNameInput.classList.remove('ring-2', 'ring-error', 'animate-pulse');
+		}}
+	/>
+</div>
+
+<div class="flex flex-col bg-primary p-5 rounded-lg w-full mb-5">
+	<div class="flex justify-between">
+		<label for="meso-duration" class="card-title">Mesocycle duration</label>
+		<button class="help-button" on:click={() => durationHelpModal.show()}>?</button>
+	</div>
+	<div class="h-0.5 bg-black mt-1 mb-4" />
+	<div class="flex items-center gap-2">
+		<p class="text-center basis-28 bg-black rounded-md text-sm py-1">{$duration} weeks</p>
+		<input
+			type="range"
+			id="meso-duration"
+			min="2"
+			max="20"
+			bind:value={$duration}
+			class="range range-xs {$duration >= 4 && $duration <= 16 ? 'range-secondary' : 'range-warning'}"
+		/>
+	</div>
+</div>
+
+<div class="flex flex-col bg-primary p-5 rounded-lg w-full">
+	<div class="flex justify-between">
+		<label for="meso-RIR" class="card-title">Start Reps In Reserve</label>
+		<button class="help-button" on:click={() => startRIRHelpModal.show()}>?</button>
+	</div>
+	<div class="h-0.5 bg-black mt-1 mb-4" />
+	<select class="select select-sm select-bordered w-full" bind:value={$startRIR} id="meso-RIR">
+		<option value={4}>4 RIR</option>
+		<option value={3} selected>3 RIR</option>
+		<option value={2}>2 RIR</option>
+		<option value={1}>1 RIR</option>
+	</select>
+</div>

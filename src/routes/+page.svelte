@@ -1,2 +1,18 @@
-<h1 class="text-5xl">Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+	import { navigating } from '$app/stores';
+</script>
+
+<div class="flex flex-col gap-2">
+	<a href="/mesocycles" class="btn btn-primary">
+		{#if $navigating?.to?.url.pathname === '/mesocycles'}
+			<span class="loading loading-spinner" />
+		{/if}
+		Mesocycles
+	</a>
+	<a href="/workouts" class="btn btn-primary">
+		{#if $navigating?.to?.url.pathname === '/workouts'}
+			<span class="loading loading-spinner" />
+		{/if}
+		Workouts
+	</a>
+</div>

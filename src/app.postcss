@@ -1,4 +1,15 @@
-/* Write your global styles here, in PostCSS syntax */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+	overflow-x: hidden;
+}
+
+.help-button {
+	@apply btn btn-xs font-bold btn-circle w-8 border-2 border-accent;
+}
