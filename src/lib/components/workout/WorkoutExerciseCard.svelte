@@ -191,7 +191,10 @@
 				</div>
 			</div>
 			<div class="flex justify-between items-end -mt-2">
-				<h4 class="capitalize text-sm font-semibold italic">{exercise.setType} sets</h4>
+				<h4 class="capitalize text-sm font-semibold italic flex gap-2 items-center">
+					{exercise.setType} sets
+					<span class="badge badge-sm badge-info not-italic normal-case">{exercise.repRangeStart} to {exercise.repRangeEnd}</span>
+				</h4>
 				<div class="flex justify-between mt-2.5 text-sm">
 					<span class="badge badge-error text-black">{exercise.muscleTarget}</span>
 				</div>
