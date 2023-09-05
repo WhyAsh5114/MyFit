@@ -15,24 +15,7 @@ export const weekNumber: Writable<number> = writable(parseInt(ls?.getItem('weekN
 export const referenceWorkout: Writable<null | number> = writable(JSON.parse(ls?.getItem('referenceWorkout') || 'null'));
 export const workoutExercises: Writable<WorkoutExercise[]> = writable(JSON.parse(ls?.getItem('workoutExercises') || '[]'));
 export const muscleWorkloads: Writable<Workout['muscleGroupWorkloads']> = writable(
-	JSON.parse(
-		ls?.getItem('muscleWorkloads') ||
-			JSON.stringify({
-				Chest: undefined,
-				'Front delts': undefined,
-				'Side delts': undefined,
-				'Rear delts': undefined,
-				Back: undefined,
-				Traps: undefined,
-				Triceps: undefined,
-				Biceps: undefined,
-				Forearms: undefined,
-				Quads: undefined,
-				Hamstrings: undefined,
-				Glutes: undefined,
-				Calves: undefined
-			})
-	)
+	JSON.parse(ls?.getItem('muscleWorkloads') || '{}')
 );
 export const musclesTargetedPreviously: Writable<MuscleSorenessData[]> = writable(
 	JSON.parse(ls?.getItem('musclesTargetedPreviously') || '[]')

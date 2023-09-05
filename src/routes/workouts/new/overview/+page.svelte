@@ -10,7 +10,7 @@
 		referenceWorkout,
 		musclesTargetedPreviously
 	} from '../newWorkoutStore.js';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import MyModal from '$lib/components/MyModal.svelte';
 	export let data;
 
@@ -83,7 +83,7 @@
 			}
 		});
 		if (response.ok) {
-			$workoutExercises = [];
+			localStorage.clear();
 			successModal.show();
 		} else {
 			errorMsg = await response.text();
@@ -101,6 +101,7 @@
 	title="Success"
 	titleColor="text-success"
 	onClose={() => {
+		invalidateAll();
 		goto('/workouts');
 	}}
 >
