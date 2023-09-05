@@ -32,7 +32,7 @@
 		<div class="dropdown dropdown-end">
 			<button
 				class="btn btn-ghost btn-circle avatar {showIndicator ? 'indicator' : ''}"
-				on:click={() => showIndicator = false}
+				on:click={() => (showIndicator = false)}
 			>
 				{#if showIndicator}
 					<span class="indicator-item badge badge-accent badge-xs animate-pulse mx-1.5 my-1.5" />
