@@ -6,6 +6,4 @@ export const load: PageServerLoad = async ({ locals }) => {
   if (!session) {
     throw redirect(300, '/');
   }
-
-  
 }

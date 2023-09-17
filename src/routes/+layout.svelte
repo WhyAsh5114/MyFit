@@ -21,7 +21,7 @@
 	<div class="drawer-content flex flex-col">
 		<!-- Page content here -->
 		<Navbar />
-		<div class="h-px grow flex flex-col justify-center items-center">
+		<div class="h-px grow flex flex-col justify-center items-center m-1">
 			<slot />
 		</div>
 	</div>
