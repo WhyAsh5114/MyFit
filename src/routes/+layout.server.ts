@@ -14,7 +14,10 @@ export const load: LayoutServerLoad = async (event) => {
 	let userData = null;
 	if (session) {
 		const client = await clientPromise;
-		userData = client.db().collection('users').findOne({ email: session.user?.email });
+		userData = await client
+			.db()
+			.collection('users')
+			.findOne({ email: session.user?.email }, { projection: { _id: 0 } });
 	}
 
 	return {
