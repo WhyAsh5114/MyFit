@@ -1,4 +1,5 @@
 <script lang="ts">
+	let mesocycleName = "";
 	let mesocycleDuration = 8;
 </script>
 
@@ -13,6 +14,7 @@
 				placeholder="Type here"
 				class="input input-bordered w-full max-w-xs"
 				id="mesocycle-name"
+				bind:value={mesocycleName}
 				required
 			/>
 		</div>
