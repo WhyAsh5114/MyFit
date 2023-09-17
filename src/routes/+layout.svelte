@@ -16,7 +16,7 @@
 	{@html webManifestLink}
 </svelte:head>
 
-<div class="drawer h-full">
+<div class="drawer lg:drawer-open h-full">
 	<input id="my-drawer" type="checkbox" class="drawer-toggle" />
 	<div class="drawer-content flex flex-col">
 		<!-- Page content here -->
@@ -27,7 +27,7 @@
 	</div>
 	<div class="drawer-side">
 		<label for="my-drawer" class="drawer-overlay" />
-		<ul class="menu p-4 w-64 min-h-full bg-neutral text-base-content font-semibold">
+		<ul class="menu p-4 w-72 min-h-full bg-neutral text-base-content font-semibold">
 			<!-- Sidebar content here -->
 			{#each drawerLinks as { name, link }}
 				{#if $page.url.pathname.startsWith(link)}

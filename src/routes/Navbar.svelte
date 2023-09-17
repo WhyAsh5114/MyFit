@@ -6,7 +6,7 @@
 
 <div class="navbar bg-primary">
 	<div class="flex-none">
-		<label for="my-drawer" class="btn btn-square btn-ghost">
+		<label for="my-drawer" class="btn btn-square btn-ghost lg:hidden">
 			<Hamburger />
 		</label>
 	</div>
