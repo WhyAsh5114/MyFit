@@ -4,7 +4,7 @@
 		mesocycleName,
 		mesocycleStartRIR,
 		mesocycleFatLossPhase
-	} from '../../newMesocycleStore';
+	} from '../newMesocycleStore';
 	import { goto } from '$app/navigation';
 </script>
 
