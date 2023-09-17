@@ -10,7 +10,7 @@
 
 <form
 	class="w-full grow flex flex-col justify-center items-center"
-	on:submit|preventDefault={() => goto('/mesocycles/new/split')}
+	on:submit|preventDefault={() => goto('/mesocycles/new/custom/split')}
 >
 	<div class="form-control w-full max-w-xs gap-5 my-auto">
 		<div>

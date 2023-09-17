@@ -1,5 +1,5 @@
 <div class="flex flex-col justify-evenly gap-5">
-	<h2 class="text-2xl text-white font-semibold">Create new mesocycle</h2>
+	<h2 class="text-2xl font-semibold">Create new mesocycle</h2>
 
 	<a class="card w-full max-w-sm bg-primary" href="/mesocycles/new/custom/basics">
 		<div class="card-body">
