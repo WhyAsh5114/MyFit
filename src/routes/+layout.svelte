@@ -27,11 +27,11 @@
 	</div>
 	<div class="drawer-side">
 		<label for="my-drawer" class="drawer-overlay" />
-		<ul class="menu p-4 w-2/3 min-h-full bg-neutral text-base-content font-semibold">
+		<ul class="menu p-4 w-64 min-h-full bg-neutral text-base-content font-semibold">
 			<!-- Sidebar content here -->
 			{#each drawerLinks as { name, link }}
 				{#if $page.url.pathname.startsWith(link)}
-					<li class="bg-accent text-black">
+					<li class="text-accent">
 						<a href={link}>{name}</a>
 					</li>
 				{:else}
