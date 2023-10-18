@@ -171,7 +171,6 @@
 							on:click={() => {
 								deletingExerciseNumber = exerciseNumber;
 								deleteExerciseModal.show();
-								console.log(exerciseNumber, exercise.name);
 							}}>Delete</button
 						>
 						<div class="text-white px-0 flex gap-1 items-center mb-1">
