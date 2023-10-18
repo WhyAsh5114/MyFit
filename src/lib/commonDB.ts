@@ -130,3 +130,21 @@ export function getSFRColor(sfr: number) {
 	if (sfr < 1.5) return 'text-warning';
 	return 'text-accent';
 }
+
+export function splitExerciseToWorkoutExercise(splitEx: SplitExercise, plannedRIR: number) {
+	const workoutExercise: WorkoutExercise = {
+		name: splitEx.name as string,
+		repRangeStart: splitEx.repRangeStart as number,
+		repRangeEnd: splitEx.repRangeEnd as number,
+		muscleTarget: splitEx.muscleTarget as (typeof commonMuscleGroups)[number],
+		setType: splitEx.setType as Exclude<SplitExercise['setType'], ''>,
+		jointPainRating: undefined,
+		pumpRating: undefined,
+		repsLoadRIR: [],
+		note: splitEx.note
+	};
+	for (let i = 0; i < (splitEx.sets as number); i++) {
+		workoutExercise.repsLoadRIR.push([undefined, undefined, plannedRIR]);
+	}
+	return workoutExercise;
+}

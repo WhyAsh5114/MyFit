@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { navigating } from '$app/stores';
-	import { dateFormatter, days } from '$lib/commonDB';
+	import { dateFormatter, days, splitExerciseToWorkoutExercise } from '$lib/commonDB';
 	import { slide, fly } from 'svelte/transition';
 	import {
 		workoutDay,
@@ -26,24 +26,6 @@
 		data.parentMesocycle.startRIR -
 		Math.floor(($weekNumber * data.parentMesocycle.startRIR) / data.parentMesocycle.duration);
 
-	function splitExerciseToWorkoutExercise(splitEx: SplitExercise) {
-		const workoutExercise: WorkoutExercise = {
-			name: splitEx.name as string,
-			repRangeStart: splitEx.repRangeStart as number,
-			repRangeEnd: splitEx.repRangeEnd as number,
-			muscleTarget: splitEx.muscleTarget as (typeof commonMuscleGroups)[number],
-			setType: splitEx.setType as Exclude<SplitExercise['setType'], ''>,
-			jointPainRating: undefined,
-			pumpRating: undefined,
-			repsLoadRIR: [],
-			note: splitEx.note
-		};
-		for (let i = 0; i < (splitEx.sets as number); i++) {
-			workoutExercise.repsLoadRIR.push([undefined, undefined, $plannedRIR]);
-		}
-		return workoutExercise;
-	}
-
 	$: findReferenceWorkout($workoutDay);
 	function findReferenceWorkout(dayNumber: number) {
 		let activeMesoWorkouts = structuredClone(data.activeMesocycle.workouts).reverse();
@@ -61,7 +43,7 @@
 	$: if ($referenceWorkout === null && data.parentMesocycle.splitExercises[$workoutDay] && $plannedRIR) {
 		tempWorkoutExercises = [];
 		data.parentMesocycle.splitExercises[$workoutDay].forEach((exercise) => {
-			tempWorkoutExercises.push(splitExerciseToWorkoutExercise(exercise));
+			tempWorkoutExercises.push(splitExerciseToWorkoutExercise(exercise, $plannedRIR));
 		});
 	} else if (data.workouts && $referenceWorkout !== null) {
 		// TODO: template from old workout and apply appropriate volume changes
