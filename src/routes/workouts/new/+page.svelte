@@ -36,8 +36,7 @@
 			jointPainRating: undefined,
 			pumpRating: undefined,
 			repsLoadRIR: [],
-			note: splitEx.note,
-			repeatForMeso: true
+			note: splitEx.note
 		};
 		for (let i = 0; i < (splitEx.sets as number); i++) {
 			workoutExercise.repsLoadRIR.push([undefined, undefined, $plannedRIR]);

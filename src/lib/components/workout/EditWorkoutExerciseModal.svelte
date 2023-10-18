@@ -14,7 +14,6 @@
 		repsLoadRIR: [[undefined, undefined, 0]],
 		jointPainRating: undefined,
 		pumpRating: undefined,
-		repeatForMeso: true
 	};
 	export let i: number;
 
@@ -39,8 +38,6 @@
 			errorMsgs.push('Exercise already exists in this workout, please choose a different name');
 		}
 
-		oldExercise.repeatForMeso = repeatForMesocycle;
-
 		if (errorMsgs.length === 0) {
 			workoutExercises[i] = oldExercise;
 			// Re-assignment for updating DOM
@@ -48,8 +45,6 @@
 			editExerciseModal.close();
 		}
 	}
-
-	let repeatForMesocycle = false;
 </script>
 
 <MyModal title="Edit Exercise" bind:dialogElement={editExerciseModal}>
@@ -101,15 +96,9 @@
 		></textarea>
 		<div class="flex flex-col">
 			<label class="label cursor-pointer w-fit gap-2">
-				<input type="checkbox" class="toggle" bind:checked={repeatForMesocycle} />
-				<span class="">Repeat for active mesocycle</span>
+				<input type="checkbox" class="toggle" />
+				<span class="label-text">Save change to <span class="font-semibold italic">{parentMesocycleName}</span></span>
 			</label>
-			{#if repeatForMesocycle}
-				<label class="label cursor-pointer w-fit gap-2">
-					<input type="checkbox" class="checkbox" />
-					<span class="label-text">Save change to <span class="font-semibold italic">{parentMesocycleName}</span></span>
-				</label>
-			{/if}
 		</div>
 		<button class="btn btn-accent btn-block mt-4">Edit exercise</button>
 	</form>

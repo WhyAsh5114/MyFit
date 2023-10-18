@@ -79,7 +79,6 @@ type WorkoutExercise = {
 	jointPainRating: 'none' | 'moderate' | 'high' | undefined;
 	pumpRating: 'none' | 'moderate' | 'high' | undefined;
 	note?: string;
-	repeatForMeso: boolean;
 };
 
 interface MuscleSorenessData extends MuscleToLastWorkout {
