@@ -16,6 +16,6 @@
 	<p>Are you sure you want to delete <span class="font-semibold">{exerciseName}</span>?</p>
 	<div class="join mt-4 w-full grid grid-cols-2">
 		<button class="join-item btn"> No </button>
-		<button class="join-item btn btn-error text-white" on:click={deleteExercise}>Yes</button>
+		<button class="join-item btn btn-error text-black" on:click={deleteExercise}>Yes</button>
 	</div>
 </MyModal>
