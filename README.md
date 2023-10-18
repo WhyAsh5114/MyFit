@@ -1,38 +1,66 @@
-# create-svelte
+# MyFit: Mobile Workout Tracking App
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+MyFit is a powerful workout tracking app designed to help you achieve your fitness goals effectively. Inspired by the RP Hypertrophy app, MyFit offers a comprehensive set of features including mesocycle creation, automatic volume management, exercise progression metrics, and a science-based recommendation algorithm. Whether you are a beginner or an experienced fitness enthusiast, MyFit is your ideal companion on your fitness journey.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Mesocycle Creation**: Plan your workouts efficiently with the mesocycle creation feature. Organize your training into structured cycles for optimal results.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- **Automatic Volume Management**: MyFit automatically manages your workout volume, ensuring that you are progressively overloading your muscles for continuous growth and strength gains.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+- **Exercise Progression Metrics**: Track your progress with detailed exercise metrics. Monitor your lifts, repetitions, and weights to stay motivated and on track.
 
-## Developing
+- **Science-Based Recommendation Algorithm**: Receive personalized workout recommendations based on scientific principles. MyFit helps you make informed decisions about your training routine.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Getting Started
 
-```bash
-npm run dev
+### Direct web app (can also be installed as a PWA)
+https://my-fit-whyash5114.vercel.app/
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+### Prerequisites
 
-## Building
+- **Node.js**: Ensure you have Node.js installed. If not, you can download it from [nodejs.org](https://nodejs.org/).
 
-To create a production version of your app:
+### Installation
 
-```bash
-npm run build
-```
+1. **Clone the repository**:
 
-You can preview the production build with `npm run preview`.
+   ```sh
+   git clone https://github.com/WhyAsh5114/MyFit.git
+   ```
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+2. **Navigate to the project directory**:
+
+   ```sh
+   cd MyFit
+   ```
+
+3. **Install dependencies**:
+
+   ```sh
+   npm install
+   ```
+
+4. **Start the development server**:
+
+   ```sh
+   npm start
+   ```
+
+   MyFit will be accessible at `http://localhost:3000`.
+
+## Contributing
+
+Contributions are welcome! Feel free to open an issue or submit a pull request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgements
+
+MyFit is built with love by the open-source community and inspired by the RP Hypertrophy app.
+
+---
+
+Feel free to customize the README further to include specific instructions, screenshots, or any additional information that you find relevant to your project. Good luck with your workout tracking app! 🏋️‍♂️💪
