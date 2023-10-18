@@ -88,6 +88,7 @@
 			bind:muscleWorkloads={$muscleWorkloads}
 			bind:musclesTargetedPreviously={$musclesTargetedPreviously}
 			bind:parentMesocycleName={data.parentMesocycle.name}
+			plannedRIR={$plannedRIR}
 		/>
 	</div>
 </div>

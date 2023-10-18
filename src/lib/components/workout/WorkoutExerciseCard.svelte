@@ -5,7 +5,9 @@
 	import ExerciseDetailsModal from './ExerciseDetailsModal.svelte';
 	import EditWorkoutExerciseModal from './EditWorkoutExerciseModal.svelte';
 	import MyModal from '../MyModal.svelte';
+	import AddWorkoutExerciseModal from './AddWorkoutExerciseModal.svelte';
 
+	export let plannedRIR: number;
 	export let workoutPerformed = false;
 	export let workoutExercises: WorkoutExercise[];
 	export let parentMesocycleName: string | undefined;
@@ -97,6 +99,8 @@
 
 	let errorModal: HTMLDialogElement;
 	let errorMsg = '';
+
+	let addExerciseModal: HTMLDialogElement;
 </script>
 
 <ExerciseDetailsModal bind:viewingExercise />
@@ -117,6 +121,7 @@
 	bind:editExerciseModal
 	bind:parentMesocycleName
 />
+<AddWorkoutExerciseModal bind:addExerciseModal {plannedRIR} {workoutExercises} />
 <MyModal title="Delete exercise" titleColor="text-error" bind:dialogElement={deleteExerciseModal}>
 	{#if deletingExerciseNumber !== undefined}
 		Are you sure you want to delete <span class="italic font-semibold">{workoutExercises[deletingExerciseNumber].name}</span>

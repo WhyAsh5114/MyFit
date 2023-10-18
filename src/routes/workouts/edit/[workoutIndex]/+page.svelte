@@ -140,6 +140,7 @@
 		bind:muscleWorkloads={data.workout.muscleGroupWorkloads}
 		parentMesocycleName={data.parentMesocycle?.name}
 		workoutPerformed={true}
+		plannedRIR={data.workout.plannedRIR}
 	/>
 </div>
 <div class="join grid grid-cols-2 w-full mt-2">
