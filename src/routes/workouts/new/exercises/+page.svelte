@@ -59,6 +59,8 @@
 			}
 		});
 	}
+
+	let openAddExerciseModal: () => void;
 </script>
 
 <div class="grow w-full bg-primary rounded-md flex flex-col">
@@ -89,11 +91,12 @@
 			bind:musclesTargetedPreviously={$musclesTargetedPreviously}
 			bind:parentMesocycleName={data.parentMesocycle.name}
 			plannedRIR={$plannedRIR}
+			bind:openAddExerciseModal
 		/>
 	</div>
 </div>
 <div class="join grid grid-cols-2 w-full place-items-center mt-3">
-	<button class="join-item btn btn-primary w-full">Add exercise</button>
+	<button class="join-item btn btn-primary w-full" on:click={openAddExerciseModal}>Add exercise</button>
 	<button
 		class="join-item btn btn-accent flex flex-col disabled:bg-accent disabled:text-black w-full"
 		disabled={$totalSetsPerformed !== totalSets}

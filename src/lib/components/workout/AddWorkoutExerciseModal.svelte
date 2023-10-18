@@ -5,6 +5,7 @@
 	export let workoutExercises: WorkoutExercise[];
 	export let addExerciseModal: HTMLDialogElement;
 	export let plannedRIR: number;
+	export let setsPerformedPerExercise: boolean[][];
 	let newExercise: SplitExercise = {
 		name: undefined,
 		sets: undefined,
@@ -43,6 +44,7 @@
 
 		if (errorMsgs.length === 0) {
 			workoutExercises.push(splitExerciseToWorkoutExercise(newExercise, plannedRIR));
+			setsPerformedPerExercise.push(Array(newExercise.sets).fill(false));
 			// Re-assignment for updating DOM
 			workoutExercises = workoutExercises;
 			addExerciseModal.close();
