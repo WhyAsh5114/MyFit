@@ -4,6 +4,7 @@
 	import ExerciseFeedbackModal from './ExerciseFeedbackModal.svelte';
 	import ExerciseDetailsModal from './ExerciseDetailsModal.svelte';
 	import EditWorkoutExerciseModal from './EditWorkoutExerciseModal.svelte';
+	import MyModal from '../MyModal.svelte';
 
 	export let workoutPerformed = false;
 	export let workoutExercises: WorkoutExercise[];
@@ -66,6 +67,26 @@
 
 	function swapExercises(a: number, b: number) {
 		[workoutExercises[b], workoutExercises[a]] = [workoutExercises[a], workoutExercises[b]];
+		[setsPerformedPerExercise[b], setsPerformedPerExercise[a]] = [setsPerformedPerExercise[a], setsPerformedPerExercise[b]];
+	}
+
+	let deletingExerciseNumber: undefined | number = undefined;
+	let deleteExerciseModal: HTMLDialogElement;
+	function deleteExercise() {
+		if (deletingExerciseNumber === undefined) {
+			return false;
+		}
+		if (workoutExercises.length === 1) {
+			errorMsg = 'Need at least one exercise in the workout';
+			errorModal.show();
+			return false;
+		}
+		workoutExercises.splice(deletingExerciseNumber, 1);
+		setsPerformedPerExercise.splice(deletingExerciseNumber, 1);
+		workoutExercises = workoutExercises;
+		setsPerformedPerExercise = setsPerformedPerExercise;
+		deletingExerciseNumber = undefined;
+		return true;
 	}
 
 	let openWorkloadAndSorenessModal: () => void;
@@ -73,6 +94,9 @@
 	let editingExercise: WorkoutExercise;
 	let editingExerciseNumber: number;
 	let editExerciseModal: HTMLDialogElement;
+
+	let errorModal: HTMLDialogElement;
+	let errorMsg = '';
 </script>
 
 <ExerciseDetailsModal bind:viewingExercise />
@@ -93,6 +117,18 @@
 	bind:editExerciseModal
 	bind:parentMesocycleName
 />
+<MyModal title="Delete exercise" titleColor="text-error" bind:dialogElement={deleteExerciseModal}>
+	{#if deletingExerciseNumber !== undefined}
+		Are you sure you want to delete <span class="italic font-semibold">{workoutExercises[deletingExerciseNumber].name}</span>
+	{/if}
+	<div class="join mt-4 w-full grid grid-cols-2">
+		<button class="join-item btn"> No </button>
+		<button class="join-item btn btn-error text-black" on:click={deleteExercise}>Yes</button>
+	</div>
+</MyModal>
+<MyModal title="Error" titleColor="text-error" bind:dialogElement={errorModal}>
+	<p>{errorMsg}</p>
+</MyModal>
 <ul class="flex flex-col gap-2">
 	{#each workoutExercises as exercise, exerciseNumber (exercise.name)}
 		<li
@@ -121,6 +157,14 @@
 								editingExerciseNumber = exerciseNumber;
 								editExerciseModal.show();
 							}}>Edit</button
+						>
+						<button
+							class="btn btn-sm btn-error text-black"
+							on:click={() => {
+								deletingExerciseNumber = exerciseNumber;
+								deleteExerciseModal.show();
+								console.log(exerciseNumber, exercise.name);
+							}}>Delete</button
 						>
 						<div class="text-white px-0 flex gap-1 items-center mb-1">
 							Feedback
@@ -193,7 +237,9 @@
 			<div class="flex justify-between items-end -mt-2">
 				<h4 class="capitalize text-sm font-semibold italic flex gap-2 items-center">
 					{exercise.setType} sets
-					<span class="badge badge-sm badge-info not-italic normal-case">{exercise.repRangeStart} to {exercise.repRangeEnd}</span>
+					<span class="badge badge-sm badge-info not-italic normal-case"
+						>{exercise.repRangeStart} to {exercise.repRangeEnd}</span
+					>
 				</h4>
 				<div class="flex justify-between mt-2.5 text-sm">
 					<span class="badge badge-error text-black">{exercise.muscleTarget}</span>
