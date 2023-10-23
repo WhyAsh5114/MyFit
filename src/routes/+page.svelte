@@ -44,7 +44,7 @@
 				<p>
 					{todaysDay}: <span class="font-semibold text-white">{data.parentMesocycle?.splitSchedule[workoutDay]}</span>
 				</p>
-				<a class="btn-sm btn-accent" href="/workouts/new">Go</a>
+				<a class="btn btn-sm btn-accent" href="/workouts/new">Go</a>
 			{:else}
 				<span class="font-semibold text-white">All done for today!</span>
 				<span class="btn btn-sm btn-accent btn-circle">✓</span>
