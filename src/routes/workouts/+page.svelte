@@ -83,7 +83,7 @@
 	<div class="h-0.5 bg-black mt-1 mb-4" />
 	<div class="flex gap-2">
 		<select class="select select-sm select-bordered grow" bind:value={selectedMesocycle} disabled={!filterByMesocycles}>
-			{#if data.mesocycles === null || data.mesocycles?.length === 0}
+			{#if !data.mesocycles || data.mesocycles?.length === 0}
 				<option value={undefined}>No mesocycle created</option>
 			{:else}
 				{#if !data.activeMesocycle}
@@ -138,9 +138,25 @@
 		{/if}
 	</div>
 </div>
-<a class="btn btn-block btn-accent" href="/workouts/new">
-	{#if $navigating?.to?.url.pathname === '/workouts/new'}
-		<span class="loading loading-spinner" />
-	{/if}
-	Log new workout
-</a>
+{#if !data.mesocycles}
+	<a class="btn btn-block btn-accent" href="/mesocycles/new/basics">
+		{#if $navigating?.to?.url.pathname === '/mesocycles/new/basics'}
+			<span class="loading loading-spinner" />
+		{/if}
+		Create new mesocycle
+	</a>
+{:else if data.mesocycles?.length === 0}
+	<a class="btn btn-block btn-accent" href="/mesocycles">
+		{#if $navigating?.to?.url.pathname === '/mesocycles'}
+			<span class="loading loading-spinner" />
+		{/if}
+		Activate a mesocycle
+	</a>
+{:else}
+	<a class="btn btn-block btn-accent" href="/workouts/new">
+		{#if $navigating?.to?.url.pathname === '/workouts/new'}
+			<span class="loading loading-spinner" />
+		{/if}
+		Log new workout
+	</a>
+{/if}
