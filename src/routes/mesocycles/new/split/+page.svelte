@@ -33,7 +33,7 @@
 
 <MyModal title="Select a common split" titleColor="text-accent" bind:dialogElement={selectSplitModal}>
 	<div class="flex gap-2 items-center">
-		<select class="select select-bordered grow" bind:value={selectedCommonSplit}>
+		<select class="select select-bordered grow" name="common-split" bind:value={selectedCommonSplit}>
 			<option disabled selected>Choose a common split</option>
 			{#each Object.keys(commonSplits) as split}
 				<option>{split}</option>

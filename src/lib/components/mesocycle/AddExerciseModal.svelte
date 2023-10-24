@@ -67,13 +67,20 @@
 	<form class="flex flex-col gap-3" on:submit|preventDefault={addExercise}>
 		<div class="join mx-auto w-full">
 			<p class="btn join-item btn-sm no-animation btn-secondary w-14">Name</p>
-			<input class="input join-item input-sm w-full" placeholder="Type here" bind:value={newExercise.name} required />
+			<input
+				class="input join-item input-sm w-full"
+				name="new-exercise-name"
+				placeholder="Type here"
+				bind:value={newExercise.name}
+				required
+			/>
 		</div>
 		<div class="flex gap-2">
 			<div class="join w-1/3">
 				<p class="btn join-item btn-sm no-animation btn-secondary w-14">Sets</p>
 				<input
 					class="input join-item input-sm w-full"
+					name="new-exercise-sets"
 					type="number"
 					placeholder="0"
 					min="1"
@@ -81,7 +88,7 @@
 					required
 				/>
 			</div>
-			<select class="select w-2/3 select-sm" bind:value={newExercise.setType} required>
+			<select class="select w-2/3 select-sm" bind:value={newExercise.setType} name="new-exercise-sets-type" required>
 				<option disabled selected value="">Set type</option>
 				<option value="straight">Normal sets</option>
 				<option value="drop">Drop sets</option>
@@ -95,6 +102,7 @@
 			<p class="btn join-item btn-sm no-animation btn-secondary w-1/2">Rep range</p>
 			<input
 				class="input join-item input-sm w-full"
+				name="new-exercise-rep-range-start"
 				placeholder="Start"
 				bind:value={newExercise.repRangeStart}
 				type="number"
@@ -104,6 +112,7 @@
 			<p class="btn join-item btn-sm no-animation btn-secondary w-8">To</p>
 			<input
 				class="input join-item input-sm w-full"
+				name="new-exercise-rep-range-end"
 				placeholder="End"
 				bind:value={newExercise.repRangeEnd}
 				type="number"
@@ -111,13 +120,18 @@
 				required
 			/>
 		</div>
-		<select class="select select-sm" required bind:value={newExercise.muscleTarget}>
+		<select class="select select-sm" required bind:value={newExercise.muscleTarget} name="new-exercise-muscle-target">
 			<option disabled selected value="">Choose primary muscle target</option>
 			{#each commonMuscleGroups as muscleGroup}
 				<option>{muscleGroup}</option>
 			{/each}
 		</select>
-		<textarea placeholder="Notes" class="textarea textarea-bordered textarea-sm w-full resize-none" bind:value={newExercise.note}></textarea>
+		<textarea
+			placeholder="Notes"
+			name="new-exercise-notes"
+			class="textarea textarea-bordered textarea-sm w-full resize-none"
+			bind:value={newExercise.note}
+		></textarea>
 		<button class="btn btn-accent btn-block mt-4">Add exercise</button>
 	</form>
 	<ul class="list-disc ml-5 mt-2 text-error font-semibold">
