@@ -46,7 +46,7 @@
 			tempWorkoutExercises.push(splitExerciseToWorkoutExercise(exercise, $plannedRIR));
 		});
 	} else if (data.workouts && $referenceWorkout !== null) {
-		// TODO: template from old workout and apply appropriate volume changes
+		// Template from old workout and apply appropriate volume changes
 		tempWorkoutExercises = [];
 		let referencedWorkout = structuredClone(data.workouts[$referenceWorkout]);
 		if (referencedWorkout && $plannedRIR) {

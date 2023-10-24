@@ -13,7 +13,8 @@
 		</div>
 	</a>
 
-	<a class="p-4 rounded-md bg-primary w-full max-w-sm" href="/calculators/bmr">
+	<!--TODO: make BMR calculator-->
+	<a class="p-4 rounded-md bg-primary w-full max-w-sm btn-disabled opacity-50" href="/calculators/bmr">
 		<div class="flex flex-col">
 			<h2 class="card-title">BMR (Basal Metabolic Rate)</h2>
 			<p>Age, Weight, and Height</p>
