@@ -75,6 +75,7 @@
 		<h3 class="card-title">Current Mesocycle</h3>
 		<input
 			type="checkbox"
+			name="filter-by-mesocycle"
 			class="toggle toggle-secondary"
 			aria-label="filter-by-mesocycle"
 			bind:checked={filterByMesocycles}
@@ -82,7 +83,12 @@
 	</div>
 	<div class="h-0.5 bg-black mt-1 mb-4" />
 	<div class="flex gap-2">
-		<select class="select select-sm select-bordered grow" bind:value={selectedMesocycle} disabled={!filterByMesocycles}>
+		<select
+			class="select select-sm select-bordered grow"
+			name="filter-by-mesocycle-name"
+			bind:value={selectedMesocycle}
+			disabled={!filterByMesocycles}
+		>
 			{#if !data.mesocycles || data.mesocycles?.length === 0}
 				<option value={undefined}>No mesocycle created</option>
 			{:else}
@@ -138,14 +144,14 @@
 		{/if}
 	</div>
 </div>
-{#if !data.mesocycles}
+{#if !data.mesocycles || data.mesocycles.filter((meso) => meso !== null).length === 0}
 	<a class="btn btn-block btn-accent" href="/mesocycles/new/basics">
 		{#if $navigating?.to?.url.pathname === '/mesocycles/new/basics'}
 			<span class="loading loading-spinner" />
 		{/if}
 		Create new mesocycle
 	</a>
-{:else if data.mesocycles?.length === 0}
+{:else if !selectedMesocycle}
 	<a class="btn btn-block btn-accent" href="/mesocycles">
 		{#if $navigating?.to?.url.pathname === '/mesocycles'}
 			<span class="loading loading-spinner" />
