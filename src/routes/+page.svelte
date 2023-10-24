@@ -35,6 +35,9 @@
 		{/if}
 		Workouts
 	</a>
+	<a href="/calculators" class="btn btn-primary">
+		Calculators
+	</a>
 </div>
 
 {#if data.parentMesocycle}
