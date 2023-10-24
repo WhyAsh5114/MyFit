@@ -52,7 +52,7 @@
 				</div>
 			</button>
 
-			<ul class="menu dropdown-content mt-3 p-2 shadow bg-secondary text-black font-semibold rounded-box">
+			<ul class="menu dropdown-content p-2 shadow bg-neutral font-semibold rounded-md">
 				<PWAButton bind:updatingModal bind:showIndicator />
 				{#if $page.data.session}
 					<li><a href="/profile">Profile</a></li>
