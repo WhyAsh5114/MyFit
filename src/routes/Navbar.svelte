@@ -4,6 +4,7 @@
 	import { navigating, page } from '$app/stores';
 	import MyModal from '$lib/components/MyModal.svelte';
 	import { signOut } from '@auth/sveltekit/client';
+	import Hamburger from '$lib/Hamburger.svelte'
 
 	let logoutModal: HTMLDialogElement;
 	let updatingModal: HTMLDialogElement;
@@ -16,7 +17,12 @@
 		Please wait
 	</button>
 </MyModal>
-<div class="navbar bg-primary z-10">
+<div class="navbar bg-primary">
+	<div class="flex-none">
+		<label for="my-drawer" class="btn btn-square btn-ghost lg:hidden">
+			<Hamburger />
+		</label>
+	</div>
 	<div class="flex-1">
 		<div class="h-10 w-10 relative">
 			{#if $navigating?.to}
