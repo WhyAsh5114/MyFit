@@ -27,7 +27,7 @@
 
 <AddExerciseModal bind:addExerciseModal bind:splitExercises />
 <section class="flex flex-col w-full h-full">
-	<h2 class="bg-accent text-black text-center text-lg font-semibold rounded-t-lg">
+	<h2 class="bg-accent text-black text-center text-lg font-semibold rounded-t-lg drop-shadow-md shadow-md shadow-black">
 		{workoutName} ({currentDay})
 	</h2>
 	{#key currentDay}
