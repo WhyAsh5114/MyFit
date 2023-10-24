@@ -24,7 +24,7 @@
 		</label>
 	</div>
 	<div class="flex-1">
-		<div class="h-10 w-10 relative">
+		<div class="h-10 w-10 relative mt-1 -mr-3 ml-1">
 			{#if $navigating?.to}
 				<div class="bg-primary w-10 h-10 absolute z-20 grid place-items-center">
 					<span class="loading loading-spinner text-accent" />
