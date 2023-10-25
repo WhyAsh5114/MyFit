@@ -17,7 +17,7 @@ export default defineConfig({
 				start_url: '/',
 				display: 'standalone',
 				background_color: '#000000',
-				theme_color: '#323b49',
+				theme_color: '#292524',
 				orientation: 'portrait',
 				description: "A fitness app with all the logging and tracking options you'll ever need",
 				icons: [
