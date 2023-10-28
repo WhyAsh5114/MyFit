@@ -29,10 +29,10 @@
 	</div>
 	<div class="drawer-side z-30">
 		<label for="my-drawer" class="drawer-overlay" />
-		<ul class="menu p-4 lg:w-72 w-4/6 min-h-full bg-neutral text-base-content font-semibold">
+		<ul class="menu p-4 w-72 min-h-full bg-neutral text-base-content font-semibold">
 			<!-- Sidebar content here -->
-			<a class="flex btn btn-ghost justify-start gap-0" href="/">
-				<div class="h-10 w-10 relative mt-1 -ml-2">
+			<a class="flex btn btn-ghost justify-start gap-2" href="/">
+				<div class="h-10 w-10 relative -ml-2">
 					{#if $navigating?.to}
 						<div class="w-10 h-10 absolute z-20 grid place-items-center">
 							<span class="loading loading-spinner text-accent" />
@@ -45,6 +45,7 @@
 					MyFit
 				</h1>
 			</a>
+			<div class="h-px my-3"></div>
 			{#each drawerLinks as { name, link }}
 				{#if $page.url.pathname.startsWith(link)}
 					<li class="text-accent">
