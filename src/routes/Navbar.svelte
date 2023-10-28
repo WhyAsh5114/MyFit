@@ -4,7 +4,7 @@
 	import { navigating, page } from '$app/stores';
 	import MyModal from '$lib/components/MyModal.svelte';
 	import { signOut } from '@auth/sveltekit/client';
-	import Hamburger from '$lib/Hamburger.svelte'
+	import Hamburger from '$lib/Hamburger.svelte';
 
 	let logoutModal: HTMLDialogElement;
 	let updatingModal: HTMLDialogElement;
@@ -17,7 +17,7 @@
 		Please wait
 	</button>
 </MyModal>
-<div class="navbar bg-primary">
+<div class="navbar bg-primary lg:hidden">
 	<div class="flex-none">
 		<label for="my-drawer" class="btn btn-square btn-ghost lg:hidden">
 			<Hamburger />
@@ -26,13 +26,14 @@
 	<div class="flex-1">
 		<div class="h-10 w-10 relative mt-1 -mr-3 ml-1">
 			{#if $navigating?.to}
-				<div class="bg-primary w-10 h-10 absolute z-20 grid place-items-center">
+				<div class="w-10 h-10 absolute z-20 grid place-items-center">
 					<span class="loading loading-spinner text-accent" />
 				</div>
+			{:else}
+				<img src="/logo_no_bg.png" alt="" class="absolute" width="40" height="40" />
 			{/if}
-			<img src="/favicon.png" alt="" class="absolute" width="40" height="40" />
 		</div>
-		<h1><a class="btn btn-ghost normal-case text-2xl text-white" href="/">MyFit</a></h1>
+		<h1><a class="btn btn-ghost normal-case text-2xl text-white font-bold" href="/">MyFit</a></h1>
 	</div>
 	<div class="flex-none">
 		<div class="dropdown dropdown-end">
