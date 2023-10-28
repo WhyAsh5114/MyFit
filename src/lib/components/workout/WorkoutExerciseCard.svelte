@@ -264,6 +264,7 @@
 				{#each exercise.repsLoadRIR as repLoadRIR, setNumber}
 					<select
 						class="select select-sm text-white rounded-none disabled:text-opacity-75"
+						name="{exercise.name}-reps"
 						bind:value={repLoadRIR[0]}
 						bind:this={repSelectElements[exerciseNumber][setNumber]}
 						disabled={setsPerformedPerExercise[exerciseNumber][setNumber]}
@@ -282,6 +283,7 @@
 					</select>
 					<select
 						class="select select-sm text-white rounded-none disabled:text-opacity-75"
+						name="{exercise.name}-load"
 						bind:value={repLoadRIR[1]}
 						disabled={setsPerformedPerExercise[exerciseNumber][setNumber]}
 					>
@@ -291,6 +293,7 @@
 					</select>
 					<select
 						class="select select-sm text-white rounded-none disabled:text-opacity-75"
+						name="{exercise.name}-RIR"
 						bind:value={repLoadRIR[2]}
 						disabled={setsPerformedPerExercise[exerciseNumber][setNumber]}
 					>

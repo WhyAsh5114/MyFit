@@ -51,10 +51,10 @@
 	<form class="flex flex-col gap-3" on:submit|preventDefault={editExercise}>
 		<div class="join mx-auto w-full">
 			<p class="btn join-item btn-sm no-animation btn-secondary w-14">Name</p>
-			<input class="input join-item input-sm w-full" placeholder="Type here" bind:value={oldExercise.name} required />
+			<input class="input join-item input-sm w-full" name="exercise-name" placeholder="Type here" bind:value={oldExercise.name} required />
 		</div>
 		<div class="grid grid-cols-2 gap-2">
-			<select class="select select-sm" bind:value={oldExercise.setType} required>
+			<select class="select select-sm" bind:value={oldExercise.setType} name="exercise-set-type" required>
 				<option disabled selected value="">Set type</option>
 				<option value="straight">Normal sets</option>
 				<option value="drop">Drop sets</option>
@@ -63,7 +63,7 @@
 				<option value="myorep">Myorep sets</option>
 				<option value="myorep match">Myorep match sets</option>
 			</select>
-			<select class="select select-sm" required bind:value={oldExercise.muscleTarget}>
+			<select class="select select-sm" name="exercise-muscle-target" required bind:value={oldExercise.muscleTarget}>
 				{#each commonMuscleGroups as muscleGroup}
 					<option>{muscleGroup}</option>
 				{/each}
@@ -73,6 +73,7 @@
 			<p class="btn join-item btn-sm no-animation btn-secondary w-1/2">Rep range</p>
 			<input
 				class="input join-item input-sm w-full"
+				name="exercise-rep-range-start"
 				placeholder="Start"
 				bind:value={oldExercise.repRangeStart}
 				type="number"
@@ -82,6 +83,7 @@
 			<p class="btn join-item btn-sm no-animation btn-secondary w-8">To</p>
 			<input
 				class="input join-item input-sm w-full"
+				name="exercise-rep-range-end"
 				placeholder="End"
 				bind:value={oldExercise.repRangeEnd}
 				type="number"
@@ -91,12 +93,13 @@
 		</div>
 		<textarea
 			placeholder="Notes"
+			name="exercise-notes"
 			class="textarea textarea-bordered textarea-sm w-full resize-none"
 			bind:value={oldExercise.note}
 		></textarea>
 		<div class="flex flex-col">
 			<label class="label cursor-pointer w-fit gap-2">
-				<input type="checkbox" class="toggle" />
+				<input type="checkbox" class="toggle" name="save-changes-to-meso" />
 				<span class="label-text">Save change to <span class="font-semibold italic">{parentMesocycleName}</span></span>
 			</label>
 		</div>

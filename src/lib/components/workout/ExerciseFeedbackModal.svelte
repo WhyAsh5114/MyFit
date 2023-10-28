@@ -11,10 +11,19 @@
 
 	const ratingMap: Record<number, string> = { 0: 'none', 1: 'moderate', 2: 'high' };
 	const workloadMap: Record<number, string> = { 0: 'low', 1: 'moderate', 2: 'high' };
+	const colorMap = ['checked:!bg-success', 'checked:!bg-warning', 'checked:!bg-error'];
 
-	let feedbackSystem: Record<string, Record<string, 'good-btn' | 'ok-btn' | 'bad-btn'>> = {
-		'Joint pain rating': { 'No pain': 'good-btn', 'Some pain': 'ok-btn', 'That hurt': 'bad-btn' },
-		'Pump rating': { 'No pump': 'bad-btn', 'Decent pump': 'ok-btn', 'Amazing pump': 'good-btn' }
+	let feedbackSystem: Record<string, Record<string, string>> = {
+		'Joint pain rating': {
+			'No pain': colorMap[0],
+			'Some pain': colorMap[1],
+			'That hurt': colorMap[2]
+		},
+		'Pump rating': {
+			'No pump': colorMap[2],
+			'Decent pump': colorMap[1],
+			'Amazing pump': colorMap[0]
+		}
 	};
 
 	let feedbackValues: Record<string, 'none' | 'moderate' | 'high' | undefined>;
@@ -83,15 +92,14 @@
 			<div class="flex flex-col">
 				<h3 class="font-semibold mt-2">Workload rating</h3>
 				<div class="grid grid-cols-3 gap-1 mt-1">
-					{#each [["Could've done more", 'ok-btn'], ['Just right', 'good-btn'], ['Too much work', 'bad-btn']] as choice, i}
+					{#each [["Could've done more", colorMap[1]], ['Just right', colorMap[0]], ['Too much work', colorMap[2]]] as choice, i}
 						<input
-							class="btn"
+							class="btn checked:!text-black {choice[1]}"
 							type="radio"
 							name="Workload rating"
 							aria-label={choice[0]}
 							bind:group={muscleWorkloads[selectedExercise.muscleTarget]}
 							value={workloadMap[i]}
-							id={choice[1]}
 						/>
 					{/each}
 				</div>
@@ -100,15 +108,14 @@
 				<div class="flex flex-col">
 					<h3 class="font-semibold mt-2">Soreness rating</h3>
 					<div class="grid grid-cols-3 gap-1 mt-1">
-						{#each [['none', 'ok-btn'], ['recovered on time', 'good-btn'], ['interfered with workout', 'bad-btn']] as choice}
+						{#each [['none', colorMap[1]], ['recovered on time', colorMap[0]], ['interfered with workout', colorMap[2]]] as choice}
 							<input
-								class="btn"
+								class="btn checked:!text-black {choice[1]}"
 								type="radio"
 								name="Soreness rating"
 								aria-label={choice[0]}
 								bind:group={sorenessDataField.sorenessRating}
 								value={choice[0]}
-								id={choice[1]}
 							/>
 						{/each}
 					</div>
@@ -138,11 +145,10 @@
 				<div class="grid grid-cols-3 gap-1 mt-1">
 					{#each Object.keys(feedbackSystem[item]) as choice, i}
 						<input
-							class="btn"
+							class="btn checked:!text-black {feedbackSystem[item][choice]}"
 							type="radio"
 							name={item}
 							aria-label={choice}
-							id={feedbackSystem[item][choice]}
 							bind:group={feedbackValues[item]}
 							value={ratingMap[i]}
 							on:change={syncExerciseFeedback}
@@ -161,17 +167,3 @@
 		</button>
 	</form>
 </MyModal>
-
-<style lang="postcss">
-	#good-btn:checked {
-		@apply bg-success text-black;
-	}
-
-	#ok-btn:checked {
-		@apply bg-warning text-black;
-	}
-
-	#bad-btn:checked {
-		@apply bg-error text-black;
-	}
-</style>
