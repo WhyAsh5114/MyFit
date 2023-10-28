@@ -84,6 +84,7 @@
 		});
 		if (response.ok) {
 			localStorage.clear();
+			$startTimestamp = NaN;
 			successModal.show();
 		} else {
 			errorMsg = await response.text();
@@ -100,9 +101,9 @@
 	bind:dialogElement={successModal}
 	title="Success"
 	titleColor="text-success"
-	onClose={() => {
-		invalidateAll();
-		goto('/workouts');
+	onClose={async () => {
+		await invalidateAll();
+		await goto('/workouts');
 	}}
 >
 	<p>Workout saved successfully</p>
