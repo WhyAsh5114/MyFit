@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { navigating } from '$app/stores';
 	import { dateFormatter, days, getSFR, getSFRColor } from '$lib/commonDB.js';
 	import MyModal from '$lib/components/MyModal.svelte';
@@ -135,6 +135,7 @@
 	titleColor="text-success"
 	bind:dialogElement={deletionSuccessfulModal}
 	onClose={async () => {
+		await invalidateAll();
 		await goto('/workouts');
 	}}
 >
