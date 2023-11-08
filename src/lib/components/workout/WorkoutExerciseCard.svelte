@@ -124,7 +124,13 @@
 	bind:editExerciseModal
 	bind:parentMesocycleName
 />
-<AddWorkoutExerciseModal bind:addExerciseModal {plannedRIR} bind:workoutExercises bind:setsPerformedPerExercise />
+<AddWorkoutExerciseModal
+	bind:addExerciseModal
+	{plannedRIR}
+	bind:workoutExercises
+	bind:setsPerformedPerExercise
+	bind:repSelectElements
+/>
 <MyModal title="Delete exercise" titleColor="text-error" bind:dialogElement={deleteExerciseModal}>
 	{#if deletingExerciseNumber !== undefined}
 		Are you sure you want to delete <span class="italic font-semibold">{workoutExercises[deletingExerciseNumber].name}</span>
