@@ -40,7 +40,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@auth/core": "^0.17.0",
+		"@auth/core": "^0.18.0",
 		"@auth/mongodb-adapter": "^2.0.2",
 		"@auth/sveltekit": "^0.3.1",
 		"chart.js": "^4.3.2",
