@@ -8,7 +8,10 @@ const config = {
 		extend: {}
 	},
 
-	plugins: [daisyui]
+	plugins: [daisyui],
+	daisyui: {
+		themes: ["forest"]
+	}
 };
 
 module.exports = config;
