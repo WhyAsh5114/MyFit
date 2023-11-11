@@ -1,2 +1,3 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+{#each new Array(100).fill("scrollable content") as elem, i}
+    <p>{elem} {i}</p>
+{/each}
