@@ -2,6 +2,7 @@
 	import "../app.postcss";
 	import Hamburger from "$lib/Hamburger.svelte";
 	import { page } from "$app/stores";
+	import { signOut } from "@auth/sveltekit/client";
 </script>
 
 <div class="drawer lg:drawer-open">
@@ -35,10 +36,21 @@
 			<li><a>Sidebar Item 2</a></li>
 			{#if $page.data.session}
 				<div class="dropdown dropdown-top mt-auto">
-					<button class="btn m-1 w-full">Username</button>
-					<ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-						<li><a>Item 1</a></li>
-						<li><a>Item 2</a></li>
+					<button class="btn btn-neutral w-full justify-start h-14">
+						<img
+							src={$page.data.session.user?.image}
+							referrerpolicy="no-referrer"
+							alt="profile"
+							width="40"
+							height="40"
+							class="rounded-full avatar"
+						/>
+						<span class="grow text-center">{$page.data.session.user?.name}</span>
+					</button>
+					<ul class="dropdown-content z-[1] menu p-2 shadow bg-neutral rounded-md w-52 my-1">
+						<li><a href="/profile">Profile</a></li>
+						<li><a href="/settings">Settings</a></li>
+						<li><button class="text-error" on:click={() => signOut()}>Logout</button></li>
 					</ul>
 				</div>
 			{:else}
