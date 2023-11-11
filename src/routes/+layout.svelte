@@ -16,7 +16,7 @@
 				<h1 class="text-2xl font-bold text-white">MyFit</h1>
 			</a>
 		</div>
-		<main class="h-px grow overflow-y-auto p-2 w-full justify-center max-w-2xl flex flex-col">
+		<main class="h-px grow overflow-y-auto p-2 w-full max-w-2xl flex flex-col">
 			<slot />
 		</main>
 	</div>
