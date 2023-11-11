@@ -16,11 +16,9 @@
 				<h1 class="text-2xl font-bold text-white">MyFit</h1>
 			</a>
 		</div>
-		<div class="flex h-px grow overflow-y-auto p-2 w-full justify-center">
-			<main>
-				<slot />
-			</main>
-		</div>
+		<main class="h-px grow overflow-y-auto p-2 w-full justify-center max-w-2xl flex flex-col">
+			<slot />
+		</main>
 	</div>
 	<div class="drawer-side">
 		<label for="drawer" aria-label="close sidebar" class="drawer-overlay"></label>
@@ -32,8 +30,8 @@
 					<h1 class="text-2xl font-bold text-white">MyFit</h1>
 				</a>
 			</li>
-			<li><a>Sidebar Item 1</a></li>
-			<li><a>Sidebar Item 2</a></li>
+			<li><a href="/mesocycles">Mesocycles</a></li>
+			<li><a href="/workouts">Workouts</a></li>
 			{#if $page.data.session}
 				<div class="dropdown dropdown-top mt-auto">
 					<button class="btn btn-neutral w-full justify-start h-14">
