@@ -17,6 +17,7 @@ type MesocycleTemplate = {
 	name: string;
 	durationInWeeks: number;
 	startRIR: number;
+	RIRscheme: number[];
 	exerciseSplit: (null | SplitExercise[])[];
 };
 
