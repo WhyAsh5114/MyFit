@@ -29,6 +29,7 @@
 	}
 
 	$: RIRProgression = calculateRIRProgression($mesocycleDuration, $mesocycleStartRIR);
+	// Get number of weeks before 'x' RIR training begins
 	function previousWeeks(RIR: number) {
 		let prevWeeks = 0;
 		RIRProgression.forEach((progression) => {
@@ -45,6 +46,13 @@
 			(progression) => progression.specificRIR === RIR
 		) as ProgressionData;
 		p.duration = duration;
+
+		// If no upcoming RIRs, function complete
+		if (RIR === 0) {
+			// Update DOM
+			RIRProgression = RIRProgression;
+			return;
+		}
 
 		// Modify the upcoming RIRs' progression
 		let laterProgression = calculateRIRProgression(
