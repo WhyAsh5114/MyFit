@@ -1,12 +1,2 @@
-<script lang="ts">
-	export let data;
-</script>
-
-{#if !data.session}
-	<p>Please login to continue</p>
-{:else}
-	{#if !data.userData?.mesocycles}
-		<p class="my-auto">You haven't created a mesocycle yet!</p>
-		<a class="btn btn-primary btn-block" href="/mesocycles/new">Create mesocycle</a>
-	{/if}
-{/if}
+<h1>Welcome to SvelteKit</h1>
+<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
