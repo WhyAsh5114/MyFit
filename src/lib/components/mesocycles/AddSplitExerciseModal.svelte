@@ -14,6 +14,7 @@
 
         const typedExercise = newExercise as SplitExercise;
         exercises.push(typedExercise);
+        exercises = exercises;
 		dialogElement.close();
 	}
 </script>
