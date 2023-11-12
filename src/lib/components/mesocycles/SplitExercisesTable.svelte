@@ -7,12 +7,12 @@
 </script>
 
 <AddSplitExerciseModal bind:dialogElement={addSplitExerciseModal} bind:exercises />
-<div class="flex flex-col gap-1 h-px grow">
+<div class="flex flex-col gap-1 h-px grow overflow-y-auto">
 	{#each exercises as exercise}
 		<SplitExerciseCard bind:exercise />
 	{/each}
 </div>
-<div class="join mb-3 w-full grid grid-cols-2">
+<div class="join my-2 w-full grid grid-cols-2">
 	<button class="btn btn-primary join-item">Functions</button>
 	<button class="btn btn-primary join-item" on:click={() => addSplitExerciseModal.show()}>
 		Add exercise
