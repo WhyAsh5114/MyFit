@@ -18,7 +18,7 @@ type MesocycleTemplate = {
 	name: string;
 	startRIR: number;
 	RIRProgression: ProgressionData[];
-	exerciseSplit: (null | SplitExercise[])[];
+	exerciseSplit: (null | { name: string; exercises: SplitExercise[] })[];
 };
 
 type ActiveMesocycle = {
