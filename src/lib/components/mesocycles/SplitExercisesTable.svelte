@@ -1,14 +1,15 @@
 <script lang="ts">
 	import AddSplitExerciseModal from "./AddSplitExerciseModal.svelte";
+	import SplitExerciseCard from "./SplitExerciseCard.svelte";
 	export let exercises: SplitExercise[];
 
 	let addSplitExerciseModal: HTMLDialogElement;
 </script>
 
 <AddSplitExerciseModal bind:dialogElement={addSplitExerciseModal} bind:exercises />
-<div class="flex h-px grow">
+<div class="flex flex-col gap-1 h-px grow">
 	{#each exercises as exercise}
-		<p>{exercise.name}</p>
+		<SplitExerciseCard bind:exercise />
 	{/each}
 </div>
 <div class="join mb-3 w-full grid grid-cols-2">
