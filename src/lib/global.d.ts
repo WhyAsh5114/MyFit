@@ -13,10 +13,9 @@ type MuscleGroup =
 	| "Glutes"
 	| "Calves";
 
-type ProgressionData = { specificRIR: number; durationInWeeks: number };
+type ProgressionData = { specificRIR: number; cycles: number };
 type MesocycleTemplate = {
 	name: string;
-	durationInWeeks: number;
 	startRIR: number;
 	RIRProgression: ProgressionData[];
 	exerciseSplit: (null | SplitExercise[])[];
@@ -62,7 +61,7 @@ type Workout = {
 	muscleGroupWorkloads: Record<MuscleGroup, null | WorkloadFeedback>;
 	plannedRIR: number;
 	muscleSorenessToNextWorkout: Record<MuscleGroup, null | SorenessFeedback>;
-	weekNumber: number;
+	cycleNumber: number;
 	deload: boolean;
 };
 

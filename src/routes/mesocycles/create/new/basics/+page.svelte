@@ -1,14 +1,20 @@
 <script lang="ts">
 	import MyModal from "$lib/components/MyModal.svelte";
 	import { slide } from "svelte/transition";
-	import { mesocycleName, mesocycleDuration, mesocycleStartRIR, mesocycleRIRProgression } from "../newMesocycleStore";
-	let customizeRIRProgression = false;
+	import {
+		mesocycleName,
+		mesocycleDuration,
+		mesocycleStartRIR,
+		mesocycleRIRProgression,
+		customizeRIRProgression
+	} from "../newMesocycleStore";
+	import { goto } from "$app/navigation";
 
 	let RIRColors = ["range-error", "range-warning", "range-accent", "range-success"];
 	function calculateRIRProgression(totalDuration: number, startRIR: number) {
-		let failureWeek = false;
+		let failureCycle = false;
 		if (totalDuration > 0) {
-			failureWeek = true;
+			failureCycle = true;
 			totalDuration -= 1;
 		}
 		let quotient = Math.floor(totalDuration / startRIR);
@@ -22,30 +28,35 @@
 
 		let progression: ProgressionData[] = [];
 		for (let i = startRIR; i >= 1; i--) {
-			progression.push({ specificRIR: i, durationInWeeks: result[startRIR - i] });
+			progression.push({ specificRIR: i, cycles: result[startRIR - i] });
 		}
-		progression.push({ specificRIR: 0, durationInWeeks: failureWeek ? 1 : 0 });
+		progression.push({ specificRIR: 0, cycles: failureCycle ? 1 : 0 });
 		return progression;
 	}
 
-	$: RIRProgression = calculateRIRProgression($mesocycleDuration, $mesocycleStartRIR);
-	// Get number of weeks before 'x' RIR training begins
-	function previousWeeks(RIR: number) {
-		let prevWeeks = 0;
+	let RIRProgression: ProgressionData[];
+	$: if ($mesocycleRIRProgression) {
+		RIRProgression = $mesocycleRIRProgression;
+	} else if ($mesocycleDuration || $mesocycleStartRIR) {
+		RIRProgression = calculateRIRProgression($mesocycleDuration, $mesocycleStartRIR);
+	}
+	// Get number of cycles before 'x' RIR training begins
+	function previousCycles(RIR: number) {
+		let prevCycles = 0;
 		RIRProgression.forEach((progression) => {
 			if (RIR < progression.specificRIR) {
-				prevWeeks += progression.durationInWeeks;
+				prevCycles += progression.cycles;
 			}
 		});
-		return prevWeeks;
+		return prevCycles;
 	}
 
-	function modifyProgression(RIR: number, duration: number) {
+	function modifyProgression(RIR: number, cycles: number) {
 		// Set the current RIR's duration
 		const p = RIRProgression.find(
 			(progression) => progression.specificRIR === RIR
 		) as ProgressionData;
-		p.durationInWeeks = duration;
+		p.cycles = cycles;
 
 		// If no upcoming RIRs, function complete
 		if (RIR === 0) {
@@ -56,14 +67,14 @@
 
 		// Modify the upcoming RIRs' progression
 		let laterProgression = calculateRIRProgression(
-			$mesocycleDuration - previousWeeks(RIR) - duration,
+			$mesocycleDuration - previousCycles(RIR) - cycles,
 			RIR - 1
 		);
-		laterProgression.forEach(({ specificRIR, durationInWeeks }) => {
+		laterProgression.forEach(({ specificRIR, cycles }) => {
 			const p = RIRProgression.find(
 				(originalProgression) => originalProgression.specificRIR === specificRIR
 			) as ProgressionData;
-			p.durationInWeeks = duration;
+			p.cycles = cycles;
 		});
 
 		// Update DOM
@@ -71,24 +82,22 @@
 	}
 
 	let errorModal: HTMLDialogElement;
-	function validateProgression() {
-		// TODO: make sure total duration matches sum of all specific RIR durations
+	async function validateProgression() {
 		let totalDuration = 0;
-		RIRProgression.forEach(({ durationInWeeks }) => {
-			totalDuration += durationInWeeks;
+		RIRProgression.forEach(({ cycles }) => {
+			totalDuration += cycles;
 		});
 		if (totalDuration < $mesocycleDuration) {
 			errorModal.show();
 			return false;
 		}
 		$mesocycleRIRProgression = RIRProgression;
+		await goto("/mesocycles/create/new/split");
 	}
 </script>
 
 <MyModal title="Error" titleColor="text-error" bind:dialogElement={errorModal}>
-	<p>
-		Weekly RIR duration is less than total mesocycle duration, re-adjust the sliders accordingly
-	</p>
+	Total RIR duration is less than total mesocycle duration, re-adjust the sliders accordingly
 </MyModal>
 <form class="flex flex-col w-full grow" on:submit|preventDefault={validateProgression}>
 	<div class="flex flex-col my-auto">
@@ -108,7 +117,7 @@
 		<div class="form-control w-full mt-6 max-w-xs mx-auto">
 			<label class="label" for="mesocycle-duration">
 				<span class="label-text">Mesocycle duration</span>
-				<span class="label-text-alt">{$mesocycleDuration} weeks</span>
+				<span class="label-text-alt">{$mesocycleDuration} cycles</span>
 			</label>
 			<input
 				type="range"
@@ -141,23 +150,23 @@
 					type="checkbox"
 					class="toggle"
 					id="customize-RIR-progression"
-					bind:checked={customizeRIRProgression}
+					bind:checked={$customizeRIRProgression}
 				/>
 			</label>
 		</div>
-		{#if customizeRIRProgression}
+		{#if $customizeRIRProgression}
 			<div class="flex flex-col" transition:slide={{ duration: 200 }}>
-				{#each RIRProgression as { specificRIR, durationInWeeks }}
+				{#each RIRProgression as { specificRIR, cycles }}
 					<div class="form-control w-full max-w-xs mx-auto">
 						<label class="label" for={`${specificRIR}-RIR-duration`}>
 							<span class="label-text">{specificRIR} RIR</span>
-							<span class="label-text-alt">{durationInWeeks} weeks</span>
+							<span class="label-text-alt">{cycles} cycles</span>
 						</label>
 						<input
 							type="range"
 							min={0}
-							max={$mesocycleDuration - previousWeeks(specificRIR)}
-							value={durationInWeeks}
+							max={$mesocycleDuration - previousCycles(specificRIR)}
+							value={cycles}
 							on:input={(e) => modifyProgression(specificRIR, parseInt(e.currentTarget.value))}
 							class="range range-xs range-secondary {RIRColors[specificRIR]}"
 							id={`${specificRIR}-RIR-duration`}
@@ -169,6 +178,6 @@
 	</div>
 	<div class="join grid grid-cols-2">
 		<button class="btn btn-accent join-item" disabled>Previous</button>
-		<a class="btn btn-accent join-item" href="/mesocycles/create/new/split">Next</a>
+		<button class="btn btn-accent join-item">Next</button>
 	</div>
 </form>
