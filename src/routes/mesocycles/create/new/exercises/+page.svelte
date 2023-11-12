@@ -10,7 +10,7 @@
 </script>
 
 <div class="collapse collapse-arrow rounded-md bg-primary my-2">
-	<input type="checkbox" id="show-all-days" />
+	<input type="checkbox" id="show-all-days" aria-label="show-all-days" />
 	<div class="collapse-title text-xl font-semibold">
 		D{selectedWorkoutIndex + 1}
 		<span class="text-base font-normal ml-2">{$exerciseSplit[selectedWorkoutIndex]?.name}</span>
