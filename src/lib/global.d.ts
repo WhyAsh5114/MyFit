@@ -13,11 +13,12 @@ type MuscleGroup =
 	| "Glutes"
 	| "Calves";
 
+type ProgressionData = { specificRIR: number; durationInWeeks: number };
 type MesocycleTemplate = {
 	name: string;
 	durationInWeeks: number;
 	startRIR: number;
-	RIRscheme: number[];
+	RIRProgression: ProgressionData[];
 	exerciseSplit: (null | SplitExercise[])[];
 };
 
