@@ -33,7 +33,7 @@
 			<li><a href="/mesocycles">Mesocycles</a></li>
 			<li><a href="/workouts">Workouts</a></li>
 			{#if $page.data.session}
-				<div class="dropdown dropdown-top mt-auto">
+				<li class="dropdown dropdown-top mt-auto">
 					<button class="btn btn-neutral w-full justify-start h-14">
 						<img
 							src={$page.data.session.user?.image}
@@ -50,7 +50,7 @@
 						<li><a href="/settings">Settings</a></li>
 						<li><button class="text-error" on:click={() => signOut()}>Logout</button></li>
 					</ul>
-				</div>
+				</li>
 			{:else}
 				<a href="/login" class="btn w-full mt-auto">Login</a>
 			{/if}
