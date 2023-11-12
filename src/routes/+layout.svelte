@@ -3,7 +3,14 @@
 	import Hamburger from "$lib/Hamburger.svelte";
 	import { page } from "$app/stores";
 	import { signOut } from "@auth/sveltekit/client";
+	import { pwaInfo } from "virtual:pwa-info";
+
+	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : "";
 </script>
+
+<svelte:head> 
+ 	{@html webManifestLink} 
+</svelte:head>
 
 <div class="drawer lg:drawer-open">
 	<input id="drawer" type="checkbox" class="drawer-toggle" />
