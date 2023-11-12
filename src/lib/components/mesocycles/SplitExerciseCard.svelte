@@ -2,6 +2,8 @@
 	import Hamburger from "$lib/Hamburger.svelte";
 
 	export let exercise: SplitExercise;
+	export let editingExerciseName: undefined | string;
+	export let editSplitExerciseModal: HTMLDialogElement;
 </script>
 
 <div class="flex flex-col bg-primary w-full h-fit rounded-md p-2">
@@ -10,7 +12,15 @@
 		<div class="dropdown dropdown-end">
 			<button class="btn p-0 btn-xs btn-ghost"><Hamburger /></button>
 			<ul class="shadow menu menu-sm dropdown-content z-[1] bg-neutral gap-1 rounded-md w-fit">
-				<li><button class="btn btn-primary btn-sm rounded-sm">Edit</button></li>
+				<li>
+					<button
+						class="btn btn-primary btn-sm rounded-sm"
+						on:click={() => {
+							editingExerciseName = exercise.name;
+							editSplitExerciseModal.show();
+						}}>Edit</button
+					>
+				</li>
 				<li class="join grid grid-cols-2 gap-1">
 					<button class="join-item text-lg btn btn-primary btn-sm p-0 rounded-sm">↑</button>
 					<button class="join-item text-lg btn btn-primary btn-sm p-0 rounded-sm">↓</button>
