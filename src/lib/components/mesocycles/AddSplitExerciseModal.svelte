@@ -4,18 +4,19 @@
 	export let dialogElement: HTMLDialogElement;
 	export let exercises: SplitExercise[];
 
-	const newExercise: Partial<SplitExercise> = {};
+	let newExercise: Partial<SplitExercise> = {};
 	function validateExercise() {
 		let alreadyExists = false;
 		exercises.forEach((exercise) => {
 			if (exercise.name === newExercise.name) alreadyExists = true;
 		});
-        if (alreadyExists) return false;
+		if (alreadyExists) return false;
 
-        const typedExercise = newExercise as SplitExercise;
-        exercises.push(typedExercise);
-        exercises = exercises;
+		const typedExercise = JSON.parse(JSON.stringify(newExercise)) as SplitExercise;
+		exercises.push(typedExercise);
+		exercises = exercises;
 		dialogElement.close();
+		newExercise = {};
 	}
 </script>
 
