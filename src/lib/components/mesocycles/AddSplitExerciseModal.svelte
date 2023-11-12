@@ -4,13 +4,18 @@
 	export let dialogElement: HTMLDialogElement;
 	export let exercises: SplitExercise[];
 
+	let exerciseNameInput: HTMLInputElement;
 	let newExercise: Partial<SplitExercise> = {};
+	let alreadyExists = false;
 	function validateExercise() {
-		let alreadyExists = false;
+		alreadyExists = false;
 		exercises.forEach((exercise) => {
 			if (exercise.name === newExercise.name) alreadyExists = true;
 		});
-		if (alreadyExists) return false;
+		if (alreadyExists) {
+			exerciseNameInput.focus();
+			return false;
+		}
 
 		const typedExercise = JSON.parse(JSON.stringify(newExercise)) as SplitExercise;
 		exercises.push(typedExercise);
@@ -25,12 +30,16 @@
 		<div class="form-control w-full">
 			<label class="label" for="new-exercise-name">
 				<span class="label-text">Exercise name</span>
+				{#if alreadyExists}
+					<span class="label-text-alt text-error">Already exists, use a different name</span>
+				{/if}
 			</label>
 			<input
 				type="text"
 				placeholder="Type here"
 				class="input input-bordered w-full"
 				id="new-exercise-name"
+				bind:this={exerciseNameInput}
 				bind:value={newExercise.name}
 				required
 			/>
