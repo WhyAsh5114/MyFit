@@ -10,7 +10,7 @@
 	$: if (exerciseOriginalName) {
 		currentExercise = exercises.find(
 			(exercise) => exercise.name === exerciseOriginalName
-		) as SplitExercise;
+		) || {};
 	}
 
 	let alreadyExists = false;

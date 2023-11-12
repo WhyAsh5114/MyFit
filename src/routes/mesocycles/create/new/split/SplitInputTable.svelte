@@ -16,7 +16,7 @@
 	<div class="flex w-full justify-end">
 		<span>Rest</span>
 	</div>
-	<div class="flex flex-col gap-2 overflow-y-auto max-h-96">
+	<div class="flex flex-col gap-2 overflow-y-auto max-h-80">
 		{#each $exerciseSplit as splitDay, i}
 			<SplitInput dayText={`Day ${i + 1}`} bind:splitDay />
 		{/each}
