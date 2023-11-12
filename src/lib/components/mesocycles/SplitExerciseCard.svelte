@@ -7,13 +7,17 @@
 <div class="flex flex-col bg-primary w-full h-fit rounded-md p-2">
 	<div class="flex gap-2">
 		<p class="font-semibold grow">{exercise.name}</p>
-		<details class="dropdown dropdown-end">
-			<summary class="btn p-0 btn-xs btn-ghost"><Hamburger /></summary>
-			<ul class="shadow menu menu-sm uppercase font-semibold dropdown-content z-[1] bg-secondary rounded-md w-fit">
-				<li><button class="text-black uppercase">Edit</button></li>
-				<li><button class="text-error uppercase">Delete</button></li>
+		<div class="dropdown dropdown-end">
+			<button class="btn p-0 btn-xs btn-ghost"><Hamburger /></button>
+			<ul class="shadow menu menu-sm dropdown-content z-[1] bg-neutral gap-1 rounded-md w-fit">
+				<li><button class="btn btn-primary btn-sm rounded-sm">Edit</button></li>
+				<li class="join grid grid-cols-2 gap-1">
+					<button class="join-item text-lg btn btn-primary btn-sm p-0 rounded-sm">↑</button>
+					<button class="join-item text-lg btn btn-primary btn-sm p-0 rounded-sm">↓</button>
+				</li>
+				<li><button class="btn btn-sm btn-error text-black rounded-sm">Delete</button></li>
 			</ul>
-		</details>
+		</div>
 	</div>
 	<div class="flex items-end justify-between text-sm">
 		<p>{exercise.sets} sets of {exercise.repRangeStart} to {exercise.repRangeEnd} reps</p>
