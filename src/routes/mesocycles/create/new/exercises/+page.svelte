@@ -43,7 +43,7 @@
 		</div>
 	</div>
 </div>
-<SplitExercisesTable bind:exercises={selectedWorkout.exercises} />
+<SplitExercisesTable bind:selectedWorkout />
 <div class="join grid grid-cols-2">
 	<a class="btn btn-primary join-item" href="/mesocycles/create/new/split">Previous</a>
 	<button class="btn btn-accent join-item">Next</button>

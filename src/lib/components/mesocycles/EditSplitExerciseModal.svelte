@@ -2,15 +2,15 @@
 	import { muscleGroups } from "$lib/commonDB";
 	import MyModal from "../MyModal.svelte";
 	export let dialogElement: HTMLDialogElement;
-	export let exercises: SplitExercise[];
+	export let selectedWorkout: { name: string, exercises: SplitExercise[]};
 	export let idx: number;
 
 	let currentExercise: Partial<SplitExercise> = {};
 
-	$: updateCurrentExercise(idx);
+	$: if (selectedWorkout) updateCurrentExercise(idx);
 	function updateCurrentExercise(idx: number) {
 		if (idx !== -1) {
-			currentExercise = JSON.parse(JSON.stringify(exercises[idx]));
+			currentExercise = JSON.parse(JSON.stringify(selectedWorkout.exercises[idx]));
 		} else {
 			currentExercise = {};
 		}
@@ -19,8 +19,8 @@
 	function validateExercise() {
 		const typedExercise = currentExercise as SplitExercise;
 		if (idx === undefined) return;
-		exercises[idx] = typedExercise;
-		exercises = exercises;
+		selectedWorkout.exercises[idx] = typedExercise;
+		selectedWorkout.exercises = selectedWorkout.exercises;
 		dialogElement.close();
 	}
 </script>

@@ -4,7 +4,7 @@
 	import EditSplitExerciseModal from "./EditSplitExerciseModal.svelte";
 	import SplitExerciseCard from "./SplitExerciseCard.svelte";
 	import { slide } from "svelte/transition";
-	export let exercises: SplitExercise[];
+	export let selectedWorkout: { name: string; exercises: SplitExercise[] };
 
 	let addSplitExerciseModal: HTMLDialogElement;
 
@@ -12,8 +12,8 @@
 	let editingExerciseNumber = -1;
 
 	function deleteExercise(idx: number) {
-		exercises.splice(idx, 1);
-		exercises = exercises;
+		selectedWorkout.exercises.splice(idx, 1);
+		selectedWorkout.exercises = selectedWorkout.exercises;
 	}
 
 	function editExercise(idx: number) {
@@ -22,15 +22,18 @@
 	}
 </script>
 
-<AddSplitExerciseModal bind:dialogElement={addSplitExerciseModal} bind:exercises />
+<AddSplitExerciseModal
+	bind:dialogElement={addSplitExerciseModal}
+	bind:exercises={selectedWorkout.exercises}
+/>
 <EditSplitExerciseModal
 	bind:dialogElement={editSplitExerciseModal}
-	bind:exercises
+	bind:selectedWorkout
 	bind:idx={editingExerciseNumber}
 />
 
 <ul class="flex flex-col gap-1 h-px grow overflow-y-auto">
-	{#each exercises as exercise, idx (exercise.name)}
+	{#each selectedWorkout.exercises as exercise, idx (exercise.name)}
 		<div transition:slide|local={{ duration: 200 }} animate:flip={{ duration: 200 }}>
 			<SplitExerciseCard bind:exercise {idx} {deleteExercise} {editExercise} />
 		</div>
