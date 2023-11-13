@@ -24,7 +24,7 @@
 	}
 
 	function reorderExercise(idx: number, s: "up" | "down") {
-		if (s == 'up') {
+		if (s == "up") {
 			[exercises[idx], exercises[idx - 1]] = [exercises[idx - 1], exercises[idx]];
 		} else {
 			[exercises[idx], exercises[idx + 1]] = [exercises[idx + 1], exercises[idx]];
@@ -51,7 +51,4 @@
 		</div>
 	{/each}
 </ul>
-<div class="join my-2 w-full grid grid-cols-2">
-	<button class="btn btn-primary join-item">Functions</button>
-	<button class="btn btn-primary join-item" on:click={addExercise}> Add exercise </button>
-</div>
+<button class="btn btn-primary btn-block join-item" on:click={addExercise}> Add exercise </button>
