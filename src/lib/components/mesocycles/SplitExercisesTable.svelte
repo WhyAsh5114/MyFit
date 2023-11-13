@@ -9,10 +9,16 @@
 	let addSplitExerciseModal: HTMLDialogElement;
 
 	let editSplitExerciseModal: HTMLDialogElement;
-	let editingExerciseName: undefined | string = undefined;
+	let editingExerciseNumber = -1;
 
-	function deleteExercise(name: string) {
-		exercises = exercises.filter((exercise) => exercise.name !== name);
+	function deleteExercise(idx: number) {
+		exercises.splice(idx, 1);
+		exercises = exercises;
+	}
+
+	function editExercise(idx: number) {
+		editingExerciseNumber = idx;
+		editSplitExerciseModal.show();
 	}
 </script>
 
@@ -20,18 +26,13 @@
 <EditSplitExerciseModal
 	bind:dialogElement={editSplitExerciseModal}
 	bind:exercises
-	bind:exerciseOriginalName={editingExerciseName}
+	bind:idx={editingExerciseNumber}
 />
 
 <ul class="flex flex-col gap-1 h-px grow overflow-y-auto">
-	{#each exercises as exercise (exercise.name)}
+	{#each exercises as exercise, idx (exercise.name)}
 		<div transition:slide|local={{ duration: 200 }} animate:flip={{ duration: 200 }}>
-			<SplitExerciseCard
-				bind:exercise
-				bind:editingExerciseName
-				bind:editSplitExerciseModal
-				{deleteExercise}
-			/>
+			<SplitExerciseCard bind:exercise {idx} {deleteExercise} {editExercise} />
 		</div>
 	{/each}
 </ul>

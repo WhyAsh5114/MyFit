@@ -3,35 +3,25 @@
 	import MyModal from "../MyModal.svelte";
 	export let dialogElement: HTMLDialogElement;
 	export let exercises: SplitExercise[];
-	export let exerciseOriginalName: string | undefined;
+	export let idx: number;
 
-	let exerciseNameInput: HTMLInputElement;
 	let currentExercise: Partial<SplitExercise> = {};
-	$: if (exerciseOriginalName) {
-		currentExercise = exercises.find(
-			(exercise) => exercise.name === exerciseOriginalName
-		) || {};
+
+	$: updateCurrentExercise(idx);
+	function updateCurrentExercise(idx: number) {
+		if (idx !== -1) {
+			currentExercise = JSON.parse(JSON.stringify(exercises[idx]));
+		} else {
+			currentExercise = {};
+		}
 	}
 
-	let alreadyExists = false;
 	function validateExercise() {
-		alreadyExists = false;
-		exercises.forEach((exercise) => {
-			if (exercise.name === currentExercise.name || exercise.name === exerciseOriginalName) {
-				alreadyExists = true;
-			}
-		});
-		if (alreadyExists) {
-			exerciseNameInput.focus();
-			return false;
-		}
-
-		const typedExercise = JSON.parse(JSON.stringify(currentExercise)) as SplitExercise;
-		const originalIdx = exercises.findIndex((exercise) => exercise.name === exerciseOriginalName);
-		exercises[originalIdx] = typedExercise;
+		const typedExercise = currentExercise as SplitExercise;
+		if (idx === undefined) return;
+		exercises[idx] = typedExercise;
 		exercises = exercises;
 		dialogElement.close();
-		currentExercise = {};
 	}
 </script>
 
@@ -39,19 +29,16 @@
 	<form on:submit|preventDefault={validateExercise}>
 		<div class="form-control w-full">
 			<label class="label" for="edit-exercise-name">
+				
 				<span class="label-text">Exercise name</span>
-				{#if alreadyExists}
-					<span class="label-text-alt text-error">Already exists, use a different name</span>
-				{/if}
 			</label>
 			<input
 				type="text"
 				placeholder="Type here"
 				class="input input-bordered w-full"
 				id="edit-exercise-name"
-				bind:this={exerciseNameInput}
-				bind:value={currentExercise.name}
-				required
+				value={currentExercise.name}
+				disabled
 			/>
 		</div>
 		<div class="flex gap-2">

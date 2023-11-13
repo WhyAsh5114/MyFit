@@ -2,9 +2,10 @@
 	import Hamburger from "$lib/Hamburger.svelte";
 
 	export let exercise: SplitExercise;
-	export let editingExerciseName: undefined | string = undefined;
-	export let editSplitExerciseModal: HTMLDialogElement;
-	export let deleteExercise: (name: string) => void;
+	export let idx: number;
+
+	export let deleteExercise: (idx: number) => void;
+	export let editExercise: (idx: number) => void;
 </script>
 
 <li class="flex flex-col bg-primary w-full h-fit rounded-md p-2">
@@ -14,13 +15,9 @@
 			<button class="btn p-0 btn-xs btn-ghost"><Hamburger /></button>
 			<ul class="shadow menu menu-sm dropdown-content z-[1] bg-neutral gap-1 rounded-md w-fit">
 				<li>
-					<button
-						class="btn btn-primary btn-sm rounded-sm"
-						on:click={() => {
-							editingExerciseName = exercise.name;
-							editSplitExerciseModal.show();
-						}}>Edit</button
-					>
+					<button class="btn btn-primary btn-sm rounded-sm" on:click={() => editExercise(idx)}>
+						Edit
+					</button>
 				</li>
 				<li class="join grid grid-cols-2 gap-1">
 					<button class="join-item text-lg btn btn-primary btn-sm p-0 rounded-sm">↑</button>
@@ -29,8 +26,9 @@
 				<li>
 					<button
 						class="btn btn-sm btn-error text-black rounded-sm"
-						on:click={() => deleteExercise(exercise.name)}>Delete</button
-					>
+						on:click={() => deleteExercise(idx)}
+						>Delete
+					</button>
 				</li>
 			</ul>
 		</div>
