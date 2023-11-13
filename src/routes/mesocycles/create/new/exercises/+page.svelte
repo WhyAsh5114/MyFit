@@ -2,11 +2,26 @@
 	import SplitExercisesTable from "$lib/components/mesocycles/SplitExercisesTable.svelte";
 	import { exerciseSplit } from "../newMesocycleStore";
 
+	let copiedExercises: SplitExercise[] = [];
+
 	let selectedWorkoutIndex = $exerciseSplit.findIndex((split) => split !== null);
 	$: selectedWorkout = $exerciseSplit[selectedWorkoutIndex] as {
 		name: string;
 		exercises: SplitExercise[];
 	};
+
+	function copyExercises() {
+		copiedExercises = JSON.parse(JSON.stringify(selectedWorkout.exercises));
+	}
+
+	function pasteExercises() {
+		selectedWorkout.exercises = JSON.parse(JSON.stringify(copiedExercises));
+	}
+
+	function cutExercises() {
+		copyExercises();
+		selectedWorkout.exercises = [];
+	}
 </script>
 
 <div class="collapse collapse-arrow rounded-md bg-primary my-2">
@@ -43,7 +58,32 @@
 		</div>
 	</div>
 </div>
-<SplitExercisesTable bind:exercises={selectedWorkout.exercises} />
+{#key selectedWorkout.name}
+	<SplitExercisesTable bind:exercises={selectedWorkout.exercises} />
+{/key}
+<div class="join grid grid-cols-3 gap-1 my-2">
+	<button
+		class="btn join-item btn-sm btn-secondary"
+		disabled={selectedWorkout.exercises.length === 0}
+		on:click={copyExercises}
+	>
+		Copy
+	</button>
+	<button
+		class="btn join-item btn-sm btn-secondary"
+		disabled={copiedExercises.length === 0 || selectedWorkout.exercises.length > 0}
+		on:click={pasteExercises}
+	>
+		Paste
+	</button>
+	<button
+		class="btn join-item btn-sm btn-error"
+		disabled={selectedWorkout.exercises.length === 0}
+		on:click={cutExercises}
+	>
+		Cut
+	</button>
+</div>
 <div class="join grid grid-cols-2">
 	<a class="btn btn-primary join-item" href="/mesocycles/create/new/split">Previous</a>
 	<button class="btn btn-accent join-item">Next</button>
