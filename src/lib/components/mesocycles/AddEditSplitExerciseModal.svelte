@@ -6,7 +6,7 @@
 	export let editingIdx: number | undefined = undefined;
 
 	let editMode = false;
-	let modeText: "add-" | "edit-" = "add-";
+	let modeText: "Add" | "Edit" = "Add";
 	let selectedExercise: Partial<SplitExercise>;
 
 	let editingExercise: Partial<SplitExercise> = {};
@@ -25,15 +25,22 @@
 	function addExercise() {
 		const duplicate = exercises.find((exercise) => exercise.name === newExercise.name);
 		alreadyExists = duplicate ? true : false;
+		if (duplicate) return false;
 
 		const typedExercise = JSON.parse(JSON.stringify(newExercise)) as SplitExercise;
 		exercises = [...exercises, typedExercise];
 		newExercise = {};
-        selectedExercise = newExercise;
+		selectedExercise = newExercise;
 		dialogElement.close();
 	}
 
 	function editExercise(idx: number) {
+		const duplicate = exercises.find((exercise, exerciseIdx) => {
+			return exercise.name === editingExercise.name && exerciseIdx !== idx;
+		});
+		alreadyExists = duplicate ? true : false;
+		if (duplicate) return false;
+
 		const typedExercise = editingExercise as SplitExercise;
 		if (idx === undefined) return;
 		exercises[idx] = typedExercise;
@@ -42,26 +49,26 @@
 	}
 
 	function submitForm() {
-		if (editingIdx !== undefined) editExercise(editingIdx);
-		else addExercise();
+		if (editingIdx !== undefined) return editExercise(editingIdx);
+		else return addExercise();
 	}
 
-    $: editMode, editingIdx, updateMode();
+	$: editMode, editingIdx && exercises[editingIdx], updateMode();
 	function updateMode() {
 		if (editMode) {
-			modeText = "edit-";
+			modeText = "Edit";
 			selectedExercise = editingExercise;
 		} else {
-			modeText = "add-";
+			modeText = "Add";
 			selectedExercise = newExercise;
 		}
 	}
 </script>
 
-<MyModal title="Add exercise" titleColor="text-accent" bind:dialogElement>
+<MyModal title="{modeText} exercise" titleColor="text-accent" bind:dialogElement>
 	<form on:submit|preventDefault={submitForm}>
 		<div class="form-control w-full">
-			<label class="label" for="{modeText}exercise-name">
+			<label class="label" for="{modeText}-exercise-name">
 				<span class="label-text">Exercise name</span>
 				{#if alreadyExists}
 					<span class="label-text-alt text-error">Already exists, use a different name</span>
@@ -71,14 +78,14 @@
 				type="text"
 				placeholder="Type here"
 				class="input input-bordered w-full"
-				id="{modeText}exercise-name"
+				id="{modeText}-exercise-name"
 				bind:value={selectedExercise.name}
 				required
 			/>
 		</div>
 		<div class="flex gap-2">
 			<div class="form-control w-full">
-				<label class="label" for="{modeText}exercise-sets">
+				<label class="label" for="{modeText}-exercise-sets">
 					<span class="label-text">Sets</span>
 				</label>
 				<input
@@ -86,18 +93,18 @@
 					min="1"
 					placeholder="Type here"
 					class="input input-bordered w-full max-w-xs"
-					id="{modeText}exercise-sets"
+					id="{modeText}-exercise-sets"
 					bind:value={selectedExercise.sets}
 					required
 				/>
 			</div>
 			<div class="form-control w-full max-w-xs">
-				<label class="label" for="{modeText}exercise-muscle-group">
+				<label class="label" for="{modeText}-exercise-muscle-group">
 					<span class="label-text">Target muscle group</span>
 				</label>
 				<select
 					class="select select-bordered"
-					id="{modeText}exercise-muscle-group"
+					id="{modeText}-exercise-muscle-group"
 					bind:value={selectedExercise.targetMuscleGroup}
 					required
 				>
@@ -110,13 +117,13 @@
 		</div>
 		<div class="flex gap-2">
 			<div class="form-control w-full max-w-xs">
-				<label class="label" for="{modeText}exercise-rep-range-start">
+				<label class="label" for="{modeText}-exercise-rep-range-start">
 					<span class="label-text">Rep range start</span>
 				</label>
 				<input
 					placeholder="Type here"
 					class="input input-bordered w-full max-w-xs"
-					id="{modeText}exercise-rep-range-start"
+					id="{modeText}-exercise-rep-range-start"
 					type="number"
 					min="1"
 					bind:value={selectedExercise.repRangeStart}
@@ -124,13 +131,13 @@
 				/>
 			</div>
 			<div class="form-control w-full max-w-xs">
-				<label class="label" for="{modeText}exercise-rep-range-end">
+				<label class="label" for="{modeText}-exercise-rep-range-end">
 					<span class="label-text">Rep range end</span>
 				</label>
 				<input
 					placeholder="Type here"
 					class="input input-bordered w-full max-w-xs"
-					id="{modeText}exercise-rep-range-end"
+					id="{modeText}-exercise-rep-range-end"
 					min={(selectedExercise.repRangeStart || 0) + 1}
 					type="number"
 					bind:value={selectedExercise.repRangeEnd}
@@ -139,16 +146,16 @@
 			</div>
 		</div>
 		<div class="form-control">
-			<label class="label" for="{modeText}exercise-note">
+			<label class="label" for="{modeText}-exercise-note">
 				<span class="label-text">Exercise note</span>
 			</label>
 			<textarea
 				class="textarea textarea-bordered h-24 resize-none"
 				placeholder="Note"
-				id="{modeText}exercise-note"
+				id="{modeText}-exercise-note"
 				bind:value={selectedExercise.note}
 			></textarea>
 		</div>
-		<button class="btn btn-block btn-accent mt-4">Add exercise</button>
+		<button class="btn btn-block btn-accent mt-4">{modeText} exercise</button>
 	</form>
 </MyModal>
