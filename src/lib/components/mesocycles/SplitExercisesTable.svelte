@@ -22,6 +22,14 @@
 		exercises.splice(idx, 1);
 		exercises = exercises;
 	}
+
+	function reorderExercise(idx: number, s: "up" | "down") {
+		if (s == 'up') {
+			[exercises[idx], exercises[idx - 1]] = [exercises[idx - 1], exercises[idx]];
+		} else {
+			[exercises[idx], exercises[idx + 1]] = [exercises[idx + 1], exercises[idx]];
+		}
+	}
 </script>
 
 <AddEditSplitExerciseModal
@@ -32,13 +40,18 @@
 <ul class="flex flex-col gap-1 h-px grow overflow-y-auto">
 	{#each exercises as exercise, idx (exercise.name)}
 		<div transition:slide|local={{ duration: 200 }} animate:flip={{ duration: 200 }}>
-			<SplitExerciseCard bind:exercise {idx} {deleteExercise} {editExercise} />
+			<SplitExerciseCard
+				bind:totalExercises={exercises.length}
+				bind:exercise
+				{idx}
+				{deleteExercise}
+				{editExercise}
+				{reorderExercise}
+			/>
 		</div>
 	{/each}
 </ul>
 <div class="join my-2 w-full grid grid-cols-2">
 	<button class="btn btn-primary join-item">Functions</button>
-	<button class="btn btn-primary join-item" on:click={addExercise}>
-		Add exercise
-	</button>
+	<button class="btn btn-primary join-item" on:click={addExercise}> Add exercise </button>
 </div>
