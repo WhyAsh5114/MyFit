@@ -39,7 +39,7 @@
 				</li>
 				<li>
 					<button
-						class="btn btn-sm btn-error text-black rounded-sm"
+						class="btn btn-sm btn-error rounded-sm"
 						on:click={() => deleteExercise(idx)}
 					>
 						Delete
