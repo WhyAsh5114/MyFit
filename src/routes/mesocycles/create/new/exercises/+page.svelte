@@ -30,7 +30,7 @@
 						/>
 					{:else}
 						<input
-							class="join-item btn btn-sm btn-secondary checked:!btn-accent"
+							class="join-item btn btn-sm btn-secondary checked:!text-black checked:!bg-accent"
 							type="radio"
 							name="options"
 							aria-label={splitDay.name}
