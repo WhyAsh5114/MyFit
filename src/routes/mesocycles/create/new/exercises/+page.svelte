@@ -10,7 +10,7 @@
 </script>
 
 <div class="collapse collapse-arrow rounded-md bg-primary my-2">
-	<input type="checkbox" id="show-all-days" aria-label="show-all-days" />
+	<input type="checkbox" id="show-all-days" aria-label="show-all-days" checked />
 	<div class="collapse-title text-xl font-semibold">
 		D{selectedWorkoutIndex + 1}
 		<span class="text-base font-normal ml-2">{$exerciseSplit[selectedWorkoutIndex]?.name}</span>
@@ -43,7 +43,7 @@
 		</div>
 	</div>
 </div>
-<SplitExercisesTable bind:selectedWorkout />
+<SplitExercisesTable bind:exercises={selectedWorkout.exercises} />
 <div class="join grid grid-cols-2">
 	<a class="btn btn-primary join-item" href="/mesocycles/create/new/split">Previous</a>
 	<button class="btn btn-accent join-item">Next</button>
