@@ -1,5 +1,4 @@
 <script lang="ts">
-
 </script>
 
 <h2>Mesocycles</h2>

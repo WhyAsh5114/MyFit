@@ -8,8 +8,8 @@
 	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : "";
 </script>
 
-<svelte:head> 
- 	{@html webManifestLink} 
+<svelte:head>
+	{@html webManifestLink}
 </svelte:head>
 
 <div class="drawer lg:drawer-open">

@@ -8,7 +8,9 @@
 
 <div class="flex justify-between items-center">
 	<div class="join basis-3/4 items-center shrink">
-		<span class="btn btn-primary btn-sm join-item basis-16 p-0 shrink-0 text-center">{dayText}</span>
+		<span class="btn btn-primary btn-sm join-item basis-16 p-0 shrink-0 text-center">
+			{dayText}
+		</span>
 		{#if splitDay !== null}
 			<input
 				class="input input-bordered join-item input-sm"
@@ -25,5 +27,10 @@
 			/>
 		{/if}
 	</div>
-	<input type="checkbox" class="checkbox shrink-0" id="is-{dayText}-rest" bind:checked={isRestDay} />
+	<input
+		type="checkbox"
+		class="checkbox shrink-0"
+		id="is-{dayText}-rest"
+		bind:checked={isRestDay}
+	/>
 </div>
