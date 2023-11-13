@@ -51,4 +51,6 @@
 		</div>
 	{/each}
 </ul>
-<button class="btn btn-primary btn-block join-item" on:click={addExercise}> Add exercise </button>
+<button class="btn btn-primary btn-block" on:click={addExercise}>
+	+ Add exercise
+</button>
