@@ -35,10 +35,12 @@
 	}
 
 	let RIRProgression: ProgressionData[];
-	$: if ($mesocycleRIRProgression) {
+	$: RIRProgression = calculateRIRProgression($mesocycleDuration, $mesocycleStartRIR);
+	$: if (
+		$mesocycleRIRProgression &&
+		$mesocycleRIRProgression[0].specificRIR === $mesocycleStartRIR
+	) {
 		RIRProgression = $mesocycleRIRProgression;
-	} else {
-		RIRProgression = calculateRIRProgression($mesocycleDuration, $mesocycleStartRIR);
 	}
 
 	// Get number of cycles before 'x' RIR training begins
@@ -142,11 +144,6 @@
 				class="select select-bordered"
 				id="mesocycle-start-RIR"
 				bind:value={$mesocycleStartRIR}
-				on:change={() => {
-					// Update progression if start RIR changes
-					// Don't use store, it doesn't persist value
-					RIRProgression = calculateRIRProgression($mesocycleDuration, $mesocycleStartRIR);
-				}}
 			>
 				<option value={3}>3 RIR</option>
 				<option value={2}>2 RIR</option>
