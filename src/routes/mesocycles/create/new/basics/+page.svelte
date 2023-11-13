@@ -37,9 +37,10 @@
 	let RIRProgression: ProgressionData[];
 	$: if ($mesocycleRIRProgression) {
 		RIRProgression = $mesocycleRIRProgression;
-	} else if ($mesocycleDuration || $mesocycleStartRIR) {
+	} else {
 		RIRProgression = calculateRIRProgression($mesocycleDuration, $mesocycleStartRIR);
 	}
+
 	// Get number of cycles before 'x' RIR training begins
 	function previousCycles(RIR: number) {
 		let prevCycles = 0;
@@ -81,13 +82,18 @@
 		RIRProgression = RIRProgression;
 	}
 
-	let errorModal: HTMLDialogElement;
-	async function validateProgression() {
+	function isProgressionValid(progression: ProgressionData[], totalCycles: number) {
 		let totalDuration = 0;
-		RIRProgression.forEach(({ cycles }) => {
+		progression.forEach(({ cycles }) => {
 			totalDuration += cycles;
 		});
-		if (totalDuration < $mesocycleDuration) {
+		return totalDuration === totalCycles;
+	}
+
+	let errorModal: HTMLDialogElement;
+	async function validateProgression() {
+		const isValid = isProgressionValid(RIRProgression, $mesocycleDuration);
+		if (!isValid) {
 			errorModal.show();
 			return false;
 		}
@@ -114,7 +120,7 @@
 				required
 			/>
 		</div>
-		<div class="form-control w-full mt-6 max-w-xs mx-auto">
+		<div class="form-control w-full mt-4 max-w-xs mx-auto">
 			<label class="label" for="mesocycle-duration">
 				<span class="label-text">Mesocycle duration</span>
 				<span class="label-text-alt">{$mesocycleDuration} cycles</span>
@@ -128,7 +134,7 @@
 				id="mesocycle-duration"
 			/>
 		</div>
-		<div class="form-control w-full mt-6 max-w-xs mx-auto">
+		<div class="form-control w-full mt-4 max-w-xs mx-auto">
 			<label class="label" for="mesocycle-start-RIR">
 				<span class="label-text">Start RIR</span>
 			</label>
@@ -136,6 +142,11 @@
 				class="select select-bordered"
 				id="mesocycle-start-RIR"
 				bind:value={$mesocycleStartRIR}
+				on:change={() => {
+					// Update progression if start RIR changes
+					// Don't use store, it doesn't persist value
+					RIRProgression = calculateRIRProgression($mesocycleDuration, $mesocycleStartRIR);
+				}}
 			>
 				<option value={3}>3 RIR</option>
 				<option value={2}>2 RIR</option>
@@ -143,7 +154,7 @@
 				<option value={0}>0 RIR</option>
 			</select>
 		</div>
-		<div class="form-control mt-6 max-w-xs mx-auto w-full">
+		<div class="form-control mt-4 max-w-xs mx-auto w-full">
 			<label class="label cursor-pointer">
 				<span class="label-text">Customize RIR progression</span>
 				<input
@@ -156,15 +167,15 @@
 		</div>
 		{#if $customizeRIRProgression}
 			<div class="flex flex-col" transition:slide={{ duration: 200 }}>
-				{#each RIRProgression as { specificRIR, cycles }}
+				{#each RIRProgression as { specificRIR, cycles }, i}
 					<div class="form-control w-full max-w-xs mx-auto">
-						<label class="label" for={`${specificRIR}-RIR-duration`}>
+						<label class="label pb-0.5" for={`${specificRIR}-RIR-duration`}>
 							<span class="label-text">{specificRIR} RIR</span>
 							<span class="label-text-alt">{cycles} cycles</span>
 						</label>
 						<input
 							type="range"
-							min={0}
+							min={i === 0 ? 1 : 0}
 							max={$mesocycleDuration - previousCycles(specificRIR)}
 							value={cycles}
 							on:input={(e) => modifyProgression(specificRIR, parseInt(e.currentTarget.value))}
