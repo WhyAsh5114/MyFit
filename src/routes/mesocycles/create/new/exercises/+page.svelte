@@ -1,29 +1,48 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
+	import MyModal from "$lib/components/MyModal.svelte";
 	import SplitExercisesTable from "$lib/components/mesocycles/SplitExercisesTable.svelte";
 	import { exerciseSplit } from "../newMesocycleStore";
 
+	type SplitWorkout = { name: string; exercises: SplitExercise[] };
 	let copiedExercises: SplitExercise[] = [];
 
 	let selectedWorkoutIndex = $exerciseSplit.findIndex((split) => split !== null);
-	$: selectedWorkout = $exerciseSplit[selectedWorkoutIndex] as {
-		name: string;
-		exercises: SplitExercise[];
-	};
+	$: selectedWorkout = $exerciseSplit[selectedWorkoutIndex] as SplitWorkout;
 
 	function copyExercises() {
 		copiedExercises = JSON.parse(JSON.stringify(selectedWorkout.exercises));
 	}
-
 	function pasteExercises() {
 		selectedWorkout.exercises = JSON.parse(JSON.stringify(copiedExercises));
 	}
-
 	function cutExercises() {
 		copyExercises();
 		selectedWorkout.exercises = [];
 	}
+
+	let invalidSplits: string[] = [];
+	async function validateExercises() {
+		invalidSplits = [];
+		$exerciseSplit.forEach((split) => {
+			if (split === null) return;
+			if (split.exercises.length === 0) invalidSplits.push(split.name);
+		});
+		if (invalidSplits.length > 0) {
+			errorModal.show();
+			return;
+		}
+		await goto("/mesocycles/create/new/overview");
+	}
+
+	let errorModal: HTMLDialogElement;
 </script>
 
+<MyModal title="Error" titleColor="text-error" bind:dialogElement={errorModal}>
+	Add at least one exercise in each workout. Missing in: <span class="font-semibold text-error">
+		{invalidSplits.join(", ")}
+	</span>
+</MyModal>
 <div class="collapse collapse-arrow rounded-md bg-primary my-2">
 	<input type="checkbox" id="show-all-days" aria-label="show-all-days" checked />
 	<div class="collapse-title text-xl font-semibold">
@@ -86,5 +105,5 @@
 </div>
 <div class="join grid grid-cols-2">
 	<a class="btn btn-primary join-item" href="/mesocycles/create/new/split">Previous</a>
-	<button class="btn btn-accent join-item">Next</button>
+	<button class="btn btn-accent join-item" on:click={validateExercises}>Next</button>
 </div>
