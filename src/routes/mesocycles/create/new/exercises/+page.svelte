@@ -32,7 +32,7 @@
 			errorModal.show();
 			return;
 		}
-		await goto("/mesocycles/create/new/overview");
+		await goto("/mesocycles/create/new/specialization");
 	}
 
 	let errorModal: HTMLDialogElement;
