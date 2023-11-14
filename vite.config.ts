@@ -8,7 +8,8 @@ export default defineConfig({
 		SvelteKitPWA({
 			srcDir: "src",
 			registerType: "prompt",
-			strategies: "generateSW",
+			strategies: "injectManifest",
+			filename: "service-worker.ts",
 			scope: "/",
 			base: "/",
 			manifest: {
@@ -32,8 +33,12 @@ export default defineConfig({
 			injectManifest: {
 				globPatterns: ["client/**/*.{js,css,ico,png,svg,webp,woff,woff2}"]
 			},
+			workbox: {
+				globPatterns: ["client/**/*.{js,css,ico,png,svg,webp,woff,woff2}"]
+			},
 			devOptions: {
-				enabled: true
+				enabled: true,
+				type: "module"
 			}
 		})
 	]

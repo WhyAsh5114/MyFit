@@ -8,5 +8,6 @@ export const handle = SvelteKitAuth({
 	providers: [Google({ clientId: GOOGLE_ID, clientSecret: GOOGLE_SECRET })],
 	adapter: MongoDBAdapter(clientPromise, {
 		databaseName: "MyFit-v2"
-	})
+	}),
+	trustHost: true
 });

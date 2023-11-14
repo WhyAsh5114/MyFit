@@ -1,7 +1,3 @@
-<script lang="ts">
-	export const prerender = true;
-</script>
-
 <h2>Create new mesocycle</h2>
 
 <div class="flex flex-col gap-2">
