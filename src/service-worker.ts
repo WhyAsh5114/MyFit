@@ -56,10 +56,8 @@ self.addEventListener("fetch", (event) => {
 
 		// `build`/`files` can always be served from the cache
 		if (ASSETS.includes(url.pathname)) {
-			const match = await cache.match(url.pathname);
-			if (!match) {
-				return new Response("Not found", { status: 404 });
-			}
+			// Should always be able to find these assets
+			const match = await cache.match(url.pathname) as Response;
 			return match;
 		}
 
