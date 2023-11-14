@@ -36,6 +36,8 @@
 			}
 		}));
 	});
+
+	let reloading = false;
 </script>
 
 {#if showInstallButton}
@@ -53,8 +55,18 @@
 {:else if $offlineReady}
 	App ready to work offline
 {:else if $needRefresh}
-	<button class="btn btn-accent gap-4" on:click={() => updateServiceWorker(true)}>
-		<ReloadIcon />
-		Update available
+	<button
+		class="btn btn-accent gap-4"
+		on:click={() => {
+			updateServiceWorker(true);
+			reloading = true;
+		}}
+	>
+		{#if !reloading}
+			<ReloadIcon />
+			Update available
+		{:else}
+			<span class="loading loading-spinner"></span>
+		{/if}
 	</button>
 {/if}
