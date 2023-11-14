@@ -4,13 +4,14 @@
 /// <reference lib="WebWorker" />
 
 declare let self: ServiceWorkerGlobalScope
-import { files, version } from "$service-worker";
+import { build, files, version } from "$service-worker";
 import { precacheAndRoute } from 'workbox-precaching';
 
 // Create a unique cache name for this deployment
 const CACHE = `cache-${version}`;
 
 const ASSETS = [
+	...build, // the app itself
 	...files // everything in `static`
 ];
 
