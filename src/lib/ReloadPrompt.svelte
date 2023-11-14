@@ -32,7 +32,7 @@
 						class="btn btn-circle btn-sm btn-accent"
 						on:click={() => {
 							updateServiceWorker(true);
-                            $needRefresh = false;
+							$needRefresh = false;
 						}}
 					>
 						&#8635;
