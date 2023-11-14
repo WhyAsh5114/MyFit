@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	const steps = ["basics", "split", "exercises", "specialization"];
+	const steps = ["basics", "split", "exercises", "extras"];
 	$: currentPageIndex = steps.findIndex((step) => $page.url.pathname.endsWith(step));
 </script>
 
