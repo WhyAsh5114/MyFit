@@ -47,6 +47,9 @@ self.addEventListener("fetch", (event) => {
 	// ignore POST requests etc
 	if (event.request.method !== "GET") return;
 
+	// ignore chrome-extensions console errors
+	if (!event.request.url.startsWith('http')) return;
+
 	async function respond(): Promise<Response> {
 		const url = new URL(event.request.url);
 		const cache = await caches.open(CACHE);
