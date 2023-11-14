@@ -1,9 +1,9 @@
 <script>
 	import "../app.postcss";
-	import Hamburger from "$lib/Hamburger.svelte";
-	import { page } from "$app/stores";
-	import { signOut } from "@auth/sveltekit/client";
+	import Hamburger from "$lib/components/icons/Hamburger.svelte";
 	import { pwaInfo } from "virtual:pwa-info";
+	import PwaButton from "./PWAButton.svelte";
+	import UserButton from "./UserButton.svelte";
 
 	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : "";
 </script>
@@ -29,42 +29,22 @@
 	</div>
 	<div class="drawer-side z-10">
 		<label for="drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-		<ul class="menu p-4 w-80 min-h-full bg-primary text-base-content">
+		<div class="menu p-4 w-80 min-h-full text-base-content bg-primary">
 			<!-- Sidebar content here -->
-			<li>
-				<a class="bg-primary w-full items-center py-2 hidden lg:flex" href="/">
-					<img src="/favicon.png" alt="logo" class="w-12 -mb-1 mr-1" />
-					<h1 class="text-2xl font-bold text-white">MyFit</h1>
-				</a>
-			</li>
-			<li><a href="/mesocycles">Mesocycles</a></li>
-			<li><a href="/workouts">Workouts</a></li>
-			{#if $page.data.session}
-				<li class="dropdown dropdown-top mt-auto">
-					<button class="btn btn-neutral w-full justify-start h-14">
-						<img
-							src={$page.data.session.user?.image}
-							referrerpolicy="no-referrer"
-							alt="profile"
-							width="40"
-							height="40"
-							class="rounded-full avatar"
-						/>
-						<span class="grow text-center">{$page.data.session.user?.name}</span>
-					</button>
-					<ul class="dropdown-content z-[1] menu p-2 shadow bg-neutral rounded-md w-52 my-1">
-						<li><a href="/profile">Profile</a></li>
-						<li><a href="/settings">Settings</a></li>
-						<li><button class="text-error" on:click={() => signOut()}>Logout</button></li>
-					</ul>
+			<ul>
+				<li>
+					<a class="w-full items-center py-2 hidden lg:flex" href="/">
+						<img src="/favicon.png" alt="logo" class="w-12 -mb-1 mr-1" />
+						<h1 class="text-2xl font-bold text-white">MyFit</h1>
+					</a>
 				</li>
-			{:else}
-				<a href="/login" class="btn w-full mt-auto">Login</a>
-			{/if}
-		</ul>
+				<li><a href="/mesocycles">Mesocycles</a></li>
+				<li><a href="/workouts">Workouts</a></li>
+			</ul>
+			<div class="flex flex-col gap-2 mt-auto">
+				<PwaButton />
+				<UserButton />
+			</div>
+		</div>
 	</div>
 </div>
-
-{#await import("$lib/ReloadPrompt.svelte") then { default: ReloadPrompt }}
-	<ReloadPrompt />
-{/await}
