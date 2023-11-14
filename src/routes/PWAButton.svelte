@@ -6,7 +6,6 @@
 	import ReloadIcon from "../lib/components/icons/ReloadIcon.svelte";
 
 	let showInstallButton = false;
-	// experimental API
 	let deferredPrompt: Event | null;
 	let needRefresh: Writable<boolean>;
 	let offlineReady: Writable<boolean>;
