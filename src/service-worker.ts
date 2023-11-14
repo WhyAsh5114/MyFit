@@ -3,9 +3,9 @@
 /// <reference lib="esnext" />
 /// <reference lib="WebWorker" />
 
-declare let self: ServiceWorkerGlobalScope
+declare let self: ServiceWorkerGlobalScope;
 import { build, files, version } from "$service-worker";
-import { precacheAndRoute } from 'workbox-precaching';
+import { precacheAndRoute } from "workbox-precaching";
 
 // Create a unique cache name for this deployment
 const CACHE = `cache-${version}`;
@@ -17,6 +17,10 @@ const ASSETS = [
 
 // self.__WB_MANIFEST is default injection point
 precacheAndRoute(self.__WB_MANIFEST);
+
+self.addEventListener("message", (event) => {
+	if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
+});
 
 self.addEventListener("install", (event) => {
 	// Create a new cache and add all files to it
@@ -43,13 +47,17 @@ self.addEventListener("fetch", (event) => {
 	// ignore POST requests etc
 	if (event.request.method !== "GET") return;
 
-	async function respond() {
+	async function respond(): Promise<Response> {
 		const url = new URL(event.request.url);
 		const cache = await caches.open(CACHE);
 
 		// `build`/`files` can always be served from the cache
 		if (ASSETS.includes(url.pathname)) {
-			return cache.match(url.pathname);
+			const match = await cache.match(url.pathname);
+			if (!match) {
+				return new Response("Not found", { status: 404 });
+			}
+			return match;
 		}
 
 		// for everything else, try the network first, but
@@ -63,7 +71,11 @@ self.addEventListener("fetch", (event) => {
 
 			return response;
 		} catch {
-			return cache.match(event.request);
+			const match = await cache.match(url.pathname);
+			if (!match) {
+				return new Response("Not found", { status: 404 });
+			}
+			return match;
 		}
 	}
 
