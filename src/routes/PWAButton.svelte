@@ -50,18 +50,11 @@
 		<DownloadIcon />
 		Install app
 	</button>
+{:else if $offlineReady}
+	App ready to work offline
 {:else if $needRefresh}
-	<button class="btn btn-accent gap-4">
+	<button class="btn btn-accent gap-4" on:click={() => updateServiceWorker(true)}>
 		<ReloadIcon />
 		Update available
-	</button>
-{:else}
-	<button class="btn btn-secondary no-animation">
-		{#if $offlineReady}
-			Sync complete
-		{:else}
-			<span class="loading loading-bars"></span>
-			Syncing
-		{/if}
 	</button>
 {/if}
