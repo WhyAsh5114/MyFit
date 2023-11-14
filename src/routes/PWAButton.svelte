@@ -23,11 +23,19 @@
 		});
 
 		({ needRefresh, updateServiceWorker, offlineReady } = useRegisterSW({
-			onRegistered(r) {
+			onRegisteredSW(swUrl, r) {
 				r &&
-					setInterval(() => {
-						console.log("Checking for sw update");
-						r.update();
+					setInterval(async () => {
+						if (!(!r.installing && navigator)) return;
+						if ("connection" in navigator && !navigator.onLine) return;
+						const resp = await fetch(swUrl, {
+							cache: "no-store",
+							headers: {
+								cache: "no-store",
+								"cache-control": "no-cache"
+							}
+						});
+						if (resp?.status === 200) await r.update();
 					}, 20000 /* 20s for testing purposes */);
 				console.log(`SW Registered: ${r}`);
 			},
