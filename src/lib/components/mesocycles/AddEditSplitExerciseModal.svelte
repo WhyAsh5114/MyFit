@@ -102,7 +102,7 @@
 			</div>
 			<div class="form-control w-full max-w-xs">
 				<label class="label" for="{modeText}-exercise-muscle-group">
-					<span class="label-text">Target muscle group</span>
+					<span class="label-text">Target muscle</span>
 				</label>
 				<select
 					class="select select-bordered"
@@ -132,12 +132,10 @@
 					required
 				/>
 			</div>
-			<div class="form-control w-full max-w-xs">
-				<label class="label" for="{modeText}-exercise-rep-range-start">
-					<span class="label-text">Rep range start</span>
-				</label>
+			<div class="grid grid-cols-2 justify-items-center items-end gap-x-0.5">
+				<span class="label-text col-span-2">Rep range</span>
 				<input
-					placeholder="Type here"
+					placeholder="From"
 					class="input input-bordered w-full max-w-xs"
 					id="{modeText}-exercise-rep-range-start"
 					type="number"
@@ -145,13 +143,8 @@
 					bind:value={selectedExercise.repRangeStart}
 					required
 				/>
-			</div>
-			<div class="form-control w-full max-w-xs">
-				<label class="label" for="{modeText}-exercise-rep-range-end">
-					<span class="label-text">Rep range end</span>
-				</label>
 				<input
-					placeholder="Type here"
+					placeholder="To"
 					class="input input-bordered w-full max-w-xs"
 					id="{modeText}-exercise-rep-range-end"
 					min={(selectedExercise.repRangeStart || 0) + 1}
