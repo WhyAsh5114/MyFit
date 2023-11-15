@@ -13,6 +13,22 @@ type MuscleGroup =
 	| "Glutes"
 	| "Calves";
 
+const muscleGroups = [
+	"Chest",
+	"Front delts",
+	"Side delts",
+	"Rear delts",
+	"Back",
+	"Traps",
+	"Triceps",
+	"Biceps",
+	"Forearms",
+	"Quads",
+	"Hamstrings",
+	"Glutes",
+	"Calves"
+] as const;
+
 enum CaloricState {
 	"Hypo-caloric" = -1,
 	"Iso-caloric" = 0,
@@ -26,7 +42,7 @@ type MesocycleTemplate = {
 	RIRProgression: ProgressionData[];
 	exerciseSplit: (null | { name: string; exercises: SplitExercise[] })[];
 	caloricBalance: CaloricState;
-	specialization?: MuscleGroup[]
+	specialization?: MuscleGroup[];
 };
 
 type ActiveMesocycle = {

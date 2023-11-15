@@ -13,7 +13,7 @@
 	"files": [
 		"./node_modules/vite-plugin-pwa/client.d.ts",
 		"./node_modules/vite-plugin-pwa/info.d.ts",
-		"src/lib/mongodb.d.ts"
+		"src/lib/mongo/mongodb.d.ts"
 	]
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	//
