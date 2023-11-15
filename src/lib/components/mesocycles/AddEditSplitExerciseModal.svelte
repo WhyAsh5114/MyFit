@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { muscleGroups } from "$lib/commonDB";
+	import { exerciseWeightTypes, muscleGroups } from "$lib/commonDB";
 	import MyModal from "../MyModal.svelte";
 	export let dialogElement: HTMLDialogElement;
 	export let exercises: SplitExercise[];
@@ -84,19 +84,21 @@
 			/>
 		</div>
 		<div class="flex gap-2">
-			<div class="form-control w-full">
-				<label class="label" for="{modeText}-exercise-sets">
-					<span class="label-text">Sets</span>
+			<div class="form-control w-full max-w-xs">
+				<label class="label" for="{modeText}-exercise-weight-type">
+					<span class="label-text">Weight type</span>
 				</label>
-				<input
-					type="number"
-					min="1"
-					placeholder="Type here"
-					class="input input-bordered w-full max-w-xs"
-					id="{modeText}-exercise-sets"
-					bind:value={selectedExercise.sets}
+				<select
+					class="select select-bordered"
+					id="{modeText}-exercise-weight-type"
+					bind:value={selectedExercise.weightType}
 					required
-				/>
+				>
+					<option value={undefined} disabled selected>Pick one</option>
+					{#each exerciseWeightTypes as weightType}
+						<option>{weightType}</option>
+					{/each}
+				</select>
 			</div>
 			<div class="form-control w-full max-w-xs">
 				<label class="label" for="{modeText}-exercise-muscle-group">
@@ -116,6 +118,20 @@
 			</div>
 		</div>
 		<div class="flex gap-2">
+			<div class="form-control w-full">
+				<label class="label" for="{modeText}-exercise-sets">
+					<span class="label-text">Sets</span>
+				</label>
+				<input
+					type="number"
+					min="1"
+					placeholder="Type here"
+					class="input input-bordered w-full max-w-xs"
+					id="{modeText}-exercise-sets"
+					bind:value={selectedExercise.sets}
+					required
+				/>
+			</div>
 			<div class="form-control w-full max-w-xs">
 				<label class="label" for="{modeText}-exercise-rep-range-start">
 					<span class="label-text">Rep range start</span>

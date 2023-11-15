@@ -39,12 +39,16 @@ type PerformedMesocycle = ActiveMesocycle & {
 	endDate: EpochTimeStamp;
 };
 
+type ExerciseWeightType = "Barbell" | "Dumbbell" | "Machine" | "Bodyweight";
+type WeightTypeIncrements = Record<ExerciseWeightType, number>;
+
 type SplitExercise = {
 	name: string;
 	sets: number;
 	targetMuscleGroup: MuscleGroup;
 	repRangeStart: number;
 	repRangeEnd: number;
+	weightType: ExerciseWeightType;
 	note: string;
 };
 

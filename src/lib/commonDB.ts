@@ -13,3 +13,5 @@ export const muscleGroups = [
 	"Glutes",
 	"Calves"
 ] as const;
+
+export const exerciseWeightTypes = ["Barbell", "Dumbbell", "Machine", "Bodyweight"] as const;
