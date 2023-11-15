@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Hamburger from "$lib/components/icons/Hamburger.svelte";
+	import Hamburger from "virtual:icons/material-symbols/menu";
 
 	export let exercise: SplitExercise;
 	export let idx: number;

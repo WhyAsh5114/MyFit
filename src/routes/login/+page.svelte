@@ -2,6 +2,7 @@
 	import { page } from "$app/stores";
 	import MyModal from "$lib/components/MyModal.svelte";
 	import { signIn } from "@auth/sveltekit/client";
+	import GoogleLogo from "virtual:icons/ri/google-fill";
 
 	let redirectingModal: HTMLDialogElement;
 </script>
@@ -16,7 +17,7 @@
 		Please wait
 	</button>
 </MyModal>
-<div class="flex flex-col items-center bg-secondary rounded-lg py-5 px-10 gap-3 w-full">
+<div class="flex flex-col items-center bg-secondary rounded-lg py-5 px-10 gap-3 w-full max-w-xs m-auto">
 	<h3 class="text-black font-semibold">Login to continue</h3>
 	<button
 		class="btn gap-2 btn-primary normal-case w-full"
@@ -25,7 +26,7 @@
 			signIn("google", { callbackUrl: $page.url.searchParams.get("callbackURL") || "" });
 		}}
 	>
-		<img src="/google_logo.png" alt="Google logo" height="30" width="30" />
+		<GoogleLogo class="h-6 w-6 mx-2" />
 		Sign in with Google
 	</button>
 </div>

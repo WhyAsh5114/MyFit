@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import DownloadIcon from "../lib/components/icons/DownloadIcon.svelte";
+	import DownloadIcon from "virtual:icons/material-symbols/download";
 	import { useRegisterSW } from "virtual:pwa-register/svelte";
 	import type { Writable } from "svelte/store";
-	import ReloadIcon from "../lib/components/icons/ReloadIcon.svelte";
+	import ReloadIcon from "virtual:icons/tabler/reload";
 
 	let showInstallButton = false;
 	let deferredPrompt: Event | null;
@@ -56,7 +56,7 @@
 			deferredPrompt = null;
 		}}
 	>
-		<DownloadIcon />
+		<DownloadIcon class="w-6 h-6" />
 		Install app
 	</button>
 {:else if $offlineReady}
