@@ -46,9 +46,10 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
 	// ignore POST requests etc
 	if (event.request.method !== "GET") return;
-
-	// ignore chrome-extensions console errors
-	if (!event.request.url.startsWith('http')) return;
+	// ignore chrome-extensions requests (all non http requests)
+	if (!event.request.url.startsWith("http")) return;
+	// ignore auth requests (doesn't make sense to cache them)
+	if (event.request.url.includes("/auth/")) return;
 
 	async function respond(): Promise<Response> {
 		const url = new URL(event.request.url);
@@ -57,7 +58,7 @@ self.addEventListener("fetch", (event) => {
 		// `build`/`files` can always be served from the cache
 		if (ASSETS.includes(url.pathname)) {
 			// Should always be able to find these assets
-			const match = await cache.match(url.pathname) as Response;
+			const match = (await cache.match(url.pathname)) as Response;
 			return match;
 		}
 
