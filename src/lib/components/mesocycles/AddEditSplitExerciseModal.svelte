@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { exerciseWeightTypes, muscleGroups } from "$lib/commonDB";
+	import { exerciseWeightTypes, muscleGroups } from "$lib/types/arrays";
 	import MyModal from "../MyModal.svelte";
 	export let dialogElement: HTMLDialogElement;
 	export let exercises: SplitExercise[];

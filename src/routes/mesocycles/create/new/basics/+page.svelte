@@ -26,7 +26,7 @@
 			.fill(quotient)
 			.concat(new Array(remainder).fill(quotient + 1));
 
-		let progression: ProgressionData[] = [];
+		let progression: RIRProgressionData[] = [];
 		for (let i = startRIR; i >= 1; i--) {
 			progression.push({ specificRIR: i, cycles: result[startRIR - i] });
 		}
@@ -34,7 +34,7 @@
 		return progression;
 	}
 
-	let RIRProgression: ProgressionData[];
+	let RIRProgression: RIRProgressionData[];
 	$: RIRProgression = calculateRIRProgression($mesocycleDuration, $mesocycleStartRIR);
 	$: if (
 		$mesocycleRIRProgression &&
@@ -58,7 +58,7 @@
 		// Set the current RIR's duration
 		const p = RIRProgression.find(
 			(progression) => progression.specificRIR === RIR
-		) as ProgressionData;
+		) as RIRProgressionData;
 		p.cycles = cycles;
 
 		// If no upcoming RIRs, function complete
@@ -76,7 +76,7 @@
 		laterProgression.forEach(({ specificRIR, cycles }) => {
 			const p = RIRProgression.find(
 				(originalProgression) => originalProgression.specificRIR === specificRIR
-			) as ProgressionData;
+			) as RIRProgressionData;
 			p.cycles = cycles;
 		});
 
@@ -84,7 +84,7 @@
 		RIRProgression = RIRProgression;
 	}
 
-	function isProgressionValid(progression: ProgressionData[], totalCycles: number) {
+	function isProgressionValid(progression: RIRProgressionData[], totalCycles: number) {
 		let totalDuration = 0;
 		progression.forEach(({ cycles }) => {
 			totalDuration += cycles;
