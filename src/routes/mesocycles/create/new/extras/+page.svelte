@@ -44,6 +44,7 @@
 	let successModal: HTMLDialogElement;
 	let errorModal: HTMLDialogElement;
 	let errorMessage = "";
+	let callingEndpoint = false;
 	async function submitForm() {
 		if ($mesocycleSpecialization && specializedMuscleGroups.length === 0) {
 			errorMessage = "When specializing, add at least one muscle group to specialize";
@@ -60,6 +61,7 @@
 		const requestBody: APIMesocyclesCreate = {
 			mesocycleTemplate: createdMesocycle
 		};
+		callingEndpoint = true;
 		const response = await fetch("/api/mesocycles/create", {
 			method: "POST",
 			body: JSON.stringify(requestBody),
@@ -67,13 +69,13 @@
 				"content-type": "application/json"
 			}
 		});
+		callingEndpoint = false;
 		if (!response.ok) {
 			errorMessage = await response.text();
 			errorModal.show();
 			return;
 		}
 		successModal.show();
-		console.log(requestBody, response);
 	}
 </script>
 
@@ -170,4 +172,15 @@
 	</form>
 </div>
 
-<button type="submit" form="caloric-state-form" class="btn btn-block btn-accent">Submit</button>
+<button
+	type="submit"
+	form="caloric-state-form"
+	class="btn btn-block btn-accent"
+	disabled={callingEndpoint}
+>
+	{#if callingEndpoint}
+		<span class="loading loading-bars"></span>
+	{:else}
+		Submit
+	{/if}
+</button>
