@@ -1,10 +1,22 @@
-const CaloricStates = {
-	"Hypo-caloric": -1,
-	"Iso-caloric": 0,
-	"Hyper-caloric": 1
-} as const;
+const CaloricStates = [
+	{
+		name: "Hypo-caloric",
+		commonTerm: "Deficit",
+		value: -1
+	},
+	{
+		name: "Iso-caloric",
+		commonTerm: "Maintenance",
+		value: 0
+	},
+	{
+		name: "Hyper-caloric",
+		commonTerm: "Surplus",
+		value: 1
+	}
+] as const;
 
-type CaloricState = (typeof CaloricStates)[keyof typeof CaloricStates];
+type CaloricStateValue = (typeof CaloricStates)[number]["value"];
 
 type RIRProgressionData = { specificRIR: number; cycles: number };
 
@@ -13,7 +25,7 @@ type MesocycleTemplate = {
 	startRIR: number;
 	RIRProgression: RIRProgressionData[];
 	exerciseSplit: (null | { name: string; exercises: SplitExercise[] })[];
-	caloricBalance: CaloricState;
+	caloricBalance: CaloricStateValue;
 	specialization?: MuscleGroup[];
 };
 

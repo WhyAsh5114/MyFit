@@ -21,10 +21,22 @@ const exerciseWeightTypes: typeof ExerciseWeightTypes = [
 	"Bodyweight"
 ] as const;
 
-const caloricStates: typeof CaloricStates = {
-	"Hypo-caloric": -1,
-	"Iso-caloric": 0,
-	"Hyper-caloric": 1
-} as const;
+const caloricStates: typeof CaloricStates = [
+	{
+		name: "Hypo-caloric",
+		commonTerm: "Deficit",
+		value: -1
+	},
+	{
+		name: "Iso-caloric",
+		commonTerm: "Maintenance",
+		value: 0
+	},
+	{
+		name: "Hyper-caloric",
+		commonTerm: "Surplus",
+		value: 1
+	}
+] as const;
 
 export { muscleGroups, exerciseWeightTypes, caloricStates };
