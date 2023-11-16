@@ -13,3 +13,4 @@ export const exerciseSplit: Writable<MesocycleTemplate["exerciseSplit"]> = writa
 
 export const mesocycleCaloricState: Writable<MesocycleTemplate["caloricBalance"]> = writable(0);
 export const mesocycleSpecialization: Writable<boolean> = writable(false);
+export const specializedMuscleGroups: Writable<MuscleGroup[]> = writable([]);

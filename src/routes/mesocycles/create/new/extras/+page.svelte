@@ -8,37 +8,39 @@
 		mesocycleName,
 		mesocycleRIRProgression,
 		mesocycleSpecialization,
-		mesocycleStartRIR
+		mesocycleStartRIR,
+		specializedMuscleGroups
 	} from "../newMesocycleStore";
 	import DeleteIcon from "virtual:icons/ph/x-bold";
 
 	let remainingMuscleGroups = muscleGroups.slice();
-	let specializedMuscleGroups: MuscleGroup[] = [];
+	remainingMuscleGroups = remainingMuscleGroups.filter(
+		(muscleGroup) => $specializedMuscleGroups.includes(muscleGroup) === false
+	);
 
 	let selectedMuscleGroup: MuscleGroup | undefined;
-
-	let showSpecializedMuscleGroups = false;
+	let showSpecializedMuscleGroups = $specializedMuscleGroups.length !== 0;
 
 	function specializeMuscleGroup() {
 		if (!selectedMuscleGroup) return;
 
-		specializedMuscleGroups = [...specializedMuscleGroups, selectedMuscleGroup];
+		$specializedMuscleGroups = [...$specializedMuscleGroups, selectedMuscleGroup];
 
 		const idx = remainingMuscleGroups.indexOf(selectedMuscleGroup);
 		remainingMuscleGroups.splice(idx, 1);
 		remainingMuscleGroups = remainingMuscleGroups;
 
 		selectedMuscleGroup = undefined;
-		if (specializedMuscleGroups.length === 1) showSpecializedMuscleGroups = true;
+		if ($specializedMuscleGroups.length === 1) showSpecializedMuscleGroups = true;
 	}
 
 	function removeSpecializedMuscleGroup(muscleGroup: MuscleGroup) {
-		const idx = specializedMuscleGroups.indexOf(muscleGroup);
-		specializedMuscleGroups.splice(idx, 1);
-		specializedMuscleGroups = specializedMuscleGroups;
+		const idx = $specializedMuscleGroups.indexOf(muscleGroup);
+		$specializedMuscleGroups.splice(idx, 1);
+		$specializedMuscleGroups = $specializedMuscleGroups;
 
 		remainingMuscleGroups = [...remainingMuscleGroups, muscleGroup];
-		if (specializedMuscleGroups.length === 0) showSpecializedMuscleGroups = false;
+		if ($specializedMuscleGroups.length === 0) showSpecializedMuscleGroups = false;
 	}
 
 	let successModal: HTMLDialogElement;
@@ -46,7 +48,7 @@
 	let errorMessage = "";
 	let callingEndpoint = false;
 	async function submitForm() {
-		if ($mesocycleSpecialization && specializedMuscleGroups.length === 0) {
+		if ($mesocycleSpecialization && $specializedMuscleGroups.length === 0) {
 			errorMessage = "When specializing, add at least one muscle group to specialize";
 			errorModal.show();
 			return false;
@@ -56,7 +58,8 @@
 			startRIR: $mesocycleStartRIR,
 			RIRProgression: $mesocycleRIRProgression,
 			exerciseSplit: $exerciseSplit,
-			caloricBalance: $mesocycleCaloricState
+			caloricBalance: $mesocycleCaloricState,
+			specialization: $mesocycleSpecialization ? $specializedMuscleGroups : undefined
 		};
 		const requestBody: APIMesocyclesCreate = {
 			mesocycleTemplate: createdMesocycle
@@ -152,11 +155,11 @@
 					bind:checked={showSpecializedMuscleGroups}
 				/>
 				<div class="collapse-title text-lg font-medium">
-					Specialized muscle groups: {specializedMuscleGroups.length}
+					Specialized muscle groups: {$specializedMuscleGroups.length}
 				</div>
 				<div class="collapse-content backdrop-brightness-75">
 					<div class="flex flex-wrap gap-1.5 justify-center mt-3">
-						{#each specializedMuscleGroups as muscleGroup}
+						{#each $specializedMuscleGroups as muscleGroup}
 							<button
 								class="badge gap-1 badge-accent font-semibold"
 								on:click={() => removeSpecializedMuscleGroup(muscleGroup)}
