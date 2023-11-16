@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import MyModal from "$lib/components/MyModal.svelte";
 	import { caloricStates, muscleGroups } from "$lib/types/arrays";
 	import {
@@ -40,9 +41,12 @@
 		if (specializedMuscleGroups.length === 0) showSpecializedMuscleGroups = false;
 	}
 
+	let successModal: HTMLDialogElement;
 	let errorModal: HTMLDialogElement;
+	let errorMessage = "";
 	async function submitForm() {
 		if ($mesocycleSpecialization && specializedMuscleGroups.length === 0) {
+			errorMessage = "When specializing, add at least one muscle group to specialize";
 			errorModal.show();
 			return false;
 		}
@@ -53,12 +57,39 @@
 			exerciseSplit: $exerciseSplit,
 			caloricBalance: $mesocycleCaloricState
 		};
-		
+		const requestBody: APIMesocyclesCreate = {
+			mesocycleTemplate: createdMesocycle
+		};
+		const response = await fetch("/api/mesocycles/create", {
+			method: "POST",
+			body: JSON.stringify(requestBody),
+			headers: {
+				"content-type": "application/json"
+			}
+		});
+		if (!response.ok) {
+			errorMessage = await response.text();
+			errorModal.show();
+			return;
+		}
+		successModal.show();
+		console.log(requestBody, response);
 	}
 </script>
 
 <MyModal bind:dialogElement={errorModal} title="Error" titleColor="text-error">
-	When specializing, add at least one muscle group to specialize
+	{errorMessage}
+</MyModal>
+
+<MyModal
+	bind:dialogElement={successModal}
+	title="Success"
+	titleColor="text-success"
+	onClose={() => {
+		goto("/mesocycles");
+	}}
+>
+	Mesocycle created successfully
 </MyModal>
 
 <div class="flex flex-col w-full max-w-sm m-auto gap-10">
