@@ -17,7 +17,9 @@
 		Please wait
 	</button>
 </MyModal>
-<div class="flex flex-col items-center bg-secondary rounded-lg py-5 px-10 gap-3 w-full max-w-xs m-auto">
+<div
+	class="flex flex-col items-center bg-secondary rounded-lg py-5 px-10 gap-3 w-full max-w-xs m-auto"
+>
 	<h3 class="text-black font-semibold">Login to continue</h3>
 	<button
 		class="btn gap-2 btn-primary normal-case w-full"

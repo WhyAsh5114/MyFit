@@ -17,7 +17,9 @@
 	<div class="drawer-content flex flex-col items-center justify-center h-screen">
 		<!-- Page content here -->
 		<div class="flex bg-primary w-full items-center py-2 lg:hidden">
-			<label for="drawer" class="btn btn-ghost drawer-button lg:hidden"><Hamburger class="w-6 h-6" /></label>
+			<label for="drawer" class="btn btn-ghost drawer-button lg:hidden"
+				><Hamburger class="w-6 h-6" /></label
+			>
 			<a href="/" class="flex items-center">
 				<img src="/favicon.png" alt="logo" class="w-12 -mb-1 mr-1" />
 				<h1 class="text-2xl font-bold text-white">MyFit</h1>
