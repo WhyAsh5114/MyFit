@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		)
 		.map((doc) => {
 			const { _id, ...otherProps } = doc;
-			const stringID = JSON.stringify(doc._id);
+			const stringID = doc._id.toString();
 			const mesocycle: WithSerializedID<MesocycleTemplate> = {
 				id: stringID,
 				...otherProps
