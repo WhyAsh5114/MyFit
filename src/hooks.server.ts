@@ -8,5 +8,14 @@ export const handle = SvelteKitAuth({
 	providers: [Google({ clientId: GOOGLE_ID, clientSecret: GOOGLE_SECRET })],
 	adapter: MongoDBAdapter(clientPromise, {
 		databaseName: "MyFit_v2"
-	})
+	}),
+	callbacks: {
+		// Attach mongoDB user document ID for easier queries
+		async session({ session, user }) {
+			if (session.user) {
+				session.user.id = user.id;
+			}
+			return session;
+		}
+	}
 });
