@@ -4,6 +4,7 @@
 	import { pwaInfo } from "virtual:pwa-info";
 	import PwaButton from "./PWAButton.svelte";
 	import UserButton from "./UserButton.svelte";
+	import { navigating } from "$app/stores";
 
 	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : "";
 </script>
@@ -21,9 +22,14 @@
 				><Hamburger class="w-6 h-6" /></label
 			>
 			<a href="/" class="flex items-center">
-				<img src="/favicon.png" alt="logo" class="w-12 -mb-1 mr-1" />
+				<img src="/favicon.png" alt="logo" class="-mb-1 mr-1" width="48" />
 				<h1 class="text-2xl font-bold text-white">MyFit</h1>
 			</a>
+			{#if $navigating}
+				<div class="grid w-10 h-10 place-items-center ml-auto px-2">
+					<span class="loading loading-ring text-accent"></span>
+				</div>
+			{/if}
 		</div>
 		<main class="h-px grow overflow-y-auto p-2 w-full max-w-2xl flex flex-col">
 			<slot />
@@ -36,8 +42,13 @@
 			<ul>
 				<li>
 					<a class="w-full items-center py-2 hidden lg:flex" href="/">
-						<img src="/favicon.png" alt="logo" class="w-12 -mb-1 mr-1" />
+						<img src="/favicon.png" alt="logo" class="-mb-1 mr-1" width="48" />
 						<h1 class="text-2xl font-bold text-white">MyFit</h1>
+						{#if $navigating}
+							<div class="grid w-10 h-10 place-items-center ml-auto px-2">
+								<span class="loading loading-ring text-accent"></span>
+							</div>
+						{/if}
 					</a>
 				</li>
 				<li><a href="/mesocycles">Mesocycles</a></li>

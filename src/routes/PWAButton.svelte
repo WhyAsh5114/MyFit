@@ -35,7 +35,7 @@
 							}
 						});
 						if (resp?.status === 200) await r.update();
-					}, 20000 /* 20s for testing purposes */);
+					}, 600000 /* every 10 minutes */);
 				console.log(`SW Registered: ${r}`);
 			},
 			onRegisterError(error) {
