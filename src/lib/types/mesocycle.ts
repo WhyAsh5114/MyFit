@@ -30,9 +30,9 @@ type MesocycleTemplate = {
 };
 
 type ActiveMesocycle = {
-	templateMesoID: number;
+	templateMesoID: string;
 	startDate: EpochTimeStamp;
-	workouts: number[];
+	workouts: string[];
 };
 
 type PerformedMesocycle = ActiveMesocycle & {

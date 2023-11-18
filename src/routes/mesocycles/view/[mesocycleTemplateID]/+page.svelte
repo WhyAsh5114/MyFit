@@ -15,29 +15,50 @@
 	let errorModal: HTMLDialogElement;
 	let errorMsg = "";
 	let callingEndpoint = false;
+
 	async function deleteMesocycle() {
-		const reqBody: APIMesocyclesDeleteTemplate = {
+		const requestBody: APIMesocyclesDeleteTemplate = {
 			mesocycleTemplateID: $page.params.mesocycleTemplateID
 		};
 		callingEndpoint = true;
-		const res = await fetch("/api/mesocycles/deleteTemplate", {
+		const response = await fetch("/api/mesocycles/deleteTemplate", {
 			method: "POST",
-			body: JSON.stringify(reqBody),
+			body: JSON.stringify(requestBody),
 			headers: {
 				"content-type": "application/json"
 			}
 		});
 		callingEndpoint = false;
 		deleteModal.close();
-		if (res.ok) {
+		if (response.ok) {
 			deletionSuccessfulModal.show();
 			return;
 		}
-		errorMsg = await res.text();
+		errorMsg = await response.text();
 		errorModal.show();
 	}
 
-	async function startMesocycle() {}
+    let startSuccessfulModal: HTMLDialogElement;
+	async function startMesocycle() {
+		const requestBody: APIMesocyclesStartMesocycle = {
+			mesocycleTemplateID: $page.params.mesocycleTemplateID
+		};
+		callingEndpoint = true;
+		const response = await fetch("/api/mesocycles/startMesocycle", {
+			method: "POST",
+			body: JSON.stringify(requestBody),
+			headers: {
+				"content-type": "application/json"
+			}
+		});
+		callingEndpoint = false;
+        if (response.ok) {
+            startSuccessfulModal.show();
+            return;
+        }
+        errorMsg = await response.text();
+        errorModal.show();
+	}
 </script>
 
 <MyModal bind:dialogElement={errorModal} title="Error" titleColor="text-error">
@@ -60,13 +81,17 @@
 </MyModal>
 <MyModal
 	title="Deleted successfully"
-	titleColor="text-success"
+	titleColor="text-accent"
 	bind:dialogElement={deletionSuccessfulModal}
 	onClose={() => {
 		goto("/mesocycles");
 	}}
 >
 	Mesocycle <span class="font-semibold">{data.mesocycleTemplate.name}</span> deleted successfully
+</MyModal>
+
+<MyModal bind:dialogElement={startSuccessfulModal} title="Started successfully" titleColor="text-accent">
+    Mesocycle started successfully
 </MyModal>
 
 <div class="stats stats-vertical grid-cols-2 overflow-y-auto">
