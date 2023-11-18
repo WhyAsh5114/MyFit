@@ -4,9 +4,17 @@
 </script>
 
 <h2>Mesocycles</h2>
-<p>Currently active (TODO)</p>
-<p>All mesocycles</p>
-{#each data.streamed.streamArray as mesocycleTemplatePromise}
-	<MesocycleCard {mesocycleTemplatePromise} />
-{/each}
-<a href="/mesocycles/create" class="btn btn-block btn-accent mt-auto">Create new mesocycle</a>
+
+<h3 class="text-xl mb-1">Currently active</h3>
+<div class="skeleton w-full h-16 bg-primary brightness-50 rounded-md grid place-items-center">
+	TODO
+</div>
+
+<h3 class="text-xl my-1">All mesocycles</h3>
+<div class="flex flex-col gap-2 h-px grow overflow-y-auto">
+	{#each data.streamed.streamArray as mesocycleTemplatePromise}
+		<MesocycleCard {mesocycleTemplatePromise} />
+	{/each}
+</div>
+
+<a href="/mesocycles/create" class="btn btn-block btn-accent mt-2">Create new mesocycle</a>
