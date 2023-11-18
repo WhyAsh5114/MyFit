@@ -9,6 +9,7 @@
 		customizeRIRProgression
 	} from "../newMesocycleStore";
 	import { goto } from "$app/navigation";
+	import { calculateTotalDuration } from "$lib/commonDB";
 
 	let RIRColors = ["range-error", "range-warning", "range-accent", "range-success"];
 	function calculateRIRProgression(totalDuration: number, startRIR: number) {
@@ -85,10 +86,7 @@
 	}
 
 	function isProgressionValid(progression: RIRProgressionData[], totalCycles: number) {
-		let totalDuration = 0;
-		progression.forEach(({ cycles }) => {
-			totalDuration += cycles;
-		});
+		let totalDuration = calculateTotalDuration(progression);
 		return totalDuration === totalCycles;
 	}
 
