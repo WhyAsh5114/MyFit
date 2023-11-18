@@ -89,7 +89,7 @@
 <MyModal
 	bind:dialogElement={successModal}
 	title="Success"
-	titleColor="text-success"
+	titleColor="text-accent"
 	onClose={() => {
 		goto("/mesocycles");
 	}}
