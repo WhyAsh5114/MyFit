@@ -1,5 +1,13 @@
 <script lang="ts">
 	export let mesocycleTemplatePromise: Promise<MesocycleTemplate | null>;
+
+	function calculateDuration(progression: RIRProgressionData[]) {
+		let totalDuration = 0;
+		progression.forEach(({ cycles }) => {
+			totalDuration += cycles;
+		});
+		return totalDuration;
+	}
 </script>
 
 {#await mesocycleTemplatePromise}
@@ -10,7 +18,7 @@
 			<div class="flex flex-col w-full gap-1">
 				<div class="flex items-center justify-between">
 					<span class="text-lg font-semibold">{mesocycleTemplate.name}</span>
-					<span class="font-normal">{mesocycleTemplate.startRIR} RIR</span>
+					<span class="font-normal">{calculateDuration(mesocycleTemplate.RIRProgression)} cycles</span>
 				</div>
 				<div class="flex flex-wrap gap-1">
 					{#each mesocycleTemplate.exerciseSplit as split}
