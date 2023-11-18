@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const client = await clientPromise;
 	const mesocycleTemplateDocuments = client
 		.db()
-		.collection<MesocycleTemplateDocument>("mesocycleTemplates")
+		.collection<Omit<MesocycleTemplateDocument, "userId">>("mesocycleTemplates")
 		.find(
 			{
 				userId: new ObjectId(session.user.id)
@@ -39,22 +39,44 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 
 	let activeMesocycle: WithSerializedId<ActiveMesocycle> | null = null;
+	let activeMesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
 	const activeMesocycleDocument = await client
 		.db()
-		.collection<ActiveMesocycleDocument>("activeMesocycles")
-		.findOne({ userId: new ObjectId(session.user.id) });
-	if (activeMesocycleDocument) {
-		const { _id, templateMesoId, workouts, startDate } = activeMesocycleDocument;
-		activeMesocycle = {
-			id: _id.toString(),
-			templateMesoId: templateMesoId.toString(),
-			workouts: workouts.map((workout) => workout.toString()),
-			startDate
+		.collection<Omit<ActiveMesocycleDocument, "userId">>("activeMesocycles")
+		.findOne({ userId: new ObjectId(session.user.id) }, { projection: { userId: 0 } });
+	if (!activeMesocycleDocument) {
+		return {
+			activeMesocycle,
+			activeMesocycleTemplate,
+			streamed: {
+				mesocycleTemplatesStreamArray
+			}
+		};
+	}
+
+	const { _id, templateMesoId, workouts, startDate } = activeMesocycleDocument;
+	activeMesocycle = {
+		id: _id.toString(),
+		templateMesoId: templateMesoId.toString(),
+		workouts: workouts.map((workout) => workout.toString()),
+		startDate
+	};
+
+	const activeMesocycleTemplateDocument = await client
+		.db()
+		.collection<Omit<MesocycleTemplateDocument, "userId">>("mesocycleTemplates")
+		.findOne({ _id: new ObjectId(activeMesocycle.templateMesoId) }, { projection: { userId: 0 } });
+	if (activeMesocycleTemplateDocument) {
+		const { _id, ...otherProps } = activeMesocycleTemplateDocument;
+		activeMesocycleTemplate = {
+			id: activeMesocycleTemplateDocument._id.toString(),
+			...otherProps
 		};
 	}
 
 	return {
 		activeMesocycle,
+		activeMesocycleTemplate,
 		streamed: {
 			mesocycleTemplatesStreamArray
 		}
