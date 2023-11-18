@@ -12,7 +12,7 @@
 			class="btn btn-primary h-fit p-2 flex-col rounded-md"
 			href="/mesocycles/view/{mesocycleTemplate.id}"
 		>
-			<div class="flex flex-col w-full gap-1">
+			<div class="flex flex-col w-full gap-2">
 				<div class="flex items-center justify-between">
 					<span class="text-lg font-semibold">{mesocycleTemplate.name}</span>
 					<span class="font-normal">
