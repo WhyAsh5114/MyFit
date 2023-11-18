@@ -15,7 +15,7 @@
 				<div class="flex flex-wrap gap-1">
 					{#each mesocycleTemplate.exerciseSplit as split}
 						{#if split !== null}
-							<span class="badge badge-accent font-semibold">{split.name}</span>
+							<span class="badge font-semibold">{split.name}</span>
 						{:else}
 							<span class="badge"></span>
 						{/if}

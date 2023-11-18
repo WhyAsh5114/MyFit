@@ -10,7 +10,7 @@
 	TODO
 </div>
 
-<h3 class="text-xl my-1">All mesocycles</h3>
+<h3 class="text-xl mb-1 mt-3">All mesocycles</h3>
 <div class="flex flex-col gap-1.5 h-px grow overflow-y-auto">
 	{#each data.streamed.streamArray as mesocycleTemplatePromise}
 		<MesocycleCard {mesocycleTemplatePromise} />
