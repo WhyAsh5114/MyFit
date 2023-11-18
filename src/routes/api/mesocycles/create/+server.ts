@@ -1,9 +1,10 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import clientPromise from "$lib/mongo/mongodb";
+import { ObjectId } from "mongodb";
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const session = await locals.getSession();
-	if (!session) {
+	if (!session?.user?.id) {
 		return new Response("Invalid session", {
 			status: 403
 		});
@@ -14,11 +15,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	try {
 		await client
 			.db()
-			.collection("users")
-			.updateOne(
-				{ email: session.user?.email },
-				{ $push: { mesocycleTemplates: mesocycleTemplate } }
-			);
+			.collection("mesocycleTemplates")
+			.insertOne({
+				userId: new ObjectId(session.user.id),
+				...mesocycleTemplate
+			});
 
 		return new Response("Mesocycle created successfully", {
 			status: 200
