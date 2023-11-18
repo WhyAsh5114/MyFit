@@ -7,12 +7,12 @@
 
 <h3 class="text-xl mb-1">Currently active</h3>
 <div class="skeleton w-full h-16 bg-primary brightness-50 rounded-md grid place-items-center">
-	TODO
+	{data.activeMesocycle}
 </div>
 
 <h3 class="text-xl mb-1 mt-3">All mesocycles</h3>
 <div class="flex flex-col gap-1.5 h-px grow overflow-y-auto">
-	{#each data.streamed.streamArray as mesocycleTemplatePromise}
+	{#each data.streamed.mesocycleTemplatesStreamArray as mesocycleTemplatePromise}
 		<MesocycleCard {mesocycleTemplatePromise} />
 	{/each}
 </div>

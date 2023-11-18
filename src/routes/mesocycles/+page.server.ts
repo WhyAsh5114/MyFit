@@ -2,6 +2,7 @@ import type { PageServerLoad } from "./$types";
 import clientPromise from "$lib/mongo/mongodb";
 import { error } from "@sveltejs/kit";
 import { ObjectId } from "mongodb";
+import type { ActiveMesocycleDocument, MesocycleTemplateDocument } from "$lib/types/documents";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.getSession();
@@ -10,9 +11,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 
 	const client = await clientPromise;
-	const mesocycleTemplates = client
+	const mesocycleTemplateDocuments = client
 		.db()
-		.collection<MesocycleTemplate & { userId: ObjectId }>("mesocycleTemplates")
+		.collection<MesocycleTemplateDocument>("mesocycleTemplates")
 		.find(
 			{
 				userId: new ObjectId(session.user.id)
@@ -20,28 +21,42 @@ export const load: PageServerLoad = async ({ locals }) => {
 			{
 				projection: {
 					userId: 0
-				},
-				serializeFunctions: true
+				}
 			}
 		)
-		.map((doc) => {
-			const { _id, ...otherProps } = doc;
-			const stringID = doc._id.toString();
-			const mesocycle: WithSerializedID<MesocycleTemplate> = {
-				id: stringID,
+		.map((mesocycleTemplateDocument) => {
+			const { _id, ...otherProps } = mesocycleTemplateDocument;
+			const mesocycleTemplate: WithSerializedId<MesocycleTemplate> = {
+				id: mesocycleTemplateDocument._id.toString(),
 				...otherProps
 			};
-			return mesocycle;
+			return mesocycleTemplate;
 		});
 
-	const streamArray = [];
-	while (await mesocycleTemplates.hasNext()) {
-		streamArray.push(mesocycleTemplates.next());
+	const mesocycleTemplatesStreamArray = [];
+	while (await mesocycleTemplateDocuments.hasNext()) {
+		mesocycleTemplatesStreamArray.push(mesocycleTemplateDocuments.next());
+	}
+
+	let activeMesocycle: WithSerializedId<ActiveMesocycle> | null = null;
+	const activeMesocycleDocument = await client
+		.db()
+		.collection<ActiveMesocycleDocument>("activeMesocycles")
+		.findOne({ userId: new ObjectId(session.user.id) });
+	if (activeMesocycleDocument) {
+		const { _id, templateMesoId, workouts, startDate } = activeMesocycleDocument;
+		activeMesocycle = {
+			id: _id.toString(),
+			templateMesoId: templateMesoId.toString(),
+			workouts: workouts.map((workout) => workout.toString()),
+			startDate
+		};
 	}
 
 	return {
+		activeMesocycle,
 		streamed: {
-			streamArray
+			mesocycleTemplatesStreamArray
 		}
 	};
 };
