@@ -18,7 +18,7 @@
 
 	async function deleteMesocycle() {
 		const requestBody: APIMesocyclesDeleteTemplate = {
-			mesocycleTemplateID: $page.params.mesocycleTemplateID
+			mesocycleTemplateId: $page.params.mesocycleTemplateId
 		};
 		callingEndpoint = true;
 		const response = await fetch("/api/mesocycles/deleteTemplate", {
@@ -41,7 +41,7 @@
     let startSuccessfulModal: HTMLDialogElement;
 	async function startMesocycle() {
 		const requestBody: APIMesocyclesStartMesocycle = {
-			mesocycleTemplateID: $page.params.mesocycleTemplateID
+			mesocycleTemplateId: $page.params.mesocycleTemplateId
 		};
 		callingEndpoint = true;
 		const response = await fetch("/api/mesocycles/startMesocycle", {

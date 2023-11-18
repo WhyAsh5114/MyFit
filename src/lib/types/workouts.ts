@@ -13,7 +13,7 @@ type Workout = {
 	startTimestamp: EpochTimeStamp;
 	referenceWorkout: null | number;
 	dayNumber: number;
-	templateMesoID: number;
+	templateMesoId: number;
 	difficultyRating: 1 | 2 | 3 | 4 | 5;
 	exercisesPerformed: WorkoutExercise[];
 	muscleGroupWorkloads: Record<MuscleGroup, null | WorkloadFeedback>;

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { calculateTotalDuration } from "$lib/commonDB";
 
-	export let mesocycleTemplatePromise: Promise<WithSerializedID<MesocycleTemplate> | null>;
+	export let mesocycleTemplatePromise: Promise<WithSerializedId<MesocycleTemplate> | null>;
 </script>
 
 {#await mesocycleTemplatePromise}

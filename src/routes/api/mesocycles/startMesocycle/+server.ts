@@ -10,7 +10,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { mesocycleTemplateID }: APIMesocyclesStartMesocycle = await request.json();
+	const { mesocycleTemplateId }: APIMesocyclesStartMesocycle = await request.json();
 	const client = await clientPromise;
 
 	// Check if a mesocycle is already active
@@ -39,7 +39,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			.collection("activeMesocycles")
 			.insertOne({
 				userId: new ObjectId(session.user.id),
-				templateMesoId: new ObjectId(mesocycleTemplateID),
+				templateMesoId: new ObjectId(mesocycleTemplateId),
 				startTimestamp: +new Date(),
 				workouts: []
 			});

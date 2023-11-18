@@ -10,14 +10,14 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { mesocycleTemplateID }: APIMesocyclesDeleteTemplate = await request.json();
+	const { mesocycleTemplateId }: APIMesocyclesDeleteTemplate = await request.json();
 	const client = await clientPromise;
 	try {
 		const deleteResult = await client
 			.db()
 			.collection("mesocycleTemplates")
 			.deleteOne({
-				_id: new ObjectId(mesocycleTemplateID),
+				_id: new ObjectId(mesocycleTemplateId),
 				userId: new ObjectId(session.user.id)
 			});
 

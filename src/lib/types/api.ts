@@ -3,9 +3,9 @@ type APIMesocyclesCreateTemplate = {
 };
 
 type APIMesocyclesDeleteTemplate = {
-	mesocycleTemplateID: string;
+	mesocycleTemplateId: string;
 };
 
 type APIMesocyclesStartMesocycle = {
-	mesocycleTemplateID: string;
+	mesocycleTemplateId: string;
 }

@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		throw error(403, "Not logged in");
 	}
 
-	if (params.mesocycleTemplateID.length !== 24) {
+	if (params.mesocycleTemplateId.length !== 24) {
 		throw error(400, "Mesocycle template ID should be 24 character hex string");
 	}
 
@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	const mesocycleTemplateDocument = await client
 		.db()
 		.collection<MesocycleTemplate & { userId: ObjectId }>("mesocycleTemplates")
-		.findOne({ _id: new ObjectId(params.mesocycleTemplateID) });
+		.findOne({ _id: new ObjectId(params.mesocycleTemplateId) });
 
 	if (mesocycleTemplateDocument === null) {
 		throw error(404, "Mesocycle not found");
