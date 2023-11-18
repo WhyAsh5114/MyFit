@@ -12,18 +12,27 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const client = await clientPromise;
 	const mesocycleTemplates = client
 		.db()
-		.collection<MesocycleTemplate>("mesocycleTemplates")
+		.collection<MesocycleTemplate & { userId: ObjectId }>("mesocycleTemplates")
 		.find(
 			{
 				userId: new ObjectId(session.user.id)
 			},
 			{
 				projection: {
-					_id: 0,
 					userId: 0
-				}
+				},
+				serializeFunctions: true
 			}
-		);
+		)
+		.map((doc) => {
+			const { _id, ...otherProps } = doc;
+			const stringID = JSON.stringify(doc._id);
+			const mesocycle: WithSerializedID<MesocycleTemplate> = {
+				id: stringID,
+				...otherProps
+			};
+			return mesocycle;
+		});
 
 	const streamArray = [];
 	while (await mesocycleTemplates.hasNext()) {
