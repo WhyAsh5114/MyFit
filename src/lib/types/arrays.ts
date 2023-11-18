@@ -1,4 +1,4 @@
-const muscleGroups: typeof MuscleGroups = [
+export const muscleGroups: typeof MuscleGroups = [
 	"Chest",
 	"Front delts",
 	"Side delts",
@@ -14,14 +14,14 @@ const muscleGroups: typeof MuscleGroups = [
 	"Calves"
 ] as const;
 
-const exerciseWeightTypes: typeof ExerciseWeightTypes = [
+export const exerciseWeightTypes: typeof ExerciseWeightTypes = [
 	"Barbell",
 	"Dumbbell",
 	"Machine",
 	"Bodyweight"
 ] as const;
 
-const caloricStates: typeof CaloricStates = [
+export const caloricStates: typeof CaloricStates = [
 	{
 		name: "Hypo-caloric",
 		commonTerm: "Deficit",
@@ -38,5 +38,3 @@ const caloricStates: typeof CaloricStates = [
 		value: 1
 	}
 ] as const;
-
-export { muscleGroups, exerciseWeightTypes, caloricStates };
