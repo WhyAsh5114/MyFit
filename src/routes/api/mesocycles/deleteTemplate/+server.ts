@@ -10,18 +10,24 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { mesocycleTemplate }: APIMesocyclesCreate = await request.json();
+	const { mesocycleTemplateID }: APIMesocyclesDeleteTemplate = await request.json();
 	const client = await clientPromise;
 	try {
-		await client
+		const deleteResult = await client
 			.db()
 			.collection("mesocycleTemplates")
-			.insertOne({
-				userId: new ObjectId(session.user.id),
-				...mesocycleTemplate
+			.deleteOne({
+				_id: new ObjectId(mesocycleTemplateID),
+				userId: new ObjectId(session.user.id)
 			});
 
-		return new Response("Mesocycle created successfully", {
+		if (deleteResult.deletedCount === 0) {
+			return new Response("Mesocycle not found", {
+				status: 404
+			});
+		}
+
+		return new Response("Mesocycle deleted successfully", {
 			status: 200
 		});
 	} catch (e) {

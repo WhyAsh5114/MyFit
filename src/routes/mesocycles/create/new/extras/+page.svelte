@@ -61,11 +61,11 @@
 			caloricBalance: $mesocycleCaloricState,
 			specialization: $mesocycleSpecialization ? $specializedMuscleGroups : undefined
 		};
-		const requestBody: APIMesocyclesCreate = {
+		const requestBody: APIMesocyclesCreateTemplate = {
 			mesocycleTemplate: createdMesocycle
 		};
 		callingEndpoint = true;
-		const response = await fetch("/api/mesocycles/create", {
+		const response = await fetch("/api/mesocycles/createTemplate", {
 			method: "POST",
 			body: JSON.stringify(requestBody),
 			headers: {
