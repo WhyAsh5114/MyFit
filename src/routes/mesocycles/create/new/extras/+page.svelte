@@ -80,6 +80,13 @@
 		}
 		successModal.show();
 	}
+
+	let redirecting = false;
+	async function closeModal() {
+		redirecting = true;
+		await goto('/mesocycles');
+		redirecting = false;
+	}
 </script>
 
 <MyModal bind:dialogElement={errorModal} title="Error" titleColor="text-error">
@@ -90,9 +97,7 @@
 	bind:dialogElement={successModal}
 	title="Success"
 	titleColor="text-accent"
-	onClose={() => {
-		goto("/mesocycles");
-	}}
+	onClose={closeModal}
 >
 	Mesocycle created successfully
 </MyModal>
@@ -178,12 +183,15 @@
 <button
 	type="submit"
 	form="caloric-state-form"
-	class="btn btn-block btn-accent"
-	disabled={callingEndpoint}
+	class="btn btn-block btn-accent disabled:text-white"
+	disabled={callingEndpoint || redirecting}
 >
 	{#if callingEndpoint}
 		<span class="loading loading-bars"></span>
+	{:else if redirecting}
+		Redirecting
+		<span class="loading loading-bars"></span>
 	{:else}
-		Submit
+		Create mesocycle
 	{/if}
 </button>
