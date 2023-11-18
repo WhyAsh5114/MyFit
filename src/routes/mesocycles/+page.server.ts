@@ -17,7 +17,12 @@ export const load: PageServerLoad = async ({ locals }) => {
 			{
 				userId: new ObjectId(session.user.id)
 			},
-			{ projection: { _id: 0, userId: 0 } }
+			{
+				projection: {
+					_id: 0,
+					userId: 0
+				}
+			}
 		);
 
 	const streamArray = [];

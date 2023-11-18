@@ -1,3 +1,3 @@
 type APIMesocyclesCreate = {
-    mesocycleTemplate: MesocycleTemplate
-}
+	mesocycleTemplate: MesocycleTemplate;
+};
