@@ -12,6 +12,28 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 	const { mesocycleTemplateId }: APIMesocyclesDeleteTemplate = await request.json();
 	const client = await clientPromise;
+
+	// Don't delete template if active mesocycle
+	try {
+		const activeMesocycle = await client
+			.db()
+			.collection("activeMesocycles")
+			.findOne({
+				userId: new ObjectId(session.user.id),
+				templateMesoId: new ObjectId(mesocycleTemplateId)
+			});
+
+		if (activeMesocycle) {
+			return new Response("Cannot delete an active mesocycle", {
+				status: 400
+			});
+		}
+	} catch (e) {
+		return new Response(JSON.stringify(e), {
+			status: 500
+		});
+	}
+
 	try {
 		const deleteResult = await client
 			.db()
