@@ -84,7 +84,7 @@
 	let redirecting = false;
 	async function closeModal() {
 		redirecting = true;
-		await goto('/mesocycles');
+		await goto("/mesocycles");
 		redirecting = false;
 	}
 </script>

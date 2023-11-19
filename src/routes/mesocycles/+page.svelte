@@ -32,7 +32,6 @@
 				value={data.activeMesocycle.workouts.length}
 				max={totalWorkouts}
 			></progress>
-			
 		</div>
 	</button>
 {:else}

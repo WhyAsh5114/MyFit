@@ -38,7 +38,7 @@
 		errorModal.show();
 	}
 
-    let startSuccessfulModal: HTMLDialogElement;
+	let startSuccessfulModal: HTMLDialogElement;
 	async function startMesocycle() {
 		const requestBody: APIMesocyclesStartMesocycle = {
 			mesocycleTemplateId: $page.params.mesocycleTemplateId
@@ -52,12 +52,12 @@
 			}
 		});
 		callingEndpoint = false;
-        if (response.ok) {
-            startSuccessfulModal.show();
-            return;
-        }
-        errorMsg = await response.text();
-        errorModal.show();
+		if (response.ok) {
+			startSuccessfulModal.show();
+			return;
+		}
+		errorMsg = await response.text();
+		errorModal.show();
 	}
 </script>
 
@@ -90,8 +90,12 @@
 	Mesocycle <span class="font-semibold">{data.mesocycleTemplate.name}</span> deleted successfully
 </MyModal>
 
-<MyModal bind:dialogElement={startSuccessfulModal} title="Started successfully" titleColor="text-accent">
-    Mesocycle started successfully
+<MyModal
+	bind:dialogElement={startSuccessfulModal}
+	title="Started successfully"
+	titleColor="text-accent"
+>
+	Mesocycle started successfully
 </MyModal>
 
 <div class="stats stats-vertical grid-cols-2 overflow-y-auto">
