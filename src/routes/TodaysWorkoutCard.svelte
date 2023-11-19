@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getTodaysWorkout } from "$lib/util/MesocycleTemplate";
+	import { getMuscleGroups, getTodaysWorkout, getTotalSets } from "$lib/util/MesocycleTemplate";
 	export let activeMesocycle: ActiveMesocycle;
 	export let activeMesocycleTemplate: MesocycleTemplate;
 
@@ -14,10 +14,8 @@
 	let totalSets = 0;
 	let targetMuscleGroups: Set<MuscleGroup> = new Set();
 	if (todaysWorkout) {
-		todaysWorkout.exercises.forEach((exercise) => {
-			totalSets += exercise.sets;
-			targetMuscleGroups.add(exercise.targetMuscleGroup);
-		});
+		totalSets = getTotalSets(todaysWorkout.exercises);
+		targetMuscleGroups = getMuscleGroups(todaysWorkout.exercises);
 	}
 </script>
 
