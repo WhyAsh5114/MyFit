@@ -74,6 +74,7 @@
 	disabled={redirecting}
 >
 	{#if redirecting}
+		Redirecting
 		<span class="loading loading-bars"></span>
 	{:else}
 		Stop mesocycle
