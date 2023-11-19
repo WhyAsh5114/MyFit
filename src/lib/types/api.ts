@@ -9,3 +9,7 @@ type APIMesocyclesDeleteTemplate = {
 type APIMesocyclesStartMesocycle = {
 	mesocycleTemplateId: string;
 };
+
+type APIMesocyclesStopMesocycle = {
+	activeMesocycleId: string;
+};
