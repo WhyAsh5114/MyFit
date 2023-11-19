@@ -1,26 +1,52 @@
 <script lang="ts">
-	import { getTodaysWorkout } from "$lib/util/MesocycleTemplate.js";
+	import {
+		getMuscleGroupsAndSets,
+		getTodaysWorkout,
+		getTotalSets
+	} from "$lib/util/MesocycleTemplate.js";
 
 	export let data;
 	const { activeMesocycle, activeMesocycleTemplate } = data;
-	const { workout: todaysWorkout } = getTodaysWorkout(
+	const { workout: todaysWorkout, workoutIdx } = getTodaysWorkout(
 		activeMesocycle.workouts,
 		activeMesocycleTemplate.exerciseSplit
 	);
+	let muscleGroupsAndSets: { muscleGroup: MuscleGroup; sets: number }[];
+	let totalSets = 0;
+	if (todaysWorkout) {
+		muscleGroupsAndSets = getMuscleGroupsAndSets(todaysWorkout.exercises);
+		totalSets = getTotalSets(todaysWorkout.exercises);
+	}
 </script>
 
-<div class="stats stats-vertical">
+<div class="stats stats-vertical grid grid-cols-2">
 	{#if todaysWorkout}
-		<div class="stat">
+		<div class="stat col-span-2">
 			<div class="stat-title">Workout template</div>
 			<div class="stat-value">
 				{todaysWorkout.name}
 			</div>
-			<div class="stat-desc"></div>
+			<div class="stat-desc">Day {workoutIdx + 1}</div>
 		</div>
 		<div class="stat">
+			<div class="stat-title">Total sets</div>
+			<div class="stat-value">{totalSets}</div>
+		</div>
+		<div class="stat">
+			<div class="stat-title">Planned RIR</div>
+		</div>
+		<div class="stat col-span-2">
 			<div class="stat-title">Muscle groups</div>
-			<div class="stat-value"></div>
+			<div class="flex flex-wrap gap-1 mt-2">
+				{#each muscleGroupsAndSets as { muscleGroup, sets }}
+					{@const specialized = activeMesocycleTemplate.specialization?.includes(muscleGroup)}
+					<span class="badge {specialized ? 'badge-accent' : ''}">{muscleGroup} x {sets}</span>
+				{/each}
+			</div>
+		</div>
+		<div class="stat col-span-2">
+			<div class="stat-title">Reference workout</div>
+			<div class="stat-value">Not found</div>
 		</div>
 	{:else}
 		<div class="stat">
