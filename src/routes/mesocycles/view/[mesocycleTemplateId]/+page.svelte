@@ -149,9 +149,8 @@
 		</div>
 	{/if}
 </div>
-<div class="join grid grid-cols-3 mt-auto">
+<div class="join grid grid-cols-2 mt-auto">
 	<button class="join-item btn btn-error" on:click={() => deleteModal.show()}>Delete</button>
-	<button class="join-item btn btn-primary">Edit</button>
 	<button class="join-item btn btn-accent" on:click={startMesocycle} disabled={callingEndpoint}>
 		{#if callingEndpoint}
 			<span class="loading loading-bars"></span>
