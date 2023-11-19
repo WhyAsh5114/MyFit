@@ -7,7 +7,7 @@
 </script>
 
 <h2>Home</h2>
-{#if activeMesocycle}
+{#if activeMesocycle && activeMesocycleTemplate}
 	<h3 class="text-xl mb-1">Active mesocycle</h3>
 	<ActiveMesocycleCard {activeMesocycle} {activeMesocycleTemplate} />
 
