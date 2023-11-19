@@ -2,7 +2,7 @@
 	export let data;
 	import ActiveMesocycleCard from "./ActiveMesocycleCard.svelte";
 	import { calculateTotalDuration } from "$lib/commonDB";
-	import MesocycleCard from "./MesocycleCard.svelte";
+	import MesocycleTemplateCard from "./MesocycleTemplateCard.svelte";
 
 	let totalMesocycleTemplates = data.streamed.mesocycleTemplatesStreamArray.length;
 	const { activeMesocycle, activeMesocycleTemplate } = data;
@@ -33,7 +33,7 @@
 <div class="flex flex-col gap-1.5 h-px grow overflow-y-auto">
 	{#if totalMesocycleTemplates > 0}
 		{#each data.streamed.mesocycleTemplatesStreamArray as mesocycleTemplatePromise}
-			<MesocycleCard {mesocycleTemplatePromise} />
+			<MesocycleTemplateCard {mesocycleTemplatePromise} />
 		{/each}
 	{:else}
 		<div class="flex flex-col bg-primary rounded-md p-2">
