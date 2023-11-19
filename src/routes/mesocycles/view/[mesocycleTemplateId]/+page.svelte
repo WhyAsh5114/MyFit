@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
+	import { goto, invalidateAll } from "$app/navigation";
 	import { page } from "$app/stores";
 	import { calculateTotalDuration } from "$lib/commonDB.js";
 	import MyModal from "$lib/components/MyModal.svelte";
@@ -51,6 +51,7 @@
 				"content-type": "application/json"
 			}
 		});
+		await invalidateAll();
 		callingEndpoint = false;
 		if (response.ok) {
 			startSuccessfulModal.show();

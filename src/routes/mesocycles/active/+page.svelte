@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
+	import { goto, invalidateAll } from "$app/navigation";
 	import MyModal from "$lib/components/MyModal.svelte";
 	export let data;
 
@@ -35,6 +35,7 @@
 	let redirecting = false;
 	async function closeModal() {
 		redirecting = true;
+		await invalidateAll();
 		await goto("/mesocycles");
 		redirecting = false;
 	}
