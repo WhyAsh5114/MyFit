@@ -33,9 +33,14 @@ export const load: LayoutServerLoad = async ({ locals, url, depends }) => {
 		};
 	}
 
-	const { _id, templateMesoId, workouts, startTimestamp } = activeMesocycleDocument;
+	const {
+		_id: activeMesocycleId,
+		templateMesoId,
+		workouts,
+		startTimestamp
+	} = activeMesocycleDocument;
 	activeMesocycle = {
-		id: _id.toString(),
+		id: activeMesocycleId.toString(),
 		templateMesoId: templateMesoId.toString(),
 		workouts: workouts.map((workout) => workout.toString()),
 		startTimestamp
@@ -49,13 +54,11 @@ export const load: LayoutServerLoad = async ({ locals, url, depends }) => {
 			{ projection: { userId: 0 } }
 		)) as WithId<Omit<MesocycleTemplateDocument, "userId">>;
 
-	{
-		const { _id, ...otherProps } = activeMesocycleTemplateDocument;
-		activeMesocycleTemplate = {
-			id: activeMesocycleTemplateDocument._id.toString(),
-			...otherProps
-		};
-	}
+	const { _id: activeMesocycleTemplateId, ...otherProps } = activeMesocycleTemplateDocument;
+	activeMesocycleTemplate = {
+		id: activeMesocycleTemplateDocument._id.toString(),
+		...otherProps
+	};
 
 	return {
 		session,
