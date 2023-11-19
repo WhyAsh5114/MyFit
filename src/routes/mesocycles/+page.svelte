@@ -1,18 +1,18 @@
 <script lang="ts">
+	export let data;
 	import ActiveMesocycleCard from "./ActiveMesocycleCard.svelte";
-
 	import { calculateTotalDuration } from "$lib/commonDB";
 	import MesocycleCard from "./MesocycleCard.svelte";
-	export let data;
 
 	let totalMesocycleTemplates = data.streamed.mesocycleTemplatesStreamArray.length;
+	const { activeMesocycle, activeMesocycleTemplate } = data;
 
 	let totalCycles: number, totalWorkouts: number;
-	if (data.activeMesocycleTemplate) {
-		const totalNonRestDays = data.activeMesocycleTemplate.exerciseSplit.filter(
+	if (activeMesocycleTemplate) {
+		const totalNonRestDays = activeMesocycleTemplate.exerciseSplit.filter(
 			(split) => split !== null
 		).length;
-		totalCycles = calculateTotalDuration(data.activeMesocycleTemplate.RIRProgression);
+		totalCycles = calculateTotalDuration(activeMesocycleTemplate.RIRProgression);
 		totalWorkouts = totalCycles * totalNonRestDays;
 	}
 </script>
@@ -20,11 +20,8 @@
 <h2>Mesocycles</h2>
 
 <h3 class="text-xl mb-1">Currently active</h3>
-{#if data.activeMesocycleTemplate}
-	<ActiveMesocycleCard
-		activeMesocycleTemplate={data.activeMesocycleTemplate}
-		activeMesocycle={data.activeMesocycle}
-	/>
+{#if activeMesocycle && activeMesocycleTemplate}
+	<ActiveMesocycleCard {activeMesocycleTemplate} {activeMesocycle} />
 {:else}
 	<div class="flex flex-col bg-primary rounded-md p-2">
 		<span class="text-warning">No mesocycle active</span>
