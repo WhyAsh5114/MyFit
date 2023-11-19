@@ -51,4 +51,4 @@
 		</div>
 	{/each}
 </ul>
-<button class="btn btn-primary btn-block" on:click={addExercise}> + Add exercise </button>
+<button class="btn btn-primary btn-block mt-1" on:click={addExercise}> + Add exercise </button>
