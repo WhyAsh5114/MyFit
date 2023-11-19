@@ -1,7 +1,7 @@
 import type { PageServerLoad } from "./$types";
 import clientPromise from "$lib/mongo/mongodb";
 import { error } from "@sveltejs/kit";
-import { ObjectId } from "mongodb";
+import { ObjectId, type WithId } from "mongodb";
 import type { ActiveMesocycleDocument, MesocycleTemplateDocument } from "$lib/types/documents";
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -30,11 +30,15 @@ export const load: PageServerLoad = async ({ locals }) => {
 		startTimestamp
 	};
 
-	const activeMesocycleTemplateDocument = await client
+	const activeMesocycleTemplateDocument = (await client
 		.db()
 		.collection<Omit<MesocycleTemplateDocument, "userId">>("mesocycleTemplates")
-		.findOne({ _id: new ObjectId(activeMesocycle.templateMesoId) }, { projection: { userId: 0 } });
-	if (activeMesocycleTemplateDocument) {
+		.findOne(
+			{ _id: new ObjectId(activeMesocycle.templateMesoId) },
+			{ projection: { userId: 0 } }
+		)) as WithId<Omit<MesocycleTemplateDocument, "userId">>;
+	
+	{
 		const { _id, ...otherProps } = activeMesocycleTemplateDocument;
 		activeMesocycleTemplate = {
 			id: activeMesocycleTemplateDocument._id.toString(),
