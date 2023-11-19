@@ -19,7 +19,7 @@
 
 <h3 class="text-xl mb-1">Currently active</h3>
 {#if data.activeMesocycleTemplate}
-	<button class="btn btn-primary rounded-md h-fit p-2">
+	<a class="btn btn-primary rounded-md h-fit p-2" href="/mesocycles/active">
 		<div class="grid grid-cols-3 place-items-center w-full gap-2">
 			<span class="font-semibold text-lg text-accent text-left col-span-2"
 				>{data.activeMesocycleTemplate.name}</span
@@ -33,7 +33,7 @@
 				max={totalWorkouts}
 			></progress>
 		</div>
-	</button>
+	</a>
 {:else}
 	<div class="flex flex-col bg-primary rounded-md p-2">
 		<span class="text-warning">No mesocycle active</span>
