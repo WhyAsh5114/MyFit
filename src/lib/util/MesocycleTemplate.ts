@@ -10,5 +10,7 @@ export function getTodaysWorkout(
 	workouts: string[],
 	exerciseSplit: MesocycleTemplate["exerciseSplit"]
 ) {
-	return exerciseSplit[workouts.length % exerciseSplit.length];
+	const workoutIdx = workouts.length % exerciseSplit.length;
+	const workout = exerciseSplit[workoutIdx];
+	return { workout, workoutIdx };
 }
