@@ -61,11 +61,11 @@
 	}
 </script>
 
-<MyModal bind:dialogElement={errorModal} title="Error" titleColor="text-error">
+<MyModal bind:dialogElement={errorModal} title="Error">
 	{errorMsg}
 </MyModal>
 
-<MyModal bind:dialogElement={deleteModal} title="Delete mesocycle" titleColor="text-error">
+<MyModal bind:dialogElement={deleteModal} title="Delete mesocycle">
 	Are you sure you want to delete this mesocycle? <b>({data.mesocycleTemplate.name})</b>
 	<div class="join grid grid-cols-2 mt-4">
 		<button class="join-item btn uppercase"> Cancel </button>
@@ -75,13 +75,16 @@
 			type="button"
 			on:click={deleteMesocycle}
 		>
-			Yes, delete
+			{#if callingEndpoint}
+				<span class="loading loading-bars"></span>
+			{:else}
+				Yes, delete
+			{/if}
 		</button>
 	</div>
 </MyModal>
 <MyModal
 	title="Deleted successfully"
-	titleColor="text-accent"
 	bind:dialogElement={deletionSuccessfulModal}
 	onClose={() => {
 		goto("/mesocycles");
@@ -93,7 +96,6 @@
 <MyModal
 	bind:dialogElement={startSuccessfulModal}
 	title="Started successfully"
-	titleColor="text-accent"
 >
 	Mesocycle started successfully
 </MyModal>
@@ -150,5 +152,11 @@
 <div class="join grid grid-cols-3 mt-auto">
 	<button class="join-item btn btn-error" on:click={() => deleteModal.show()}>Delete</button>
 	<button class="join-item btn btn-primary">Edit</button>
-	<button class="join-item btn btn-accent" on:click={startMesocycle}>Start</button>
+	<button class="join-item btn btn-accent" on:click={startMesocycle} disabled={callingEndpoint}>
+		{#if callingEndpoint}
+			<span class="loading loading-bars"></span>
+		{:else}
+			Start
+		{/if}
+	</button>
 </div>

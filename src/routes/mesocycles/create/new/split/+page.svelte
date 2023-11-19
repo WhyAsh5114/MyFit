@@ -18,7 +18,7 @@
 	}
 </script>
 
-<MyModal title="Error" titleColor="text-red-500" bind:dialogElement={errorModal}>
+<MyModal title="Error" bind:dialogElement={errorModal}>
 	Need to have at least one workout in a microcycle
 </MyModal>
 <form on:submit|preventDefault={validateSplit} class="flex flex-col grow">

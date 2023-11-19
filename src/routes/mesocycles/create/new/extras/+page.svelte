@@ -89,14 +89,13 @@
 	}
 </script>
 
-<MyModal bind:dialogElement={errorModal} title="Error" titleColor="text-error">
+<MyModal bind:dialogElement={errorModal} title="Error">
 	{errorMessage}
 </MyModal>
 
 <MyModal
 	bind:dialogElement={successModal}
 	title="Success"
-	titleColor="text-accent"
 	onClose={closeModal}
 >
 	Mesocycle created successfully
@@ -183,7 +182,7 @@
 <button
 	type="submit"
 	form="caloric-state-form"
-	class="btn btn-block btn-accent disabled:text-white"
+	class="btn btn-block btn-accent"
 	disabled={callingEndpoint || redirecting}
 >
 	{#if callingEndpoint}

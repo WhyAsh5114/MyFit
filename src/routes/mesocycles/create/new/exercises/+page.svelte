@@ -38,7 +38,7 @@
 	let errorModal: HTMLDialogElement;
 </script>
 
-<MyModal title="Error" titleColor="text-error" bind:dialogElement={errorModal}>
+<MyModal title="Error" bind:dialogElement={errorModal}>
 	Add at least one exercise in each workout. Missing in: <span class="font-semibold text-error">
 		{invalidSplits.join(", ")}
 	</span>

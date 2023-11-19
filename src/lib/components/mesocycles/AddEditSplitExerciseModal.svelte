@@ -65,7 +65,7 @@
 	}
 </script>
 
-<MyModal title="{modeText} exercise" titleColor="text-accent" bind:dialogElement>
+<MyModal title="{modeText} exercise" bind:dialogElement>
 	<form on:submit|preventDefault={submitForm}>
 		<div class="form-control w-full">
 			<label class="label" for="{modeText}-exercise-name">

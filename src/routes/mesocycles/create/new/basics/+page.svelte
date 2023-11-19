@@ -102,7 +102,7 @@
 	}
 </script>
 
-<MyModal title="Error" titleColor="text-error" bind:dialogElement={errorModal}>
+<MyModal title="Error" bind:dialogElement={errorModal}>
 	Total RIR duration is less than total mesocycle duration, re-adjust the sliders accordingly
 </MyModal>
 <form class="flex flex-col w-full grow" on:submit|preventDefault={validateProgression}>

@@ -11,7 +11,7 @@
 	<title>MyFit | Login</title>
 </svelte:head>
 
-<MyModal title="Redirecting" titleColor="text-accent" bind:dialogElement={redirectingModal}>
+<MyModal title="Redirecting" bind:dialogElement={redirectingModal}>
 	<button class="btn btn-accent normal-case">
 		<span class="loading loading-spinner" />
 		Please wait
