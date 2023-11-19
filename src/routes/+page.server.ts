@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		return {
 			activeMesocycle,
 			activeMesocycleDocument
-		}
+		};
 	}
 
 	const { _id, templateMesoId, workouts, startTimestamp } = activeMesocycleDocument;
@@ -40,7 +40,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 			{ _id: new ObjectId(activeMesocycle.templateMesoId) },
 			{ projection: { userId: 0 } }
 		)) as WithId<Omit<MesocycleTemplateDocument, "userId">>;
-	
+
 	{
 		const { _id, ...otherProps } = activeMesocycleTemplateDocument;
 		activeMesocycleTemplate = {

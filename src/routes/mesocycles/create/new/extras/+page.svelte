@@ -93,11 +93,7 @@
 	{errorMessage}
 </MyModal>
 
-<MyModal
-	bind:dialogElement={successModal}
-	title="Success"
-	onClose={closeModal}
->
+<MyModal bind:dialogElement={successModal} title="Success" onClose={closeModal}>
 	Mesocycle created successfully
 </MyModal>
 

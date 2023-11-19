@@ -93,10 +93,7 @@
 	Mesocycle <span class="font-semibold">{data.mesocycleTemplate.name}</span> deleted successfully
 </MyModal>
 
-<MyModal
-	bind:dialogElement={startSuccessfulModal}
-	title="Started successfully"
->
+<MyModal bind:dialogElement={startSuccessfulModal} title="Started successfully">
 	Mesocycle started successfully
 </MyModal>
 
