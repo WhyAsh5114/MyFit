@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidateAll } from "$app/navigation";
+	import { goto, invalidate } from "$app/navigation";
 	import MyModal from "$lib/components/MyModal.svelte";
 	export let data;
 
@@ -33,15 +33,15 @@
 	}
 
 	let redirecting = false;
-	async function closeModal() {
+	async function closeMesocycleStoppedModal() {
 		redirecting = true;
-		await invalidateAll();
+		await invalidate("mesocycle:active");
 		await goto("/mesocycles");
 		redirecting = false;
 	}
 </script>
 
-<MyModal bind:dialogElement={modal} bind:title={modalTitle} onClose={closeModal}>
+<MyModal bind:dialogElement={modal} bind:title={modalTitle} onClose={closeMesocycleStoppedModal}>
 	{modalText}
 </MyModal>
 

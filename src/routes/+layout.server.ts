@@ -6,11 +6,12 @@ import { ObjectId, type WithId } from "mongodb";
 
 const unprotectedRoutes = ["/", "/login"];
 
-export const load: LayoutServerLoad = async (event) => {
-	const session = await event.locals.getSession();
+export const load: LayoutServerLoad = async ({ locals, url, depends }) => {
+	depends("mesocycle:active");
+	const session = await locals.getSession();
 
-	if (!session && !unprotectedRoutes.includes(event.url.pathname)) {
-		throw redirect(303, `/login?callbackURL=${event.url.pathname}`);
+	if (!session && !unprotectedRoutes.includes(url.pathname)) {
+		throw redirect(303, `/login?callbackURL=${url.pathname}`);
 	}
 
 	let activeMesocycle: WithSerializedId<ActiveMesocycle> | null = null;

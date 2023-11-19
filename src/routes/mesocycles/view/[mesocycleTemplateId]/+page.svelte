@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidateAll } from "$app/navigation";
+	import { goto, invalidate } from "$app/navigation";
 	import { page } from "$app/stores";
 	import { calculateTotalDuration } from "$lib/commonDB.js";
 	import MyModal from "$lib/components/MyModal.svelte";
@@ -51,7 +51,7 @@
 				"content-type": "application/json"
 			}
 		});
-		await invalidateAll();
+		await invalidate("mesocycle:active");
 		callingEndpoint = false;
 		if (response.ok) {
 			startSuccessfulModal.show();
@@ -59,6 +59,14 @@
 		}
 		errorMsg = await response.text();
 		errorModal.show();
+	}
+
+	let redirecting = false;
+	async function closeMesocycleDeleteModal() {
+		redirecting = true;
+		await invalidate("mesocycle:templates");
+		await goto("/mesocycles");
+		redirecting = false;
 	}
 </script>
 
@@ -87,9 +95,7 @@
 <MyModal
 	title="Deleted successfully"
 	bind:dialogElement={deletionSuccessfulModal}
-	onClose={() => {
-		goto("/mesocycles");
-	}}
+	onClose={closeMesocycleDeleteModal}
 >
 	Mesocycle <span class="font-semibold">{data.mesocycleTemplate.name}</span> deleted successfully
 </MyModal>
@@ -148,7 +154,14 @@
 	{/if}
 </div>
 <div class="join grid grid-cols-2 mt-auto">
-	<button class="join-item btn btn-error" on:click={() => deleteModal.show()}>Delete</button>
+	<button class="join-item btn btn-error" on:click={() => deleteModal.show()}>
+		{#if redirecting}
+			Redirecting
+			<span class="loading loading-bars"></span>
+		{:else}
+			Delete
+		{/if}
+	</button>
 	<button class="join-item btn btn-accent" on:click={startMesocycle} disabled={callingEndpoint}>
 		{#if callingEndpoint}
 			<span class="loading loading-bars"></span>

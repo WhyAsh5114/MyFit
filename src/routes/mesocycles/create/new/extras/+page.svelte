@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidateAll } from "$app/navigation";
+	import { goto, invalidate } from "$app/navigation";
 	import MyModal from "$lib/components/MyModal.svelte";
 	import { caloricStates, muscleGroups } from "$lib/types/arrays";
 	import {
@@ -82,9 +82,9 @@
 	}
 
 	let redirecting = false;
-	async function closeModal() {
+	async function closeMesocycleCreationSuccessfulModal() {
 		redirecting = true;
-		await invalidateAll();
+		await invalidate("mesocycle:templates");
 		await goto("/mesocycles");
 		redirecting = false;
 	}
@@ -94,7 +94,11 @@
 	{errorMessage}
 </MyModal>
 
-<MyModal bind:dialogElement={successModal} title="Success" onClose={closeModal}>
+<MyModal
+	bind:dialogElement={successModal}
+	title="Success"
+	onClose={closeMesocycleCreationSuccessfulModal}
+>
 	Mesocycle created successfully
 </MyModal>
 
