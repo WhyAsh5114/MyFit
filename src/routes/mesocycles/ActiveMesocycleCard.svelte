@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { calculateTotalDuration } from "$lib/commonDB";
+	import { calculateTotalDuration } from "$lib/util/MesocycleTemplate";
 	export let activeMesocycleTemplate: MesocycleTemplate;
 	export let activeMesocycle: ActiveMesocycle;
 

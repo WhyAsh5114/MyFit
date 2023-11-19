@@ -1,13 +1,14 @@
 <script lang="ts">
+	import { getTodaysWorkout } from "$lib/util/MesocycleTemplate";
 	export let activeMesocycle: ActiveMesocycle;
 	export let activeMesocycleTemplate: MesocycleTemplate;
 
 	let todaysWorkout: { name: string; exercises: SplitExercise[] } | null = null;
 	if (activeMesocycle) {
-		todaysWorkout =
-			activeMesocycleTemplate.exerciseSplit[
-				activeMesocycle.workouts.length % activeMesocycleTemplate.exerciseSplit.length
-			];
+		todaysWorkout = getTodaysWorkout(
+			activeMesocycle.workouts,
+			activeMesocycleTemplate.exerciseSplit
+		);
 	}
 
 	let totalSets = 0;

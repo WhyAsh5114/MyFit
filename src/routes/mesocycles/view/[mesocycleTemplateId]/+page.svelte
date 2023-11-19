@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { goto, invalidate } from "$app/navigation";
 	import { page } from "$app/stores";
-	import { calculateTotalDuration } from "$lib/commonDB.js";
 	import MyModal from "$lib/components/MyModal.svelte";
 	import { caloricStates } from "$lib/types/arrays.js";
+	import { calculateTotalDuration } from "$lib/util/MesocycleTemplate.js";
 	export let data;
 
 	let caloricState = caloricStates.find(

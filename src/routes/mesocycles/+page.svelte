@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let data;
+	import { calculateTotalDuration } from "$lib/util/MesocycleTemplate";
 	import ActiveMesocycleCard from "./ActiveMesocycleCard.svelte";
-	import { calculateTotalDuration } from "$lib/commonDB";
 	import MesocycleTemplateCard from "./MesocycleTemplateCard.svelte";
 
 	let totalMesocycleTemplates = data.streamed.mesocycleTemplatesStreamArray.length;
