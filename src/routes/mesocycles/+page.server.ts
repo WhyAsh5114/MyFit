@@ -54,12 +54,12 @@ export const load: PageServerLoad = async ({ locals }) => {
 		};
 	}
 
-	const { _id, templateMesoId, workouts, startDate } = activeMesocycleDocument;
+	const { _id, templateMesoId, workouts, startTimestamp } = activeMesocycleDocument;
 	activeMesocycle = {
 		id: _id.toString(),
 		templateMesoId: templateMesoId.toString(),
 		workouts: workouts.map((workout) => workout.toString()),
-		startDate
+		startTimestamp
 	};
 
 	const activeMesocycleTemplateDocument = await client
