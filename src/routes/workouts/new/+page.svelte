@@ -1,6 +1,8 @@
 <script lang="ts">
 	import {
+		getCycleNumber,
 		getMuscleGroupsAndSets,
+		getPlannedRIR,
 		getTodaysWorkout,
 		getTotalSets
 	} from "$lib/util/MesocycleTemplate.js";
@@ -26,7 +28,12 @@
 			<div class="stat-value">
 				{todaysWorkout.name}
 			</div>
-			<div class="stat-desc">Day {workoutIdx + 1}</div>
+			<div class="stat-desc">
+				Day {workoutIdx + 1}, Cycle {getCycleNumber(
+					activeMesocycleTemplate.exerciseSplit,
+					activeMesocycle.workouts
+				)}
+			</div>
 		</div>
 		<div class="stat">
 			<div class="stat-title">Total sets</div>
@@ -34,6 +41,9 @@
 		</div>
 		<div class="stat">
 			<div class="stat-title">Planned RIR</div>
+			<div class="stat-value">
+				{getPlannedRIR(activeMesocycleTemplate, activeMesocycle.workouts)}
+			</div>
 		</div>
 		<div class="stat col-span-2">
 			<div class="stat-title">Muscle groups</div>

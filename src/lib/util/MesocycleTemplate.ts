@@ -46,3 +46,27 @@ export function getTotalSets(exercises: SplitExercise[]) {
 	});
 	return totalSets;
 }
+
+export function getCycleNumber(
+	exerciseSplit: MesocycleTemplate["exerciseSplit"],
+	workouts: string[]
+) {
+	return 1 + Math.floor(workouts.length / exerciseSplit.length);
+}
+
+export function getPlannedRIR(
+	{ exerciseSplit, RIRProgression }: MesocycleTemplate,
+	workouts: string[]
+) {
+	const cycleNumber = getCycleNumber(exerciseSplit, workouts);
+	let cyclesPassed = 0;
+	let plannedRIR = -1;
+	for (const { specificRIR, cycles } of RIRProgression) {
+		cyclesPassed += cycles;
+		if (cycleNumber < cyclesPassed) {
+			plannedRIR = specificRIR;
+			break;
+		}
+	}
+	return plannedRIR;
+}
