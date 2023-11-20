@@ -47,7 +47,7 @@
 		</div>
 		<div class="stat col-span-2">
 			<div class="stat-title">Muscle groups</div>
-			<div class="flex flex-wrap gap-1 mt-2">
+			<div class="flex flex-wrap gap-1 mt-2 font-semibold">
 				{#each muscleGroupsAndSets as { muscleGroup, sets }}
 					{@const specialized = activeMesocycleTemplate.specialization?.includes(muscleGroup)}
 					<span class="badge {specialized ? 'badge-accent' : ''}">{muscleGroup} x {sets}</span>

@@ -77,9 +77,9 @@
 <MyModal bind:dialogElement={deleteModal} title="Delete mesocycle">
 	Are you sure you want to delete this mesocycle? <b>({data.mesocycleTemplate.name})</b>
 	<div class="join grid grid-cols-2 mt-4">
-		<button class="join-item btn uppercase"> Cancel </button>
+		<button class="join-item btn"> Cancel </button>
 		<button
-			class="join-item btn btn-error uppercase"
+			class="join-item btn btn-error"
 			disabled={callingEndpoint}
 			type="button"
 			on:click={deleteMesocycle}
