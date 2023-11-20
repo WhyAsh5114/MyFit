@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { dateFormatter } from "$lib/util/CommonFunctions.js";
 	import {
 		getCycleNumber,
 		getMuscleGroupsAndSets,
@@ -56,7 +57,13 @@
 		</div>
 		<div class="stat col-span-2">
 			<div class="stat-title">Reference workout</div>
-			<div class="stat-value">Not found</div>
+			<div class="stat-value">
+				{#if data.referenceWorkoutTimestamp}
+					{dateFormatter(data.referenceWorkoutTimestamp)}
+				{:else}
+					Not found
+				{/if}
+			</div>
 		</div>
 	{:else}
 		<div class="stat">
