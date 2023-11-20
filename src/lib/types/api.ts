@@ -13,3 +13,7 @@ type APIMesocyclesStartMesocycle = {
 type APIMesocyclesStopMesocycle = {
 	activeMesocycleId: string;
 };
+
+type APIWorkoutsGetReferenceWorkout = {
+	workoutName: string;
+}

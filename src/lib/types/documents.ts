@@ -12,3 +12,8 @@ export type ActiveMesocycleDocument = {
 export type PerformedMesocycleDocument = ActiveMesocycleDocument & {
 	endTimestamp: EpochTimeStamp;
 };
+
+export type WorkoutDocument = Workout & {
+	userId: ObjectId;
+	performedMesocycleId: ObjectId;
+}
