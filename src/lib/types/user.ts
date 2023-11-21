@@ -2,10 +2,8 @@ type Nullable<T> = {
 	[P in keyof T]: T[P] | null;
 };
 
-type UserProperties = {
-	mesocycleTemplates: (null | MesocycleTemplate)[];
-	weightTypeIncrements: Record<ExerciseWeightType, number>;
-	workouts: (null | Workout)[];
+type AllUserPreferences = {
+	bodyweight: number;
 };
 
-type AppUser = Nullable<UserProperties>;
+type UserPreferences = Nullable<AllUserPreferences>;

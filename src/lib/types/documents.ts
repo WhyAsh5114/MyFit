@@ -16,4 +16,8 @@ export type PerformedMesocycleDocument = ActiveMesocycleDocument & {
 export type WorkoutDocument = Workout & {
 	userId: ObjectId;
 	performedMesocycleId: ObjectId;
-}
+};
+
+export type UserPreferencesDocument = UserPreferences & {
+	userId: ObjectId;
+};
