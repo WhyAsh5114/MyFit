@@ -14,12 +14,7 @@ export const muscleGroups: typeof MuscleGroups = [
 	"Calves"
 ] as const;
 
-export const exerciseWeightTypes: typeof ExerciseWeightTypes = [
-	"Barbell",
-	"Dumbbell",
-	"Machine",
-	"Bodyweight"
-] as const;
+export const exerciseWeightTypes: typeof ExerciseWeightTypes = ["Weighted", "Bodyweight"] as const;
 
 export const caloricStates: typeof CaloricStates = [
 	{
