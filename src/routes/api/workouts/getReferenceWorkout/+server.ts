@@ -48,7 +48,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 					performedMesocycleId: activeMesocycle._id
 				},
 				{ limit: exerciseSplit.length }
-			);
+			)
+			.sort({ startTimestamp: -1 });
 
 		const currentWorkoutIdx = exerciseSplit.findIndex((split) => split?.name === workoutName);
 		let referenceWorkoutDocument: WorkoutDocument | undefined = undefined;
