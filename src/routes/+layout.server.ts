@@ -7,7 +7,7 @@ import { ObjectId, type WithId } from "mongodb";
 const unprotectedRoutes = ["/", "/login"];
 
 export const load: LayoutServerLoad = async ({ locals, url, depends }) => {
-	depends("mesocycle:active", "user:preferences");
+	depends("mesocycle:active");
 	const session = await locals.getSession();
 
 	if (!session && !unprotectedRoutes.includes(url.pathname)) {
