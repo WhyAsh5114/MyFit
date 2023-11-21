@@ -11,13 +11,17 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { ...userProps }: APIUserUpdatePreferences = await request.json();
+	const userPreferences: APIUserUpdatePreferences = await request.json();
 	const client = await clientPromise;
 	try {
 		await client
 			.db()
 			.collection<UserPreferencesDocument>("userPreferences")
-			.updateOne({ userId: new ObjectId(session.user.id) }, { ...userProps }, { upsert: true });
+			.updateOne(
+				{ userId: new ObjectId(session.user.id) },
+				{ $set: userPreferences },
+				{ upsert: true }
+			);
 
 		return new Response("User preferences updated successfully", {
 			status: 200
