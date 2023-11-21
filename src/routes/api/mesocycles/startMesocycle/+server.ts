@@ -18,7 +18,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	try {
 		const activeMesocycle = await client
 			.db()
-			.collection("activeMesocycles")
+			.collection<ActiveMesocycleDocument>("activeMesocycles")
 			.findOne({
 				userId: new ObjectId(session.user.id)
 			});

@@ -33,7 +33,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		if (activeMesocycle.workouts.length === 0) {
 			await client
 				.db()
-				.collection("activeMesocycles")
+				.collection<ActiveMesocycleDocument>("activeMesocycles")
 				.deleteOne({ _id: new ObjectId(activeMesocycleId) });
 
 			return new Response("Stopped successfully. Not saved as no workouts performed", {
