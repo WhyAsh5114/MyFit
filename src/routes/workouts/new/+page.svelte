@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto, invalidate } from "$app/navigation";
 	import { dateFormatter } from "$lib/util/CommonFunctions.js";
 	import {
 		getCycleNumber,
@@ -16,13 +17,45 @@
 	);
 	let muscleGroupsAndSets: { muscleGroup: MuscleGroup; sets: number }[];
 	let totalSets = 0;
+	let bodyweightExercises = false;
 	if (todaysWorkout) {
 		muscleGroupsAndSets = getMuscleGroupsAndSets(todaysWorkout.exercises);
 		totalSets = getTotalSets(todaysWorkout.exercises);
+		for (const exercise of todaysWorkout.exercises) {
+			if (exercise.weightType.includes("Bodyweight")) {
+				bodyweightExercises = true;
+				break;
+			}
+		}
+	}
+
+	let bodyweightInput = data.userPreferences?.bodyweight || null;
+	let callingEndpoint = false;
+	async function submitForm() {
+		if (bodyweightExercises && bodyweightInput !== null) {
+			const requestBody: APIUserUpdatePreferences = {
+				bodyweight: bodyweightInput
+			};
+			callingEndpoint = true;
+			const response = await fetch("/api/user/updatePreferences", {
+				method: "POST",
+				body: JSON.stringify(requestBody),
+				headers: {
+					"content-type": "application/json"
+				}
+			});
+			callingEndpoint = false;
+			await invalidate("user:preferences");
+			await goto("/workouts/new/exercises");
+		}
 	}
 </script>
 
-<div class="stats stats-vertical grid grid-cols-2">
+<form
+	on:submit|preventDefault={submitForm}
+	id="workoutForm"
+	class="stats stats-vertical grid grid-cols-2"
+>
 	{#if todaysWorkout}
 		<div class="stat col-span-2">
 			<div class="stat-title">Workout template</div>
@@ -65,10 +98,32 @@
 				{/if}
 			</div>
 		</div>
+		{#if bodyweightExercises}
+			<div class="stat col-span-2">
+				<div class="stat-title mb-2">Bodyweight</div>
+				<input
+					type="number"
+					id="bodyweight"
+					step={0.01}
+					class="input"
+					placeholder="Type here"
+					bind:value={bodyweightInput}
+					required
+				/>
+			</div>
+		{/if}
 	{:else}
 		<div class="stat">
 			<div class="stat-title">Workout template</div>
 			<div class="stat-value">It's a Rest day!</div>
 		</div>
 	{/if}
-</div>
+</form>
+
+<button type="submit" form="workoutForm" class="btn btn-accent mt-auto">
+	{#if callingEndpoint}
+		<span class="loading loading-bars"></span>
+	{:else}
+		Log workout
+	{/if}
+</button>
