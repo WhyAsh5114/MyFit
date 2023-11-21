@@ -20,7 +20,7 @@
 		}
 	}
 
-	let newExercise: Partial<SplitExercise> = {};
+	let newExercise: Partial<SplitExercise> = { weightType: "Weighted" };
 	let alreadyExists = false;
 	function addExercise() {
 		const duplicate = exercises.find((exercise) => exercise.name === newExercise.name);
@@ -29,7 +29,7 @@
 
 		const typedExercise = JSON.parse(JSON.stringify(newExercise)) as SplitExercise;
 		exercises = [...exercises, typedExercise];
-		newExercise = {};
+		newExercise = { weightType: "Weighted" };
 		selectedExercise = newExercise;
 		dialogElement.close();
 	}

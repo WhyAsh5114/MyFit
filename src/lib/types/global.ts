@@ -15,7 +15,12 @@ const MuscleGroups = [
 ] as const;
 type MuscleGroup = (typeof MuscleGroups)[number];
 
-const ExerciseWeightTypes = ["Barbell", "Dumbbell", "Machine", "Bodyweight"] as const;
+const ExerciseWeightTypes = [
+	"Weighted",
+	"Bodyweight",
+	"Bodyweight assisted",
+	"Bodyweight weighted"
+] as const;
 type ExerciseWeightType = (typeof ExerciseWeightTypes)[number];
 
 type WithSerializedId<T> = T & { id: string };
