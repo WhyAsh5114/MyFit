@@ -5,7 +5,9 @@ import { ObjectId } from "mongodb";
 import type { PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async ({ locals, parent, fetch }) => {
+export const load: PageServerLoad = async ({ locals, parent, fetch, depends }) => {
+	depends("user:preferences");
+
 	const session = await locals.getSession();
 	if (!session?.user?.id) {
 		throw error(403, "Not logged in");
@@ -47,6 +49,6 @@ export const load: PageServerLoad = async ({ locals, parent, fetch }) => {
 		activeMesocycle,
 		activeMesocycleTemplate,
 		referenceWorkoutTimestamp,
-		userPreferences
+		userBodyweight: userPreferences?.bodyweight || null
 	};
 };

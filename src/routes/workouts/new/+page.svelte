@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto, invalidate } from "$app/navigation";
+	import MyModal from "$lib/components/MyModal.svelte";
 	import { dateFormatter } from "$lib/util/CommonFunctions.js";
 	import {
 		getCycleNumber,
@@ -8,6 +9,9 @@
 		getTodaysWorkout,
 		getTotalSets
 	} from "$lib/util/MesocycleTemplate.js";
+	import EditIcon from "virtual:icons/ep/edit";
+	import DoneIcon from "virtual:icons/material-symbols/done";
+	import CancelIcon from "virtual:icons/ph/x-bold";
 
 	export let data;
 	const { activeMesocycle, activeMesocycleTemplate } = data;
@@ -29,28 +33,41 @@
 		}
 	}
 
-	let bodyweightInput = data.userPreferences?.bodyweight || null;
-	let callingEndpoint = false;
+	let bodyweightInputValue = data.userBodyweight;
+	let editingBodyweightValue = bodyweightInputValue === null;
 	async function submitForm() {
-		if (bodyweightExercises && bodyweightInput !== null) {
-			const requestBody: APIUserUpdatePreferences = {
-				bodyweight: bodyweightInput
-			};
-			callingEndpoint = true;
-			const response = await fetch("/api/user/updatePreferences", {
-				method: "POST",
-				body: JSON.stringify(requestBody),
-				headers: {
-					"content-type": "application/json"
-				}
-			});
-			callingEndpoint = false;
-			await invalidate("user:preferences");
-			await goto("/workouts/new/exercises");
+		await goto("/workouts/new/exercises");
+	}
+
+	let errorModal: HTMLDialogElement;
+	let errorMsg = "";
+	let callingEndpoint = false;
+	async function saveBodyweight() {
+		const requestBody: APIUserUpdatePreferences = {
+			bodyweight: bodyweightInputValue
+		};
+		callingEndpoint = true;
+		const response = await fetch("/api/user/updatePreferences", {
+			method: "POST",
+			body: JSON.stringify(requestBody),
+			headers: {
+				"content-type": "application/json"
+			}
+		});
+		await invalidate("user:preferences");
+		callingEndpoint = false;
+		if (response.ok) {
+			editingBodyweightValue = false;
+		} else {
+			errorMsg = await response.text();
+			errorModal.show();
 		}
 	}
 </script>
 
+<MyModal bind:dialogElement={errorModal} title="Error">
+	{errorMsg}
+</MyModal>
 <form
 	on:submit|preventDefault={submitForm}
 	id="workoutForm"
@@ -99,17 +116,54 @@
 			</div>
 		</div>
 		{#if bodyweightExercises}
-			<div class="stat col-span-2">
+			<div class="stat col-span-2 w-full">
 				<div class="stat-title mb-2">Bodyweight</div>
-				<input
-					type="number"
-					id="bodyweight"
-					step={0.01}
-					class="input"
-					placeholder="Type here"
-					bind:value={bodyweightInput}
-					required
-				/>
+				<div class="flex justify-between items-center gap-2">
+					{#if data.userBodyweight === null || editingBodyweightValue}
+						<input
+							type="number"
+							id="bodyweight"
+							min={0}
+							step={0.01}
+							class="input w-3/4"
+							placeholder="Type here"
+							bind:value={bodyweightInputValue}
+							required
+						/>
+						<button
+							class="btn btn-circle btn-sm btn-error shrink-0"
+							type="button"
+							on:click={() => (editingBodyweightValue = false)}
+							disabled={data.userBodyweight === null}
+						>
+							<CancelIcon class="w-5 h-5" />
+						</button>
+						<button
+							class="btn btn-circle btn-sm btn-accent shrink-0"
+							type="button"
+							on:click={saveBodyweight}
+							disabled={bodyweightInputValue === null}
+						>
+							{#if callingEndpoint}
+								<span class="loading loading-spinner"></span>
+							{:else}
+								<DoneIcon class="w-6 h-6" />
+							{/if}
+						</button>
+					{:else}
+						<div class="stat-value">{data.userBodyweight}</div>
+						<button
+							class="btn btn-sm btn-ghost"
+							type="button"
+							on:click={() => {
+								bodyweightInputValue = data.userBodyweight;
+								editingBodyweightValue = true;
+							}}
+						>
+							<EditIcon class="w-6 h-6" />
+						</button>
+					{/if}
+				</div>
 			</div>
 		{/if}
 	{:else}
@@ -120,10 +174,11 @@
 	{/if}
 </form>
 
-<button type="submit" form="workoutForm" class="btn btn-accent mt-auto">
-	{#if callingEndpoint}
-		<span class="loading loading-bars"></span>
-	{:else}
-		Log workout
-	{/if}
+<button
+	type="submit"
+	form="workoutForm"
+	class="btn btn-accent mt-auto"
+	disabled={editingBodyweightValue}
+>
+	Log workout
 </button>
