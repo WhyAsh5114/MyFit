@@ -1,7 +1,7 @@
 import { redirect } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
 import clientPromise from "$lib/mongo/mongodb";
-import type { ActiveMesocycleDocument, MesocycleTemplateDocument, UserPreferencesDocument } from "$lib/types/documents";
+import type { ActiveMesocycleDocument, MesocycleTemplateDocument } from "$lib/types/documents";
 import { ObjectId, type WithId } from "mongodb";
 
 const unprotectedRoutes = ["/", "/login"];
@@ -14,18 +14,13 @@ export const load: LayoutServerLoad = async ({ locals, url, depends }) => {
 		throw redirect(303, `/login?callbackURL=${url.pathname}`);
 	}
 
-	let userPreferences: UserPreferences | null = null;
 	let activeMesocycle: WithSerializedId<ActiveMesocycle> | null = null;
 	let activeMesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
 	if (!session?.user?.id) {
-		return { session, activeMesocycle, activeMesocycleTemplate, userPreferences };
+		return { session, activeMesocycle, activeMesocycleTemplate };
 	}
 
 	const client = await clientPromise;
-	userPreferences = await client.db().collection<UserPreferencesDocument>("users").findOne({
-		userId: new ObjectId(session.user.id)
-	});
-
 	const activeMesocycleDocument = await client
 		.db()
 		.collection<Omit<ActiveMesocycleDocument, "userId">>("activeMesocycles")
@@ -34,8 +29,7 @@ export const load: LayoutServerLoad = async ({ locals, url, depends }) => {
 		return {
 			session,
 			activeMesocycle,
-			activeMesocycleTemplate,
-			userPreferences
+			activeMesocycleTemplate
 		};
 	}
 
