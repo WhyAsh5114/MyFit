@@ -1,6 +1,6 @@
 import clientPromise from "$lib/mongo/mongodb";
 import type { UserPreferencesDocument, WorkoutDocument } from "$lib/types/documents";
-import { getTodaysWorkout } from "$lib/util/MesocycleTemplate";
+import { getTodaysSplitWorkout } from "$lib/util/MesocycleTemplate";
 import { ObjectId } from "mongodb";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
@@ -24,7 +24,7 @@ export const load: LayoutServerLoad = async ({ locals, parent, fetch, depends })
 		.collection<Omit<UserPreferencesDocument, "userId">>("userPreferences")
 		.findOne({ userId: new ObjectId(session.user.id) }, { projection: { _id: 0, userId: 0 } });
 
-	const { workout: todaysWorkout } = getTodaysWorkout(
+	const todaysWorkout = getTodaysSplitWorkout(
 		activeMesocycle.workouts,
 		activeMesocycleTemplate.exerciseSplit
 	);

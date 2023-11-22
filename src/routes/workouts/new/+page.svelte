@@ -4,9 +4,10 @@
 	import { dateFormatter } from "$lib/util/CommonFunctions.js";
 	import {
 		getCycleNumber,
+		getDayNumber,
 		getMuscleGroupsAndSets,
 		getPlannedRIR,
-		getTodaysWorkout,
+		getTodaysSplitWorkout,
 		getTotalSets
 	} from "$lib/util/MesocycleTemplate.js";
 	import EditIcon from "virtual:icons/ep/edit";
@@ -15,7 +16,8 @@
 
 	export let data;
 	const { activeMesocycle, activeMesocycleTemplate } = data;
-	const { workout: todaysWorkout, workoutIdx } = getTodaysWorkout(
+	const workoutIdx = getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit);
+	const todaysWorkout = getTodaysSplitWorkout(
 		activeMesocycle.workouts,
 		activeMesocycleTemplate.exerciseSplit
 	);

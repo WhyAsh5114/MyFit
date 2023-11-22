@@ -6,13 +6,20 @@ export function calculateTotalDuration(RIRProgression: RIRProgressionData[]) {
 	return totalDuration;
 }
 
-export function getTodaysWorkout(
+export function getDayNumber(
 	workouts: (string | null)[],
 	exerciseSplit: MesocycleTemplate["exerciseSplit"]
 ) {
-	const workoutIdx = workouts.length % exerciseSplit.length;
+	return workouts.length % exerciseSplit.length;
+}
+
+export function getTodaysSplitWorkout(
+	workouts: (string | null)[],
+	exerciseSplit: MesocycleTemplate["exerciseSplit"]
+) {
+	const workoutIdx = getDayNumber(workouts, exerciseSplit);
 	const workout = exerciseSplit[workoutIdx];
-	return { workout, workoutIdx };
+	return workout;
 }
 
 export function getMuscleGroups(exercises: SplitExercise[]) {
