@@ -2,10 +2,10 @@ import clientPromise from "$lib/mongo/mongodb";
 import type { UserPreferencesDocument, WorkoutDocument } from "$lib/types/documents";
 import { getTodaysWorkout } from "$lib/util/MesocycleTemplate";
 import { ObjectId } from "mongodb";
-import type { PageServerLoad } from "./$types";
+import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async ({ locals, parent, fetch, depends }) => {
+export const load: LayoutServerLoad = async ({ locals, parent, fetch, depends }) => {
 	depends("user:preferences");
 
 	const session = await locals.getSession();
@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({ locals, parent, fetch, depends }) =
 		activeMesocycleTemplate.exerciseSplit
 	);
 
-	let referenceWorkoutTimestamp: EpochTimeStamp | null = null;
+	let referenceWorkout: Workout | null = null;
 	if (todaysWorkout) {
 		const requestBody: APIWorkoutsGetReferenceWorkout = { workoutName: todaysWorkout.name };
 		const response = await fetch("/api/workouts/getReferenceWorkout", {
@@ -41,14 +41,14 @@ export const load: PageServerLoad = async ({ locals, parent, fetch, depends }) =
 		});
 		if (response.ok) {
 			const referenceWorkoutDocument: WorkoutDocument = await response.json();
-			referenceWorkoutTimestamp = referenceWorkoutDocument.startTimestamp;
+			referenceWorkout = referenceWorkoutDocument;
 		}
 	}
 
 	return {
 		activeMesocycle,
 		activeMesocycleTemplate,
-		referenceWorkoutTimestamp,
+		referenceWorkout,
 		userBodyweight: userPreferences?.bodyweight || null
 	};
 };
