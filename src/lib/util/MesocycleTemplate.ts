@@ -13,11 +13,18 @@ export function getDayNumber(
 	return workouts.length % exerciseSplit.length;
 }
 
+export function getCycleNumber(
+	exerciseSplit: MesocycleTemplate["exerciseSplit"],
+	workouts: (string | null)[]
+) {
+	return 1 + Math.floor(workouts.length / exerciseSplit.length);
+}
+
 export function getTodaysSplitWorkout(
 	workouts: (string | null)[],
 	exerciseSplit: MesocycleTemplate["exerciseSplit"]
 ) {
-	const workoutIdx = getDayNumber(workouts, exerciseSplit);
+	const workoutIdx = workouts.length % exerciseSplit.length;;
 	const workout = exerciseSplit[workoutIdx];
 	return workout;
 }
@@ -52,13 +59,6 @@ export function getTotalSets(exercises: SplitExercise[]) {
 		totalSets += sets;
 	});
 	return totalSets;
-}
-
-export function getCycleNumber(
-	exerciseSplit: MesocycleTemplate["exerciseSplit"],
-	workouts: (string | null)[]
-) {
-	return 1 + Math.floor(workouts.length / exerciseSplit.length);
 }
 
 export function getPlannedRIR(
