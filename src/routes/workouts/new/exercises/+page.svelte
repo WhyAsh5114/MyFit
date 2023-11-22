@@ -1,8 +1,6 @@
 <script>
-	import {
-		getCycleNumber,
-		getDayNumber
-	} from "$lib/util/MesocycleTemplate";
+	import WorkoutExercisesTable from "$lib/components/workouts/WorkoutExercisesTable.svelte";
+	import { getCycleNumber, getDayNumber } from "$lib/util/MesocycleTemplate";
 	export let data;
 
 	const { activeMesocycle, activeMesocycleTemplate, todaysWorkout, todaysSplitWorkout } = data;
@@ -10,7 +8,7 @@
 </script>
 
 <div class="collapse bg-primary collapse-arrow rounded-md">
-	<input type="checkbox" id="show-workout-details" checked />
+	<input type="checkbox" id="show-workout-details" aria-label="show-workout-details" checked />
 	<div class="collapse-title text-xl font-medium">
 		{todaysSplitWorkout.name}
 		<span class="text-sm font-normal">
@@ -26,5 +24,5 @@
 		</div>
 	</div>
 </div>
-
-<button class="btn btn-accent btn-block mt-auto"> Finish workout </button>
+<WorkoutExercisesTable exercises={todaysWorkout.exercisesPerformed} />
+<button class="btn btn-accent btn-block mt-1"> Finish workout </button>
