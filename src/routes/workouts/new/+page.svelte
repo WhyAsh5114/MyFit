@@ -108,8 +108,8 @@
 		<div class="stat col-span-2">
 			<div class="stat-title">Reference workout</div>
 			<div class="stat-value">
-				{#if data.referenceWorkoutTimestamp}
-					{dateFormatter(data.referenceWorkoutTimestamp)}
+				{#if data.referenceWorkout}
+					{dateFormatter(data.referenceWorkout.startTimestamp)}
 				{:else}
 					Not found
 				{/if}
