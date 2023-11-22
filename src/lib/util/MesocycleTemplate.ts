@@ -7,7 +7,7 @@ export function calculateTotalDuration(RIRProgression: RIRProgressionData[]) {
 }
 
 export function getTodaysWorkout(
-	workouts: string[],
+	workouts: (string | null)[],
 	exerciseSplit: MesocycleTemplate["exerciseSplit"]
 ) {
 	const workoutIdx = workouts.length % exerciseSplit.length;
@@ -49,14 +49,14 @@ export function getTotalSets(exercises: SplitExercise[]) {
 
 export function getCycleNumber(
 	exerciseSplit: MesocycleTemplate["exerciseSplit"],
-	workouts: string[]
+	workouts: (string | null)[]
 ) {
 	return 1 + Math.floor(workouts.length / exerciseSplit.length);
 }
 
 export function getPlannedRIR(
 	{ exerciseSplit, RIRProgression }: MesocycleTemplate,
-	workouts: string[]
+	workouts: (string | null)[]
 ) {
 	const cycleNumber = getCycleNumber(exerciseSplit, workouts);
 	let cyclesPassed = 0;
