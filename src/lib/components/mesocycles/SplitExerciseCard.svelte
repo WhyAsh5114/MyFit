@@ -14,7 +14,7 @@
 	<div class="flex gap-2">
 		<p class="font-semibold grow">{exercise.name}</p>
 		<div class="dropdown dropdown-end">
-			<button class="btn p-0 btn-xs btn-ghost"><Hamburger /></button>
+			<button class="btn p-0 btn-xs btn-ghost" aria-label="exercise-menu"><Hamburger /></button>
 			<ul class="shadow menu menu-sm dropdown-content z-10 bg-neutral gap-1 rounded-md w-fit">
 				<li>
 					<button class="btn btn-primary btn-sm rounded-sm" on:click={() => editExercise(idx)}>

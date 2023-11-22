@@ -137,6 +137,7 @@
 							type="button"
 							on:click={() => (editingBodyweightValue = false)}
 							disabled={data.userBodyweight === null}
+							aria-label="cancel-editing-bodyweight"
 						>
 							<CancelIcon class="w-5 h-5" />
 						</button>
@@ -145,6 +146,7 @@
 							type="button"
 							on:click={saveBodyweight}
 							disabled={bodyweightInputValue === null}
+							aria-label="set-bodyweight"
 						>
 							{#if callingEndpoint}
 								<span class="loading loading-spinner"></span>

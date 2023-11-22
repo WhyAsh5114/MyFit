@@ -157,6 +157,7 @@
 				<input
 					type="checkbox"
 					id="show-specialized-muscle-groups"
+					aria-label="show-specialized-muscle-groups"
 					bind:checked={showSpecializedMuscleGroups}
 				/>
 				<div class="collapse-title text-lg font-medium">
