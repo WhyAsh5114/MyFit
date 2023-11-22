@@ -10,9 +10,11 @@ export function splitExercisesToWorkoutExercise(exercises: SplitExercise[]) {
 			...splitExerciseProps,
 			jointPainRating: null,
 			pumpRating: null,
-			sets: Array(sets).map(() => {
-				return { reps: null, load: null, RIR: null };
-			})
+			sets: Array(sets)
+				.fill(undefined)
+				.map(() => {
+					return { reps: null, load: null, RIR: null };
+				})
 		};
 		workoutExercises.push(workoutExercise);
 	});
