@@ -1,23 +1,7 @@
 <script lang="ts">
+	import WorkoutExerciseSets from "./WorkoutExerciseSets.svelte";
 	import Hamburger from "virtual:icons/material-symbols/menu";
-	import DoneIcon from "virtual:icons/material-symbols/done";
-	import { range } from "$lib/util/CommonFunctions";
 	export let exercise: WorkoutExerciseWithoutSetNumbers;
-
-	function selectParam(
-		value: number,
-		setNumber: number,
-		currentTarget: EventTarget & HTMLButtonElement,
-		param: "reps" | "load" | "RIR"
-	) {
-        currentTarget.blur();
-        
-		if (param === "reps") exercise.sets[setNumber].reps = value;
-		if (param === "load") exercise.sets[setNumber].load = value;
-		if (param === "RIR") exercise.sets[setNumber].RIR = value;
-	}
-
-	const repsArray = "";
 </script>
 
 <div class="flex flex-col rounded-md bg-primary p-2">
@@ -45,74 +29,7 @@
 		<span class="text-sm font-semibold">Load</span>
 		<span class="text-sm font-semibold">RIR</span>
 		<span></span>
-		{#each exercise.sets as { reps, load, RIR }, setNumber}
-			<div class="dropdown">
-				<button class="btn py-0 btn-sm rounded-md">
-					{#if reps !== null}
-						{reps}
-					{:else}
-						?
-					{/if}
-				</button>
-				<div class="dropdown-menu mt-0.5 h-44 overflow-y-auto flex flex-col !flex-nowrap">
-					{#each range(1, 100, 1) as i}
-						<button
-							class="btn btn-sm"
-							on:click={(e) => {
-								selectParam(i, setNumber, e.currentTarget, "reps");
-							}}
-						>
-							{i}
-						</button>
-					{/each}
-				</div>
-			</div>
-			<div class="dropdown">
-				<button class="btn py-0 btn-sm rounded-md">
-					{#if load !== null}
-						{load}
-					{:else}
-						?
-					{/if}
-				</button>
-				<ul class="dropdown-menu mt-0.5 h-44 overflow-y-auto flex flex-col !flex-nowrap">
-					{#each range(0, 1000, 2.5) as i}
-						<li>
-							<button
-								class="btn btn-sm"
-								on:click={(e) => selectParam(i, setNumber, e.currentTarget, "load")}
-							>
-								{i}
-							</button>
-						</li>
-					{/each}
-				</ul>
-			</div>
-			<div class="dropdown">
-				<button class="btn py-0 btn-sm rounded-md">
-					{#if RIR !== null}
-						{RIR}
-					{:else}
-						?
-					{/if}
-				</button>
-				<ul class="dropdown-menu mt-0.5 h-fit overflow-y-auto flex flex-col !flex-nowrap">
-					{#each range(4, 0, -1) as x, i}
-						<li>
-							<button
-								class="btn btn-sm"
-								on:click={(e) => selectParam(i, setNumber, e.currentTarget, "RIR")}
-							>
-								{i}
-							</button>
-						</li>
-					{/each}
-				</ul>
-			</div>
-			<button class="btn btn-xs btn-accent btn-circle" aria-label="mark-set-complete">
-				<DoneIcon />
-			</button>
-		{/each}
+			<WorkoutExerciseSets {exercise} />
 	</div>
 </div>
 
