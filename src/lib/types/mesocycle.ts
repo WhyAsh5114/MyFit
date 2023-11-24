@@ -46,5 +46,5 @@ type SplitExercise = {
 	repRangeStart: number;
 	repRangeEnd: number;
 	weightType: ExerciseWeightType;
-	note: string;
+	note?: string;
 };

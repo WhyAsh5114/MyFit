@@ -46,7 +46,7 @@ type WorkoutExercise = {
 	targetMuscleGroup: MuscleGroup;
 	jointPainRating: JointPainFeedback | null;
 	pumpRating: PumpFeedback | null;
-	note: string;
+	note?: string;
 };
 
 type WorkoutExerciseWithoutSetNumbers = Omit<WorkoutExercise, "sets"> & {
