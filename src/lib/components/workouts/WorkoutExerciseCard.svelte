@@ -26,10 +26,15 @@
 	<div class="h-px bg-secondary brightness-75 mt-1.5"></div>
 	<div class="grid workout-sets-grid gap-x-2 gap-y-1 mt-2 place-items-center">
 		<span class="text-sm font-semibold">Reps</span>
-		<span class="text-sm font-semibold">Load</span>
+		<span class="text-sm font-semibold">
+			Load
+			{#if exercise.weightType === "Bodyweight"}
+				<span class="text-white text-xs">BW</span>
+			{/if}
+		</span>
 		<span class="text-sm font-semibold">RIR</span>
 		<span></span>
-			<WorkoutExerciseSets {exercise} />
+		<WorkoutExerciseSets {exercise} />
 	</div>
 </div>
 
