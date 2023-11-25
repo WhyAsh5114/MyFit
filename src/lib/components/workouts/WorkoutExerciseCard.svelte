@@ -2,6 +2,7 @@
 	import WorkoutExerciseSets from "./WorkoutExerciseSets.svelte";
 	import Hamburger from "virtual:icons/material-symbols/menu";
 	export let exercise: WorkoutExerciseWithoutSetNumbers;
+	export let setsCompleted: boolean[];
 </script>
 
 <div class="flex flex-col rounded-md bg-primary p-2">
@@ -34,7 +35,7 @@
 		</span>
 		<span class="text-sm font-semibold">RIR</span>
 		<span></span>
-		<WorkoutExerciseSets {exercise} />
+		<WorkoutExerciseSets {exercise} bind:setsCompleted />
 	</div>
 </div>
 

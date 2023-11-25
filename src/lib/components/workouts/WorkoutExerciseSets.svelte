@@ -2,8 +2,7 @@
 	import DoneIcon from "virtual:icons/material-symbols/done";
 	import EditIcon from "virtual:icons/material-symbols/edit-outline";
 	export let exercise: WorkoutExerciseWithoutSetNumbers;
-
-	let setsCompleted = Array(exercise.sets.length).fill(false);
+	export let setsCompleted: boolean[];
 </script>
 
 {#each exercise.sets as { reps, load, RIR }, setNumber}
