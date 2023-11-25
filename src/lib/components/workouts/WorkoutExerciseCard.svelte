@@ -2,7 +2,13 @@
 	import WorkoutExerciseSets from "./WorkoutExerciseSets.svelte";
 	import Hamburger from "virtual:icons/material-symbols/menu";
 	export let exercise: WorkoutExerciseWithoutSetNumbers;
+	export let exerciseIndex: number;
 	export let setsCompleted: boolean[];
+	export let totalExercises: number;
+
+	export let editExercise: (idx: number) => void;
+	export let reorderExercise: (idx: number, direction: "up" | "down") => void;
+	export let deleteExercise: (idx: number) => void;
 </script>
 
 <div class="flex flex-col rounded-md bg-primary p-2">
@@ -10,10 +16,41 @@
 		<span class="font-semibold grow">{exercise.name}</span>
 		<div class="dropdown dropdown-end">
 			<button class="btn p-0 btn-xs btn-ghost" aria-label="Exercise options"><Hamburger /></button>
-			<ul class="dropdown-menu">
-				<li><button class="btn btn-sm">Func1</button></li>
-				<li><button class="btn btn-sm">Func2</button></li>
-				<li><button class="btn btn-sm">Func3</button></li>
+			<ul
+				class="shadow-2xl shadow-black menu menu-sm dropdown-content z-10 bg-neutral gap-1 rounded-md w-fit"
+			>
+				<li>
+					<button
+						class="btn btn-sm btn-primary rounded-sm"
+						on:click={() => editExercise(exerciseIndex)}
+					>
+						Edit
+					</button>
+				</li>
+				<li class="join grid grid-cols-2 gap-1">
+					<button
+						class="btn btn-sm join-item btn-primary rounded-sm"
+						on:click={() => reorderExercise(exerciseIndex, "up")}
+						disabled={exerciseIndex === 0}
+					>
+						↑
+					</button>
+					<button
+						class="btn btn-sm join-item btn-primary rounded-sm"
+						on:click={() => reorderExercise(exerciseIndex, "down")}
+						disabled={exerciseIndex === totalExercises - 1}
+					>
+						↓
+					</button>
+				</li>
+				<li>
+					<button
+						class="btn btn-sm btn-error rounded-sm"
+						on:click={() => deleteExercise(exerciseIndex)}
+					>
+						Delete
+					</button>
+				</li>
 			</ul>
 		</div>
 	</div>
