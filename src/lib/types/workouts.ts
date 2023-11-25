@@ -1,14 +1,19 @@
-enum WorkloadFeedback {
-	"low",
-	"moderate",
-	"high"
-}
-enum SorenessFeedback {
-	"none",
-	"little bit",
-	"recovered on time",
-	"interfered with workout"
-}
+const WorkloadFeedback = [
+	{ name: "none", value: 0, bgColor: "checked:!bg-warning" },
+	{ name: "decent", value: 1, bgColor: "checked:!bg-accent" },
+	{ name: "pushed my limits", value: 2, bgColor: "checked:!bg-success" },
+	{ name: "too much work", value: 3, bgColor: "checked:!bg-warning" }
+];
+type WorkloadState = (typeof WorkloadFeedback)[number]["value"];
+
+const SorenessFeedback = [
+	{ name: "none", value: 0, bgColor: "checked:!bg-warning" },
+	{ name: "little bit", value: 1, bgColor: "checked:!bg-success" },
+	{ name: "recovered on time", value: 2, bgColor: "checked:!bg-accent" },
+	{ name: "interfered with workout", value: 3, bgColor: "checked:!bg-error" }
+] as const;
+type SorenessState = (typeof SorenessFeedback)[number]["value"];
+
 type Workout = {
 	startTimestamp: EpochTimeStamp;
 	referenceWorkout: null | string;
@@ -17,22 +22,26 @@ type Workout = {
 	templateMesoId: string;
 	difficultyRating: 1 | 2 | 3 | 4 | 5;
 	exercisesPerformed: WorkoutExercise[];
-	muscleGroupWorkloads: Record<MuscleGroup, null | WorkloadFeedback>;
+	muscleGroupWorkloads: Partial<Record<MuscleGroup, null | WorkloadState>>;
 	plannedRIR: number;
-	muscleSorenessToNextWorkout: Record<MuscleGroup, null | SorenessFeedback>;
+	muscleSorenessToNextWorkout: Partial<Record<MuscleGroup, null | SorenessState>>;
 	deload: boolean;
 };
 
-enum JointPainFeedback {
-	"no pain",
-	"some pain",
-	"it hurts"
-}
-enum PumpFeedback {
-	"no pump",
-	"decent pump",
-	"great pump"
-}
+const JointPainFeedback = [
+	{ name: "no pain", value: 0, bgColor: "checked:!bg-success" },
+	{ name: "some pain", value: 1, bgColor: "checked:!bg-warning" },
+	{ name: "it hurts", value: 2, bgColor: "checked:!bg-error" }
+] as const;
+type JoinPainState = (typeof JointPainFeedback)[number]["value"];
+
+const PumpFeedback = [
+	{ name: "no pump", value: 0, bgColor: "checked:!bg-warning" },
+	{ name: "decent pump", value: 1, bgColor: "checked:!bg-success" },
+	{ name: "great pump", value: 2, bgColor: "checked:!bg-accent" }
+] as const;
+type PumpState = (typeof PumpFeedback)[number]["value"];
+
 type WorkoutExercise = {
 	name: string;
 	sets: {
@@ -44,8 +53,8 @@ type WorkoutExercise = {
 	repRangeEnd: number;
 	weightType: ExerciseWeightType;
 	targetMuscleGroup: MuscleGroup;
-	jointPainRating: JointPainFeedback | null;
-	pumpRating: PumpFeedback | null;
+	jointPainRating: JoinPainState | null;
+	pumpRating: PumpState | null;
 	note?: string;
 };
 

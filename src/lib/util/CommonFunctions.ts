@@ -3,6 +3,19 @@ export function dateFormatter(timestamp: number) {
 	return date.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" });
 }
 
+export const groupBy = <T>(
+	array: T[],
+	predicate: (value: T, index: number, array: T[]) => string
+) =>
+	array.reduce(
+		(acc, value, index, array) => {
+			const v = { ...value, idx: index };
+			(acc[predicate(value, index, array)] ||= []).push(v);
+			return acc;
+		},
+		{} as { [key: string]: (T & { idx: number })[] }
+	);
+
 export function splitExercisesToWorkoutExercise(exercises: SplitExercise[]) {
 	const workoutExercises: WorkoutExerciseWithoutSetNumbers[] = [];
 	exercises.forEach(({ sets, ...splitExerciseProps }) => {
