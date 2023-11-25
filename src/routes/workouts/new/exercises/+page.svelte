@@ -18,6 +18,9 @@
 			});
 		});
 	}
+
+	let sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"];
+	let muscleGroupWorkloads: Workout["muscleGroupWorkloads"];
 </script>
 
 <div class="collapse bg-primary collapse-arrow rounded-md">
@@ -42,5 +45,7 @@
 <WorkoutExercisesTable
 	bind:exercises={todaysWorkout.exercisesPerformed}
 	bind:allExercisesSetsCompleted
+	bind:muscleGroupWorkloads
+	bind:sorenessFromPreviousWorkouts
 />
 <button class="btn btn-accent btn-block mt-1"> Finish workout </button>

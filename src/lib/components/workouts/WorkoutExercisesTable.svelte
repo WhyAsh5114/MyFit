@@ -4,6 +4,7 @@
 	import AddEditWorkoutExerciseModal from "./AddEditWorkoutExerciseModal.svelte";
 	import WorkoutExerciseCard from "./WorkoutExerciseCard.svelte";
 	import WorkoutExerciseFeedbackModal from "./WorkoutExerciseFeedbackModal.svelte";
+
 	export let exercises: WorkoutExerciseWithoutSetNumbers[];
 	export let mode: "performing" | "performed" = "performing";
 
@@ -58,6 +59,9 @@
 		feedbackModal.show();
 		feedbackTaken[idx] = true;
 	}
+
+	export let muscleGroupWorkloads: Workout["muscleGroupWorkloads"];
+	export let sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"];
 </script>
 
 <AddEditWorkoutExerciseModal
@@ -71,6 +75,8 @@
 	bind:feedbackExerciseIdx
 	bind:exercises
 	bind:feedbackTaken
+	bind:muscleGroupWorkloads
+	bind:sorenessFromPreviousWorkouts
 />
 
 <div class="flex flex-col h-px grow overflow-y-auto mt-2 gap-1">

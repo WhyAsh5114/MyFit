@@ -16,8 +16,8 @@
 		feedbackExercise = undefined;
 	}
 
-	let muscleGroupWorkloads: Workout["muscleGroupWorkloads"] = {};
-	let sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"] = {};
+	export let muscleGroupWorkloads: Workout["muscleGroupWorkloads"] = {};
+	export let sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"] = {};
 
 	let muscleGroupFeedbackModal: HTMLDialogElement;
 	let takeFeedbackForMuscleGroup: MuscleGroup | undefined = undefined;
