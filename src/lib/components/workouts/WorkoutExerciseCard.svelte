@@ -9,6 +9,7 @@
 	export let editExercise: (idx: number) => void;
 	export let reorderExercise: (idx: number, direction: "up" | "down") => void;
 	export let deleteExercise: (idx: number) => void;
+	export let takeFeedback: (idx: number, force?: boolean) => void;
 
 	function addSet() {
 		exercise.sets = [...exercise.sets, { reps: null, load: null, RIR: null }];
@@ -22,7 +23,7 @@
 	}
 
 	$: if (!setsCompleted.includes(false)) {
-		console.log("exercise completed! take feedback");
+		takeFeedback(exerciseIndex);
 	}
 </script>
 
@@ -40,6 +41,15 @@
 						on:click={() => editExercise(exerciseIndex)}
 					>
 						Edit
+					</button>
+				</li>
+				<li>
+					<button
+						class="btn btn-sm rounded-sm btn-primary"
+						on:click={() => takeFeedback(exerciseIndex, true)}
+						disabled={setsCompleted.includes(false)}
+					>
+						Feedback
 					</button>
 				</li>
 				<li class="join grid grid-cols-2 gap-1">

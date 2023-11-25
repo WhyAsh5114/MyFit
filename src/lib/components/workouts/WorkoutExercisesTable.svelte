@@ -3,6 +3,7 @@
 	import { slide } from "svelte/transition";
 	import AddEditWorkoutExerciseModal from "./AddEditWorkoutExerciseModal.svelte";
 	import WorkoutExerciseCard from "./WorkoutExerciseCard.svelte";
+	import WorkoutExerciseFeedbackModal from "./WorkoutExerciseFeedbackModal.svelte";
 	export let exercises: WorkoutExerciseWithoutSetNumbers[];
 	export let mode: "performing" | "performed" = "performing";
 
@@ -11,7 +12,7 @@
 		let setCompleted = mode === "performed";
 		allExercisesSetsCompleted.push(Array(exercise.sets.length).fill(setCompleted));
 	});
-	let feedbackTaken = Array(exercises.length).fill(false);
+	let feedbackTaken: boolean[] = Array(exercises.length).fill(false);
 
 	let addEditWorkoutExerciseModal: HTMLDialogElement;
 	let editingExerciseNumber: number | undefined = undefined;
@@ -49,7 +50,14 @@
 		}
 	}
 
-	function takeFeedback(idx: number, force = true) {}
+	let feedbackModal: HTMLDialogElement;
+	let feedbackExerciseIdx: number | undefined = undefined;
+	function takeFeedback(idx: number, force = false) {
+		if (feedbackTaken[idx] && !force) return;
+		feedbackExerciseIdx = idx;
+		feedbackModal.show();
+		feedbackTaken[idx] = true;
+	}
 </script>
 
 <AddEditWorkoutExerciseModal
@@ -58,6 +66,13 @@
 	bind:editingIdx={editingExerciseNumber}
 	bind:allExercisesSetsCompleted
 />
+<WorkoutExerciseFeedbackModal
+	bind:dialogElement={feedbackModal}
+	bind:feedbackExerciseIdx
+	bind:exercises
+	bind:feedbackTaken
+/>
+
 <div class="flex flex-col h-px grow overflow-y-auto mt-2 gap-1">
 	{#each exercises as exercise, i (exercise.name)}
 		<div transition:slide|local={{ duration: 200 }} animate:flip={{ duration: 200 }}>
@@ -69,6 +84,7 @@
 				{editExercise}
 				{deleteExercise}
 				{reorderExercise}
+				{takeFeedback}
 			/>
 		</div>
 	{/each}
