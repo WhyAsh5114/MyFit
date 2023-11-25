@@ -10,7 +10,7 @@
 		totalSetsCompleted = 0;
 	let allExercisesSetsCompleted: boolean[][] = [];
 	$: {
-		totalSets = 0, totalSetsCompleted = 0;
+		(totalSets = 0), (totalSetsCompleted = 0);
 		allExercisesSetsCompleted.forEach((setsCompleted) => {
 			setsCompleted.forEach((set) => {
 				if (set === true) totalSetsCompleted++;

@@ -14,7 +14,7 @@
 	function updateEditingExercise(idx: number | undefined) {
 		if (idx !== undefined && exercises[idx]) {
 			editMode = true;
-			editingExercise = JSON.parse(JSON.stringify(exercises[idx]));
+			editingExercise = JSON.parse(JSON.stringify(exercises[idx])) as SplitExercise;
 		} else {
 			editMode = false;
 		}

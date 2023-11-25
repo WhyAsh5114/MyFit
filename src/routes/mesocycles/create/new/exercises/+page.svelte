@@ -11,10 +11,10 @@
 	$: selectedWorkout = $exerciseSplit[selectedWorkoutIndex] as SplitWorkout;
 
 	function copyExercises() {
-		copiedExercises = JSON.parse(JSON.stringify(selectedWorkout.exercises));
+		copiedExercises = JSON.parse(JSON.stringify(selectedWorkout.exercises)) as SplitExercise[];
 	}
 	function pasteExercises() {
-		selectedWorkout.exercises = JSON.parse(JSON.stringify(copiedExercises));
+		selectedWorkout.exercises = JSON.parse(JSON.stringify(copiedExercises)) as SplitExercise[];
 	}
 	function cutExercises() {
 		copyExercises();
