@@ -5,6 +5,7 @@
 	export let dialogElement: HTMLDialogElement;
 	export let exercises: WorkoutExerciseWithoutSetNumbers[];
 	export let editingIdx: number | undefined = undefined;
+	export let allExercisesSetsCompleted: boolean[][];
 
 	let editMode = false;
 	let modeText: "Add" | "Edit" = "Add";
@@ -36,6 +37,10 @@
 
 		const typedExercise = JSON.parse(JSON.stringify(newExercise)) as SplitExercise;
 		exercises = [...exercises, ...splitExercisesToWorkoutExercise([typedExercise])];
+		allExercisesSetsCompleted = [
+			...allExercisesSetsCompleted,
+			Array(typedExercise.sets).fill(false)
+		];
 		newExercise = { weightType: "Weighted" };
 		selectedExercise = newExercise;
 		dialogElement.close();
@@ -136,6 +141,7 @@
 					class="input input-bordered w-full max-w-xs"
 					id="{modeText}-exercise-sets"
 					bind:value={selectedExercise.sets}
+					disabled={editMode}
 					required
 				/>
 			</div>
