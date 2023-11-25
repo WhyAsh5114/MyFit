@@ -1,5 +1,9 @@
 <script lang="ts">
-	import { getMuscleGroups, getTodaysSplitWorkout, getTotalSets } from "$lib/util/MesocycleTemplate";
+	import {
+		getMuscleGroups,
+		getTodaysSplitWorkout,
+		getTotalSets
+	} from "$lib/util/MesocycleTemplate";
 	export let activeMesocycle: ActiveMesocycle;
 	export let activeMesocycleTemplate: MesocycleTemplate;
 

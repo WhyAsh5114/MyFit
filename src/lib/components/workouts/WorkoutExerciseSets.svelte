@@ -24,9 +24,9 @@
 			<input
 				type="number"
 				id="{exercise.name}-set{setNumber}-load"
-				class="input input-sm w-12"
+				class="input input-sm w-16"
 				bind:value={load}
-				placeholder="?"
+				placeholder={exercise.weightType === "Bodyweight" ? "0/+/-" : "?"}
 				required
 				disabled={setsCompleted[setNumber]}
 			/>

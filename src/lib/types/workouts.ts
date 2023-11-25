@@ -50,8 +50,8 @@ type WorkoutExercise = {
 };
 
 type WorkoutExerciseWithoutSetNumbers = Omit<WorkoutExercise, "sets"> & {
-	sets: Nullable<WorkoutExercise["sets"][number]>[]
-}
+	sets: Nullable<WorkoutExercise["sets"][number]>[];
+};
 
 type WorkoutBeingPerformed = {
 	startTimestamp: EpochTimeStamp;

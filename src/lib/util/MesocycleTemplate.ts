@@ -24,7 +24,7 @@ export function getTodaysSplitWorkout(
 	workouts: (string | null)[],
 	exerciseSplit: MesocycleTemplate["exerciseSplit"]
 ) {
-	const workoutIdx = workouts.length % exerciseSplit.length;;
+	const workoutIdx = workouts.length % exerciseSplit.length;
 	const workout = exerciseSplit[workoutIdx];
 	return workout;
 }
