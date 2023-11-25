@@ -9,6 +9,21 @@
 	export let editExercise: (idx: number) => void;
 	export let reorderExercise: (idx: number, direction: "up" | "down") => void;
 	export let deleteExercise: (idx: number) => void;
+
+	function addSet() {
+		exercise.sets = [...exercise.sets, { reps: null, load: null, RIR: null }];
+		setsCompleted = [...setsCompleted, false];
+	}
+	function removeSet() {
+		exercise.sets.pop();
+		exercise.sets = exercise.sets;
+		setsCompleted.pop();
+		setsCompleted = setsCompleted;
+	}
+
+	$: if (!setsCompleted.includes(false)) {
+		console.log("exercise completed! take feedback");
+	}
 </script>
 
 <div class="flex flex-col rounded-md bg-primary p-2">
@@ -41,6 +56,16 @@
 						disabled={exerciseIndex === totalExercises - 1}
 					>
 						↓
+					</button>
+				</li>
+				<li class="join grid grid-cols-2 gap-1">
+					<button class="btn btn-sm join-item btn-primary rounded-sm" on:click={addSet}> + </button>
+					<button
+						class="btn btn-sm join-item btn-primary rounded-sm"
+						on:click={removeSet}
+						disabled={setsCompleted.length === 1}
+					>
+						-
 					</button>
 				</li>
 				<li>

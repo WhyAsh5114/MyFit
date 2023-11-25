@@ -7,15 +7,11 @@
 	export let mode: "performing" | "performed" = "performing";
 
 	export let allExercisesSetsCompleted: boolean[][] = [];
-
-	$: updateSetsCompleted(exercises);
-	function updateSetsCompleted(exercises: WorkoutExerciseWithoutSetNumbers[]) {
-		allExercisesSetsCompleted = [];
-		exercises.forEach((exercise) => {
-			let setCompleted = mode === "performed";
-			allExercisesSetsCompleted.push(Array(exercise.sets.length).fill(setCompleted));
-		});
-	}
+	exercises.forEach((exercise) => {
+		let setCompleted = mode === "performed";
+		allExercisesSetsCompleted.push(Array(exercise.sets.length).fill(setCompleted));
+	});
+	let feedbackTaken = Array(exercises.length).fill(false);
 
 	let addEditWorkoutExerciseModal: HTMLDialogElement;
 	let editingExerciseNumber: number | undefined = undefined;
@@ -33,21 +29,34 @@
 	function deleteExercise(idx: number) {
 		exercises.splice(idx, 1);
 		exercises = exercises;
+		allExercisesSetsCompleted.splice(idx, 1);
+		allExercisesSetsCompleted = allExercisesSetsCompleted;
 	}
 
 	function reorderExercise(idx: number, direction: "up" | "down") {
 		if (direction == "up") {
 			[exercises[idx], exercises[idx - 1]] = [exercises[idx - 1], exercises[idx]];
+			[allExercisesSetsCompleted[idx], allExercisesSetsCompleted[idx - 1]] = [
+				allExercisesSetsCompleted[idx - 1],
+				allExercisesSetsCompleted[idx]
+			];
 		} else {
 			[exercises[idx], exercises[idx + 1]] = [exercises[idx + 1], exercises[idx]];
+			[allExercisesSetsCompleted[idx], allExercisesSetsCompleted[idx + 1]] = [
+				allExercisesSetsCompleted[idx + 1],
+				allExercisesSetsCompleted[idx]
+			];
 		}
 	}
+
+	function takeFeedback(idx: number, force = true) {}
 </script>
 
 <AddEditWorkoutExerciseModal
 	bind:dialogElement={addEditWorkoutExerciseModal}
 	bind:exercises
 	bind:editingIdx={editingExerciseNumber}
+	bind:allExercisesSetsCompleted
 />
 <div class="flex flex-col h-px grow overflow-y-auto mt-2 gap-1">
 	{#each exercises as exercise, i (exercise.name)}
