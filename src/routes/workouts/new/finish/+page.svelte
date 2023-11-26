@@ -2,7 +2,12 @@
 	import { goto, invalidate } from "$app/navigation";
 	import MyModal from "$lib/components/MyModal.svelte";
 	import { getTotalSets } from "$lib/util/MesocycleTemplate";
-	import { sorenessData, workloadData, workoutBeingPerformed } from "../newWorkoutStore";
+	import {
+		allExercisesSetsCompleted,
+		sorenessData,
+		workloadData,
+		workoutBeingPerformed
+	} from "../newWorkoutStore";
 
 	let difficultyRating: 1 | 2 | 3 | 4 | 5 = 3;
 
@@ -17,7 +22,7 @@
 		if (!$workoutBeingPerformed) return;
 		const { exercisesPerformed: temp, ...otherProps } = $workoutBeingPerformed;
 		let exercisesPerformed = temp as WorkoutExercise[];
-		
+
 		const requestBody: APIWorkoutsSaveWorkout = {
 			workout: {
 				...otherProps,
@@ -52,7 +57,10 @@
 	let redirecting = false;
 	async function closeModal() {
 		redirecting = true;
-		localStorage.clear();
+		$workoutBeingPerformed = null;
+		$allExercisesSetsCompleted = [];
+		$workloadData = {};
+		$sorenessData = {};
 		await invalidate("workouts:all");
 		await invalidate("mesocycle:active");
 		await goto("/workouts");
