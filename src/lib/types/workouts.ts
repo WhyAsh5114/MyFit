@@ -19,7 +19,6 @@ type Workout = {
 	referenceWorkout: null | string;
 	dayNumber: number;
 	cycleNumber: number;
-	templateMesoId: string;
 	difficultyRating: 1 | 2 | 3 | 4 | 5;
 	exercisesPerformed: WorkoutExercise[];
 	muscleGroupWorkloads: Partial<Record<MuscleGroup, null | WorkloadState>>;
@@ -67,7 +66,6 @@ type WorkoutBeingPerformed = {
 	referenceWorkout: null | string;
 	dayNumber: number;
 	cycleNumber: number;
-	templateMesoId: string;
 	exercisesPerformed: WorkoutExerciseWithoutSetNumbers[];
 	plannedRIR: number;
 	deload: boolean;
