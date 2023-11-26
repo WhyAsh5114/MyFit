@@ -45,7 +45,7 @@ export const load: LayoutServerLoad = async ({ locals, url, depends }) => {
 	activeMesocycle = {
 		id: activeMesocycleId.toString(),
 		templateMesoId: templateMesoId.toString(),
-		workouts: workouts.map((workout) => workout.toString()),
+		workouts: workouts.map((workout) => workout?.toString() ?? null),
 		startTimestamp
 	};
 

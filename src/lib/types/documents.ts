@@ -6,7 +6,7 @@ export type MesocycleDocument = {
 	userId: ObjectId;
 	startTimestamp: EpochTimeStamp;
 	templateMesoId: ObjectId;
-	workouts: ObjectId[];
+	workouts: (ObjectId | null)[];
 	endTimestamp?: EpochTimeStamp;
 };
 

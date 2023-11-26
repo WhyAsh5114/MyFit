@@ -3,7 +3,6 @@ import clientPromise from "$lib/mongo/mongodb";
 import { ObjectId } from "mongodb";
 import type {
 	MesocycleDocument,
-	MesocycleTemplateDocument,
 	WorkoutDocument
 } from "$lib/types/documents";
 
