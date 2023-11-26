@@ -17,19 +17,18 @@
 	let modal: HTMLDialogElement;
 	let modalTitle = "";
 	let modalText = "";
-	let modalClose = () => {};
 
 	export let data;
-	const { activeMesocycle, activeMesocycleTemplate } = data;
-	const workoutIdx = getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit);
-	const todaysWorkout = getTodaysSplitWorkout(
+	$: ({ activeMesocycle, activeMesocycleTemplate } = data);
+	$: workoutIdx = getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit);
+	$: todaysWorkout = getTodaysSplitWorkout(
 		activeMesocycle.workouts,
 		activeMesocycleTemplate.exerciseSplit
 	);
 	let muscleGroupsAndSets: { muscleGroup: MuscleGroup; sets: number }[];
 	let totalSets = 0;
 	let bodyweightExercises = false;
-	if (todaysWorkout) {
+	$: if (todaysWorkout) {
 		muscleGroupsAndSets = getMuscleGroupsAndSets(todaysWorkout.exercises);
 		totalSets = getTotalSets(todaysWorkout.exercises);
 		for (const exercise of todaysWorkout.exercises) {
@@ -57,17 +56,9 @@
 			modalTitle = "Error";
 		}
 		modalText = await response.text();
-		callingEndpoint = false;
-		modalClose = closeModalWithRedirect;
-		modal.show();
-	}
-
-	let redirecting = false;
-	async function closeModalWithRedirect() {
-		redirecting = true;
 		await invalidate("mesocycle:active");
-		await goto("/workouts");
-		redirecting = false;
+		callingEndpoint = false;
+		modal.show();
 	}
 
 	let callingEndpoint = false;
@@ -90,13 +81,12 @@
 		} else {
 			modalTitle = "Error";
 			modalText = await response.text();
-			modalClose = () => {};
 			modal.show();
 		}
 	}
 </script>
 
-<MyModal bind:dialogElement={modal} bind:title={modalTitle} bind:onClose={modalClose}>
+<MyModal bind:dialogElement={modal} bind:title={modalTitle}>
 	{modalText}
 </MyModal>
 <form
@@ -211,14 +201,11 @@
 	type="submit"
 	form="workoutForm"
 	class="btn btn-accent mt-auto"
-	disabled={editingBodyweightValue || callingEndpoint || redirecting}
+	disabled={editingBodyweightValue || callingEndpoint}
 >
 	{#if todaysWorkout}
 		Log workout
 	{:else if callingEndpoint}
-		<span class="loading loading-bars"></span>
-	{:else if redirecting}
-		Redirecting
 		<span class="loading loading-bars"></span>
 	{:else}
 		Mark rest day complete
