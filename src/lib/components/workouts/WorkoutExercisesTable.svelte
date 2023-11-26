@@ -56,7 +56,7 @@
 	let feedbackModal: HTMLDialogElement;
 	let feedbackExerciseIdx: number | undefined = undefined;
 	function takeFeedback(idx: number, force = false) {
-		if (feedbackTaken[idx] && !force) return;
+		if (feedbackTaken[idx] !== undefined && !force) return;
 		feedbackExerciseIdx = idx;
 		feedbackModal.show();
 		feedbackTaken[idx] = true;
