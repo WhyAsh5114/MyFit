@@ -8,11 +8,13 @@
 	export let exercises: WorkoutExerciseWithoutSetNumbers[];
 	export let mode: "performing" | "performed" = "performing";
 
-	export let allExercisesSetsCompleted: boolean[][] = [];
-	exercises.forEach((exercise) => {
-		let setCompleted = mode === "performed";
-		allExercisesSetsCompleted.push(Array(exercise.sets.length).fill(setCompleted));
-	});
+	export let allExercisesSetsCompleted: boolean[][];
+	if (allExercisesSetsCompleted.length === 0) {
+		exercises.forEach((exercise) => {
+			let setCompleted = mode === "performed";
+			allExercisesSetsCompleted.push(Array(exercise.sets.length).fill(setCompleted));
+		});
+	}
 	let feedbackTaken: boolean[] = Array(exercises.length).fill(false);
 
 	let addEditWorkoutExerciseModal: HTMLDialogElement;

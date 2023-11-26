@@ -6,7 +6,12 @@
 </script>
 
 {#each exercise.sets as { reps, load, RIR }, setNumber}
-	<form class="contents" on:submit|preventDefault={() => (setsCompleted[setNumber] = true)}>
+	<form
+		class="contents"
+		on:submit|preventDefault={() => {
+			setsCompleted[setNumber] = true;
+		}}
+	>
 		<div class="flex">
 			<input
 				type="number"

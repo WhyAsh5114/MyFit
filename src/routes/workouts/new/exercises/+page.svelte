@@ -1,17 +1,28 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
+	import MyModal from "$lib/components/MyModal.svelte";
 	import WorkoutExercisesTable from "$lib/components/workouts/WorkoutExercisesTable.svelte";
 	import { getCycleNumber, getDayNumber } from "$lib/util/MesocycleTemplate";
+	import {
+		allExercisesSetsCompleted,
+		sorenessData,
+		workloadData,
+		workoutBeingPerformed
+	} from "../newWorkoutStore.js";
 	export let data;
 
-	const { activeMesocycle, activeMesocycleTemplate, todaysWorkout, todaysSplitWorkout } = data;
+	let { activeMesocycle, activeMesocycleTemplate, todaysSplitWorkout } = data;
 	const workoutIdx = getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit);
+
+	$: if ($workoutBeingPerformed === null) {
+		$workoutBeingPerformed = data.todaysWorkout;
+	}
 
 	let totalSets = 0,
 		totalSetsCompleted = 0;
-	let allExercisesSetsCompleted: boolean[][] = [];
 	$: {
 		(totalSets = 0), (totalSetsCompleted = 0);
-		allExercisesSetsCompleted.forEach((setsCompleted) => {
+		$allExercisesSetsCompleted.forEach((setsCompleted) => {
 			setsCompleted.forEach((set) => {
 				if (set === true) totalSetsCompleted++;
 				totalSets++;
@@ -21,8 +32,22 @@
 
 	let sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"];
 	let muscleGroupWorkloads: Workout["muscleGroupWorkloads"];
+
+	let errorModal: HTMLDialogElement;
+	async function saveExercisesAndWorkload() {
+		if ($workoutBeingPerformed.exercisesPerformed.length === 0) {
+			errorModal.show();
+			return;
+		}
+		$workloadData = muscleGroupWorkloads;
+		$sorenessData = sorenessFromPreviousWorkouts;
+		await goto("/workouts/new/finish");
+	}
 </script>
 
+<MyModal bind:dialogElement={errorModal} title="Error">
+	Add at least one exercise to the workout
+</MyModal>
 <div class="collapse bg-primary collapse-arrow rounded-md">
 	<input type="checkbox" id="show-workout-details" aria-label="show-workout-details" checked />
 	<div class="collapse-title text-xl font-medium">
@@ -43,9 +68,15 @@
 	</div>
 </div>
 <WorkoutExercisesTable
-	bind:exercises={todaysWorkout.exercisesPerformed}
-	bind:allExercisesSetsCompleted
+	bind:exercises={$workoutBeingPerformed.exercisesPerformed}
+	bind:allExercisesSetsCompleted={$allExercisesSetsCompleted}
 	bind:muscleGroupWorkloads
 	bind:sorenessFromPreviousWorkouts
 />
-<button class="btn btn-accent btn-block mt-1"> Finish workout </button>
+<button
+	class="btn btn-accent btn-block mt-1"
+	disabled={totalSetsCompleted < totalSets}
+	on:click={saveExercisesAndWorkload}
+>
+	Finish workout
+</button>

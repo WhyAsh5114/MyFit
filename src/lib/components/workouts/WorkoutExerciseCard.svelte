@@ -107,7 +107,7 @@
 		</span>
 		<span class="text-sm font-semibold">RIR</span>
 		<span></span>
-		<WorkoutExerciseSets {exercise} bind:setsCompleted />
+		<WorkoutExerciseSets bind:exercise bind:setsCompleted />
 	</div>
 </div>
 
