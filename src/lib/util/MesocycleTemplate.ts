@@ -37,17 +37,20 @@ export function getMuscleGroups(exercises: SplitExercise[]) {
 	return muscleGroups;
 }
 
-export function getMuscleGroupsAndSets(exercises: SplitExercise[]) {
+export function getMuscleGroupsAndSets(exercises: SplitExercise[] | WorkoutExercise[]) {
 	const muscleGroupAndSets: { muscleGroup: MuscleGroup; sets: number }[] = [];
 	exercises.forEach((exercise) => {
 		const targetMuscleGroup = exercise.targetMuscleGroup;
 		const idx = muscleGroupAndSets.findIndex(
 			({ muscleGroup }) => targetMuscleGroup === muscleGroup
 		);
+		let totalSets;
+		if (typeof exercise.sets === "number") totalSets = exercise.sets;
+		else totalSets = exercise.sets.length;
 		if (idx !== -1) {
-			muscleGroupAndSets[idx].sets += exercise.sets;
+			muscleGroupAndSets[idx].sets += totalSets;
 		} else {
-			muscleGroupAndSets.push({ muscleGroup: targetMuscleGroup, sets: exercise.sets });
+			muscleGroupAndSets.push({ muscleGroup: targetMuscleGroup, sets: totalSets });
 		}
 	});
 	return muscleGroupAndSets;
