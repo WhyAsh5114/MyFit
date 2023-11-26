@@ -1,7 +1,7 @@
 import { redirect } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
 import clientPromise from "$lib/mongo/mongodb";
-import type { ActiveMesocycleDocument, MesocycleTemplateDocument } from "$lib/types/documents";
+import type { MesocycleDocument, MesocycleTemplateDocument } from "$lib/types/documents";
 import { ObjectId, type WithId } from "mongodb";
 
 const unprotectedRoutes = ["/", "/login"];
@@ -23,8 +23,11 @@ export const load: LayoutServerLoad = async ({ locals, url, depends }) => {
 	const client = await clientPromise;
 	const activeMesocycleDocument = await client
 		.db()
-		.collection<Omit<ActiveMesocycleDocument, "userId">>("activeMesocycles")
-		.findOne({ userId: new ObjectId(session.user.id) }, { projection: { userId: 0 } });
+		.collection<Omit<MesocycleDocument, "userId">>("mesocycles")
+		.findOne(
+			{ userId: new ObjectId(session.user.id), endTimestamp: { $exists: false } },
+			{ projection: { userId: 0 } }
+		);
 	if (!activeMesocycleDocument) {
 		return {
 			session,

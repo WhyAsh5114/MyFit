@@ -1,7 +1,7 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import clientPromise from "$lib/mongo/mongodb";
 import { ObjectId } from "mongodb";
-import type { ActiveMesocycleDocument, MesocycleTemplateDocument } from "$lib/types/documents";
+import type { MesocycleDocument, MesocycleTemplateDocument } from "$lib/types/documents";
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const session = await locals.getSession();
@@ -18,10 +18,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	try {
 		const activeMesocycle = await client
 			.db()
-			.collection<ActiveMesocycleDocument>("activeMesocycles")
+			.collection<MesocycleDocument>("mesocycles")
 			.findOne({
 				userId: new ObjectId(session.user.id),
-				templateMesoId: new ObjectId(mesocycleTemplateId)
+				templateMesoId: new ObjectId(mesocycleTemplateId),
+				endTimestamp: { $exists: false }
 			});
 
 		if (activeMesocycle) {

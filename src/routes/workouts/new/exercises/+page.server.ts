@@ -33,7 +33,6 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 		referenceWorkout: null,
 		dayNumber: getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit),
 		cycleNumber: getCycleNumber(activeMesocycleTemplate.exerciseSplit, activeMesocycle.workouts),
-		templateMesoId: activeMesocycle.templateMesoId,
 		plannedRIR: getPlannedRIR(activeMesocycleTemplate, activeMesocycle.workouts),
 		deload: false
 	};

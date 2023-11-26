@@ -1,7 +1,7 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import clientPromise from "$lib/mongo/mongodb";
 import { ObjectId } from "mongodb";
-import type { PerformedMesocycleDocument, ActiveMesocycleDocument } from "$lib/types/documents";
+import type { MesocycleDocument } from "$lib/types/documents";
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const session = await locals.getSession();
@@ -17,11 +17,14 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	try {
 		const activeMesocycle = await client
 			.db()
-			.collection<ActiveMesocycleDocument>("activeMesocycles")
-			.findOne({
-				_id: new ObjectId(activeMesocycleId),
-				userId: new ObjectId(session.user.id)
-			});
+			.collection<MesocycleDocument>("mesocycles")
+			.findOneAndUpdate(
+				{
+					_id: new ObjectId(activeMesocycleId),
+					userId: new ObjectId(session.user.id)
+				},
+				{ $set: { endTimestamp: +new Date() } }
+			);
 
 		// Check if active mesocycle exists
 		if (activeMesocycle === null) {
@@ -30,27 +33,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			});
 		}
 
-		if (activeMesocycle.workouts.length === 0) {
-			await client
-				.db()
-				.collection<ActiveMesocycleDocument>("activeMesocycles")
-				.deleteOne({ _id: new ObjectId(activeMesocycleId) });
-
-			return new Response("Stopped successfully. Not saved as no workouts performed", {
-				status: 200
-			});
-		}
-
-		const { _id, ...activeMesocycleProps } = activeMesocycle;
-		await client
-			.db()
-			.collection<PerformedMesocycleDocument>("performedMesocycles")
-			.insertOne({
-				...activeMesocycleProps,
-				endTimestamp: +new Date()
-			});
-
-		return new Response("Stopped successfully. Saved in performed mesocycles", {
+		return new Response("Stopped and saved successfully", {
 			status: 200
 		});
 	} catch (e) {
