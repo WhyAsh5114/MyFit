@@ -14,6 +14,11 @@
 	import DoneIcon from "virtual:icons/material-symbols/done";
 	import CancelIcon from "virtual:icons/ph/x-bold";
 
+	let modal: HTMLDialogElement;
+	let modalTitle = "";
+	let modalText = "";
+	let modalClose = () => {};
+
 	export let data;
 	const { activeMesocycle, activeMesocycleTemplate } = data;
 	const workoutIdx = getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit);
@@ -38,11 +43,33 @@
 	let bodyweightInputValue = data.userBodyweight;
 	let editingBodyweightValue = bodyweightInputValue === null;
 	async function submitForm() {
-		await goto("/workouts/new/exercises");
+		if (todaysWorkout) {
+			await goto("/workouts/new/exercises");
+			return;
+		}
+		callingEndpoint = true;
+		const response = await fetch("/api/workouts/completeRestDay", {
+			method: "POST"
+		});
+		if (response.ok) {
+			modalTitle = "Success";
+		} else {
+			modalTitle = "Error";
+		}
+		modalText = await response.text();
+		callingEndpoint = false;
+		modalClose = closeModalWithRedirect;
+		modal.show();
 	}
 
-	let errorModal: HTMLDialogElement;
-	let errorMsg = "";
+	let redirecting = false;
+	async function closeModalWithRedirect() {
+		redirecting = true;
+		await invalidate("mesocycle:active");
+		await goto("/workouts");
+		redirecting = false;
+	}
+
 	let callingEndpoint = false;
 	async function saveBodyweight() {
 		const requestBody: APIUserUpdatePreferences = {
@@ -61,14 +88,16 @@
 		if (response.ok) {
 			editingBodyweightValue = false;
 		} else {
-			errorMsg = await response.text();
-			errorModal.show();
+			modalTitle = "Error";
+			modalText = await response.text();
+			modalClose = () => {};
+			modal.show();
 		}
 	}
 </script>
 
-<MyModal bind:dialogElement={errorModal} title="Error">
-	{errorMsg}
+<MyModal bind:dialogElement={modal} bind:title={modalTitle} bind:onClose={modalClose}>
+	{modalText}
 </MyModal>
 <form
 	on:submit|preventDefault={submitForm}
@@ -182,7 +211,16 @@
 	type="submit"
 	form="workoutForm"
 	class="btn btn-accent mt-auto"
-	disabled={editingBodyweightValue}
+	disabled={editingBodyweightValue || callingEndpoint || redirecting}
 >
-	Log workout
+	{#if todaysWorkout}
+		Log workout
+	{:else if callingEndpoint}
+		<span class="loading loading-bars"></span>
+	{:else if redirecting}
+		Redirecting
+		<span class="loading loading-bars"></span>
+	{:else}
+		Mark rest day complete
+	{/if}
 </button>
