@@ -53,10 +53,11 @@ export function getMuscleGroupsAndSets(exercises: SplitExercise[]) {
 	return muscleGroupAndSets;
 }
 
-export function getTotalSets(exercises: SplitExercise[]) {
+export function getTotalSets(exercises: SplitExercise[] | WorkoutExercise[]) {
 	let totalSets = 0;
 	exercises.forEach(({ sets }) => {
-		totalSets += sets;
+		if (typeof sets === "number") totalSets += sets;
+		else totalSets += sets.length;
 	});
 	return totalSets;
 }

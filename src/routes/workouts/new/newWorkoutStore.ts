@@ -5,7 +5,7 @@ if (typeof window !== "undefined") {
 	ls = localStorage;
 }
 
-export const workoutBeingPerformed: Writable<WorkoutBeingPerformed> = writable(
+export const workoutBeingPerformed: Writable<WorkoutBeingPerformed | null> = writable(
 	JSON.parse(ls?.getItem("workoutBeingPerformed") || "null")
 );
 export const allExercisesSetsCompleted: Writable<boolean[][]> = writable(

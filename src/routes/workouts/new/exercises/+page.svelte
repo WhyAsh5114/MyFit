@@ -14,7 +14,7 @@
 	let { activeMesocycle, activeMesocycleTemplate, todaysSplitWorkout } = data;
 	const workoutIdx = getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit);
 
-	$: if ($workoutBeingPerformed === null) {
+	if ($workoutBeingPerformed === null) {
 		$workoutBeingPerformed = data.todaysWorkout;
 	}
 
@@ -35,6 +35,7 @@
 
 	let errorModal: HTMLDialogElement;
 	async function saveExercisesAndWorkload() {
+		if (!$workoutBeingPerformed) return;
 		if ($workoutBeingPerformed.exercisesPerformed.length === 0) {
 			errorModal.show();
 			return;
@@ -67,12 +68,14 @@
 		</div>
 	</div>
 </div>
-<WorkoutExercisesTable
-	bind:exercises={$workoutBeingPerformed.exercisesPerformed}
-	bind:allExercisesSetsCompleted={$allExercisesSetsCompleted}
-	bind:muscleGroupWorkloads
-	bind:sorenessFromPreviousWorkouts
-/>
+{#if $workoutBeingPerformed}
+	<WorkoutExercisesTable
+		bind:exercises={$workoutBeingPerformed.exercisesPerformed}
+		bind:allExercisesSetsCompleted={$allExercisesSetsCompleted}
+		bind:muscleGroupWorkloads
+		bind:sorenessFromPreviousWorkouts
+	/>
+{/if}
 <button
 	class="btn btn-accent btn-block mt-1"
 	disabled={totalSetsCompleted < totalSets}

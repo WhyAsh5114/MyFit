@@ -19,3 +19,8 @@ type APIWorkoutsGetReferenceWorkout = {
 };
 
 type APIUserUpdatePreferences = Partial<UserPreferences>;
+
+type APIWorkoutsSaveWorkout = {
+	workout: Workout;
+	previousSoreness: Workout["muscleSorenessToNextWorkout"];
+};
