@@ -35,7 +35,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			.collection<MesocycleTemplateDocument>("activeMesocycle")
 			.findOne(
 				{
-					userId: new ObjectId(session.user.id)
+					userId: new ObjectId(session.user.id),
+					_id: activeMesocycle.templateMesoId
 				},
 				{ projection: { exerciseSplit: 1 } }
 			)) as WithId<MesocycleTemplateDocument>;
