@@ -9,6 +9,13 @@
 	}
 	$: selectedMesocycleTemplateId, (selectedMesocycleId = null);
 
+	const asyncFind = async <T,>(arr: Array<T>, predicate: (value: T) => Promise<boolean>) => {
+		const promises = arr.map(predicate);
+		const results = await Promise.all(promises);
+		const index = results.findIndex((result) => result);
+		return arr[index];
+	};
+
 	const asyncFilter = async <T,>(arr: Array<T>, predicate: (value: T) => Promise<boolean>) => {
 		const results = await Promise.all(arr.map(predicate));
 		return arr.filter((_v, index) => results[index]);
@@ -20,6 +27,15 @@
 	let selectedMesocycleId: null | string = null;
 
 	async function filterWorkouts() {
+		selectedMesocycleTemplate = await asyncFind(
+			data.streamed.mesocycleTemplatesStreamArray,
+			async (mesocycleTemplatePromise) => {
+				const mesocycleTemplate = await mesocycleTemplatePromise;
+				if (mesocycleTemplate === null) return false;
+				return mesocycleTemplate.id === selectedMesocycleTemplateId;
+			}
+		);
+
 		let allMesocyclesIds: (string | undefined)[] = [];
 		const allMesocyclesOfTemplate = await asyncFilter(
 			data.streamed.mesocyclesStreamArray,
@@ -31,6 +47,7 @@
 		allMesocyclesIds = (await Promise.all(allMesocyclesOfTemplate)).map(
 			(mesocycle) => mesocycle?.id
 		);
+
 		workoutsStreamArray = await asyncFilter(
 			data.streamed.workoutsStreamArray,
 			async (workoutPromise) => {
@@ -90,7 +107,7 @@
 					</select>
 				{/await}
 			{/if}
-			<button class="btn btn-accent btn-sm w-1/2 mx-auto mt-2">Apply filter</button>
+			<button class="btn btn-accent btn-sm btn-block mt-2">Apply filter</button>
 		{/if}
 	</div>
 </form>
