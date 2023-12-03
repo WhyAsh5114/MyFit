@@ -1,11 +1,17 @@
 <script lang="ts">
 	import WorkoutExerciseSets from "./WorkoutExerciseSets.svelte";
 	import Hamburger from "virtual:icons/material-symbols/menu";
+	import EqualIcon from "virtual:icons/akar-icons/equal-fill";
+	import IncreaseIcon from "virtual:icons/icon-park-solid/up-c";
+	import DecreaseIcon from "virtual:icons/icon-park-solid/down-c";
+
 	export let mode: "performing" | "performed";
 	export let exercise: WorkoutExerciseWithoutSetNumbers;
 	export let exerciseIndex: number;
 	export let setsCompleted: boolean[];
 	export let totalExercises: number;
+	export let comparing: boolean;
+	export let referenceExercise: WorkoutExercise | null;
 
 	export let editExercise: (idx: number) => void;
 	export let reorderExercise: (idx: number, direction: "up" | "down") => void;
@@ -26,6 +32,31 @@
 	function checkForFeedback() {
 		if (!setsCompleted.includes(false)) {
 			takeFeedback(exerciseIndex);
+		}
+	}
+
+	function compareVolume() {
+		let referenceVolume = 0;
+		let currentVolume = 0;
+		for (let i = 0; i < exercise.sets.length; i++) {
+			const currentSet = exercise.sets[i];
+			let referenceSet = referenceExercise?.sets[i];
+
+			if (referenceSet) {
+				referenceVolume += referenceSet.reps * referenceSet.load;
+			}
+
+			if (currentSet.reps !== null && currentSet.load !== null) {
+				currentVolume += currentSet.reps * currentSet.load;
+			}
+		}
+
+		if (currentVolume < referenceVolume) {
+			return -1;
+		} else if (currentVolume > referenceVolume) {
+			return 1;
+		} else {
+			return 0;
 		}
 	}
 </script>
@@ -106,7 +137,7 @@
 	{/if}
 	<div class="h-px bg-secondary brightness-75 mt-1.5"></div>
 	<div
-		class="grid {mode === 'performing'
+		class="grid {mode === 'performing' || comparing
 			? 'workout-sets-grid-performing'
 			: 'workout-sets-grid-performed'} gap-x-2 gap-y-1 mt-2 place-items-center"
 	>
@@ -118,10 +149,27 @@
 			{/if}
 		</span>
 		<span class="text-sm font-semibold">RIR</span>
-		{#if mode === "performing"}
-			<span></span>
-		{/if}
-		<WorkoutExerciseSets bind:exercise bind:setsCompleted {checkForFeedback} {mode} />
+		{#key exercise.sets}
+			{#if mode === "performing" || comparing}
+				<div>
+					{#if compareVolume() === 1}
+						<IncreaseIcon class="text-success" />
+					{:else if compareVolume() === 0}
+						<EqualIcon />
+					{:else if compareVolume() === -1}
+						<DecreaseIcon class="text-error" />
+					{/if}
+				</div>
+			{/if}
+		{/key}
+		<WorkoutExerciseSets
+			bind:exercise
+			bind:setsCompleted
+			bind:comparing
+			{referenceExercise}
+			{checkForFeedback}
+			{mode}
+		/>
 	</div>
 </div>
 

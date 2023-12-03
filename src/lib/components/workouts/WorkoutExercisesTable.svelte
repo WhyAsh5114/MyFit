@@ -7,6 +7,9 @@
 
 	export let exercises: WorkoutExerciseWithoutSetNumbers[];
 	export let mode: "performing" | "performed" = "performing";
+	export let referenceWorkout: Workout | null = null;
+
+	let comparing = false;
 
 	export let allExercisesSetsCompleted: boolean[][] = [];
 	if (allExercisesSetsCompleted.length === 0) {
@@ -88,6 +91,7 @@
 			<WorkoutExerciseCard
 				bind:exercise
 				bind:setsCompleted={allExercisesSetsCompleted[i]}
+				bind:comparing
 				exerciseIndex={i}
 				totalExercises={exercises.length}
 				{editExercise}
@@ -95,10 +99,27 @@
 				{reorderExercise}
 				{takeFeedback}
 				{mode}
+				referenceExercise={referenceWorkout?.exercisesPerformed[i] ?? null}
 			/>
 		</div>
 	{/each}
 </div>
-{#if mode === "performing"}
-	<button class="btn btn-primary mt-1" on:click={addExercise}>Add exercise</button>
-{/if}
+
+<div class="join mt-1 w-full gap-1">
+	{#if referenceWorkout}
+		{#if !comparing}
+			<button class="join-item btn btn-primary w-1/2 grow" on:click={() => (comparing = true)}>
+				Compare
+			</button>
+		{:else}
+			<button class="join-item btn btn-primary w-1/2 grow" on:click={() => (comparing = false)}>
+				Back
+			</button>
+		{/if}
+	{/if}
+	{#if mode === "performing"}
+		<button class="join-item btn btn-primary w-1/2 grow" on:click={addExercise}>
+			Add exercise
+		</button>
+	{/if}
+</div>

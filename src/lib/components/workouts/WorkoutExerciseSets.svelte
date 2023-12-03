@@ -1,10 +1,46 @@
 <script lang="ts">
 	import DoneIcon from "virtual:icons/material-symbols/done";
 	import EditIcon from "virtual:icons/material-symbols/edit-outline";
+	import RightArrow from "virtual:icons/mdi/arrow-right-thin";
+
+	import EqualIcon from "virtual:icons/akar-icons/equal";
+	import IncreaseIcon from "virtual:icons/icon-park-outline/up-c";
+	import DecreaseIcon from "virtual:icons/icon-park-outline/down-c";
+
 	export let exercise: WorkoutExerciseWithoutSetNumbers;
 	export let setsCompleted: boolean[];
 	export let checkForFeedback: () => void;
 	export let mode: "performing" | "performed";
+	export let comparing: boolean;
+	export let referenceExercise: WorkoutExercise | null;
+
+	function getColor(param: "reps" | "load" | "RIR", setNumber: number) {
+		let newValue = null;
+		let reference = null;
+		newValue = exercise.sets[setNumber][param];
+		reference = referenceExercise?.sets[setNumber][param] ?? null;
+		if (newValue === null || reference === null) return;
+		if (reference === newValue) return "";
+		if (reference > newValue) return "text-warning";
+		if (reference < newValue) return "text-accent";
+	}
+
+	function compareVolume(setNumber: number) {
+		let referenceSet = referenceExercise?.sets[setNumber];
+		let currentSet = exercise.sets[setNumber];
+		if (!referenceSet) return false;
+		if (currentSet.reps === null || currentSet.load === null) return false;
+
+		let referenceVolume = referenceSet.reps * referenceSet.load;
+		let currentVolume = currentSet.reps * currentSet.load;
+		if (currentVolume < referenceVolume) {
+			return -1;
+		} else if (currentVolume > referenceVolume) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
 </script>
 
 {#each exercise.sets as { reps, load, RIR }, setNumber}
@@ -15,43 +51,61 @@
 			checkForFeedback();
 		}}
 	>
-		<div class="flex">
-			<input
-				type="number"
-				id="{exercise.name}-set{setNumber}-reps"
-				class="input input-sm w-12"
-				bind:value={reps}
-				placeholder="?"
-				min={0}
-				required
-				disabled={setsCompleted[setNumber]}
-			/>
+		<div class="flex items-center gap-2">
+			{#if comparing && referenceExercise?.sets[setNumber]}
+				<span class="text-sm">{referenceExercise.sets[setNumber].reps}</span>
+				<RightArrow />
+				<span class="font-semibold {getColor('reps', setNumber)}">{reps}</span>
+			{:else}
+				<input
+					type="number"
+					id="{exercise.name}-set{setNumber}-reps"
+					class="input input-sm w-12"
+					bind:value={reps}
+					placeholder="?"
+					min={0}
+					required
+					disabled={setsCompleted[setNumber] || comparing}
+				/>
+			{/if}
 		</div>
-		<div class="flex">
-			<input
-				type="number"
-				id="{exercise.name}-set{setNumber}-load"
-				class="input input-sm w-16"
-				bind:value={load}
-				placeholder={exercise.weightType === "Bodyweight" ? "0/+/-" : "?"}
-				required
-				disabled={setsCompleted[setNumber]}
-			/>
+		<div class="flex items-center gap-2">
+			{#if comparing && referenceExercise?.sets[setNumber]}
+				<span class="text-sm">{referenceExercise.sets[setNumber].load}</span>
+				<RightArrow />
+				<span class="font-semibold {getColor('load', setNumber)}">{load}</span>
+			{:else}
+				<input
+					type="number"
+					id="{exercise.name}-set{setNumber}-load"
+					class="input input-sm w-16"
+					bind:value={load}
+					placeholder={exercise.weightType === "Bodyweight" ? "0/+/-" : "?"}
+					required
+					disabled={setsCompleted[setNumber] || comparing}
+				/>
+			{/if}
 		</div>
-		<div class="flex">
-			<input
-				type="number"
-				id="{exercise.name}-set{setNumber}-RIR"
-				class="input input-sm w-12"
-				bind:value={RIR}
-				placeholder="?"
-				min={0}
-				max={10}
-				required
-				disabled={setsCompleted[setNumber]}
-			/>
+		<div class="flex items-center gap-2">
+			{#if comparing && referenceExercise?.sets[setNumber]}
+				<span class="text-sm">{referenceExercise.sets[setNumber].RIR}</span>
+				<RightArrow />
+				<span class="font-semibold {getColor('RIR', setNumber)}">{RIR}</span>
+			{:else}
+				<input
+					type="number"
+					id="{exercise.name}-set{setNumber}-RIR"
+					class="input input-sm w-12"
+					bind:value={RIR}
+					placeholder="?"
+					min={0}
+					max={10}
+					required
+					disabled={setsCompleted[setNumber] || comparing}
+				/>
+			{/if}
 		</div>
-		{#if mode === "performing"}
+		{#if mode === "performing" && !comparing}
 			{#if !setsCompleted[setNumber]}
 				<button class="btn btn-xs btn-accent btn-circle" aria-label="mark-set-complete">
 					<DoneIcon />
@@ -64,6 +118,14 @@
 				>
 					<EditIcon />
 				</button>
+			{/if}
+		{:else if comparing}
+			{#if compareVolume(setNumber) === 0}
+				<EqualIcon class="text-warning" />
+			{:else if compareVolume(setNumber) === 1}
+				<IncreaseIcon class="text-success" />
+			{:else if compareVolume(setNumber) === -1}
+				<DecreaseIcon class="text-error" />
 			{/if}
 		{/if}
 	</form>
