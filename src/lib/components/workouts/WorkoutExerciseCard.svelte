@@ -22,8 +22,10 @@
 		setsCompleted = setsCompleted;
 	}
 
-	$: if (!setsCompleted.includes(false)) {
-		takeFeedback(exerciseIndex);
+	function checkForFeedback() {
+		if (!setsCompleted.includes(false)) {
+			takeFeedback(exerciseIndex);
+		}
 	}
 </script>
 
@@ -107,7 +109,7 @@
 		</span>
 		<span class="text-sm font-semibold">RIR</span>
 		<span></span>
-		<WorkoutExerciseSets bind:exercise bind:setsCompleted />
+		<WorkoutExerciseSets bind:exercise bind:setsCompleted {checkForFeedback} />
 	</div>
 </div>
 

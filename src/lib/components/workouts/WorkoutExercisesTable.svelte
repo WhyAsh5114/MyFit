@@ -8,7 +8,7 @@
 	export let exercises: WorkoutExerciseWithoutSetNumbers[];
 	export let mode: "performing" | "performed" = "performing";
 
-	export let allExercisesSetsCompleted: boolean[][];
+	export let allExercisesSetsCompleted: boolean[][] = [];
 	if (allExercisesSetsCompleted.length === 0) {
 		exercises.forEach((exercise) => {
 			let setCompleted = mode === "performed";
@@ -56,14 +56,15 @@
 	let feedbackModal: HTMLDialogElement;
 	let feedbackExerciseIdx: number | undefined = undefined;
 	function takeFeedback(idx: number, force = false) {
-		if (feedbackTaken[idx] !== undefined && !force) return;
+		if (feedbackTaken[idx] === true && !force) return;
+		if (!feedbackModal) return;
 		feedbackExerciseIdx = idx;
 		feedbackModal.show();
 		feedbackTaken[idx] = true;
 	}
 
-	export let muscleGroupWorkloads: Workout["muscleGroupWorkloads"];
-	export let sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"];
+	export let muscleGroupWorkloads: Workout["muscleGroupWorkloads"] = {};
+	export let sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"] = {};
 </script>
 
 <AddEditWorkoutExerciseModal

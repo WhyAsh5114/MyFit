@@ -3,6 +3,7 @@
 	import EditIcon from "virtual:icons/material-symbols/edit-outline";
 	export let exercise: WorkoutExerciseWithoutSetNumbers;
 	export let setsCompleted: boolean[];
+	export let checkForFeedback: () => void;
 </script>
 
 {#each exercise.sets as { reps, load, RIR }, setNumber}
@@ -10,6 +11,7 @@
 		class="contents"
 		on:submit|preventDefault={() => {
 			setsCompleted[setNumber] = true;
+			checkForFeedback();
 		}}
 	>
 		<div class="flex">
@@ -52,7 +54,6 @@
 			<button
 				class="btn btn-xs btn-accent btn-circle"
 				aria-label="mark-set-complete"
-				disabled={setsCompleted[setNumber]}
 			>
 				<DoneIcon />
 			</button>
