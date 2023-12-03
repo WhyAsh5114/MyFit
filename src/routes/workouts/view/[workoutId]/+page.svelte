@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from "$app/stores";
 	import WorkoutExercisesTable from "$lib/components/workouts/WorkoutExercisesTable.svelte";
 	import { dateFormatter } from "$lib/util/CommonFunctions.js";
 	export let data;
@@ -20,3 +21,7 @@
 	</div>
 </div>
 <WorkoutExercisesTable exercises={data.workout.exercisesPerformed} mode="performed" />
+<div class="join grid grid-cols-2 mt-2">
+	<button class="join-item btn btn-error">Delete</button>
+	<a class="join-item btn btn-primary" href="/workouts/edit/{$page.params.workoutId}">Edit</a>
+</div>
