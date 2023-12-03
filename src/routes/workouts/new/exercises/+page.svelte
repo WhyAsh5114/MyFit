@@ -74,6 +74,7 @@
 		bind:allExercisesSetsCompleted={$allExercisesSetsCompleted}
 		bind:muscleGroupWorkloads
 		bind:sorenessFromPreviousWorkouts
+		referenceWorkout={data.referenceWorkout}
 	/>
 {/if}
 <button
