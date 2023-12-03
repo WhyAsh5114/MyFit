@@ -94,8 +94,11 @@
 				{deleteExercise}
 				{reorderExercise}
 				{takeFeedback}
+				{mode}
 			/>
 		</div>
 	{/each}
 </div>
-<button class="btn btn-primary mt-1" on:click={addExercise}>Add exercise</button>
+{#if mode === "performing"}
+	<button class="btn btn-primary mt-1" on:click={addExercise}>Add exercise</button>
+{/if}

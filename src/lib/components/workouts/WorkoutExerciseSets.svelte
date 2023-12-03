@@ -4,6 +4,7 @@
 	export let exercise: WorkoutExerciseWithoutSetNumbers;
 	export let setsCompleted: boolean[];
 	export let checkForFeedback: () => void;
+	export let mode: "performing" | "performed";
 </script>
 
 {#each exercise.sets as { reps, load, RIR }, setNumber}
@@ -50,21 +51,20 @@
 				disabled={setsCompleted[setNumber]}
 			/>
 		</div>
-		{#if !setsCompleted[setNumber]}
-			<button
-				class="btn btn-xs btn-accent btn-circle"
-				aria-label="mark-set-complete"
-			>
-				<DoneIcon />
-			</button>
-		{:else}
-			<button
-				class="btn btn-xs btn-circle bg-base-100/25 border-0"
-				on:click={() => (setsCompleted[setNumber] = false)}
-				aria-label="edit-set"
-			>
-				<EditIcon />
-			</button>
+		{#if mode === "performing"}
+			{#if !setsCompleted[setNumber]}
+				<button class="btn btn-xs btn-accent btn-circle" aria-label="mark-set-complete">
+					<DoneIcon />
+				</button>
+			{:else}
+				<button
+					class="btn btn-xs btn-circle bg-base-100/25 border-0"
+					on:click={() => (setsCompleted[setNumber] = false)}
+					aria-label="edit-set"
+				>
+					<EditIcon />
+				</button>
+			{/if}
 		{/if}
 	</form>
 {/each}
