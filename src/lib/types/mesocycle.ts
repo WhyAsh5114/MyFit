@@ -35,6 +35,10 @@ type ActiveMesocycle = {
 	workouts: (string | null)[];
 };
 
+type Mesocycle = ActiveMesocycle & {
+	endTimestamp?: EpochTimeStamp;
+}
+
 type PerformedMesocycle = ActiveMesocycle & {
 	endTimestamp: EpochTimeStamp;
 };
