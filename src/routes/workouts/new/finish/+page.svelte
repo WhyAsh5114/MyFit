@@ -96,7 +96,7 @@
 	</div>
 	<div class="stat">
 		<div class="stat-title">Average RIR</div>
-		<div class="stat-value">{avgRIR} RIR</div>
+		<div class="stat-value">{avgRIR.toFixed(2)} RIR</div>
 	</div>
 </div>
 
