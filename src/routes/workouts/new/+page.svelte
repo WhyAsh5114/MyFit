@@ -13,6 +13,12 @@
 	import EditIcon from "virtual:icons/ep/edit";
 	import DoneIcon from "virtual:icons/material-symbols/done";
 	import CancelIcon from "virtual:icons/ph/x-bold";
+	import {
+		allExercisesSetsCompleted,
+		sorenessData,
+		workloadData,
+		workoutBeingPerformed
+	} from "./newWorkoutStore.js";
 
 	let modal: HTMLDialogElement;
 	let modalTitle = "";
@@ -83,6 +89,14 @@
 			modalText = await response.text();
 			modal.show();
 		}
+	}
+
+	async function overwriteWorkout() {
+		$workoutBeingPerformed = null;
+		$allExercisesSetsCompleted = [];
+		$workloadData = {};
+		$sorenessData = {};
+		await submitForm();
 	}
 </script>
 
@@ -197,17 +211,26 @@
 	{/if}
 </form>
 
-<button
-	type="submit"
-	form="workoutForm"
-	class="btn btn-accent mt-auto"
-	disabled={editingBodyweightValue || callingEndpoint}
->
-	{#if todaysWorkout}
-		Log workout
-	{:else if callingEndpoint}
-		<span class="loading loading-bars"></span>
-	{:else}
-		Mark rest day complete
-	{/if}
-</button>
+{#if $workoutBeingPerformed === null}
+	<button
+		type="submit"
+		form="workoutForm"
+		class="btn btn-accent mt-auto"
+		disabled={editingBodyweightValue || callingEndpoint}
+	>
+		{#if todaysWorkout}
+			Log workout
+		{:else if callingEndpoint}
+			<span class="loading loading-bars"></span>
+		{:else}
+			Mark rest day complete
+		{/if}
+	</button>
+{:else}
+	<div class="join grid grid-cols-2 mt-auto">
+		<button class="join-item btn btn-error" on:click={overwriteWorkout}>Overwrite workout</button>
+		<button type="submit" form="workoutForm" class="join-item btn btn-primary">
+			Back to workout
+		</button>
+	</div>
+{/if}
