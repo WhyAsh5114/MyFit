@@ -1,8 +1,9 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import clientPromise from "$lib/mongo/mongodb";
-import { ObjectId } from "mongodb";
+import { ObjectId, type WithId } from "mongodb";
 import type {
 	MesocycleDocument,
+	MesocycleTemplateDocument,
 	WorkoutDocument
 } from "$lib/types/documents";
 
@@ -27,6 +28,50 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 		if (!activeMesocycle) {
 			return new Response("No active mesocycle found", { status: 400 });
+		}
+
+		const { exerciseSplit } = (await client
+			.db()
+			.collection<MesocycleTemplateDocument>("activeMesocycle")
+			.findOne(
+				{
+					userId: new ObjectId(session.user.id),
+					_id: activeMesocycle.templateMesoId
+				},
+				{ projection: { exerciseSplit: 1 } }
+			)) as WithId<MesocycleTemplateDocument>;
+
+		const workoutsCursor = client
+			.db()
+			.collection<WorkoutDocument>("workouts")
+			.find(
+				{ userId: new ObjectId(session.user.id), performedMesocycleId: activeMesocycle._id },
+				{ limit: exerciseSplit.length }
+			)
+			.sort({ startTimestamp: -1 });
+
+		while ((await workoutsCursor.hasNext()) && Object.keys(previousSoreness).length > 0) {
+			const workout = await workoutsCursor.next();
+			if (workout === null) continue;
+			let workoutChanged = false;
+			for (const [muscleGroup, sorenessValue] of Object.entries(previousSoreness)) {
+				workout.exercisesPerformed.forEach(({ targetMuscleGroup }) => {
+					if (muscleGroup === targetMuscleGroup) {
+						workout.muscleSorenessToNextWorkout[muscleGroup] = sorenessValue;
+						workoutChanged = true;
+						delete previousSoreness[muscleGroup];
+					}
+				});
+			}
+			if (workoutChanged) {
+				await client
+					.db()
+					.collection<WorkoutDocument>("workouts")
+					.updateOne(
+						{ _id: workout._id },
+						{ $set: { muscleSorenessToNextWorkout: workout.muscleSorenessToNextWorkout } }
+					);
+			}
 		}
 
 		const savedWorkout = await client
