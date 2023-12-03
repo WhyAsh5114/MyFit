@@ -32,7 +32,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 		const { exerciseSplit } = (await client
 			.db()
-			.collection<MesocycleTemplateDocument>("activeMesocycle")
+			.collection<MesocycleTemplateDocument>("mesocycleTemplates")
 			.findOne(
 				{
 					userId: new ObjectId(session.user.id),
@@ -92,6 +92,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			status: 200
 		});
 	} catch (e) {
+		console.log(e);
 		return new Response(JSON.stringify(e), {
 			status: 500
 		});
