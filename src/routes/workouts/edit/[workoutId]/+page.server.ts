@@ -1,11 +1,7 @@
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import clientPromise from "$lib/mongo/mongodb";
-import type {
-	MesocycleDocument,
-	WorkoutDocument,
-	MesocycleTemplateDocument
-} from "$lib/types/documents";
+import type { WorkoutDocument } from "$lib/types/documents";
 import { ObjectId } from "mongodb";
 
 export const load: PageServerLoad = async ({ locals, params }) => {
