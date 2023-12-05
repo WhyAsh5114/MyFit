@@ -37,7 +37,9 @@ export function getMuscleGroups(exercises: SplitExercise[]) {
 	return muscleGroups;
 }
 
-export function getMuscleGroupsAndSets(exercises: SplitExercise[] | WorkoutExercise[]) {
+export function getMuscleGroupsAndSets(
+	exercises: SplitExercise[] | WorkoutExerciseWithoutSetNumbers[]
+) {
 	const muscleGroupAndSets: { muscleGroup: MuscleGroup; sets: number }[] = [];
 	exercises.forEach((exercise) => {
 		const targetMuscleGroup = exercise.targetMuscleGroup;
@@ -56,7 +58,7 @@ export function getMuscleGroupsAndSets(exercises: SplitExercise[] | WorkoutExerc
 	return muscleGroupAndSets;
 }
 
-export function getTotalSets(exercises: SplitExercise[] | WorkoutExercise[]) {
+export function getTotalSets(exercises: SplitExercise[] | WorkoutExerciseWithoutSetNumbers[]) {
 	let totalSets = 0;
 	exercises.forEach(({ sets }) => {
 		if (typeof sets === "number") totalSets += sets;
