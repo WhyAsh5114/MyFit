@@ -12,6 +12,7 @@
 	export let totalExercises: number;
 	export let comparing: boolean;
 	export let referenceExercise: WorkoutExercise | null;
+	export let userBodyweight: number | null;
 
 	export let editExercise: (idx: number) => void;
 	export let reorderExercise: (idx: number, direction: "up" | "down") => void;
@@ -43,11 +44,19 @@
 			let referenceSet = referenceExercise?.sets[i];
 
 			if (referenceSet) {
-				referenceVolume += referenceSet.reps * referenceSet.load;
+				let referenceLoad = referenceSet.load;
+				if (referenceExercise?.bodyweight !== undefined) {
+					referenceLoad += referenceExercise.bodyweight;
+				}
+				referenceVolume += referenceSet.reps * referenceLoad;
 			}
 
 			if (currentSet.reps !== null && currentSet.load !== null) {
-				currentVolume += currentSet.reps * currentSet.load;
+				let currentLoad = currentSet.load;
+				if (exercise.bodyweight !== undefined) {
+					currentLoad += userBodyweight ?? 0;
+				}
+				currentVolume += currentSet.reps * currentLoad;
 			}
 		}
 
@@ -152,12 +161,14 @@
 		{#key exercise.sets}
 			{#if mode === "performing" || comparing}
 				<div>
-					{#if compareVolume() === 1}
-						<IncreaseIcon class="text-success" />
-					{:else if compareVolume() === 0}
-						<EqualIcon />
-					{:else if compareVolume() === -1}
-						<DecreaseIcon class="text-error" />
+					{#if referenceExercise}
+						{#if compareVolume() === 1}
+							<IncreaseIcon class="text-success" />
+						{:else if compareVolume() === 0}
+							<EqualIcon />
+						{:else if compareVolume() === -1}
+							<DecreaseIcon class="text-error" />
+						{/if}
 					{/if}
 				</div>
 			{/if}
@@ -169,16 +180,17 @@
 			{referenceExercise}
 			{checkForFeedback}
 			{mode}
+			{userBodyweight}
 		/>
 	</div>
 </div>
 
 <style lang="postcss">
 	.workout-sets-grid-performing {
-		grid-template-columns: 1fr 1fr 1fr 2.5rem;
+		grid-template-columns: 1fr 2fr 1fr 1.5rem;
 	}
 
 	.workout-sets-grid-performed {
-		grid-template-columns: 1fr 1fr 1fr;
+		grid-template-columns: 1fr 2fr 1fr;
 	}
 </style>
