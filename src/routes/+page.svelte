@@ -11,6 +11,6 @@
 	<h3 class="text-xl mb-1">Active mesocycle</h3>
 	<ActiveMesocycleCard {activeMesocycle} {activeMesocycleTemplate} />
 
-	<h3 class="text-xl mb-1 mt-2">Today's workout</h3>
+	<h3 class="text-xl mb-1 mt-2">Upcoming workout</h3>
 	<TodaysWorkoutCard bind:activeMesocycle {activeMesocycleTemplate} />
 {/if}
