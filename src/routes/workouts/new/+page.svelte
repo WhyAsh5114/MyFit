@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto, invalidate } from "$app/navigation";
 	import MyModal from "$lib/components/MyModal.svelte";
-	import { dateFormatter } from "$lib/util/CommonFunctions.js";
+	import { dateFormatter, splitExercisesToWorkoutExercise } from "$lib/util/CommonFunctions.js";
 	import {
 		getCycleNumber,
 		getDayNumber,
@@ -19,6 +19,7 @@
 		workloadData,
 		workoutBeingPerformed
 	} from "./newWorkoutStore.js";
+	import { applyProgressiveOverload } from "$lib/util/ProgressiveOverload.js";
 
 	let modal: HTMLDialogElement;
 	let modalTitle = "";
@@ -35,10 +36,16 @@
 	let totalSets = 0;
 	let bodyweightExercises = false;
 	$: if (todaysWorkout) {
-		muscleGroupsAndSets = getMuscleGroupsAndSets(todaysWorkout.exercises);
-		totalSets = getTotalSets(todaysWorkout.exercises);
-		for (const exercise of todaysWorkout.exercises) {
-			if (exercise.weightType.includes("Bodyweight")) {
+		let exercises: WorkoutExerciseWithoutSetNumbers[];
+		if (data.referenceWorkout) {
+			exercises = applyProgressiveOverload(data.referenceWorkout.exercisesPerformed);
+		} else {
+			exercises = splitExercisesToWorkoutExercise(todaysWorkout.exercises);
+		}
+		muscleGroupsAndSets = getMuscleGroupsAndSets(exercises);
+		totalSets = getTotalSets(exercises);
+		for (const exercise of exercises) {
+			if (exercise.bodyweight !== undefined) {
 				bodyweightExercises = true;
 				break;
 			}
