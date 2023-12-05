@@ -113,8 +113,16 @@
 </form>
 
 <div class="flex flex-col h-px grow overflow-y-auto gap-1">
-	{#each workoutsStreamArray as workoutPromise}
-		<WorkoutCard {workoutPromise} bind:mesocycleTemplate={selectedMesocycleTemplate} />
-	{/each}
+	{#if workoutsStreamArray.length > 0}
+		{#each workoutsStreamArray as workoutPromise}
+			<WorkoutCard {workoutPromise} bind:mesocycleTemplate={selectedMesocycleTemplate} />
+		{/each}
+	{:else}
+		<div class="stats">
+			<div class="stat">
+				<div class="text-sm text-white font-semibold">No workout found</div>
+			</div>
+		</div>
+	{/if}
 </div>
 <a href="/workouts/new" class="btn btn-accent btn-block">Log today's workout</a>
