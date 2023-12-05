@@ -6,7 +6,7 @@ import type {
 	WorkoutDocument,
 	MesocycleTemplateDocument
 } from "$lib/types/documents";
-import { ObjectId } from "mongodb";
+import { ObjectId, type WithId } from "mongodb";
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const session = await locals.getSession();
@@ -30,6 +30,28 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	if (!workoutDocument) {
 		throw error(404, "Workout not found");
 	}
+
+	let referenceWorkout: WithSerializedId<WorkoutDocument> | null = null;
+	let referenceWorkoutDocument: WithId<WorkoutDocument> | null = null;
+	if (workoutDocument.referenceWorkout) {
+		referenceWorkoutDocument = await client
+			.db()
+			.collection<WorkoutDocument>("workouts")
+			.findOne({
+				_id: new ObjectId(workoutDocument.referenceWorkout),
+				userId: new ObjectId(session.user.id)
+			});
+	}
+
+	if (referenceWorkoutDocument) {
+		const { _id, ...referenceWorkoutProps } = referenceWorkoutDocument;
+		referenceWorkout = {
+			id: _id.toString(),
+			...referenceWorkoutProps
+		};
+	}
+
+	let mesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
 	const { _id: workoutId, performedMesocycleId, ...workout } = workoutDocument;
 	const performedMesocycleDocument = await client
 		.db()
@@ -39,7 +61,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			{ projection: { userId: 0 } }
 		);
 	if (!performedMesocycleDocument) {
-		return { workout, mesocycleTemplate: null };
+		return { workout, mesocycleTemplate, referenceWorkout };
 	}
 
 	const mesocycleTemplateDocument = await client
@@ -50,9 +72,14 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			{ projection: { userId: 0 } }
 		);
 	if (!mesocycleTemplateDocument) {
-		return { workout, mesocycleTemplate: null };
+		return { workout, mesocycleTemplate, referenceWorkout };
 	}
-	const { _id: mesocycleTemplateId, ...mesocycleTemplate } = mesocycleTemplateDocument;
+	
+	let { _id: mesocycleTemplateId, ...otherMesocycleTemplateProps } = mesocycleTemplateDocument;
+	mesocycleTemplate = {
+		id: mesocycleTemplateId.toString(),
+		...otherMesocycleTemplateProps
+	};
 
-	return { workout, mesocycleTemplate };
+	return { workout, mesocycleTemplate, referenceWorkout };
 };
