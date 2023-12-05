@@ -1,8 +1,13 @@
 const WorkloadFeedback = [
-	{ name: "none", value: 0, bgColor: "checked:!bg-warning" },
-	{ name: "decent", value: 1, bgColor: "checked:!bg-accent" },
-	{ name: "pushed my limits", value: 2, bgColor: "checked:!bg-success" },
-	{ name: "too much work", value: 3, bgColor: "checked:!bg-warning" }
+	{ name: "none", value: 0, bgColorChecked: "checked:!bg-warning", bgColor: "bg-warning" },
+	{ name: "decent", value: 1, bgColorChecked: "checked:!bg-accent", bgColor: "bg-accent" },
+	{
+		name: "pushed my limits",
+		value: 2,
+		bgColorChecked: "checked:!bg-success",
+		bgColor: "bg-success"
+	},
+	{ name: "too much work", value: 3, bgColorChecked: "checked:!bg-error", bgColor: "bg-error" }
 ];
 type WorkloadState = (typeof WorkloadFeedback)[number]["value"];
 
