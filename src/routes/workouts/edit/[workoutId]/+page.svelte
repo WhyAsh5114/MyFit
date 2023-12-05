@@ -8,12 +8,10 @@
 		allExercisesSetsCompleted.push(Array(sets.length).fill(true));
 	});
 
-    let muscleGroupWorkloads = data.workout.muscleGroupWorkloads;
-    let sorenessFromPreviousWorkouts = {};
+	let muscleGroupWorkloads = data.workout.muscleGroupWorkloads;
+	let sorenessFromPreviousWorkouts = {};
 
-    async function updateWorkout() {
-
-    }
+	async function updateWorkout() {}
 </script>
 
 <h2>Edit workout</h2>
@@ -22,8 +20,8 @@
 <WorkoutExercisesTable
 	bind:exercises={data.workout.exercisesPerformed}
 	bind:allExercisesSetsCompleted
-    bind:muscleGroupWorkloads
-    bind:sorenessFromPreviousWorkouts
+	bind:muscleGroupWorkloads
+	bind:sorenessFromPreviousWorkouts
 />
 
 <button class="btn btn-accent mt-2">Update workout</button>
