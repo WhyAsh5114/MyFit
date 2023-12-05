@@ -101,6 +101,7 @@
 					type="number"
 					id="{exercise.name}-set{setNumber}-load"
 					class="input input-sm w-16"
+					step="0.01"
 					bind:value={load}
 					placeholder={exercise.bodyweight !== undefined ? "0/+/-" : "?"}
 					required
