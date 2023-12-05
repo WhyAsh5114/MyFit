@@ -92,7 +92,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			status: 200
 		});
 	} catch (e) {
-		console.log(e);
 		return new Response(JSON.stringify(e), {
 			status: 500
 		});
