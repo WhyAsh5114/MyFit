@@ -144,7 +144,7 @@
 		<span class="text-sm font-semibold">Reps</span>
 		<span class="text-sm font-semibold">
 			Load
-			{#if exercise.weightType === "Bodyweight"}
+			{#if exercise.bodyweight !== undefined}
 				<span class="text-white text-xs">BW</span>
 			{/if}
 		</span>

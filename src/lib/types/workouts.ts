@@ -50,7 +50,7 @@ type WorkoutExercise = {
 	}[];
 	repRangeStart: number;
 	repRangeEnd: number;
-	weightType: ExerciseWeightType;
+	bodyweight?: number;
 	targetMuscleGroup: MuscleGroup;
 	jointPainRating: JoinPainState | null;
 	pumpRating: PumpState | null;

@@ -80,7 +80,7 @@
 					id="{exercise.name}-set{setNumber}-load"
 					class="input input-sm w-16"
 					bind:value={load}
-					placeholder={exercise.weightType === "Bodyweight" ? "0/+/-" : "?"}
+					placeholder={exercise.bodyweight !== undefined ? "0/+/-" : "?"}
 					required
 					disabled={setsCompleted[setNumber] || comparing}
 				/>
