@@ -4,7 +4,7 @@ export function applyProgressiveOverload(
 ) {
 	workout = JSON.parse(JSON.stringify(workout));
 	workout.forEach((exercise) => {
-		if (exercise.bodyweight !== null && newBodyweight !== null) {
+		if (exercise.bodyweight !== undefined && newBodyweight !== null) {
 			exercise.bodyweight = newBodyweight;
 		}
 	});
