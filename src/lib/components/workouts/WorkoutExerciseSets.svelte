@@ -13,13 +13,20 @@
 	export let mode: "performing" | "performed";
 	export let comparing: boolean;
 	export let referenceExercise: WorkoutExercise | null;
+	export let userBodyweight: number | null;
 
 	function getColor(param: "reps" | "load" | "RIR", setNumber: number) {
 		let newValue = null;
 		let reference = null;
 		newValue = exercise.sets[setNumber][param];
 		reference = referenceExercise?.sets[setNumber][param] ?? null;
+
 		if (newValue === null || reference === null) return;
+		if (param === 'load' && exercise.bodyweight !== undefined) {
+			newValue += userBodyweight ?? 0;
+			reference += referenceExercise?.bodyweight ?? 0;
+		}
+		
 		if (reference === newValue) return "";
 		if (reference > newValue) return "text-warning";
 		if (reference < newValue) return "text-accent";
@@ -28,11 +35,18 @@
 	function compareVolume(setNumber: number) {
 		let referenceSet = referenceExercise?.sets[setNumber];
 		let currentSet = exercise.sets[setNumber];
-		if (!referenceSet) return false;
+		if (!referenceSet || !referenceExercise) return false;
 		if (currentSet.reps === null || currentSet.load === null) return false;
 
-		let referenceVolume = referenceSet.reps * referenceSet.load;
-		let currentVolume = currentSet.reps * currentSet.load;
+		let referenceLoad = referenceSet.load;
+		let currentLoad = currentSet.load;
+		if (exercise.bodyweight !== undefined) {
+			referenceLoad += referenceExercise.bodyweight ?? 0;
+			currentLoad += userBodyweight ?? 0;
+		}
+
+		let referenceVolume = referenceSet.reps * referenceLoad;
+		let currentVolume = currentSet.reps * currentLoad;
 		if (currentVolume < referenceVolume) {
 			return -1;
 		} else if (currentVolume > referenceVolume) {
@@ -51,7 +65,7 @@
 			checkForFeedback();
 		}}
 	>
-		<div class="flex items-center gap-2">
+		<div class="flex items-center gap-1">
 			{#if comparing && referenceExercise?.sets[setNumber]}
 				<span class="text-sm">{referenceExercise.sets[setNumber].reps}</span>
 				<RightArrow />
@@ -69,11 +83,19 @@
 				/>
 			{/if}
 		</div>
-		<div class="flex items-center gap-2">
+		<div class="flex items-center gap-1">
 			{#if comparing && referenceExercise?.sets[setNumber]}
-				<span class="text-sm">{referenceExercise.sets[setNumber].load}</span>
-				<RightArrow />
-				<span class="font-semibold {getColor('load', setNumber)}">{load}</span>
+				{#if exercise.bodyweight === undefined}
+					<span class="text-sm">{referenceExercise.sets[setNumber].load}</span>
+					<RightArrow />
+					<span class="font-semibold {getColor('load', setNumber)}">{load}</span>
+				{:else}
+					<span class="text-sm"
+						>{referenceExercise.bodyweight}+{referenceExercise.sets[setNumber].load}</span
+					>
+					<RightArrow />
+					<span class="font-semibold {getColor('load', setNumber)}">{userBodyweight}+{load}</span>
+				{/if}
 			{:else}
 				<input
 					type="number"
@@ -86,7 +108,7 @@
 				/>
 			{/if}
 		</div>
-		<div class="flex items-center gap-2">
+		<div class="flex items-center gap-1">
 			{#if comparing && referenceExercise?.sets[setNumber]}
 				<span class="text-sm">{referenceExercise.sets[setNumber].RIR}</span>
 				<RightArrow />
