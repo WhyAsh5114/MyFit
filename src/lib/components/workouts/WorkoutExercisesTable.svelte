@@ -8,6 +8,7 @@
 	export let exercises: WorkoutExerciseWithoutSetNumbers[];
 	export let mode: "performing" | "performed" = "performing";
 	export let referenceWorkout: Workout | null = null;
+	export let userBodyweight: number | null = null;
 
 	let comparing = false;
 
@@ -100,6 +101,7 @@
 				{takeFeedback}
 				{mode}
 				referenceExercise={referenceWorkout?.exercisesPerformed[i] ?? null}
+				{userBodyweight}
 			/>
 		</div>
 	{/each}
