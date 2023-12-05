@@ -41,9 +41,7 @@
 						<img src="/logo_no_bg.png" alt="" class="absolute" width="40" height="40" />
 					{/if}
 				</div>
-				<h1 class="text-3xl normal-case font-bold {$page.url.pathname === '/' ? 'text-accent' : 'text-white'}">
-					MyFit
-				</h1>
+				<h1 class="text-3xl normal-case font-bold {$page.url.pathname === '/' ? 'text-accent' : 'text-white'}">MyFit</h1>
 			</a>
 			<div class="h-px my-3"></div>
 			{#each drawerLinks as { name, link }}
@@ -55,6 +53,7 @@
 					<li><a href={link}>{name}</a></li>
 				{/if}
 			{/each}
+			<li><a href="https://my-fit-whyash5114.vercel.app/" class="text-accent">V2 is now available!</a></li>
 		</ul>
 	</div>
 </div>
