@@ -33,9 +33,9 @@
 
 			<span class="text-secondary/75">Soreness</span>
 			<div class="join mt-1 gap-0.5 grid grid-cols-4">
-				{#each sorenessFeedback as { name, value, bgColor }}
+				{#each sorenessFeedback as { name, value, bgColorChecked }}
 					<input
-						class="join-item btn capitalize {bgColor} checked:!text-black"
+						class="join-item btn capitalize {bgColorChecked} checked:!text-black"
 						type="radio"
 						name="soreness-feedback"
 						aria-label={name}
