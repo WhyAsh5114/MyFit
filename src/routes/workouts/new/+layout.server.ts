@@ -1,7 +1,7 @@
 import clientPromise from "$lib/mongo/mongodb";
 import type { UserPreferencesDocument, WorkoutDocument } from "$lib/types/documents";
 import { getTodaysSplitWorkout } from "$lib/util/MesocycleTemplate";
-import { ObjectId } from "mongodb";
+import { ObjectId, type WithId } from "mongodb";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
@@ -29,7 +29,7 @@ export const load: LayoutServerLoad = async ({ locals, parent, fetch, depends })
 		activeMesocycleTemplate.exerciseSplit
 	);
 
-	let referenceWorkout: Workout | null = null;
+	let referenceWorkout: WithId<WorkoutDocument> | null = null;
 	if (todaysWorkout) {
 		const requestBody: APIWorkoutsGetReferenceWorkout = { workoutName: todaysWorkout.name };
 		const response = await fetch("/api/workouts/getReferenceWorkout", {
@@ -40,7 +40,7 @@ export const load: LayoutServerLoad = async ({ locals, parent, fetch, depends })
 			}
 		});
 		if (response.ok) {
-			const referenceWorkoutDocument: WorkoutDocument = await response.json();
+			const referenceWorkoutDocument: WithId<WorkoutDocument> = await response.json();
 			referenceWorkout = referenceWorkoutDocument;
 		}
 	}
