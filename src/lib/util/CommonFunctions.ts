@@ -16,9 +16,12 @@ export const groupBy = <T>(
 		{} as { [key: string]: (T & { idx: number })[] }
 	);
 
-export function splitExercisesToWorkoutExercise(exercises: SplitExercise[]) {
+export function splitExercisesToWorkoutExercise(
+	exercises: SplitExercise[],
+	userBodyweight: number = -1
+) {
 	const workoutExercises: WorkoutExerciseWithoutSetNumbers[] = [];
-	exercises.forEach(({ sets, ...splitExerciseProps }) => {
+	exercises.forEach(({ sets, weightType, ...splitExerciseProps }) => {
 		const workoutExercise: WorkoutExerciseWithoutSetNumbers = {
 			...splitExerciseProps,
 			jointPainRating: null,
@@ -27,7 +30,8 @@ export function splitExercisesToWorkoutExercise(exercises: SplitExercise[]) {
 				.fill(undefined)
 				.map(() => {
 					return { reps: null, load: null, RIR: null };
-				})
+				}),
+			bodyweight: weightType === "Bodyweight" ? userBodyweight : undefined
 		};
 		workoutExercises.push(workoutExercise);
 	});
