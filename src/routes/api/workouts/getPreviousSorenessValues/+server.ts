@@ -15,8 +15,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { muscleGroups, mesocycleId }: APIGetWorkoutsThatPreviouslyTargeted =
-		await request.json();
+	const { muscleGroups, mesocycleId }: APIGetPreviousSorenessValues = await request.json();
 	const client = await clientPromise;
 	try {
 		const performedMesocycle = await client
@@ -54,24 +53,22 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			)
 			.sort({ startTimestamp: -1 });
 
-		const previouslyTargetedWorkouts: APIGetWorkoutsThatPreviouslyTargetedResponse = {};
+		const previouslyTargetedWorkouts: APIGetPreviousSorenessValuesResponse = {};
 		muscleGroups.forEach((muscleGroup) => {
-			previouslyTargetedWorkouts[muscleGroup] = null;
+			previouslyTargetedWorkouts[muscleGroup] = undefined;
 		});
 
 		while ((await workoutsCursor.hasNext()) && muscleGroups.length > 0) {
 			const workout = await workoutsCursor.next();
 			if (workout === null) continue;
-			for (const muscleGroup of muscleGroups) {
-				workout.exercisesPerformed.forEach(({ targetMuscleGroup }) => {
-					if (
-						muscleGroup === targetMuscleGroup &&
-						previouslyTargetedWorkouts[muscleGroup] === null
-					) {
-						previouslyTargetedWorkouts[muscleGroup] === workout._id.toString();
-					}
-				});
-			}
+
+			muscleGroups.forEach((muscleGroup) => {
+				if (previouslyTargetedWorkouts[muscleGroup] !== undefined) return;
+				if (workout.muscleSorenessToNextWorkout[muscleGroup] !== undefined) {
+					previouslyTargetedWorkouts[muscleGroup] =
+						workout.muscleSorenessToNextWorkout[muscleGroup];
+				}
+			});
 		}
 
 		return new Response(JSON.stringify(previouslyTargetedWorkouts), {
