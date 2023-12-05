@@ -54,7 +54,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			.sort({ startTimestamp: -1 });
 
 		const currentWorkoutIdx = exerciseSplit.findIndex((split) => split?.name === workoutName);
-		let referenceWorkoutDocument: WorkoutDocument | undefined = undefined;
+		let referenceWorkoutDocument: WithId<WorkoutDocument> | undefined = undefined;
 		for await (const workoutDocument of activeMesocycleWorkouts) {
 			if (workoutDocument.dayNumber === currentWorkoutIdx) {
 				referenceWorkoutDocument = workoutDocument;
