@@ -11,7 +11,7 @@
 	} from "../newWorkoutStore.js";
 	export let data;
 
-	let { activeMesocycle, activeMesocycleTemplate, todaysSplitWorkout } = data;
+	let { activeMesocycle, activeMesocycleTemplate, todaysSplitWorkout, userBodyweight } = data;
 	const workoutIdx = getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit);
 
 	if ($workoutBeingPerformed === null) {
@@ -74,6 +74,7 @@
 		bind:allExercisesSetsCompleted={$allExercisesSetsCompleted}
 		bind:muscleGroupWorkloads
 		bind:sorenessFromPreviousWorkouts
+		{userBodyweight}
 		referenceWorkout={data.referenceWorkout}
 	/>
 {/if}
