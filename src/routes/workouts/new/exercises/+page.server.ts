@@ -15,7 +15,8 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 		throw error(403, "Not logged in");
 	}
 
-	const { activeMesocycle, activeMesocycleTemplate, referenceWorkout, userBodyweight } = await parent();
+	const { activeMesocycle, activeMesocycleTemplate, referenceWorkout, userBodyweight } =
+		await parent();
 	if (!activeMesocycle) {
 		throw error(404, "No active mesocycle found");
 	}
@@ -46,7 +47,8 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 	} else {
 		todaysWorkout.exercisesPerformed = splitExercisesToWorkoutExercise(
 			todaysSplitWorkout.exercises,
-			userBodyweight ?? -1
+			userBodyweight ?? -1,
+			getPlannedRIR(activeMesocycleTemplate, activeMesocycle.workouts)
 		);
 	}
 
