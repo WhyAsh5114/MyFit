@@ -1,7 +1,7 @@
 // Vercel analytics
-import { dev } from '$app/environment';
-import { inject } from '@vercel/analytics';
-inject({ mode: dev ? 'development' : 'production' });
+import { dev } from "$app/environment";
+import { inject } from "@vercel/analytics";
+inject({ mode: dev ? "development" : "production" });
 
 import { redirect } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";

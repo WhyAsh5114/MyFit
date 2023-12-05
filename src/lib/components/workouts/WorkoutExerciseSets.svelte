@@ -22,11 +22,11 @@
 		reference = referenceExercise?.sets[setNumber][param] ?? null;
 
 		if (newValue === null || reference === null) return;
-		if (param === 'load' && exercise.bodyweight !== undefined) {
+		if (param === "load" && exercise.bodyweight !== undefined) {
 			newValue += userBodyweight ?? 0;
 			reference += referenceExercise?.bodyweight ?? 0;
 		}
-		
+
 		if (reference === newValue) return "";
 		if (reference > newValue) return "text-warning";
 		if (reference < newValue) return "text-accent";

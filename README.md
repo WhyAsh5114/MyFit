@@ -15,6 +15,7 @@ MyFit is a powerful workout tracking app designed to help you achieve your fitne
 ## Getting Started
 
 ### Direct web app (can also be installed as a PWA)
+
 https://my-fit-whyash5114.vercel.app/
 
 ### Prerequisites

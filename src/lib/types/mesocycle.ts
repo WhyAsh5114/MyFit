@@ -37,7 +37,7 @@ type ActiveMesocycle = {
 
 type Mesocycle = ActiveMesocycle & {
 	endTimestamp?: EpochTimeStamp;
-}
+};
 
 type PerformedMesocycle = ActiveMesocycle & {
 	endTimestamp: EpochTimeStamp;
