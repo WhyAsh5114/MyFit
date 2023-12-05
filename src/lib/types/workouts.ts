@@ -12,10 +12,20 @@ const WorkloadFeedback = [
 type WorkloadState = (typeof WorkloadFeedback)[number]["value"];
 
 const SorenessFeedback = [
-	{ name: "none", value: 0, bgColor: "checked:!bg-warning" },
-	{ name: "little bit", value: 1, bgColor: "checked:!bg-success" },
-	{ name: "recovered on time", value: 2, bgColor: "checked:!bg-accent" },
-	{ name: "interfered with workout", value: 3, bgColor: "checked:!bg-error" }
+	{ name: "none", value: 0, bgColorChecked: "checked:!bg-warning", bgColor: "bg-warning" },
+	{ name: "little bit", value: 1, bgColorChecked: "checked:!bg-success", bgColor: "bg-success" },
+	{
+		name: "recovered on time",
+		value: 2,
+		bgColorChecked: "checked:!bg-accent",
+		bgColor: "bg-accent"
+	},
+	{
+		name: "interfered with workout",
+		value: 3,
+		bgColorChecked: "checked:!bg-error",
+		bgColor: "bg-error"
+	}
 ] as const;
 type SorenessState = (typeof SorenessFeedback)[number]["value"];
 
