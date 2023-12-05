@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 		throw error(403, "Not logged in");
 	}
 
-	const { activeMesocycle, activeMesocycleTemplate, referenceWorkout } = await parent();
+	const { activeMesocycle, activeMesocycleTemplate, referenceWorkout, userBodyweight } = await parent();
 	if (!activeMesocycle) {
 		throw error(404, "No active mesocycle found");
 	}
@@ -39,11 +39,14 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 
 	if (referenceWorkout) {
 		todaysWorkout.exercisesPerformed = applyProgressiveOverload(
-			referenceWorkout.exercisesPerformed
+			referenceWorkout.exercisesPerformed,
+			userBodyweight
 		);
+		todaysWorkout.referenceWorkout = referenceWorkout._id.toString();
 	} else {
 		todaysWorkout.exercisesPerformed = splitExercisesToWorkoutExercise(
-			todaysSplitWorkout.exercises
+			todaysSplitWorkout.exercises,
+			userBodyweight ?? -1
 		);
 	}
 
