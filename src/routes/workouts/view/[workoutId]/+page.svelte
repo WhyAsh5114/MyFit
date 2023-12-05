@@ -23,7 +23,7 @@
 					{data.mesocycleTemplate?.exerciseSplit[data.workout.dayNumber]?.name}
 				</div>
 				<div class="stat-desc">
-					Day {data.workout.dayNumber}, Cycle {data.workout.cycleNumber}
+					Day {data.workout.dayNumber + 1}, Cycle {data.workout.cycleNumber}
 				</div>
 			</div>
 			<div class="stat">
@@ -39,7 +39,7 @@
 				</div>
 				{#if data.referenceWorkout}
 					<div class="stat-desc">
-						Day {data.referenceWorkout.dayNumber}, Cycle {data.referenceWorkout.cycleNumber}
+						Day {data.referenceWorkout.dayNumber + 1}, Cycle {data.referenceWorkout.cycleNumber}
 					</div>
 				{:else}
 					<div class="stat-desc">Used meso exercises</div>
