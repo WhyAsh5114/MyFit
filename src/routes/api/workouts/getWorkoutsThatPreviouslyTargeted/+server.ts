@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { workoutId, performedMesocycleId, workout, previousSoreness }: APIWorkoutsUpdateWorkout =
+	const { muscleGroups, activeMesocycleId }: APIGetWorkoutsThatPreviouslyTargeted =
 		await request.json();
 	const client = await clientPromise;
 	try {
@@ -24,23 +24,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			.collection<MesocycleDocument>("mesocycles")
 			.findOne({
 				userId: new ObjectId(session.user.id),
-				_id: new ObjectId(performedMesocycleId)
+				_id: new ObjectId(activeMesocycleId)
 			});
 
 		if (!performedMesocycle) {
-			return new Response("Performed mesocycle not found", { status: 400 });
-		}
-
-		const savedWorkout = await client
-			.db()
-			.collection<WorkoutDocument>("workouts")
-			.findOne({
-				userId: new ObjectId(session.user.id),
-				_id: new ObjectId(workoutId)
-			});
-
-		if (savedWorkout === null) {
-			return new Response("Workout not found", { status: 404 });
+			return new Response("No active mesocycle found", { status: 400 });
 		}
 
 		const { exerciseSplit } = (await client
@@ -60,43 +48,33 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			.find(
 				{
 					userId: new ObjectId(session.user.id),
-					performedMesocycleId: performedMesocycle._id,
-					startTimestamp: { $lt: savedWorkout.startTimestamp }
+					performedMesocycleId: performedMesocycle._id
 				},
 				{ limit: exerciseSplit.length }
 			)
 			.sort({ startTimestamp: -1 });
 
-		while ((await workoutsCursor.hasNext()) && Object.keys(previousSoreness).length > 0) {
+		const previouslyTargetedWorkouts: APIGetWorkoutsThatPreviouslyTargetedResponse = {};
+		muscleGroups.forEach((muscleGroup) => {
+			previouslyTargetedWorkouts[muscleGroup] = null;
+		});
+
+		while ((await workoutsCursor.hasNext()) && muscleGroups.length > 0) {
 			const workout = await workoutsCursor.next();
 			if (workout === null) continue;
-			let workoutChanged = false;
-			for (const [muscleGroup, sorenessValue] of Object.entries(previousSoreness)) {
+			for (const muscleGroup of muscleGroups) {
 				workout.exercisesPerformed.forEach(({ targetMuscleGroup }) => {
-					if (muscleGroup === targetMuscleGroup) {
-						workout.muscleSorenessToNextWorkout[muscleGroup] = sorenessValue;
-						workoutChanged = true;
-						delete previousSoreness[muscleGroup];
+					if (
+						muscleGroup === targetMuscleGroup &&
+						previouslyTargetedWorkouts[muscleGroup] === null
+					) {
+						previouslyTargetedWorkouts[muscleGroup] === workout._id.toString();
 					}
 				});
 			}
-			if (workoutChanged) {
-				await client
-					.db()
-					.collection<WorkoutDocument>("workouts")
-					.updateOne(
-						{ _id: workout._id },
-						{ $set: { muscleSorenessToNextWorkout: workout.muscleSorenessToNextWorkout } }
-					);
-			}
 		}
 
-		await client
-			.db()
-			.collection<WorkoutDocument>("workouts")
-			.updateOne({ _id: new ObjectId(workoutId) }, { $set: { ...workout } });
-
-		return new Response("Workout updated successfully", {
+		return new Response(JSON.stringify(previouslyTargetedWorkouts), {
 			status: 200
 		});
 	} catch (e) {
