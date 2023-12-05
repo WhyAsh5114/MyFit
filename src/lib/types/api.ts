@@ -28,4 +28,5 @@ type APIWorkoutsSaveWorkout = {
 type APIWorkoutsUpdateWorkout = {
 	workoutId: string;
 	workout: Workout;
+	previousSoreness: Workout["muscleSorenessToNextWorkout"];
 };
