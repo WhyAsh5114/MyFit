@@ -19,9 +19,9 @@
 
 			<span class="text-secondary/75">Workload</span>
 			<div class="join mt-1 gap-0.5 grid grid-cols-4">
-				{#each workloadFeedback as { name, value, bgColor }}
+				{#each workloadFeedback as { name, value, bgColorChecked }}
 					<input
-						class="join-item btn capitalize {bgColor} checked:!text-black"
+						class="join-item btn capitalize {bgColorChecked} checked:!text-black"
 						type="radio"
 						name="workload-feedback"
 						aria-label={name}
