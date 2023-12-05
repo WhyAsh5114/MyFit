@@ -18,7 +18,8 @@ export const groupBy = <T>(
 
 export function splitExercisesToWorkoutExercise(
 	exercises: SplitExercise[],
-	userBodyweight: number = -1
+	userBodyweight: number = -1,
+	plannedRIR: number | null = null
 ) {
 	const workoutExercises: WorkoutExerciseWithoutSetNumbers[] = [];
 	exercises.forEach(({ sets, weightType, ...splitExerciseProps }) => {
@@ -29,7 +30,7 @@ export function splitExercisesToWorkoutExercise(
 			sets: Array(sets)
 				.fill(undefined)
 				.map(() => {
-					return { reps: null, load: null, RIR: null };
+					return { reps: null, load: null, RIR: plannedRIR };
 				}),
 			bodyweight: weightType === "Bodyweight" ? userBodyweight : undefined
 		};
