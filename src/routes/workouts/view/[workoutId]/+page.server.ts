@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		throw error(404, "Workout not found");
 	}
 
-	let referenceWorkout: WithSerializedId<WorkoutDocument> | null = null;
+	let referenceWorkout: WithSerializedId<Workout> | null = null;
 	let referenceWorkoutDocument: WithId<WorkoutDocument> | null = null;
 	if (workoutDocument.referenceWorkout) {
 		referenceWorkoutDocument = await client
@@ -44,7 +44,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	}
 
 	if (referenceWorkoutDocument) {
-		const { _id, ...referenceWorkoutProps } = referenceWorkoutDocument;
+		const { _id, userId, performedMesocycleId, ...referenceWorkoutProps } = referenceWorkoutDocument;
 		referenceWorkout = {
 			id: _id.toString(),
 			...referenceWorkoutProps
