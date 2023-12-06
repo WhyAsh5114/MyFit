@@ -6,7 +6,7 @@
 	import WorkoutExerciseFeedbackModal from "./WorkoutExerciseFeedbackModal.svelte";
 
 	export let exercises: WorkoutExerciseWithoutSetNumbers[];
-	export let mode: "performing" | "performed" = "performing";
+	export let mode: "viewing" | "editing" | "performing";
 	export let referenceWorkout: Workout | null = null;
 	export let userBodyweight: number | null = null;
 
@@ -15,7 +15,7 @@
 	export let allExercisesSetsCompleted: boolean[][] = [];
 	if (allExercisesSetsCompleted.length === 0) {
 		exercises.forEach((exercise) => {
-			let setCompleted = mode === "performed";
+			let setCompleted = mode !== "performing";
 			allExercisesSetsCompleted.push(Array(exercise.sets.length).fill(setCompleted));
 		});
 	}
@@ -84,6 +84,7 @@
 	bind:feedbackTaken
 	bind:muscleGroupWorkloads
 	bind:sorenessFromPreviousWorkouts
+	bind:mode
 />
 
 <div class="flex flex-col h-px grow overflow-y-auto mt-2 gap-1">

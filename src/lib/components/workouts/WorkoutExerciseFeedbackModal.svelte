@@ -8,6 +8,7 @@
 	export let feedbackExerciseIdx: number | undefined = undefined;
 	export let exercises: WorkoutExerciseWithoutSetNumbers[];
 	export let feedbackTaken: boolean[];
+	export let mode: "viewing" | "editing" | "performing";
 
 	let feedbackExercise: undefined | WorkoutExerciseWithoutSetNumbers;
 	$: if (feedbackExerciseIdx !== undefined) {
@@ -38,6 +39,10 @@
 	}
 
 	function closeModal() {
+		if (mode === "editing" && feedbackExercise) {
+			takeFeedbackForMuscleGroup = feedbackExercise.targetMuscleGroup;
+			showMuscleGroupFeedbackModal = true;
+		}
 		if (showMuscleGroupFeedbackModal) {
 			muscleGroupFeedbackModal.show();
 			showMuscleGroupFeedbackModal = false;
