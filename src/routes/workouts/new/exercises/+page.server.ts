@@ -42,7 +42,8 @@ export const load: PageServerLoad = async ({ locals, parent, fetch }) => {
 	if (referenceWorkout) {
 		todaysWorkout.exercisesPerformed = applyProgressiveOverload(
 			referenceWorkout.exercisesPerformed,
-			userBodyweight
+			userBodyweight,
+			todaysWorkout.plannedRIR
 		);
 		todaysWorkout.referenceWorkout = referenceWorkout._id.toString();
 	} else {
