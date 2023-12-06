@@ -1,4 +1,4 @@
-export function calculateTotalDuration(RIRProgression: RIRProgressionData[]) {
+export function getTotalDuration(RIRProgression: RIRProgressionData[]) {
 	let totalDuration = 0;
 	RIRProgression.forEach(({ cycles }) => {
 		totalDuration += cycles;

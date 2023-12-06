@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { calculateTotalDuration } from "$lib/util/MesocycleTemplate";
+	import { getTotalDuration } from "$lib/util/MesocycleTemplate";
 	export let mesocycleTemplatePromise: Promise<WithSerializedId<MesocycleTemplate> | null>;
 </script>
 
@@ -15,7 +15,7 @@
 				<div class="flex items-center justify-between">
 					<span class="text-lg font-semibold">{mesocycleTemplate.name}</span>
 					<span class="font-normal">
-						{calculateTotalDuration(mesocycleTemplate.RIRProgression)} cycles
+						{getTotalDuration(mesocycleTemplate.RIRProgression)} cycles
 					</span>
 				</div>
 				<div class="flex flex-wrap gap-1">

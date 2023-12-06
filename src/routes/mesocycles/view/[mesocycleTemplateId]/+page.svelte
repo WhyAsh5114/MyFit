@@ -3,7 +3,7 @@
 	import { page } from "$app/stores";
 	import MyModal from "$lib/components/MyModal.svelte";
 	import { caloricStates } from "$lib/types/arrays.js";
-	import { calculateTotalDuration } from "$lib/util/MesocycleTemplate.js";
+	import { getTotalDuration } from "$lib/util/MesocycleTemplate.js";
 	export let data;
 
 	let caloricState = caloricStates.find(
@@ -68,6 +68,8 @@
 		await goto("/mesocycles");
 		redirecting = false;
 	}
+
+	const RIRColors = ["progress-error", "progress-warning", "progress-accent", "progress-success"];
 </script>
 
 <MyModal bind:dialogElement={errorModal} title="Error">
@@ -117,7 +119,24 @@
 	<div class="stat">
 		<div class="stat-title">Total duration</div>
 		<div class="stat-value">
-			{calculateTotalDuration(data.mesocycleTemplate.RIRProgression)} cycles
+			{getTotalDuration(data.mesocycleTemplate.RIRProgression)} cycles
+		</div>
+	</div>
+
+	<div class="stat col-span-2">
+		<div class="stat-title">RIR progression</div>
+		<div class="flex flex-col mt-1.5 mb-1">
+			{#each data.mesocycleTemplate.RIRProgression as { specificRIR, cycles }}
+				<div class="flex items-center justify-between gap-4">
+					<span class="text-sm text-white font-semibold basis-9 shrink-0">{specificRIR} RIR</span>
+					<progress
+						class="progress {RIRColors[specificRIR]}"
+						value={cycles}
+						max={getTotalDuration(data.mesocycleTemplate.RIRProgression)}
+					></progress>
+					<span class="text-sm text-white basis-12 shrink-0">{cycles} cycles</span>
+				</div>
+			{/each}
 		</div>
 	</div>
 
