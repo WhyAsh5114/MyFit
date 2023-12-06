@@ -40,3 +40,8 @@ type APIGetWorkoutsThatPreviouslyTargeted = {
 type APIGetWorkoutsThatPreviouslyTargetedResponse = Partial<Record<MuscleGroup, string | null>>;
 
 type APIGetPreviousSorenessValues = APIGetWorkoutsThatPreviouslyTargeted;
+
+type APIWorkoutsDeleteWorkout = {
+	workoutId: string;
+	performedMesocycleId: string;
+};

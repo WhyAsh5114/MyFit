@@ -1,11 +1,81 @@
 <script lang="ts">
+	import { goto, invalidate } from "$app/navigation";
 	import { page } from "$app/stores";
+	import MyModal from "$lib/components/MyModal.svelte";
 	import WorkoutExercisesTable from "$lib/components/workouts/WorkoutExercisesTable.svelte";
 	import { sorenessFeedback, workloadFeedback } from "$lib/types/arrays.js";
 	import { dateFormatter } from "$lib/util/CommonFunctions.js";
 	import StarIcon from "virtual:icons/material-symbols/star";
 	export let data;
+
+	let modal: HTMLDialogElement;
+	let modalTitle = "";
+	let modalText = "";
+
+	let deleteModal: HTMLDialogElement;
+	let callingEndpoint = false;
+	async function deleteWorkout() {
+		if (!data.mesocycle) {
+			console.error("No mesocycle found, maybe deleted?");
+			return;
+		}
+		const requestBody: APIWorkoutsDeleteWorkout = {
+			workoutId: $page.params.workoutId,
+			performedMesocycleId: data.mesocycle?.id
+		};
+		callingEndpoint = true;
+		const response = await fetch("/api/workouts/deleteWorkout", {
+			method: "POST",
+			body: JSON.stringify(requestBody),
+			headers: {
+				"content-type": "application/json"
+			}
+		});
+		modalText = await response.text();
+		callingEndpoint = false;
+		if (response.ok) {
+			modalTitle = "Deletion successful";
+		} else {
+			modalTitle = "Error";
+		}
+		deleteModal.close();
+		modal.show();
+	}
+
+	let redirecting = false;
+	async function closeModal() {
+		redirecting = true;
+		await invalidate("workout:all");
+		if (data.activeMesocycle?.id === data.mesocycle?.id) {
+			await invalidate("mesocycle:active");
+		}
+		await goto("/workouts");
+		redirecting = false;
+	}
 </script>
+
+<MyModal title="Delete workout" bind:dialogElement={deleteModal}>
+	Are you sure you want to delete this workout?
+	<div class="join grid grid-cols-2 mt-2">
+		<button class="join-item btn">Cancel</button>
+		<button
+			class="join-item btn btn-error"
+			type="button"
+			disabled={callingEndpoint}
+			on:click={deleteWorkout}
+		>
+			{#if callingEndpoint}
+				<span class="loading loading-bars"></span>
+			{:else}
+				Yes, delete
+			{/if}
+		</button>
+	</div>
+</MyModal>
+
+<MyModal bind:dialogElement={modal} bind:title={modalTitle} onClose={closeModal}>
+	{modalText}
+</MyModal>
 
 <div class="collapse collapse-arrow bg-primary rounded-md">
 	<input type="checkbox" id="view-workout-details" checked />
@@ -114,6 +184,16 @@
 </div>
 <WorkoutExercisesTable exercises={data.workout.exercisesPerformed} mode="viewing" />
 <div class="join grid grid-cols-2 mt-2">
-	<button class="join-item btn btn-error">Delete</button>
+	<button
+		class="join-item btn btn-error"
+		on:click={() => deleteModal.show()}
+		disabled={redirecting}
+	>
+		{#if redirecting}
+			<span class="loading loading-bars"></span>
+		{:else}
+			Delete
+		{/if}
+	</button>
 	<a class="join-item btn btn-primary" href="/workouts/{$page.params.workoutId}/edit">Edit</a>
 </div>
