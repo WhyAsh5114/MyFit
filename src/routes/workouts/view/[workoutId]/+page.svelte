@@ -49,7 +49,7 @@
 			<div class="stat">
 				<div class="stat-title">Mesocycle template</div>
 				<div class="stat-value truncate">
-					<a href="/mesocycles/view/{data.mesocycleTemplate?.id}" class="link">
+					<a href="/mesocycles/viewTemplate/{data.mesocycleTemplate?.id}" class="link">
 						{data.mesocycleTemplate?.name}
 					</a>
 				</div>

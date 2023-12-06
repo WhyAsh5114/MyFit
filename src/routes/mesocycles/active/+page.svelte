@@ -72,7 +72,7 @@
 <div class="stats stats-vertical">
 	<div class="stat">
 		<div class="stat-title">Mesocycle template</div>
-		<a class="stat-value link truncate" href="/mesocycles/view/{data.activeMesocycleTemplate.id}">
+		<a class="stat-value link truncate" href="/mesocycles/viewTemplate/{data.activeMesocycleTemplate.id}">
 			{data.activeMesocycleTemplate.name}
 		</a>
 	</div>
@@ -88,7 +88,7 @@
 					<div class="skeleton h-8 w-full bg-primary brightness-50 rounded-md"></div>
 				{:then workout}
 					{#if workout}
-						<a class="btn h-8 btn-sm" href="/workouts/view/{workout.id}">
+						<a class="btn h-8 btn-sm" href="/workouts/viewTemplate/{workout.id}">
 							<div class="flex w-full justify-between items-center">
 								<span>{dateFormatter(workout.startTimestamp)}</span>
 								<span class="font-normal text-sm">

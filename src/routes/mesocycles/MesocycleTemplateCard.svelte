@@ -9,7 +9,7 @@
 	{#if mesocycleTemplate}
 		<a
 			class="btn btn-primary h-fit p-2 flex-col rounded-md"
-			href="/mesocycles/view/{mesocycleTemplate.id}"
+			href="/mesocycles/viewTemplate/{mesocycleTemplate.id}"
 		>
 			<div class="flex flex-col w-full gap-2">
 				<div class="flex items-center justify-between">

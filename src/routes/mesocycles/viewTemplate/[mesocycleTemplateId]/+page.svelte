@@ -180,7 +180,7 @@
 				{#each data.streamed.mesocyclesStreamArray as mesocyclePromise}
 					{#await mesocyclePromise then mesocycle}
 						{#if mesocycle}
-							<a href="/mesocycles/view/{mesocycle.id}" class="btn btn-sm">
+							<a href="/mesocycles/viewTemplate/{mesocycle.id}" class="btn btn-sm">
 								{dateFormatter(mesocycle.startTimestamp)}
 							</a>
 						{/if}
