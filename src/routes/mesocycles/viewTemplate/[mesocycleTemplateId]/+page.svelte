@@ -180,9 +180,15 @@
 				{#each data.streamed.mesocyclesStreamArray as mesocyclePromise}
 					{#await mesocyclePromise then mesocycle}
 						{#if mesocycle}
-							<a href="/mesocycles/viewTemplate/{mesocycle.id}" class="btn btn-sm">
-								{dateFormatter(mesocycle.startTimestamp)}
-							</a>
+							{#if mesocycle.endTimestamp === undefined}
+								<a href="/mesocycles/active" class="btn btn-sm text-accent">
+									{dateFormatter(mesocycle.startTimestamp)}
+								</a>
+							{:else}
+								<a href="/mesocycles/view/{mesocycle.id}" class="btn btn-sm">
+									{dateFormatter(mesocycle.startTimestamp)}
+								</a>
+							{/if}
 						{/if}
 					{/await}
 				{/each}
