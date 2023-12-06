@@ -53,6 +53,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	}
 
 	let mesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
+	let mesocycle: WithSerializedId<Mesocycle> | null = null;
+
 	const { _id: workoutId, performedMesocycleId, ...workout } = workoutDocument;
 	const performedMesocycleDocument = await client
 		.db()
@@ -62,8 +64,16 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			{ projection: { userId: 0 } }
 		);
 	if (!performedMesocycleDocument) {
-		return { workout, mesocycleTemplate, referenceWorkout };
+		return { workout, mesocycleTemplate, mesocycle, referenceWorkout };
 	}
+
+	mesocycle = {
+		id: performedMesocycleDocument._id.toString(),
+		templateMesoId: performedMesocycleDocument.templateMesoId.toString(),
+		workouts: performedMesocycleDocument.workouts.map((workout) => workout?.toString() ?? null),
+		startTimestamp: performedMesocycleDocument.startTimestamp,
+		endTimestamp: performedMesocycleDocument.endTimestamp
+	};
 
 	const mesocycleTemplateDocument = await client
 		.db()
@@ -82,5 +92,5 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		...otherMesocycleTemplateProps
 	};
 
-	return { workout, mesocycleTemplate, referenceWorkout };
+	return { workout, mesocycle, mesocycleTemplate, referenceWorkout };
 };
