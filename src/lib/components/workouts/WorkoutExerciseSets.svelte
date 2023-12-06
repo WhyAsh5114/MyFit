@@ -74,7 +74,7 @@
 				<input
 					type="number"
 					id="{exercise.name}-set{setNumber}-reps"
-					class="input input-sm w-12"
+					class="input input-sm w-12 text-center !px-1"
 					bind:value={reps}
 					placeholder="?"
 					min={0}
