@@ -9,6 +9,7 @@
 	export let exercises: WorkoutExerciseWithoutSetNumbers[];
 	export let feedbackTaken: boolean[];
 	export let mode: "viewing" | "editing" | "performing";
+	export let workoutsThatPreviouslyTargeted: APIGetWorkoutsThatPreviouslyTargetedResponse;
 
 	let feedbackExercise: undefined | WorkoutExerciseWithoutSetNumbers;
 	$: if (feedbackExerciseIdx !== undefined) {
@@ -31,7 +32,7 @@
 			groupedExercises[feedbackExercise.targetMuscleGroup].forEach(({ idx }) => {
 				if (!feedbackTaken[idx]) muscleGroupCompleted = false;
 			});
-			if (muscleGroupCompleted && !muscleGroupWorkloads[feedbackExercise.targetMuscleGroup]) {
+			if (muscleGroupCompleted) {
 				takeFeedbackForMuscleGroup = feedbackExercise.targetMuscleGroup;
 				showMuscleGroupFeedbackModal = true;
 			}
@@ -55,6 +56,7 @@
 	bind:muscleGroup={takeFeedbackForMuscleGroup}
 	bind:muscleGroupWorkloads
 	bind:sorenessFromPreviousWorkouts
+	bind:workoutsThatPreviouslyTargeted
 />
 
 <MyModal bind:dialogElement title="Exercise feedback" onClose={closeModal}>

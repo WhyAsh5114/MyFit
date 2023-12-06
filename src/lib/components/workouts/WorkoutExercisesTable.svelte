@@ -9,6 +9,7 @@
 	export let mode: "viewing" | "editing" | "performing";
 	export let referenceWorkout: Workout | null = null;
 	export let userBodyweight: number | null = null;
+	export let workoutsThatPreviouslyTargeted: APIGetWorkoutsThatPreviouslyTargetedResponse;
 
 	let comparing = false;
 
@@ -84,6 +85,7 @@
 	bind:feedbackTaken
 	bind:muscleGroupWorkloads
 	bind:sorenessFromPreviousWorkouts
+	bind:workoutsThatPreviouslyTargeted
 	bind:mode
 />
 
