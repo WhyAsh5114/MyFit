@@ -5,11 +5,6 @@
 	export let muscleGroup: MuscleGroup | undefined = undefined;
 	export let sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"];
 	export let muscleGroupWorkloads: Workout["muscleGroupWorkloads"];
-
-	$: if (muscleGroup) {
-		muscleGroupWorkloads[muscleGroup] = null;
-		sorenessFromPreviousWorkouts[muscleGroup] = null;
-	}
 </script>
 
 <MyModal bind:dialogElement title="Muscle group workload feedback">
