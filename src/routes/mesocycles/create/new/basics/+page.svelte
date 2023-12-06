@@ -9,7 +9,7 @@
 		customizeRIRProgression
 	} from "../newMesocycleStore";
 	import { goto } from "$app/navigation";
-	import { calculateTotalDuration } from "$lib/util/MesocycleTemplate";
+	import { getTotalDuration } from "$lib/util/MesocycleTemplate";
 
 	let RIRColors = ["range-error", "range-warning", "range-accent", "range-success"];
 	function calculateRIRProgression(totalDuration: number, startRIR: number) {
@@ -86,7 +86,7 @@
 	}
 
 	function isProgressionValid(progression: RIRProgressionData[], totalCycles: number) {
-		let totalDuration = calculateTotalDuration(progression);
+		let totalDuration = getTotalDuration(progression);
 		return totalDuration === totalCycles;
 	}
 

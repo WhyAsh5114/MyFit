@@ -1,6 +1,6 @@
 <script lang="ts">
 	export let data;
-	import { calculateTotalDuration } from "$lib/util/MesocycleTemplate";
+	import { getTotalDuration } from "$lib/util/MesocycleTemplate";
 	import ActiveMesocycleCard from "./ActiveMesocycleCard.svelte";
 	import MesocycleTemplateCard from "./MesocycleTemplateCard.svelte";
 
@@ -12,7 +12,7 @@
 		const totalNonRestDays = activeMesocycleTemplate.exerciseSplit.filter(
 			(split) => split !== null
 		).length;
-		totalCycles = calculateTotalDuration(activeMesocycleTemplate.RIRProgression);
+		totalCycles = getTotalDuration(activeMesocycleTemplate.RIRProgression);
 		totalWorkouts = totalCycles * totalNonRestDays;
 	}
 </script>

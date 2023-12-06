@@ -3,7 +3,7 @@
 	import { page } from "$app/stores";
 	import MyModal from "$lib/components/MyModal.svelte";
 	import { caloricStates } from "$lib/types/arrays.js";
-	import { calculateTotalDuration } from "$lib/util/MesocycleTemplate.js";
+	import { getTotalDuration } from "$lib/util/MesocycleTemplate.js";
 	export let data;
 
 	let caloricState = caloricStates.find(
@@ -117,7 +117,7 @@
 	<div class="stat">
 		<div class="stat-title">Total duration</div>
 		<div class="stat-value">
-			{calculateTotalDuration(data.mesocycleTemplate.RIRProgression)} cycles
+			{getTotalDuration(data.mesocycleTemplate.RIRProgression)} cycles
 		</div>
 	</div>
 
