@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		.findOne({ _id: new ObjectId(params.mesocycleTemplateId) });
 
 	if (mesocycleTemplateDocument === null) {
-		throw error(404, "Mesocycle not found");
+		throw error(404, "Mesocycle template not found");
 	} else if (mesocycleTemplateDocument.userId.toString() !== session.user.id) {
 		throw error(403, "Unauthorized");
 	}
