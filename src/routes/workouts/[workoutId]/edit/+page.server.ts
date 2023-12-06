@@ -1,8 +1,5 @@
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import clientPromise from "$lib/mongo/mongodb";
-import type { WorkoutDocument } from "$lib/types/documents";
-import { ObjectId } from "mongodb";
 import { getMuscleGroups } from "$lib/util/MesocycleTemplate";
 
 export const load: PageServerLoad = async ({ locals, parent, fetch }) => {
@@ -11,9 +8,7 @@ export const load: PageServerLoad = async ({ locals, parent, fetch }) => {
 		throw error(403, "Not logged in");
 	}
 
-	const client = await clientPromise;
 	const { workout, mesocycle } = await parent();
-
 	if (!mesocycle) {
 		throw error(500, "No mesocycle found");
 	}
