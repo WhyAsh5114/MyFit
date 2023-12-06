@@ -16,11 +16,12 @@
 	function updateEditingExercise(idx: number | undefined) {
 		if (idx !== undefined && exercises[idx]) {
 			editMode = true;
-			const { sets, ...otherProps } = JSON.parse(
+			const { sets, bodyweight, ...otherProps } = JSON.parse(
 				JSON.stringify(exercises[idx])
 			) as WorkoutExerciseWithoutSetNumbers;
 			editingExercise = {
 				sets: sets.length,
+				weightType: bodyweight === undefined ? "Weighted" : "Bodyweight",
 				...otherProps
 			};
 		} else {
