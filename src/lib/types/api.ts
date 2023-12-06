@@ -42,4 +42,6 @@ type APIGetPreviousSorenessValues = {
 	muscleGroups: MuscleGroup[];
 	mesocycleId: string;
 };
-type APIGetPreviousSorenessValuesResponse = Partial<Record<MuscleGroup, SorenessState | null | undefined>>;
+type APIGetPreviousSorenessValuesResponse = Partial<
+	Record<MuscleGroup, SorenessState | null | undefined>
+>;

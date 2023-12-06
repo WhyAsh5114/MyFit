@@ -44,7 +44,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	}
 
 	if (referenceWorkoutDocument) {
-		const { _id, userId, performedMesocycleId, ...referenceWorkoutProps } = referenceWorkoutDocument;
+		const { _id, userId, performedMesocycleId, ...referenceWorkoutProps } =
+			referenceWorkoutDocument;
 		referenceWorkout = {
 			id: _id.toString(),
 			...referenceWorkoutProps
@@ -74,7 +75,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	if (!mesocycleTemplateDocument) {
 		return { workout, mesocycleTemplate, referenceWorkout };
 	}
-	
+
 	let { _id: mesocycleTemplateId, ...otherMesocycleTemplateProps } = mesocycleTemplateDocument;
 	mesocycleTemplate = {
 		id: mesocycleTemplateId.toString(),

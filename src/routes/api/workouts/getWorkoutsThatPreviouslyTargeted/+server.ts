@@ -15,8 +15,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { muscleGroups, mesocycleId }: APIGetWorkoutsThatPreviouslyTargeted =
-		await request.json();
+	const { muscleGroups, mesocycleId }: APIGetWorkoutsThatPreviouslyTargeted = await request.json();
 	const client = await clientPromise;
 	try {
 		const performedMesocycle = await client
