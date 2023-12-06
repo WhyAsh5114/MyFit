@@ -55,6 +55,18 @@
 			return 0;
 		}
 	}
+
+	function constructBodyweightString(bodyweight: number | undefined | null, load: number | null) {
+		if (load === null) {
+			return `${bodyweight}`;
+		} else if (load < 0) {
+			return `${bodyweight}${load}`;
+		} else if (load > 0) {
+			return `${bodyweight}+${load}`;
+		} else {
+			return `${bodyweight}`;
+		}
+	}
 </script>
 
 {#each exercise.sets as { reps, load, RIR }, setNumber}
@@ -91,10 +103,15 @@
 					<span class="font-semibold {getColor('load', setNumber)}">{load}</span>
 				{:else}
 					<span class="text-sm"
-						>{referenceExercise.bodyweight}+{referenceExercise.sets[setNumber].load}</span
+						>{constructBodyweightString(
+							referenceExercise.bodyweight,
+							referenceExercise.sets[setNumber].load
+						)}</span
 					>
 					<RightArrow />
-					<span class="font-semibold {getColor('load', setNumber)}">{userBodyweight}+{load}</span>
+					<span class="font-semibold {getColor('load', setNumber)}"
+						>{constructBodyweightString(userBodyweight, load)}</span
+					>
 				{/if}
 			{:else}
 				<input
