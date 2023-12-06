@@ -9,7 +9,7 @@
 	export let mode: "viewing" | "editing" | "performing";
 	export let referenceWorkout: Workout | null = null;
 	export let userBodyweight: number | null = null;
-	export let workoutsThatPreviouslyTargeted: APIGetWorkoutsThatPreviouslyTargetedResponse;
+	export let workoutsThatPreviouslyTargeted: APIGetWorkoutsThatPreviouslyTargetedResponse = {};
 
 	let comparing = false;
 
