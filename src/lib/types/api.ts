@@ -35,11 +35,8 @@ type APIWorkoutsUpdateWorkout = {
 type APIGetWorkoutsThatPreviouslyTargeted = {
 	muscleGroups: MuscleGroup[];
 	mesocycleId: string;
+	beforeTimestamp: EpochTimeStamp;
 };
 type APIGetWorkoutsThatPreviouslyTargetedResponse = Partial<Record<MuscleGroup, string | null>>;
 
-type APIGetPreviousSorenessValues = {
-	muscleGroups: MuscleGroup[];
-	mesocycleId: string;
-	workoutStartTimestamp: EpochTimeStamp;
-};
+type APIGetPreviousSorenessValues = APIGetWorkoutsThatPreviouslyTargeted;
