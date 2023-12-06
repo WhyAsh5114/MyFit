@@ -29,7 +29,7 @@ export function getTodaysSplitWorkout(
 	return workout;
 }
 
-export function getMuscleGroups(exercises: SplitExercise[]) {
+export function getMuscleGroups(exercises: SplitExercise[] | WorkoutExercise[]) {
 	const muscleGroups: Set<MuscleGroup> = new Set();
 	exercises.forEach(({ targetMuscleGroup }) => {
 		muscleGroups.add(targetMuscleGroup);
