@@ -59,15 +59,28 @@ export function applyProgressiveOverload(
 	exercises = JSON.parse(JSON.stringify(exercises));
 
 	exercises.forEach((exercise) => {
+		const originalTotalVolume = getTotalVolume(exercise.bodyweight, exercise.sets);
+		
 		// Set new bodyweight
 		if (exercise.bodyweight !== undefined && newBodyweight !== null) {
 			exercise.bodyweight = newBodyweight;
 		}
 
+		exercise.sets.forEach((set, i) => {
+			updateRIR(plannedRIR, set);
+
+			if (set.reps < exercise.repRangeStart) {
+				exercise.sets[i] = matchSetVolumeWithNewLoad(exercise, set, set.load - MINIMUM_LOAD_CHANGE);
+			} else if (set.reps >= exercise.repRangeEnd) {
+				exercise.sets[i] = matchSetVolumeWithNewLoad(exercise, set, set.load + MINIMUM_LOAD_CHANGE);
+				console.log(set);
+			}
+		});
+
 		// Apply progressive overload
-		const originalTotalVolume = getTotalVolume(exercise.bodyweight, exercise.sets);
 		let newTotalVolume = getTotalVolume(exercise.bodyweight, exercise.sets);
 		while (newTotalVolume < (1 + VOLUME_INCREASE_RATE) * originalTotalVolume) {
+			// This is rep change
 			const minimumVolumeSet = exercise.sets.reduce(
 				(min, set) =>
 					getSetVolume(exercise.bodyweight, set) < getSetVolume(exercise.bodyweight, min)
@@ -77,18 +90,10 @@ export function applyProgressiveOverload(
 			);
 			minimumVolumeSet.reps++;
 			newTotalVolume = getTotalVolume(exercise.bodyweight, exercise.sets);
+
+			// TODO: implement load change, choose optimal approach
 		}
 		console.log(originalTotalVolume, newTotalVolume, newTotalVolume / originalTotalVolume);
-
-		exercise.sets.forEach((set) => {
-			updateRIR(plannedRIR, set);
-
-			if (set.reps < exercise.repRangeStart) {
-				set = matchSetVolumeWithNewLoad(exercise, set, set.load + MINIMUM_LOAD_CHANGE);
-			} else if (set.reps >= exercise.repRangeEnd) {
-				set = matchSetVolumeWithNewLoad(exercise, set, set.load - MINIMUM_LOAD_CHANGE);
-			}
-		});
 	});
 	return exercises;
 }
