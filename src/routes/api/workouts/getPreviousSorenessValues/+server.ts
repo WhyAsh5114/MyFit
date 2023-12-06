@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { muscleGroups, mesocycleId, workoutStartTimestamp }: APIGetPreviousSorenessValues =
+	const { muscleGroups, mesocycleId, beforeTimestamp }: APIGetPreviousSorenessValues =
 		await request.json();
 	const client = await clientPromise;
 	try {
@@ -49,7 +49,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 				{
 					userId: new ObjectId(session.user.id),
 					performedMesocycleId: performedMesocycle._id,
-					startTimestamp: { $lt: workoutStartTimestamp }
+					startTimestamp: { $lt: beforeTimestamp }
 				},
 				{ limit: exerciseSplit.length }
 			)
