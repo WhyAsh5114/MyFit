@@ -15,7 +15,7 @@ type APIMesocyclesStopMesocycle = {
 };
 
 type APIWorkoutsGetReferenceWorkout = {
-	workoutName: string;
+	workoutDayNumber: number;
 };
 
 type APIUserUpdatePreferences = Partial<UserPreferences>;

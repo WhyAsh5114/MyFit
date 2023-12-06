@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { workoutName }: APIWorkoutsGetReferenceWorkout = await request.json();
+	const { workoutDayNumber }: APIWorkoutsGetReferenceWorkout = await request.json();
 	const client = await clientPromise;
 	try {
 		const activeMesocycle = await client
@@ -53,10 +53,9 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			)
 			.sort({ startTimestamp: -1 });
 
-		const currentWorkoutIdx = exerciseSplit.findIndex((split) => split?.name === workoutName);
 		let referenceWorkoutDocument: WithId<WorkoutDocument> | undefined = undefined;
 		for await (const workoutDocument of activeMesocycleWorkouts) {
-			if (workoutDocument.dayNumber === currentWorkoutIdx) {
+			if (workoutDocument.dayNumber === workoutDayNumber) {
 				referenceWorkoutDocument = workoutDocument;
 				break;
 			}

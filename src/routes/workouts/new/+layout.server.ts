@@ -1,6 +1,6 @@
 import clientPromise from "$lib/mongo/mongodb";
 import type { UserPreferencesDocument, WorkoutDocument } from "$lib/types/documents";
-import { getTodaysSplitWorkout } from "$lib/util/MesocycleTemplate";
+import { getDayNumber, getTodaysSplitWorkout } from "$lib/util/MesocycleTemplate";
 import { ObjectId, type WithId } from "mongodb";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
@@ -31,7 +31,12 @@ export const load: LayoutServerLoad = async ({ locals, parent, fetch, depends })
 
 	let referenceWorkout: WithId<WorkoutDocument> | null = null;
 	if (todaysWorkout) {
-		const requestBody: APIWorkoutsGetReferenceWorkout = { workoutName: todaysWorkout.name };
+		const requestBody: APIWorkoutsGetReferenceWorkout = {
+			workoutDayNumber: getDayNumber(
+				activeMesocycle.workouts,
+				activeMesocycleTemplate.exerciseSplit
+			)
+		};
 		const response = await fetch("/api/workouts/getReferenceWorkout", {
 			method: "POST",
 			body: JSON.stringify(requestBody),
