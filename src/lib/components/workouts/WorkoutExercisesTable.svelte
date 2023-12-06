@@ -77,6 +77,7 @@
 	bind:exercises
 	bind:editingIdx={editingExerciseNumber}
 	bind:allExercisesSetsCompleted
+	bind:userBodyweight
 />
 <WorkoutExerciseFeedbackModal
 	bind:dialogElement={feedbackModal}

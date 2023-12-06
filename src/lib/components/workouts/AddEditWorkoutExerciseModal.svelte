@@ -16,14 +16,17 @@
 	function updateEditingExercise(idx: number | undefined) {
 		if (idx !== undefined && exercises[idx]) {
 			editMode = true;
-			const { sets, bodyweight, ...otherProps } = JSON.parse(
-				JSON.stringify(exercises[idx])
-			) as WorkoutExerciseWithoutSetNumbers;
+			const {
+				sets,
+				bodyweight: exerciseBodyweight,
+				...otherProps
+			} = JSON.parse(JSON.stringify(exercises[idx])) as WorkoutExerciseWithoutSetNumbers;
 			editingExercise = {
 				sets: sets.length,
-				weightType: bodyweight === undefined ? "Weighted" : "Bodyweight",
+				weightType: userBodyweight === null ? "Weighted" : "Bodyweight",
 				...otherProps
 			};
+			userBodyweight = exerciseBodyweight ?? null;
 		} else {
 			editMode = false;
 		}
@@ -37,7 +40,7 @@
 		if (duplicate) return false;
 
 		const typedExercise = JSON.parse(JSON.stringify(newExercise)) as SplitExercise;
-		exercises = [...exercises, ...splitExercisesToWorkoutExercise([typedExercise])];
+		exercises = [...exercises, ...splitExercisesToWorkoutExercise([typedExercise], userBodyweight)];
 		allExercisesSetsCompleted = [
 			...allExercisesSetsCompleted,
 			Array(typedExercise.sets).fill(false)
@@ -56,7 +59,11 @@
 
 		const typedExercise = editingExercise as SplitExercise;
 		if (idx === undefined) return;
-		exercises[idx] = splitExercisesToWorkoutExercise([typedExercise])[0];
+		if (editingExercise.weightType === "Bodyweight") {
+			exercises[idx] = splitExercisesToWorkoutExercise([typedExercise], userBodyweight)[0];
+		} else {
+			exercises[idx] = splitExercisesToWorkoutExercise([typedExercise])[0];
+		}
 		exercises = exercises;
 		dialogElement.close();
 	}
@@ -76,6 +83,8 @@
 			selectedExercise = newExercise;
 		}
 	}
+
+	export let userBodyweight: number | null;
 </script>
 
 <MyModal title="{modeText} exercise" bind:dialogElement>
@@ -97,21 +106,40 @@
 			/>
 		</div>
 		<div class="flex gap-2">
-			<div class="form-control w-full max-w-xs">
-				<label class="label" for="{modeText}-exercise-weight-type">
-					<span class="label-text">Weight type</span>
-				</label>
-				<select
-					class="select select-bordered"
-					id="{modeText}-exercise-weight-type"
-					bind:value={selectedExercise.weightType}
-					required
-				>
-					<option value={undefined} disabled selected>Pick one</option>
-					{#each exerciseWeightTypes as weightType}
-						<option>{weightType}</option>
-					{/each}
-				</select>
+			<div class="flex flex-col w-full max-w-xs">
+				<div class="form-control w-full">
+					<label class="label" for="{modeText}-exercise-weight-type">
+						<span class="label-text">Weight type</span>
+					</label>
+					<select
+						class="select select-bordered"
+						id="{modeText}-exercise-weight-type"
+						bind:value={selectedExercise.weightType}
+						required
+					>
+						<option value={undefined} disabled selected>Pick one</option>
+						{#each exerciseWeightTypes as weightType}
+							<option>{weightType}</option>
+						{/each}
+					</select>
+				</div>
+				{#if selectedExercise.weightType === "Bodyweight"}
+					<div class="form-control">
+						<label class="label" for="{modeText}-exercise-bodyweight">
+							<span class="label-text">Bodyweight</span>
+						</label>
+						<input
+							type="number"
+							min="0"
+							step="0.01"
+							placeholder="Type here"
+							class="input input-bordered w-full max-w-xs"
+							id="{modeText}-exercise-bodyweight"
+							bind:value={userBodyweight}
+							required
+						/>
+					</div>
+				{/if}
 			</div>
 			<div class="form-control w-full max-w-xs">
 				<label class="label" for="{modeText}-exercise-muscle-group">
