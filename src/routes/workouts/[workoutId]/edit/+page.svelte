@@ -63,6 +63,8 @@
 	{modalText}
 </MyModal>
 
+<!--TODO: add option for difficulty rating change, and bodyweight-->
+
 <WorkoutExercisesTable
 	bind:exercises={data.workout.exercisesPerformed}
 	bind:allExercisesSetsCompleted
