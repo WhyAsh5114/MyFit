@@ -9,7 +9,7 @@
 	});
 
 	let muscleGroupWorkloads = data.workout.muscleGroupWorkloads;
-	let sorenessFromPreviousWorkouts = {};
+	let sorenessFromPreviousWorkouts = data.previousWorkoutSorenessValues;
 
 	async function updateWorkout() {}
 </script>

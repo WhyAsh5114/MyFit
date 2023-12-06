@@ -4,7 +4,7 @@ import clientPromise from "$lib/mongo/mongodb";
 import type { WorkoutDocument } from "$lib/types/documents";
 import { ObjectId } from "mongodb";
 
-export const load: PageServerLoad = async ({ locals, params }) => {
+export const load: PageServerLoad = async ({ locals, params, fetch }) => {
 	const session = await locals.getSession();
 	if (!session?.user?.id) {
 		throw error(403, "Not logged in");
@@ -26,6 +26,32 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	if (!workoutDocument) {
 		throw error(404, "Workout not found");
 	}
+
+	const muscleGroups: MuscleGroup[] = [];
+	workoutDocument.exercisesPerformed.forEach(({ targetMuscleGroup }) => {
+		if (!muscleGroups.includes(targetMuscleGroup)) {
+			muscleGroups.push(targetMuscleGroup);
+		}
+	});
+	const requestBody: APIGetPreviousSorenessValues = {
+		mesocycleId: workoutDocument.performedMesocycleId.toString(),
+		muscleGroups,
+		workoutStartTimestamp: workoutDocument.startTimestamp
+	};
+	const response = await fetch("/api/workouts/getPreviousSorenessValues", {
+		method: "POST",
+		headers: {
+			"content-type": "application/json"
+		},
+		body: JSON.stringify(requestBody)
+	});
+	if (!response.ok) {
+		throw error(500, await response.text());
+	}
+
+	const previousWorkoutSorenessValues: Workout["muscleSorenessToNextWorkout"] =
+		await response.json();
+
 	const { _id, performedMesocycleId, ...workout } = workoutDocument;
-	return { workout };
+	return { workout, previousWorkoutSorenessValues };
 };
