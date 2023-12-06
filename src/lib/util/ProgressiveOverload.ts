@@ -51,14 +51,14 @@ function matchSetVolumeWithNewLoad(
 }
 
 export function applyProgressiveOverload(
-	workout: WorkoutExercise[],
+	exercises: WorkoutExercise[],
 	newBodyweight: number | null = null,
 	plannedRIR: number | null = null
 ) {
 	// Don't modify instance
-	workout = JSON.parse(JSON.stringify(workout));
+	exercises = JSON.parse(JSON.stringify(exercises));
 
-	workout.forEach((exercise) => {
+	exercises.forEach((exercise) => {
 		// Set new bodyweight
 		if (exercise.bodyweight !== undefined && newBodyweight !== null) {
 			exercise.bodyweight = newBodyweight;
@@ -90,5 +90,5 @@ export function applyProgressiveOverload(
 			}
 		});
 	});
-	return workout;
+	return exercises;
 }
