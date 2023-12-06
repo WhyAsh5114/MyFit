@@ -13,7 +13,7 @@
 	{#if workout}
 		<a
 			class="btn btn-primary rounded-md justify-start px-0 font-normal h-fit"
-			href="/workouts/view/{workout.id}"
+			href="/workouts/{workout.id}/view"
 		>
 			<div class="flex flex-col p-2 w-full items-start">
 				<div class="flex justify-between items-center w-full">

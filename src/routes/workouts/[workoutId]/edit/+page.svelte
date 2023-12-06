@@ -12,6 +12,7 @@
 	let sorenessFromPreviousWorkouts = data.previousWorkoutSorenessValues;
 
 	async function updateWorkout() {}
+	console.log(data.workoutsThatPreviouslyTargeted)
 </script>
 
 <h2>Edit workout</h2>
@@ -22,6 +23,7 @@
 	bind:allExercisesSetsCompleted
 	bind:muscleGroupWorkloads
 	bind:sorenessFromPreviousWorkouts
+	bind:workoutsThatPreviouslyTargeted={data.workoutsThatPreviouslyTargeted}
 	mode="editing"
 />
 

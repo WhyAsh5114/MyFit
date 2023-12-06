@@ -1,5 +1,4 @@
 import { error } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
 import clientPromise from "$lib/mongo/mongodb";
 import type {
 	MesocycleDocument,
@@ -7,8 +6,11 @@ import type {
 	MesocycleTemplateDocument
 } from "$lib/types/documents";
 import { ObjectId, type WithId } from "mongodb";
+import type { LayoutServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({ locals, params }) => {
+export const load: LayoutServerLoad = async ({ locals, params, depends }) => {
+	depends("workout:this");
+
 	const session = await locals.getSession();
 	if (!session?.user?.id) {
 		throw error(403, "Not logged in");

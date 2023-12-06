@@ -3,13 +3,14 @@ import type { PageServerLoad } from "./$types";
 import {
 	getCycleNumber,
 	getDayNumber,
+	getMuscleGroups,
 	getPlannedRIR,
 	getTodaysSplitWorkout
 } from "$lib/util/MesocycleTemplate";
 import { applyProgressiveOverload } from "$lib/util/ProgressiveOverload";
 import { splitExercisesToWorkoutExercise } from "$lib/util/CommonFunctions";
 
-export const load: PageServerLoad = async ({ locals, parent }) => {
+export const load: PageServerLoad = async ({ locals, parent, fetch }) => {
 	const session = await locals.getSession();
 	if (!session?.user?.id) {
 		throw error(403, "Not logged in");
@@ -52,10 +53,29 @@ export const load: PageServerLoad = async ({ locals, parent }) => {
 		);
 	}
 
+	const requestBody: APIGetWorkoutsThatPreviouslyTargeted = {
+		mesocycleId: activeMesocycle.id,
+		muscleGroups: Array.from(getMuscleGroups(todaysSplitWorkout.exercises)),
+		beforeTimestamp: +new Date()
+	};
+	const response = await fetch("/api/workouts/getWorkoutsThatPreviouslyTargeted", {
+		method: "POST",
+		headers: {
+			"content-type": "application/json"
+		},
+		body: JSON.stringify(requestBody)
+	});
+	if (!response.ok) {
+		throw error(500, await response.text());
+	}
+
+	const workoutsThatPreviouslyTargeted = await response.json();
+
 	return {
 		activeMesocycle,
 		activeMesocycleTemplate,
 		todaysWorkout: todaysWorkout as WorkoutBeingPerformed,
+		workoutsThatPreviouslyTargeted,
 		todaysSplitWorkout
 	};
 };

@@ -37,7 +37,7 @@
 				<div class="stat-title">Reference workout</div>
 				<div class="stat-value">
 					{#if data.referenceWorkout}
-						<a href="/workouts/view/{data.referenceWorkout.id}" class="truncate link">
+						<a href="/workouts/{data.referenceWorkout.id}/view" class="truncate link">
 							{dateFormatter(data.referenceWorkout.startTimestamp)}
 						</a>
 					{:else}
@@ -115,5 +115,5 @@
 <WorkoutExercisesTable exercises={data.workout.exercisesPerformed} mode="viewing" />
 <div class="join grid grid-cols-2 mt-2">
 	<button class="join-item btn btn-error">Delete</button>
-	<a class="join-item btn btn-primary" href="/workouts/edit/{$page.params.workoutId}">Edit</a>
+	<a class="join-item btn btn-primary" href="/workouts/{$page.params.workoutId}/edit">Edit</a>
 </div>

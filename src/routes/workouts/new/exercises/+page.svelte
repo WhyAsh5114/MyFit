@@ -77,6 +77,7 @@
 		bind:sorenessFromPreviousWorkouts
 		{userBodyweight}
 		referenceWorkout={data.referenceWorkout}
+		workoutsThatPreviouslyTargeted={data.workoutsThatPreviouslyTargeted}
 	/>
 {/if}
 <button
