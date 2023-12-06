@@ -56,13 +56,10 @@ const PumpFeedback = [
 ] as const;
 type PumpState = (typeof PumpFeedback)[number]["value"];
 
+type WorkoutExerciseSet = { reps: number; load: number; RIR: number };
 type WorkoutExercise = {
 	name: string;
-	sets: {
-		reps: number;
-		load: number;
-		RIR: number;
-	}[];
+	sets: WorkoutExerciseSet[];
 	repRangeStart: number;
 	repRangeEnd: number;
 	bodyweight?: number;
@@ -73,7 +70,7 @@ type WorkoutExercise = {
 };
 
 type WorkoutExerciseWithoutSetNumbers = Omit<WorkoutExercise, "sets"> & {
-	sets: Nullable<WorkoutExercise["sets"][number]>[];
+	sets: Nullable<WorkoutExerciseSet>[];
 };
 
 type WorkoutBeingPerformed = {
