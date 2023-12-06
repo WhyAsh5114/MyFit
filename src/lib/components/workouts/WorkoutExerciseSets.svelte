@@ -10,7 +10,7 @@
 	export let exercise: WorkoutExerciseWithoutSetNumbers;
 	export let setsCompleted: boolean[];
 	export let checkForFeedback: () => void;
-	export let mode: "performing" | "performed";
+	export let mode: "viewing" | "performing" | "editing";
 	export let comparing: boolean;
 	export let referenceExercise: WorkoutExercise | null;
 	export let userBodyweight: number | null;
@@ -128,7 +128,7 @@
 				/>
 			{/if}
 		</div>
-		{#if mode === "performing" && !comparing}
+		{#if mode !== "viewing" && !comparing}
 			{#if !setsCompleted[setNumber]}
 				<button class="btn btn-xs btn-accent btn-circle" aria-label="mark-set-complete">
 					<DoneIcon />

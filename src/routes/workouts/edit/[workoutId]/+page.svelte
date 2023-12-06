@@ -22,6 +22,7 @@
 	bind:allExercisesSetsCompleted
 	bind:muscleGroupWorkloads
 	bind:sorenessFromPreviousWorkouts
+	mode="editing"
 />
 
 <button class="btn btn-accent mt-2">Update workout</button>

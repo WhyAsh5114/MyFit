@@ -112,7 +112,7 @@
 		</div>
 	</div>
 </div>
-<WorkoutExercisesTable exercises={data.workout.exercisesPerformed} mode="performed" />
+<WorkoutExercisesTable exercises={data.workout.exercisesPerformed} mode="viewing" />
 <div class="join grid grid-cols-2 mt-2">
 	<button class="join-item btn btn-error">Delete</button>
 	<a class="join-item btn btn-primary" href="/workouts/edit/{$page.params.workoutId}">Edit</a>

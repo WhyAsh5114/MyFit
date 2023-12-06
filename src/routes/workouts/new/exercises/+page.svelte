@@ -70,6 +70,7 @@
 </div>
 {#if $workoutBeingPerformed}
 	<WorkoutExercisesTable
+		mode="performing"
 		bind:exercises={$workoutBeingPerformed.exercisesPerformed}
 		bind:allExercisesSetsCompleted={$allExercisesSetsCompleted}
 		bind:muscleGroupWorkloads

@@ -5,7 +5,7 @@
 	import IncreaseIcon from "virtual:icons/icon-park-solid/up-c";
 	import DecreaseIcon from "virtual:icons/icon-park-solid/down-c";
 
-	export let mode: "performing" | "performed";
+	export let mode: "viewing" | "performing" | "editing";
 	export let exercise: WorkoutExerciseWithoutSetNumbers;
 	export let exerciseIndex: number;
 	export let setsCompleted: boolean[];
@@ -73,7 +73,7 @@
 <div class="flex flex-col rounded-md bg-primary p-2">
 	<div class="flex gap-2 w-full">
 		<span class="font-semibold grow">{exercise.name}</span>
-		{#if mode === "performing"}
+		{#if mode !== "viewing"}
 			<div class="dropdown dropdown-end">
 				<button class="btn p-0 btn-xs btn-ghost" aria-label="Exercise options"><Hamburger /></button
 				>
@@ -146,7 +146,7 @@
 	{/if}
 	<div class="h-px bg-secondary brightness-75 mt-1.5"></div>
 	<div
-		class="grid {mode === 'performing' || comparing
+		class="grid {mode !== 'viewing' || comparing
 			? 'workout-sets-grid-performing'
 			: 'workout-sets-grid-performed'} gap-x-2 gap-y-1 mt-2 place-items-center"
 	>
@@ -159,7 +159,7 @@
 		</span>
 		<span class="text-sm font-semibold">RIR</span>
 		{#key exercise.sets}
-			{#if mode === "performing" || comparing}
+			{#if mode !== "viewing" || comparing}
 				<div>
 					{#if referenceExercise}
 						{#if compareVolume() === 1}
@@ -179,7 +179,7 @@
 			bind:comparing
 			{referenceExercise}
 			{checkForFeedback}
-			{mode}
+			bind:mode
 			{userBodyweight}
 		/>
 	</div>
