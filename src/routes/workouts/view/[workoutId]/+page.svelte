@@ -12,9 +12,16 @@
 	<div class="collapse-title text-xl font-medium">Workout details</div>
 	<div class="collapse-content backdrop-brightness-75 px-0 !pb-0">
 		<div class="stats-vertical grid grid-cols-2 w-full max-h-56 shadow-inner shadow-black">
-			<div class="stat col-span-2">
+			<div class="stat">
 				<div class="stat-title">Workout date</div>
 				<div class="stat-value">{dateFormatter(data.workout.startTimestamp)}</div>
+			</div>
+			<div class="stat">
+				<div class="stat-title">Difficulty rating</div>
+				<div class="stat-value flex items-center gap-1">
+					{data.workout.difficultyRating}
+					<StarIcon class="text-orange-400" />
+				</div>
 			</div>
 
 			<div class="stat">
@@ -47,18 +54,17 @@
 			</div>
 
 			<div class="stat">
+				<div class="stat-title">Mesocycle</div>
+				<a class="stat-value link" href="/mesocycles/view/{data.mesocycle?.id}">
+					{dateFormatter(data.mesocycle?.startTimestamp)}
+				</a>
+			</div>
+			<div class="stat">
 				<div class="stat-title">Mesocycle template</div>
 				<div class="stat-value truncate">
 					<a href="/mesocycles/viewTemplate/{data.mesocycleTemplate?.id}" class="link">
 						{data.mesocycleTemplate?.name}
 					</a>
-				</div>
-			</div>
-			<div class="stat">
-				<div class="stat-title">Difficulty rating</div>
-				<div class="stat-value flex items-center gap-1">
-					{data.workout.difficultyRating}
-					<StarIcon class="text-orange-400" />
 				</div>
 			</div>
 
