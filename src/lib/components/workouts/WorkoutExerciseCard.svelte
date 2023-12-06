@@ -36,6 +36,7 @@
 		}
 	}
 
+	let increasePercentage: number | null = null;
 	function compareVolume() {
 		let referenceVolume = 0;
 		let currentVolume = 0;
@@ -60,6 +61,7 @@
 			}
 		}
 
+		increasePercentage = currentVolume / referenceVolume;
 		if (currentVolume < referenceVolume) {
 			return -1;
 		} else if (currentVolume > referenceVolume) {
@@ -68,6 +70,7 @@
 			return 0;
 		}
 	}
+	const colorMap = ["text-error", "text-secondary", "text-success"];
 </script>
 
 <div class="flex flex-col rounded-md bg-primary p-2">
@@ -160,15 +163,26 @@
 		<span class="text-sm font-semibold">RIR</span>
 		{#key exercise.sets}
 			{#if mode !== "viewing" || comparing}
-				<div>
+				<div class="dropdown dropdown-end">
 					{#if referenceExercise}
-						{#if compareVolume() === 1}
-							<IncreaseIcon class="text-success" />
-						{:else if compareVolume() === 0}
-							<EqualIcon />
-						{:else if compareVolume() === -1}
-							<DecreaseIcon class="text-error" />
-						{/if}
+						<button aria-label="exercise-volume-change">
+							{#if compareVolume() === 1}
+								<IncreaseIcon class="text-success" />
+							{:else if compareVolume() === 0}
+								<EqualIcon />
+							{:else if compareVolume() === -1}
+								<DecreaseIcon class="text-error" />
+							{/if}
+						</button>
+					{/if}
+					{#if increasePercentage !== null}
+						<ul class="dropdown-content z-[1] shadow bg-neutral rounded-md w-48 px-2 py-1">
+							<li class="text-center">
+								<span class="{colorMap[compareVolume() + 1]} font-semibold text-sm text-center w-full">
+									Volume change: {(increasePercentage * 100 - 100).toFixed(2)}%
+								</span>
+							</li>
+						</ul>
 					{/if}
 				</div>
 			{/if}

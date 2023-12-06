@@ -73,7 +73,6 @@ export function applyProgressiveOverload(
 				exercise.sets[i] = matchSetVolumeWithNewLoad(exercise, set, set.load - MINIMUM_LOAD_CHANGE);
 			} else if (set.reps >= exercise.repRangeEnd) {
 				exercise.sets[i] = matchSetVolumeWithNewLoad(exercise, set, set.load + MINIMUM_LOAD_CHANGE);
-				console.log(set);
 			}
 		});
 
@@ -93,7 +92,6 @@ export function applyProgressiveOverload(
 
 			// TODO: implement load change, choose optimal approach
 		}
-		console.log(originalTotalVolume, newTotalVolume, newTotalVolume / originalTotalVolume);
 	});
 	return exercises;
 }
