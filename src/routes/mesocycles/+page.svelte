@@ -29,7 +29,7 @@
 	</div>
 {/if}
 
-<h3 class="text-xl mb-1 mt-3">All mesocycles</h3>
+<h3 class="text-xl mb-1 mt-3">Mesocycle templates</h3>
 <div class="flex flex-col gap-1.5 h-px grow overflow-y-auto">
 	{#if totalMesocycleTemplates > 0}
 		{#each data.streamed.mesocycleTemplatesStreamArray as mesocycleTemplatePromise}

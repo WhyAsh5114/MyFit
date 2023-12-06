@@ -2,6 +2,7 @@ import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import clientPromise from "$lib/mongo/mongodb";
 import { ObjectId } from "mongodb";
+import type { MesocycleDocument } from "$lib/types/documents";
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const session = await locals.getSession();
@@ -27,5 +28,29 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	const { _id, userId, ...mesocycleTemplateProps } = mesocycleTemplateDocument;
 	const mesocycleTemplate: MesocycleTemplate = { ...mesocycleTemplateProps };
-	return { mesocycleTemplate };
+
+	const mesocyclesCursor = client
+		.db()
+		.collection<Omit<MesocycleDocument, "userId">>("mesocycles")
+		.find(
+			{ userId: new ObjectId(session.user.id), templateMesoId: mesocycleTemplateDocument._id },
+			{ sort: { startTimestamp: -1 }, projection: { userId: 0 } }
+		)
+		.map((mesocycleDocument) => {
+			const { _id, workouts, templateMesoId, ...otherProps } = mesocycleDocument;
+			const mesocycle: WithSerializedId<Mesocycle> = {
+				id: _id.toString(),
+				workouts: workouts.map((workout) => workout?.toString() ?? null),
+				templateMesoId: templateMesoId.toString(),
+				...otherProps
+			};
+			return mesocycle;
+		});
+
+	const mesocyclesStreamArray = [];
+	while (await mesocyclesCursor.hasNext()) {
+		mesocyclesStreamArray.push(mesocyclesCursor.next());
+	}
+
+	return { mesocycleTemplate, streamed: { mesocyclesStreamArray } };
 };

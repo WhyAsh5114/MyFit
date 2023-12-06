@@ -3,6 +3,7 @@
 	import { page } from "$app/stores";
 	import MyModal from "$lib/components/MyModal.svelte";
 	import { caloricStates } from "$lib/types/arrays.js";
+	import { dateFormatter } from "$lib/util/CommonFunctions.js";
 	import { getTotalDuration } from "$lib/util/MesocycleTemplate.js";
 	export let data;
 
@@ -106,7 +107,7 @@
 	Mesocycle started successfully
 </MyModal>
 
-<div class="stats stats-vertical grid-cols-2 overflow-y-auto">
+<div class="stats stats-vertical grid-cols-2 overflow-y-auto mb-2">
 	<div class="stat col-span-2">
 		<div class="stat-title">Mesocycle name</div>
 		<div class="stat-value">{data.mesocycleTemplate.name}</div>
@@ -167,6 +168,23 @@
 			<div class="flex flex-wrap gap-1 mt-1.5">
 				{#each data.mesocycleTemplate.specialization as muscleGroup}
 					<span class="badge badge-accent font-semibold">{muscleGroup}</span>
+				{/each}
+			</div>
+		</div>
+	{/if}
+
+	{#if data.streamed.mesocyclesStreamArray.length > 0}
+		<div class="stat col-span-2">
+			<div class="stat-title">Usages</div>
+			<div class="flex flex-col mt-2 max-h-32 overflow-y-auto gap-1">
+				{#each data.streamed.mesocyclesStreamArray as mesocyclePromise}
+					{#await mesocyclePromise then mesocycle}
+						{#if mesocycle}
+							<a href="/mesocycles/view/{mesocycle.id}" class="btn btn-sm">
+								{dateFormatter(mesocycle.startTimestamp)}
+							</a>
+						{/if}
+					{/await}
 				{/each}
 			</div>
 		</div>
