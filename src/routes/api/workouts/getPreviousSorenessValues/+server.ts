@@ -15,7 +15,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { muscleGroups, mesocycleId }: APIGetPreviousSorenessValues = await request.json();
+	const { muscleGroups, mesocycleId, workoutStartTimestamp }: APIGetPreviousSorenessValues =
+		await request.json();
 	const client = await clientPromise;
 	try {
 		const performedMesocycle = await client
@@ -27,7 +28,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			});
 
 		if (!performedMesocycle) {
-			return new Response("No active mesocycle found", { status: 400 });
+			return new Response("No performed mesocycle found", { status: 400 });
 		}
 
 		const { exerciseSplit } = (await client
@@ -47,13 +48,14 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			.find(
 				{
 					userId: new ObjectId(session.user.id),
-					performedMesocycleId: performedMesocycle._id
+					performedMesocycleId: performedMesocycle._id,
+					startTimestamp: { $lt: workoutStartTimestamp }
 				},
 				{ limit: exerciseSplit.length }
 			)
 			.sort({ startTimestamp: -1 });
 
-		const previouslyTargetedWorkouts: APIGetPreviousSorenessValuesResponse = {};
+		const previouslyTargetedWorkouts: Workout["muscleSorenessToNextWorkout"] = {};
 		muscleGroups.forEach((muscleGroup) => {
 			previouslyTargetedWorkouts[muscleGroup] = undefined;
 		});
