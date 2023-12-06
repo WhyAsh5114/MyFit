@@ -15,7 +15,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	const { muscleGroups, mesocycleId }: APIGetWorkoutsThatPreviouslyTargeted = await request.json();
+	const { muscleGroups, mesocycleId, beforeTimestamp }: APIGetWorkoutsThatPreviouslyTargeted =
+		await request.json();
 	const client = await clientPromise;
 	try {
 		const performedMesocycle = await client
@@ -47,7 +48,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			.find(
 				{
 					userId: new ObjectId(session.user.id),
-					performedMesocycleId: performedMesocycle._id
+					performedMesocycleId: performedMesocycle._id,
+					startTimestamp: { $lt: beforeTimestamp }
 				},
 				{ limit: exerciseSplit.length }
 			)
@@ -67,7 +69,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 						muscleGroup === targetMuscleGroup &&
 						previouslyTargetedWorkouts[muscleGroup] === null
 					) {
-						previouslyTargetedWorkouts[muscleGroup] === workout._id.toString();
+						previouslyTargetedWorkouts[muscleGroup] = workout._id.toString();
 					}
 				});
 			}
