@@ -88,7 +88,7 @@
 					<div class="skeleton h-8 w-full bg-primary brightness-50 rounded-md"></div>
 				{:then workout}
 					{#if workout}
-						<a class="btn h-8 btn-sm" href="/workouts/viewTemplate/{workout.id}">
+						<a class="btn h-8 btn-sm" href="/workouts/view/{workout.id}">
 							<div class="flex w-full justify-between items-center">
 								<span>{dateFormatter(workout.startTimestamp)}</span>
 								<span class="font-normal text-sm">
