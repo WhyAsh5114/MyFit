@@ -29,7 +29,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	}
 
 	const { _id, userId, workouts, templateMesoId, ...mesocycleProps } = mesocycleDocument;
-	const mesocycle: Mesocycle = {
+	const mesocycle: WithSerializedId<Mesocycle> = {
+		id: _id.toString(),
 		...mesocycleProps,
 		templateMesoId: templateMesoId.toString(),
 		workouts: workouts.map((workout) => workout?.toString() ?? null)

@@ -181,7 +181,10 @@
 					{#await mesocyclePromise then mesocycle}
 						{#if mesocycle}
 							{#if mesocycle.endTimestamp === undefined}
-								<a href="/mesocycles/active" class="btn btn-sm text-accent">
+								<a
+									href="/mesocycles/view/{data.activeMesocycle?.id}"
+									class="btn btn-sm text-accent"
+								>
 									{dateFormatter(mesocycle.startTimestamp)}
 								</a>
 							{:else}
