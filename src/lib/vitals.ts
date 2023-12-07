@@ -1,30 +1,45 @@
-// @ts-nocheck
+// vitals.ts
+
+import type { Metric } from "web-vitals";
 import { getCLS, getFCP, getFID, getLCP, getTTFB } from "web-vitals";
 
-const vitalsUrl = "https://vitals.vercel-analytics.com/v1/vitals";
+export type AnalyticsOptions = {
+	params: Record<string, string>;
+	path: string;
+	analyticsId: string;
+	debug?: true;
+};
 
-function getConnectionSpeed() {
-	return "connection" in navigator &&
-		navigator["connection"] &&
-		"effectiveType" in navigator["connection"]
-		? navigator["connection"]["effectiveType"]
-		: "";
+const vitalsUrl = "<https://vitals.vercel-analytics.com/v1/vitals>";
+
+interface NavigatorWithConnection extends Navigator {
+	connection?: {
+		effectiveType?: string;
+	};
 }
 
-function sendToAnalytics(metric, options) {
+function getConnectionSpeed(): string {
+	const nav: NavigatorWithConnection = navigator;
+	if (nav.connection && nav.connection.effectiveType) {
+		return nav.connection.effectiveType;
+	}
+	return "";
+}
+
+function sendToAnalytics(metric: Metric, options: AnalyticsOptions) {
 	const page = Object.entries(options.params).reduce(
 		(acc, [key, value]) => acc.replace(value, `[${key}]`),
 		options.path
 	);
 
 	const body = {
-		dsn: options.analyticsId, // qPgJqYH9LQX5o31Ormk8iWhCxZO
-		id: metric.id, // v2-1653884975443-1839479248192
-		page, // /blog/[slug]
-		href: location.href, // https://{my-example-app-name-here}/blog/my-test
-		event_name: metric.name, // TTFB
-		value: metric.value.toString(), // 60.20000000298023
-		speed: getConnectionSpeed() // 4g
+		dsn: options.analyticsId,
+		id: metric.id,
+		page,
+		href: location.href,
+		event_name: metric.name,
+		value: metric.value.toString(),
+		speed: getConnectionSpeed()
 	};
 
 	if (options.debug) {
@@ -32,7 +47,7 @@ function sendToAnalytics(metric, options) {
 	}
 
 	const blob = new Blob([new URLSearchParams(body).toString()], {
-		// This content type is necessary for `sendBeacon`
+		// This content type is necessary for `sendBeacon`:
 		type: "application/x-www-form-urlencoded"
 	});
 	if (navigator.sendBeacon) {
@@ -46,7 +61,7 @@ function sendToAnalytics(metric, options) {
 		});
 }
 
-export function webVitals(options) {
+export function webVitals(options: AnalyticsOptions): void {
 	try {
 		getFID((metric) => sendToAnalytics(metric, options));
 		getTTFB((metric) => sendToAnalytics(metric, options));

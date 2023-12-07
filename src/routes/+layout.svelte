@@ -4,7 +4,7 @@
 	import { pwaInfo } from "virtual:pwa-info";
 	import PwaButton from "./PWAButton.svelte";
 	import UserButton from "./UserButton.svelte";
-	import { navigating } from "$app/stores";
+	import { navigating, page } from "$app/stores";
 	import { onMount } from "svelte";
 
 	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : "";
@@ -17,6 +17,17 @@
 	import { dev } from "$app/environment";
 	import { inject } from "@vercel/analytics";
 	inject({ mode: dev ? "development" : "production" });
+	// Vercel speed insights
+	import { browser } from "$app/environment";
+	import { webVitals } from "$lib/vitals";
+	let analyticsId = import.meta.env.VERCEL_ANALYTICS_ID;
+	$: if (browser && analyticsId) {
+		webVitals({
+			path: $page.url.pathname,
+			params: $page.params,
+			analyticsId
+		});
+	}
 </script>
 
 <svelte:head>
