@@ -2,6 +2,8 @@
 	import { goto, invalidate } from "$app/navigation";
 	import MyModal from "$lib/components/MyModal.svelte";
 	import { dateFormatter } from "$lib/util/CommonFunctions.js";
+	import VolumeGraph from "./VolumeGraph.svelte";
+	import InsightsIcon from "virtual:icons/ic/baseline-insights";
 	export let data;
 
 	let modal: HTMLDialogElement;
@@ -116,9 +118,16 @@
 			{/if}
 		</div>
 	</div>
-	{#if data.mesocycle.workouts.length > 0}
+	{#if data.mesocycle.workouts.length > 0 && data.mesocycleTemplate}
 		<div class="stat col-span-2">
-			<div class="stat-title">Insights</div>
+			<div class="stat-title">Volume progression</div>
+			{#await Promise.all(data.streamed.workoutsStreamArray) then workouts}
+				<VolumeGraph exerciseSplit={data.mesocycleTemplate.exerciseSplit} {workouts} />
+			{/await}
+			<a class="btn mt-2 text-accent gap-4" href="/mesocycles/view/${data.mesocycle.id}/insights">
+				<InsightsIcon class="h-6 w-6" />
+				More insights
+			</a>
 		</div>
 	{/if}
 </div>
