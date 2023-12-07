@@ -29,7 +29,7 @@
 
 		if (reference === newValue) return "";
 		if (reference > newValue) return "text-warning";
-		if (reference < newValue) return "text-accent";
+		if (reference < newValue) return "text-success";
 	}
 
 	function compareVolume(setNumber: number) {
