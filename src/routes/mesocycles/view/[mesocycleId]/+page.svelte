@@ -69,8 +69,8 @@
 	</div>
 </MyModal>
 
-<div class="stats stats-vertical">
-	<div class="stat">
+<div class="stats stats-vertical grid grid-cols-2">
+	<div class="stat col-span-2">
 		<div class="stat-title">Mesocycle template</div>
 		<a
 			class="stat-value link truncate"
@@ -84,6 +84,14 @@
 		<div class="stat-value">{dateFormatter(data.mesocycle.startTimestamp)}</div>
 	</div>
 	<div class="stat">
+		<div class="stat-title">Ended at</div>
+		{#if data.mesocycle.endTimestamp !== undefined}
+			<div class="stat-value">{dateFormatter(data.mesocycle.endTimestamp)}</div>
+		{:else}
+			<div class="stat-value">Active</div>
+		{/if}
+	</div>
+	<div class="stat col-span-2">
 		<div class="stat-title">Workouts</div>
 		<div class="flex flex-col max-h-32 overflow-y-auto mt-2 gap-1">
 			{#if data.streamed.workoutsStreamArray.length > 0}
@@ -108,6 +116,11 @@
 			{/if}
 		</div>
 	</div>
+	{#if data.mesocycle.workouts.length > 0}
+		<div class="stat col-span-2">
+			<div class="stat-title">Insights</div>
+		</div>
+	{/if}
 </div>
 
 {#if !data.mesocycle.endTimestamp}
