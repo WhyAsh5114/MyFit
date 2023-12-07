@@ -1,7 +1,7 @@
 const MINIMUM_LOAD_CHANGE = 5;
 const VOLUME_INCREASE_RATE = 0.025;
 
-function getSetVolume(exerciseBodyweight: number | undefined, set: WorkoutExerciseSet) {
+export function getSetVolume(exerciseBodyweight: number | undefined, set: WorkoutExerciseSet) {
 	if (exerciseBodyweight !== undefined) {
 		return set.reps * (set.load + exerciseBodyweight);
 	} else {
@@ -9,7 +9,7 @@ function getSetVolume(exerciseBodyweight: number | undefined, set: WorkoutExerci
 	}
 }
 
-function getTotalVolume(exerciseBodyweight: number | undefined, sets: WorkoutExerciseSet[]) {
+export function getTotalVolume(exerciseBodyweight: number | undefined, sets: WorkoutExerciseSet[]) {
 	let totalVolume = 0;
 	sets.forEach((set) => {
 		totalVolume += getSetVolume(exerciseBodyweight, set);
