@@ -1,12 +1,17 @@
-<script>
+<script lang="ts">
 	import "../app.postcss";
 	import Hamburger from "virtual:icons/material-symbols/menu";
 	import { pwaInfo } from "virtual:pwa-info";
 	import PwaButton from "./PWAButton.svelte";
 	import UserButton from "./UserButton.svelte";
 	import { navigating } from "$app/stores";
+	import { onMount } from "svelte";
 
 	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : "";
+	let lg: MediaQueryList | undefined = undefined;
+	onMount(() => {
+		lg = window.matchMedia("(max-width: 1024px)");
+	});
 </script>
 
 <svelte:head>
@@ -17,12 +22,12 @@
 	<input id="drawer" type="checkbox" class="drawer-toggle" />
 	<div class="drawer-content flex flex-col items-center justify-center h-screen">
 		<!-- Page content here -->
-		<div class="flex bg-primary w-full items-center py-2 lg:hidden">
-			<label for="drawer" class="btn btn-ghost drawer-button lg:hidden"
+		<div class="flex bg-primary w-full items-center py-2 lg:hidden" aria-hidden={!lg?.matches}>
+			<label for="drawer" class="btn btn-ghost drawer-button lg:hidden" aria-hidden={!lg?.matches}
 				><Hamburger class="w-6 h-6" /></label
 			>
 			<a href="/" class="flex items-center">
-				<img src="/favicon.png" alt="logo" class="-mb-1 mr-1" width="48" />
+				<img src="/favicon.png" alt="logo" class="-mb-1 mr-1" width="48" height="48" />
 				<h1 class="text-2xl font-bold text-white">MyFit</h1>
 			</a>
 			{#if $navigating}
@@ -36,13 +41,14 @@
 		</main>
 	</div>
 	<div class="drawer-side z-10">
-		<label for="drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+		<label for="drawer" aria-label="close sidebar" aria-hidden={!lg?.matches} class="drawer-overlay"
+		></label>
 		<div class="menu p-4 w-80 min-h-full text-base-content bg-primary">
 			<!-- Sidebar content here -->
 			<ul>
 				<li>
 					<a class="w-full items-center py-2 hidden lg:flex" href="/">
-						<img src="/favicon.png" alt="logo" class="-mb-1 mr-1" width="48" />
+						<img src="/favicon.png" alt="logo" class="-mb-1 mr-1" width="48" height="48" />
 						<h1 class="text-2xl font-bold text-white">MyFit</h1>
 						{#if $navigating}
 							<div class="grid w-10 h-10 place-items-center ml-auto px-2">
