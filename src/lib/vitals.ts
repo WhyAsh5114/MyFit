@@ -1,5 +1,3 @@
-// vitals.ts
-
 import type { Metric } from "web-vitals";
 import { getCLS, getFCP, getFID, getLCP, getTTFB } from "web-vitals";
 
@@ -10,7 +8,7 @@ export type AnalyticsOptions = {
 	debug?: true;
 };
 
-const vitalsUrl = "<https://vitals.vercel-analytics.com/v1/vitals>";
+const vitalsUrl = "https://vitals.vercel-analytics.com/v1/vitals";
 
 interface NavigatorWithConnection extends Navigator {
 	connection?: {
