@@ -205,7 +205,7 @@
 			Delete
 		{/if}
 	</button>
-	<button class="join-item btn btn-accent" on:click={startMesocycle} disabled={callingEndpoint}>
+	<button class="join-item btn btn-primary" on:click={startMesocycle} disabled={callingEndpoint}>
 		{#if callingEndpoint}
 			<span class="loading loading-bars"></span>
 		{:else}
