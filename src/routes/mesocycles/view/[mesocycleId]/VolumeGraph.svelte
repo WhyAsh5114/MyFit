@@ -4,12 +4,11 @@
 	import { addAlpha } from "$lib/util/CommonFunctions";
 	import { getTotalVolume } from "$lib/util/ProgressiveOverload";
 	export let workouts: (Workout | null)[];
-	export let exerciseSplit: MesocycleTemplate["exerciseSplit"];
 
 	Chart.defaults.color = "#f4f4f4";
 	workouts.reverse();
 
-	type DataEntry = { startTimestamp: EpochTimeStamp; dayNumber: number; sets: number; volume: 0 };
+	type DataEntry = { startTimestamp: EpochTimeStamp; sets: number; volume: 0 };
 
 	const data: DataEntry[] = [];
 	workouts.forEach((workout) => {
@@ -27,16 +26,12 @@
 		new Chart(canvasElement, {
 			type: "bar",
 			data: {
-				labels: data.map(
-					({ startTimestamp, dayNumber }) =>
-						`${exerciseSplit[dayNumber]?.name} (${new Date(startTimestamp).toLocaleDateString(
-							"en-US",
-							{
-								day: "2-digit",
-								month: "short"
-							}
-						)})`
-				),
+				labels: data.map(({ startTimestamp }) => {
+					return new Date(startTimestamp).toLocaleDateString("en-US", {
+						day: "2-digit",
+						month: "2-digit"
+					});
+				}),
 				datasets: [
 					{
 						type: "line",
@@ -60,13 +55,13 @@
 						stacked: false
 					},
 					setsScale: {
-						position: "left",
+						position: "left"
 					},
 					volumeScale: {
 						position: "right",
-                        grid: {
-                            drawOnChartArea: false
-                        }
+						grid: {
+							drawOnChartArea: false
+						}
 					}
 				}
 			}

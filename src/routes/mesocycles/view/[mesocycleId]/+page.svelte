@@ -95,7 +95,7 @@
 	</div>
 	<div class="stat col-span-2">
 		<div class="stat-title">Workouts</div>
-		<div class="flex flex-col max-h-32 overflow-y-auto mt-2 gap-1">
+		<div class="flex flex-col max-h-32 overflow-y-auto mt-2 gap-1 drop-shadow-md shadow-black">
 			{#if data.streamed.workoutsStreamArray.length > 0}
 				{#each data.streamed.workoutsStreamArray as workoutPromise}
 					{#await workoutPromise}
@@ -120,14 +120,16 @@
 	</div>
 	{#if data.mesocycle.workouts.length > 0 && data.mesocycleTemplate}
 		<div class="stat col-span-2">
-			<div class="stat-title">Volume progression</div>
-			{#await Promise.all(data.streamed.workoutsStreamArray) then workouts}
-				<VolumeGraph exerciseSplit={data.mesocycleTemplate.exerciseSplit} {workouts} />
+			<div class="stat-title mb-2">Volume progression</div>
+			{#await Promise.all(data.streamed.workoutsStreamArray)}
+				<div class="skeleton h-56 w-full bg-primary brightness-50 rounded-md"></div>
+			{:then workouts}
+				<VolumeGraph {workouts} />
+				<a class="btn mt-2 text-accent gap-4" href="/mesocycles/view/${data.mesocycle.id}/insights">
+					<InsightsIcon class="h-6 w-6" />
+					More insights
+				</a>
 			{/await}
-			<a class="btn mt-2 text-accent gap-4" href="/mesocycles/view/${data.mesocycle.id}/insights">
-				<InsightsIcon class="h-6 w-6" />
-				More insights
-			</a>
 		</div>
 	{/if}
 </div>
