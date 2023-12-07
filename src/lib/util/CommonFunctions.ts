@@ -51,3 +51,8 @@ export function range(start: number, stop: number | undefined, step: number | un
 	for (let i = start; step > 0 ? i < stop : i > stop; i += step) result.push(i);
 	return result;
 }
+
+export function addAlpha(color: string, opacity: number) {
+	let _opacity = Math.round(Math.min(Math.max(opacity || 1, 0), 1) * 255);
+	return color + _opacity.toString(16).toUpperCase();
+}
