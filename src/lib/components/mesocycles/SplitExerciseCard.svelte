@@ -26,15 +26,15 @@
         <li class="join grid grid-cols-2 gap-1">
           <button
             class="join-item text-lg btn btn-primary btn-sm p-0 rounded-sm"
-            on:click={() => reorderExercise(idx, "up")}
             disabled={idx === 0}
+            on:click={() => reorderExercise(idx, "up")}
           >
             ↑
           </button>
           <button
             class="join-item text-lg btn btn-primary btn-sm p-0 rounded-sm"
-            on:click={() => reorderExercise(idx, "down")}
             disabled={idx === totalExercises - 1}
+            on:click={() => reorderExercise(idx, "down")}
           >
             ↓
           </button>

@@ -112,12 +112,12 @@
         <span class="label-text">Mesocycle name</span>
       </label>
       <input
-        type="text"
-        placeholder="Type here"
         id="mesocycle-name"
         class="input input-bordered w-full"
-        bind:value={$mesocycleName}
+        placeholder="Type here"
         required
+        type="text"
+        bind:value={$mesocycleName}
       />
     </div>
     <div class="form-control w-full mt-4 max-w-xs mx-auto">
@@ -126,12 +126,12 @@
         <span class="label-text-alt">{$mesocycleDuration} cycles</span>
       </label>
       <input
-        type="range"
-        min="4"
-        max="20"
-        bind:value={$mesocycleDuration}
-        class="range range-secondary"
         id="mesocycle-duration"
+        class="range range-secondary"
+        max="20"
+        min="4"
+        type="range"
+        bind:value={$mesocycleDuration}
       />
     </div>
     <div class="form-control w-full mt-4 max-w-xs mx-auto">
@@ -139,8 +139,8 @@
         <span class="label-text">Start RIR</span>
       </label>
       <select
-        class="select select-bordered"
         id="mesocycle-start-RIR"
+        class="select select-bordered"
         bind:value={$mesocycleStartRIR}
       >
         <option value={3}>3 RIR</option>
@@ -153,9 +153,9 @@
       <label class="label cursor-pointer">
         <span class="label-text">Customize RIR progression</span>
         <input
-          type="checkbox"
-          class="toggle"
           id="customize-RIR-progression"
+          class="toggle"
+          type="checkbox"
           bind:checked={$customizeRIRProgression}
         />
       </label>
@@ -169,13 +169,13 @@
               <span class="label-text-alt">{cycles} cycles</span>
             </label>
             <input
-              type="range"
-              min={i === 0 ? 1 : 0}
+              id={`${specificRIR}-RIR-duration`}
+              class="range range-xs range-secondary {RIRColors[specificRIR]}"
               max={$mesocycleDuration - previousCycles(specificRIR)}
+              min={i === 0 ? 1 : 0}
+              type="range"
               value={cycles}
               on:input={(e) => modifyProgression(specificRIR, parseInt(e.currentTarget.value))}
-              class="range range-xs range-secondary {RIRColors[specificRIR]}"
-              id={`${specificRIR}-RIR-duration`}
             />
           </div>
         {/each}

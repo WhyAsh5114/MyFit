@@ -7,12 +7,12 @@
   <div class="dropdown dropdown-top">
     <button class="btn btn-neutral flex w-full justify-start h-14">
       <img
-        src={$page.data.session.user?.image}
-        referrerpolicy="no-referrer"
-        alt="profile"
-        width="36"
-        height="36"
         class="rounded-full avatar"
+        alt="profile"
+        height="36"
+        referrerpolicy="no-referrer"
+        src={$page.data.session.user?.image}
+        width="36"
       />
       <span class="grow text-center uppercase font-bold">{$page.data.session.user?.name}</span>
     </button>
@@ -23,5 +23,5 @@
     </ul>
   </div>
 {:else}
-  <a href="/login" class="btn w-full">Login</a>
+  <a class="btn w-full" href="/login">Login</a>
 {/if}

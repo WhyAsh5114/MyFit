@@ -94,18 +94,18 @@
   {#each exercises as exercise, i (exercise.name)}
     <div transition:slide|local={{ duration: 200 }} animate:flip={{ duration: 200 }}>
       <WorkoutExerciseCard
+        {deleteExercise}
+        {editExercise}
+        exerciseIndex={i}
+        {mode}
+        referenceExercise={referenceWorkout?.exercisesPerformed[i] ?? null}
+        {reorderExercise}
+        {takeFeedback}
+        totalExercises={exercises.length}
+        {userBodyweight}
         bind:exercise
         bind:setsCompleted={allExercisesSetsCompleted[i]}
         bind:comparing
-        exerciseIndex={i}
-        totalExercises={exercises.length}
-        {editExercise}
-        {deleteExercise}
-        {reorderExercise}
-        {takeFeedback}
-        {mode}
-        referenceExercise={referenceWorkout?.exercisesPerformed[i] ?? null}
-        {userBodyweight}
       />
     </div>
   {/each}

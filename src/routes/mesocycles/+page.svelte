@@ -21,7 +21,7 @@
 
 <h3 class="text-xl mb-1">Currently active</h3>
 {#if activeMesocycle && activeMesocycleTemplate}
-  <ActiveMesocycleCard {activeMesocycleTemplate} {activeMesocycle} />
+  <ActiveMesocycleCard {activeMesocycle} {activeMesocycleTemplate} />
 {:else}
   <div class="flex flex-col bg-primary rounded-md p-2">
     <span class="text-warning">No mesocycle active</span>
@@ -43,4 +43,4 @@
   {/if}
 </div>
 
-<a href="/mesocycles/create" class="btn btn-block btn-accent mt-1">Create new mesocycle</a>
+<a class="btn btn-block btn-accent mt-1" href="/mesocycles/create">Create new mesocycle</a>

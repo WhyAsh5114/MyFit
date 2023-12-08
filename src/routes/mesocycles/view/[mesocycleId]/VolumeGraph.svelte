@@ -69,4 +69,4 @@
   });
 </script>
 
-<canvas bind:this={canvasElement} class="max-h-56"></canvas>
+<canvas bind:this={canvasElement} class="max-h-56" />

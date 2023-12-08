@@ -75,7 +75,7 @@
   avgRIR /= getTotalSets(exercisesPerformed);
 </script>
 
-<MyModal bind:title={modalTitle} bind:dialogElement={modal} onClose={closeModal}>
+<MyModal onClose={closeModal} bind:title={modalTitle} bind:dialogElement={modal}>
   {modalText}
 </MyModal>
 
@@ -85,9 +85,9 @@
     <div class="rating stat-value">
       {#each Array(5) as n, i}
         <input
-          type="radio"
           name="difficulty-rating"
           class="mask mask-star-2 bg-warning"
+          type="radio"
           value={i + 1}
           bind:group={difficultyRating}
         />
@@ -102,14 +102,14 @@
 
 <button
   class="btn btn-block btn-accent mt-auto"
-  on:click={saveWorkout}
   disabled={callingEndpoint || redirecting}
+  on:click={saveWorkout}
 >
   {#if callingEndpoint}
-    <span class="loading loading-bars"></span>
+    <span class="loading loading-bars" />
   {:else if redirecting}
     Redirecting
-    <span class="loading loading-bars"></span>
+    <span class="loading loading-bars" />
   {:else}
     Save workout
   {/if}

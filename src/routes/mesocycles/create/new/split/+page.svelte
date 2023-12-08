@@ -21,10 +21,10 @@
 <MyModal title="Error" bind:dialogElement={errorModal}>
   Need to have at least one workout in a microcycle
 </MyModal>
-<form on:submit|preventDefault={validateSplit} class="flex flex-col grow">
+<form class="flex flex-col grow" on:submit|preventDefault={validateSplit}>
   <SplitInputTable />
   <div class="join grid grid-cols-2">
-    <a href="/mesocycles/create/new/basics" class="btn join-item btn-primary">Previous</a>
+    <a class="btn join-item btn-primary" href="/mesocycles/create/new/basics">Previous</a>
     <button class="btn join-item btn-accent">Next</button>
   </div>
 </form>

@@ -60,12 +60,12 @@
     <button class="join-item btn">Cancel</button>
     <button
       class="join-item btn btn-error"
-      type="button"
       disabled={callingEndpoint}
+      type="button"
       on:click={deleteWorkout}
     >
       {#if callingEndpoint}
-        <span class="loading loading-bars"></span>
+        <span class="loading loading-bars" />
       {:else}
         Yes, delete
       {/if}
@@ -73,12 +73,12 @@
   </div>
 </MyModal>
 
-<MyModal bind:dialogElement={modal} bind:title={modalTitle} onClose={closeModal}>
+<MyModal onClose={closeModal} bind:dialogElement={modal} bind:title={modalTitle}>
   {modalText}
 </MyModal>
 
 <div class="collapse collapse-arrow bg-primary rounded-md">
-  <input type="checkbox" id="view-workout-details" checked />
+  <input id="view-workout-details" checked type="checkbox" />
   <div class="collapse-title text-xl font-medium">Workout details</div>
   <div class="collapse-content backdrop-brightness-75 px-0 !pb-0">
     <div class="stats-vertical grid grid-cols-2 w-full max-h-56 shadow-inner shadow-black">
@@ -107,7 +107,7 @@
         <div class="stat-title">Reference workout</div>
         <div class="stat-value">
           {#if data.referenceWorkout}
-            <a href="/workouts/{data.referenceWorkout.id}/view" class="truncate link">
+            <a class="truncate link" href="/workouts/{data.referenceWorkout.id}/view">
               {dateFormatter(data.referenceWorkout.startTimestamp)}
             </a>
           {:else}
@@ -132,7 +132,7 @@
       <div class="stat">
         <div class="stat-title">Mesocycle template</div>
         <div class="stat-value truncate">
-          <a href="/mesocycles/viewTemplate/{data.mesocycleTemplate?.id}" class="link">
+          <a class="link" href="/mesocycles/viewTemplate/{data.mesocycleTemplate?.id}">
             {data.mesocycleTemplate?.name}
           </a>
         </div>
@@ -186,11 +186,11 @@
 <div class="join grid grid-cols-2 mt-2">
   <button
     class="join-item btn btn-error"
-    on:click={() => deleteModal.show()}
     disabled={redirecting}
+    on:click={() => deleteModal.show()}
   >
     {#if redirecting}
-      <span class="loading loading-bars"></span>
+      <span class="loading loading-bars" />
     {:else}
       Delete
     {/if}

@@ -94,8 +94,8 @@
           <li>
             <button
               class="btn btn-sm rounded-sm btn-primary"
-              on:click={() => takeFeedback(exerciseIndex, true)}
               disabled={setsCompleted.includes(false)}
+              on:click={() => takeFeedback(exerciseIndex, true)}
             >
               Feedback
             </button>
@@ -103,15 +103,15 @@
           <li class="join grid grid-cols-2 gap-1">
             <button
               class="btn btn-sm join-item btn-primary rounded-sm"
-              on:click={() => reorderExercise(exerciseIndex, "up")}
               disabled={exerciseIndex === 0}
+              on:click={() => reorderExercise(exerciseIndex, "up")}
             >
               ↑
             </button>
             <button
               class="btn btn-sm join-item btn-primary rounded-sm"
-              on:click={() => reorderExercise(exerciseIndex, "down")}
               disabled={exerciseIndex === totalExercises - 1}
+              on:click={() => reorderExercise(exerciseIndex, "down")}
             >
               ↓
             </button>
@@ -122,8 +122,8 @@
             </button>
             <button
               class="btn btn-sm join-item btn-primary rounded-sm"
-              on:click={removeSet}
               disabled={setsCompleted.length === 1}
+              on:click={removeSet}
             >
               -
             </button>
@@ -147,11 +147,11 @@
   {#if exercise.note}
     <p class="bg-info bg-opacity-75 text-black px-1 text-sm rounded-sm mt-1.5">{exercise.note}</p>
   {/if}
-  <div class="h-px bg-secondary brightness-75 mt-1.5"></div>
+  <div class="h-px bg-secondary brightness-75 mt-1.5" />
   <div
-    class="grid {mode !== 'viewing' || comparing
-      ? 'workout-sets-grid-performing'
-      : 'workout-sets-grid-performed'} gap-x-2 gap-y-1 mt-2 place-items-center"
+    class="grid gap-x-2 gap-y-1 mt-2 place-items-center"
+    class:workout-sets-grid-performed={!(mode !== "viewing" || comparing)}
+    class:workout-sets-grid-performing={mode !== "viewing" || comparing}
   >
     <span class="text-sm font-semibold">Reps</span>
     <span class="text-sm font-semibold">
@@ -190,13 +190,13 @@
       {/if}
     {/key}
     <WorkoutExerciseSets
+      {checkForFeedback}
+      {referenceExercise}
+      {userBodyweight}
       bind:exercise
       bind:setsCompleted
       bind:comparing
-      {referenceExercise}
-      {checkForFeedback}
       bind:mode
-      {userBodyweight}
     />
   </div>
 </div>

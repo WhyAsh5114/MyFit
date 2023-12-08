@@ -44,26 +44,26 @@
   }
 </script>
 
-<MyModal bind:dialogElement={modal} bind:title={modalTitle} onClose={closeMesocycleStoppedModal}>
+<MyModal onClose={closeMesocycleStoppedModal} bind:dialogElement={modal} bind:title={modalTitle}>
   {modalText}
 </MyModal>
 
 <MyModal
-  bind:dialogElement={stopConfirmationModal}
   title="Stop mesocycle"
   titleColor="text-warning"
+  bind:dialogElement={stopConfirmationModal}
 >
   Are you sure you want to stop this mesocycle?
   <div class="join grid grid-cols-2 mt-5">
     <button class="join-item btn">Cancel</button>
     <button
       class="join-item btn btn-warning"
-      type="button"
       disabled={callingEndpoint}
+      type="button"
       on:click={stopMesocycle}
     >
       {#if callingEndpoint}
-        <span class="loading loading-bars"></span>
+        <span class="loading loading-bars" />
       {:else}
         Yes, stop
       {/if}
@@ -99,7 +99,7 @@
       {#if data.streamed.workoutsStreamArray.length > 0}
         {#each data.streamed.workoutsStreamArray as workoutPromise}
           {#await workoutPromise}
-            <div class="skeleton h-8 w-full bg-primary brightness-50 rounded-md"></div>
+            <div class="skeleton h-8 w-full bg-primary brightness-50 rounded-md" />
           {:then workout}
             {#if workout}
               <a class="btn h-8 btn-sm" href="/workouts/{workout.id}/view">
@@ -122,7 +122,7 @@
     <div class="stat col-span-2">
       <div class="stat-title mb-2">Volume progression</div>
       {#await Promise.all(data.streamed.workoutsStreamArray)}
-        <div class="skeleton h-56 w-full bg-primary brightness-50 rounded-md"></div>
+        <div class="skeleton h-56 w-full bg-primary brightness-50 rounded-md" />
       {:then workouts}
         <VolumeGraph {workouts} />
         <a class="btn mt-2 text-accent gap-4" href="/mesocycles/view/${data.mesocycle.id}/insights">
@@ -137,12 +137,12 @@
 {#if !data.mesocycle.endTimestamp}
   <button
     class="btn btn-block btn-warning mt-auto"
-    on:click={() => stopConfirmationModal.show()}
     disabled={redirecting}
+    on:click={() => stopConfirmationModal.show()}
   >
     {#if redirecting}
       Redirecting
-      <span class="loading loading-bars"></span>
+      <span class="loading loading-bars" />
     {:else}
       Stop mesocycle
     {/if}

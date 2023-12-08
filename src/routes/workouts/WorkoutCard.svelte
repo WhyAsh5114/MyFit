@@ -8,7 +8,7 @@
 </script>
 
 {#await workoutPromise}
-  <div class="skeleton w-full h-20 bg-primary brightness-50 rounded-md"></div>
+  <div class="skeleton w-full h-20 bg-primary brightness-50 rounded-md" />
 {:then workout}
   {#if workout}
     <a

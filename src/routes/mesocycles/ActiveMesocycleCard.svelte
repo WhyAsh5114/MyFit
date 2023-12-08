@@ -23,8 +23,8 @@
     </span>
     <progress
       class="progress progress-accent col-span-2"
-      value={activeMesocycle.workouts.length}
       max={totalWorkouts}
-    ></progress>
+      value={activeMesocycle.workouts.length}
+    />
   </div>
 </a>

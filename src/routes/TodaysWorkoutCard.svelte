@@ -63,7 +63,7 @@
       <div class="flex flex-wrap gap-1">
         {#each targetMuscleGroups as muscleGroup}
           {@const specialized = activeMesocycleTemplate.specialization?.includes(muscleGroup)}
-          <span class="badge font-semibold {specialized ? 'badge-accent' : ''}">{muscleGroup}</span>
+          <span class="badge font-semibold" class:badge-accent={specialized}>{muscleGroup}</span>
         {/each}
       </div>
     </div>
@@ -71,9 +71,9 @@
 {:else}
   <div class="flex flex-col p-2 bg-primary rounded-md font-semibold gap-2">
     It's a Rest day!
-    <button class="btn btn-accent btn-sm" on:click={completeRestDay} disabled={callingEndpoint}>
+    <button class="btn btn-accent btn-sm" disabled={callingEndpoint} on:click={completeRestDay}>
       {#if callingEndpoint}
-        <span class="loading loading-bars"></span>
+        <span class="loading loading-bars" />
       {:else}
         Mark complete <DoneIcon />
       {/if}

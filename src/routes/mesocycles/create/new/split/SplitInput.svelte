@@ -13,24 +13,24 @@
     </span>
     {#if splitDay !== null}
       <input
-        class="input input-bordered join-item input-sm"
         id="{dayText}-workout-name"
-        bind:value={splitDay.name}
+        class="input input-bordered join-item input-sm"
         required
+        bind:value={splitDay.name}
       />
     {:else}
       <input
-        class="input input-bordered join-item input-sm"
         id="{dayText}-workout-name"
-        placeholder="Rest"
+        class="input input-bordered join-item input-sm"
         disabled
+        placeholder="Rest"
       />
     {/if}
   </div>
   <input
-    type="checkbox"
-    class="checkbox shrink-0"
     id="is-{dayText}-rest"
+    class="checkbox shrink-0"
+    type="checkbox"
     bind:checked={isRestDay}
   />
 </div>

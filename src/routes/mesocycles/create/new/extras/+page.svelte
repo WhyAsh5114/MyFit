@@ -90,22 +90,22 @@
   }
 </script>
 
-<MyModal bind:dialogElement={errorModal} title="Error">
+<MyModal title="Error" bind:dialogElement={errorModal}>
   {errorMessage}
 </MyModal>
 
 <MyModal
-  bind:dialogElement={successModal}
-  title="Success"
   onClose={closeMesocycleCreationSuccessfulModal}
+  title="Success"
+  bind:dialogElement={successModal}
 >
   Mesocycle created successfully
 </MyModal>
 
 <div class="flex flex-col w-full max-w-sm m-auto gap-10">
   <form
-    class="flex flex-col w-full gap-2"
     id="caloric-state-form"
+    class="flex flex-col w-full gap-2"
     on:submit|preventDefault={submitForm}
   >
     <div class="form-control">
@@ -113,10 +113,10 @@
         <span class="label-text">Mesocycle caloric state</span>
       </label>
       <select
-        class="select select-bordered"
         id="mesocycle-caloric-state"
-        bind:value={$mesocycleCaloricState}
+        class="select select-bordered"
         required
+        bind:value={$mesocycleCaloricState}
       >
         {#each caloricStates as { name, commonTerm, value }}
           <option {value}>{name} ({commonTerm})</option>
@@ -125,14 +125,14 @@
     </div>
   </form>
 
-  <form on:submit|preventDefault id="specialization-form" class="w-full">
+  <form id="specialization-form" class="w-full" on:submit|preventDefault>
     <div class="form-control">
       <label class="label cursor-pointer">
         <span class="label-text">Specialization</span>
         <input
-          type="checkbox"
-          class="toggle"
           id="enable-specialization"
+          class="toggle"
+          type="checkbox"
           bind:checked={$mesocycleSpecialization}
         />
       </label>
@@ -141,8 +141,8 @@
       <div class="form-control w-full">
         <div class="flex gap-1">
           <select
-            class="select select-bordered grow"
             id="specialize-muscle-group"
+            class="select select-bordered grow"
             bind:value={selectedMuscleGroup}
           >
             <option disabled selected value={undefined}>Pick one</option>
@@ -155,9 +155,9 @@
       </div>
       <div class="collapse bg-primary collapse-arrow rounded-md mt-2">
         <input
-          type="checkbox"
           id="show-specialized-muscle-groups"
           aria-label="show-specialized-muscle-groups"
+          type="checkbox"
           bind:checked={showSpecializedMuscleGroups}
         />
         <div class="collapse-title text-lg font-medium">
@@ -182,16 +182,16 @@
 </div>
 
 <button
-  type="submit"
-  form="caloric-state-form"
   class="btn btn-block btn-accent"
   disabled={callingEndpoint || redirecting}
+  form="caloric-state-form"
+  type="submit"
 >
   {#if callingEndpoint}
-    <span class="loading loading-bars"></span>
+    <span class="loading loading-bars" />
   {:else if redirecting}
     Redirecting
-    <span class="loading loading-bars"></span>
+    <span class="loading loading-bars" />
   {:else}
     Create mesocycle
   {/if}

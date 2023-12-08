@@ -4,7 +4,7 @@
 </script>
 
 {#await mesocycleTemplatePromise}
-  <div class="skeleton w-full h-20 bg-primary brightness-50 rounded-md"></div>
+  <div class="skeleton w-full h-20 bg-primary brightness-50 rounded-md" />
 {:then mesocycleTemplate}
   {#if mesocycleTemplate}
     <a
@@ -23,7 +23,7 @@
             {#if split !== null}
               <span class="badge font-semibold">{split.name}</span>
             {:else}
-              <span class="badge"></span>
+              <span class="badge" />
             {/if}
           {/each}
         </div>

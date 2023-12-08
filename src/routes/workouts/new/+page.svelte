@@ -111,9 +111,9 @@
   {modalText}
 </MyModal>
 <form
-  on:submit|preventDefault={submitForm}
   id="workoutForm"
   class="stats stats-vertical grid grid-cols-2"
+  on:submit|preventDefault={submitForm}
 >
   {#if todaysWorkout}
     <div class="stat col-span-2">
@@ -143,7 +143,7 @@
       <div class="flex flex-wrap gap-1 mt-2 font-semibold">
         {#each muscleGroupsAndSets as { muscleGroup, sets }}
           {@const specialized = activeMesocycleTemplate.specialization?.includes(muscleGroup)}
-          <span class="badge {specialized ? 'badge-accent' : ''}">{muscleGroup} x {sets}</span>
+          <span class="badge" class:badge-accent={specialized}>{muscleGroup} x {sets}</span>
         {/each}
       </div>
     </div>
@@ -163,33 +163,33 @@
         <div class="flex justify-between items-center gap-2">
           {#if data.userBodyweight === null || editingBodyweightValue}
             <input
-              type="number"
               id="bodyweight"
-              min={0}
-              step={0.01}
               class="input w-3/4"
+              min={0}
               placeholder="Type here"
-              bind:value={bodyweightInputValue}
               required
+              step={0.01}
+              type="number"
+              bind:value={bodyweightInputValue}
             />
             <button
               class="btn btn-circle btn-sm btn-error shrink-0"
+              aria-label="cancel-editing-bodyweight"
+              disabled={data.userBodyweight === null}
               type="button"
               on:click={() => (editingBodyweightValue = false)}
-              disabled={data.userBodyweight === null}
-              aria-label="cancel-editing-bodyweight"
             >
               <CancelIcon class="w-5 h-5" />
             </button>
             <button
               class="btn btn-circle btn-sm btn-accent shrink-0"
+              aria-label="set-bodyweight"
+              disabled={bodyweightInputValue === null}
               type="button"
               on:click={saveBodyweight}
-              disabled={bodyweightInputValue === null}
-              aria-label="set-bodyweight"
             >
               {#if callingEndpoint}
-                <span class="loading loading-spinner"></span>
+                <span class="loading loading-spinner" />
               {:else}
                 <DoneIcon class="w-6 h-6" />
               {/if}
@@ -220,15 +220,15 @@
 
 {#if $workoutBeingPerformed === null}
   <button
-    type="submit"
-    form="workoutForm"
     class="btn btn-accent mt-auto"
     disabled={editingBodyweightValue || callingEndpoint}
+    form="workoutForm"
+    type="submit"
   >
     {#if todaysWorkout}
       Log workout
     {:else if callingEndpoint}
-      <span class="loading loading-bars"></span>
+      <span class="loading loading-bars" />
     {:else}
       Mark rest day complete
     {/if}
@@ -236,7 +236,7 @@
 {:else}
   <div class="join grid grid-cols-2 mt-auto">
     <button class="join-item btn btn-error" on:click={overwriteWorkout}>Overwrite workout</button>
-    <button type="submit" form="workoutForm" class="join-item btn btn-primary">
+    <button class="join-item btn btn-primary" form="workoutForm" type="submit">
       Back to workout
     </button>
   </div>

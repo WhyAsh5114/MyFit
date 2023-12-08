@@ -59,19 +59,19 @@
 <h2>Edit workout</h2>
 <h3>{dateFormatter(data.workout.startTimestamp)}</h3>
 
-<MyModal bind:dialogElement={modal} bind:title={modalTitle} onClose={closeModal}>
+<MyModal onClose={closeModal} bind:dialogElement={modal} bind:title={modalTitle}>
   {modalText}
 </MyModal>
 
-<!--TODO: add option for difficulty rating change, and bodyweight-->
+<!-- TODO: add option for difficulty rating change, and bodyweight -->
 
 <WorkoutExercisesTable
+  mode="editing"
   bind:exercises={data.workout.exercisesPerformed}
   bind:allExercisesSetsCompleted
   bind:muscleGroupWorkloads={data.workout.muscleGroupWorkloads}
   bind:sorenessFromPreviousWorkouts
   bind:workoutsThatPreviouslyTargeted={data.workoutsThatPreviouslyTargeted}
-  mode="editing"
 />
 
 <button
@@ -80,9 +80,9 @@
   on:click={updateWorkout}
 >
   {#if callingEndpoint}
-    <span class="loading loading-bars"></span>
+    <span class="loading loading-bars" />
   {:else if redirecting}
-    Redirecting <span class="loading loading-bars"></span>
+    Redirecting <span class="loading loading-bars" />
   {:else}
     Update workout
   {/if}

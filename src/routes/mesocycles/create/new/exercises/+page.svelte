@@ -44,7 +44,7 @@
   </span>
 </MyModal>
 <div class="collapse collapse-arrow rounded-md bg-primary my-2">
-  <input type="checkbox" id="show-all-days" aria-label="show-all-days" checked />
+  <input id="show-all-days" aria-label="show-all-days" checked type="checkbox" />
   <div class="collapse-title text-xl font-semibold">
     D{selectedWorkoutIndex + 1}
     <span class="text-base font-normal ml-2">{$exerciseSplit[selectedWorkoutIndex]?.name}</span>
@@ -56,18 +56,18 @@
           <span class="join-item btn btn-sm">D{i + 1}</span>
           {#if splitDay === null}
             <input
-              class="join-item btn btn-sm"
-              type="radio"
               name="options"
+              class="join-item btn btn-sm"
               aria-label="Rest"
               disabled
+              type="radio"
             />
           {:else}
             <input
-              class="join-item btn btn-sm btn-secondary checked:!text-black checked:!bg-accent"
-              type="radio"
               name="options"
+              class="join-item btn btn-sm btn-secondary checked:!text-black checked:!bg-accent"
               aria-label={splitDay.name}
+              type="radio"
               value={i}
               bind:group={selectedWorkoutIndex}
             />

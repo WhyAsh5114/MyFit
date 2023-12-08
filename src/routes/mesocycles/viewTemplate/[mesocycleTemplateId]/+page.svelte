@@ -73,11 +73,11 @@
   const RIRColors = ["progress-error", "progress-warning", "progress-accent", "progress-success"];
 </script>
 
-<MyModal bind:dialogElement={errorModal} title="Error">
+<MyModal title="Error" bind:dialogElement={errorModal}>
   {errorMsg}
 </MyModal>
 
-<MyModal bind:dialogElement={deleteModal} title="Delete mesocycle">
+<MyModal title="Delete mesocycle" bind:dialogElement={deleteModal}>
   Are you sure you want to delete this mesocycle? <b>({data.mesocycleTemplate.name})</b>
   <div class="join grid grid-cols-2 mt-4">
     <button class="join-item btn"> Cancel </button>
@@ -88,7 +88,7 @@
       on:click={deleteMesocycle}
     >
       {#if callingEndpoint}
-        <span class="loading loading-bars"></span>
+        <span class="loading loading-bars" />
       {:else}
         Yes, delete
       {/if}
@@ -96,14 +96,14 @@
   </div>
 </MyModal>
 <MyModal
+  onClose={closeMesocycleDeleteModal}
   title="Deleted successfully"
   bind:dialogElement={deletionSuccessfulModal}
-  onClose={closeMesocycleDeleteModal}
 >
   Mesocycle <span class="font-semibold">{data.mesocycleTemplate.name}</span> deleted successfully
 </MyModal>
 
-<MyModal bind:dialogElement={startSuccessfulModal} title="Started successfully">
+<MyModal title="Started successfully" bind:dialogElement={startSuccessfulModal}>
   Mesocycle started successfully
 </MyModal>
 
@@ -132,9 +132,9 @@
           <span class="text-sm text-white font-semibold basis-9 shrink-0">{specificRIR} RIR</span>
           <progress
             class="progress {RIRColors[specificRIR]}"
-            value={cycles}
             max={getTotalDuration(data.mesocycleTemplate.RIRProgression)}
-          ></progress>
+            value={cycles}
+          />
           <span class="text-sm text-white basis-12 shrink-0">{cycles} cycles</span>
         </div>
       {/each}
@@ -182,13 +182,13 @@
             {#if mesocycle}
               {#if mesocycle.endTimestamp === undefined}
                 <a
-                  href="/mesocycles/view/{data.activeMesocycle?.id}"
                   class="btn btn-sm text-accent"
+                  href="/mesocycles/view/{data.activeMesocycle?.id}"
                 >
                   {dateFormatter(mesocycle.startTimestamp)}
                 </a>
               {:else}
-                <a href="/mesocycles/view/{mesocycle.id}" class="btn btn-sm">
+                <a class="btn btn-sm" href="/mesocycles/view/{mesocycle.id}">
                   {dateFormatter(mesocycle.startTimestamp)}
                 </a>
               {/if}
@@ -203,14 +203,14 @@
   <button class="join-item btn btn-error" on:click={() => deleteModal.show()}>
     {#if redirecting}
       Redirecting
-      <span class="loading loading-bars"></span>
+      <span class="loading loading-bars" />
     {:else}
       Delete
     {/if}
   </button>
-  <button class="join-item btn btn-primary" on:click={startMesocycle} disabled={callingEndpoint}>
+  <button class="join-item btn btn-primary" disabled={callingEndpoint} on:click={startMesocycle}>
     {#if callingEndpoint}
-      <span class="loading loading-bars"></span>
+      <span class="loading loading-bars" />
     {:else}
       Start
     {/if}

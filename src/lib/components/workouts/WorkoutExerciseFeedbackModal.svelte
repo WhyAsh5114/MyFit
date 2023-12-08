@@ -59,7 +59,7 @@
   bind:workoutsThatPreviouslyTargeted
 />
 
-<MyModal bind:dialogElement title="Exercise feedback" onClose={closeModal}>
+<MyModal onClose={closeModal} title="Exercise feedback" bind:dialogElement>
   {#if feedbackExercise}
     <div class="flex flex-col">
       <span class="font-semibold text-lg mb-2">{feedbackExercise.name}</span>
@@ -68,10 +68,10 @@
       <div class="join mt-1 gap-0.5 grid grid-cols-3">
         {#each pumpFeedback as { name, value, bgColor }}
           <input
-            class="join-item btn capitalize {bgColor} checked:!text-black"
-            type="radio"
             name="pump-feedback"
+            class="join-item btn capitalize {bgColor} checked:!text-black"
             aria-label={name}
+            type="radio"
             {value}
             bind:group={feedbackExercise.pumpRating}
           />
@@ -82,10 +82,10 @@
       <div class="join mt-1 gap-0.5 grid grid-cols-3">
         {#each jointPainFeedback as { name, value, bgColor }}
           <input
-            class="join-item btn capitalize {bgColor} checked:!text-black"
-            type="radio"
             name="joint-pain-feedback"
+            class="join-item btn capitalize {bgColor} checked:!text-black"
             aria-label={name}
+            type="radio"
             {value}
             bind:group={feedbackExercise.jointPainRating}
           />

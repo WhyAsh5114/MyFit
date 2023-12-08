@@ -27,20 +27,20 @@
 </svelte:head>
 
 <div class="drawer lg:drawer-open">
-  <input id="drawer" type="checkbox" class="drawer-toggle" />
+  <input id="drawer" class="drawer-toggle" type="checkbox" />
   <div class="drawer-content flex flex-col items-center justify-center h-screen">
     <!-- Page content here -->
     <div class="flex bg-primary w-full items-center py-2 lg:hidden" aria-hidden={!lg?.matches}>
-      <label for="drawer" class="btn btn-ghost drawer-button lg:hidden" aria-hidden={!lg?.matches}
+      <label class="btn btn-ghost drawer-button lg:hidden" aria-hidden={!lg?.matches} for="drawer"
         ><Hamburger class="w-6 h-6" /></label
       >
-      <a href="/" class="flex items-center">
-        <img src="/favicon.png" alt="logo" class="-mb-1 mr-1" width="48" height="48" />
+      <a class="flex items-center" href="/">
+        <img class="-mb-1 mr-1" alt="logo" height="48" src="/favicon.png" width="48" />
         <h1 class="text-2xl font-bold text-white">MyFit</h1>
       </a>
       {#if $navigating}
         <div class="grid w-10 h-10 place-items-center ml-auto px-2">
-          <span class="loading loading-ring text-accent"></span>
+          <span class="loading loading-ring text-accent" />
         </div>
       {/if}
     </div>
@@ -49,18 +49,22 @@
     </main>
   </div>
   <div class="drawer-side z-10">
-    <label for="drawer" aria-label="close sidebar" aria-hidden={!lg?.matches} class="drawer-overlay"
-    ></label>
+    <label
+      class="drawer-overlay"
+      aria-hidden={!lg?.matches}
+      aria-label="close sidebar"
+      for="drawer"
+    />
     <div class="menu p-4 w-80 min-h-full text-base-content bg-primary">
       <!-- Sidebar content here -->
       <ul>
         <li>
           <a class="w-full items-center py-2 hidden lg:flex" href="/">
-            <img src="/favicon.png" alt="logo" class="-mb-1 mr-1" width="48" height="48" />
+            <img class="-mb-1 mr-1" alt="logo" height="48" src="/favicon.png" width="48" />
             <h1 class="text-2xl font-bold text-white">MyFit</h1>
             {#if $navigating}
               <div class="grid w-10 h-10 place-items-center ml-auto px-2">
-                <span class="loading loading-ring text-accent"></span>
+                <span class="loading loading-ring text-accent" />
               </div>
             {/if}
           </a>

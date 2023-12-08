@@ -6,7 +6,7 @@
 
 <ul class="steps bg-primary rounded-md py-1">
   {#each steps as step, i}
-    <li class="step capitalize {i <= currentPageIndex ? 'step-accent' : ''}">{step}</li>
+    <li class="step capitalize" class:step-accent={i <= currentPageIndex}>{step}</li>
   {/each}
 </ul>
 

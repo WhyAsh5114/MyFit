@@ -75,12 +75,12 @@
         {/if}
       </label>
       <input
-        type="text"
-        placeholder="Type here"
-        class="input input-bordered w-full"
         id="{modeText}-exercise-name"
-        bind:value={selectedExercise.name}
+        class="input input-bordered w-full"
+        placeholder="Type here"
         required
+        type="text"
+        bind:value={selectedExercise.name}
       />
     </div>
     <div class="flex gap-2">
@@ -89,12 +89,12 @@
           <span class="label-text">Weight type</span>
         </label>
         <select
-          class="select select-bordered"
           id="{modeText}-exercise-weight-type"
-          bind:value={selectedExercise.weightType}
+          class="select select-bordered"
           required
+          bind:value={selectedExercise.weightType}
         >
-          <option value={undefined} disabled selected>Pick one</option>
+          <option disabled selected value={undefined}>Pick one</option>
           {#each exerciseWeightTypes as weightType}
             <option>{weightType}</option>
           {/each}
@@ -105,12 +105,12 @@
           <span class="label-text">Target muscle</span>
         </label>
         <select
-          class="select select-bordered"
           id="{modeText}-exercise-muscle-group"
-          bind:value={selectedExercise.targetMuscleGroup}
+          class="select select-bordered"
           required
+          bind:value={selectedExercise.targetMuscleGroup}
         >
-          <option value={undefined} disabled selected>Pick one</option>
+          <option disabled selected value={undefined}>Pick one</option>
           {#each muscleGroups as muscleGroup}
             <option>{muscleGroup}</option>
           {/each}
@@ -123,34 +123,34 @@
           <span class="label-text">Sets</span>
         </label>
         <input
-          type="number"
+          id="{modeText}-exercise-sets"
+          class="input input-bordered w-full max-w-xs"
           min="1"
           placeholder="Type here"
-          class="input input-bordered w-full max-w-xs"
-          id="{modeText}-exercise-sets"
-          bind:value={selectedExercise.sets}
           required
+          type="number"
+          bind:value={selectedExercise.sets}
         />
       </div>
       <div class="grid grid-cols-2 justify-items-center items-end gap-x-0.5">
         <span class="label-text col-span-2">Rep range</span>
         <input
-          placeholder="From"
-          class="input input-bordered w-full max-w-xs"
           id="{modeText}-exercise-rep-range-start"
-          type="number"
+          class="input input-bordered w-full max-w-xs"
           min="1"
-          bind:value={selectedExercise.repRangeStart}
+          placeholder="From"
           required
+          type="number"
+          bind:value={selectedExercise.repRangeStart}
         />
         <input
-          placeholder="To"
-          class="input input-bordered w-full max-w-xs"
           id="{modeText}-exercise-rep-range-end"
+          class="input input-bordered w-full max-w-xs"
           min={(selectedExercise.repRangeStart || 0) + 1}
+          placeholder="To"
+          required
           type="number"
           bind:value={selectedExercise.repRangeEnd}
-          required
         />
       </div>
     </div>
@@ -159,11 +159,11 @@
         <span class="label-text">Exercise note</span>
       </label>
       <textarea
+        id="{modeText}-exercise-note"
         class="textarea textarea-bordered h-24 resize-none"
         placeholder="Note"
-        id="{modeText}-exercise-note"
         bind:value={selectedExercise.note}
-      ></textarea>
+      />
     </div>
     <button class="btn btn-block btn-accent mt-4">{modeText} exercise</button>
   </form>

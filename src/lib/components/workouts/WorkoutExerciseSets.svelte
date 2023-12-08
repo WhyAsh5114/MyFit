@@ -84,14 +84,14 @@
         <span class="font-semibold {getColor('reps', setNumber)}">{reps}</span>
       {:else}
         <input
-          type="number"
           id="{exercise.name}-set{setNumber}-reps"
           class="input input-sm w-12 text-center !px-1"
-          bind:value={reps}
-          placeholder="?"
-          min={0}
-          required
           disabled={setsCompleted[setNumber] || comparing}
+          min={0}
+          placeholder="?"
+          required
+          type="number"
+          bind:value={reps}
         />
       {/if}
     </div>
@@ -115,14 +115,14 @@
         {/if}
       {:else}
         <input
-          type="number"
           id="{exercise.name}-set{setNumber}-load"
           class="input input-sm w-16"
-          step="0.01"
-          bind:value={load}
+          disabled={setsCompleted[setNumber] || comparing}
           placeholder={exercise.bodyweight !== undefined ? "0/+/-" : "?"}
           required
-          disabled={setsCompleted[setNumber] || comparing}
+          step="0.01"
+          type="number"
+          bind:value={load}
         />
       {/if}
     </div>
@@ -133,15 +133,15 @@
         <span class="font-semibold {getColor('RIR', setNumber)}">{RIR}</span>
       {:else}
         <input
-          type="number"
           id="{exercise.name}-set{setNumber}-RIR"
           class="input input-sm w-12"
-          bind:value={RIR}
-          placeholder="?"
-          min={0}
-          max={10}
-          required
           disabled={setsCompleted[setNumber] || comparing}
+          max={10}
+          min={0}
+          placeholder="?"
+          required
+          type="number"
+          bind:value={RIR}
         />
       {/if}
     </div>
@@ -153,8 +153,8 @@
       {:else}
         <button
           class="btn btn-xs btn-circle bg-base-100/25 border-0"
-          on:click={() => (setsCompleted[setNumber] = false)}
           aria-label="edit-set"
+          on:click={() => (setsCompleted[setNumber] = false)}
         >
           <EditIcon />
         </button>

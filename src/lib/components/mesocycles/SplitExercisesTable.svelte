@@ -41,12 +41,12 @@
   {#each exercises as exercise, idx (exercise.name)}
     <div transition:slide|local={{ duration: 200 }} animate:flip={{ duration: 200 }}>
       <SplitExerciseCard
-        bind:totalExercises={exercises.length}
-        bind:exercise
-        {idx}
         {deleteExercise}
         {editExercise}
+        {idx}
         {reorderExercise}
+        bind:totalExercises={exercises.length}
+        bind:exercise
       />
     </div>
   {/each}

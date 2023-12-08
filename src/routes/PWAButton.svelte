@@ -34,7 +34,7 @@
                 "cache-control": "no-cache"
               }
             });
-            if (resp?.status === 200) await r.update();
+            if (resp.status === 200) await r.update();
           }, 600000 /* every 10 minutes */);
         console.log(`SW Registered: ${r}`);
       },
@@ -73,7 +73,7 @@
       <ReloadIcon />
       Update available
     {:else}
-      <span class="loading loading-spinner"></span>
+      <span class="loading loading-spinner" />
     {/if}
   </button>
 {/if}

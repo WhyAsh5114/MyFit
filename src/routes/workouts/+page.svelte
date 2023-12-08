@@ -67,15 +67,15 @@
     <div class="stat-title flex justify-between items-center">
       <label for="filter-by-mesocycle">Filter by mesocycle</label>
       <input
-        type="checkbox"
         id="filter-by-mesocycle"
         class="toggle"
+        type="checkbox"
         bind:checked={filterByMesocycle}
       />
     </div>
     {#if filterByMesocycle}
       {#await Promise.all(data.streamed.mesocycleTemplatesStreamArray)}
-        <span class="loading loading-bars"></span>
+        <span class="loading loading-bars" />
       {:then mesocycleTemplates}
         <select
           id="mesocycle-name"
@@ -83,7 +83,7 @@
           required
           bind:value={selectedMesocycleTemplateId}
         >
-          <option value={null} disabled>Select template</option>
+          <option disabled value={null}>Select template</option>
           {#each mesocycleTemplates as mesocycleTemplate}
             {#if mesocycleTemplate}
               <option value={mesocycleTemplate.id}>{mesocycleTemplate.name}</option>
@@ -125,4 +125,4 @@
     </div>
   {/if}
 </div>
-<a href="/workouts/new" class="btn btn-accent btn-block">Log today's workout</a>
+<a class="btn btn-accent btn-block" href="/workouts/new">Log today's workout</a>

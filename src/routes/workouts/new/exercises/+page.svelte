@@ -46,11 +46,11 @@
   }
 </script>
 
-<MyModal bind:dialogElement={errorModal} title="Error">
+<MyModal title="Error" bind:dialogElement={errorModal}>
   Add at least one exercise to the workout
 </MyModal>
 <div class="collapse bg-primary collapse-arrow rounded-md">
-  <input type="checkbox" id="show-workout-details" aria-label="show-workout-details" checked />
+  <input id="show-workout-details" aria-label="show-workout-details" checked type="checkbox" />
   <div class="collapse-title text-xl font-medium">
     {todaysSplitWorkout.name}
     <span class="text-sm font-normal">
@@ -62,8 +62,11 @@
   </div>
   <div class="collapse-content backdrop-brightness-50">
     <div class="flex gap-1 mt-4 font-semibold justify-around items-center">
-      <progress class="progress progress-accent w-56 b" value={totalSetsCompleted} max={totalSets}
-      ></progress>
+      <progress
+        class="progress progress-accent w-56 b"
+        max={totalSets}
+        value={totalSetsCompleted}
+      />
       {totalSetsCompleted}/{totalSets}
     </div>
   </div>
@@ -71,13 +74,13 @@
 {#if $workoutBeingPerformed}
   <WorkoutExercisesTable
     mode="performing"
+    referenceWorkout={data.referenceWorkout}
+    {userBodyweight}
+    workoutsThatPreviouslyTargeted={data.workoutsThatPreviouslyTargeted}
     bind:exercises={$workoutBeingPerformed.exercisesPerformed}
     bind:allExercisesSetsCompleted={$allExercisesSetsCompleted}
     bind:muscleGroupWorkloads
     bind:sorenessFromPreviousWorkouts
-    {userBodyweight}
-    referenceWorkout={data.referenceWorkout}
-    workoutsThatPreviouslyTargeted={data.workoutsThatPreviouslyTargeted}
   />
 {/if}
 <button
