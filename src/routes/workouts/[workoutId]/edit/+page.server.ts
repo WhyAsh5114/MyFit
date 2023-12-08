@@ -3,53 +3,53 @@ import type { PageServerLoad } from "./$types";
 import { getMuscleGroups } from "$lib/util/MesocycleTemplate";
 
 export const load: PageServerLoad = async ({ locals, parent, fetch }) => {
-	const session = await locals.getSession();
-	if (!session?.user?.id) {
-		throw error(403, "Not logged in");
-	}
+  const session = await locals.getSession();
+  if (!session?.user?.id) {
+    throw error(403, "Not logged in");
+  }
 
-	const { workout, mesocycle } = await parent();
-	if (!mesocycle) {
-		throw error(500, "No mesocycle found");
-	}
+  const { workout, mesocycle } = await parent();
+  if (!mesocycle) {
+    throw error(500, "No mesocycle found");
+  }
 
-	const requestBodySoreness: APIGetPreviousSorenessValues = {
-		mesocycleId: mesocycle?.id,
-		muscleGroups: Array.from(getMuscleGroups(workout.exercisesPerformed)),
-		beforeTimestamp: workout.startTimestamp
-	};
-	const responseSoreness = await fetch("/api/workouts/getPreviousSorenessValues", {
-		method: "POST",
-		headers: {
-			"content-type": "application/json"
-		},
-		body: JSON.stringify(requestBodySoreness)
-	});
-	if (!responseSoreness.ok) {
-		throw error(500, await responseSoreness.text());
-	}
+  const requestBodySoreness: APIGetPreviousSorenessValues = {
+    mesocycleId: mesocycle?.id,
+    muscleGroups: Array.from(getMuscleGroups(workout.exercisesPerformed)),
+    beforeTimestamp: workout.startTimestamp
+  };
+  const responseSoreness = await fetch("/api/workouts/getPreviousSorenessValues", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json"
+    },
+    body: JSON.stringify(requestBodySoreness)
+  });
+  if (!responseSoreness.ok) {
+    throw error(500, await responseSoreness.text());
+  }
 
-	const previousWorkoutSorenessValues: Workout["muscleSorenessToNextWorkout"] =
-		await responseSoreness.json();
+  const previousWorkoutSorenessValues: Workout["muscleSorenessToNextWorkout"] =
+    await responseSoreness.json();
 
-	const requestBody: APIGetWorkoutsThatPreviouslyTargeted = {
-		mesocycleId: mesocycle.id,
-		muscleGroups: Array.from(getMuscleGroups(workout.exercisesPerformed)),
-		beforeTimestamp: workout.startTimestamp
-	};
-	const response = await fetch("/api/workouts/getWorkoutsThatPreviouslyTargeted", {
-		method: "POST",
-		headers: {
-			"content-type": "application/json"
-		},
-		body: JSON.stringify(requestBody)
-	});
-	if (!response.ok) {
-		throw error(500, await response.text());
-	}
+  const requestBody: APIGetWorkoutsThatPreviouslyTargeted = {
+    mesocycleId: mesocycle.id,
+    muscleGroups: Array.from(getMuscleGroups(workout.exercisesPerformed)),
+    beforeTimestamp: workout.startTimestamp
+  };
+  const response = await fetch("/api/workouts/getWorkoutsThatPreviouslyTargeted", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json"
+    },
+    body: JSON.stringify(requestBody)
+  });
+  if (!response.ok) {
+    throw error(500, await response.text());
+  }
 
-	const workoutsThatPreviouslyTargeted: APIGetWorkoutsThatPreviouslyTargetedResponse =
-		await response.json();
+  const workoutsThatPreviouslyTargeted: APIGetWorkoutsThatPreviouslyTargetedResponse =
+    await response.json();
 
-	return { workout, previousWorkoutSorenessValues, workoutsThatPreviouslyTargeted };
+  return { workout, previousWorkoutSorenessValues, workoutsThatPreviouslyTargeted };
 };
