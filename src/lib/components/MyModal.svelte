@@ -14,17 +14,17 @@
 </script>
 
 <dialog
+  bind:this={dialogElement}
   id={title}
   class="modal modal-bottom sm:modal-middle"
-  bind:this={dialogElement}
   on:close={onClose}
 >
-  <form method="dialog" class="modal-box bg-primary text-white">
+  <form class="modal-box bg-primary text-white" method="dialog">
     <button class="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
     <h2 class="font-bold text-lg {titleColor} mb-5">{title}</h2>
     <slot />
   </form>
-  <form method="dialog" class="modal-backdrop bg-black bg-opacity-50">
+  <form class="modal-backdrop bg-black bg-opacity-50" method="dialog">
     <button>close</button>
   </form>
 </dialog>
