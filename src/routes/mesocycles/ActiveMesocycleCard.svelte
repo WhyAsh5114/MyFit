@@ -9,6 +9,11 @@
   ).length;
   totalCycles = getTotalDuration(activeMesocycleTemplate.RIRProgression);
   totalWorkouts = totalCycles * totalNonRestDays;
+
+  let totalWorkoutsPerformed = 0;
+  activeMesocycle.workouts.forEach((workout) => {
+    if (workout !== null) totalWorkoutsPerformed++;
+  });
 </script>
 
 <a class="btn btn-primary rounded-md h-fit p-2" href="/mesocycles/view/{activeMesocycle.id}">
@@ -17,12 +22,12 @@
       {activeMesocycleTemplate.name}
     </span>
     <span class="row-span-2 font-normal">
-      {activeMesocycle.workouts.length}/{totalWorkouts} workouts completed
+      {totalWorkoutsPerformed}/{totalWorkouts} workouts completed
     </span>
     <progress
       class="progress progress-accent col-span-2"
       max={totalWorkouts}
-      value={activeMesocycle.workouts.length}
+      value={totalWorkoutsPerformed}
     />
   </div>
 </a>
