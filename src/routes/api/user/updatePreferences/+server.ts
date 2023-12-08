@@ -11,8 +11,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     });
   }
 
-  const userPreferences: APIUserUpdatePreferences = await request.json();
-  const client = await clientPromise;
+  const userPreferences: APIUserUpdatePreferences = await request.json(),
+    client = await clientPromise;
   try {
     await client
       .db()

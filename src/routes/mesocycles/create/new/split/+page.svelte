@@ -8,7 +8,9 @@
   async function validateSplit() {
     let totalWorkouts = 0;
     $exerciseSplit.forEach((splitDay) => {
-      if (splitDay !== null) totalWorkouts++;
+      if (splitDay !== null) {
+        totalWorkouts++;
+      }
     });
     if (totalWorkouts === 0) {
       errorModal.show();

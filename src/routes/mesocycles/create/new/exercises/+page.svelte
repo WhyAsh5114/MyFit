@@ -4,10 +4,13 @@
   import SplitExercisesTable from "$lib/components/mesocycles/SplitExercisesTable.svelte";
   import { exerciseSplit } from "../newMesocycleStore";
 
-  type SplitWorkout = { name: string; exercises: SplitExercise[] };
-  let copiedExercises: SplitExercise[] = [];
-
-  let selectedWorkoutIndex = $exerciseSplit.findIndex((split) => split !== null);
+  interface SplitWorkout {
+    name: string;
+    exercises: SplitExercise[];
+  }
+  let copiedExercises: SplitExercise[] = [],
+    selectedWorkoutIndex = $exerciseSplit.findIndex((split) => split !== null),
+    selectedWorkout: SplitWorkout;
   $: selectedWorkout = $exerciseSplit[selectedWorkoutIndex] as SplitWorkout;
 
   function copyExercises() {
@@ -25,8 +28,12 @@
   async function validateExercises() {
     invalidSplits = [];
     $exerciseSplit.forEach((split) => {
-      if (split === null) return;
-      if (split.exercises.length === 0) invalidSplits.push(split.name);
+      if (split === null) {
+        return;
+      }
+      if (split.exercises.length === 0) {
+        invalidSplits.push(split.name);
+      }
     });
     if (invalidSplits.length > 0) {
       errorModal.show();
@@ -47,7 +54,7 @@
   <input id="show-all-days" aria-label="show-all-days" checked type="checkbox" />
   <div class="collapse-title text-xl font-semibold">
     D{selectedWorkoutIndex + 1}
-    <span class="text-base font-normal ml-2">{$exerciseSplit[selectedWorkoutIndex]?.name}</span>
+    <span class="text-base font-normal ml-2">{selectedWorkout.name}</span>
   </div>
   <div class="collapse-content backdrop-brightness-50">
     <div class="flex flex-wrap justify-center items-center gap-2 mt-4">
@@ -78,7 +85,7 @@
   </div>
 </div>
 {#key selectedWorkout.name}
-  <SplitExercisesTable bind:exercises={selectedWorkout.exercises} />
+  <SplitExercisesTable exercises={selectedWorkout.exercises} />
 {/key}
 <div class="join grid grid-cols-3 gap-1 my-2">
   <button

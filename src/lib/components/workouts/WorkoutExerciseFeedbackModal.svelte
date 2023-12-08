@@ -5,13 +5,13 @@
   import { groupBy } from "$lib/util/CommonFunctions";
 
   export let dialogElement: HTMLDialogElement;
-  export let feedbackExerciseIdx: number | undefined = undefined;
+  export let feedbackExerciseIdx: number | undefined;
   export let exercises: WorkoutExerciseWithoutSetNumbers[];
   export let feedbackTaken: boolean[];
-  export let mode: "viewing" | "editing" | "performing";
+  export let mode: "editing" | "performing" | "viewing";
   export let workoutsThatPreviouslyTargeted: APIGetWorkoutsThatPreviouslyTargetedResponse;
 
-  let feedbackExercise: undefined | WorkoutExerciseWithoutSetNumbers;
+  let feedbackExercise: WorkoutExerciseWithoutSetNumbers | undefined;
   $: if (feedbackExerciseIdx !== undefined) {
     feedbackExercise = exercises[feedbackExerciseIdx];
   } else {
@@ -21,17 +21,19 @@
   export let muscleGroupWorkloads: Workout["muscleGroupWorkloads"] = {};
   export let sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"] = {};
 
-  let muscleGroupFeedbackModal: HTMLDialogElement;
-  let takeFeedbackForMuscleGroup: MuscleGroup | undefined = undefined;
-  let showMuscleGroupFeedbackModal = false;
+  let muscleGroupFeedbackModal: HTMLDialogElement,
+    showMuscleGroupFeedbackModal = false,
+    takeFeedbackForMuscleGroup: MuscleGroup | undefined;
 
   $: {
     const groupedExercises = groupBy(exercises, (exercise) => exercise.targetMuscleGroup);
     if (feedbackExercise) {
       let muscleGroupCompleted = true;
-      groupedExercises[feedbackExercise.targetMuscleGroup].forEach(({ idx }) => {
-        if (!feedbackTaken[idx]) muscleGroupCompleted = false;
-      });
+      for (const { idx } of groupedExercises[feedbackExercise.targetMuscleGroup]) {
+        if (!feedbackTaken[idx]) {
+          muscleGroupCompleted = false;
+        }
+      }
       if (muscleGroupCompleted) {
         takeFeedbackForMuscleGroup = feedbackExercise.targetMuscleGroup;
         showMuscleGroupFeedbackModal = true;

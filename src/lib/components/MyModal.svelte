@@ -3,7 +3,7 @@
   export let title: string;
   export let titleColor = "text-accent";
   export let onClose: () => void = () => {
-    /* don't do anything on close by default */
+    /* Don't do anything on close by default */
   };
 
   $: if (/success/i.test(title)) {

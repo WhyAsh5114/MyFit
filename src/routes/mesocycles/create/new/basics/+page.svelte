@@ -2,32 +2,31 @@
   import MyModal from "$lib/components/MyModal.svelte";
   import { slide } from "svelte/transition";
   import {
-    mesocycleName,
+    customizeRIRProgression,
     mesocycleDuration,
-    mesocycleStartRIR,
+    mesocycleName,
     mesocycleRIRProgression,
-    customizeRIRProgression
+    mesocycleStartRIR
   } from "../newMesocycleStore";
   import { goto } from "$app/navigation";
   import { getTotalDuration } from "$lib/util/MesocycleTemplate";
 
-  let RIRColors = ["range-error", "range-warning", "range-accent", "range-success"];
+  const RIRColors = ["range-error", "range-warning", "range-accent", "range-success"];
   function calculateRIRProgression(totalDuration: number, startRIR: number) {
     let failureCycle = false;
     if (totalDuration > 0) {
       failureCycle = true;
       totalDuration -= 1;
     }
-    let quotient = Math.floor(totalDuration / startRIR);
-    let remainder = totalDuration % startRIR;
+    let quotient = Math.floor(totalDuration / startRIR),
+      remainder = totalDuration % startRIR;
     quotient = isNaN(quotient) ? 0 : quotient;
     remainder = isNaN(remainder) ? 0 : remainder;
 
-    let result = new Array(startRIR - remainder)
-      .fill(quotient)
-      .concat(new Array(remainder).fill(quotient + 1));
-
-    let progression: RIRProgressionData[] = [];
+    const result = new Array(startRIR - remainder)
+        .fill(quotient)
+        .concat(new Array(remainder).fill(quotient + 1)),
+      progression: RIRProgressionData[] = [];
     for (let i = startRIR; i >= 1; i--) {
       progression.push({ specificRIR: i, cycles: result[startRIR - i] });
     }
@@ -38,7 +37,7 @@
   let RIRProgression: RIRProgressionData[];
   $: RIRProgression = calculateRIRProgression($mesocycleDuration, $mesocycleStartRIR);
   $: if (
-    $mesocycleRIRProgression &&
+    $mesocycleRIRProgression.length > 0 &&
     $mesocycleRIRProgression[0].specificRIR === $mesocycleStartRIR
   ) {
     RIRProgression = $mesocycleRIRProgression;
@@ -57,9 +56,7 @@
 
   function modifyProgression(RIR: number, cycles: number) {
     // Set the current RIR's duration
-    const p = RIRProgression.find(
-      (progression) => progression.specificRIR === RIR
-    ) as RIRProgressionData;
+    const p = RIRProgression.find((progression) => progression.specificRIR === RIR)!;
     p.cycles = cycles;
 
     // If no upcoming RIRs, function complete
@@ -70,14 +67,14 @@
     }
 
     // Modify the upcoming RIRs' progression
-    let laterProgression = calculateRIRProgression(
+    const laterProgression = calculateRIRProgression(
       $mesocycleDuration - previousCycles(RIR) - cycles,
       RIR - 1
     );
     laterProgression.forEach(({ specificRIR, cycles }) => {
       const p = RIRProgression.find(
         (originalProgression) => originalProgression.specificRIR === specificRIR
-      ) as RIRProgressionData;
+      )!;
       p.cycles = cycles;
     });
 
@@ -86,7 +83,7 @@
   }
 
   function isProgressionValid(progression: RIRProgressionData[], totalCycles: number) {
-    let totalDuration = getTotalDuration(progression);
+    const totalDuration = getTotalDuration(progression);
     return totalDuration === totalCycles;
   }
 
@@ -175,7 +172,9 @@
               min={i === 0 ? 1 : 0}
               type="range"
               value={cycles}
-              on:input={(e) => modifyProgression(specificRIR, parseInt(e.currentTarget.value))}
+              on:input={(e) => {
+                modifyProgression(specificRIR, parseInt(e.currentTarget.value));
+              }}
             />
           </div>
         {/each}

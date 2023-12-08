@@ -2,7 +2,7 @@
   import { sorenessFeedback, workloadFeedback } from "$lib/types/arrays";
   import MyModal from "../MyModal.svelte";
   export let dialogElement: HTMLDialogElement;
-  export let muscleGroup: MuscleGroup | undefined = undefined;
+  export let muscleGroup: MuscleGroup | undefined;
   export let sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"];
   export let muscleGroupWorkloads: Workout["muscleGroupWorkloads"];
   export let workoutsThatPreviouslyTargeted: APIGetWorkoutsThatPreviouslyTargetedResponse;

@@ -6,12 +6,11 @@
   import InsightsIcon from "virtual:icons/ic/baseline-insights";
   export let data;
 
-  let modal: HTMLDialogElement;
-  let modalTitle = "";
-  let modalText = "";
-
-  let stopConfirmationModal: HTMLDialogElement;
-  let callingEndpoint = false;
+  let callingEndpoint = false,
+    modal: HTMLDialogElement,
+    modalText = "",
+    modalTitle = "",
+    stopConfirmationModal: HTMLDialogElement;
   async function stopMesocycle() {
     const requestBody: APIMesocyclesStopMesocycle = {
       activeMesocycleId: data.mesocycle.id
@@ -138,7 +137,9 @@
   <button
     class="btn btn-block btn-warning mt-auto"
     disabled={redirecting}
-    on:click={() => stopConfirmationModal.show()}
+    on:click={() => {
+      stopConfirmationModal.show();
+    }}
   >
     {#if redirecting}
       Redirecting

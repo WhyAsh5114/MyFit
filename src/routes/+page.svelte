@@ -15,7 +15,7 @@
   <ActiveMesocycleCard {activeMesocycle} {activeMesocycleTemplate} />
 
   <h3 class="text-xl mb-1 mt-2">Upcoming workout</h3>
-  <TodaysWorkoutCard {activeMesocycleTemplate} bind:activeMesocycle />
+  <TodaysWorkoutCard {activeMesocycle} {activeMesocycleTemplate} />
 {:else}
   No active mesocycle found
   <a class="btn btn-accent mt-1" href="/mesocycles">Go to mesocycles</a>

@@ -11,11 +11,13 @@
   } from "../newWorkoutStore.js";
   export let data;
 
-  let { activeMesocycle, activeMesocycleTemplate, todaysSplitWorkout, userBodyweight } = data;
-  const workoutIdx = getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit);
+  const { activeMesocycle, activeMesocycleTemplate, todaysSplitWorkout, userBodyweight } = data,
+    workoutIdx = getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit);
 
+  let exercisesPerformed: WorkoutExerciseWithoutSetNumbers[] | null = null;
   if ($workoutBeingPerformed === null) {
     $workoutBeingPerformed = data.todaysWorkout;
+    ({ exercisesPerformed } = $workoutBeingPerformed);
   }
 
   let totalSets = 0,
@@ -24,18 +26,21 @@
     (totalSets = 0), (totalSetsCompleted = 0);
     $allExercisesSetsCompleted.forEach((setsCompleted) => {
       setsCompleted.forEach((set) => {
-        if (set === true) totalSetsCompleted++;
+        if (set) {
+          totalSetsCompleted++;
+        }
         totalSets++;
       });
     });
   }
 
-  let sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"];
-  let muscleGroupWorkloads: Workout["muscleGroupWorkloads"];
-
-  let errorModal: HTMLDialogElement;
+  let errorModal: HTMLDialogElement,
+    muscleGroupWorkloads: Workout["muscleGroupWorkloads"],
+    sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"];
   async function saveExercisesAndWorkload() {
-    if (!$workoutBeingPerformed) return;
+    if (!$workoutBeingPerformed) {
+      return;
+    }
     if ($workoutBeingPerformed.exercisesPerformed.length === 0) {
       errorModal.show();
       return;
@@ -71,13 +76,13 @@
     </div>
   </div>
 </div>
-{#if $workoutBeingPerformed}
+{#if $workoutBeingPerformed && exercisesPerformed !== null}
   <WorkoutExercisesTable
+    exercises={exercisesPerformed}
     mode="performing"
     referenceWorkout={data.referenceWorkout}
     {userBodyweight}
     workoutsThatPreviouslyTargeted={data.workoutsThatPreviouslyTargeted}
-    bind:exercises={$workoutBeingPerformed.exercisesPerformed}
     bind:allExercisesSetsCompleted={$allExercisesSetsCompleted}
     bind:muscleGroupWorkloads
     bind:sorenessFromPreviousWorkouts

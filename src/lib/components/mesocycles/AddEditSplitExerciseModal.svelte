@@ -3,13 +3,12 @@
   import MyModal from "../MyModal.svelte";
   export let dialogElement: HTMLDialogElement;
   export let exercises: SplitExercise[];
-  export let editingIdx: number | undefined = undefined;
+  export let editingIdx: number | undefined;
 
-  let editMode = false;
-  let modeText: "Add" | "Edit" = "Add";
-  let selectedExercise: Partial<SplitExercise>;
-
-  let editingExercise: Partial<SplitExercise> = {};
+  let editMode = false,
+    modeText: "Add" | "Edit" = "Add",
+    selectedExercise: Partial<SplitExercise>,
+    editingExercise: Partial<SplitExercise> = {};
   $: exercises, updateEditingExercise(editingIdx);
   function updateEditingExercise(idx: number | undefined) {
     if (idx !== undefined && exercises[idx]) {
@@ -20,12 +19,14 @@
     }
   }
 
-  let newExercise: Partial<SplitExercise> = { weightType: "Weighted" };
-  let alreadyExists = false;
+  let newExercise: Partial<SplitExercise> = { weightType: "Weighted" },
+    alreadyExists = false;
   function addExercise() {
     const duplicate = exercises.find((exercise) => exercise.name === newExercise.name);
-    alreadyExists = duplicate ? true : false;
-    if (duplicate) return false;
+    alreadyExists = Boolean(duplicate);
+    if (duplicate) {
+      return false;
+    }
 
     const typedExercise = JSON.parse(JSON.stringify(newExercise)) as SplitExercise;
     exercises = [...exercises, typedExercise];
@@ -35,22 +36,25 @@
   }
 
   function editExercise(idx: number) {
-    const duplicate = exercises.find((exercise, exerciseIdx) => {
-      return exercise.name === editingExercise.name && exerciseIdx !== idx;
-    });
-    alreadyExists = duplicate ? true : false;
-    if (duplicate) return false;
+    const duplicate = exercises.find(
+      (exercise, exerciseIdx) => exercise.name === editingExercise.name && exerciseIdx !== idx
+    );
+    alreadyExists = Boolean(duplicate);
+    if (duplicate) {
+      return false;
+    }
 
     const typedExercise = editingExercise as SplitExercise;
-    if (idx === undefined) return;
     exercises[idx] = typedExercise;
     exercises = exercises;
     dialogElement.close();
   }
 
   function submitForm() {
-    if (editingIdx !== undefined) return editExercise(editingIdx);
-    else return addExercise();
+    if (editingIdx !== undefined) {
+      return editExercise(editingIdx);
+    }
+    return addExercise();
   }
 
   $: editMode, editingIdx && exercises[editingIdx], updateMode();
@@ -165,6 +169,6 @@
         bind:value={selectedExercise.note}
       />
     </div>
-    <button class="btn btn-block btn-accent mt-4">{modeText} exercise</button>
+    <button class="btn btn-block btn-accent mt-4" type="submit">{modeText} exercise</button>
   </form>
 </MyModal>

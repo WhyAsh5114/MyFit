@@ -14,11 +14,11 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     throw error(400, "Mesocycle template ID should be 24 character hex string");
   }
 
-  const client = await clientPromise;
-  const mesocycleTemplateDocument = await client
-    .db()
-    .collection<MesocycleTemplate & { userId: ObjectId }>("mesocycleTemplates")
-    .findOne({ _id: new ObjectId(params.mesocycleTemplateId) });
+  const client = await clientPromise,
+    mesocycleTemplateDocument = await client
+      .db()
+      .collection<MesocycleTemplate & { userId: ObjectId }>("mesocycleTemplates")
+      .findOne({ _id: new ObjectId(params.mesocycleTemplateId) });
 
   if (mesocycleTemplateDocument === null) {
     throw error(404, "Mesocycle template not found");
@@ -26,28 +26,26 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     throw error(403, "Unauthorized");
   }
 
-  const { _id, userId, ...mesocycleTemplateProps } = mesocycleTemplateDocument;
-  const mesocycleTemplate: MesocycleTemplate = { ...mesocycleTemplateProps };
-
-  const mesocyclesCursor = client
-    .db()
-    .collection<Omit<MesocycleDocument, "userId">>("mesocycles")
-    .find(
-      { userId: new ObjectId(session.user.id), templateMesoId: mesocycleTemplateDocument._id },
-      { sort: { startTimestamp: -1 }, projection: { userId: 0 } }
-    )
-    .map((mesocycleDocument) => {
-      const { _id, workouts, templateMesoId, ...otherProps } = mesocycleDocument;
-      const mesocycle: WithSerializedId<Mesocycle> = {
-        id: _id.toString(),
-        workouts: workouts.map((workout) => workout?.toString() ?? null),
-        templateMesoId: templateMesoId.toString(),
-        ...otherProps
-      };
-      return mesocycle;
-    });
-
-  const mesocyclesStreamArray = [];
+  const { _id, userId, ...mesocycleTemplateProps } = mesocycleTemplateDocument,
+    mesocycleTemplate: MesocycleTemplate = { ...mesocycleTemplateProps },
+    mesocyclesCursor = client
+      .db()
+      .collection<Omit<MesocycleDocument, "userId">>("mesocycles")
+      .find(
+        { userId: new ObjectId(session.user.id), templateMesoId: mesocycleTemplateDocument._id },
+        { sort: { startTimestamp: -1 }, projection: { userId: 0 } }
+      )
+      .map((mesocycleDocument) => {
+        const { _id, workouts, templateMesoId, ...otherProps } = mesocycleDocument,
+          mesocycle: WithSerializedId<Mesocycle> = {
+            id: _id.toString(),
+            workouts: workouts.map((workout) => workout?.toString() ?? null),
+            templateMesoId: templateMesoId.toString(),
+            ...otherProps
+          };
+        return mesocycle;
+      }),
+    mesocyclesStreamArray = [];
   while (await mesocyclesCursor.hasNext()) {
     mesocyclesStreamArray.push(mesocyclesCursor.next());
   }

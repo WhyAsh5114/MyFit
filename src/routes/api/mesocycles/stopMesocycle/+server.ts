@@ -11,8 +11,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     });
   }
 
-  const { activeMesocycleId }: APIMesocyclesStopMesocycle = await request.json();
-  const client = await clientPromise;
+  const { activeMesocycleId }: APIMesocyclesStopMesocycle = await request.json(),
+    client = await clientPromise;
 
   try {
     const activeMesocycle = await client
@@ -23,7 +23,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
           _id: new ObjectId(activeMesocycleId),
           userId: new ObjectId(session.user.id)
         },
-        { $set: { endTimestamp: +new Date() } }
+        { $set: { endTimestamp: Number(new Date()) } }
       );
 
     // Check if active mesocycle exists

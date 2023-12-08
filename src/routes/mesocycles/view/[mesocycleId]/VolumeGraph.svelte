@@ -8,12 +8,18 @@
   Chart.defaults.color = "#f4f4f4";
   workouts.reverse();
 
-  type DataEntry = { startTimestamp: EpochTimeStamp; sets: number; volume: 0 };
+  interface DataEntry {
+    startTimestamp: EpochTimeStamp;
+    sets: number;
+    volume: 0;
+  }
 
   const data: DataEntry[] = [];
   workouts.forEach((workout) => {
-    if (workout === null) return;
-    let dataEntry: DataEntry = { ...workout, sets: 0, volume: 0 };
+    if (workout === null) {
+      return;
+    }
+    const dataEntry: DataEntry = { ...workout, sets: 0, volume: 0 };
     workout.exercisesPerformed.forEach((exercise) => {
       dataEntry.sets += exercise.sets.length;
       dataEntry.volume += getTotalVolume(exercise.bodyweight, exercise.sets);
@@ -26,12 +32,12 @@
     new Chart(canvasElement, {
       type: "bar",
       data: {
-        labels: data.map(({ startTimestamp }) => {
-          return new Date(startTimestamp).toLocaleDateString("en-US", {
+        labels: data.map(({ startTimestamp }) =>
+          new Date(startTimestamp).toLocaleDateString("en-US", {
             day: "2-digit",
             month: "2-digit"
-          });
-        }),
+          })
+        ),
         datasets: [
           {
             type: "line",

@@ -29,18 +29,18 @@ const SorenessFeedback = [
 ] as const;
 type SorenessState = (typeof SorenessFeedback)[number]["value"];
 
-type Workout = {
+interface Workout {
   startTimestamp: EpochTimeStamp;
-  referenceWorkout: null | string;
+  referenceWorkout: string | null;
   dayNumber: number;
   cycleNumber: number;
   difficultyRating: 1 | 2 | 3 | 4 | 5;
   exercisesPerformed: WorkoutExercise[];
-  muscleGroupWorkloads: Partial<Record<MuscleGroup, null | WorkloadState>>;
+  muscleGroupWorkloads: Partial<Record<MuscleGroup, WorkloadState | null>>;
   plannedRIR: number;
-  muscleSorenessToNextWorkout: Partial<Record<MuscleGroup, null | SorenessState>>;
+  muscleSorenessToNextWorkout: Partial<Record<MuscleGroup, SorenessState | null>>;
   deload: boolean;
-};
+}
 
 const JointPainFeedback = [
   { name: "no pain", value: 0, bgColor: "checked:!bg-success" },
@@ -56,8 +56,12 @@ const PumpFeedback = [
 ] as const;
 type PumpState = (typeof PumpFeedback)[number]["value"];
 
-type WorkoutExerciseSet = { reps: number; load: number; RIR: number };
-type WorkoutExercise = {
+interface WorkoutExerciseSet {
+  reps: number;
+  load: number;
+  RIR: number;
+}
+interface WorkoutExercise {
   name: string;
   sets: WorkoutExerciseSet[];
   repRangeStart: number;
@@ -67,18 +71,18 @@ type WorkoutExercise = {
   jointPainRating: JoinPainState | null;
   pumpRating: PumpState | null;
   note?: string;
-};
+}
 
 type WorkoutExerciseWithoutSetNumbers = Omit<WorkoutExercise, "sets"> & {
   sets: Nullable<WorkoutExerciseSet>[];
 };
 
-type WorkoutBeingPerformed = {
+interface WorkoutBeingPerformed {
   startTimestamp: EpochTimeStamp;
-  referenceWorkout: null | string;
+  referenceWorkout: string | null;
   dayNumber: number;
   cycleNumber: number;
   exercisesPerformed: WorkoutExerciseWithoutSetNumbers[];
   plannedRIR: number;
   deload: boolean;
-};
+}

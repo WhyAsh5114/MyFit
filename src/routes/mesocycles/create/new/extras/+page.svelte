@@ -15,14 +15,16 @@
 
   let remainingMuscleGroups = muscleGroups.slice();
   remainingMuscleGroups = remainingMuscleGroups.filter(
-    (muscleGroup) => $specializedMuscleGroups.includes(muscleGroup) === false
+    (muscleGroup) => !$specializedMuscleGroups.includes(muscleGroup)
   );
 
-  let selectedMuscleGroup: MuscleGroup | undefined;
-  let showSpecializedMuscleGroups = $specializedMuscleGroups.length !== 0;
+  let selectedMuscleGroup: MuscleGroup | undefined,
+    showSpecializedMuscleGroups = $specializedMuscleGroups.length !== 0;
 
   function specializeMuscleGroup() {
-    if (!selectedMuscleGroup) return;
+    if (!selectedMuscleGroup) {
+      return;
+    }
 
     $specializedMuscleGroups = [...$specializedMuscleGroups, selectedMuscleGroup];
 
@@ -31,7 +33,9 @@
     remainingMuscleGroups = remainingMuscleGroups;
 
     selectedMuscleGroup = undefined;
-    if ($specializedMuscleGroups.length === 1) showSpecializedMuscleGroups = true;
+    if ($specializedMuscleGroups.length === 1) {
+      showSpecializedMuscleGroups = true;
+    }
   }
 
   function removeSpecializedMuscleGroup(muscleGroup: MuscleGroup) {
@@ -40,13 +44,15 @@
     $specializedMuscleGroups = $specializedMuscleGroups;
 
     remainingMuscleGroups = [...remainingMuscleGroups, muscleGroup];
-    if ($specializedMuscleGroups.length === 0) showSpecializedMuscleGroups = false;
+    if ($specializedMuscleGroups.length === 0) {
+      showSpecializedMuscleGroups = false;
+    }
   }
 
-  let successModal: HTMLDialogElement;
-  let errorModal: HTMLDialogElement;
-  let errorMessage = "";
-  let callingEndpoint = false;
+  let callingEndpoint = false,
+    errorMessage = "",
+    errorModal: HTMLDialogElement,
+    successModal: HTMLDialogElement;
   async function submitForm() {
     if ($mesocycleSpecialization && $specializedMuscleGroups.length === 0) {
       errorMessage = "When specializing, add at least one muscle group to specialize";
@@ -54,16 +60,16 @@
       return false;
     }
     const createdMesocycle: MesocycleTemplate = {
-      name: $mesocycleName,
-      startRIR: $mesocycleStartRIR,
-      RIRProgression: $mesocycleRIRProgression,
-      exerciseSplit: $exerciseSplit,
-      caloricBalance: $mesocycleCaloricState,
-      specialization: $mesocycleSpecialization ? $specializedMuscleGroups : undefined
-    };
-    const requestBody: APIMesocyclesCreateTemplate = {
-      mesocycleTemplate: createdMesocycle
-    };
+        name: $mesocycleName,
+        startRIR: $mesocycleStartRIR,
+        RIRProgression: $mesocycleRIRProgression,
+        exerciseSplit: $exerciseSplit,
+        caloricBalance: $mesocycleCaloricState,
+        specialization: $mesocycleSpecialization ? $specializedMuscleGroups : undefined
+      },
+      requestBody: APIMesocyclesCreateTemplate = {
+        mesocycleTemplate: createdMesocycle
+      };
     callingEndpoint = true;
     const response = await fetch("/api/mesocycles/createTemplate", {
       method: "POST",
@@ -88,6 +94,8 @@
     await goto("/mesocycles");
     redirecting = false;
   }
+
+  $: totalSpecializedMuscleGroups = $specializedMuscleGroups.length;
 </script>
 
 <MyModal title="Error" bind:dialogElement={errorModal}>
@@ -161,14 +169,16 @@
           bind:checked={showSpecializedMuscleGroups}
         />
         <div class="collapse-title text-lg font-medium">
-          Specialized muscle groups: {$specializedMuscleGroups.length}
+          Specialized muscle groups: {totalSpecializedMuscleGroups}
         </div>
         <div class="collapse-content backdrop-brightness-75">
           <div class="flex flex-wrap gap-1.5 justify-center mt-3">
             {#each $specializedMuscleGroups as muscleGroup}
               <button
                 class="badge gap-1 badge-accent font-semibold"
-                on:click={() => removeSpecializedMuscleGroup(muscleGroup)}
+                on:click={() => {
+                  removeSpecializedMuscleGroup(muscleGroup);
+                }}
               >
                 {muscleGroup}
                 <DeleteIcon />

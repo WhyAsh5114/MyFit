@@ -1,13 +1,14 @@
-type commonMesocycles = {
+type CommonMesocycles = {
   name: string;
   description: string;
   exerciseSplit: MesocycleTemplate["exerciseSplit"];
 }[];
 
-export const commonMesocycles: commonMesocycles = [
+export const commonMesocycles: CommonMesocycles = [
   {
     name: "Pull Push Legs",
-    description: `A common split with moderate volume. Six workouts per microcycle and a muscle group targeting frequency of 2x`,
+    description:
+      "A common split with moderate volume. Six workouts per microcycle and a muscle group targeting frequency of 2x",
     exerciseSplit: [
       {
         name: "Pull A",

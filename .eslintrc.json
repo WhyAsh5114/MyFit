@@ -1,5 +1,11 @@
 {
-  "extends": ["plugin:svelte/all", "plugin:svelte/prettier", "eslint:recommended"],
+  "extends": [
+    "plugin:svelte/all",
+    "plugin:svelte/prettier",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": ["@typescript-eslint"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "tsconfig.json",
@@ -21,13 +27,25 @@
       }
     }
   },
-  "ignorePatterns": ["postcss.config.cjs", "svelte.config.js", "tailwind.config.cjs"],
+  "ignorePatterns": [
+    "postcss.config.cjs",
+    "svelte.config.js",
+    "tailwind.config.cjs",
+    "src/service-worker.ts"
+  ],
   "rules": {
     "svelte/no-unused-class-name": "off",
     "svelte/block-lang": "off",
+    "svelte/require-each-key": "off",
     "svelte/experimental-require-strict-events": "off",
+    "svelte/experimental-require-slot-types": "off",
+    "svelte/button-has-type": "off",
+    "svelte/no-at-html-tags": "off",
+    "svelte/no-inline-styles": ["error", { "allowTransitions": true }],
     "no-undef": "off",
     "no-inner-declarations": "off",
-    "no-self-assign": "off"
+    "no-self-assign": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "off"
   }
 }

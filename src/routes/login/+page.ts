@@ -1,4 +1,4 @@
-import { redirect, type Load } from "@sveltejs/kit";
+import { type Load, redirect } from "@sveltejs/kit";
 
 export const load: Load = async ({ parent }) => {
   const { session } = await parent();

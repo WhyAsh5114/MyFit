@@ -1,11 +1,7 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import clientPromise from "$lib/mongo/mongodb";
-import { ObjectId, type WithId } from "mongodb";
-import type {
-  MesocycleDocument,
-  MesocycleTemplateDocument,
-  WorkoutDocument
-} from "$lib/types/documents";
+import { ObjectId } from "mongodb";
+import type { MesocycleDocument, WorkoutDocument } from "$lib/types/documents";
 
 export const POST: RequestHandler = async ({ request, locals }) => {
   const session = await locals.getSession();
@@ -15,8 +11,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     });
   }
 
-  const { workoutId, performedMesocycleId }: APIWorkoutsDeleteWorkout = await request.json();
-  const client = await clientPromise;
+  const { workoutId, performedMesocycleId }: APIWorkoutsDeleteWorkout = await request.json(),
+    client = await clientPromise;
   try {
     const performedMesocycle = await client
       .db()

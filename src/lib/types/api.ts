@@ -1,47 +1,47 @@
-type APIMesocyclesCreateTemplate = {
+interface APIMesocyclesCreateTemplate {
   mesocycleTemplate: MesocycleTemplate;
-};
+}
 
-type APIMesocyclesDeleteTemplate = {
+interface APIMesocyclesDeleteTemplate {
   mesocycleTemplateId: string;
-};
+}
 
-type APIMesocyclesStartMesocycle = {
+interface APIMesocyclesStartMesocycle {
   mesocycleTemplateId: string;
-};
+}
 
-type APIMesocyclesStopMesocycle = {
+interface APIMesocyclesStopMesocycle {
   activeMesocycleId: string;
-};
+}
 
-type APIWorkoutsGetReferenceWorkout = {
+interface APIWorkoutsGetReferenceWorkout {
   workoutDayNumber: number;
-};
+}
 
 type APIUserUpdatePreferences = Partial<UserPreferences>;
 
-type APIWorkoutsSaveWorkout = {
+interface APIWorkoutsSaveWorkout {
   workout: Workout;
   previousSoreness: Workout["muscleSorenessToNextWorkout"];
-};
+}
 
-type APIWorkoutsUpdateWorkout = {
+interface APIWorkoutsUpdateWorkout {
   workoutId: string;
   workout: Workout;
   previousSoreness: Workout["muscleSorenessToNextWorkout"];
   performedMesocycleId: string;
-};
+}
 
-type APIGetWorkoutsThatPreviouslyTargeted = {
+interface APIGetWorkoutsThatPreviouslyTargeted {
   muscleGroups: MuscleGroup[];
   mesocycleId: string;
   beforeTimestamp: EpochTimeStamp;
-};
+}
 type APIGetWorkoutsThatPreviouslyTargetedResponse = Partial<Record<MuscleGroup, string | null>>;
 
 type APIGetPreviousSorenessValues = APIGetWorkoutsThatPreviouslyTargeted;
 
-type APIWorkoutsDeleteWorkout = {
+interface APIWorkoutsDeleteWorkout {
   workoutId: string;
   performedMesocycleId: string;
-};
+}

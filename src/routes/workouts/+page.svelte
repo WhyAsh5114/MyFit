@@ -9,29 +9,30 @@
   }
   $: selectedMesocycleTemplateId, (selectedMesocycleId = null);
 
-  const asyncFind = async <T,>(arr: Array<T>, predicate: (value: T) => Promise<boolean>) => {
-    const promises = arr.map(predicate);
-    const results = await Promise.all(promises);
-    const index = results.findIndex((result) => result);
-    return arr[index];
-  };
+  const asyncFind = async <T,>(arr: T[], predicate: (_value: T) => Promise<boolean>) => {
+      const promises = arr.map(predicate),
+        results = await Promise.all(promises),
+        index = results.findIndex((result) => result);
+      return arr[index];
+    },
+    asyncFilter = async <T,>(arr: T[], predicate: (_value: T) => Promise<boolean>) => {
+      const results = await Promise.all(arr.map(predicate));
+      return arr.filter((_v, index) => results[index]);
+    };
 
-  const asyncFilter = async <T,>(arr: Array<T>, predicate: (value: T) => Promise<boolean>) => {
-    const results = await Promise.all(arr.map(predicate));
-    return arr.filter((_v, index) => results[index]);
-  };
-
-  let filterByMesocycle = false;
-  let selectedMesocycleTemplateId: null | string = null;
-  let selectedMesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
-  let selectedMesocycleId: null | string = null;
+  let filterByMesocycle = false,
+    selectedMesocycleId: string | null = null,
+    selectedMesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null,
+    selectedMesocycleTemplateId: string | null = null;
 
   async function filterWorkouts() {
     selectedMesocycleTemplate = await asyncFind(
       data.streamed.mesocycleTemplatesStreamArray,
       async (mesocycleTemplatePromise) => {
         const mesocycleTemplate = await mesocycleTemplatePromise;
-        if (mesocycleTemplate === null) return false;
+        if (mesocycleTemplate === null) {
+          return false;
+        }
         return mesocycleTemplate.id === selectedMesocycleTemplateId;
       }
     );
@@ -54,9 +55,8 @@
         const workout = await workoutPromise;
         if (selectedMesocycleId !== null) {
           return workout?.performedMesocycleId === selectedMesocycleId;
-        } else {
-          return allMesocyclesIds.includes(workout?.performedMesocycleId);
         }
+        return allMesocyclesIds.includes(workout?.performedMesocycleId);
       }
     );
   }

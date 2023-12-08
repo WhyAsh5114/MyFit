@@ -5,6 +5,7 @@
   import GoogleLogo from "virtual:icons/ri/google-fill";
 
   let redirectingModal: HTMLDialogElement;
+  $: ({ url } = $page);
 </script>
 
 <svelte:head>
@@ -25,7 +26,7 @@
     class="btn gap-2 btn-primary normal-case w-full"
     on:click={() => {
       redirectingModal.show();
-      signIn("google", { callbackUrl: $page.url.searchParams.get("callbackURL") || "" });
+      signIn("google", { callbackUrl: url.searchParams.get("callbackURL") || "" });
     }}
   >
     <GoogleLogo class="h-6 w-6 mx-2" />

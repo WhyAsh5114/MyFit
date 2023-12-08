@@ -10,62 +10,72 @@
   export let exercise: WorkoutExerciseWithoutSetNumbers;
   export let setsCompleted: boolean[];
   export let checkForFeedback: () => void;
-  export let mode: "viewing" | "performing" | "editing";
+  export let mode: "editing" | "performing" | "viewing";
   export let comparing: boolean;
   export let referenceExercise: WorkoutExercise | null;
   export let userBodyweight: number | null;
 
-  function getColor(param: "reps" | "load" | "RIR", setNumber: number) {
-    let newValue = null;
-    let reference = null;
+  function getColor(param: "load" | "reps" | "RIR", setNumber: number) {
+    let newValue = null,
+      reference = null;
     newValue = exercise.sets[setNumber][param];
     reference = referenceExercise?.sets[setNumber][param] ?? null;
 
-    if (newValue === null || reference === null) return;
+    if (newValue === null || reference === null) {
+      return;
+    }
     if (param === "load" && exercise.bodyweight !== undefined) {
       newValue += userBodyweight ?? 0;
       reference += referenceExercise?.bodyweight ?? 0;
     }
 
-    if (reference === newValue) return "";
-    if (reference > newValue) return "text-warning";
-    if (reference < newValue) return "text-success";
+    if (reference === newValue) {
+      return "";
+    }
+    if (reference > newValue) {
+      return "text-warning";
+    }
+    if (reference < newValue) {
+      return "text-success";
+    }
   }
 
   function compareVolume(setNumber: number) {
-    let referenceSet = referenceExercise?.sets[setNumber];
-    let currentSet = exercise.sets[setNumber];
-    if (!referenceSet || !referenceExercise) return false;
-    if (currentSet.reps === null || currentSet.load === null) return false;
+    const referenceSet = referenceExercise?.sets[setNumber],
+      currentSet = exercise.sets[setNumber];
+    if (!referenceSet || !referenceExercise) {
+      return false;
+    }
+    if (currentSet.reps === null || currentSet.load === null) {
+      return false;
+    }
 
-    let referenceLoad = referenceSet.load;
-    let currentLoad = currentSet.load;
+    let referenceLoad = referenceSet.load,
+      currentLoad = currentSet.load;
     if (exercise.bodyweight !== undefined) {
       referenceLoad += referenceExercise.bodyweight ?? 0;
       currentLoad += userBodyweight ?? 0;
     }
 
-    let referenceVolume = referenceSet.reps * referenceLoad;
-    let currentVolume = currentSet.reps * currentLoad;
+    const referenceVolume = referenceSet.reps * referenceLoad,
+      currentVolume = currentSet.reps * currentLoad;
     if (currentVolume < referenceVolume) {
       return -1;
     } else if (currentVolume > referenceVolume) {
       return 1;
-    } else {
-      return 0;
     }
+    return 0;
   }
 
-  function constructBodyweightString(bodyweight: number | undefined | null, load: number | null) {
+  function constructBodyweightString(bodyweight: number | null | undefined, load: number | null) {
     if (load === null) {
       return `${bodyweight}`;
     } else if (load < 0) {
       return `${bodyweight}${load}`;
     } else if (load > 0) {
       return `${bodyweight}+${load}`;
-    } else {
-      return `${bodyweight}`;
     }
+    return `${bodyweight}`;
   }
 </script>
 

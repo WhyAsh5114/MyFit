@@ -17,21 +17,17 @@ export const load: PageServerLoad = async ({ locals, parent, fetch }) => {
   }
 
   const { activeMesocycle, activeMesocycleTemplate, referenceWorkout, userBodyweight } =
-    await parent();
-  if (!activeMesocycle) {
-    throw error(404, "No active mesocycle found");
-  }
-
-  const todaysSplitWorkout = getTodaysSplitWorkout(
-    activeMesocycle.workouts,
-    activeMesocycleTemplate.exerciseSplit
-  );
+      await parent(),
+    todaysSplitWorkout = getTodaysSplitWorkout(
+      activeMesocycle.workouts,
+      activeMesocycleTemplate.exerciseSplit
+    );
   if (todaysSplitWorkout === null) {
     throw error(400, "No workout found for today");
   }
 
   const todaysWorkout: Partial<WorkoutBeingPerformed> = {
-    startTimestamp: +new Date(),
+    startTimestamp: Number(new Date()),
     referenceWorkout: null,
     dayNumber: getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit),
     cycleNumber: getCycleNumber(activeMesocycleTemplate.exerciseSplit, activeMesocycle.workouts),
@@ -55,17 +51,17 @@ export const load: PageServerLoad = async ({ locals, parent, fetch }) => {
   }
 
   const requestBody: APIGetWorkoutsThatPreviouslyTargeted = {
-    mesocycleId: activeMesocycle.id,
-    muscleGroups: Array.from(getMuscleGroups(todaysSplitWorkout.exercises)),
-    beforeTimestamp: +new Date()
-  };
-  const response = await fetch("/api/workouts/getWorkoutsThatPreviouslyTargeted", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json"
+      mesocycleId: activeMesocycle.id,
+      muscleGroups: Array.from(getMuscleGroups(todaysSplitWorkout.exercises)),
+      beforeTimestamp: Number(new Date())
     },
-    body: JSON.stringify(requestBody)
-  });
+    response = await fetch("/api/workouts/getWorkoutsThatPreviouslyTargeted", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify(requestBody)
+    });
   if (!response.ok) {
     throw error(500, await response.text());
   }

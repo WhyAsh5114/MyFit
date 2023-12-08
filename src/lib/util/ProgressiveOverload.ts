@@ -1,12 +1,11 @@
-const MINIMUM_LOAD_CHANGE = 5;
-const VOLUME_INCREASE_RATE = 0.025;
+const MINIMUM_LOAD_CHANGE = 5,
+  VOLUME_INCREASE_RATE = 0.025;
 
 export function getSetVolume(exerciseBodyweight: number | undefined, set: WorkoutExerciseSet) {
   if (exerciseBodyweight !== undefined) {
     return set.reps * (set.load + exerciseBodyweight);
-  } else {
-    return set.reps * set.load;
   }
+  return set.reps * set.load;
 }
 
 export function getTotalVolume(exerciseBodyweight: number | undefined, sets: WorkoutExerciseSet[]) {
@@ -31,21 +30,27 @@ function matchSetVolumeWithNewLoad(
   set: WorkoutExerciseSet,
   newLoad: number
 ) {
-  const oldVolume = getSetVolume(exercise.bodyweight, set);
-  let newSet: WorkoutExerciseSet = { reps: set.reps, load: newLoad, RIR: set.RIR };
-  let newVolume = getSetVolume(exercise.bodyweight, newSet);
-  let absoluteDifference = Math.abs(newVolume - oldVolume);
-  while (true) {
-    if (newVolume > oldVolume) newSet.reps--;
-    else newSet.reps++;
+  const oldVolume = getSetVolume(exercise.bodyweight, set),
+    newSet: WorkoutExerciseSet = { reps: set.reps, load: newLoad, RIR: set.RIR };
+  let newVolume = getSetVolume(exercise.bodyweight, newSet),
+    absoluteDifference = Math.abs(newVolume - oldVolume);
+  for (;;) {
+    if (newVolume > oldVolume) {
+      newSet.reps--;
+    } else {
+      newSet.reps++;
+    }
 
     newVolume = getSetVolume(exercise.bodyweight, newSet);
-    let newAbsoluteDifference = Math.abs(newVolume - oldVolume);
+    const newAbsoluteDifference = Math.abs(newVolume - oldVolume);
     if (newAbsoluteDifference < absoluteDifference) {
       absoluteDifference = newAbsoluteDifference;
     } else {
-      if (newVolume > oldVolume) newSet.reps--;
-      else newSet.reps++;
+      if (newVolume > oldVolume) {
+        newSet.reps--;
+      } else {
+        newSet.reps++;
+      }
       break;
     }
   }
@@ -61,7 +66,7 @@ export function applyProgressiveOverload(
   exercises = JSON.parse(JSON.stringify(exercises));
 
   exercises.forEach((exercise) => {
-    let originalTotalVolume = getTotalVolume(exercise.bodyweight, exercise.sets);
+    const originalTotalVolume = getTotalVolume(exercise.bodyweight, exercise.sets);
 
     // Set new bodyweight
     if (exercise.bodyweight !== undefined && newBodyweight !== null) {

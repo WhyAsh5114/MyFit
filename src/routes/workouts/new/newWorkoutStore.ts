@@ -1,6 +1,7 @@
-import { writable, type Writable } from "svelte/store";
+/* eslint-disable svelte/no-ignored-unsubscribe */
+import { type Writable, writable } from "svelte/store";
 
-let ls: Storage | undefined = undefined;
+let ls: Storage | undefined;
 if (typeof window !== "undefined") {
   ls = localStorage;
 }

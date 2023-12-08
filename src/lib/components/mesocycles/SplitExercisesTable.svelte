@@ -5,8 +5,7 @@
   import AddEditSplitExerciseModal from "./AddEditSplitExerciseModal.svelte";
   export let exercises: SplitExercise[];
 
-  let addEditSplitExerciseModal: HTMLDialogElement;
-  let editingExerciseNumber: number | undefined = undefined;
+  let addEditSplitExerciseModal: HTMLDialogElement, editingExerciseNumber: number | undefined;
 
   function addExercise() {
     editingExerciseNumber = undefined;
@@ -23,7 +22,7 @@
     exercises = exercises;
   }
 
-  function reorderExercise(idx: number, s: "up" | "down") {
+  function reorderExercise(idx: number, s: "down" | "up") {
     if (s == "up") {
       [exercises[idx], exercises[idx - 1]] = [exercises[idx - 1], exercises[idx]];
     } else {

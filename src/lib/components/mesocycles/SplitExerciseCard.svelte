@@ -5,9 +5,9 @@
   export let idx: number;
   export let totalExercises: number;
 
-  export let deleteExercise: (idx: number) => void;
-  export let editExercise: (idx: number) => void;
-  export let reorderExercise: (idx: number, s: "up" | "down") => void;
+  export let deleteExercise: (_idx: number) => void;
+  export let editExercise: (_idx: number) => void;
+  export let reorderExercise: (_idx: number, _s: "down" | "up") => void;
 </script>
 
 <li class="flex flex-col bg-primary w-full h-fit rounded-md p-2">
@@ -19,7 +19,12 @@
         class="shadow-2xl shadow-black menu menu-sm dropdown-content z-10 bg-neutral gap-1 rounded-md w-fit"
       >
         <li>
-          <button class="btn btn-primary btn-sm rounded-sm" on:click={() => editExercise(idx)}>
+          <button
+            class="btn btn-primary btn-sm rounded-sm"
+            on:click={() => {
+              editExercise(idx);
+            }}
+          >
             Edit
           </button>
         </li>
@@ -27,20 +32,29 @@
           <button
             class="join-item text-lg btn btn-primary btn-sm p-0 rounded-sm"
             disabled={idx === 0}
-            on:click={() => reorderExercise(idx, "up")}
+            on:click={() => {
+              reorderExercise(idx, "up");
+            }}
           >
             ↑
           </button>
           <button
             class="join-item text-lg btn btn-primary btn-sm p-0 rounded-sm"
             disabled={idx === totalExercises - 1}
-            on:click={() => reorderExercise(idx, "down")}
+            on:click={() => {
+              reorderExercise(idx, "down");
+            }}
           >
             ↓
           </button>
         </li>
         <li>
-          <button class="btn btn-sm btn-error rounded-sm" on:click={() => deleteExercise(idx)}>
+          <button
+            class="btn btn-sm btn-error rounded-sm"
+            on:click={() => {
+              deleteExercise(idx);
+            }}
+          >
             Delete
           </button>
         </li>

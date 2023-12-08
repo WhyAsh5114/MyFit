@@ -5,7 +5,7 @@
   import IncreaseIcon from "virtual:icons/icon-park-solid/up-c";
   import DecreaseIcon from "virtual:icons/icon-park-solid/down-c";
 
-  export let mode: "viewing" | "performing" | "editing";
+  export let mode: "editing" | "performing" | "viewing";
   export let exercise: WorkoutExerciseWithoutSetNumbers;
   export let exerciseIndex: number;
   export let setsCompleted: boolean[];
@@ -14,10 +14,10 @@
   export let referenceExercise: WorkoutExercise | null;
   export let userBodyweight: number | null;
 
-  export let editExercise: (idx: number) => void;
-  export let reorderExercise: (idx: number, direction: "up" | "down") => void;
-  export let deleteExercise: (idx: number) => void;
-  export let takeFeedback: (idx: number, force?: boolean) => void;
+  export let editExercise: (_idx: number) => void;
+  export let reorderExercise: (_idx: number, _direction: "down" | "up") => void;
+  export let deleteExercise: (_idx: number) => void;
+  export let takeFeedback: (_idx: number, _force?: boolean) => void;
 
   function addSet() {
     exercise.sets = [...exercise.sets, { reps: null, load: null, RIR: null }];
@@ -38,11 +38,11 @@
 
   let increasePercentage: number | null = null;
   function compareVolume() {
-    let referenceVolume = 0;
-    let currentVolume = 0;
+    let currentVolume = 0,
+      referenceVolume = 0;
     for (let i = 0; i < exercise.sets.length; i++) {
-      const currentSet = exercise.sets[i];
-      let referenceSet = referenceExercise?.sets[i];
+      const currentSet = exercise.sets[i],
+        referenceSet = referenceExercise?.sets[i];
 
       if (referenceSet) {
         let referenceLoad = referenceSet.load;
@@ -66,9 +66,8 @@
       return -1;
     } else if (currentVolume > referenceVolume) {
       return 1;
-    } else {
-      return 0;
     }
+    return 0;
   }
   const colorMap = ["text-error", "text-secondary", "text-success"];
 </script>
@@ -86,7 +85,9 @@
           <li>
             <button
               class="btn btn-sm btn-primary rounded-sm"
-              on:click={() => editExercise(exerciseIndex)}
+              on:click={() => {
+                editExercise(exerciseIndex);
+              }}
             >
               Edit
             </button>
@@ -95,7 +96,9 @@
             <button
               class="btn btn-sm rounded-sm btn-primary"
               disabled={setsCompleted.includes(false)}
-              on:click={() => takeFeedback(exerciseIndex, true)}
+              on:click={() => {
+                takeFeedback(exerciseIndex, true);
+              }}
             >
               Feedback
             </button>
@@ -104,14 +107,18 @@
             <button
               class="btn btn-sm join-item btn-primary rounded-sm"
               disabled={exerciseIndex === 0}
-              on:click={() => reorderExercise(exerciseIndex, "up")}
+              on:click={() => {
+                reorderExercise(exerciseIndex, "up");
+              }}
             >
               ↑
             </button>
             <button
               class="btn btn-sm join-item btn-primary rounded-sm"
               disabled={exerciseIndex === totalExercises - 1}
-              on:click={() => reorderExercise(exerciseIndex, "down")}
+              on:click={() => {
+                reorderExercise(exerciseIndex, "down");
+              }}
             >
               ↓
             </button>
@@ -131,7 +138,9 @@
           <li>
             <button
               class="btn btn-sm btn-error rounded-sm"
-              on:click={() => deleteExercise(exerciseIndex)}
+              on:click={() => {
+                deleteExercise(exerciseIndex);
+              }}
             >
               Delete
             </button>

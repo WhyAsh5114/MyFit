@@ -7,8 +7,9 @@
   import { navigating } from "$app/stores";
   import { onMount } from "svelte";
 
+  // eslint-disable-next-line svelte/no-immutable-reactive-statements
   $: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : "";
-  let lg: MediaQueryList | undefined = undefined;
+  let lg: MediaQueryList | undefined;
   onMount(() => {
     lg = window.matchMedia("(max-width: 1024px)");
   });

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto, invalidate } from "$app/navigation";
   import MyModal from "$lib/components/MyModal.svelte";
+  import { range } from "$lib/util/CommonFunctions";
   import { getTotalSets } from "$lib/util/MesocycleTemplate";
   import {
     allExercisesSetsCompleted,
@@ -9,30 +10,30 @@
     workoutBeingPerformed
   } from "../newWorkoutStore";
 
-  let difficultyRating: 1 | 2 | 3 | 4 | 5 = 3;
-
-  let temp: WorkoutExerciseWithoutSetNumbers[] = [];
+  let difficultyRating: 1 | 2 | 3 | 4 | 5 = 3,
+    temp: WorkoutExerciseWithoutSetNumbers[] = [];
   if ($workoutBeingPerformed) {
     ({ exercisesPerformed: temp } = $workoutBeingPerformed);
   }
-  let exercisesPerformed = temp as WorkoutExercise[];
+  const exercisesPerformed = temp as WorkoutExercise[];
 
   let callingEndpoint = false;
   async function saveWorkout() {
-    if (!$workoutBeingPerformed) return;
-    const { exercisesPerformed: temp, ...otherProps } = $workoutBeingPerformed;
-    let exercisesPerformed = temp as WorkoutExercise[];
-
-    const requestBody: APIWorkoutsSaveWorkout = {
-      workout: {
-        ...otherProps,
-        exercisesPerformed,
-        muscleGroupWorkloads: $workloadData,
-        muscleSorenessToNextWorkout: {},
-        difficultyRating
-      },
-      previousSoreness: $sorenessData
-    };
+    if (!$workoutBeingPerformed) {
+      return;
+    }
+    const { exercisesPerformed: temp, ...otherProps } = $workoutBeingPerformed,
+      exercisesPerformed = temp as WorkoutExercise[],
+      requestBody: APIWorkoutsSaveWorkout = {
+        workout: {
+          ...otherProps,
+          exercisesPerformed,
+          muscleGroupWorkloads: $workloadData,
+          muscleSorenessToNextWorkout: {},
+          difficultyRating
+        },
+        previousSoreness: $sorenessData
+      };
     callingEndpoint = true;
     const response = await fetch("/api/workouts/saveWorkout", {
       method: "POST",
@@ -51,10 +52,10 @@
     modal.show();
   }
 
-  let modalTitle = "";
-  let modalText = "";
-  let modal: HTMLDialogElement;
-  let redirecting = false;
+  let modal: HTMLDialogElement,
+    modalText = "",
+    modalTitle = "",
+    redirecting = false;
   async function closeModal() {
     redirecting = true;
     $workoutBeingPerformed = null;
@@ -83,7 +84,7 @@
   <div class="stat">
     <div class="stat-title mb-2">Difficulty rating</div>
     <div class="rating stat-value">
-      {#each Array(5) as n, i}
+      {#each range(1, 5 + 1) as i}
         <input
           name="difficulty-rating"
           class="mask mask-star-2 bg-warning"

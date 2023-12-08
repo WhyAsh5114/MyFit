@@ -8,12 +8,11 @@
   import StarIcon from "virtual:icons/material-symbols/star";
   export let data;
 
-  let modal: HTMLDialogElement;
-  let modalTitle = "";
-  let modalText = "";
-
-  let deleteModal: HTMLDialogElement;
-  let callingEndpoint = false;
+  let callingEndpoint = false,
+    deleteModal: HTMLDialogElement,
+    modal: HTMLDialogElement,
+    modalText = "",
+    modalTitle = "";
   async function deleteWorkout() {
     if (!data.mesocycle) {
       console.error("No mesocycle found, maybe deleted?");
@@ -187,7 +186,9 @@
   <button
     class="join-item btn btn-error"
     disabled={redirecting}
-    on:click={() => deleteModal.show()}
+    on:click={() => {
+      deleteModal.show();
+    }}
   >
     {#if redirecting}
       <span class="loading loading-bars" />
@@ -195,5 +196,5 @@
       Delete
     {/if}
   </button>
-  <a class="join-item btn btn-primary" href="/workouts/{$page.params.workoutId}/edit">Edit</a>
+  <a class="join-item btn btn-primary" href="/workouts/{data.workout.id}/edit">Edit</a>
 </div>

@@ -4,13 +4,11 @@
   export let activeMesocycle: WithSerializedId<ActiveMesocycle>;
 
   let totalCycles: number, totalWorkouts: number;
-  if (activeMesocycleTemplate) {
-    const totalNonRestDays = activeMesocycleTemplate.exerciseSplit.filter(
-      (split) => split !== null
-    ).length;
-    totalCycles = getTotalDuration(activeMesocycleTemplate.RIRProgression);
-    totalWorkouts = totalCycles * totalNonRestDays;
-  }
+  const totalNonRestDays = activeMesocycleTemplate.exerciseSplit.filter(
+    (split) => split !== null
+  ).length;
+  totalCycles = getTotalDuration(activeMesocycleTemplate.RIRProgression);
+  totalWorkouts = totalCycles * totalNonRestDays;
 </script>
 
 <a class="btn btn-primary rounded-md h-fit p-2" href="/mesocycles/view/{activeMesocycle.id}">

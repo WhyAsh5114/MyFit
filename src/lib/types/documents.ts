@@ -2,13 +2,13 @@ import type { ObjectId } from "mongodb";
 
 export type MesocycleTemplateDocument = MesocycleTemplate & { userId: ObjectId };
 
-export type MesocycleDocument = {
+export interface MesocycleDocument {
   userId: ObjectId;
   startTimestamp: EpochTimeStamp;
   templateMesoId: ObjectId;
   workouts: (ObjectId | null)[];
   endTimestamp?: EpochTimeStamp;
-};
+}
 
 export type WorkoutDocument = Workout & {
   userId: ObjectId;

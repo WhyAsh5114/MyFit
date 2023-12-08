@@ -21,9 +21,9 @@
   } from "./newWorkoutStore.js";
   import { applyProgressiveOverload } from "$lib/util/ProgressiveOverload.js";
 
-  let modal: HTMLDialogElement;
-  let modalTitle = "";
-  let modalText = "";
+  let modal: HTMLDialogElement,
+    modalText = "",
+    modalTitle = "";
 
   export let data;
   $: ({ activeMesocycle, activeMesocycleTemplate } = data);
@@ -32,9 +32,9 @@
     activeMesocycle.workouts,
     activeMesocycleTemplate.exerciseSplit
   );
-  let muscleGroupsAndSets: { muscleGroup: MuscleGroup; sets: number }[];
-  let totalSets = 0;
-  let bodyweightExercises = false;
+  let bodyweightExercises = false,
+    muscleGroupsAndSets: { muscleGroup: MuscleGroup; sets: number }[],
+    totalSets = 0;
   $: if (todaysWorkout) {
     let exercises: WorkoutExerciseWithoutSetNumbers[];
     if (data.referenceWorkout) {
@@ -52,8 +52,8 @@
     }
   }
 
-  let bodyweightInputValue = data.userBodyweight;
-  let editingBodyweightValue = bodyweightInputValue === null;
+  let bodyweightInputValue = data.userBodyweight,
+    editingBodyweightValue = bodyweightInputValue === null;
   async function submitForm() {
     if (todaysWorkout) {
       await goto("/workouts/new/exercises");

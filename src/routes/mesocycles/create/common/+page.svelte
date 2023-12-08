@@ -13,7 +13,7 @@
 {#each commonMesocycles as mesocycle}
   <button
     class="btn btn-primary w-full h-fit py-3"
-    on:click={() => setMesocycle(mesocycle.name, mesocycle.exerciseSplit)}
+    on:click={async () => setMesocycle(mesocycle.name, mesocycle.exerciseSplit)}
   >
     <div class="flex flex-col w-full font-normal text-left gap-1">
       <span class="font-semibold text-lg">{mesocycle.name}</span>

@@ -15,63 +15,60 @@ export const load: PageServerLoad = async ({ depends, locals }) => {
     throw error(403, "Not logged in");
   }
 
-  const client = await clientPromise;
-  const mesocycleCursor = client
-    .db()
-    .collection<Omit<MesocycleDocument, "userId">>("mesocycles")
-    .find({ userId: new ObjectId(session.user.id) }, { projection: { userId: 0 } })
-    .map((mesocycleDocument) => {
-      const { _id, templateMesoId, workouts, ...otherProps } = mesocycleDocument;
-      const mesocycle: WithSerializedId<Mesocycle> = {
-        id: _id.toString(),
-        ...otherProps,
-        templateMesoId: templateMesoId.toString(),
-        workouts: workouts.map((workout) => workout?.toString() ?? null)
-      };
-      return mesocycle;
-    });
-
-  const mesocyclesStreamArray = [];
+  const client = await clientPromise,
+    mesocycleCursor = client
+      .db()
+      .collection<Omit<MesocycleDocument, "userId">>("mesocycles")
+      .find({ userId: new ObjectId(session.user.id) }, { projection: { userId: 0 } })
+      .map((mesocycleDocument) => {
+        const { _id, templateMesoId, workouts, ...otherProps } = mesocycleDocument,
+          mesocycle: WithSerializedId<Mesocycle> = {
+            id: _id.toString(),
+            ...otherProps,
+            templateMesoId: templateMesoId.toString(),
+            workouts: workouts.map((workout) => workout?.toString() ?? null)
+          };
+        return mesocycle;
+      }),
+    mesocyclesStreamArray = [];
   while (await mesocycleCursor.hasNext()) {
     mesocyclesStreamArray.push(mesocycleCursor.next());
   }
 
   const mesocycleTemplateCursor = client
-    .db()
-    .collection<Omit<MesocycleTemplateDocument, "userId">>("mesocycleTemplates")
-    .find({ userId: new ObjectId(session.user.id) }, { projection: { userId: 0 } })
-    .map((mesocycleTemplateDocument) => {
-      const { _id, ...otherProps } = mesocycleTemplateDocument;
-      const mesocycleTemplate: WithSerializedId<MesocycleTemplate> = {
-        id: mesocycleTemplateDocument._id.toString(),
-        ...otherProps
-      };
-      return mesocycleTemplate;
-    });
-
-  const mesocycleTemplatesStreamArray = [];
+      .db()
+      .collection<Omit<MesocycleTemplateDocument, "userId">>("mesocycleTemplates")
+      .find({ userId: new ObjectId(session.user.id) }, { projection: { userId: 0 } })
+      .map((mesocycleTemplateDocument) => {
+        const { _id, ...otherProps } = mesocycleTemplateDocument,
+          mesocycleTemplate: WithSerializedId<MesocycleTemplate> = {
+            id: mesocycleTemplateDocument._id.toString(),
+            ...otherProps
+          };
+        return mesocycleTemplate;
+      }),
+    mesocycleTemplatesStreamArray = [];
   while (await mesocycleTemplateCursor.hasNext()) {
     mesocycleTemplatesStreamArray.push(mesocycleTemplateCursor.next());
   }
 
   const workoutsCursor = client
-    .db()
-    .collection<Omit<WorkoutDocument, "userId">>("workouts")
-    .find(
-      { userId: new ObjectId(session.user.id) },
-      { sort: { startTimestamp: -1 }, projection: { userId: 0 } }
-    )
-    .map((workoutDocument) => {
-      const { _id, performedMesocycleId, ...otherProps } = workoutDocument;
-      const workout: WithSerializedId<Workout> & { performedMesocycleId: string } = {
-        id: _id.toString(),
-        performedMesocycleId: performedMesocycleId.toString(),
-        ...otherProps
-      };
-      return workout;
-    });
-
-  const workoutsStreamArray = [];
+      .db()
+      .collection<Omit<WorkoutDocument, "userId">>("workouts")
+      .find(
+        { userId: new ObjectId(session.user.id) },
+        { sort: { startTimestamp: -1 }, projection: { userId: 0 } }
+      )
+      .map((workoutDocument) => {
+        const { _id, performedMesocycleId, ...otherProps } = workoutDocument,
+          workout: WithSerializedId<Workout> & { performedMesocycleId: string } = {
+            id: _id.toString(),
+            performedMesocycleId: performedMesocycleId.toString(),
+            ...otherProps
+          };
+        return workout;
+      }),
+    workoutsStreamArray = [];
   while (await workoutsCursor.hasNext()) {
     workoutsStreamArray.push(workoutsCursor.next());
   }

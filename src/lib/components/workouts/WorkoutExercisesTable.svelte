@@ -6,7 +6,7 @@
   import WorkoutExerciseFeedbackModal from "./WorkoutExerciseFeedbackModal.svelte";
 
   export let exercises: WorkoutExerciseWithoutSetNumbers[];
-  export let mode: "viewing" | "editing" | "performing";
+  export let mode: "editing" | "performing" | "viewing";
   export let referenceWorkout: Workout | null = null;
   export let userBodyweight: number | null = null;
   export let workoutsThatPreviouslyTargeted: APIGetWorkoutsThatPreviouslyTargetedResponse = {};
@@ -16,14 +16,13 @@
   export let allExercisesSetsCompleted: boolean[][] = [];
   if (allExercisesSetsCompleted.length === 0) {
     exercises.forEach((exercise) => {
-      let setCompleted = mode !== "performing";
+      const setCompleted = mode !== "performing";
       allExercisesSetsCompleted.push(Array(exercise.sets.length).fill(setCompleted));
     });
   }
-  let feedbackTaken: boolean[] = Array(exercises.length).fill(false);
-
-  let addEditWorkoutExerciseModal: HTMLDialogElement;
-  let editingExerciseNumber: number | undefined = undefined;
+  let feedbackTaken: boolean[] = Array(exercises.length).fill(false),
+    addEditWorkoutExerciseModal: HTMLDialogElement,
+    editingExerciseNumber: number | undefined;
 
   function addExercise() {
     editingExerciseNumber = undefined;
@@ -42,7 +41,7 @@
     allExercisesSetsCompleted = allExercisesSetsCompleted;
   }
 
-  function reorderExercise(idx: number, direction: "up" | "down") {
+  function reorderExercise(idx: number, direction: "down" | "up") {
     if (direction == "up") {
       [exercises[idx], exercises[idx - 1]] = [exercises[idx - 1], exercises[idx]];
       [allExercisesSetsCompleted[idx], allExercisesSetsCompleted[idx - 1]] = [
@@ -58,11 +57,11 @@
     }
   }
 
-  let feedbackModal: HTMLDialogElement;
-  let feedbackExerciseIdx: number | undefined = undefined;
+  let feedbackExerciseIdx: number | undefined, feedbackModal: HTMLDialogElement;
   function takeFeedback(idx: number, force = false) {
-    if (feedbackTaken[idx] === true && !force) return;
-    if (!feedbackModal) return;
+    if (feedbackTaken[idx] && !force) {
+      return;
+    }
     feedbackExerciseIdx = idx;
     feedbackModal.show();
     feedbackTaken[idx] = true;

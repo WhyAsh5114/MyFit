@@ -14,36 +14,35 @@ export const load: PageServerLoad = async ({ locals, parent, fetch }) => {
   }
 
   const requestBodySoreness: APIGetPreviousSorenessValues = {
-    mesocycleId: mesocycle?.id,
-    muscleGroups: Array.from(getMuscleGroups(workout.exercisesPerformed)),
-    beforeTimestamp: workout.startTimestamp
-  };
-  const responseSoreness = await fetch("/api/workouts/getPreviousSorenessValues", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json"
+      mesocycleId: mesocycle.id,
+      muscleGroups: Array.from(getMuscleGroups(workout.exercisesPerformed)),
+      beforeTimestamp: workout.startTimestamp
     },
-    body: JSON.stringify(requestBodySoreness)
-  });
+    responseSoreness = await fetch("/api/workouts/getPreviousSorenessValues", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify(requestBodySoreness)
+    });
   if (!responseSoreness.ok) {
     throw error(500, await responseSoreness.text());
   }
 
   const previousWorkoutSorenessValues: Workout["muscleSorenessToNextWorkout"] =
-    await responseSoreness.json();
-
-  const requestBody: APIGetWorkoutsThatPreviouslyTargeted = {
-    mesocycleId: mesocycle.id,
-    muscleGroups: Array.from(getMuscleGroups(workout.exercisesPerformed)),
-    beforeTimestamp: workout.startTimestamp
-  };
-  const response = await fetch("/api/workouts/getWorkoutsThatPreviouslyTargeted", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json"
+      await responseSoreness.json(),
+    requestBody: APIGetWorkoutsThatPreviouslyTargeted = {
+      mesocycleId: mesocycle.id,
+      muscleGroups: Array.from(getMuscleGroups(workout.exercisesPerformed)),
+      beforeTimestamp: workout.startTimestamp
     },
-    body: JSON.stringify(requestBody)
-  });
+    response = await fetch("/api/workouts/getWorkoutsThatPreviouslyTargeted", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify(requestBody)
+    });
   if (!response.ok) {
     throw error(500, await response.text());
   }

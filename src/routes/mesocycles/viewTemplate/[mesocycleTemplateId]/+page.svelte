@@ -7,15 +7,15 @@
   import { getTotalDuration } from "$lib/util/MesocycleTemplate.js";
   export let data;
 
-  let caloricState = caloricStates.find(
+  const caloricState = caloricStates.find(
     (state) => state.value === data.mesocycleTemplate.caloricBalance
   );
 
-  let deleteModal: HTMLDialogElement;
-  let deletionSuccessfulModal: HTMLDialogElement;
-  let errorModal: HTMLDialogElement;
-  let errorMsg = "";
-  let callingEndpoint = false;
+  let callingEndpoint = false,
+    deleteModal: HTMLDialogElement,
+    deletionSuccessfulModal: HTMLDialogElement,
+    errorModal: HTMLDialogElement,
+    errorMsg = "";
 
   async function deleteMesocycle() {
     const requestBody: APIMesocyclesDeleteTemplate = {
@@ -200,7 +200,12 @@
   {/if}
 </div>
 <div class="join grid grid-cols-2 mt-auto">
-  <button class="join-item btn btn-error" on:click={() => deleteModal.show()}>
+  <button
+    class="join-item btn btn-error"
+    on:click={() => {
+      deleteModal.show();
+    }}
+  >
     {#if redirecting}
       Redirecting
       <span class="loading loading-bars" />

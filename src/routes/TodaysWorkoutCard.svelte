@@ -18,17 +18,17 @@
     );
   }
 
-  let totalSets = 0;
-  let targetMuscleGroups: Set<MuscleGroup> = new Set();
+  let totalSets = 0,
+    targetMuscleGroups = new Set<MuscleGroup>();
   $: if (todaysWorkout) {
     totalSets = getTotalSets(todaysWorkout.exercises);
     targetMuscleGroups = getMuscleGroups(todaysWorkout.exercises);
   }
 
-  let modal: HTMLDialogElement;
-  let modalTitle = "";
-  let modalText = "";
-  let callingEndpoint = false;
+  let callingEndpoint = false,
+    modal: HTMLDialogElement,
+    modalText = "",
+    modalTitle = "";
   async function completeRestDay() {
     if (todaysWorkout) {
       await goto("/workouts/new/exercises");
@@ -41,7 +41,6 @@
     if (response.ok) {
       await invalidate("mesocycle:active");
       callingEndpoint = false;
-      return;
     } else {
       modalTitle = "Error";
       modalText = await response.text();
@@ -57,7 +56,7 @@
   <a class="btn btn-primary h-fit py-2 px-4" href="/workouts/new">
     <div class="flex flex-col gap-1 w-full font-normal">
       <div class="flex justify-between items-center">
-        <span class="text-lg font-semibold">{todaysWorkout?.name}</span>
+        <span class="text-lg font-semibold">{todaysWorkout.name}</span>
         <span>{totalSets} sets</span>
       </div>
       <div class="flex flex-wrap gap-1">

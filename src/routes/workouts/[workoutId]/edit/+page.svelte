@@ -6,18 +6,16 @@
   import { dateFormatter } from "$lib/util/CommonFunctions.js";
   export let data;
 
-  let modal: HTMLDialogElement;
-  let modalTitle = "";
-  let modalText = "";
-
-  let allExercisesSetsCompleted: boolean[][] = [];
+  let modal: HTMLDialogElement,
+    modalTitle = "",
+    modalText = "",
+    allExercisesSetsCompleted: boolean[][] = [];
   data.workout.exercisesPerformed.forEach(({ sets }) => {
     allExercisesSetsCompleted.push(Array(sets.length).fill(true));
   });
 
-  let sorenessFromPreviousWorkouts = data.previousWorkoutSorenessValues;
-
-  let callingEndpoint = false;
+  let sorenessFromPreviousWorkouts = data.previousWorkoutSorenessValues,
+    callingEndpoint = false;
   async function updateWorkout() {
     if (!data.mesocycle?.id) {
       console.error("Performed mesocycle not found, maybe deleted?");

@@ -1,20 +1,10 @@
 <script lang="ts">
   export let data;
-  import { getTotalDuration } from "$lib/util/MesocycleTemplate";
   import ActiveMesocycleCard from "./ActiveMesocycleCard.svelte";
   import MesocycleTemplateCard from "./MesocycleTemplateCard.svelte";
 
-  let totalMesocycleTemplates = data.streamed.mesocycleTemplatesStreamArray.length;
-  const { activeMesocycle, activeMesocycleTemplate } = data;
-
-  let totalCycles: number, totalWorkouts: number;
-  if (activeMesocycleTemplate) {
-    const totalNonRestDays = activeMesocycleTemplate.exerciseSplit.filter(
-      (split) => split !== null
-    ).length;
-    totalCycles = getTotalDuration(activeMesocycleTemplate.RIRProgression);
-    totalWorkouts = totalCycles * totalNonRestDays;
-  }
+  const totalMesocycleTemplates = data.streamed.mesocycleTemplatesStreamArray.length,
+    { activeMesocycle, activeMesocycleTemplate } = data;
 </script>
 
 <h2>Mesocycles</h2>

@@ -2,8 +2,8 @@ import { error } from "@sveltejs/kit";
 import clientPromise from "$lib/mongo/mongodb";
 import type {
   MesocycleDocument,
-  WorkoutDocument,
-  MesocycleTemplateDocument
+  MesocycleTemplateDocument,
+  WorkoutDocument
 } from "$lib/types/documents";
 import { ObjectId, type WithId } from "mongodb";
 import type { LayoutServerLoad } from "./$types";
@@ -20,21 +20,21 @@ export const load: LayoutServerLoad = async ({ locals, params, depends }) => {
     throw error(400, "Workout ID should be 24 character hex string");
   }
 
-  const client = await clientPromise;
-  const workoutDocument = await client
-    .db()
-    .collection<Omit<WorkoutDocument, "userId">>("workouts")
-    .findOne(
-      { userId: new ObjectId(session.user.id), _id: new ObjectId(params.workoutId) },
-      { projection: { userId: 0 } }
-    );
+  const client = await clientPromise,
+    workoutDocument = await client
+      .db()
+      .collection<Omit<WorkoutDocument, "userId">>("workouts")
+      .findOne(
+        { userId: new ObjectId(session.user.id), _id: new ObjectId(params.workoutId) },
+        { projection: { userId: 0 } }
+      );
 
   if (!workoutDocument) {
     throw error(404, "Workout not found");
   }
 
-  let referenceWorkout: WithSerializedId<Workout> | null = null;
-  let referenceWorkoutDocument: WithId<WorkoutDocument> | null = null;
+  let referenceWorkout: WithSerializedId<Workout> | null = null,
+    referenceWorkoutDocument: WithId<WorkoutDocument> | null = null;
   if (workoutDocument.referenceWorkout) {
     referenceWorkoutDocument = await client
       .db()
@@ -54,17 +54,17 @@ export const load: LayoutServerLoad = async ({ locals, params, depends }) => {
     };
   }
 
-  let mesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
-  let mesocycle: WithSerializedId<Mesocycle> | null = null;
+  let mesocycle: WithSerializedId<Mesocycle> | null = null,
+    mesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
 
-  const { _id: workoutId, performedMesocycleId, ...workout } = workoutDocument;
-  const performedMesocycleDocument = await client
-    .db()
-    .collection<Omit<MesocycleDocument, "userId">>("mesocycles")
-    .findOne(
-      { userId: new ObjectId(session.user.id), _id: performedMesocycleId },
-      { projection: { userId: 0 } }
-    );
+  const { _id: workoutId, performedMesocycleId, ...workout } = workoutDocument,
+    performedMesocycleDocument = await client
+      .db()
+      .collection<Omit<MesocycleDocument, "userId">>("mesocycles")
+      .findOne(
+        { userId: new ObjectId(session.user.id), _id: performedMesocycleId },
+        { projection: { userId: 0 } }
+      );
   if (!performedMesocycleDocument) {
     return { workout, mesocycleTemplate, mesocycle, referenceWorkout };
   }
@@ -81,14 +81,14 @@ export const load: LayoutServerLoad = async ({ locals, params, depends }) => {
     .db()
     .collection<Omit<MesocycleTemplateDocument, "userId">>("mesocycleTemplates")
     .findOne(
-      { userId: new ObjectId(session.user.id), _id: performedMesocycleDocument?.templateMesoId },
+      { userId: new ObjectId(session.user.id), _id: performedMesocycleDocument.templateMesoId },
       { projection: { userId: 0 } }
     );
   if (!mesocycleTemplateDocument) {
     return { workout, mesocycleTemplate, referenceWorkout };
   }
 
-  let { _id: mesocycleTemplateId, ...otherMesocycleTemplateProps } = mesocycleTemplateDocument;
+  const { _id: mesocycleTemplateId, ...otherMesocycleTemplateProps } = mesocycleTemplateDocument;
   mesocycleTemplate = {
     id: mesocycleTemplateId.toString(),
     ...otherMesocycleTemplateProps

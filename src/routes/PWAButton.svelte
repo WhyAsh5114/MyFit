@@ -5,11 +5,11 @@
   import type { Writable } from "svelte/store";
   import ReloadIcon from "virtual:icons/tabler/reload";
 
-  let showInstallButton = false;
-  let deferredPrompt: Event | null;
-  let needRefresh: Writable<boolean>;
-  let offlineReady: Writable<boolean>;
-  let updateServiceWorker: (arg0: boolean) => void;
+  let deferredPrompt: Event | null,
+    needRefresh: Writable<boolean>,
+    offlineReady: Writable<boolean>,
+    showInstallButton = false,
+    updateServiceWorker: (_arg0: boolean) => void;
   onMount(() => {
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
@@ -25,8 +25,13 @@
       onRegisteredSW(swUrl, r) {
         r &&
           setInterval(async () => {
-            if (!(!r.installing && navigator)) return;
-            if ("connection" in navigator && !navigator.onLine) return;
+            // eslint-disable-next-line svelte/@typescript-eslint/no-unnecessary-condition
+            if (!(!r.installing && navigator)) {
+              return;
+            }
+            if ("connection" in navigator && !navigator.onLine) {
+              return;
+            }
             const resp = await fetch(swUrl, {
               cache: "no-store",
               headers: {
@@ -34,8 +39,10 @@
                 "cache-control": "no-cache"
               }
             });
-            if (resp.status === 200) await r.update();
-          }, 600000 /* every 10 minutes */);
+            if (resp.status === 200) {
+              await r.update();
+            }
+          }, 600000 /* Every 10 minutes */);
         console.log(`SW Registered: ${r}`);
       },
       onRegisterError(error) {

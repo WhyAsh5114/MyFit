@@ -11,8 +11,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     });
   }
 
-  const { mesocycleTemplateId }: APIMesocyclesDeleteTemplate = await request.json();
-  const client = await clientPromise;
+  const { mesocycleTemplateId }: APIMesocyclesDeleteTemplate = await request.json(),
+    client = await clientPromise;
 
   // Don't delete template if active mesocycle
   try {

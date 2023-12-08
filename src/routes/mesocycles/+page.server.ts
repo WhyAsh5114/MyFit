@@ -11,23 +11,21 @@ export const load: PageServerLoad = async ({ locals, parent, depends }) => {
     throw error(403, "Not logged in");
   }
 
-  const { activeMesocycle, activeMesocycleTemplate } = await parent();
-
-  const client = await clientPromise;
-  const mesocycleTemplateDocuments = client
-    .db()
-    .collection<Omit<MesocycleTemplateDocument, "userId">>("mesocycleTemplates")
-    .find({ userId: new ObjectId(session.user.id) }, { projection: { userId: 0 } })
-    .map((mesocycleTemplateDocument) => {
-      const { _id, ...otherProps } = mesocycleTemplateDocument;
-      const mesocycleTemplate: WithSerializedId<MesocycleTemplate> = {
-        id: mesocycleTemplateDocument._id.toString(),
-        ...otherProps
-      };
-      return mesocycleTemplate;
-    });
-
-  const mesocycleTemplatesStreamArray = [];
+  const { activeMesocycle, activeMesocycleTemplate } = await parent(),
+    client = await clientPromise,
+    mesocycleTemplateDocuments = client
+      .db()
+      .collection<Omit<MesocycleTemplateDocument, "userId">>("mesocycleTemplates")
+      .find({ userId: new ObjectId(session.user.id) }, { projection: { userId: 0 } })
+      .map((mesocycleTemplateDocument) => {
+        const { _id, ...otherProps } = mesocycleTemplateDocument,
+          mesocycleTemplate: WithSerializedId<MesocycleTemplate> = {
+            id: mesocycleTemplateDocument._id.toString(),
+            ...otherProps
+          };
+        return mesocycleTemplate;
+      }),
+    mesocycleTemplatesStreamArray = [];
   while (await mesocycleTemplateDocuments.hasNext()) {
     mesocycleTemplatesStreamArray.push(mesocycleTemplateDocuments.next());
   }
