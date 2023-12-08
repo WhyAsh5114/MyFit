@@ -135,7 +135,7 @@
             max={getTotalDuration(data.mesocycleTemplate.RIRProgression)}
             value={cycles}
           />
-          <span class="text-sm text-white basis-12 shrink-0">{cycles} cycles</span>
+          <span class="text-sm text-white text-right basis-14 shrink-0">{cycles} cycles</span>
         </div>
       {/each}
     </div>
