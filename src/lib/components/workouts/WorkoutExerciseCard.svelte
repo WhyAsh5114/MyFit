@@ -178,7 +178,9 @@
 					{#if increasePercentage !== null}
 						<ul class="dropdown-content z-[1] shadow bg-neutral rounded-md w-48 px-2 py-1">
 							<li class="text-center">
-								<span class="{colorMap[compareVolume() + 1]} font-semibold text-sm text-center w-full">
+								<span
+									class="{colorMap[compareVolume() + 1]} font-semibold text-sm text-center w-full"
+								>
 									Volume change: {(increasePercentage * 100 - 100).toFixed(2)}%
 								</span>
 							</li>
