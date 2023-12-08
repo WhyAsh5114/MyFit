@@ -51,6 +51,7 @@
     await goto("/workouts");
     redirecting = false;
   }
+$: ({ params } = $page);
 </script>
 
 <MyModal title="Delete workout" bind:dialogElement={deleteModal}>
@@ -196,5 +197,5 @@
       Delete
     {/if}
   </button>
-  <a class="join-item btn btn-primary" href="/workouts/{data.workout.id}/edit">Edit</a>
+  <a class="join-item btn btn-primary" href="/workouts/{params.workoutId}/edit">Edit</a>
 </div>
