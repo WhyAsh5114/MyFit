@@ -1,12 +1,8 @@
 import { redirect } from "@sveltejs/kit";
-import clientPromise from "$lib/mongo/mongodb";
-import type { MesocycleDocument, MesocycleTemplateDocument } from "$lib/types/documents";
-import { ObjectId } from "mongodb";
 
 const unprotectedRoutes = ["/", "/login"];
 
-export const load = async ({ locals, url, depends }) => {
-  depends("mesocycle:active");
+export const load = async ({ locals, url, fetch }) => {
   const session = await locals.getSession();
 
   if (!session && !unprotectedRoutes.includes(url.pathname)) {
@@ -19,47 +15,17 @@ export const load = async ({ locals, url, depends }) => {
     return { session, activeMesocycle, activeMesocycleTemplate };
   }
 
-  const client = await clientPromise,
-    activeMesocycleDocument = await client
-      .db()
-      .collection<Omit<MesocycleDocument, "userId">>("mesocycles")
-      .findOne(
-        { userId: new ObjectId(session.user.id), endTimestamp: { $exists: false } },
-        { projection: { userId: 0 } }
-      );
-  if (!activeMesocycleDocument) {
-    return {
-      session,
-      activeMesocycle,
-      activeMesocycleTemplate
-    };
+  const getActiveMesocycleResponse = await fetch("/api/mesocycles/getActiveMesocycle");
+  if (getActiveMesocycleResponse.ok) {
+    activeMesocycle = await getActiveMesocycleResponse.json();
   }
 
-  const {
-    _id: activeMesocycleId,
-    templateMesoId,
-    workouts,
-    startTimestamp
-  } = activeMesocycleDocument;
-  activeMesocycle = {
-    id: activeMesocycleId.toString(),
-    templateMesoId: templateMesoId.toString(),
-    workouts: workouts.map((workout) => workout?.toString() ?? null),
-    startTimestamp
-  };
-
-  const activeMesocycleTemplateDocument = (await client
-      .db()
-      .collection<Omit<MesocycleTemplateDocument, "userId">>("mesocycleTemplates")
-      .findOne(
-        { _id: new ObjectId(activeMesocycle.templateMesoId) },
-        { projection: { userId: 0 } }
-      ))!,
-    { _id: activeMesocycleTemplateId, ...otherProps } = activeMesocycleTemplateDocument;
-  activeMesocycleTemplate = {
-    id: activeMesocycleTemplateDocument._id.toString(),
-    ...otherProps
-  };
+  const getActiveMesocycleTemplateResponse = await fetch(
+    "/api/mesocycles/getActiveMesocycleTemplate"
+  );
+  if (getActiveMesocycleTemplateResponse.ok) {
+    activeMesocycleTemplate = await getActiveMesocycleTemplateResponse.json();
+  }
 
   return {
     session,
