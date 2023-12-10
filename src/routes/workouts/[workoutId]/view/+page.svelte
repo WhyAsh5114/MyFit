@@ -51,7 +51,7 @@
     await goto("/workouts");
     redirecting = false;
   }
-$: ({ params } = $page);
+  $: ({ params } = $page);
 </script>
 
 <MyModal title="Delete workout" bind:dialogElement={deleteModal}>
