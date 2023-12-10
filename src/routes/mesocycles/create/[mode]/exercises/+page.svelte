@@ -3,6 +3,7 @@
   import MyModal from "$lib/components/MyModal.svelte";
   import SplitExercisesTable from "$lib/components/mesocycles/SplitExercisesTable.svelte";
   import { exerciseSplit } from "../newMesocycleStore";
+  export let data;
 
   interface SplitWorkout {
     name: string;
@@ -47,7 +48,7 @@
       errorModal.show();
       return;
     }
-    await goto("/mesocycles/create/new/extras");
+    await goto(`./extras?mesocycleTemplateId=${data.mesocycleTemplate?.id}`);
   }
 
   let errorModal: HTMLDialogElement;
