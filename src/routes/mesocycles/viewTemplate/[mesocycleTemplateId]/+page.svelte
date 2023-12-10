@@ -5,6 +5,7 @@
   import { caloricStates } from "$lib/types/arrays.js";
   import { dateFormatter } from "$lib/util/CommonFunctions.js";
   import { getTotalDuration } from "$lib/util/MesocycleTemplate.js";
+  import EditIcon from "virtual:icons/material-symbols/edit-outline";
   export let data;
 
   const caloricState = caloricStates.find(
@@ -71,6 +72,7 @@
   }
 
   const RIRColors = ["progress-error", "progress-warning", "progress-accent", "progress-success"];
+  $: ({ params } = $page);
 </script>
 
 <MyModal title="Error" bind:dialogElement={errorModal}>
@@ -110,7 +112,16 @@
 <div class="stats stats-vertical grid-cols-2 overflow-y-auto mb-2">
   <div class="stat col-span-2">
     <div class="stat-title">Mesocycle name</div>
-    <div class="stat-value">{data.mesocycleTemplate.name}</div>
+    <div class="stat-value flex items-center justify-between w-full">
+      {data.mesocycleTemplate.name}
+      <a
+        class="btn btn-sm"
+        href="/mesocycles/create/edit/basics/?mesocycleTemplateId={params.mesocycleTemplateId}"
+      >
+        <EditIcon />
+        Edit
+      </a>
+    </div>
   </div>
 
   <div class="stat">
