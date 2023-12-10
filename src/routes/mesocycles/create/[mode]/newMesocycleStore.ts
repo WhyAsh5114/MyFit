@@ -1,4 +1,5 @@
 /* eslint-disable svelte/no-ignored-unsubscribe */
+import { getTotalDuration } from "$lib/util/MesocycleTemplate";
 import { type Writable, writable } from "svelte/store";
 
 let ls: Storage | undefined;
@@ -68,4 +69,15 @@ export function resetStores() {
   mesocycleCaloricState.set(0);
   mesocycleSpecialization.set(false);
   specializedMuscleGroups.set([]);
+}
+
+export function setStores(mesocycleTemplate: MesocycleTemplate) {
+  mesocycleName.set(mesocycleTemplate.name);
+  mesocycleDuration.set(getTotalDuration(mesocycleTemplate.RIRProgression));
+  mesocycleStartRIR.set(mesocycleTemplate.RIRProgression[0]?.specificRIR ?? 3);
+  mesocycleRIRProgression.set(mesocycleTemplate.RIRProgression);
+  exerciseSplit.set(mesocycleTemplate.exerciseSplit);
+  mesocycleCaloricState.set(mesocycleTemplate.caloricBalance);
+  mesocycleSpecialization.set(mesocycleTemplate.specialization !== undefined);
+  specializedMuscleGroups.set(mesocycleTemplate.specialization ?? []);
 }
