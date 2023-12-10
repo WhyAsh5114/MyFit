@@ -2,6 +2,11 @@ interface APIMesocyclesCreateTemplate {
   mesocycleTemplate: MesocycleTemplate;
 }
 
+interface APIMesocyclesEditTemplate {
+  mesocycleTemplate: MesocycleTemplate;
+  mesocycleTemplateId: string;
+}
+
 interface APIMesocyclesDeleteTemplate {
   mesocycleTemplateId: string;
 }
