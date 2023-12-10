@@ -8,9 +8,10 @@
     name: string;
     exercises: SplitExercise[];
   }
-  let copiedExercises: SplitExercise[] = [],
-    selectedWorkoutIndex = $exerciseSplit.findIndex((split) => split !== null),
-    selectedWorkout: SplitWorkout;
+  let copiedExercises: SplitExercise[] = [];
+
+  let selectedWorkoutIndex = $exerciseSplit.findIndex((split) => split !== null);
+  let selectedWorkout: SplitWorkout;
   $: selectedWorkout = $exerciseSplit[selectedWorkoutIndex] as SplitWorkout;
 
   function copyExercises() {
@@ -85,7 +86,7 @@
   </div>
 </div>
 {#key selectedWorkout.name}
-  <SplitExercisesTable exercises={selectedWorkout.exercises} />
+  <SplitExercisesTable bind:exercises={selectedWorkout.exercises} />
 {/key}
 <div class="join grid grid-cols-3 gap-1 my-2">
   <button
