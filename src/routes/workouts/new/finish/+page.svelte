@@ -35,7 +35,7 @@
         previousSoreness: $sorenessData
       };
     callingEndpoint = true;
-    const response = await fetch("/api/workouts/saveWorkout", {
+    const response = await fetch("/api/workouts/createWorkout", {
       method: "POST",
       body: JSON.stringify(requestBody),
       headers: {
