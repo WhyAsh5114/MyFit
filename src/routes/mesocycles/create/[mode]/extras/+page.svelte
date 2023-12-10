@@ -55,7 +55,8 @@
   let callingEndpoint = false,
     errorMessage = "",
     errorModal: HTMLDialogElement,
-    successModal: HTMLDialogElement;
+    successModal: HTMLDialogElement,
+    successText = "";
   async function submitForm() {
     if ($mesocycleSpecialization && $specializedMuscleGroups.length === 0) {
       errorMessage = "When specializing, add at least one muscle group to specialize";
@@ -105,6 +106,7 @@
       errorModal.show();
       return;
     }
+    successText = await response.text();
     successModal.show();
     resetStores();
   }
@@ -130,7 +132,7 @@
   title="Success"
   bind:dialogElement={successModal}
 >
-  Mesocycle created successfully
+  {successText}
 </MyModal>
 
 <div class="flex flex-col w-full max-w-sm m-auto gap-10">
