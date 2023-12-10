@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { commonMesocycles } from "$lib/commonMesocycles";
-  import { exerciseSplit, mesocycleName } from "../new/newMesocycleStore";
+  import { exerciseSplit, mesocycleName } from "../[mode]/newMesocycleStore";
 
   async function setMesocycle(name: string, split: MesocycleTemplate["exerciseSplit"]) {
     $exerciseSplit = split;
