@@ -116,7 +116,7 @@
       {data.mesocycleTemplate.name}
       <a
         class="btn btn-sm"
-        href="/mesocycles/createTemplate/edit/basics/?mesocycleTemplateId={params.mesocycleTemplateId}"
+        href="/mesocycles/editTemplate/basics/?mesocycleTemplateId={params.mesocycleTemplateId}"
       >
         <EditIcon />
         Edit

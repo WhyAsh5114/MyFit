@@ -27,7 +27,7 @@
 <form class="flex flex-col grow" on:submit|preventDefault={validateSplit}>
   <SplitInputTable />
   <div class="join grid grid-cols-2">
-    <a class="btn join-item btn-primary" href="/mesocycles/createTemplate/new/basics">Previous</a>
+    <a class="btn join-item btn-primary" href="/mesocycles/newTemplate/basics">Previous</a>
     <button class="btn join-item btn-accent">Next</button>
   </div>
 </form>

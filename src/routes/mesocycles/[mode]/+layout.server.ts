@@ -12,9 +12,9 @@ export const load: LayoutServerLoad = async ({ params, locals, url }) => {
 
   let mesocycleTemplate: WithSerializedId<MesocycleTemplate> | undefined = undefined;
 
-  if (params.mode === "new") {
+  if (params.mode === "newTemplate") {
     return { mesocycleTemplate };
-  } else if (params.mode !== "edit") {
+  } else if (params.mode !== "editTemplate") {
     throw error(400, "Invalid mode");
   }
 

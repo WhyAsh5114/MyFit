@@ -227,9 +227,9 @@
   {:else if redirecting}
     Redirecting
     <span class="loading loading-bars" />
-  {:else if params.mode === "new"}
+  {:else if !data.mesocycleTemplate}
     Create mesocycle
-  {:else if params.mode === "edit"}
+  {:else if data.mesocycleTemplate}
     Edit mesocycle
   {/if}
 </button>
