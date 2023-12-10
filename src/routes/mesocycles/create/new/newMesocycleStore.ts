@@ -57,3 +57,15 @@ mesocycleSpecialization.subscribe(
 specializedMuscleGroups.subscribe(
   (val) => ls?.setItem("specializedMuscleGroups", JSON.stringify(val))
 );
+
+export function resetStores() {
+  customizeRIRProgression.set(false);
+  mesocycleName.set("");
+  mesocycleDuration.set(6);
+  mesocycleStartRIR.set(3);
+  mesocycleRIRProgression.set([]);
+  exerciseSplit.set(Array.from({ length: 7 }, () => ({ name: "", exercises: [] })));
+  mesocycleCaloricState.set(0);
+  mesocycleSpecialization.set(false);
+  specializedMuscleGroups.set([]);
+}

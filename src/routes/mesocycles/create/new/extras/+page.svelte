@@ -9,6 +9,7 @@
     mesocycleRIRProgression,
     mesocycleSpecialization,
     mesocycleStartRIR,
+    resetStores,
     specializedMuscleGroups
   } from "../newMesocycleStore";
   import DeleteIcon from "virtual:icons/ph/x-bold";
@@ -80,6 +81,7 @@
     });
     callingEndpoint = false;
     if (!response.ok) {
+      resetStores();
       errorMessage = await response.text();
       errorModal.show();
       return;

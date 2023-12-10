@@ -1,7 +1,17 @@
+<script>
+  import { resetStores } from "./new/newMesocycleStore";
+</script>
+
 <h2>Create new mesocycle</h2>
 
 <div class="flex flex-col gap-2">
-  <a class="btn btn-primary w-full h-fit py-3" href="/mesocycles/create/new/basics">
+  <a
+    class="btn btn-primary w-full h-fit py-3"
+    href="/mesocycles/create/new/basics"
+    on:click={() => {
+      resetStores();
+    }}
+  >
     <div class="flex flex-col w-full font-normal text-left gap-1">
       <h3 class="text-xl font-semibold">Start from scratch</h3>
       <p>Create a brand new mesocycle without a template</p>
