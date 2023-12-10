@@ -78,7 +78,7 @@
         mesocycleTemplate: createdMesocycle
       };
       callingEndpoint = true;
-      response = await fetch("/api/mesocycles/createTemplate", {
+      response = await fetch("/api/mesocycles/createTemplateTemplate", {
         method: "POST",
         body: JSON.stringify(requestBody),
         headers: {

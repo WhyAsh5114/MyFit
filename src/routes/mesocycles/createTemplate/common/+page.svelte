@@ -6,7 +6,7 @@
   async function setMesocycle(name: string, split: MesocycleTemplate["exerciseSplit"]) {
     $exerciseSplit = split;
     $mesocycleName = name;
-    await goto("/mesocycles/create/new/basics");
+    await goto("/mesocycles/createTemplate/new/basics");
   }
 </script>
 

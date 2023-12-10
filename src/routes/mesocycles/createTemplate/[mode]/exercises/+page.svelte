@@ -120,6 +120,6 @@
   </button>
 </div>
 <div class="join grid grid-cols-2">
-  <a class="btn btn-primary join-item" href="/mesocycles/create/new/split">Previous</a>
+  <a class="btn btn-primary join-item" href="/mesocycles/createTemplate/new/split">Previous</a>
   <button class="btn btn-accent join-item" on:click={validateExercises}>Next</button>
 </div>
