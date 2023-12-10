@@ -49,10 +49,7 @@ mesocycleStartRIR.subscribe((val) => ls?.setItem("mesocycleStartRIR", JSON.strin
 mesocycleRIRProgression.subscribe(
   (val) => ls?.setItem("mesocycleRIRProgression", JSON.stringify(val))
 );
-exerciseSplit.subscribe((val) => {
-  console.log(val);
-  ls?.setItem("exerciseSplit", JSON.stringify(val));
-});
+exerciseSplit.subscribe((val) => ls?.setItem("exerciseSplit", JSON.stringify(val)));
 mesocycleCaloricState.subscribe((val) => ls?.setItem("mesocycleCaloricState", JSON.stringify(val)));
 mesocycleSpecialization.subscribe(
   (val) => ls?.setItem("mesocycleSpecialization", JSON.stringify(val))

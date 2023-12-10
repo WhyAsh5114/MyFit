@@ -12,7 +12,14 @@
 
   let selectedWorkoutIndex = $exerciseSplit.findIndex((split) => split !== null);
   let selectedWorkout: SplitWorkout;
-  $: selectedWorkout = $exerciseSplit[selectedWorkoutIndex] as SplitWorkout;
+  $: updateSelectedWorkout(selectedWorkoutIndex);
+  $: $exerciseSplit[selectedWorkoutIndex] = selectedWorkout;
+
+  function updateSelectedWorkout(selectedWorkoutIndex: number) {
+    if ($exerciseSplit[selectedWorkoutIndex] !== null) {
+      selectedWorkout = $exerciseSplit[selectedWorkoutIndex] as SplitWorkout;
+    }
+  }
 
   function copyExercises() {
     copiedExercises = JSON.parse(JSON.stringify(selectedWorkout.exercises)) as SplitExercise[];
