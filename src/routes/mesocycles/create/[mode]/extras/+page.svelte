@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto, invalidate } from "$app/navigation";
+  import { page } from "$app/stores";
   import MyModal from "$lib/components/MyModal.svelte";
   import { caloricStates, muscleGroups } from "$lib/types/arrays";
   import {
@@ -13,6 +14,7 @@
     specializedMuscleGroups
   } from "../newMesocycleStore";
   import DeleteIcon from "virtual:icons/ph/x-bold";
+  export let data;
 
   let remainingMuscleGroups = muscleGroups.slice();
   remainingMuscleGroups = remainingMuscleGroups.filter(
@@ -61,32 +63,50 @@
       return false;
     }
     const createdMesocycle: MesocycleTemplate = {
-        name: $mesocycleName,
-        startRIR: $mesocycleStartRIR,
-        RIRProgression: $mesocycleRIRProgression,
-        exerciseSplit: $exerciseSplit,
-        caloricBalance: $mesocycleCaloricState,
-        specialization: $mesocycleSpecialization ? $specializedMuscleGroups : undefined
-      },
-      requestBody: APIMesocyclesCreateTemplate = {
+      name: $mesocycleName,
+      startRIR: $mesocycleStartRIR,
+      RIRProgression: $mesocycleRIRProgression,
+      exerciseSplit: $exerciseSplit,
+      caloricBalance: $mesocycleCaloricState,
+      specialization: $mesocycleSpecialization ? $specializedMuscleGroups : undefined
+    };
+
+    let response: Response;
+    if (!data.mesocycleTemplate) {
+      const requestBody: APIMesocyclesCreateTemplate = {
         mesocycleTemplate: createdMesocycle
       };
-    callingEndpoint = true;
-    const response = await fetch("/api/mesocycles/createTemplate", {
-      method: "POST",
-      body: JSON.stringify(requestBody),
-      headers: {
-        "content-type": "application/json"
-      }
-    });
-    callingEndpoint = false;
+      callingEndpoint = true;
+      response = await fetch("/api/mesocycles/createTemplate", {
+        method: "POST",
+        body: JSON.stringify(requestBody),
+        headers: {
+          "content-type": "application/json"
+        }
+      });
+      callingEndpoint = false;
+    } else {
+      const requestBody: APIMesocyclesEditTemplate = {
+        mesocycleTemplate: createdMesocycle,
+        mesocycleTemplateId: data.mesocycleTemplate.id
+      };
+      callingEndpoint = true;
+      response = await fetch("/api/mesocycles/editTemplate", {
+        method: "POST",
+        body: JSON.stringify(requestBody),
+        headers: {
+          "content-type": "application/json"
+        }
+      });
+      callingEndpoint = false;
+    }
     if (!response.ok) {
-      resetStores();
       errorMessage = await response.text();
       errorModal.show();
       return;
     }
     successModal.show();
+    resetStores();
   }
 
   let redirecting = false;
@@ -98,6 +118,7 @@
   }
 
   $: totalSpecializedMuscleGroups = $specializedMuscleGroups.length;
+  $: ({ params } = $page);
 </script>
 
 <MyModal title="Error" bind:dialogElement={errorModal}>
@@ -204,7 +225,9 @@
   {:else if redirecting}
     Redirecting
     <span class="loading loading-bars" />
-  {:else}
+  {:else if params.mode === "new"}
     Create mesocycle
+  {:else if params.mode === "edit"}
+    Edit mesocycle
   {/if}
 </button>
