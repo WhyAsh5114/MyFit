@@ -86,7 +86,6 @@ export function applyProgressiveOverload(
       );
       minimumVolumeSet.reps++;
       newTotalVolume = getTotalVolume(exercise.bodyweight, exercise.sets);
-      console.log(exercise.name, minimumVolumeSet);
 
       // TODO: implement load change, choose optimal approach
     }
@@ -115,7 +114,6 @@ export function applyProgressiveOverload(
       );
       minimumVolumeSet.reps++;
       newTotalVolume = getTotalVolume(exercise.bodyweight, exercise.sets);
-      console.log(exercise.name, minimumVolumeSet);
 
       // TODO: implement load change, choose optimal approach
     }
