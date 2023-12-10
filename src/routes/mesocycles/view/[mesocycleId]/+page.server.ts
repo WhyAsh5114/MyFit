@@ -1,5 +1,4 @@
 import { error } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
 import clientPromise from "$lib/mongo/mongodb";
 import { ObjectId } from "mongodb";
 import type {
@@ -8,7 +7,7 @@ import type {
   WorkoutDocument
 } from "$lib/types/documents";
 
-export const load: PageServerLoad = async ({ locals, params }) => {
+export const load = async ({ locals, params }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
     throw error(403, "Not logged in");

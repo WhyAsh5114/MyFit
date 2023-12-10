@@ -2,10 +2,9 @@ import clientPromise from "$lib/mongo/mongodb";
 import type { UserPreferencesDocument, WorkoutDocument } from "$lib/types/documents";
 import { getDayNumber, getTodaysSplitWorkout } from "$lib/util/MesocycleTemplate";
 import { ObjectId, type WithId } from "mongodb";
-import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
-export const load: LayoutServerLoad = async ({ locals, parent, fetch, depends }) => {
+export const load = async ({ locals, parent, fetch, depends }) => {
   depends("user:preferences");
 
   const session = await locals.getSession();

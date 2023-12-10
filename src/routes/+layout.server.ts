@@ -1,12 +1,11 @@
 import { redirect } from "@sveltejs/kit";
-import type { LayoutServerLoad } from "./$types";
 import clientPromise from "$lib/mongo/mongodb";
 import type { MesocycleDocument, MesocycleTemplateDocument } from "$lib/types/documents";
-import { ObjectId, type WithId } from "mongodb";
+import { ObjectId } from "mongodb";
 
 const unprotectedRoutes = ["/", "/login"];
 
-export const load: LayoutServerLoad = async ({ locals, url, depends }) => {
+export const load = async ({ locals, url, depends }) => {
   depends("mesocycle:active");
   const session = await locals.getSession();
 

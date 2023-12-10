@@ -23,6 +23,7 @@
     "daisyui": "^4.0.0",
     "eslint": "^8.55.0",
     "eslint-plugin-svelte": "^2.35.1",
+    "eslint-plugin-unused-imports": "^3.0.0",
     "kolorist": "^1.8.0",
     "postcss": "^8.4.24",
     "postcss-load-config": "^5.0.1",

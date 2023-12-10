@@ -1,6 +1,6 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import clientPromise from "$lib/mongo/mongodb";
-import { ObjectId, type WithId } from "mongodb";
+import { ObjectId } from "mongodb";
 import type {
   MesocycleDocument,
   MesocycleTemplateDocument,

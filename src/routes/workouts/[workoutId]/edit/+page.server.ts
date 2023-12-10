@@ -1,8 +1,7 @@
 import { error } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
 import { getMuscleGroups } from "$lib/util/MesocycleTemplate";
 
-export const load: PageServerLoad = async ({ locals, parent, fetch }) => {
+export const load = async ({ locals, parent, fetch }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
     throw error(403, "Not logged in");

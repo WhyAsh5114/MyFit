@@ -6,9 +6,8 @@ import type {
   WorkoutDocument
 } from "$lib/types/documents";
 import { ObjectId, type WithId } from "mongodb";
-import type { LayoutServerLoad } from "./$types";
 
-export const load: LayoutServerLoad = async ({ locals, params, depends }) => {
+export const load = async ({ locals, params, depends }) => {
   depends("workout:this");
 
   const session = await locals.getSession();

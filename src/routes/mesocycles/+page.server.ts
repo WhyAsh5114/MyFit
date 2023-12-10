@@ -1,10 +1,9 @@
-import type { PageServerLoad } from "./$types";
 import clientPromise from "$lib/mongo/mongodb";
 import { error } from "@sveltejs/kit";
 import { ObjectId } from "mongodb";
 import type { MesocycleTemplateDocument } from "$lib/types/documents";
 
-export const load: PageServerLoad = async ({ locals, parent, depends }) => {
+export const load = async ({ locals, parent, depends }) => {
   depends("mesocycle:templates");
   const session = await locals.getSession();
   if (!session?.user?.id) {
