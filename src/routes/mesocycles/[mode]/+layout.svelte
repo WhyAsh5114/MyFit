@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { setStores } from "./newMesocycleStore.js";
+  import { setStores } from "./mesocycleStore.js";
   export let data;
   const steps = ["basics", "split", "exercises", "extras"];
   $: currentPageIndex = steps.findIndex((step) => $page.url.pathname.endsWith(step));

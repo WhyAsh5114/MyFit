@@ -1,6 +1,6 @@
 <script lang="ts">
   import SplitInput from "./SplitInput.svelte";
-  import { exerciseSplit } from "../newMesocycleStore";
+  import { exerciseSplit } from "../mesocycleStore";
 
   function addDay() {
     $exerciseSplit.push({ name: "", exercises: [] });

@@ -1,5 +1,5 @@
 <script>
-  import { resetStores } from "../[mode]/newMesocycleStore";
+  import { resetStores } from "../[mode]/mesocycleStore";
 </script>
 
 <h2>Create new mesocycle</h2>

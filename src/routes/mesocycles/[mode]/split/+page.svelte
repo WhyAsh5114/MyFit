@@ -1,6 +1,6 @@
 <script lang="ts">
   import SplitInputTable from "./SplitInputTable.svelte";
-  import { exerciseSplit } from "../newMesocycleStore";
+  import { exerciseSplit } from "../mesocycleStore";
   import { goto } from "$app/navigation";
   import MyModal from "$lib/components/MyModal.svelte";
   export let data;

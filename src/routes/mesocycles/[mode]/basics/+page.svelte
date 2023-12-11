@@ -7,7 +7,7 @@
     mesocycleName,
     mesocycleRIRProgression,
     mesocycleStartRIR
-  } from "../newMesocycleStore";
+  } from "../mesocycleStore";
   import { goto } from "$app/navigation";
   import { getTotalDuration } from "$lib/util/MesocycleTemplate";
   export let data;

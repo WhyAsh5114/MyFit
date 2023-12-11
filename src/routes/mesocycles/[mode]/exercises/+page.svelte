@@ -2,7 +2,7 @@
   import { goto } from "$app/navigation";
   import MyModal from "$lib/components/MyModal.svelte";
   import SplitExercisesTable from "$lib/components/mesocycles/SplitExercisesTable.svelte";
-  import { exerciseSplit } from "../newMesocycleStore";
+  import { exerciseSplit } from "../mesocycleStore";
   export let data;
 
   interface SplitWorkout {

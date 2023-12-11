@@ -12,7 +12,7 @@
     mesocycleStartRIR,
     resetStores,
     specializedMuscleGroups
-  } from "../newMesocycleStore";
+  } from "../mesocycleStore";
   import DeleteIcon from "virtual:icons/ph/x-bold";
   export let data;
 
