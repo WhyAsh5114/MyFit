@@ -47,10 +47,10 @@
     modal.show();
   }
 
-  let modal: HTMLDialogElement,
-    modalText = "",
-    modalTitle = "",
-    redirecting = false;
+  let modal: HTMLDialogElement;
+  let modalText = "";
+  let modalTitle = "";
+  let redirecting = false;
   async function closeModal() {
     redirecting = true;
     $workoutBeingPerformed = null;

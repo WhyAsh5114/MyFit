@@ -8,8 +8,8 @@ export const load = async ({ locals, url, fetch }) => {
     throw redirect(303, `/login?callbackURL=${url.pathname}`);
   }
 
-  let activeMesocycle: WithSerializedId<ActiveMesocycle> | null = null,
-    activeMesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
+  let activeMesocycle: WithSerializedId<ActiveMesocycle> | null = null;
+  let activeMesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
   if (!session?.user?.id) {
     return { session, activeMesocycle, activeMesocycleTemplate };
   }

@@ -11,8 +11,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     });
   }
 
-  const { workoutId, performedMesocycleId }: APIWorkoutsDeleteWorkout = await request.json(),
-    client = await clientPromise;
+  const { workoutId, performedMesocycleId }: APIWorkoutsDeleteWorkout = await request.json();
+  const client = await clientPromise;
   try {
     const performedMesocycle = await client
       .db()

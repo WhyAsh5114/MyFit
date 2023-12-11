@@ -5,10 +5,10 @@
   export let exercises: SplitExercise[];
   export let editingIdx: number | undefined;
 
-  let editMode = false,
-    modeText: "Add" | "Edit" = "Add",
-    selectedExercise: Partial<SplitExercise>,
-    editingExercise: Partial<SplitExercise> = {};
+  let editMode = false;
+  let modeText: "Add" | "Edit" = "Add";
+  let selectedExercise: Partial<SplitExercise>;
+  let editingExercise: Partial<SplitExercise> = {};
   $: exercises, updateEditingExercise(editingIdx);
   function updateEditingExercise(idx: number | undefined) {
     if (idx !== undefined && exercises[idx]) {
@@ -19,8 +19,8 @@
     }
   }
 
-  let newExercise: Partial<SplitExercise> = { weightType: "Weighted" },
-    alreadyExists = false;
+  let newExercise: Partial<SplitExercise> = { weightType: "Weighted" };
+  let alreadyExists = false;
   function addExercise() {
     const duplicate = exercises.find((exercise) => exercise.name === newExercise.name);
     alreadyExists = Boolean(duplicate);

@@ -6,10 +6,11 @@ if (!MONGODB_URI) {
   throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
 }
 
-const uri = MONGODB_URI,
-  options = {};
+const uri = MONGODB_URI;
+const options = {};
 
-let client, clientPromise: Promise<MongoClient>;
+let client;
+let clientPromise: Promise<MongoClient>;
 
 if (process.env.NODE_ENV === "development") {
   /*

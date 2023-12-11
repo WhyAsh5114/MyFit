@@ -21,8 +21,8 @@
     (muscleGroup) => !$specializedMuscleGroups.includes(muscleGroup)
   );
 
-  let selectedMuscleGroup: MuscleGroup | undefined,
-    showSpecializedMuscleGroups = $specializedMuscleGroups.length !== 0;
+  let selectedMuscleGroup: MuscleGroup | undefined;
+  let showSpecializedMuscleGroups = $specializedMuscleGroups.length !== 0;
 
   function specializeMuscleGroup() {
     if (!selectedMuscleGroup) {
@@ -52,11 +52,11 @@
     }
   }
 
-  let callingEndpoint = false,
-    errorMessage = "",
-    errorModal: HTMLDialogElement,
-    successModal: HTMLDialogElement,
-    successText = "";
+  let callingEndpoint = false;
+  let errorMessage = "";
+  let errorModal: HTMLDialogElement;
+  let successModal: HTMLDialogElement;
+  let successText = "";
   async function submitForm() {
     if ($mesocycleSpecialization && $specializedMuscleGroups.length === 0) {
       errorMessage = "When specializing, add at least one muscle group to specialize";

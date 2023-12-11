@@ -11,8 +11,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     });
   }
 
-  const { mesocycleTemplate }: APIMesocyclesCreateTemplate = await request.json(),
-    client = await clientPromise;
+  const { mesocycleTemplate }: APIMesocyclesCreateTemplate = await request.json();
+  const client = await clientPromise;
   try {
     await client
       .db()

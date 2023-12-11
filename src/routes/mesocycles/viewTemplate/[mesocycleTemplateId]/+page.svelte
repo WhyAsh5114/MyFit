@@ -12,11 +12,11 @@
     (state) => state.value === data.mesocycleTemplate.caloricBalance
   );
 
-  let callingEndpoint = false,
-    deleteModal: HTMLDialogElement,
-    deletionSuccessfulModal: HTMLDialogElement,
-    errorModal: HTMLDialogElement,
-    errorMsg = "";
+  let callingEndpoint = false;
+  let deleteModal: HTMLDialogElement;
+  let deletionSuccessfulModal: HTMLDialogElement;
+  let errorModal: HTMLDialogElement;
+  let errorMsg = "";
 
   async function deleteMesocycle() {
     const requestBody: APIMesocyclesDeleteTemplate = {

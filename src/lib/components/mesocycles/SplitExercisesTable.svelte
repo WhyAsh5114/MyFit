@@ -5,7 +5,8 @@
   import AddEditSplitExerciseModal from "./AddEditSplitExerciseModal.svelte";
   export let exercises: SplitExercise[];
 
-  let addEditSplitExerciseModal: HTMLDialogElement, editingExerciseNumber: number | undefined;
+  let addEditSplitExerciseModal: HTMLDialogElement;
+  let editingExerciseNumber: number | undefined;
 
   function addExercise() {
     editingExerciseNumber = undefined;

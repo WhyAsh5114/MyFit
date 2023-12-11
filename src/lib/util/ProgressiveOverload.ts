@@ -1,5 +1,5 @@
-const MINIMUM_LOAD_CHANGE = 5,
-  VOLUME_INCREASE_RATE = 0.025;
+const MINIMUM_LOAD_CHANGE = 5;
+const VOLUME_INCREASE_RATE = 0.025;
 
 export function getSetVolume(
   exerciseBodyweight: number | undefined | null,
@@ -36,10 +36,10 @@ function matchSetVolumeWithNewLoad(
   set: WorkoutExerciseSet,
   newLoad: number
 ) {
-  const oldVolume = getSetVolume(exercise.bodyweight, set),
-    newSet: WorkoutExerciseSet = { reps: set.reps, load: newLoad, RIR: set.RIR };
-  let newVolume = getSetVolume(exercise.bodyweight, newSet),
-    absoluteDifference = Math.abs(newVolume - oldVolume);
+  const oldVolume = getSetVolume(exercise.bodyweight, set);
+  const newSet: WorkoutExerciseSet = { reps: set.reps, load: newLoad, RIR: set.RIR };
+  let newVolume = getSetVolume(exercise.bodyweight, newSet);
+  let absoluteDifference = Math.abs(newVolume - oldVolume);
   for (;;) {
     if (newVolume > oldVolume) {
       newSet.reps--;

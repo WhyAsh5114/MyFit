@@ -38,11 +38,11 @@
 
   let increasePercentage: number | null = null;
   function compareVolume() {
-    let currentVolume = 0,
-      referenceVolume = 0;
+    let currentVolume = 0;
+    let referenceVolume = 0;
     for (let i = 0; i < exercise.sets.length; i++) {
-      const currentSet = exercise.sets[i],
-        referenceSet = referenceExercise?.sets[i];
+      const currentSet = exercise.sets[i];
+      const referenceSet = referenceExercise?.sets[i];
 
       if (referenceSet) {
         let referenceLoad = referenceSet.load;

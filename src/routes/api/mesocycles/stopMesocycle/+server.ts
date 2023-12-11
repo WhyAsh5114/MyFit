@@ -11,8 +11,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     });
   }
 
-  const { activeMesocycleId }: APIMesocyclesStopMesocycle = await request.json(),
-    client = await clientPromise;
+  const { activeMesocycleId }: APIMesocyclesStopMesocycle = await request.json();
+  const client = await clientPromise;
 
   try {
     const activeMesocycle = await client

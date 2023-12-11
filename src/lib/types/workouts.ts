@@ -83,6 +83,7 @@ interface WorkoutBeingPerformed {
   referenceWorkout: string | null;
   dayNumber: number;
   cycleNumber: number;
+  performedMesocycleId: string;
   exercisesPerformed: WorkoutExerciseWithoutSetNumbers[];
   plannedRIR: number;
   deload: boolean;

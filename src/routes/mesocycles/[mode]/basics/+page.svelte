@@ -19,15 +19,15 @@
       failureCycle = true;
       totalDuration -= 1;
     }
-    let quotient = Math.floor(totalDuration / startRIR),
-      remainder = totalDuration % startRIR;
+    let quotient = Math.floor(totalDuration / startRIR);
+    let remainder = totalDuration % startRIR;
     quotient = isNaN(quotient) ? 0 : quotient;
     remainder = isNaN(remainder) ? 0 : remainder;
 
     const result = new Array(startRIR - remainder)
-        .fill(quotient)
-        .concat(new Array(remainder).fill(quotient + 1)),
-      progression: RIRProgressionData[] = [];
+      .fill(quotient)
+      .concat(new Array(remainder).fill(quotient + 1));
+    const progression: RIRProgressionData[] = [];
     for (let i = startRIR; i >= 1; i--) {
       progression.push({ specificRIR: i, cycles: result[startRIR - i] });
     }
