@@ -47,10 +47,10 @@ https://my-fit-whyash5114.vercel.app/
 4. **Start the development server**:
 
    ```sh
-   npm start
+   npm run dev
    ```
 
-   MyFit will be accessible at `http://localhost:3000`.
+   MyFit will be accessible at `http://localhost:4173`.
 
 ## Contributing
 
