@@ -17,7 +17,7 @@
   let sorenessFromPreviousWorkouts = data.previousWorkoutSorenessValues,
     callingEndpoint = false;
   async function updateWorkout() {
-    if (!data.mesocycle?.id) {
+    if (!data.mesocycle?._id) {
       console.error("Performed mesocycle not found, maybe deleted?");
       return;
     }
@@ -25,7 +25,7 @@
       workout: { ...data.workout },
       workoutId: $page.params.workoutId,
       previousSoreness: sorenessFromPreviousWorkouts,
-      performedMesocycleId: data.mesocycle.id
+      performedMesocycleId: data.mesocycle._id
     };
     callingEndpoint = true;
     const response = await fetch("/api/workouts/updateWorkout", {

@@ -13,7 +13,7 @@ export const load = async ({ locals, parent, fetch }) => {
   }
 
   const requestBodySoreness: APIGetPreviousSorenessValues = {
-      mesocycleId: mesocycle.id,
+      mesocycleId: mesocycle._id,
       muscleGroups: Array.from(getMuscleGroups(workout.exercisesPerformed)),
       beforeTimestamp: workout.startTimestamp
     },
@@ -31,7 +31,7 @@ export const load = async ({ locals, parent, fetch }) => {
   const previousWorkoutSorenessValues: Workout["muscleSorenessToNextWorkout"] =
       await responseSoreness.json(),
     requestBody: APIGetWorkoutsThatPreviouslyTargeted = {
-      mesocycleId: mesocycle.id,
+      mesocycleId: mesocycle._id,
       muscleGroups: Array.from(getMuscleGroups(workout.exercisesPerformed)),
       beforeTimestamp: workout.startTimestamp
     },

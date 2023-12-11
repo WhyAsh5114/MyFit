@@ -20,7 +20,7 @@
     }
     const requestBody: APIWorkoutsDeleteWorkout = {
       workoutId: $page.params.workoutId,
-      performedMesocycleId: data.mesocycle?.id
+      performedMesocycleId: data.mesocycle?._id
     };
     callingEndpoint = true;
     const response = await fetch("/api/workouts/deleteWorkout", {
@@ -45,7 +45,7 @@
   async function closeModal() {
     redirecting = true;
     await invalidate("workout:all");
-    if (data.activeMesocycle?.id === data.mesocycle?.id) {
+    if (data.activeMesocycle?._id === data.mesocycle?._id) {
       await invalidate("mesocycle:active");
     }
     await goto("/workouts");
@@ -107,7 +107,7 @@
         <div class="stat-title">Reference workout</div>
         <div class="stat-value">
           {#if data.referenceWorkout}
-            <a class="truncate link" href="/workouts/{data.referenceWorkout.id}/view">
+            <a class="truncate link" href="/workouts/{data.referenceWorkout._id}/view">
               {dateFormatter(data.referenceWorkout.startTimestamp)}
             </a>
           {:else}
@@ -125,14 +125,14 @@
 
       <div class="stat">
         <div class="stat-title">Mesocycle</div>
-        <a class="stat-value link" href="/mesocycles/view/{data.mesocycle?.id}">
+        <a class="stat-value link" href="/mesocycles/view/{data.mesocycle?._id}">
           {dateFormatter(data.mesocycle?.startTimestamp)}
         </a>
       </div>
       <div class="stat">
         <div class="stat-title">Mesocycle template</div>
         <div class="stat-value truncate">
-          <a class="link" href="/mesocycles/viewTemplate/{data.mesocycleTemplate?.id}">
+          <a class="link" href="/mesocycles/viewTemplate/{data.mesocycleTemplate?._id}">
             {data.mesocycleTemplate?.name}
           </a>
         </div>

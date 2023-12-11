@@ -1,97 +1,39 @@
 import { error } from "@sveltejs/kit";
-import clientPromise from "$lib/mongo/mongodb";
-import type {
-  MesocycleDocument,
-  MesocycleTemplateDocument,
-  WorkoutDocument
-} from "$lib/types/documents";
-import { ObjectId, type WithId } from "mongodb";
 
-export const load = async ({ locals, params, depends }) => {
-  depends("workout:this");
-
+export const load = async ({ locals, params, fetch }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
     throw error(403, "Not logged in");
   }
 
-  if (params.workoutId.length !== 24) {
-    throw error(400, "Workout ID should be 24 character hex string");
-  }
-
-  const client = await clientPromise,
-    workoutDocument = await client
-      .db()
-      .collection<Omit<WorkoutDocument, "userId">>("workouts")
-      .findOne(
-        { userId: new ObjectId(session.user.id), _id: new ObjectId(params.workoutId) },
-        { projection: { userId: 0 } }
-      );
-
-  if (!workoutDocument) {
+  let workout: WithSerializedId<Workout> | null = null;
+  const getWorkoutResponse = await fetch("/api/workouts/getWorkout?workoutId=" + params.workoutId);
+  if (getWorkoutResponse.ok) {
+    workout = (await getWorkoutResponse.json()) as WithSerializedId<Workout>;
+  } else {
     throw error(404, "Workout not found");
   }
 
-  let referenceWorkout: WithSerializedId<Workout> | null = null,
-    referenceWorkoutDocument: WithId<WorkoutDocument> | null = null;
-  if (workoutDocument.referenceWorkout) {
-    referenceWorkoutDocument = await client
-      .db()
-      .collection<WorkoutDocument>("workouts")
-      .findOne({
-        _id: new ObjectId(workoutDocument.referenceWorkout),
-        userId: new ObjectId(session.user.id)
-      });
-  }
+  let mesocycle: WithSerializedId<Mesocycle> | null = null;
+  const getMesocycleResponse = await fetch(
+    "/api/mesocycles/getMesocycle?mesocycleId=" + workout.performedMesocycleId
+  );
+  if (getMesocycleResponse.ok) mesocycle = await getMesocycleResponse.json();
 
-  if (referenceWorkoutDocument) {
-    const { _id, userId, performedMesocycleId, ...referenceWorkoutProps } =
-      referenceWorkoutDocument;
-    referenceWorkout = {
-      id: _id.toString(),
-      ...referenceWorkoutProps
-    };
-  }
-
-  let mesocycle: WithSerializedId<Mesocycle> | null = null,
-    mesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
-
-  const { _id: workoutId, performedMesocycleId, ...workout } = workoutDocument,
-    performedMesocycleDocument = await client
-      .db()
-      .collection<Omit<MesocycleDocument, "userId">>("mesocycles")
-      .findOne(
-        { userId: new ObjectId(session.user.id), _id: performedMesocycleId },
-        { projection: { userId: 0 } }
-      );
-  if (!performedMesocycleDocument) {
-    return { workout, mesocycleTemplate, mesocycle, referenceWorkout };
-  }
-
-  mesocycle = {
-    id: performedMesocycleDocument._id.toString(),
-    templateMesoId: performedMesocycleDocument.templateMesoId.toString(),
-    workouts: performedMesocycleDocument.workouts.map((workout) => workout?.toString() ?? null),
-    startTimestamp: performedMesocycleDocument.startTimestamp,
-    endTimestamp: performedMesocycleDocument.endTimestamp
-  };
-
-  const mesocycleTemplateDocument = await client
-    .db()
-    .collection<Omit<MesocycleTemplateDocument, "userId">>("mesocycleTemplates")
-    .findOne(
-      { userId: new ObjectId(session.user.id), _id: performedMesocycleDocument.templateMesoId },
-      { projection: { userId: 0 } }
+  let mesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
+  if (mesocycle) {
+    const getMesocycleTemplateResponse = await fetch(
+      "/api/mesocycles/getMesocycleTemplate?mesocycleTemplateId=" + mesocycle.templateMesoId
     );
-  if (!mesocycleTemplateDocument) {
-    return { workout, mesocycleTemplate, referenceWorkout };
+    if (getMesocycleTemplateResponse.ok)
+      mesocycleTemplate = await getMesocycleTemplateResponse.json();
   }
 
-  const { _id: mesocycleTemplateId, ...otherMesocycleTemplateProps } = mesocycleTemplateDocument;
-  mesocycleTemplate = {
-    id: mesocycleTemplateId.toString(),
-    ...otherMesocycleTemplateProps
-  };
+  let referenceWorkout: WithSerializedId<Workout> | null = null;
+  const getReferenceWorkoutResponse = await fetch(
+    "/api/workouts/getReferenceWorkout?workoutDayNumber=" + workout.dayNumber
+  );
+  if (getReferenceWorkoutResponse.ok) referenceWorkout = await getReferenceWorkoutResponse.json();
 
   return { workout, mesocycle, mesocycleTemplate, referenceWorkout };
 };
