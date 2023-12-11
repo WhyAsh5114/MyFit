@@ -1,68 +1,63 @@
 <script lang="ts">
   import { dateFormatter } from "$lib/util/CommonFunctions";
+  import { onMount } from "svelte";
   import WorkoutCard from "./WorkoutCard.svelte";
   export let data;
 
-  let { workoutsStreamArray } = data.streamed;
-  $: if (!filterByMesocycle) {
-    workoutsStreamArray = data.streamed.workoutsStreamArray;
+  let {
+    activeMesocycle,
+    activeMesocycleTemplate,
+    mesocycleTemplates,
+    mesocycles,
+    workouts,
+    workoutsCount
+  } = data;
+
+  let selectedMesocycleTemplateId = activeMesocycleTemplate?._id;
+  let selectedMesocycleId = activeMesocycle?._id;
+
+  let filterByMesocycle = selectedMesocycleId !== undefined;
+  let mounted = false;
+  onMount(() => (mounted = true));
+  $: if (!filterByMesocycle && mounted) {
+    workouts = JSON.parse(JSON.stringify(data.workouts));
+    workoutsCount = data.workoutsCount;
   }
-  $: selectedMesocycleTemplateId, (selectedMesocycleId = null);
 
-  const asyncFind = async <T,>(arr: T[], predicate: (_value: T) => Promise<boolean>) => {
-      const promises = arr.map(predicate),
-        results = await Promise.all(promises),
-        index = results.findIndex((result) => result);
-      return arr[index];
-    },
-    asyncFilter = async <T,>(arr: T[], predicate: (_value: T) => Promise<boolean>) => {
-      const results = await Promise.all(arr.map(predicate));
-      return arr.filter((_v, index) => results[index]);
-    };
-
-  let filterByMesocycle = false,
-    selectedMesocycleId: string | null = null,
-    selectedMesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null,
-    selectedMesocycleTemplateId: string | null = null;
-
+  let filtering = false;
   async function filterWorkouts() {
-    selectedMesocycleTemplate = await asyncFind(
-      data.streamed.mesocycleTemplatesStreamArray,
-      async (mesocycleTemplatePromise) => {
-        const mesocycleTemplate = await mesocycleTemplatePromise;
-        if (mesocycleTemplate === null) {
-          return false;
-        }
-        return mesocycleTemplate.id === selectedMesocycleTemplateId;
-      }
-    );
+    filtering = true;
+    await loadMore(true);
+    filtering = false;
+  }
 
-    let allMesocyclesIds: (string | undefined)[] = [];
-    const allMesocyclesOfTemplate = await asyncFilter(
-      data.streamed.mesocyclesStreamArray,
-      async (mesocyclePromise) => {
-        const mesocycle = await mesocyclePromise;
-        return mesocycle?.templateMesoId === selectedMesocycleTemplateId;
+  let loadingMore = false;
+  async function loadMore(reset = false) {
+    const pageToLoad = reset ? 0 : Math.floor(workouts.length / 10);
+    let params = "?page=" + pageToLoad;
+    if (filterByMesocycle) {
+      if (selectedMesocycleId) {
+        params += "&mesocycleId=" + selectedMesocycleId;
+      } else if (selectedMesocycleTemplateId) {
+        params += "&mesocycleTemplateId=" + selectedMesocycleTemplateId;
       }
-    );
-    allMesocyclesIds = (await Promise.all(allMesocyclesOfTemplate)).map(
-      (mesocycle) => mesocycle?.id
-    );
+    }
 
-    workoutsStreamArray = await asyncFilter(
-      data.streamed.workoutsStreamArray,
-      async (workoutPromise) => {
-        const workout = await workoutPromise;
-        if (selectedMesocycleId !== null) {
-          return workout?.performedMesocycleId === selectedMesocycleId;
-        }
-        return allMesocyclesIds.includes(workout?.performedMesocycleId);
-      }
-    );
+    loadingMore = true;
+    const response = await fetch("/api/workouts/getAllWorkouts" + params);
+    const { workouts: newWorkouts, count: newCount } = await response.json();
+    loadingMore = false;
+
+    workoutsCount = newCount;
+    if (!reset) workouts = [...workouts, ...newWorkouts];
+    else workouts = [...newWorkouts];
   }
 </script>
 
-<form class="stats stats-vertical mb-4" on:submit|preventDefault={filterWorkouts}>
+<form
+  class="stats stats-vertical mb-2 drop-shadow-2xl shadow-black"
+  on:submit|preventDefault={filterWorkouts}
+>
   <div class="stat">
     <div class="stat-title flex justify-between items-center">
       <label for="filter-by-mesocycle">Filter by mesocycle</label>
@@ -74,49 +69,54 @@
       />
     </div>
     {#if filterByMesocycle}
-      {#await Promise.all(data.streamed.mesocycleTemplatesStreamArray)}
-        <span class="loading loading-bars" />
-      {:then mesocycleTemplates}
+      <div class="flex flex-col gap-1 mt-2">
         <select
-          id="mesocycle-name"
-          class="select mt-2"
-          required
+          id="filter-by-mesocycle-template-name"
+          class="select"
           bind:value={selectedMesocycleTemplateId}
         >
-          <option disabled value={null}>Select template</option>
           {#each mesocycleTemplates as mesocycleTemplate}
-            {#if mesocycleTemplate}
-              <option value={mesocycleTemplate.id}>{mesocycleTemplate.name}</option>
+            <option value={mesocycleTemplate._id}>
+              {mesocycleTemplate.name}
+            </option>
+          {/each}
+        </select>
+        <select id="filter-by-mesocycle-start" class="select" bind:value={selectedMesocycleId}>
+          <option selected value={null}>All usages</option>
+          {#each mesocycles as mesocycle}
+            {#if mesocycle.templateMesoId === selectedMesocycleTemplateId}
+              <option value={mesocycle._id}>
+                {dateFormatter(mesocycle.startTimestamp)}
+              </option>
             {/if}
           {/each}
         </select>
-      {/await}
-      {#if selectedMesocycleTemplateId !== null}
-        {#await Promise.all(data.streamed.mesocyclesStreamArray) then mesocycles}
-          <select
-            id="performed-mesocycle-duration"
-            class="select mt-1"
-            bind:value={selectedMesocycleId}
-          >
-            <option selected value={null}>All usages</option>
-            {#each mesocycles as mesocycle}
-              {#if mesocycle && mesocycle.templateMesoId === selectedMesocycleTemplateId}
-                <option value={mesocycle.id}>{dateFormatter(mesocycle.startTimestamp)}</option>
-              {/if}
-            {/each}
-          </select>
-        {/await}
-      {/if}
-      <button class="btn btn-accent btn-sm btn-block mt-2">Apply filter</button>
+        <button class="btn btn-accent btn-sm btn-block mt-1">
+          {#if filtering}
+            <span class="loading loading-bars"></span>
+          {:else}
+            Apply filter
+          {/if}
+        </button>
+      </div>
     {/if}
   </div>
 </form>
 
-<div class="flex flex-col h-px grow overflow-y-auto gap-1">
-  {#if workoutsStreamArray.length > 0}
-    {#each workoutsStreamArray as workoutPromise}
-      <WorkoutCard {workoutPromise} bind:mesocycleTemplate={selectedMesocycleTemplate} />
+<div class="flex flex-col h-px grow overflow-y-auto gap-1 drop-shadow-2xl shadow-black">
+  {#if workouts.length > 0}
+    {#each workouts as workout}
+      <WorkoutCard mesocycleTemplate={null} {workout} />
     {/each}
+    {#if workouts.length < workoutsCount}
+      <button class="btn btn-neutral" on:click={() => loadMore()}>
+        {#if loadingMore}
+          <span class="loading loading-bars"></span>
+        {:else}
+          Load more
+        {/if}
+      </button>
+    {/if}
   {:else}
     <div class="stats">
       <div class="stat">
@@ -125,4 +125,4 @@
     </div>
   {/if}
 </div>
-<a class="btn btn-accent btn-block" href="/workouts/new">Log today's workout</a>
+<a class="btn btn-accent btn-block mt-1" href="/workouts/new">Log today's workout</a>
