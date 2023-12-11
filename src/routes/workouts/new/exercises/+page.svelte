@@ -7,17 +7,19 @@
     allExercisesSetsCompleted,
     sorenessData,
     workloadData,
+    exercisesPerformed,
     workoutBeingPerformed
   } from "../newWorkoutStore.js";
   export let data;
 
-  const { activeMesocycle, activeMesocycleTemplate, todaysSplitWorkout, userBodyweight } = data,
-    workoutIdx = getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit);
+  const { activeMesocycle, activeMesocycleTemplate, todaysSplitWorkout, userBodyweight } = data;
+  const workoutIdx = getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit);
 
-  let exercisesPerformed: WorkoutExerciseWithoutSetNumbers[] | null = null;
   if ($workoutBeingPerformed === null) {
     $workoutBeingPerformed = data.todaysWorkout;
-    ({ exercisesPerformed } = $workoutBeingPerformed);
+  }
+  if ($exercisesPerformed === null) {
+    $exercisesPerformed = data.todaysWorkout.exercisesPerformed;
   }
 
   let totalSets = 0,
@@ -38,10 +40,10 @@
     muscleGroupWorkloads: Workout["muscleGroupWorkloads"],
     sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"];
   async function saveExercisesAndWorkload() {
-    if (!$workoutBeingPerformed) {
+    if (!$exercisesPerformed) {
       return;
     }
-    if ($workoutBeingPerformed.exercisesPerformed.length === 0) {
+    if ($exercisesPerformed.length === 0) {
       errorModal.show();
       return;
     }
@@ -76,13 +78,13 @@
     </div>
   </div>
 </div>
-{#if $workoutBeingPerformed && exercisesPerformed !== null}
+{#if $exercisesPerformed !== null}
   <WorkoutExercisesTable
-    exercises={exercisesPerformed}
     mode="performing"
     referenceWorkout={data.referenceWorkout}
     {userBodyweight}
     workoutsThatPreviouslyTargeted={data.workoutsThatPreviouslyTargeted}
+    bind:exercises={$exercisesPerformed}
     bind:allExercisesSetsCompleted={$allExercisesSetsCompleted}
     bind:muscleGroupWorkloads
     bind:sorenessFromPreviousWorkouts

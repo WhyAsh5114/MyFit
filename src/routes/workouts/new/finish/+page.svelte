@@ -7,33 +7,31 @@
     allExercisesSetsCompleted,
     sorenessData,
     workloadData,
-    workoutBeingPerformed
+    workoutBeingPerformed,
+    exercisesPerformed
   } from "../newWorkoutStore";
 
-  let difficultyRating: 1 | 2 | 3 | 4 | 5 = 3,
-    temp: WorkoutExerciseWithoutSetNumbers[] = [];
-  if ($workoutBeingPerformed) {
-    ({ exercisesPerformed: temp } = $workoutBeingPerformed);
+  let difficultyRating: 1 | 2 | 3 | 4 | 5 = 3;
+  if ($exercisesPerformed === null) {
+    $exercisesPerformed = [];
   }
-  const exercisesPerformed = temp as WorkoutExercise[];
 
   let callingEndpoint = false;
   async function saveWorkout() {
     if (!$workoutBeingPerformed) {
       return;
     }
-    const { exercisesPerformed: temp, ...otherProps } = $workoutBeingPerformed,
-      exercisesPerformed = temp as WorkoutExercise[],
-      requestBody: APIWorkoutsSaveWorkout = {
-        workout: {
-          ...otherProps,
-          exercisesPerformed,
-          muscleGroupWorkloads: $workloadData,
-          muscleSorenessToNextWorkout: {},
-          difficultyRating
-        },
-        previousSoreness: $sorenessData
-      };
+    const { exercisesPerformed: temp, ...otherProps } = $workoutBeingPerformed;
+    const requestBody: APIWorkoutsSaveWorkout = {
+      workout: {
+        ...otherProps,
+        exercisesPerformed: $exercisesPerformed as WorkoutExercise[],
+        muscleGroupWorkloads: $workloadData,
+        muscleSorenessToNextWorkout: {},
+        difficultyRating
+      },
+      previousSoreness: $sorenessData
+    };
     callingEndpoint = true;
     const response = await fetch("/api/workouts/createWorkout", {
       method: "POST",
@@ -68,12 +66,12 @@
   }
 
   let avgRIR = 0;
-  exercisesPerformed.forEach(({ sets }) => {
+  $exercisesPerformed.forEach(({ sets }) => {
     sets.forEach(({ RIR }) => {
-      avgRIR += RIR;
+      avgRIR += RIR ?? 0;
     });
   });
-  avgRIR /= getTotalSets(exercisesPerformed);
+  avgRIR /= getTotalSets($exercisesPerformed);
 </script>
 
 <MyModal onClose={closeModal} bind:title={modalTitle} bind:dialogElement={modal}>
