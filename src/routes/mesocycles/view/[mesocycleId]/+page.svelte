@@ -6,6 +6,8 @@
   import InsightsIcon from "virtual:icons/ic/baseline-insights";
   export let data;
 
+  let { workouts, workoutsCount } = data;
+
   let callingEndpoint = false;
   let modal: HTMLDialogElement;
   let modalText = "";
@@ -13,7 +15,7 @@
   let stopConfirmationModal: HTMLDialogElement;
   async function stopMesocycle() {
     const requestBody: APIMesocyclesStopMesocycle = {
-      activeMesocycleId: data.mesocycle.id
+      activeMesocycleId: data.mesocycle._id
     };
     callingEndpoint = true;
     const response = await fetch("/api/mesocycles/stopMesocycle", {
@@ -40,6 +42,20 @@
     await invalidate("mesocycle:active");
     await goto("/mesocycles");
     redirecting = false;
+  }
+
+  let loadingMore = false;
+  async function loadMore() {
+    const pageToLoad = Math.floor(workouts.length / 10);
+    let params = "?page=" + pageToLoad + "&mesocycleId=" + data.mesocycle._id;
+
+    loadingMore = true;
+    const response = await fetch("/api/workouts/getAllWorkouts" + params);
+    const { workouts: newWorkouts, workoutsCount: newCount } = await response.json();
+    loadingMore = false;
+
+    workoutsCount = newCount;
+    workouts = [...workouts, ...newWorkouts];
   }
 </script>
 
@@ -75,7 +91,7 @@
     <div class="stat-title">Mesocycle template</div>
     <a
       class="stat-value link truncate"
-      href="/mesocycles/viewTemplate/{data.mesocycleTemplate?.id}"
+      href="/mesocycles/viewTemplate/{data.mesocycleTemplate?._id}"
     >
       {data.mesocycleTemplate?.name}
     </a>
@@ -95,23 +111,26 @@
   <div class="stat col-span-2">
     <div class="stat-title">Workouts</div>
     <div class="flex flex-col max-h-32 overflow-y-auto mt-2 gap-1 drop-shadow-md shadow-black">
-      {#if data.streamed.workoutsStreamArray.length > 0}
-        {#each data.streamed.workoutsStreamArray as workoutPromise}
-          {#await workoutPromise}
-            <div class="skeleton h-8 w-full bg-primary brightness-50 rounded-md" />
-          {:then workout}
-            {#if workout}
-              <a class="btn h-8 btn-sm" href="/workouts/{workout.id}/view">
-                <div class="flex w-full justify-between items-center">
-                  <span>{dateFormatter(workout.startTimestamp)}</span>
-                  <span class="font-normal text-sm">
-                    {data.mesocycleTemplate?.exerciseSplit[workout.dayNumber]?.name}, Cycle {workout.cycleNumber}
-                  </span>
-                </div>
-              </a>
-            {/if}
-          {/await}
+      {#if data.workouts.length > 0}
+        {#each data.workouts as workout}
+          <a class="btn h-8 btn-sm" href="/workouts/{workout._id}/view">
+            <div class="flex w-full justify-between items-center">
+              <span>{dateFormatter(workout.startTimestamp)}</span>
+              <span class="font-normal text-sm">
+                {data.mesocycleTemplate?.exerciseSplit[workout.dayNumber]?.name}, Cycle {workout.cycleNumber}
+              </span>
+            </div>
+          </a>
         {/each}
+        {#if data.workouts.length < data.workoutsCount}
+          <button class="btn bg-base-200/50 btn-sm" on:click={loadMore}>
+            {#if loadingMore}
+              <span class="loading loading-bars"></span>
+            {:else}
+              Load more
+            {/if}
+          </button>
+        {/if}
       {:else}
         <div class="btn btn-sm btn-block text-error">No workouts found</div>
       {/if}
@@ -120,15 +139,11 @@
   {#if data.mesocycle.workouts.length > 0 && data.mesocycleTemplate}
     <div class="stat col-span-2">
       <div class="stat-title mb-2">Volume progression</div>
-      {#await Promise.all(data.streamed.workoutsStreamArray)}
-        <div class="skeleton h-56 w-full bg-primary brightness-50 rounded-md" />
-      {:then workouts}
-        <VolumeGraph {workouts} />
-        <a class="btn mt-2 text-accent gap-4" href="/mesocycles/view/${data.mesocycle.id}/insights">
-          <InsightsIcon class="h-6 w-6" />
-          More insights
-        </a>
-      {/await}
+      <VolumeGraph workouts={data.workouts} />
+      <a class="btn mt-2 text-accent gap-4" href="/mesocycles/view/${data.mesocycle._id}/insights">
+        <InsightsIcon class="h-6 w-6" />
+        More insights
+      </a>
     </div>
   {/if}
 </div>
