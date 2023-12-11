@@ -1,7 +1,4 @@
 import { error } from "@sveltejs/kit";
-import clientPromise from "$lib/mongo/mongodb";
-import type { MesocycleTemplateDocument } from "$lib/types/documents";
-import { ObjectId } from "mongodb";
 
 export const load = async ({ params, locals, url }) => {
   const session = await locals.getSession();
@@ -24,20 +21,12 @@ export const load = async ({ params, locals, url }) => {
     throw error(400, "Mesocycle template ID should be 24 character hex string");
   }
 
-  const client = await clientPromise;
-  const mesocycleTemplateDocument = await client
-    .db()
-    .collection<MesocycleTemplateDocument>("mesocycleTemplates")
-    .findOne({ _id: new ObjectId(mesocycleTemplateId), userId: new ObjectId(session.user.id) });
-
-  if (mesocycleTemplateDocument === null) {
-    throw error(404, "Mesocycle template not found");
+  const getMesocycleTemplateResponse = await fetch(
+    "/api/mesocycles/getMesocycleTemplate?mesocycleTemplateId=" + mesocycleTemplateId
+  );
+  if (getMesocycleTemplateResponse.ok) {
+    mesocycleTemplate = await getMesocycleTemplateResponse.json();
   }
 
-  const { _id, userId, ...otherProps } = mesocycleTemplateDocument;
-  mesocycleTemplate = {
-    id: _id.toString(),
-    ...otherProps
-  };
   return { mesocycleTemplate };
 };
