@@ -33,7 +33,8 @@
     await loadMore(true);
     filtering = false;
     selectedMesocycleTemplate = mesocycleTemplates.find(
-      (mesocycleTemplate) => mesocycleTemplate._id === selectedMesocycleTemplateId
+      (mesocycleTemplate: WithSerializedId<MesocycleTemplate>) =>
+        mesocycleTemplate._id === selectedMesocycleTemplateId
     );
   }
 
