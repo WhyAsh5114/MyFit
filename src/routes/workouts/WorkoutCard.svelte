@@ -2,7 +2,7 @@
   import { dateFormatter } from "$lib/util/CommonFunctions";
 
   export let workout: WithSerializedId<Workout> | null;
-  export let mesocycleTemplate: WithSerializedId<MesocycleTemplate> | null;
+  export let mesocycleTemplate: WithSerializedId<MesocycleTemplate> | undefined;
 </script>
 
 {#if workout}

@@ -13,6 +13,7 @@
     workoutsCount
   } = data;
 
+  let selectedMesocycleTemplate: WithSerializedId<MesocycleTemplate> | undefined = undefined;
   let selectedMesocycleTemplateId = activeMesocycleTemplate?._id;
   let selectedMesocycleId = activeMesocycle?._id;
 
@@ -20,8 +21,10 @@
   let mounted = false;
   onMount(() => (mounted = true));
   $: if (!filterByMesocycle && mounted) {
+    // Reuse server loaded data
     workouts = JSON.parse(JSON.stringify(data.workouts));
     workoutsCount = data.workoutsCount;
+    selectedMesocycleTemplate = undefined;
   }
 
   let filtering = false;
@@ -29,6 +32,9 @@
     filtering = true;
     await loadMore(true);
     filtering = false;
+    selectedMesocycleTemplate = mesocycleTemplates.find(
+      (mesocycleTemplate) => mesocycleTemplate._id === selectedMesocycleTemplateId
+    );
   }
 
   let loadingMore = false;
@@ -106,11 +112,11 @@
 <div class="flex flex-col h-px grow overflow-y-auto gap-1 drop-shadow-2xl shadow-black">
   {#if workouts.length > 0}
     {#each workouts as workout}
-      <WorkoutCard mesocycleTemplate={null} {workout} />
+      <WorkoutCard mesocycleTemplate={selectedMesocycleTemplate} {workout} />
     {/each}
     {#if workouts.length < workoutsCount}
-      <button class="btn btn-neutral" on:click={() => loadMore()}>
-        {#if loadingMore}
+      <button class="btn btn-outline" on:click={() => loadMore()}>
+        {#if loadingMore && !filtering}
           <span class="loading loading-bars"></span>
         {:else}
           Load more
