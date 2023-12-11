@@ -3,8 +3,8 @@
   import ActiveMesocycleCard from "./ActiveMesocycleCard.svelte";
   import MesocycleTemplateCard from "./MesocycleTemplateCard.svelte";
 
-  const totalMesocycleTemplates = data.streamed.mesocycleTemplatesStreamArray.length,
-    { activeMesocycle, activeMesocycleTemplate } = data;
+  const totalMesocycleTemplates = data.streamed.mesocycleTemplatesStreamArray.length;
+  const { activeMesocycle, activeMesocycleTemplate } = data;
 </script>
 
 <h2>Mesocycles</h2>

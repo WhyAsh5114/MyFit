@@ -20,9 +20,9 @@
       allExercisesSetsCompleted.push(Array(exercise.sets.length).fill(setCompleted));
     });
   }
-  let feedbackTaken: boolean[] = Array(exercises.length).fill(false),
-    addEditWorkoutExerciseModal: HTMLDialogElement,
-    editingExerciseNumber: number | undefined;
+  let feedbackTaken: boolean[] = Array(exercises.length).fill(false);
+  let addEditWorkoutExerciseModal: HTMLDialogElement;
+  let editingExerciseNumber: number | undefined;
 
   function addExercise() {
     editingExerciseNumber = undefined;
@@ -57,7 +57,8 @@
     }
   }
 
-  let feedbackExerciseIdx: number | undefined, feedbackModal: HTMLDialogElement;
+  let feedbackExerciseIdx: number | undefined;
+  let feedbackModal: HTMLDialogElement;
   function takeFeedback(idx: number, force = false) {
     if (feedbackTaken[idx] && !force) {
       return;

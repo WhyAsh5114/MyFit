@@ -24,8 +24,8 @@ export function getTodaysSplitWorkout(
   workouts: (string | null)[],
   exerciseSplit: MesocycleTemplate["exerciseSplit"]
 ) {
-  const workoutIdx = workouts.length % exerciseSplit.length,
-    workout = exerciseSplit[workoutIdx];
+  const workoutIdx = workouts.length % exerciseSplit.length;
+  const workout = exerciseSplit[workoutIdx];
   return workout;
 }
 
@@ -42,8 +42,10 @@ export function getMuscleGroupsAndSets(
 ) {
   const muscleGroupAndSets: { muscleGroup: MuscleGroup; sets: number }[] = [];
   exercises.forEach((exercise) => {
-    const { targetMuscleGroup } = exercise,
-      idx = muscleGroupAndSets.findIndex(({ muscleGroup }) => targetMuscleGroup === muscleGroup);
+    const { targetMuscleGroup } = exercise;
+    const idx = muscleGroupAndSets.findIndex(
+      ({ muscleGroup }) => targetMuscleGroup === muscleGroup
+    );
     let totalSets;
     if (typeof exercise.sets === "number") {
       totalSets = exercise.sets;
@@ -76,8 +78,8 @@ export function getPlannedRIR(
   workouts: (string | null)[]
 ) {
   const cycleNumber = getCycleNumber(exerciseSplit, workouts);
-  let cyclesPassed = 0,
-    plannedRIR = -1;
+  let cyclesPassed = 0;
+  let plannedRIR = -1;
   for (const { specificRIR, cycles } of RIRProgression) {
     cyclesPassed += cycles;
     if (cycleNumber < cyclesPassed) {

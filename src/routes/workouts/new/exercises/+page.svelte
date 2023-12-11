@@ -22,8 +22,8 @@
     $exercisesPerformed = data.todaysWorkout.exercisesPerformed;
   }
 
-  let totalSets = 0,
-    totalSetsCompleted = 0;
+  let totalSets = 0;
+  let totalSetsCompleted = 0;
   $: {
     (totalSets = 0), (totalSetsCompleted = 0);
     $allExercisesSetsCompleted.forEach((setsCompleted) => {
@@ -36,9 +36,9 @@
     });
   }
 
-  let errorModal: HTMLDialogElement,
-    muscleGroupWorkloads: Workout["muscleGroupWorkloads"],
-    sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"];
+  let errorModal: HTMLDialogElement;
+  let muscleGroupWorkloads: Workout["muscleGroupWorkloads"];
+  let sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"];
   async function saveExercisesAndWorkload() {
     if (!$exercisesPerformed) {
       return;

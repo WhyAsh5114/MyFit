@@ -16,11 +16,11 @@ export const load = async ({ locals, parent, fetch }) => {
   }
 
   const { activeMesocycle, activeMesocycleTemplate, referenceWorkout, userBodyweight } =
-      await parent(),
-    todaysSplitWorkout = getTodaysSplitWorkout(
-      activeMesocycle.workouts,
-      activeMesocycleTemplate.exerciseSplit
-    );
+    await parent();
+  const todaysSplitWorkout = getTodaysSplitWorkout(
+    activeMesocycle.workouts,
+    activeMesocycleTemplate.exerciseSplit
+  );
   if (todaysSplitWorkout === null) {
     throw error(400, "No workout found for today");
   }
@@ -50,17 +50,17 @@ export const load = async ({ locals, parent, fetch }) => {
   }
 
   const requestBody: APIGetWorkoutsThatPreviouslyTargeted = {
-      mesocycleId: activeMesocycle.id,
-      muscleGroups: Array.from(getMuscleGroups(todaysSplitWorkout.exercises)),
-      beforeTimestamp: Number(new Date())
+    mesocycleId: activeMesocycle.id,
+    muscleGroups: Array.from(getMuscleGroups(todaysSplitWorkout.exercises)),
+    beforeTimestamp: Number(new Date())
+  };
+  const response = await fetch("/api/workouts/getWorkoutsThatPreviouslyTargeted", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json"
     },
-    response = await fetch("/api/workouts/getWorkoutsThatPreviouslyTargeted", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json"
-      },
-      body: JSON.stringify(requestBody)
-    });
+    body: JSON.stringify(requestBody)
+  });
   if (!response.ok) {
     throw error(500, await response.text());
   }

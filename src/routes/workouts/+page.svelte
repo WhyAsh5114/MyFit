@@ -10,20 +10,20 @@
   $: selectedMesocycleTemplateId, (selectedMesocycleId = null);
 
   const asyncFind = async <T,>(arr: T[], predicate: (_value: T) => Promise<boolean>) => {
-      const promises = arr.map(predicate),
-        results = await Promise.all(promises),
-        index = results.findIndex((result) => result);
-      return arr[index];
-    },
-    asyncFilter = async <T,>(arr: T[], predicate: (_value: T) => Promise<boolean>) => {
-      const results = await Promise.all(arr.map(predicate));
-      return arr.filter((_v, index) => results[index]);
-    };
+    const promises = arr.map(predicate);
+    const results = await Promise.all(promises);
+    const index = results.findIndex((result) => result);
+    return arr[index];
+  };
+  const asyncFilter = async <T,>(arr: T[], predicate: (_value: T) => Promise<boolean>) => {
+    const results = await Promise.all(arr.map(predicate));
+    return arr.filter((_v, index) => results[index]);
+  };
 
-  let filterByMesocycle = false,
-    selectedMesocycleId: string | null = null,
-    selectedMesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null,
-    selectedMesocycleTemplateId: string | null = null;
+  let filterByMesocycle = false;
+  let selectedMesocycleId: string | null = null;
+  let selectedMesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
+  let selectedMesocycleTemplateId: string | null = null;
 
   async function filterWorkouts() {
     selectedMesocycleTemplate = await asyncFind(

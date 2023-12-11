@@ -6,11 +6,11 @@
   import InsightsIcon from "virtual:icons/ic/baseline-insights";
   export let data;
 
-  let callingEndpoint = false,
-    modal: HTMLDialogElement,
-    modalText = "",
-    modalTitle = "",
-    stopConfirmationModal: HTMLDialogElement;
+  let callingEndpoint = false;
+  let modal: HTMLDialogElement;
+  let modalText = "";
+  let modalTitle = "";
+  let stopConfirmationModal: HTMLDialogElement;
   async function stopMesocycle() {
     const requestBody: APIMesocyclesStopMesocycle = {
       activeMesocycleId: data.mesocycle.id

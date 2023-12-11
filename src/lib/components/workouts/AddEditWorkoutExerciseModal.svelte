@@ -31,8 +31,8 @@
     }
   }
 
-  let newExercise: Partial<SplitExercise> = { weightType: "Weighted" },
-    alreadyExists = false;
+  let newExercise: Partial<SplitExercise> = { weightType: "Weighted" };
+  let alreadyExists = false;
   function addExercise() {
     const duplicate = exercises.find((exercise) => exercise.name === newExercise.name);
     alreadyExists = Boolean(duplicate);

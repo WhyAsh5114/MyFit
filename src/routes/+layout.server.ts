@@ -13,20 +13,20 @@ export const load = async ({ locals, url, depends }) => {
     throw redirect(303, `/login?callbackURL=${url.pathname}`);
   }
 
-  let activeMesocycle: WithSerializedId<ActiveMesocycle> | null = null,
-    activeMesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
+  let activeMesocycle: WithSerializedId<ActiveMesocycle> | null = null;
+  let activeMesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
   if (!session?.user?.id) {
     return { session, activeMesocycle, activeMesocycleTemplate };
   }
 
-  const client = await clientPromise,
-    activeMesocycleDocument = await client
-      .db()
-      .collection<Omit<MesocycleDocument, "userId">>("mesocycles")
-      .findOne(
-        { userId: new ObjectId(session.user.id), endTimestamp: { $exists: false } },
-        { projection: { userId: 0 } }
-      );
+  const client = await clientPromise;
+  const activeMesocycleDocument = await client
+    .db()
+    .collection<Omit<MesocycleDocument, "userId">>("mesocycles")
+    .findOne(
+      { userId: new ObjectId(session.user.id), endTimestamp: { $exists: false } },
+      { projection: { userId: 0 } }
+    );
   if (!activeMesocycleDocument) {
     return {
       session,
@@ -49,13 +49,13 @@ export const load = async ({ locals, url, depends }) => {
   };
 
   const activeMesocycleTemplateDocument = (await client
-      .db()
-      .collection<Omit<MesocycleTemplateDocument, "userId">>("mesocycleTemplates")
-      .findOne(
-        { _id: new ObjectId(activeMesocycle.templateMesoId) },
-        { projection: { userId: 0 } }
-      ))!,
-    { _id: activeMesocycleTemplateId, ...otherProps } = activeMesocycleTemplateDocument;
+    .db()
+    .collection<Omit<MesocycleTemplateDocument, "userId">>("mesocycleTemplates")
+    .findOne(
+      { _id: new ObjectId(activeMesocycle.templateMesoId) },
+      { projection: { userId: 0 } }
+    ))!;
+  const { _id: activeMesocycleTemplateId, ...otherProps } = activeMesocycleTemplateDocument;
   activeMesocycleTemplate = {
     id: activeMesocycleTemplateDocument._id.toString(),
     ...otherProps

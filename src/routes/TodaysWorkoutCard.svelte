@@ -18,17 +18,17 @@
     );
   }
 
-  let totalSets = 0,
-    targetMuscleGroups = new Set<MuscleGroup>();
+  let totalSets = 0;
+  let targetMuscleGroups = new Set<MuscleGroup>();
   $: if (todaysWorkout) {
     totalSets = getTotalSets(todaysWorkout.exercises);
     targetMuscleGroups = getMuscleGroups(todaysWorkout.exercises);
   }
 
-  let callingEndpoint = false,
-    modal: HTMLDialogElement,
-    modalText = "",
-    modalTitle = "";
+  let callingEndpoint = false;
+  let modal: HTMLDialogElement;
+  let modalText = "";
+  let modalTitle = "";
   async function completeRestDay() {
     if (todaysWorkout) {
       await goto("/workouts/new/exercises");

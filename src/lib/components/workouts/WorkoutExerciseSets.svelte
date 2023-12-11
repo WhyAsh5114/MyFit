@@ -16,8 +16,8 @@
   export let userBodyweight: number | null;
 
   function getColor(param: "load" | "reps" | "RIR", setNumber: number) {
-    let newValue = null,
-      reference = null;
+    let newValue = null;
+    let reference = null;
     newValue = exercise.sets[setNumber][param];
     reference = referenceExercise?.sets[setNumber][param] ?? null;
 
@@ -41,8 +41,8 @@
   }
 
   function compareVolume(setNumber: number) {
-    const referenceSet = referenceExercise?.sets[setNumber],
-      currentSet = exercise.sets[setNumber];
+    const referenceSet = referenceExercise?.sets[setNumber];
+    const currentSet = exercise.sets[setNumber];
     if (!referenceSet || !referenceExercise) {
       return false;
     }
@@ -50,15 +50,15 @@
       return false;
     }
 
-    let referenceLoad = referenceSet.load,
-      currentLoad = currentSet.load;
+    let referenceLoad = referenceSet.load;
+    let currentLoad = currentSet.load;
     if (exercise.bodyweight !== undefined) {
       referenceLoad += referenceExercise.bodyweight ?? 0;
       currentLoad += userBodyweight ?? 0;
     }
 
-    const referenceVolume = referenceSet.reps * referenceLoad,
-      currentVolume = currentSet.reps * currentLoad;
+    const referenceVolume = referenceSet.reps * referenceLoad;
+    const currentVolume = currentSet.reps * currentLoad;
     if (currentVolume < referenceVolume) {
       return -1;
     } else if (currentVolume > referenceVolume) {

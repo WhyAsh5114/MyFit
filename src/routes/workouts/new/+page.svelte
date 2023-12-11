@@ -22,9 +22,9 @@
   } from "./newWorkoutStore.js";
   import { applyProgressiveOverload } from "$lib/util/ProgressiveOverload.js";
 
-  let modal: HTMLDialogElement,
-    modalText = "",
-    modalTitle = "";
+  let modal: HTMLDialogElement;
+  let modalText = "";
+  let modalTitle = "";
 
   export let data;
   $: ({ activeMesocycle, activeMesocycleTemplate } = data);

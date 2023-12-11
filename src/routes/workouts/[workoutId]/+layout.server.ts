@@ -19,21 +19,21 @@ export const load = async ({ locals, params, depends }) => {
     throw error(400, "Workout ID should be 24 character hex string");
   }
 
-  const client = await clientPromise,
-    workoutDocument = await client
-      .db()
-      .collection<Omit<WorkoutDocument, "userId">>("workouts")
-      .findOne(
-        { userId: new ObjectId(session.user.id), _id: new ObjectId(params.workoutId) },
-        { projection: { userId: 0 } }
-      );
+  const client = await clientPromise;
+  const workoutDocument = await client
+    .db()
+    .collection<Omit<WorkoutDocument, "userId">>("workouts")
+    .findOne(
+      { userId: new ObjectId(session.user.id), _id: new ObjectId(params.workoutId) },
+      { projection: { userId: 0 } }
+    );
 
   if (!workoutDocument) {
     throw error(404, "Workout not found");
   }
 
-  let referenceWorkout: WithSerializedId<Workout> | null = null,
-    referenceWorkoutDocument: WithId<WorkoutDocument> | null = null;
+  let referenceWorkout: WithSerializedId<Workout> | null = null;
+  let referenceWorkoutDocument: WithId<WorkoutDocument> | null = null;
   if (workoutDocument.referenceWorkout) {
     referenceWorkoutDocument = await client
       .db()
@@ -53,17 +53,17 @@ export const load = async ({ locals, params, depends }) => {
     };
   }
 
-  let mesocycle: WithSerializedId<Mesocycle> | null = null,
-    mesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
+  let mesocycle: WithSerializedId<Mesocycle> | null = null;
+  let mesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
 
-  const { _id: workoutId, performedMesocycleId, ...workout } = workoutDocument,
-    performedMesocycleDocument = await client
-      .db()
-      .collection<Omit<MesocycleDocument, "userId">>("mesocycles")
-      .findOne(
-        { userId: new ObjectId(session.user.id), _id: performedMesocycleId },
-        { projection: { userId: 0 } }
-      );
+  const { _id: workoutId, performedMesocycleId, ...workout } = workoutDocument;
+  const performedMesocycleDocument = await client
+    .db()
+    .collection<Omit<MesocycleDocument, "userId">>("mesocycles")
+    .findOne(
+      { userId: new ObjectId(session.user.id), _id: performedMesocycleId },
+      { projection: { userId: 0 } }
+    );
   if (!performedMesocycleDocument) {
     return { workout, mesocycleTemplate, mesocycle, referenceWorkout };
   }

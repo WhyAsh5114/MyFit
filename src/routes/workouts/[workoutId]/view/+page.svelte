@@ -8,11 +8,11 @@
   import StarIcon from "virtual:icons/material-symbols/star";
   export let data;
 
-  let callingEndpoint = false,
-    deleteModal: HTMLDialogElement,
-    modal: HTMLDialogElement,
-    modalText = "",
-    modalTitle = "";
+  let callingEndpoint = false;
+  let deleteModal: HTMLDialogElement;
+  let modal: HTMLDialogElement;
+  let modalText = "";
+  let modalTitle = "";
   async function deleteWorkout() {
     if (!data.mesocycle) {
       console.error("No mesocycle found, maybe deleted?");

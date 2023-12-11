@@ -21,9 +21,9 @@
   export let muscleGroupWorkloads: Workout["muscleGroupWorkloads"] = {};
   export let sorenessFromPreviousWorkouts: Workout["muscleSorenessToNextWorkout"] = {};
 
-  let muscleGroupFeedbackModal: HTMLDialogElement,
-    showMuscleGroupFeedbackModal = false,
-    takeFeedbackForMuscleGroup: MuscleGroup | undefined;
+  let muscleGroupFeedbackModal: HTMLDialogElement;
+  let showMuscleGroupFeedbackModal = false;
+  let takeFeedbackForMuscleGroup: MuscleGroup | undefined;
 
   $: {
     const groupedExercises = groupBy(exercises, (exercise) => exercise.targetMuscleGroup);

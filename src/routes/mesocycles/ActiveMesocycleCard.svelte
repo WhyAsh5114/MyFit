@@ -3,7 +3,8 @@
   export let activeMesocycleTemplate: MesocycleTemplate;
   export let activeMesocycle: WithSerializedId<ActiveMesocycle>;
 
-  let totalCycles: number, totalWorkouts: number;
+  let totalCycles: number;
+  let totalWorkouts: number;
   const totalNonRestDays = activeMesocycleTemplate.exerciseSplit.filter(
     (split) => split !== null
   ).length;

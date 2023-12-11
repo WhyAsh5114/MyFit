@@ -15,8 +15,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     });
   }
 
-  const { workoutDayNumber }: APIWorkoutsGetReferenceWorkout = await request.json(),
-    client = await clientPromise;
+  const { workoutDayNumber }: APIWorkoutsGetReferenceWorkout = await request.json();
+  const client = await clientPromise;
   try {
     const activeMesocycle = await client
       .db()
@@ -31,26 +31,26 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     }
 
     const { exerciseSplit } = (await client
-        .db()
-        .collection<MesocycleTemplateDocument>("mesocycleTemplates")
-        .findOne(
-          {
-            userId: new ObjectId(session.user.id),
-            _id: activeMesocycle.templateMesoId
-          },
-          { projection: { exerciseSplit: 1 } }
-        ))!,
-      activeMesocycleWorkouts = client
-        .db()
-        .collection<WorkoutDocument>("workouts")
-        .find(
-          {
-            userId: new ObjectId(session.user.id),
-            performedMesocycleId: activeMesocycle._id
-          },
-          { limit: exerciseSplit.length }
-        )
-        .sort({ startTimestamp: -1 });
+      .db()
+      .collection<MesocycleTemplateDocument>("mesocycleTemplates")
+      .findOne(
+        {
+          userId: new ObjectId(session.user.id),
+          _id: activeMesocycle.templateMesoId
+        },
+        { projection: { exerciseSplit: 1 } }
+      ))!;
+    const activeMesocycleWorkouts = client
+      .db()
+      .collection<WorkoutDocument>("workouts")
+      .find(
+        {
+          userId: new ObjectId(session.user.id),
+          performedMesocycleId: activeMesocycle._id
+        },
+        { limit: exerciseSplit.length }
+      )
+      .sort({ startTimestamp: -1 });
 
     let referenceWorkoutDocument: WithId<WorkoutDocument> | undefined;
     for await (const workoutDocument of activeMesocycleWorkouts) {

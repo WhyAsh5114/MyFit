@@ -16,8 +16,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   }
 
   const { muscleGroups, mesocycleId, beforeTimestamp }: APIGetPreviousSorenessValues =
-      await request.json(),
-    client = await clientPromise;
+    await request.json();
+  const client = await clientPromise;
   try {
     const performedMesocycle = await client
       .db()
@@ -32,28 +32,28 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     }
 
     const { exerciseSplit } = (await client
-        .db()
-        .collection<MesocycleTemplateDocument>("mesocycleTemplates")
-        .findOne(
-          {
-            userId: new ObjectId(session.user.id),
-            _id: performedMesocycle.templateMesoId
-          },
-          { projection: { exerciseSplit: 1 } }
-        ))!,
-      workoutsCursor = client
-        .db()
-        .collection<WorkoutDocument>("workouts")
-        .find(
-          {
-            userId: new ObjectId(session.user.id),
-            performedMesocycleId: performedMesocycle._id,
-            startTimestamp: { $lt: beforeTimestamp }
-          },
-          { limit: exerciseSplit.length }
-        )
-        .sort({ startTimestamp: -1 }),
-      previouslyTargetedWorkouts: Workout["muscleSorenessToNextWorkout"] = {};
+      .db()
+      .collection<MesocycleTemplateDocument>("mesocycleTemplates")
+      .findOne(
+        {
+          userId: new ObjectId(session.user.id),
+          _id: performedMesocycle.templateMesoId
+        },
+        { projection: { exerciseSplit: 1 } }
+      ))!;
+    const workoutsCursor = client
+      .db()
+      .collection<WorkoutDocument>("workouts")
+      .find(
+        {
+          userId: new ObjectId(session.user.id),
+          performedMesocycleId: performedMesocycle._id,
+          startTimestamp: { $lt: beforeTimestamp }
+        },
+        { limit: exerciseSplit.length }
+      )
+      .sort({ startTimestamp: -1 });
+    const previouslyTargetedWorkouts: Workout["muscleSorenessToNextWorkout"] = {};
     muscleGroups.forEach((muscleGroup) => {
       previouslyTargetedWorkouts[muscleGroup] = undefined;
     });

@@ -5,11 +5,11 @@
   import type { Writable } from "svelte/store";
   import ReloadIcon from "virtual:icons/tabler/reload";
 
-  let deferredPrompt: Event | null,
-    needRefresh: Writable<boolean>,
-    offlineReady: Writable<boolean>,
-    showInstallButton = false,
-    updateServiceWorker: (_arg0: boolean) => void;
+  let deferredPrompt: Event | null;
+  let needRefresh: Writable<boolean>;
+  let offlineReady: Writable<boolean>;
+  let showInstallButton = false;
+  let updateServiceWorker: (_arg0: boolean) => void;
   onMount(() => {
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();

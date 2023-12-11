@@ -17,31 +17,31 @@ export const load = async ({ locals, parent, fetch, depends }) => {
     throw error(404, "No active mesocycle found");
   }
 
-  const client = await clientPromise,
-    userPreferences = await client
-      .db()
-      .collection<Omit<UserPreferencesDocument, "userId">>("userPreferences")
-      .findOne({ userId: new ObjectId(session.user.id) }, { projection: { _id: 0, userId: 0 } }),
-    todaysWorkout = getTodaysSplitWorkout(
-      activeMesocycle.workouts,
-      activeMesocycleTemplate.exerciseSplit
-    );
+  const client = await clientPromise;
+  const userPreferences = await client
+    .db()
+    .collection<Omit<UserPreferencesDocument, "userId">>("userPreferences")
+    .findOne({ userId: new ObjectId(session.user.id) }, { projection: { _id: 0, userId: 0 } });
+  const todaysWorkout = getTodaysSplitWorkout(
+    activeMesocycle.workouts,
+    activeMesocycleTemplate.exerciseSplit
+  );
 
   let referenceWorkout: WithId<WorkoutDocument> | null = null;
   if (todaysWorkout) {
     const requestBody: APIWorkoutsGetReferenceWorkout = {
-        workoutDayNumber: getDayNumber(
-          activeMesocycle.workouts,
-          activeMesocycleTemplate.exerciseSplit
-        )
-      },
-      response = await fetch("/api/workouts/getReferenceWorkout", {
-        method: "POST",
-        body: JSON.stringify(requestBody),
-        headers: {
-          "content-type": "application/json"
-        }
-      });
+      workoutDayNumber: getDayNumber(
+        activeMesocycle.workouts,
+        activeMesocycleTemplate.exerciseSplit
+      )
+    };
+    const response = await fetch("/api/workouts/getReferenceWorkout", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "content-type": "application/json"
+      }
+    });
     if (response.ok) {
       const referenceWorkoutDocument: WithId<WorkoutDocument> = await response.json();
       referenceWorkout = referenceWorkoutDocument;
