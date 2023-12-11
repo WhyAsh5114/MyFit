@@ -17,6 +17,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
   const { workoutId, performedMesocycleId, workout, previousSoreness }: APIWorkoutsUpdateWorkout =
     await request.json();
+  const { performedMesocycleId: oldId, ...workoutProps } = workout;
+
   const client = await clientPromise;
   try {
     const performedMesocycle = await client
@@ -95,7 +97,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     await client
       .db()
       .collection<WorkoutDocument>("workouts")
-      .updateOne({ _id: new ObjectId(workoutId) }, { $set: { ...workout } });
+      .updateOne(
+        { _id: new ObjectId(workoutId) },
+        { $set: { performedMesocycleId: new ObjectId(performedMesocycleId), ...workoutProps } }
+      );
 
     return new Response("Workout updated successfully", {
       status: 200

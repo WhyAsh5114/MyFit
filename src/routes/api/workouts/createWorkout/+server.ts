@@ -16,6 +16,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   }
 
   const { workout, previousSoreness }: APIWorkoutsSaveWorkout = await request.json();
+  const { performedMesocycleId, ...workoutProps } = workout;
   const client = await clientPromise;
   try {
     const activeMesocycle = await client
@@ -81,7 +82,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       .insertOne({
         userId: new ObjectId(session.user.id),
         performedMesocycleId: activeMesocycle._id,
-        ...workout
+        ...workoutProps
       });
 
     await client
