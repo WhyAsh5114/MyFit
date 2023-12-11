@@ -67,7 +67,7 @@ interface WorkoutExercise {
   sets: WorkoutExerciseSet[];
   repRangeStart: number;
   repRangeEnd: number;
-  bodyweight?: number;
+  bodyweight?: number | null;
   targetMuscleGroup: MuscleGroup;
   jointPainRating: JoinPainState | null;
   pumpRating: PumpState | null;
