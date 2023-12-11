@@ -14,14 +14,13 @@ export const load = async ({ fetch, locals, parent }) => {
   }
 
   const getAllMesocyclesResponse = await fetch("/api/mesocycles/getAllMesocycles");
-  const mesocycles = await getAllMesocyclesResponse.json();
+  const { mesocycles } = await getAllMesocyclesResponse.json();
 
   const getAllMesocycleTemplatesResponse = await fetch("/api/mesocycles/getAllMesocycleTemplates");
-  const mesocycleTemplates: WithSerializedId<MesocycleTemplate>[] =
-    await getAllMesocycleTemplatesResponse.json();
+  const { mesocycleTemplates } = await getAllMesocycleTemplatesResponse.json();
 
   const getAllWorkoutsResponse = await fetch("/api/workouts/getAllWorkouts?page=0" + params);
-  const { workouts, count: workoutsCount } = await getAllWorkoutsResponse.json();
+  const { workouts, workoutsCount } = await getAllWorkoutsResponse.json();
 
   return { mesocycles, mesocycleTemplates, workouts, workoutsCount };
 };

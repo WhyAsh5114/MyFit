@@ -22,7 +22,7 @@ export const GET = async ({ locals, url, fetch }) => {
     const getAllMesocyclesResponse = await fetch(
       `/api/mesocycles/getAllMesocycles?mesocycleTemplateId=${mesocycleTemplateId}`
     );
-    const mesocycles = await getAllMesocyclesResponse.json();
+    const { mesocycles } = await getAllMesocyclesResponse.json();
     const mesocycleIds = mesocycles.map(
       (mesocycle: WithSerializedId<Mesocycle>) => new ObjectId(mesocycle._id)
     );
@@ -32,14 +32,14 @@ export const GET = async ({ locals, url, fetch }) => {
   }
 
   const client = await clientPromise;
-  const count = await client.db().collection("workouts").countDocuments(filter);
+  const workoutsCount = await client.db().collection("workouts").countDocuments(filter);
   const workoutsCursor = client
     .db()
     .collection<WorkoutDocument>("workouts")
     .find(filter, { sort: { startTimestamp: -1 } });
   if (skip !== undefined) workoutsCursor.skip(skip).limit(10);
 
-  return new Response(JSON.stringify({ workouts: await workoutsCursor.toArray(), count }), {
+  return new Response(JSON.stringify({ workouts: await workoutsCursor.toArray(), workoutsCount }), {
     status: 200
   });
 };

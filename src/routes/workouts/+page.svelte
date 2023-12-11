@@ -51,7 +51,7 @@
 
     loadingMore = true;
     const response = await fetch("/api/workouts/getAllWorkouts" + params);
-    const { workouts: newWorkouts, count: newCount } = await response.json();
+    const { workouts: newWorkouts, workoutsCount: newCount } = await response.json();
     loadingMore = false;
 
     workoutsCount = newCount;

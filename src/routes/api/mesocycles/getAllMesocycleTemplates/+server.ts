@@ -13,6 +13,10 @@ export const GET = async ({ locals, url }) => {
   if (page >= 0) skip = page * 10;
 
   const client = await clientPromise;
+  const mesocycleTemplatesCount = await client
+    .db()
+    .collection("mesocycleTemplates")
+    .countDocuments({ userId: new ObjectId(session.user.id) });
   const mesocycleTemplateCursor = client
     .db()
     .collection<MesocycleTemplateDocument>("mesocycleTemplates")
@@ -20,5 +24,11 @@ export const GET = async ({ locals, url }) => {
 
   if (skip !== undefined) mesocycleTemplateCursor.skip(skip).limit(10);
 
-  return new Response(JSON.stringify(await mesocycleTemplateCursor.toArray()), { status: 200 });
+  return new Response(
+    JSON.stringify({
+      mesocycleTemplates: await mesocycleTemplateCursor.toArray(),
+      mesocycleTemplatesCount
+    }),
+    { status: 200 }
+  );
 };

@@ -19,8 +19,14 @@ export const GET = async ({ locals, url }) => {
   }
 
   const client = await clientPromise;
+  const mesocyclesCount = await client.db().collection("mesocycles").countDocuments(filter);
   const mesocycleCursor = client.db().collection<MesocycleDocument>("mesocycles").find(filter);
   if (skip !== undefined) mesocycleCursor.skip(skip).limit(10);
 
-  return new Response(JSON.stringify(await mesocycleCursor.toArray()), { status: 200 });
+  return new Response(
+    JSON.stringify({ mesocycles: await mesocycleCursor.toArray(), mesocyclesCount }),
+    {
+      status: 200
+    }
+  );
 };
