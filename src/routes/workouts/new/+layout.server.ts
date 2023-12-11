@@ -1,7 +1,4 @@
-import clientPromise from "$lib/mongo/mongodb";
-import type { UserPreferencesDocument, WorkoutDocument } from "$lib/types/documents";
 import { getDayNumber, getTodaysSplitWorkout } from "$lib/util/MesocycleTemplate";
-import { ObjectId, type WithId } from "mongodb";
 import { error } from "@sveltejs/kit";
 
 export const load = async ({ locals, parent, fetch, depends }) => {
@@ -13,21 +10,20 @@ export const load = async ({ locals, parent, fetch, depends }) => {
   }
 
   const { activeMesocycle, activeMesocycleTemplate } = await parent();
-  if (!activeMesocycle) {
+  if (!activeMesocycle || !activeMesocycleTemplate) {
     throw error(404, "No active mesocycle found");
   }
 
-  const client = await clientPromise,
-    userPreferences = await client
-      .db()
-      .collection<Omit<UserPreferencesDocument, "userId">>("userPreferences")
-      .findOne({ userId: new ObjectId(session.user.id) }, { projection: { _id: 0, userId: 0 } }),
-    todaysWorkout = getTodaysSplitWorkout(
-      activeMesocycle.workouts,
-      activeMesocycleTemplate.exerciseSplit
-    );
+  const todaysWorkout = getTodaysSplitWorkout(
+    activeMesocycle.workouts,
+    activeMesocycleTemplate.exerciseSplit
+  );
 
-  let referenceWorkout: WithId<WorkoutDocument> | null = null;
+  let userPreferences: UserPreferences | null = null;
+  const getUserPreferencesResponse = await fetch("/api/user/getPreferences");
+  if (getUserPreferencesResponse.ok) userPreferences = await getUserPreferencesResponse.json();
+
+  let referenceWorkout: WithSerializedId<Workout> | null = null;
   if (todaysWorkout) {
     const requestBody: APIWorkoutsGetReferenceWorkout = {
         workoutDayNumber: getDayNumber(
@@ -43,8 +39,7 @@ export const load = async ({ locals, parent, fetch, depends }) => {
         }
       });
     if (response.ok) {
-      const referenceWorkoutDocument: WithId<WorkoutDocument> = await response.json();
-      referenceWorkout = referenceWorkoutDocument;
+      referenceWorkout = await response.json();
     }
   }
 

@@ -89,7 +89,7 @@
     } else {
       const requestBody: APIMesocyclesEditTemplate = {
         mesocycleTemplate: createdMesocycle,
-        mesocycleTemplateId: data.mesocycleTemplate.id
+        mesocycleTemplateId: data.mesocycleTemplate._id
       };
       callingEndpoint = true;
       response = await fetch("/api/mesocycles/editTemplate", {

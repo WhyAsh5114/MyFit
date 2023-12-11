@@ -16,11 +16,11 @@ export const load = async ({ locals, parent, fetch }) => {
   }
 
   const { activeMesocycle, activeMesocycleTemplate, referenceWorkout, userBodyweight } =
-      await parent(),
-    todaysSplitWorkout = getTodaysSplitWorkout(
-      activeMesocycle.workouts,
-      activeMesocycleTemplate.exerciseSplit
-    );
+    await parent();
+  const todaysSplitWorkout = getTodaysSplitWorkout(
+    activeMesocycle.workouts,
+    activeMesocycleTemplate.exerciseSplit
+  );
   if (todaysSplitWorkout === null) {
     throw error(400, "No workout found for today");
   }
@@ -50,7 +50,7 @@ export const load = async ({ locals, parent, fetch }) => {
   }
 
   const requestBody: APIGetWorkoutsThatPreviouslyTargeted = {
-      mesocycleId: activeMesocycle.id,
+      mesocycleId: activeMesocycle._id,
       muscleGroups: Array.from(getMuscleGroups(todaysSplitWorkout.exercises)),
       beforeTimestamp: Number(new Date())
     },
