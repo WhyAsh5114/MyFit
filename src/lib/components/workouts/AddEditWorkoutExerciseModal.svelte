@@ -7,10 +7,10 @@
   export let editingIdx: number | undefined;
   export let allExercisesSetsCompleted: boolean[][];
 
-  let editMode = false,
-    modeText: "Add" | "Edit" = "Add",
-    selectedExercise: Partial<SplitExercise>,
-    editingExercise: Partial<SplitExercise> = {};
+  let editMode = false;
+  let modeText: "Add" | "Edit" = "Add";
+  let selectedExercise: Partial<SplitExercise>;
+  let editingExercise: Partial<SplitExercise> = {};
   $: exercises, updateEditingExercise(editingIdx);
   function updateEditingExercise(idx: number | undefined) {
     if (idx !== undefined && exercises[idx]) {
@@ -22,7 +22,7 @@
       } = JSON.parse(JSON.stringify(exercises[idx])) as WorkoutExerciseWithoutSetNumbers;
       editingExercise = {
         sets: sets.length,
-        weightType: userBodyweight === null ? "Weighted" : "Bodyweight",
+        weightType: exerciseBodyweight === undefined ? "Weighted" : "Bodyweight",
         ...otherProps
       };
       userBodyweight = exerciseBodyweight ?? null;
@@ -61,11 +61,13 @@
     }
 
     const typedExercise = editingExercise as SplitExercise;
+    const oldSets = exercises[idx].sets;
     if (editingExercise.weightType === "Bodyweight") {
       exercises[idx] = splitExercisesToWorkoutExercise([typedExercise], userBodyweight)[0];
     } else {
       exercises[idx] = splitExercisesToWorkoutExercise([typedExercise])[0];
     }
+    exercises[idx].sets = oldSets;
     exercises = exercises;
     dialogElement.close();
   }
