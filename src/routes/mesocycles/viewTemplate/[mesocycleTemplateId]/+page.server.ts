@@ -1,9 +1,6 @@
 import { error } from "@sveltejs/kit";
-import clientPromise from "$lib/mongo/mongodb";
-import { ObjectId } from "mongodb";
-import type { MesocycleDocument } from "$lib/types/documents";
 
-export const load = async ({ locals, params }) => {
+export const load = async ({ locals, params, fetch }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
     throw error(403, "Not logged in");
@@ -13,41 +10,25 @@ export const load = async ({ locals, params }) => {
     throw error(400, "Mesocycle template ID should be 24 character hex string");
   }
 
-  const client = await clientPromise;
-  const mesocycleTemplateDocument = await client
-    .db()
-    .collection<MesocycleTemplate & { userId: ObjectId }>("mesocycleTemplates")
-    .findOne({ _id: new ObjectId(params.mesocycleTemplateId) });
-
-  if (mesocycleTemplateDocument === null) {
+  let mesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
+  const getMesocycleTemplateResponse = await fetch(
+    "/api/mesocycles/getMesocycleTemplate?mesocycleTemplateId=" + params.mesocycleTemplateId
+  );
+  if (getMesocycleTemplateResponse.ok) {
+    mesocycleTemplate =
+      (await getMesocycleTemplateResponse.json()) as WithSerializedId<MesocycleTemplate>;
+  } else {
     throw error(404, "Mesocycle template not found");
-  } else if (mesocycleTemplateDocument.userId.toString() !== session.user.id) {
-    throw error(403, "Unauthorized");
   }
 
-  const { _id, userId, ...mesocycleTemplateProps } = mesocycleTemplateDocument;
-  const mesocycleTemplate: MesocycleTemplate = { ...mesocycleTemplateProps };
-  const mesocyclesCursor = client
-    .db()
-    .collection<Omit<MesocycleDocument, "userId">>("mesocycles")
-    .find(
-      { userId: new ObjectId(session.user.id), templateMesoId: mesocycleTemplateDocument._id },
-      { sort: { startTimestamp: -1 }, projection: { userId: 0 } }
-    )
-    .map((mesocycleDocument) => {
-      const { _id, workouts, templateMesoId, ...otherProps } = mesocycleDocument;
-      const mesocycle: WithSerializedId<Mesocycle> = {
-        id: _id.toString(),
-        workouts: workouts.map((workout) => workout?.toString() ?? null),
-        templateMesoId: templateMesoId.toString(),
-        ...otherProps
-      };
-      return mesocycle;
-    });
-  const mesocyclesStreamArray = [];
-  while (await mesocyclesCursor.hasNext()) {
-    mesocyclesStreamArray.push(mesocyclesCursor.next());
+  let mesocycles: WithSerializedId<Mesocycle>[] = [];
+  const getAllMesocyclesResponse = await fetch(
+    "/api/mesocycles/getAllMesocycles?mesocycleTemplateId=" + params.mesocycleTemplateId
+  );
+  if (getAllMesocyclesResponse.ok) {
+    // No need to use count and paging, won't be as many usages of each template
+    ({ mesocycles } = await getAllMesocyclesResponse.json());
   }
 
-  return { mesocycleTemplate, streamed: { mesocyclesStreamArray } };
+  return { mesocycleTemplate, mesocycles };
 };

@@ -184,27 +184,20 @@
     </div>
   {/if}
 
-  {#if data.streamed.mesocyclesStreamArray.length > 0}
+  {#if data.mesocycles.length > 0}
     <div class="stat col-span-2">
       <div class="stat-title">Usages</div>
       <div class="flex flex-col mt-2 max-h-32 overflow-y-auto gap-1">
-        {#each data.streamed.mesocyclesStreamArray as mesocyclePromise}
-          {#await mesocyclePromise then mesocycle}
-            {#if mesocycle}
-              {#if mesocycle.endTimestamp === undefined}
-                <a
-                  class="btn btn-sm text-accent"
-                  href="/mesocycles/view/{data.activeMesocycle?.id}"
-                >
-                  {dateFormatter(mesocycle.startTimestamp)}
-                </a>
-              {:else}
-                <a class="btn btn-sm" href="/mesocycles/view/{mesocycle.id}">
-                  {dateFormatter(mesocycle.startTimestamp)}
-                </a>
-              {/if}
-            {/if}
-          {/await}
+        {#each data.mesocycles as mesocycle}
+          {#if mesocycle.endTimestamp === undefined}
+            <a class="btn btn-sm text-accent" href="/mesocycles/view/{data.activeMesocycle?._id}">
+              {dateFormatter(mesocycle.startTimestamp)}
+            </a>
+          {:else}
+            <a class="btn btn-sm" href="/mesocycles/view/{mesocycle._id}">
+              {dateFormatter(mesocycle.startTimestamp)}
+            </a>
+          {/if}
         {/each}
       </div>
     </div>
