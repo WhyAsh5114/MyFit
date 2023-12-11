@@ -10,30 +10,25 @@
     workoutBeingPerformed
   } from "../newWorkoutStore";
 
-  let difficultyRating: 1 | 2 | 3 | 4 | 5 = 3,
-    temp: WorkoutExerciseWithoutSetNumbers[] = [];
-  if ($workoutBeingPerformed) {
-    ({ exercisesPerformed: temp } = $workoutBeingPerformed);
-  }
-  const exercisesPerformed = temp as WorkoutExercise[];
+  let difficultyRating: 1 | 2 | 3 | 4 | 5 = 3;
 
   let callingEndpoint = false;
   async function saveWorkout() {
     if (!$workoutBeingPerformed) {
       return;
     }
-    const { exercisesPerformed: temp, ...otherProps } = $workoutBeingPerformed,
-      exercisesPerformed = temp as WorkoutExercise[],
-      requestBody: APIWorkoutsSaveWorkout = {
-        workout: {
-          ...otherProps,
-          exercisesPerformed,
-          muscleGroupWorkloads: $workloadData,
-          muscleSorenessToNextWorkout: {},
-          difficultyRating
-        },
-        previousSoreness: $sorenessData
-      };
+    const { exercisesPerformed: temp, ...otherProps } = $workoutBeingPerformed;
+    let validExercises = temp as WorkoutExercise[];
+    const requestBody: APIWorkoutsSaveWorkout = {
+      workout: {
+        ...otherProps,
+        exercisesPerformed: validExercises,
+        muscleGroupWorkloads: $workloadData,
+        muscleSorenessToNextWorkout: {},
+        difficultyRating
+      },
+      previousSoreness: $sorenessData
+    };
     callingEndpoint = true;
     const response = await fetch("/api/workouts/createWorkout", {
       method: "POST",
@@ -68,12 +63,12 @@
   }
 
   let avgRIR = 0;
-  exercisesPerformed.forEach(({ sets }) => {
+  $workoutBeingPerformed?.exercisesPerformed.forEach(({ sets }) => {
     sets.forEach(({ RIR }) => {
-      avgRIR += RIR;
+      avgRIR += RIR ?? 0;
     });
   });
-  avgRIR /= getTotalSets(exercisesPerformed);
+  avgRIR /= getTotalSets($workoutBeingPerformed?.exercisesPerformed ?? []);
 </script>
 
 <MyModal onClose={closeModal} bind:title={modalTitle} bind:dialogElement={modal}>

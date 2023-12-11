@@ -46,7 +46,7 @@
 
       if (referenceSet) {
         let referenceLoad = referenceSet.load;
-        if (referenceExercise?.bodyweight !== undefined) {
+        if (referenceExercise?.bodyweight !== null && referenceExercise?.bodyweight !== undefined) {
           referenceLoad += referenceExercise.bodyweight;
         }
         referenceVolume += referenceSet.reps * referenceLoad;

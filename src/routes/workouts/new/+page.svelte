@@ -15,6 +15,7 @@
   import CancelIcon from "virtual:icons/ph/x-bold";
   import {
     allExercisesSetsCompleted,
+    exercisesPerformed,
     sorenessData,
     workloadData,
     workoutBeingPerformed
@@ -101,6 +102,7 @@
   async function overwriteWorkout() {
     $workoutBeingPerformed = null;
     $allExercisesSetsCompleted = [];
+    $exercisesPerformed = null;
     $workloadData = {};
     $sorenessData = {};
     await submitForm();
