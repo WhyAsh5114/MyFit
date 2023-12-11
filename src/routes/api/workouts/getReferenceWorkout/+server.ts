@@ -7,7 +7,7 @@ import type {
   WorkoutDocument
 } from "$lib/types/documents";
 
-export const POST: RequestHandler = async ({ request, locals }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
     return new Response("Invalid session", {
@@ -15,8 +15,12 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     });
   }
 
-  const { workoutDayNumber }: APIWorkoutsGetReferenceWorkout = await request.json(),
-    client = await clientPromise;
+  const workoutDayNumber = parseInt(url.searchParams.get("workoutDayNumber") ?? "");
+  if (isNaN(workoutDayNumber)) {
+    return new Response("Invalid workout day number given", { status: 400 });
+  }
+
+  const client = await clientPromise;
   try {
     const activeMesocycle = await client
       .db()
