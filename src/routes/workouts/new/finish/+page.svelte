@@ -7,14 +7,10 @@
     allExercisesSetsCompleted,
     sorenessData,
     workloadData,
-    workoutBeingPerformed,
-    exercisesPerformed
+    workoutBeingPerformed
   } from "../newWorkoutStore";
 
   let difficultyRating: 1 | 2 | 3 | 4 | 5 = 3;
-  if ($exercisesPerformed === null) {
-    $exercisesPerformed = [];
-  }
 
   let callingEndpoint = false;
   async function saveWorkout() {
@@ -22,10 +18,11 @@
       return;
     }
     const { exercisesPerformed: temp, ...otherProps } = $workoutBeingPerformed;
+    let validExercises = temp as WorkoutExercise[];
     const requestBody: APIWorkoutsSaveWorkout = {
       workout: {
         ...otherProps,
-        exercisesPerformed: $exercisesPerformed as WorkoutExercise[],
+        exercisesPerformed: validExercises,
         muscleGroupWorkloads: $workloadData,
         muscleSorenessToNextWorkout: {},
         difficultyRating
@@ -66,12 +63,12 @@
   }
 
   let avgRIR = 0;
-  $exercisesPerformed.forEach(({ sets }) => {
+  $workoutBeingPerformed?.exercisesPerformed.forEach(({ sets }) => {
     sets.forEach(({ RIR }) => {
       avgRIR += RIR ?? 0;
     });
   });
-  avgRIR /= getTotalSets($exercisesPerformed);
+  avgRIR /= getTotalSets($workoutBeingPerformed?.exercisesPerformed ?? []);
 </script>
 
 <MyModal onClose={closeModal} bind:title={modalTitle} bind:dialogElement={modal}>

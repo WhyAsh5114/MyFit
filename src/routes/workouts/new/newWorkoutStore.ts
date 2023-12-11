@@ -25,6 +25,7 @@ export const sorenessData: Writable<Workout["muscleSorenessToNextWorkout"]> = wr
 workoutBeingPerformed.subscribe((val) => ls?.setItem("workoutBeingPerformed", JSON.stringify(val)));
 exercisesPerformed.subscribe((exercises) => {
   ls?.setItem("exercisesPerformed", JSON.stringify(exercises));
+  // Sync with workoutBeingPerformed
   workoutBeingPerformed.update((workout) => {
     if (exercises && workout) {
       workout.exercisesPerformed = exercises;
