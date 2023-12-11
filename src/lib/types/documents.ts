@@ -10,7 +10,7 @@ export interface MesocycleDocument {
   endTimestamp?: EpochTimeStamp;
 }
 
-export type WorkoutDocument = Workout & {
+export type WorkoutDocument = Omit<Workout, "performedMesocycleId"> & {
   userId: ObjectId;
   performedMesocycleId: ObjectId;
 };
