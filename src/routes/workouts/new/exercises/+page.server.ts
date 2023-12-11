@@ -50,23 +50,22 @@ export const load = async ({ locals, parent, fetch }) => {
   }
 
   const requestBody: APIGetWorkoutsThatPreviouslyTargeted = {
-      mesocycleId: activeMesocycle._id,
-      muscleGroups: Array.from(getMuscleGroups(todaysSplitWorkout.exercises)),
-      beforeTimestamp: Number(new Date())
+    mesocycleId: activeMesocycle._id,
+    muscleGroups: Array.from(getMuscleGroups(todaysSplitWorkout.exercises)),
+    beforeTimestamp: Number(new Date())
+  };
+  const response = await fetch("/api/workouts/getWorkoutsThatPreviouslyTargeted", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json"
     },
-    response = await fetch("/api/workouts/getWorkoutsThatPreviouslyTargeted", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json"
-      },
-      body: JSON.stringify(requestBody)
-    });
+    body: JSON.stringify(requestBody)
+  });
   if (!response.ok) {
     throw error(500, await response.text());
   }
 
   const workoutsThatPreviouslyTargeted = await response.json();
-
   return {
     activeMesocycle,
     activeMesocycleTemplate,
