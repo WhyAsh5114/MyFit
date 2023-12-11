@@ -30,7 +30,7 @@ export function splitExercisesToWorkoutExercise(
       sets: Array(sets)
         .fill(undefined)
         .map(() => ({ reps: null, load: null, RIR: plannedRIR })),
-      bodyweight: weightType === "Bodyweight" ? userBodyweight ?? undefined : undefined
+      bodyweight: weightType === "Bodyweight" ? userBodyweight ?? null : undefined
     };
     workoutExercises.push(workoutExercise);
   });

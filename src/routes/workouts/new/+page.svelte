@@ -15,6 +15,7 @@
   import CancelIcon from "virtual:icons/ph/x-bold";
   import {
     allExercisesSetsCompleted,
+    exercisesPerformed,
     sorenessData,
     workloadData,
     workoutBeingPerformed
@@ -32,9 +33,9 @@
     activeMesocycle.workouts,
     activeMesocycleTemplate.exerciseSplit
   );
-  let bodyweightExercises = false,
-    muscleGroupsAndSets: { muscleGroup: MuscleGroup; sets: number }[],
-    totalSets = 0;
+  let bodyweightExercises = false;
+  let muscleGroupsAndSets: { muscleGroup: MuscleGroup; sets: number }[];
+  let totalSets = 0;
   $: if (todaysWorkout) {
     let exercises: WorkoutExerciseWithoutSetNumbers[];
     if (data.referenceWorkout) {
@@ -52,8 +53,8 @@
     }
   }
 
-  let bodyweightInputValue = data.userBodyweight,
-    editingBodyweightValue = bodyweightInputValue === null;
+  let bodyweightInputValue = data.userBodyweight;
+  let editingBodyweightValue = bodyweightInputValue === null;
   async function submitForm() {
     if (todaysWorkout) {
       await goto("/workouts/new/exercises");
@@ -101,6 +102,7 @@
   async function overwriteWorkout() {
     $workoutBeingPerformed = null;
     $allExercisesSetsCompleted = [];
+    $exercisesPerformed = null;
     $workloadData = {};
     $sorenessData = {};
     await submitForm();
