@@ -1,6 +1,6 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import clientPromise from "$lib/mongo/mongodb";
-import { ObjectId, type WithId } from "mongodb";
+import { ObjectId } from "mongodb";
 import type {
   MesocycleDocument,
   MesocycleTemplateDocument,
@@ -40,23 +40,32 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         },
         { projection: { exerciseSplit: 1 } }
       ))!;
-    const activeMesocycleWorkouts = client
+
+    let referenceWorkoutDocument = await client
       .db()
       .collection<WorkoutDocument>("workouts")
-      .find(
+      .findOne(
         {
           userId: new ObjectId(session.user.id),
-          performedMesocycleId: activeMesocycle._id
+          performedMesocycleId: activeMesocycle._id,
+          dayNumber: workoutDayNumber
         },
-        { limit: exerciseSplit.length }
-      )
-      .sort({ startTimestamp: -1 });
+        {
+          sort: ["startTimestamp", -1]
+        }
+      );
 
-    let referenceWorkoutDocument: WithId<WorkoutDocument> | undefined;
-    for await (const workoutDocument of activeMesocycleWorkouts) {
-      if (workoutDocument.dayNumber === workoutDayNumber) {
-        referenceWorkoutDocument = workoutDocument;
-        break;
+    // Find actual reference workout (not skipped workout) if exists
+    if (referenceWorkoutDocument?.skipped === true) {
+      // If no reference even in skipped workout, no actual workout exists
+      if (!referenceWorkoutDocument.referenceWorkout) {
+        referenceWorkoutDocument = null;
+      } else {
+        // Get the real reference workout
+        referenceWorkoutDocument = await client
+          .db()
+          .collection<WorkoutDocument>("workouts")
+          .findOne({ _id: new ObjectId(referenceWorkoutDocument.referenceWorkout) });
       }
     }
     if (!referenceWorkoutDocument) {
