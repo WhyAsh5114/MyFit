@@ -14,7 +14,7 @@
   let comparing = false;
 
   export let allExercisesSetsCompleted: boolean[][] = [];
-  if (allExercisesSetsCompleted.length === 0) {
+  $: if (exercises.length !== allExercisesSetsCompleted.length) {
     exercises.forEach((exercise) => {
       const setCompleted = mode !== "performing";
       allExercisesSetsCompleted.push(Array(exercise.sets.length).fill(setCompleted));
