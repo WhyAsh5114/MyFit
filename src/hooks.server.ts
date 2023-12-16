@@ -13,9 +13,6 @@ export const handle = SvelteKitAuth({
   adapter: MongoDBAdapter(clientPromise, {
     databaseName: "MyFit_v2"
   }),
-  pages: {
-    signIn: "/login"
-  },
   callbacks: {
     // Attach mongoDB user document ID for easier queries
     async session({ session, user }) {
