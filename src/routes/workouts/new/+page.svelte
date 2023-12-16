@@ -13,6 +13,7 @@
   import EditIcon from "virtual:icons/ep/edit";
   import DoneIcon from "virtual:icons/material-symbols/done";
   import CancelIcon from "virtual:icons/ph/x-bold";
+  import SkipIcon from "virtual:icons/dashicons/controls-skipforward";
   import {
     allExercisesSetsCompleted,
     exercisesPerformed,
@@ -25,6 +26,7 @@
   let modal: HTMLDialogElement;
   let modalText = "";
   let modalTitle = "";
+  let onModalClose = () => {};
 
   export let data;
   $: ({ activeMesocycle, activeMesocycleTemplate } = data);
@@ -99,17 +101,64 @@
     }
   }
 
-  async function overwriteWorkout() {
+  async function overwriteWorkout(redirect = false) {
     $workoutBeingPerformed = null;
     $allExercisesSetsCompleted = [];
     $exercisesPerformed = null;
     $workloadData = {};
     $sorenessData = {};
-    await submitForm();
+    if (redirect) await submitForm();
+  }
+
+  let skippingWorkout = false;
+  async function skipWorkout() {
+    const requestBody: APIWorkoutsSaveWorkout = {
+      workout: {
+        startTimestamp: Number(new Date()),
+        referenceWorkout: data.referenceWorkout?._id.toString() ?? null,
+        dayNumber: getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit),
+        cycleNumber: getCycleNumber(
+          activeMesocycleTemplate.exerciseSplit,
+          activeMesocycle.workouts
+        ),
+        plannedRIR: getPlannedRIR(activeMesocycleTemplate, activeMesocycle.workouts),
+        deload: false,
+        skipped: true,
+        muscleGroupWorkloads: {},
+        muscleSorenessToNextWorkout: {},
+        exercisesPerformed: [],
+        difficultyRating: 1
+      },
+      // TODO: Can ask user here to provide soreness
+      previousSoreness: {}
+    };
+    skippingWorkout = true;
+    const response = await fetch("/api/workouts/createWorkout", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify(requestBody)
+    });
+    if (response.ok) {
+      modalTitle = "Success";
+      modalText = "Workout has been skipped successfully";
+      await overwriteWorkout();
+    } else {
+      modalTitle = "Error";
+      modalText = await response.text();
+    }
+    skippingWorkout = false;
+    modal.show();
+    onModalClose = async () => {
+      callingEndpoint = true;
+      await invalidate("mesocycle:active");
+      callingEndpoint = false;
+    };
   }
 </script>
 
-<MyModal bind:dialogElement={modal} bind:title={modalTitle}>
+<MyModal onClose={onModalClose} title={modalTitle} bind:dialogElement={modal}>
   {modalText}
 </MyModal>
 <form
@@ -120,8 +169,15 @@
   {#if todaysWorkout}
     <div class="stat col-span-2">
       <div class="stat-title">Workout template</div>
-      <div class="stat-value">
+      <div class="stat-value flex items-center justify-between">
         {todaysWorkout.name}
+        <button class="btn btn-sm" type="button" on:click={skipWorkout}>
+          {#if skippingWorkout}
+            <span class="loading loading-bars loading-sm"></span>
+          {:else}
+            Skip <SkipIcon />
+          {/if}
+        </button>
       </div>
       <div class="stat-desc">
         Day {workoutIdx + 1}, Cycle {getCycleNumber(
@@ -223,21 +279,27 @@
 {#if $workoutBeingPerformed === null}
   <button
     class="btn btn-accent mt-auto"
-    disabled={editingBodyweightValue || callingEndpoint}
+    disabled={editingBodyweightValue || callingEndpoint || skippingWorkout}
     form="workoutForm"
     type="submit"
   >
     {#if todaysWorkout}
       Log workout
-    {:else if callingEndpoint}
+    {:else if callingEndpoint || skippingWorkout}
       <span class="loading loading-bars" />
     {:else}
       Mark rest day complete
     {/if}
   </button>
+{:else if editingBodyweightValue || callingEndpoint || skippingWorkout}
+  <button class="btn btn-block mt-auto">
+    <span class="loading loading-bars"></span>
+  </button>
 {:else}
   <div class="join grid grid-cols-2 mt-auto">
-    <button class="join-item btn btn-error" on:click={overwriteWorkout}>Overwrite workout</button>
+    <button class="join-item btn btn-error" on:click={() => overwriteWorkout(true)}>
+      Overwrite workout
+    </button>
     <button class="join-item btn btn-primary" form="workoutForm" type="submit">
       Back to workout
     </button>
