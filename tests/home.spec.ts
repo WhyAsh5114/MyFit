@@ -10,5 +10,5 @@ test("has title", async ({ page }) => {
 test("login redirects to login page", async ({ page }) => {
   await page.goto("/");
   await page.getByText("Login to the app").click();
-  await expect(page).toHaveURL(/.*\/login/)
-})
+  await expect(page).toHaveURL(/.*\/login/);
+});

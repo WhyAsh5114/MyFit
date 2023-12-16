@@ -44,7 +44,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
       await page.goto("http://localhost:4173/login");
       await page.getByText("Sign in with GitHub").click();
       await page.waitForURL(/github.com/);
-      
+
       await page.getByLabel("Username or email address").fill(account.username);
       await page.getByLabel("Password").fill(account.password);
       await page.getByRole("button", { name: "Sign in" }).click();
