@@ -52,9 +52,9 @@ function matchSetVolumeWithNewLoad(
     if (newAbsoluteDifference < absoluteDifference) {
       absoluteDifference = newAbsoluteDifference;
     } else {
-      if (newVolume > oldVolume) {
+      if (newVolume > oldVolume && newSet.reps > exercise.repRangeStart) {
         newSet.reps--;
-      } else {
+      } else if (newSet.reps < exercise.repRangeEnd - 1) {
         newSet.reps++;
       }
       break;
