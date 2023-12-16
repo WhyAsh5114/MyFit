@@ -25,7 +25,8 @@
         exercisesPerformed: validExercises,
         muscleGroupWorkloads: $workloadData,
         muscleSorenessToNextWorkout: {},
-        difficultyRating
+        difficultyRating,
+        skipped: false
       },
       previousSoreness: $sorenessData
     };
