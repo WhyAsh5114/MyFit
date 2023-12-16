@@ -127,7 +127,8 @@
         muscleGroupWorkloads: {},
         muscleSorenessToNextWorkout: {},
         exercisesPerformed: [],
-        difficultyRating: 1
+        difficultyRating: 1,
+        performedMesocycleId: activeMesocycle._id
       },
       // TODO: Can ask user here to provide soreness
       previousSoreness: {}
