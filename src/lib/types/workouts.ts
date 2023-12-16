@@ -40,6 +40,7 @@ interface Workout {
   plannedRIR: number;
   muscleSorenessToNextWorkout: Partial<Record<MuscleGroup, SorenessState | null>>;
   deload: boolean;
+  skipped: boolean;
 }
 
 const JointPainFeedback = [
