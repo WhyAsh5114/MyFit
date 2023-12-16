@@ -22,13 +22,13 @@ export const load = async ({ locals, parent, fetch, depends }) => {
     .db()
     .collection<Omit<UserPreferencesDocument, "userId">>("userPreferences")
     .findOne({ userId: new ObjectId(session.user.id) }, { projection: { _id: 0, userId: 0 } });
-  const todaysWorkout = getTodaysSplitWorkout(
+  const todaysSplitWorkout = getTodaysSplitWorkout(
     activeMesocycle.workouts,
     activeMesocycleTemplate.exerciseSplit
   );
 
   let referenceWorkout: WithId<WorkoutDocument> | null = null;
-  if (todaysWorkout) {
+  if (todaysSplitWorkout) {
     const requestBody: APIWorkoutsGetReferenceWorkout = {
       workoutDayNumber: getDayNumber(
         activeMesocycle.workouts,
