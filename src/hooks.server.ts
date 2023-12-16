@@ -17,5 +17,6 @@ export const handle = SvelteKitAuth({
       }
       return session;
     }
-  }
+  },
+  trustHost: true
 });
