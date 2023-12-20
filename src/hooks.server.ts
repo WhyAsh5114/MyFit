@@ -4,16 +4,16 @@ import GitHub from "@auth/core/providers/github";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "$lib/mongo/mongodb";
 import {
-  AUTH_GOOGLE_ID,
-  AUTH_GOOGLE_SECRET,
-  AUTH_GITHUB_ID,
-  AUTH_GITHUB_SECRET
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRET
 } from "$env/static/private";
 
 export const handle = SvelteKitAuth({
   providers: [
-    Google({ clientId: AUTH_GOOGLE_ID, clientSecret: AUTH_GOOGLE_SECRET }),
-    GitHub({ clientId: AUTH_GITHUB_ID, clientSecret: AUTH_GITHUB_SECRET })
+    Google({ clientId: GOOGLE_CLIENT_ID, clientSecret: GOOGLE_CLIENT_SECRET }),
+    GitHub({ clientId: GITHUB_CLIENT_ID, clientSecret: GITHUB_CLIENT_SECRET })
   ],
   adapter: MongoDBAdapter(clientPromise, {
     databaseName: "MyFit_v2"
