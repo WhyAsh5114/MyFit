@@ -9,18 +9,22 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check . && eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "playwright test --reporter list"
   },
   "devDependencies": {
     "@iconify/json": "^2.2.142",
+    "@playwright/test": "^1.40.1",
     "@sveltejs/adapter-vercel": "^3.1.0",
     "@sveltejs/kit": "^1.20.4",
+    "@types/node": "^20.10.4",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",
     "@vite-pwa/sveltekit": "^0.2.7",
     "autoprefixer": "^10.4.14",
     "daisyui": "^4.0.0",
     "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-svelte": "^2.35.1",
     "eslint-plugin-unused-imports": "^3.0.0",
     "kolorist": "^1.8.0",
@@ -34,8 +38,7 @@
     "tslib": "^2.4.1",
     "typescript": "^5.3.3",
     "unplugin-icons": "^0.18.0",
-    "vite": "^4.4.2",
-    "eslint-config-prettier": "^9.1.0"
+    "vite": "^4.4.2"
   },
   "type": "module",
   "dependencies": {
@@ -45,6 +48,7 @@
     "@vercel/analytics": "^1.1.1",
     "@vercel/speed-insights": "^1.0.0",
     "chart.js": "^4.4.1",
+    "dotenv": "^16.3.1",
     "mongodb": "^6.2.0"
   }
 }

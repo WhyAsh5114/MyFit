@@ -3,9 +3,15 @@
   import MyModal from "$lib/components/MyModal.svelte";
   import { signIn } from "@auth/sveltekit/client";
   import GoogleLogo from "virtual:icons/ri/google-fill";
+  import GitHubLogo from "virtual:icons/mdi/github";
 
   let redirectingModal: HTMLDialogElement;
   $: ({ url } = $page);
+
+  const providerList = [
+    { name: "google", logo: GoogleLogo },
+    { name: "github", logo: GitHubLogo }
+  ];
 </script>
 
 <svelte:head>
@@ -18,18 +24,19 @@
     Please wait
   </button>
 </MyModal>
-<div
-  class="flex flex-col items-center bg-secondary rounded-lg py-5 px-10 gap-3 w-full max-w-xs m-auto"
->
-  <h3 class="text-black font-semibold">Login to continue</h3>
-  <button
-    class="btn gap-2 btn-primary normal-case w-full"
-    on:click={() => {
-      redirectingModal.show();
-      signIn("google", { callbackUrl: url.searchParams.get("callbackURL") || "" });
-    }}
-  >
-    <GoogleLogo class="h-6 w-6 mx-2" />
-    Sign in with Google
-  </button>
+
+<h2>Login</h2>
+<div class="flex flex-col items-center rounded-lg gap-1 w-full max-w-sm m-auto">
+  {#each providerList as { name, logo }}
+    <button
+      class="btn gap-2 btn-primary normal-case w-full justify-evenly"
+      on:click={() => {
+        redirectingModal.show();
+        signIn(name, { callbackUrl: url.searchParams.get("callbackURL") || "" });
+      }}
+    >
+      <svelte:component this={logo} class="h-7 w-7" />
+      <span>Sign in with <span class="capitalize">{name}</span></span>
+    </button>
+  {/each}
 </div>

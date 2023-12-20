@@ -31,7 +31,8 @@
     "postcss.config.cjs",
     "svelte.config.js",
     "tailwind.config.cjs",
-    "src/service-worker.ts"
+    "src/service-worker.ts",
+    "playwright.config.ts"
   ],
   "rules": {
     "svelte/no-unused-class-name": "off",

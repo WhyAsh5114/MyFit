@@ -1,11 +1,20 @@
 import { SvelteKitAuth } from "@auth/sveltekit";
 import Google from "@auth/core/providers/google";
-import { AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET } from "$env/static/private";
+import GitHub from "@auth/core/providers/github";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "$lib/mongo/mongodb";
+import {
+  AUTH_GOOGLE_ID,
+  AUTH_GOOGLE_SECRET,
+  AUTH_GITHUB_ID,
+  AUTH_GITHUB_SECRET
+} from "$env/static/private";
 
 export const handle = SvelteKitAuth({
-  providers: [Google({ clientId: AUTH_GOOGLE_ID, clientSecret: AUTH_GOOGLE_SECRET })],
+  providers: [
+    Google({ clientId: AUTH_GOOGLE_ID, clientSecret: AUTH_GOOGLE_SECRET }),
+    GitHub({ clientId: AUTH_GITHUB_ID, clientSecret: AUTH_GITHUB_SECRET })
+  ],
   adapter: MongoDBAdapter(clientPromise, {
     databaseName: "MyFit_v2"
   }),
@@ -17,5 +26,6 @@ export const handle = SvelteKitAuth({
       }
       return session;
     }
-  }
+  },
+  trustHost: true
 });
