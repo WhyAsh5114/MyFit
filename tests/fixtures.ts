@@ -33,7 +33,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
           name: "authjs.session-token",
           value: testSession,
           path: "/",
-          domain: "localhost",
+          domain: "localhost"
         }
       ]);
       // Wait until the page receives the cookies.
@@ -45,7 +45,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
       await page.close();
       await use(fileName);
 
-      // Clear user data
+      // TODO: Clear user data, mesocycles, templates, workouts, preferences
     },
     { scope: "worker" }
   ]
