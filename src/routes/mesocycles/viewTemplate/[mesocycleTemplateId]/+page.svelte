@@ -113,7 +113,7 @@
   <div class="stat col-span-2">
     <div class="stat-title">Mesocycle name</div>
     <div class="stat-value flex items-center justify-between w-full">
-      {data.mesocycleTemplate.name}
+      <span data-testid="mesocycle-name">{data.mesocycleTemplate.name}</span>
       <a
         class="btn btn-sm"
         href="/mesocycles/editTemplate/basics/?mesocycleTemplateId={params.mesocycleTemplateId}"
@@ -126,11 +126,13 @@
 
   <div class="stat">
     <div class="stat-title">Start RIR</div>
-    <div class="stat-value">{data.mesocycleTemplate.startRIR} RIR</div>
+    <div class="stat-value" data-testid="mesocycle-start-RIR">
+      {data.mesocycleTemplate.startRIR} RIR
+    </div>
   </div>
   <div class="stat">
     <div class="stat-title">Total duration</div>
-    <div class="stat-value">
+    <div class="stat-value" data-testid="mesocycle-duration">
       {getTotalDuration(data.mesocycleTemplate.RIRProgression)} cycles
     </div>
   </div>
@@ -154,12 +156,14 @@
 
   <div class="stat col-span-2">
     <div class="stat-title">Caloric state</div>
-    <div class="stat-value">{caloricState?.name} ({caloricState?.commonTerm})</div>
+    <div class="stat-value" data-testid="mesocycle-caloric-state">
+      {caloricState?.name} ({caloricState?.commonTerm})
+    </div>
   </div>
 
   <div class="stat col-span-2">
     <div class="stat-title">Exercise split</div>
-    <div class="flex flex-wrap gap-2 mt-1.5">
+    <div class="flex flex-wrap gap-2 mt-1.5" data-testid="mesocycle-split">
       {#each data.mesocycleTemplate.exerciseSplit as split, i}
         <div class="join font-semibold text-sm">
           <span class="join-item bg-base-200 px-2">D{i + 1}</span>
@@ -176,7 +180,7 @@
   {#if data.mesocycleTemplate.specialization}
     <div class="stat col-span-2">
       <div class="stat-title">Specialization</div>
-      <div class="flex flex-wrap gap-1 mt-1.5">
+      <div class="flex flex-wrap gap-1 mt-1.5" data-testid="mesocycle-specializations">
         {#each data.mesocycleTemplate.specialization as muscleGroup}
           <span class="badge badge-accent font-semibold">{muscleGroup}</span>
         {/each}
