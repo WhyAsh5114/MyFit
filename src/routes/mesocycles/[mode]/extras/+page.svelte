@@ -1,6 +1,5 @@
 <script lang="ts">
   import { goto, invalidate } from "$app/navigation";
-  import { page } from "$app/stores";
   import MyModal from "$lib/components/MyModal.svelte";
   import { caloricStates, muscleGroups } from "$lib/types/arrays";
   import {
@@ -120,7 +119,6 @@
   }
 
   $: totalSpecializedMuscleGroups = $specializedMuscleGroups.length;
-  $: ({ params } = $page);
 </script>
 
 <MyModal title="Error" bind:dialogElement={errorModal}>
