@@ -177,7 +177,7 @@
       {:else if compareVolume(setNumber) === -1}
         <DecreaseIcon class="text-error" />
       {/if}
-    {:else}
+    {:else if mode !== 'viewing'}
       <span></span>
     {/if}
   </form>
