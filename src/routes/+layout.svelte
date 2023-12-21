@@ -4,7 +4,7 @@
   import { pwaInfo } from "virtual:pwa-info";
   import PwaButton from "./PWAButton.svelte";
   import UserButton from "./UserButton.svelte";
-  import { navigating } from "$app/stores";
+  import { navigating, page } from "$app/stores";
   import { onMount } from "svelte";
 
   // eslint-disable-next-line svelte/no-immutable-reactive-statements
@@ -17,10 +17,14 @@
   // Vercel analytics
   import { dev } from "$app/environment";
   import { inject } from "@vercel/analytics";
-  inject({ mode: dev ? "development" : "production" });
   // Vercel speed insights
   import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit";
-  injectSpeedInsights();
+
+  if ($page.url.hostname !== "localhost") {
+    console.log("Vercel insights and analytics enabled");
+    inject({ mode: dev ? "development" : "production" });
+    injectSpeedInsights();
+  }
 </script>
 
 <svelte:head>
