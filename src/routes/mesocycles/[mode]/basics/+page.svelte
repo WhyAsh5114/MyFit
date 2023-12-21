@@ -119,10 +119,10 @@
       />
     </div>
     <div class="form-control w-full mt-4 max-w-xs mx-auto">
-      <label class="label" for="mesocycle-duration">
-        <span class="label-text">Mesocycle duration</span>
+      <div class="flex items-center justify-between">
+        <label class="label label-text" for="mesocycle-duration"> Mesocycle duration </label>
         <span class="label-text-alt">{$mesocycleDuration} cycles</span>
-      </label>
+      </div>
       <input
         id="mesocycle-duration"
         class="range range-secondary"
@@ -162,10 +162,12 @@
       <div class="flex flex-col" transition:slide={{ duration: 200 }}>
         {#each RIRProgression as { specificRIR, cycles }, i}
           <div class="form-control w-full max-w-xs mx-auto">
-            <label class="label pb-0.5" for={`${specificRIR}-RIR-duration`}>
-              <span class="label-text">{specificRIR} RIR</span>
-              <span class="label-text-alt">{cycles} cycles</span>
-            </label>
+            <div class="flex items-center justify-between">
+              <label class="label pb-0.5 label-text" for={`${specificRIR}-RIR-duration`}>
+                {`${specificRIR} RIR cycles`}
+              </label>
+              <span class="label-text-alt" data-testid={`Total ${specificRIR} RIR cycles`}>{cycles} cycles</span>
+            </div>
             <input
               id={`${specificRIR}-RIR-duration`}
               class="range range-xs range-secondary {RIRColors[specificRIR]}"
