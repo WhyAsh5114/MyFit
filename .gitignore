@@ -11,3 +11,5 @@ vite.config.ts.timestamp-*
 dev-dist
 .vercel
 .vscode
+test-results
+playwright-report
