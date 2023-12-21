@@ -18,7 +18,7 @@
   </div>
   <div class="flex flex-col gap-2 overflow-y-auto max-h-80">
     {#each $exerciseSplit as splitDay, i}
-      <SplitInput dayText={`Day ${i + 1}`} bind:splitDay />
+      <SplitInput dayNumber={i + 1} bind:splitDay />
     {/each}
   </div>
   <div class="join grid grid-cols-2 gap-1 mt-5">
