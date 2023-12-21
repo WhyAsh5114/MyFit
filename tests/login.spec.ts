@@ -1,6 +1,6 @@
 import { test, expect } from "./fixtures";
 
-test("goto logged in page", async ({ page }) => {
+test("be in logged in state", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByText("Go to mesocycles")).toBeVisible();
 });
