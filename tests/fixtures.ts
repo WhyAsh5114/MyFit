@@ -3,6 +3,8 @@ import { test as baseTest } from "@playwright/test";
 import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
+import clientPromise from "../src/lib/mongo/mongodb";
+import type { ObjectId } from "mongodb";
 dotenv.config();
 
 export * from "@playwright/test";
@@ -45,7 +47,20 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
       await page.close();
       await use(fileName);
 
-      // TODO: Clear user data, mesocycles, templates, workouts, preferences
+      // Clear test user state
+      const client = await clientPromise;
+      const sessionDocument = await client
+        .db()
+        .collection("sessions")
+        .findOne({ sessionToken: testSession });
+      if (!sessionDocument) return;
+
+      // Clear all test user generated data
+      const userId = sessionDocument.userId as ObjectId;
+      await client.db().collection("mesocycles").deleteMany({ userId });
+      await client.db().collection("mesocycleTemplates").deleteMany({ userId });
+      await client.db().collection("workouts").deleteMany({ userId });
+      await client.db().collection("userPreferences").deleteOne({ userId });
     },
     { scope: "worker" }
   ]
