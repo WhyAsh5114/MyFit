@@ -48,7 +48,7 @@
       errorModal.show();
       return;
     }
-    await goto(`./extras?mesocycleTemplateId=${data.mesocycleTemplate?._id}`);
+    await goto(`../extras?mesocycleTemplateId=${data.mesocycleTemplate?._id}`);
   }
 
   let errorModal: HTMLDialogElement;

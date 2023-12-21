@@ -17,7 +17,7 @@
       errorModal.show();
       return false;
     }
-    await goto(`./exercises?mesocycleTemplateId=${data.mesocycleTemplate?._id}`);
+    await goto(`../exercises?mesocycleTemplateId=${data.mesocycleTemplate?._id}`);
   }
 </script>
 

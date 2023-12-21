@@ -96,7 +96,7 @@
       return false;
     }
     $mesocycleRIRProgression = RIRProgression;
-    await goto(`./split?mesocycleTemplateId=${data.mesocycleTemplate?._id}`);
+    await goto(`../split?mesocycleTemplateId=${data.mesocycleTemplate?._id}`);
   }
 </script>
 
