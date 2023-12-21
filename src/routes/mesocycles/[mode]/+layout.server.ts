@@ -3,7 +3,7 @@ import { error } from "@sveltejs/kit";
 export const load = async ({ params, locals, url }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
-    throw error(403, "Not logged in");
+    error(403, "Not logged in");
   }
 
   let mesocycleTemplate: WithSerializedId<MesocycleTemplate> | undefined = undefined;
@@ -11,14 +11,14 @@ export const load = async ({ params, locals, url }) => {
   if (params.mode === "newTemplate") {
     return { mesocycleTemplate };
   } else if (params.mode !== "editTemplate") {
-    throw error(400, "Invalid mode");
+    error(400, "Invalid mode");
   }
 
   const mesocycleTemplateId = url.searchParams.get("mesocycleTemplateId");
   if (mesocycleTemplateId === null) {
-    throw error(400, "No mesocycle template ID given");
+    error(400, "No mesocycle template ID given");
   } else if (mesocycleTemplateId.length !== 24) {
-    throw error(400, "Mesocycle template ID should be 24 character hex string");
+    error(400, "Mesocycle template ID should be 24 character hex string");
   }
 
   const getMesocycleTemplateResponse = await fetch(

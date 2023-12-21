@@ -12,7 +12,7 @@ import { splitExercisesToWorkoutExercise } from "$lib/util/CommonFunctions";
 export const load = async ({ locals, parent, fetch }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
-    throw error(403, "Not logged in");
+    error(403, "Not logged in");
   }
 
   const { activeMesocycle, activeMesocycleTemplate, referenceWorkout, userBodyweight } =
@@ -22,7 +22,7 @@ export const load = async ({ locals, parent, fetch }) => {
     activeMesocycleTemplate.exerciseSplit
   );
   if (todaysSplitWorkout === null) {
-    throw error(400, "No workout found for today");
+    error(400, "No workout found for today");
   }
 
   const todaysWorkout: Partial<WorkoutBeingPerformed> = {
@@ -62,7 +62,7 @@ export const load = async ({ locals, parent, fetch }) => {
     body: JSON.stringify(requestBody)
   });
   if (!response.ok) {
-    throw error(500, await response.text());
+    error(500, await response.text());
   }
 
   const workoutsThatPreviouslyTargeted = await response.json();

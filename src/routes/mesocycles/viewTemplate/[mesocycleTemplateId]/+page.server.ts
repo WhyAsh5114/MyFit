@@ -3,11 +3,11 @@ import { error } from "@sveltejs/kit";
 export const load = async ({ locals, params, fetch }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
-    throw error(403, "Not logged in");
+    error(403, "Not logged in");
   }
 
   if (params.mesocycleTemplateId.length !== 24) {
-    throw error(400, "Mesocycle template ID should be 24 character hex string");
+    error(400, "Mesocycle template ID should be 24 character hex string");
   }
 
   let mesocycleTemplate: WithSerializedId<MesocycleTemplate> | null = null;
@@ -18,7 +18,7 @@ export const load = async ({ locals, params, fetch }) => {
     mesocycleTemplate =
       (await getMesocycleTemplateResponse.json()) as WithSerializedId<MesocycleTemplate>;
   } else {
-    throw error(404, "Mesocycle template not found");
+    error(404, "Mesocycle template not found");
   }
 
   let mesocycles: WithSerializedId<Mesocycle>[] = [];

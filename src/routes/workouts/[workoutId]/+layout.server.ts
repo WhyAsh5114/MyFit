@@ -3,7 +3,7 @@ import { error } from "@sveltejs/kit";
 export const load = async ({ locals, params, fetch }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
-    throw error(403, "Not logged in");
+    error(403, "Not logged in");
   }
 
   let workout: WithSerializedId<Workout> | null = null;
@@ -11,7 +11,7 @@ export const load = async ({ locals, params, fetch }) => {
   if (getWorkoutResponse.ok) {
     workout = (await getWorkoutResponse.json()) as WithSerializedId<Workout>;
   } else {
-    throw error(404, "Workout not found");
+    error(404, "Workout not found");
   }
 
   let mesocycle: WithSerializedId<Mesocycle> | null = null;

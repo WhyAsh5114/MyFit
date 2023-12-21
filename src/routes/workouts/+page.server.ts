@@ -3,7 +3,7 @@ import { error } from "@sveltejs/kit";
 export const load = async ({ fetch, locals, parent }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
-    throw error(403, "Not logged in");
+    error(403, "Not logged in");
   }
 
   const { activeMesocycle } = await parent();

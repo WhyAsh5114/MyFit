@@ -4,12 +4,12 @@ import { getMuscleGroups } from "$lib/util/MesocycleTemplate";
 export const load = async ({ locals, parent, fetch }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
-    throw error(403, "Not logged in");
+    error(403, "Not logged in");
   }
 
   const { workout, mesocycle } = await parent();
   if (!mesocycle) {
-    throw error(500, "No mesocycle found");
+    error(500, "No mesocycle found");
   }
 
   const requestBodySoreness: APIGetPreviousSorenessValues = {
@@ -25,7 +25,7 @@ export const load = async ({ locals, parent, fetch }) => {
     body: JSON.stringify(requestBodySoreness)
   });
   if (!responseSoreness.ok) {
-    throw error(500, await responseSoreness.text());
+    error(500, await responseSoreness.text());
   }
 
   const previousWorkoutSorenessValues: Workout["muscleSorenessToNextWorkout"] =
@@ -43,7 +43,7 @@ export const load = async ({ locals, parent, fetch }) => {
     body: JSON.stringify(requestBody)
   });
   if (!response.ok) {
-    throw error(500, await response.text());
+    error(500, await response.text());
   }
 
   const workoutsThatPreviouslyTargeted: APIGetWorkoutsThatPreviouslyTargetedResponse =
