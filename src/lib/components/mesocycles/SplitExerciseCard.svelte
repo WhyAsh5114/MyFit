@@ -62,7 +62,7 @@
     </div>
   </div>
   <div class="flex items-end justify-between text-sm">
-    <p data-testid="exercise{idx + 1}-set-and-rep-range">
+    <p data-testid="exercise{idx + 1}-sets-and-rep-range">
       {exercise.sets} sets of {exercise.repRangeStart} to {exercise.repRangeEnd} reps
     </p>
     <span
