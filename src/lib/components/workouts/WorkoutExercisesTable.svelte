@@ -98,7 +98,9 @@
         {editExercise}
         exerciseIndex={i}
         {mode}
-        referenceExercise={referenceWorkout?.exercisesPerformed[i] ?? null}
+        referenceExercise={referenceWorkout?.exercisesPerformed.find(
+          (referenceExercise) => referenceExercise.name === exercise.name
+        ) ?? null}
         {reorderExercise}
         {takeFeedback}
         totalExercises={exercises.length}

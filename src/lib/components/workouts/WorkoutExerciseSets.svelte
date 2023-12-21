@@ -169,7 +169,7 @@
           <EditIcon />
         </button>
       {/if}
-    {:else if comparing}
+    {:else if comparing && referenceExercise}
       {#if compareVolume(setNumber) === 0}
         <EqualIcon class="text-warning" />
       {:else if compareVolume(setNumber) === 1}
@@ -177,6 +177,8 @@
       {:else if compareVolume(setNumber) === -1}
         <DecreaseIcon class="text-error" />
       {/if}
+    {:else}
+      <span></span>
     {/if}
   </form>
 {/each}
