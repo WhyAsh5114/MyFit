@@ -7,7 +7,8 @@ import {
   AUTH_GOOGLE_ID,
   AUTH_GOOGLE_SECRET,
   AUTH_GITHUB_ID,
-  AUTH_GITHUB_SECRET
+  AUTH_GITHUB_SECRET,
+  AUTH_SECRET
 } from "$env/static/private";
 
 export const handle = SvelteKitAuth({
@@ -28,5 +29,6 @@ export const handle = SvelteKitAuth({
       return session;
     }
   },
+  secret: AUTH_SECRET,
   trustHost: true
 });
