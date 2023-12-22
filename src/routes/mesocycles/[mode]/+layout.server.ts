@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit";
 
-export const load = async ({ params, locals, url }) => {
+export const load = async ({ params, locals, url, fetch }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
     error(403, "Not logged in");
