@@ -3,6 +3,7 @@
   import MyModal from "$lib/components/MyModal.svelte";
   import { caloricStates, muscleGroups } from "$lib/types/arrays";
   import {
+    editingMesocycleId,
     exerciseSplit,
     mesocycleCaloricState,
     mesocycleName,
@@ -62,7 +63,7 @@
       errorModal.show();
       return false;
     }
-    const createdMesocycle: MesocycleTemplate = {
+    const mesocycleTemplate: MesocycleTemplate = {
       name: $mesocycleName,
       startRIR: $mesocycleStartRIR,
       RIRProgression: $mesocycleRIRProgression,
@@ -72,10 +73,8 @@
     };
 
     let response: Response;
-    if (!data.mesocycleTemplate) {
-      const requestBody: APIMesocyclesCreateTemplate = {
-        mesocycleTemplate: createdMesocycle
-      };
+    if (data.mode === "newTemplate") {
+      const requestBody: APIMesocyclesCreateTemplate = { mesocycleTemplate };
       callingEndpoint = true;
       response = await fetch("/api/mesocycles/createTemplate", {
         method: "POST",
@@ -87,8 +86,8 @@
       callingEndpoint = false;
     } else {
       const requestBody: APIMesocyclesEditTemplate = {
-        mesocycleTemplate: createdMesocycle,
-        mesocycleTemplateId: data.mesocycleTemplate._id
+        mesocycleTemplate,
+        mesocycleTemplateId: $editingMesocycleId
       };
       callingEndpoint = true;
       response = await fetch("/api/mesocycles/editTemplate", {

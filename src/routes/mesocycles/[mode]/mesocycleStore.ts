@@ -40,6 +40,9 @@ export const mesocycleSpecialization: Writable<boolean> = writable(
 export const specializedMuscleGroups: Writable<MuscleGroup[]> = writable(
   JSON.parse(ls?.getItem("specializedMuscleGroups") || "[]")
 );
+export const editingMesocycleId: Writable<string> = writable(
+  JSON.parse(ls?.getItem("editingMesocycleId") || '""')
+);
 
 customizeRIRProgression.subscribe(
   (val) => ls?.setItem("customizeRIRProgression", JSON.stringify(val))
@@ -58,6 +61,7 @@ mesocycleSpecialization.subscribe(
 specializedMuscleGroups.subscribe(
   (val) => ls?.setItem("specializedMuscleGroups", JSON.stringify(val))
 );
+editingMesocycleId.subscribe((val) => ls?.setItem("editingMesocycleId", JSON.stringify(val)));
 
 export function resetStores() {
   customizeRIRProgression.set(false);
@@ -69,9 +73,10 @@ export function resetStores() {
   mesocycleCaloricState.set(0);
   mesocycleSpecialization.set(false);
   specializedMuscleGroups.set([]);
+  editingMesocycleId.set("");
 }
 
-export function setStores(mesocycleTemplate: MesocycleTemplate) {
+export function setStores(mesocycleTemplate: WithSerializedId<MesocycleTemplate>) {
   mesocycleName.set(mesocycleTemplate.name);
   mesocycleDuration.set(getTotalDuration(mesocycleTemplate.RIRProgression));
   mesocycleStartRIR.set(mesocycleTemplate.RIRProgression[0]?.specificRIR ?? 3);
@@ -80,4 +85,5 @@ export function setStores(mesocycleTemplate: MesocycleTemplate) {
   mesocycleCaloricState.set(mesocycleTemplate.caloricBalance);
   mesocycleSpecialization.set(mesocycleTemplate.specialization !== undefined);
   specializedMuscleGroups.set(mesocycleTemplate.specialization ?? []);
+  editingMesocycleId.set(mesocycleTemplate._id);
 }
