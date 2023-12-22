@@ -33,6 +33,7 @@ const mesocycleTemplate: MesocycleTemplate = {
     null
   ]
 };
+const editedMesocycleName = randomUUID();
 
 test("create a sample mesocycle using API", async ({ page }) => {
   const createTemplateResponse = await page.request.post("/api/mesocycles/createTemplate", {
@@ -53,14 +54,15 @@ test("edit the sample mesocycle", async ({ page }) => {
     getTotalDuration(mesocycleTemplate.RIRProgression).toString()
   );
 
-  const newMesocycleName = randomUUID();
-  await page.locator("input[id='mesocycle-name']").fill(newMesocycleName);
+  await page.locator("input[id='mesocycle-name']").fill(editedMesocycleName);
   await page.getByRole("button", { name: "Next" }).click();
   await page.getByRole("button", { name: "Next" }).click();
   await page.getByRole("button", { name: "Next" }).click();
-  await page.getByRole("button", { name: "Update mesocycle" }).click();
+  await page.getByRole("button", { name: "Edit mesocycle" }).click();
   await page.locator("#Success").getByTestId("close-modal-button").click();
+});
 
+test("edited changes should be reflected in the UI", async ({ page }) => {
   await expect(page.getByRole("main")).not.toContainText(mesocycleTemplate.name);
-  await expect(page.getByRole("main")).toContainText(newMesocycleName);
+  await expect(page.getByRole("main")).toContainText(editedMesocycleName);
 });
