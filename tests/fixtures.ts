@@ -3,7 +3,7 @@ import { test as baseTest } from "@playwright/test";
 import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
-import clientPromise from "../src/lib/mongo/mongodb";
+import clientPromise from "$lib/mongo/mongodb";
 import type { ObjectId } from "mongodb";
 dotenv.config();
 
