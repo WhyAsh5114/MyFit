@@ -56,8 +56,14 @@ test("edit the sample mesocycle", async ({ page }) => {
 
   await page.locator("input[id='mesocycle-name']").fill(editedMesocycleName);
   await page.getByRole("button", { name: "Next" }).click();
+  await page.waitForURL("/mesocycles/editTemplate/split");
+
   await page.getByRole("button", { name: "Next" }).click();
+  await page.waitForURL("/mesocycles/editTemplate/exercises");
+
   await page.getByRole("button", { name: "Next" }).click();
+  await page.waitForURL("/mesocycles/editTemplate/extras");
+
   await page.getByRole("button", { name: "Edit mesocycle" }).click();
   await page.locator("#Success").getByTestId("close-modal-button").click();
 });
