@@ -1,13 +1,9 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import clientPromise from "$lib/mongo/mongodb";
 import { ObjectId } from "mongodb";
-import type {
-  MesocycleDocument,
-  MesocycleTemplateDocument,
-  WorkoutDocument
-} from "$lib/types/documents";
+import type { MesocycleDocument, WorkoutDocument } from "$lib/types/documents";
 
-export const GET: RequestHandler = async ({ url, locals }) => {
+export const GET: RequestHandler = async ({ url, locals, fetch }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
     return new Response("Invalid session", {
@@ -22,28 +18,13 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
   const client = await clientPromise;
   try {
-    const activeMesocycle = await client
-      .db()
-      .collection<MesocycleDocument>("mesocycles")
-      .findOne({
-        userId: new ObjectId(session.user.id),
-        endTimestamp: { $exists: false }
-      });
-
-    if (!activeMesocycle) {
-      return new Response("No active mesocycle", { status: 400 });
+    let activeMesocycle: WithSerializedId<MesocycleDocument> | null = null;
+    const getActiveMesocycleResponse = await fetch("/api/mesocycles/getActiveMesocycle");
+    if (!getActiveMesocycleResponse.ok) {
+      return getActiveMesocycleResponse;
     }
-
-    const { exerciseSplit } = (await client
-      .db()
-      .collection<MesocycleTemplateDocument>("mesocycleTemplates")
-      .findOne(
-        {
-          userId: new ObjectId(session.user.id),
-          _id: activeMesocycle.templateMesoId
-        },
-        { projection: { exerciseSplit: 1 } }
-      ))!;
+    activeMesocycle =
+      (await getActiveMesocycleResponse.json()) as WithSerializedId<MesocycleDocument>;
 
     let referenceWorkoutDocument = await client
       .db()
@@ -51,7 +32,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       .findOne(
         {
           userId: new ObjectId(session.user.id),
-          performedMesocycleId: activeMesocycle._id,
+          performedMesocycleId: new ObjectId(activeMesocycle._id),
           dayNumber: workoutDayNumber
         },
         {

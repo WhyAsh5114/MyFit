@@ -25,21 +25,12 @@ export const load = async ({ locals, parent, fetch, depends }) => {
 
   let referenceWorkout: WithSerializedId<Workout> | null = null;
   if (todaysWorkout) {
-    const requestBody: APIWorkoutsGetReferenceWorkout = {
-      workoutDayNumber: getDayNumber(
-        activeMesocycle.workouts,
-        activeMesocycleTemplate.exerciseSplit
-      )
-    };
-    const response = await fetch("/api/workouts/getReferenceWorkout", {
-      method: "POST",
-      body: JSON.stringify(requestBody),
-      headers: {
-        "content-type": "application/json"
-      }
-    });
-    if (response.ok) {
-      referenceWorkout = await response.json();
+    const getReferenceWorkoutResponse = await fetch(
+      "/api/workouts/getReferenceWorkout?workoutDayNumber=" +
+        getDayNumber(activeMesocycle.workouts, activeMesocycleTemplate.exerciseSplit)
+    );
+    if (getReferenceWorkoutResponse.ok) {
+      referenceWorkout = await getReferenceWorkoutResponse.json();
     }
   }
 
