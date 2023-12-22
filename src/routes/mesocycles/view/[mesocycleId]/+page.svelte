@@ -43,20 +43,6 @@
     await goto("/mesocycles");
     redirecting = false;
   }
-
-  let loadingMore = false;
-  async function loadMore() {
-    const pageToLoad = Math.floor(workouts.length / 10);
-    let params = "?page=" + pageToLoad + "&mesocycleId=" + data.mesocycle._id;
-
-    loadingMore = true;
-    const response = await fetch("/api/workouts/getAllWorkouts" + params);
-    const { workouts: newWorkouts, workoutsCount: newCount } = await response.json();
-    loadingMore = false;
-
-    workoutsCount = newCount;
-    workouts = [...workouts, ...newWorkouts];
-  }
 </script>
 
 <MyModal onClose={closeMesocycleStoppedModal} bind:dialogElement={modal} bind:title={modalTitle}>
@@ -122,15 +108,6 @@
             </div>
           </a>
         {/each}
-        {#if data.workouts.length < data.workoutsCount}
-          <button class="btn bg-base-200/50 btn-sm" on:click={loadMore}>
-            {#if loadingMore}
-              <span class="loading loading-bars"></span>
-            {:else}
-              Load more
-            {/if}
-          </button>
-        {/if}
       {:else}
         <div class="btn btn-sm btn-block text-error">No workouts found</div>
       {/if}

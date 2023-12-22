@@ -31,11 +31,12 @@ export const load = async ({ locals, params, fetch }) => {
   let workouts: WithSerializedId<Workout>[] = [];
   let workoutsCount = 0;
   const getAllWorkoutsResponse = await fetch(
-    "/api/workouts/getAllWorkouts?page=0&mesocycleId=" + mesocycle._id
+    "/api/workouts/getAllWorkouts?mesocycleId=" + mesocycle._id
   );
   if (getAllWorkoutsResponse.ok) {
     ({ workouts, workoutsCount } = await getAllWorkoutsResponse.json());
   }
+  workouts.reverse();
 
   return { mesocycle, mesocycleTemplate, workouts, workoutsCount };
 };
