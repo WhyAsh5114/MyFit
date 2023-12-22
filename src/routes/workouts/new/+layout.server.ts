@@ -6,12 +6,12 @@ export const load = async ({ locals, parent, fetch, depends }) => {
 
   const session = await locals.getSession();
   if (!session?.user?.id) {
-    throw error(403, "Not logged in");
+    error(403, "Not logged in");
   }
 
   const { activeMesocycle, activeMesocycleTemplate } = await parent();
   if (!activeMesocycle || !activeMesocycleTemplate) {
-    throw error(404, "No active mesocycle found");
+    error(404, "No active mesocycle found");
   }
 
   const todaysWorkout = getTodaysSplitWorkout(

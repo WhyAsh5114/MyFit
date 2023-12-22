@@ -5,7 +5,7 @@ const unprotectedRoutes = ["/", "/login"];
 export const load = async ({ locals, url, fetch }) => {
   const session = await locals.getSession();
   if (!session && !unprotectedRoutes.includes(url.pathname)) {
-    throw redirect(303, `/login?callbackURL=${url.pathname}`);
+    redirect(303, `/login?callbackURL=${url.pathname}`);
   }
 
   let activeMesocycle: WithSerializedId<ActiveMesocycle> | null = null;
