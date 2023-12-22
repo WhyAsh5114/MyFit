@@ -20,7 +20,9 @@
   on:close={onClose}
 >
   <form class="modal-box bg-primary text-white" method="dialog">
-    <button class="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
+    <button class="btn btn-sm btn-circle absolute right-2 top-2" data-testid="close-modal-button">
+      ✕
+    </button>
     <h2 class="font-bold text-lg {titleColor} mb-5">{title}</h2>
     <slot />
   </form>

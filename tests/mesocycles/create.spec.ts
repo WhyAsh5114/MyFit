@@ -116,7 +116,7 @@ test("should successfully create a mesocycle", async ({ page }) => {
   // Create the mesocycle
   await page.getByRole("button", { name: "Create mesocycle" }).click();
   await expect(page.locator("#Success")).toContainText("✕ Success Mesocycle created successfully");
-  await page.locator("#Success").getByRole("button", { name: "✕" }).click();
+  await page.locator("#Success").getByTestId("close-modal-button").click();
 });
 
 test("should show the created mesocycle", async ({ page }) => {

@@ -228,6 +228,6 @@
   {:else if !data.mesocycleTemplate}
     Create mesocycle
   {:else if data.mesocycleTemplate}
-    Edit mesocycle
+    Update mesocycle
   {/if}
 </button>
