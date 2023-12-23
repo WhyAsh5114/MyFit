@@ -1,67 +1,32 @@
-/* eslint-disable svelte/no-ignored-unsubscribe */
 import { getTotalDuration } from "$lib/util/MesocycleTemplate";
-import { type Writable, writable } from "svelte/store";
+import { type Writable } from "svelte/store";
+import { persisted } from "svelte-persisted-store";
 
-let ls: Storage | undefined;
-if (typeof window !== "undefined") {
-  ls = localStorage;
-}
-
-export const customizeRIRProgression: Writable<boolean> = writable(
-  JSON.parse(ls?.getItem("customizeRIRProgression") || "false")
+export const customizeRIRProgression = persisted("customizeRIRProgression", false);
+export const mesocycleName = persisted("mesocycleName", "");
+export const mesocycleDuration = persisted("mesocycleDuration", 6);
+export const mesocycleStartRIR = persisted("mesocycleStartRIR", 3);
+export const mesocycleRIRProgression: Writable<RIRProgressionData[]> = persisted(
+  "mesocycleRIRProgression",
+  []
 );
-
-export const mesocycleName: Writable<string> = writable(
-  JSON.parse(ls?.getItem("mesocycleName") || '""')
+export const exerciseSplit: Writable<MesocycleTemplate["exerciseSplit"]> = persisted(
+  "exerciseSplit",
+  Array.from({ length: 7 }, () => ({ name: "", exercises: [] }))
 );
-export const mesocycleDuration: Writable<number> = writable(
-  JSON.parse(ls?.getItem("mesocycleDuration") || "6")
+export const mesocycleCaloricState: Writable<MesocycleTemplate["caloricBalance"]> = persisted(
+  "caloricBalance",
+  0
 );
-export const mesocycleStartRIR: Writable<number> = writable(
-  JSON.parse(ls?.getItem("mesocycleStartRIR") || "3")
+export const mesocycleSpecialization: Writable<boolean> = persisted(
+  "mesocycleSpecialization",
+  false
 );
-export const mesocycleRIRProgression: Writable<RIRProgressionData[]> = writable(
-  JSON.parse(ls?.getItem("RIRProgressionData") || "[]")
+export const specializedMuscleGroups: Writable<MuscleGroup[]> = persisted(
+  "specializedMuscleGroups",
+  []
 );
-
-export const exerciseSplit: Writable<MesocycleTemplate["exerciseSplit"]> = writable(
-  JSON.parse(
-    ls?.getItem("exerciseSplit") ||
-      JSON.stringify(Array.from({ length: 7 }, () => ({ name: "", exercises: [] })))
-  )
-);
-
-export const mesocycleCaloricState: Writable<MesocycleTemplate["caloricBalance"]> = writable(
-  JSON.parse(ls?.getItem("caloricBalance") || "0")
-);
-export const mesocycleSpecialization: Writable<boolean> = writable(
-  JSON.parse(ls?.getItem("mesocycleSpecialization") || "false")
-);
-export const specializedMuscleGroups: Writable<MuscleGroup[]> = writable(
-  JSON.parse(ls?.getItem("specializedMuscleGroups") || "[]")
-);
-export const editingMesocycleId: Writable<string> = writable(
-  JSON.parse(ls?.getItem("editingMesocycleId") || '""')
-);
-
-customizeRIRProgression.subscribe(
-  (val) => ls?.setItem("customizeRIRProgression", JSON.stringify(val))
-);
-mesocycleName.subscribe((val) => ls?.setItem("mesocycleName", JSON.stringify(val)));
-mesocycleDuration.subscribe((val) => ls?.setItem("mesocycleDuration", JSON.stringify(val)));
-mesocycleStartRIR.subscribe((val) => ls?.setItem("mesocycleStartRIR", JSON.stringify(val)));
-mesocycleRIRProgression.subscribe(
-  (val) => ls?.setItem("mesocycleRIRProgression", JSON.stringify(val))
-);
-exerciseSplit.subscribe((val) => ls?.setItem("exerciseSplit", JSON.stringify(val)));
-mesocycleCaloricState.subscribe((val) => ls?.setItem("mesocycleCaloricState", JSON.stringify(val)));
-mesocycleSpecialization.subscribe(
-  (val) => ls?.setItem("mesocycleSpecialization", JSON.stringify(val))
-);
-specializedMuscleGroups.subscribe(
-  (val) => ls?.setItem("specializedMuscleGroups", JSON.stringify(val))
-);
-editingMesocycleId.subscribe((val) => ls?.setItem("editingMesocycleId", JSON.stringify(val)));
+export const editingMesocycleId: Writable<string> = persisted("editingMesocycleId", '""');
 
 export function resetStores() {
   customizeRIRProgression.set(false);

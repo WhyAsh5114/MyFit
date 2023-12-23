@@ -1,40 +1,23 @@
-/* eslint-disable svelte/no-ignored-unsubscribe */
-import { type Writable, writable } from "svelte/store";
+import { type Writable } from "svelte/store";
+import { persisted } from "svelte-persisted-store";
 
-let ls: Storage | undefined;
-if (typeof window !== "undefined") {
-  ls = localStorage;
-}
-
-export const workoutBeingPerformed: Writable<WorkoutBeingPerformed | null> = writable(
-  JSON.parse(ls?.getItem("workoutBeingPerformed") || "null")
+export const workoutBeingPerformed: Writable<WorkoutBeingPerformed | null> = persisted(
+  "workoutBeingPerformed",
+  null
 );
-export const exercisesPerformed: Writable<WorkoutExerciseWithoutSetNumbers[] | null> = writable(
-  JSON.parse(ls?.getItem("exercisesPerformed") || "null")
+export const exercisesPerformed: Writable<WorkoutExerciseWithoutSetNumbers[] | null> = persisted(
+  "exercisesPerformed",
+  null
 );
-export const allExercisesSetsCompleted: Writable<boolean[][]> = writable(
-  JSON.parse(ls?.getItem("allExercisesSetsCompleted") || "[]")
+export const allExercisesSetsCompleted: Writable<boolean[][]> = persisted(
+  "allExercisesSetsCompleted",
+  []
 );
-export const workloadData: Writable<Workout["muscleGroupWorkloads"]> = writable(
-  JSON.parse(ls?.getItem("muscleGroupWorkloads") || "{}")
+export const workloadData: Writable<Workout["muscleGroupWorkloads"]> = persisted(
+  "muscleGroupWorkloads",
+  {}
 );
-export const sorenessData: Writable<Workout["muscleSorenessToNextWorkout"]> = writable(
-  JSON.parse(ls?.getItem("muscleSorenessToNextWorkout") || "{}")
+export const sorenessData: Writable<Workout["muscleSorenessToNextWorkout"]> = persisted(
+  "muscleSorenessToNextWorkout",
+  {}
 );
-
-workoutBeingPerformed.subscribe((val) => ls?.setItem("workoutBeingPerformed", JSON.stringify(val)));
-exercisesPerformed.subscribe((exercises) => {
-  ls?.setItem("exercisesPerformed", JSON.stringify(exercises));
-  // Sync with workoutBeingPerformed
-  workoutBeingPerformed.update((workout) => {
-    if (exercises && workout) {
-      workout.exercisesPerformed = exercises;
-    }
-    return workout;
-  });
-});
-allExercisesSetsCompleted.subscribe(
-  (val) => ls?.setItem("allExercisesSetsCompleted", JSON.stringify(val))
-);
-workloadData.subscribe((val) => ls?.setItem("workloadData", JSON.stringify(val)));
-sorenessData.subscribe((val) => ls?.setItem("sorenessData", JSON.stringify(val)));
