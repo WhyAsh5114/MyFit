@@ -6,6 +6,7 @@
 {#if mesocycleTemplate}
   <a
     class="btn btn-primary h-fit p-2 flex-col rounded-md"
+    data-testid="mesocycle-card"
     href="/mesocycles/viewTemplate/{mesocycleTemplate._id}"
   >
     <div class="flex flex-col w-full gap-2">
