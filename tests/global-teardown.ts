@@ -8,7 +8,6 @@ async function globalTeardown(config: FullConfig) {
   const client = await clientPromise;
 
   for (let i = 1; i <= config.workers; i++) {
-    console.log("clearing test user" + i + " data");
     const sessionToken = process.env[`TEST_SESSION_${i}`];
     if (!sessionToken) break;
 
