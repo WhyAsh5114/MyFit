@@ -30,3 +30,14 @@ test("check if mesocycle is activated", async ({ page }) => {
   await expect(page.getByTestId("mesocycle-end-date")).toContainText("Active");
   await expect(page.getByRole("button", { name: "Stop mesocycle" })).toBeVisible();
 });
+
+test("stop active mesocycle", async ({ page }) => {
+  await page.getByRole("link", { name: "Pull Push Legs 0/36 workouts" }).click();
+  await page.getByRole("button", { name: "Stop mesocycle" }).click();
+  await page.getByRole("button", { name: "Yes, stop" }).click();
+  await page.locator("#Success").getByTestId("close-modal-button").click();
+});
+
+test("make sure no active mesocycle", async ({ page }) => {
+  await expect(page.getByText("No mesocycle active Start one")).toBeVisible();
+});
