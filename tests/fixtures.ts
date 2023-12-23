@@ -1,11 +1,23 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { test as baseTest } from "@playwright/test";
-import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
 import clientPromise from "$lib/mongo/mongodb";
 import type { ObjectId } from "mongodb";
 dotenv.config();
+
+async function clearUserData(sessionToken: string) {
+  const client = await clientPromise;
+  const sessionDocument = await client.db().collection("sessions").findOne({ sessionToken });
+  if (!sessionDocument) return;
+
+  // Clear all test user generated data
+  const userId = sessionDocument.userId as ObjectId;
+  await client.db().collection("mesocycles").deleteMany({ userId });
+  await client.db().collection("mesocycleTemplates").deleteMany({ userId });
+  await client.db().collection("workouts").deleteMany({ userId });
+  await client.db().collection("userPreferences").deleteOne({ userId });
+}
 
 export * from "@playwright/test";
 export const test = baseTest.extend<{}, { workerStorageState: string }>({
@@ -18,16 +30,11 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
       // Use parallelIndex as a unique identifier for each worker.
       const id = test.info().parallelIndex;
       const fileName = path.resolve(test.info().project.outputDir, `.auth/${id}.json`);
-
-      if (fs.existsSync(fileName)) {
-        // Reuse existing authentication state if any.
-        await use(fileName);
-        return;
-      }
+      const testSession = process.env[`TEST_SESSION_${id + 1}`] ?? "";
+      await clearUserData(testSession);
 
       // Important: make sure we authenticate in a clean environment by unsetting storage state.
       const page = await browser.newPage({ storageState: undefined });
-      const testSession = process.env[`TEST_SESSION_${id + 1}`] ?? "";
 
       // Perform authentication steps. Just set a test user's cookie.
       await page.context().addCookies([
@@ -48,19 +55,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
       await use(fileName);
 
       // Clear test user state
-      const client = await clientPromise;
-      const sessionDocument = await client
-        .db()
-        .collection("sessions")
-        .findOne({ sessionToken: testSession });
-      if (!sessionDocument) return;
-
-      // Clear all test user generated data
-      const userId = sessionDocument.userId as ObjectId;
-      await client.db().collection("mesocycles").deleteMany({ userId });
-      await client.db().collection("mesocycleTemplates").deleteMany({ userId });
-      await client.db().collection("workouts").deleteMany({ userId });
-      await client.db().collection("userPreferences").deleteOne({ userId });
+      await clearUserData(testSession);
     },
     { scope: "worker" }
   ]

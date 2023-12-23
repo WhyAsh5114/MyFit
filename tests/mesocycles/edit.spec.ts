@@ -44,7 +44,6 @@ test("create a sample mesocycle using API", async ({ page }) => {
 });
 
 test("edit the sample mesocycle", async ({ page }) => {
-  await page.goto("/mesocycles");
   await expect(page.getByRole("main")).toContainText(mesocycleTemplate.name);
   await page.getByRole("link", { name: mesocycleTemplate.name }).click();
 
