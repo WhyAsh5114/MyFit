@@ -57,4 +57,4 @@
   {/if}
 </div>
 
-<a class="btn btn-block btn-accent mt-1" href="/mesocycles/createTemplate">Create new mesocycle</a>
+<a class="btn btn-block btn-accent mt-1" href="/mesocycles/creationPresets">Create new mesocycle</a>
