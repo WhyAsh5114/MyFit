@@ -19,7 +19,10 @@
 
 <a class="btn btn-primary rounded-md h-fit p-2" href="/mesocycles/view/{activeMesocycle._id}">
   <div class="grid grid-cols-3 place-items-center w-full gap-2">
-    <span class="font-semibold text-lg text-secondary text-left col-span-2">
+    <span
+      class="font-semibold text-lg text-secondary text-left col-span-2"
+      data-testid="active-mesocycle-name"
+    >
       {activeMesocycleTemplate.name}
     </span>
     <span class="row-span-2 font-normal">

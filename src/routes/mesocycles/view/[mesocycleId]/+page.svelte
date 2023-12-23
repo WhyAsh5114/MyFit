@@ -88,11 +88,13 @@
   </div>
   <div class="stat">
     <div class="stat-title">Ended at</div>
-    {#if data.mesocycle.endTimestamp !== undefined}
-      <div class="stat-value">{dateFormatter(data.mesocycle.endTimestamp)}</div>
-    {:else}
-      <div class="stat-value">Active</div>
-    {/if}
+    <div class="stat-value" data-testid="mesocycle-end-date">
+      {#if data.mesocycle.endTimestamp !== undefined}
+        {dateFormatter(data.mesocycle.endTimestamp)}
+      {:else}
+        Active
+      {/if}
+    </div>
   </div>
   <div class="stat col-span-2">
     <div class="stat-title">Workouts</div>
