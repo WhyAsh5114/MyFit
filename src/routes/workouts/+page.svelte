@@ -81,6 +81,7 @@
           id="filter-by-mesocycle-template-name"
           class="select"
           bind:value={selectedMesocycleTemplateId}
+          on:change={() => (selectedMesocycleId = undefined)}
         >
           {#each mesocycleTemplates as mesocycleTemplate}
             <option value={mesocycleTemplate._id}>
@@ -89,7 +90,7 @@
           {/each}
         </select>
         <select id="filter-by-mesocycle-start" class="select" bind:value={selectedMesocycleId}>
-          <option selected value={null}>All usages</option>
+          <option selected value={undefined}>All usages</option>
           {#each mesocycles as mesocycle}
             {#if mesocycle.templateMesoId === selectedMesocycleTemplateId}
               <option value={mesocycle._id}>
