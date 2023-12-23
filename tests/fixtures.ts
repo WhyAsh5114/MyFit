@@ -31,7 +31,6 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
       const id = test.info().parallelIndex;
       const fileName = path.resolve(test.info().project.outputDir, `.auth/${id}.json`);
       const testSession = process.env[`TEST_SESSION_${id + 1}`] ?? "";
-      await clearUserData(testSession);
 
       // Important: make sure we authenticate in a clean environment by unsetting storage state.
       const page = await browser.newPage({ storageState: undefined });
