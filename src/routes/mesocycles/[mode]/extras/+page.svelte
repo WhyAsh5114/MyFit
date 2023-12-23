@@ -83,6 +83,7 @@
           "content-type": "application/json"
         }
       });
+      await invalidate((url) => url.href.includes("/api/mesocycles/getAllMesocycleTemplates"));
       callingEndpoint = false;
     } else {
       const requestBody: APIMesocyclesEditTemplate = {
@@ -97,6 +98,9 @@
           "content-type": "application/json"
         }
       });
+      await invalidate(
+        `/api/mesocycles/getMesocycleTemplate?mesocycleTemplateId=${$editingMesocycleId}`
+      );
       callingEndpoint = false;
     }
     if (!response.ok) {

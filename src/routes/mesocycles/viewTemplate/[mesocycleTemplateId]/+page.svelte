@@ -53,7 +53,7 @@
         "content-type": "application/json"
       }
     });
-    await invalidate("mesocycle:active");
+    await invalidate((url) => url.href.includes("getActiveMesocycle"));
     callingEndpoint = false;
     if (response.ok) {
       startSuccessfulModal.show();

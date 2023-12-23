@@ -39,7 +39,7 @@
   let redirecting = false;
   async function closeMesocycleStoppedModal() {
     redirecting = true;
-    await invalidate("mesocycle:active");
+    await invalidate((url) => url.href.includes("getActiveMesocycle"));
     await goto("/mesocycles");
     redirecting = false;
   }
