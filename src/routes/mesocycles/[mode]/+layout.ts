@@ -1,11 +1,6 @@
 import { error } from "@sveltejs/kit";
 
-export const load = async ({ params, locals, url, fetch, untrack }) => {
-  const session = await locals.getSession();
-  if (!session?.user?.id) {
-    error(403, "Not logged in");
-  }
-
+export const load = async ({ params, url, fetch, untrack }) => {
   let mesocycleTemplate: WithSerializedId<MesocycleTemplate> | undefined = undefined;
 
   if (params.mode === "newTemplate") {

@@ -1,11 +1,6 @@
 import { error } from "@sveltejs/kit";
 
-export const load = async ({ locals, params, fetch }) => {
-  const session = await locals.getSession();
-  if (!session?.user?.id) {
-    error(403, "Not logged in");
-  }
-
+export const load = async ({ params, fetch }) => {
   let workout: WithSerializedId<Workout> | null = null;
   const getWorkoutResponse = await fetch("/api/workouts/getWorkout?workoutId=" + params.workoutId);
   if (getWorkoutResponse.ok) {

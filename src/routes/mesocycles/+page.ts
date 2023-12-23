@@ -1,11 +1,4 @@
-import { error } from "@sveltejs/kit";
-
-export const load = async ({ locals, parent, fetch }) => {
-  const session = await locals.getSession();
-  if (!session?.user?.id) {
-    error(403, "Not logged in");
-  }
-
+export const load = async ({ parent, fetch }) => {
   const { activeMesocycle, activeMesocycleTemplate } = await parent();
   const getAllMesocycleTemplatesResponse = await fetch(
     "/api/mesocycles/getAllMesocycleTemplates?page=0"

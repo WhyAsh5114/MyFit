@@ -1,14 +1,7 @@
 import { getDayNumber, getTodaysSplitWorkout } from "$lib/util/MesocycleTemplate";
 import { error } from "@sveltejs/kit";
 
-export const load = async ({ locals, parent, fetch, depends }) => {
-  depends("user:preferences");
-
-  const session = await locals.getSession();
-  if (!session?.user?.id) {
-    error(403, "Not logged in");
-  }
-
+export const load = async ({ parent, fetch }) => {
   const { activeMesocycle, activeMesocycleTemplate } = await parent();
   if (!activeMesocycle || !activeMesocycleTemplate) {
     error(404, "No active mesocycle found");

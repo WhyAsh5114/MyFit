@@ -1,11 +1,4 @@
-import { error } from "@sveltejs/kit";
-
-export const load = async ({ fetch, locals, parent }) => {
-  const session = await locals.getSession();
-  if (!session?.user?.id) {
-    error(403, "Not logged in");
-  }
-
+export const load = async ({ fetch, parent }) => {
   const { activeMesocycle } = await parent();
 
   let params = "";

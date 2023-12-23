@@ -1,12 +1,7 @@
 import { error } from "@sveltejs/kit";
 import { getMuscleGroups } from "$lib/util/MesocycleTemplate";
 
-export const load = async ({ locals, parent, fetch }) => {
-  const session = await locals.getSession();
-  if (!session?.user?.id) {
-    error(403, "Not logged in");
-  }
-
+export const load = async ({ parent, fetch }) => {
   const { workout, mesocycle } = await parent();
   if (!mesocycle) {
     error(500, "No mesocycle found");

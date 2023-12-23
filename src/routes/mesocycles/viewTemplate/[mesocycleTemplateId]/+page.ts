@@ -1,11 +1,6 @@
 import { error } from "@sveltejs/kit";
 
-export const load = async ({ locals, params, fetch }) => {
-  const session = await locals.getSession();
-  if (!session?.user?.id) {
-    error(403, "Not logged in");
-  }
-
+export const load = async ({ params, fetch }) => {
   if (params.mesocycleTemplateId.length !== 24) {
     error(400, "Mesocycle template ID should be 24 character hex string");
   }

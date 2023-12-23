@@ -9,12 +9,7 @@ import {
 import { applyProgressiveOverload } from "$lib/util/ProgressiveOverload";
 import { splitExercisesToWorkoutExercise } from "$lib/util/CommonFunctions";
 
-export const load = async ({ locals, parent, fetch }) => {
-  const session = await locals.getSession();
-  if (!session?.user?.id) {
-    error(403, "Not logged in");
-  }
-
+export const load = async ({ parent, fetch }) => {
   const { activeMesocycle, activeMesocycleTemplate, referenceWorkout, userBodyweight } =
     await parent();
   const todaysSplitWorkout = getTodaysSplitWorkout(
