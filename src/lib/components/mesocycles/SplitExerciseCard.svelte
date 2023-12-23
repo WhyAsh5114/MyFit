@@ -62,11 +62,14 @@
     </div>
   </div>
   <div class="flex items-end justify-between text-sm">
-    <p data-testid="exercise{idx + 1}-sets-and-rep-range">
+    <p class="mr-auto" data-testid="exercise{idx + 1}-sets-and-rep-range">
       {exercise.sets} sets of {exercise.repRangeStart} to {exercise.repRangeEnd} reps
     </p>
+    {#if exercise.weightType === "Bodyweight"}
+      <span class="badge">BW</span>
+    {/if}
     <span
-      class="badge badge-error text-black font-semibold"
+      class="badge badge-error text-black font-semibold ml-1"
       data-testid="exercise{idx + 1}-target-muscle-group"
     >
       {exercise.targetMuscleGroup}
