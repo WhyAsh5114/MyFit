@@ -1,4 +1,3 @@
-import { randomUUID } from "crypto";
 import { test, expect } from "../fixtures";
 import { getTotalDuration } from "$lib/util/MesocycleTemplate";
 
@@ -7,7 +6,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 const mesocycleTemplate: MesocycleTemplate = {
-  name: randomUUID(),
+  name: "edit.spec.ts 1",
   caloricBalance: 0,
   startRIR: 3,
   RIRProgression: [
@@ -33,7 +32,7 @@ const mesocycleTemplate: MesocycleTemplate = {
     null
   ]
 };
-const editedMesocycleName = randomUUID();
+const editedMesocycleName = "edit.spec.ts 2";
 
 test("create a sample mesocycle using API", async ({ page }) => {
   const createTemplateResponse = await page.request.post("/api/mesocycles/createTemplate", {
@@ -41,6 +40,10 @@ test("create a sample mesocycle using API", async ({ page }) => {
     headers: { "content-type": "application/json" }
   });
   expect(createTemplateResponse.ok()).toBe(true);
+  await page.reload();
+  await expect(
+    page.getByTestId("mesocycle-card").filter({ hasText: mesocycleTemplate.name })
+  ).toBeVisible();
 });
 
 test("edit the sample mesocycle", async ({ page }) => {

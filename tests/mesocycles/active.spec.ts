@@ -1,11 +1,10 @@
-import { randomUUID } from "crypto";
 import { test, expect } from "../fixtures";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/mesocycles");
 });
 
-const randomMesocycleName = randomUUID();
+const randomMesocycleName = "active.spec.ts";
 
 test("create prebuilt PPL mesocycle", async ({ page }) => {
   await page.getByRole("link", { name: "Create new mesocycle" }).click();

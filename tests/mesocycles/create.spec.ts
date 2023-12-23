@@ -1,11 +1,10 @@
-import { randomUUID } from "crypto";
 import { test, expect } from "../fixtures";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:4173/mesocycles");
 });
 
-const randomMesocycleName = randomUUID();
+const randomMesocycleName = "create.spec.ts";
 
 test("should successfully create a mesocycle", async ({ page }) => {
   await page.getByRole("link", { name: "Create new mesocycle" }).click();
