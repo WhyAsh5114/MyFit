@@ -61,9 +61,15 @@
       </ul>
     </div>
   </div>
-  <div class="flex items-end justify-between text-sm">
-    <p>{exercise.sets} sets of {exercise.repRangeStart} to {exercise.repRangeEnd} reps</p>
-    <span class="badge badge-error text-black font-semibold">{exercise.targetMuscleGroup}</span>
+  <div class="flex items-end text-sm">
+    <p class="mr-auto">
+      {exercise.sets} sets of {exercise.repRangeStart} to {exercise.repRangeEnd} reps
+    </p>
+    {#if exercise.weightType === "Bodyweight"}
+      <span class="badge">BW</span>
+    {/if}
+    <span class="badge badge-error text-black font-semibold ml-1">{exercise.targetMuscleGroup}</span
+    >
   </div>
   {#if exercise.note}
     <p class="bg-info bg-opacity-75 text-black px-1 text-sm rounded-sm mt-1.5">{exercise.note}</p>
