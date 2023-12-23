@@ -6,26 +6,31 @@
   export let exercises: WorkoutExerciseWithoutSetNumbers[];
   export let editingIdx: number | undefined;
   export let allExercisesSetsCompleted: boolean[][];
+  export let userBodyweight: number | null;
 
   let editMode = false;
   let modeText: "Add" | "Edit" = "Add";
   let selectedExercise: Partial<SplitExercise>;
   let editingExercise: Partial<SplitExercise> = {};
-  $: exercises, updateEditingExercise(editingIdx);
-  function updateEditingExercise(idx: number | undefined) {
+
+  $: exercises, changeEditingExercise(editingIdx);
+  function changeEditingExercise(idx: number | undefined) {
     if (idx !== undefined && exercises[idx]) {
       editMode = true;
-      const {
-        sets,
-        bodyweight: exerciseBodyweight,
-        ...otherProps
-      } = JSON.parse(JSON.stringify(exercises[idx])) as WorkoutExerciseWithoutSetNumbers;
-      editingExercise = {
-        sets: sets.length,
-        weightType: exerciseBodyweight === undefined ? "Weighted" : "Bodyweight",
-        ...otherProps
-      };
-      userBodyweight = exerciseBodyweight ?? null;
+      const workoutExercise = JSON.parse(
+        JSON.stringify(exercises[idx])
+      ) as WorkoutExerciseWithoutSetNumbers;
+      const { sets, bodyweight: exerciseBodyweight, ...otherProps } = workoutExercise;
+
+      let weightType: "Weighted" | "Bodyweight" = "Weighted";
+      if (exerciseBodyweight !== undefined) {
+        weightType = "Bodyweight";
+      }
+
+      editingExercise = { sets: sets.length, weightType, ...otherProps };
+      if (editingExercise.weightType === "Bodyweight") {
+        userBodyweight = exerciseBodyweight ?? null;
+      }
     } else {
       editMode = false;
     }
@@ -89,8 +94,6 @@
       selectedExercise = newExercise;
     }
   }
-
-  export let userBodyweight: number | null;
 </script>
 
 <MyModal title="{modeText} exercise" bind:dialogElement>
