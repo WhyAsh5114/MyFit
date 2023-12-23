@@ -2,22 +2,7 @@
 import { test as baseTest } from "@playwright/test";
 import path from "path";
 import dotenv from "dotenv";
-import clientPromise from "$lib/mongo/mongodb";
-import type { ObjectId } from "mongodb";
 dotenv.config();
-
-async function clearUserData(sessionToken: string) {
-  const client = await clientPromise;
-  const sessionDocument = await client.db().collection("sessions").findOne({ sessionToken });
-  if (!sessionDocument) return;
-
-  // Clear all test user generated data
-  const userId = sessionDocument.userId as ObjectId;
-  await client.db().collection("mesocycles").deleteMany({ userId });
-  await client.db().collection("mesocycleTemplates").deleteMany({ userId });
-  await client.db().collection("workouts").deleteMany({ userId });
-  await client.db().collection("userPreferences").deleteOne({ userId });
-}
 
 export * from "@playwright/test";
 export const test = baseTest.extend<{}, { workerStorageState: string }>({
@@ -52,9 +37,6 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
       await page.context().storageState({ path: fileName });
       await page.close();
       await use(fileName);
-
-      // Clear test user state
-      await clearUserData(testSession);
     },
     { scope: "worker" }
   ]
