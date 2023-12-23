@@ -120,8 +120,7 @@ test("should successfully create a mesocycle", async ({ page }) => {
 });
 
 test("should show the created mesocycle", async ({ page }) => {
-  await expect(page.getByRole("main")).toContainText(randomMesocycleName);
-  await page.getByRole("link", { name: randomMesocycleName }).click();
+  await page.getByTestId("mesocycle-card").filter({ hasText: randomMesocycleName }).click();
 
   await expect(page.getByTestId("mesocycle-caloric-state")).toContainText("Hypo-caloric (Deficit)");
   await expect(page.getByTestId("mesocycle-split")).toContainText(
@@ -131,4 +130,12 @@ test("should show the created mesocycle", async ({ page }) => {
   await expect(page.getByTestId("mesocycle-specializations")).toContainText("Chest");
   await expect(page.getByTestId("mesocycle-start-RIR")).toContainText("2 RIR");
   await expect(page.getByTestId("mesocycle-duration")).toContainText("12 cycles");
+});
+
+test("delete the created mesocycle", async ({ page }) => {
+  await page.getByTestId("mesocycle-card").filter({ hasText: randomMesocycleName }).click();
+  await page.getByRole("button", { name: "Delete", exact: true }).click();
+  await page.getByRole("button", { name: "Yes, delete" }).click();
+  await page.locator('[id="Deleted\\ successfully"]').getByTestId("close-modal-button").click();
+  await expect(page.getByRole("main")).toContainText("No mesocycle created");
 });

@@ -44,9 +44,7 @@ test("create a sample mesocycle using API", async ({ page }) => {
 });
 
 test("edit the sample mesocycle", async ({ page }) => {
-  await expect(page.getByRole("main")).toContainText(mesocycleTemplate.name);
-  await page.getByRole("link", { name: mesocycleTemplate.name }).click();
-
+  await page.getByTestId("mesocycle-card").filter({ hasText: mesocycleTemplate.name }).click();
   await page.getByRole("link", { name: "Edit" }).click();
   await expect(page.locator("input[id='mesocycle-name']")).toHaveValue(mesocycleTemplate.name);
   await expect(page.locator("input[id='mesocycle-duration']")).toHaveValue(
@@ -68,6 +66,14 @@ test("edit the sample mesocycle", async ({ page }) => {
 });
 
 test("edited changes should be reflected in the UI", async ({ page }) => {
-  await expect(page.getByRole("main")).not.toContainText(mesocycleTemplate.name);
-  await expect(page.getByRole("main")).toContainText(editedMesocycleName);
+  await expect(page.getByTestId("mesocycle-card")).not.toContainText(mesocycleTemplate.name);
+  await expect(page.getByTestId("mesocycle-card")).toContainText(editedMesocycleName);
+});
+
+test("delete the sample mesocycle", async ({ page }) => {
+  await page.getByTestId("mesocycle-card").filter({ hasText: editedMesocycleName }).click();
+  await page.getByRole("button", { name: "Delete", exact: true }).click();
+  await page.getByRole("button", { name: "Yes, delete" }).click();
+  await page.locator('[id="Deleted\\ successfully"]').getByTestId("close-modal-button").click();
+  await expect(page.getByRole("main")).toContainText("No mesocycle created");
 });
