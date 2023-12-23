@@ -26,7 +26,7 @@ export const specializedMuscleGroups: Writable<MuscleGroup[]> = persisted(
   "specializedMuscleGroups",
   []
 );
-export const editingMesocycleId: Writable<string> = persisted("editingMesocycleId", '""');
+export const editingMesocycleId: Writable<string> = persisted("editingMesocycleId", "");
 
 export function resetStores() {
   customizeRIRProgression.set(false);
