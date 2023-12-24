@@ -8,9 +8,7 @@ const randomMesocycleName = "create.spec.ts";
 
 test("should successfully create a mesocycle", async ({ page }) => {
   await page.getByRole("link", { name: "Create new mesocycle" }).click();
-  await page.waitForURL("/mesocycles/creationPresets");
   await page.getByRole("link", { name: "Start from scratch" }).click();
-  await page.waitForURL(/newTemplate\/basics/);
 
   // Basics
   await page.getByPlaceholder("Type here").fill(randomMesocycleName);

@@ -116,6 +116,7 @@
       <span data-testid="mesocycle-name">{data.mesocycleTemplate.name}</span>
       <a
         class="btn btn-sm"
+        data-testid="edit-template-button"
         href="/mesocycles/editTemplate/basics/?mesocycleTemplateId={params.mesocycleTemplateId}"
       >
         <EditIcon />

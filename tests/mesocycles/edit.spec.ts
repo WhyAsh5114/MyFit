@@ -50,10 +50,7 @@ test("check if sample mesocycle created", async ({ page }) => {
 
 test("edit the sample mesocycle", async ({ page }) => {
   await page.getByTestId("mesocycle-card").filter({ hasText: mesocycleTemplate.name }).click();
-  await page.waitForURL(/viewTemplate/);
-  
-  await page.getByRole("link", { name: "Edit" }).click();
-  await page.waitForURL(/editTemplate/);
+  await page.getByTestId("edit-template-button").click();
   await expect(page.locator("input[id='mesocycle-name']")).toHaveValue(mesocycleTemplate.name);
   await expect(page.locator("input[id='mesocycle-duration']")).toHaveValue(
     getTotalDuration(mesocycleTemplate.RIRProgression).toString()

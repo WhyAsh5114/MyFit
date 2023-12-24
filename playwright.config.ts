@@ -74,6 +74,6 @@ export default defineConfig({
     port: 4173,
     reuseExistingServer: !process.env.CI
   },
-  globalSetup: './tests/global-teardown',
-  globalTeardown: './tests/global-teardown'
+  globalSetup: "./tests/global-teardown",
+  globalTeardown: "./tests/global-teardown"
 });
