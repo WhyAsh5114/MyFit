@@ -14,36 +14,40 @@ export const commonMesocycles: CommonMesocycles = [
         name: "Pull A",
         exercises: [
           {
-            weightType: "Bodyweight",
+            bodyweight: true,
             targetMuscleGroup: "Back",
             name: "Pull up",
             sets: 3,
             repRangeStart: 5,
-            repRangeEnd: 15
+            repRangeEnd: 15,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Barbell row",
             targetMuscleGroup: "Back",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Dumbbell curl",
             targetMuscleGroup: "Biceps",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Face pull",
             targetMuscleGroup: "Rear delts",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           }
         ]
       },
@@ -51,36 +55,40 @@ export const commonMesocycles: CommonMesocycles = [
         name: "Push A",
         exercises: [
           {
-            weightType: "Weighted",
+            bodyweight: false,
             targetMuscleGroup: "Chest",
             name: "Incline Barbell Press",
             sets: 3,
             repRangeStart: 5,
-            repRangeEnd: 10
+            repRangeEnd: 10,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Overhead cable extension",
             targetMuscleGroup: "Triceps",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Dumbbell lateral raises",
             targetMuscleGroup: "Side delts",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Cable lateral raise",
             targetMuscleGroup: "Side delts",
             sets: 2,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           }
         ]
       },
@@ -88,36 +96,40 @@ export const commonMesocycles: CommonMesocycles = [
         name: "Legs A",
         exercises: [
           {
-            weightType: "Weighted",
+            bodyweight: false,
             targetMuscleGroup: "Quads",
             name: "Barbell squat",
             sets: 3,
             repRangeStart: 5,
-            repRangeEnd: 10
+            repRangeEnd: 10,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Good morning",
             targetMuscleGroup: "Hamstrings",
             sets: 2,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Leg extension",
             targetMuscleGroup: "Quads",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           },
           {
-            weightType: "Bodyweight",
+            bodyweight: true,
             name: "Calf raise",
             targetMuscleGroup: "Calves",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           }
         ]
       },
@@ -126,36 +138,40 @@ export const commonMesocycles: CommonMesocycles = [
         name: "Pull B",
         exercises: [
           {
-            weightType: "Bodyweight",
+            bodyweight: true,
             targetMuscleGroup: "Back",
             name: "Pull up",
             sets: 3,
             repRangeStart: 5,
-            repRangeEnd: 15
+            repRangeEnd: 15,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Barbell row",
             targetMuscleGroup: "Back",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Dumbbell curl",
             targetMuscleGroup: "Biceps",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Face pull",
             targetMuscleGroup: "Rear delts",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           }
         ]
       },
@@ -163,36 +179,40 @@ export const commonMesocycles: CommonMesocycles = [
         name: "Push B",
         exercises: [
           {
-            weightType: "Weighted",
+            bodyweight: false,
             targetMuscleGroup: "Chest",
             name: "Incline Barbell Press",
             sets: 3,
             repRangeStart: 5,
-            repRangeEnd: 10
+            repRangeEnd: 10,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Overhead cable extension",
             targetMuscleGroup: "Triceps",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Dumbbell lateral raises",
             targetMuscleGroup: "Side delts",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Cable lateral raise",
             targetMuscleGroup: "Side delts",
             sets: 2,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           }
         ]
       },
@@ -200,36 +220,40 @@ export const commonMesocycles: CommonMesocycles = [
         name: "Legs B",
         exercises: [
           {
-            weightType: "Weighted",
+            bodyweight: false,
             targetMuscleGroup: "Quads",
             name: "Barbell squat",
             sets: 3,
             repRangeStart: 5,
-            repRangeEnd: 10
+            repRangeEnd: 10,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Good morning",
             targetMuscleGroup: "Hamstrings",
             sets: 2,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           },
           {
-            weightType: "Weighted",
+            bodyweight: false,
             name: "Leg extension",
             targetMuscleGroup: "Quads",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           },
           {
-            weightType: "Bodyweight",
+            bodyweight: true,
             name: "Calf raise",
             targetMuscleGroup: "Calves",
             sets: 3,
             repRangeStart: 10,
-            repRangeEnd: 20
+            repRangeEnd: 20,
+            note: ""
           }
         ]
       },
