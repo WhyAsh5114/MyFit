@@ -12,7 +12,7 @@ export const commonMesocycles: CommonMesocycles = [
     exerciseSplit: [
       {
         name: "Pull A",
-        exercises: [
+        exerciseTemplates: [
           {
             bodyweight: true,
             targetMuscleGroup: "Back",
@@ -53,7 +53,7 @@ export const commonMesocycles: CommonMesocycles = [
       },
       {
         name: "Push A",
-        exercises: [
+        exerciseTemplates: [
           {
             bodyweight: false,
             targetMuscleGroup: "Chest",
@@ -94,7 +94,7 @@ export const commonMesocycles: CommonMesocycles = [
       },
       {
         name: "Legs A",
-        exercises: [
+        exerciseTemplates: [
           {
             bodyweight: false,
             targetMuscleGroup: "Quads",
@@ -136,7 +136,7 @@ export const commonMesocycles: CommonMesocycles = [
       null,
       {
         name: "Pull B",
-        exercises: [
+        exerciseTemplates: [
           {
             bodyweight: true,
             targetMuscleGroup: "Back",
@@ -177,7 +177,7 @@ export const commonMesocycles: CommonMesocycles = [
       },
       {
         name: "Push B",
-        exercises: [
+        exerciseTemplates: [
           {
             bodyweight: false,
             targetMuscleGroup: "Chest",
@@ -218,7 +218,7 @@ export const commonMesocycles: CommonMesocycles = [
       },
       {
         name: "Legs B",
-        exercises: [
+        exerciseTemplates: [
           {
             bodyweight: false,
             targetMuscleGroup: "Quads",
