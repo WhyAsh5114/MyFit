@@ -40,7 +40,9 @@ test("create a sample mesocycle using API", async ({ page }) => {
     headers: { "content-type": "application/json" }
   });
   expect(createTemplateResponse.ok()).toBe(true);
-  await page.reload();
+});
+
+test("check if sample mesocycle created", async ({ page }) => {
   await expect(
     page.getByTestId("mesocycle-card").filter({ hasText: mesocycleTemplate.name })
   ).toBeVisible();
@@ -48,7 +50,10 @@ test("create a sample mesocycle using API", async ({ page }) => {
 
 test("edit the sample mesocycle", async ({ page }) => {
   await page.getByTestId("mesocycle-card").filter({ hasText: mesocycleTemplate.name }).click();
+  await page.waitForURL(/viewTemplate/);
+  
   await page.getByRole("link", { name: "Edit" }).click();
+  await page.waitForURL(/editTemplate/);
   await expect(page.locator("input[id='mesocycle-name']")).toHaveValue(mesocycleTemplate.name);
   await expect(page.locator("input[id='mesocycle-duration']")).toHaveValue(
     getTotalDuration(mesocycleTemplate.RIRProgression).toString()
@@ -78,5 +83,10 @@ test("delete the sample mesocycle", async ({ page }) => {
   await page.getByRole("button", { name: "Delete", exact: true }).click();
   await page.getByRole("button", { name: "Yes, delete" }).click();
   await page.locator('[id="Deleted\\ successfully"]').getByTestId("close-modal-button").click();
-  await expect(page.getByRole("main")).toContainText("No mesocycle created");
+});
+
+test("check if sample mesocycle deleted", async ({ page }) => {
+  await expect(
+    page.getByTestId("mesocycle-card").filter({ hasText: editedMesocycleName })
+  ).not.toBeVisible();
 });

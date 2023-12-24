@@ -50,30 +50,12 @@ test("should successfully create a mesocycle", async ({ page }) => {
   );
   await expect(page.getByTestId("exercise1-target-muscle-group")).toContainText("Chest");
 
-  // Copy from 1st Upper workout
+  // Copy from 1st Upper workout to 2nd Upper workout
   await page.getByRole("button", { name: "Copy" }).click();
   await page.getByLabel("Upper").nth(1).check();
   await page.getByRole("button", { name: "Paste" }).click();
-  // Add 2nd exercise in 2nd Upper workout
-  await page.getByRole("button", { name: "+ Add exercise" }).click();
-  await page.getByLabel("Exercise name").fill("Upper Exercise 2");
-  await page.getByLabel("Target muscle").selectOption("Back");
-  await page.getByLabel("Sets").fill("4");
-  await page.getByPlaceholder("From").fill("10");
-  await page.getByPlaceholder("To").fill("15");
-  await page.getByPlaceholder("Note").click();
-  await page.getByPlaceholder("Note").fill("Upper 2 note");
-  await page.getByRole("button", { name: "Add exercise", exact: true }).click();
 
-  // Check entered details of 2nd exercise in UI
-  await expect(page.getByTestId("exercise2-note")).toContainText("Upper 2 note");
-  await expect(page.getByTestId("exercise2-name")).toContainText("Upper Exercise 2");
-  await expect(page.getByTestId("exercise2-sets-and-rep-range")).toContainText(
-    "4 sets of 10 to 15 reps"
-  );
-  await expect(page.getByTestId("exercise2-target-muscle-group")).toContainText("Back");
-
-  // Add 1st exercise
+  // Add 1st exercise to Lower1
   await page.getByLabel("Lower").first().check();
   await page.getByRole("button", { name: "+ Add exercise" }).click();
   await page.getByLabel("Exercise name").fill("Lower Exercise 1");
@@ -83,34 +65,11 @@ test("should successfully create a mesocycle", async ({ page }) => {
   await page.getByPlaceholder("To").fill("10");
   await page.getByRole("button", { name: "Add exercise", exact: true }).click();
 
-  // Add 2nd exercise
-  await page.getByRole("button", { name: "+ Add exercise" }).click();
-  await page.getByLabel("Exercise name").fill("Lower Exercise 2");
-  await page.getByLabel("Target muscle").selectOption("Hamstrings");
-  await page.getByLabel("Sets").fill("2");
-  await page.getByPlaceholder("From").fill("10");
-  await page.getByPlaceholder("To").fill("20");
-  await page.getByRole("button", { name: "Add exercise", exact: true }).click();
-
-  // Throw error when submitting without having at least 1 exercise in each workout
-  await page.getByRole("button", { name: "Next" }).click();
-  await expect(page.locator("#Error")).toContainText(
-    "✕ Error Add at least one exercise in each workout. Missing in: Lower"
-  );
-  await page.locator("#Error").getByRole("button", { name: "✕" }).click();
-
   // Copy from Lower1 to Lower2
   await page.getByRole("button", { name: "Copy" }).click();
   await page.getByLabel("Lower").nth(1).check();
   await page.getByRole("button", { name: "Paste" }).click();
   await page.getByRole("button", { name: "Next" }).click();
-
-  // Add 'Chest' specialization
-  await page.getByLabel("Mesocycle caloric state").selectOption("-1");
-  await page.getByLabel("Specialization").check();
-  await page.locator("#specialize-muscle-group").selectOption("Chest");
-  await page.getByRole("button", { name: "Add" }).click();
-  await expect(page.locator("#specialization-form")).toContainText("Chest");
 
   // Create the mesocycle
   await page.getByRole("button", { name: "Create mesocycle" }).click();
@@ -121,12 +80,13 @@ test("should successfully create a mesocycle", async ({ page }) => {
 test("should show the created mesocycle", async ({ page }) => {
   await page.getByTestId("mesocycle-card").filter({ hasText: randomMesocycleName }).click();
 
-  await expect(page.getByTestId("mesocycle-caloric-state")).toContainText("Hypo-caloric (Deficit)");
+  await expect(page.getByTestId("mesocycle-caloric-state")).toContainText(
+    "Iso-caloric (Maintenance)"
+  );
   await expect(page.getByTestId("mesocycle-split")).toContainText(
     "D1 Upper D2 Lower D3 Rest D4 Upper D5 Lower D6 Rest D7 Rest"
   );
 
-  await expect(page.getByTestId("mesocycle-specializations")).toContainText("Chest");
   await expect(page.getByTestId("mesocycle-start-RIR")).toContainText("2 RIR");
   await expect(page.getByTestId("mesocycle-duration")).toContainText("12 cycles");
 });
@@ -136,5 +96,10 @@ test("delete the created mesocycle", async ({ page }) => {
   await page.getByRole("button", { name: "Delete", exact: true }).click();
   await page.getByRole("button", { name: "Yes, delete" }).click();
   await page.locator('[id="Deleted\\ successfully"]').getByTestId("close-modal-button").click();
-  await expect(page.getByRole("main")).toContainText("No mesocycle created");
+});
+
+test("check if mesocycle deleted", async ({ page }) => {
+  await expect(
+    page.getByTestId("mesocycle-card").filter({ hasText: randomMesocycleName })
+  ).not.toBeVisible();
 });

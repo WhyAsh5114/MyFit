@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { test as baseTest } from "@playwright/test";
+import { test as baseTest, expect } from "@playwright/test";
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config();
@@ -31,7 +31,8 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
       ]);
       // Wait until the page receives the cookies.
       // Reload to get user info
-      await page.reload();
+      await page.goto("localhost:4173/profile");
+      await expect(page.getByRole("main")).toContainText("Hello Test user");
       // End of authentication steps.
 
       await page.context().storageState({ path: fileName });
