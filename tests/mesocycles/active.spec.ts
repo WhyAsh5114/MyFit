@@ -8,8 +8,11 @@ const randomMesocycleName = "active.spec.ts";
 
 test("create prebuilt PPL mesocycle", async ({ page }) => {
   await page.getByRole("link", { name: "Create new mesocycle" }).click();
+  await page.waitForURL("/mesocycles/creationPresets");
   await page.getByRole("link", { name: "Use common mesocycles Start" }).click();
+  await page.waitForURL("/mesocycles/creationPresets/common");
   await page.getByRole("button", { name: "Pull Push Legs Pull A Push A" }).click();
+  await page.waitForURL(/newTemplate/);
   await page.getByPlaceholder("Type here").fill(randomMesocycleName);
   await page.getByRole("button", { name: "Next" }).click();
   await page.waitForURL("/mesocycles/newTemplate/split");
@@ -23,6 +26,7 @@ test("create prebuilt PPL mesocycle", async ({ page }) => {
 
 test("activate the newly created mesocycle", async ({ page }) => {
   await page.getByTestId("mesocycle-card").filter({ hasText: randomMesocycleName }).click();
+  await page.waitForURL(/view/);
   await page.getByRole("button", { name: "Start" }).click();
   await page.locator('[id="Started\\ successfully"]').getByTestId("close-modal-button").click();
 });
@@ -30,12 +34,14 @@ test("activate the newly created mesocycle", async ({ page }) => {
 test("check if mesocycle is activated", async ({ page }) => {
   await expect(page.getByTestId("active-mesocycle-name")).toContainText(randomMesocycleName);
   await page.getByTestId("active-mesocycle-card").filter({ hasText: randomMesocycleName }).click();
+  await page.waitForURL(/view/);
   await expect(page.getByTestId("mesocycle-end-date")).toContainText("Active");
   await expect(page.getByRole("button", { name: "Stop mesocycle" })).toBeVisible();
 });
 
 test("stop active mesocycle", async ({ page }) => {
   await page.getByTestId("active-mesocycle-card").filter({ hasText: randomMesocycleName }).click();
+  await page.waitForURL(/view/);
   await page.getByRole("button", { name: "Stop mesocycle" }).click();
   await page.getByRole("button", { name: "Yes, stop" }).click();
   await page.locator("#Success").getByTestId("close-modal-button").click();
@@ -47,6 +53,7 @@ test("make sure no active mesocycle", async ({ page }) => {
 
 test("delete the sample mesocycle", async ({ page }) => {
   await page.getByTestId("mesocycle-card").filter({ hasText: randomMesocycleName }).click();
+  await page.waitForURL(/view/);
   await page.getByRole("button", { name: "Delete", exact: true }).click();
   await page.getByRole("button", { name: "Yes, delete" }).click();
   await page.locator('[id="Deleted\\ successfully"]').getByTestId("close-modal-button").click();

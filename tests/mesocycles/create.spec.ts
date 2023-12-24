@@ -8,7 +8,9 @@ const randomMesocycleName = "create.spec.ts";
 
 test("should successfully create a mesocycle", async ({ page }) => {
   await page.getByRole("link", { name: "Create new mesocycle" }).click();
+  await page.waitForURL("/mesocycles/creationPresets");
   await page.getByRole("link", { name: "Start from scratch" }).click();
+  await page.waitForURL(/newTemplate\/basics/);
 
   // Basics
   await page.getByPlaceholder("Type here").fill(randomMesocycleName);
@@ -20,6 +22,7 @@ test("should successfully create a mesocycle", async ({ page }) => {
   await expect(page.getByTestId("Total 1 RIR cycles")).toContainText("3 cycles");
   await expect(page.getByTestId("Total 0 RIR cycles")).toContainText("1 cycles");
   await page.getByRole("button", { name: "Next" }).click();
+  await page.waitForURL(/newTemplate\/split/);
 
   // Split
   await page.locator('[id="D1-workout-name"]').fill("Upper");
@@ -32,6 +35,7 @@ test("should successfully create a mesocycle", async ({ page }) => {
   await page.locator('[id="is-D6-rest"]').check();
   await page.locator('[id="is-D7-rest"]').check();
   await page.getByRole("button", { name: "Next" }).click();
+  await page.waitForURL(/newTemplate\/exercises/);
 
   // Add first exercise
   await page.getByRole("button", { name: "+ Add exercise" }).click();
@@ -70,6 +74,7 @@ test("should successfully create a mesocycle", async ({ page }) => {
   await page.getByLabel("Lower").nth(1).check();
   await page.getByRole("button", { name: "Paste" }).click();
   await page.getByRole("button", { name: "Next" }).click();
+  await page.waitForURL(/newTemplate\/extras/);
 
   // Create the mesocycle
   await page.getByRole("button", { name: "Create mesocycle" }).click();
