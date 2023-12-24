@@ -29,7 +29,7 @@ const SorenessFeedback = [
 ] as const;
 type SorenessState = (typeof SorenessFeedback)[number]["value"];
 
-interface Workout {
+type Workout = {
   startTimestamp: EpochTimeStamp;
   referenceWorkout: string | null;
   dayNumber: number;
@@ -42,7 +42,7 @@ interface Workout {
   deload: boolean;
   skipped: boolean;
   performedMesocycleId: string;
-}
+};
 
 const JointPainFeedback = [
   { name: "no pain", value: 0, bgColor: "checked:!bg-success" },
@@ -58,12 +58,12 @@ const PumpFeedback = [
 ] as const;
 type PumpState = (typeof PumpFeedback)[number]["value"];
 
-interface WorkoutExerciseSet {
+type WorkoutExerciseSet = {
   reps: number;
   load: number;
   RIR: number;
-}
-interface WorkoutExercise {
+};
+type WorkoutExercise = {
   name: string;
   sets: WorkoutExerciseSet[];
   repRangeStart: number;
@@ -73,13 +73,13 @@ interface WorkoutExercise {
   jointPainRating: JoinPainState | null;
   pumpRating: PumpState | null;
   note?: string;
-}
+};
 
 type WorkoutExerciseWithoutSetNumbers = Omit<WorkoutExercise, "sets"> & {
   sets: Nullable<WorkoutExerciseSet>[];
 };
 
-interface WorkoutBeingPerformed {
+type WorkoutBeingPerformed = {
   startTimestamp: EpochTimeStamp;
   referenceWorkout: string | null;
   dayNumber: number;
@@ -88,4 +88,4 @@ interface WorkoutBeingPerformed {
   exercisesPerformed: WorkoutExerciseWithoutSetNumbers[];
   plannedRIR: number;
   deload: boolean;
-}
+};

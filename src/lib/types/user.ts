@@ -2,8 +2,8 @@ type Nullable<T> = {
   [P in keyof T]: T[P] | null;
 };
 
-interface AllUserPreferences {
+type AllUserPreferences = {
   bodyweight: number;
 }
 
-type UserPreferences = Nullable<AllUserPreferences>;
+type UserPreferences = Partial<AllUserPreferences>;

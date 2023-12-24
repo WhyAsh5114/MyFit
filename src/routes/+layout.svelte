@@ -14,10 +14,9 @@
     lg = window.matchMedia("(max-width: 1024px)");
   });
 
-  // Vercel analytics
+  // Vercel analytics and speed insights
   import { dev } from "$app/environment";
   import { inject } from "@vercel/analytics";
-  // Vercel speed insights
   import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit";
 
   if ($page.url.hostname !== "localhost") {
@@ -36,9 +35,9 @@
   <div class="drawer-content flex flex-col items-center justify-center h-screen">
     <!-- Page content here -->
     <div class="flex bg-primary w-full items-center py-2 lg:hidden" aria-hidden={!lg?.matches}>
-      <label class="btn btn-ghost drawer-button lg:hidden" aria-hidden={!lg?.matches} for="drawer"
-        ><Hamburger class="w-6 h-6" /></label
-      >
+      <label class="btn btn-ghost drawer-button lg:hidden" aria-hidden={!lg?.matches} for="drawer">
+        <Hamburger class="w-6 h-6" />
+      </label>
       <a class="flex items-center" href="/">
         <img class="-mb-1 mr-1" alt="logo" height="48" src="/favicon.png" width="48" />
         <h1 class="text-2xl font-bold text-white">MyFit</h1>

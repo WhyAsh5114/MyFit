@@ -7,10 +7,10 @@ import "unplugin-icons/types/svelte";
 declare global {
   namespace App {
     /*
-     * Interface Error {}
-     * interface Locals {}
-     * interface PageData {}
-     * interface Platform {}
+     * type Error {}
+     * type Locals {}
+     * type PageData {}
+     * type Platform {}
      */
   }
 }

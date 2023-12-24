@@ -15,7 +15,4 @@ const MuscleGroups = [
 ] as const;
 type MuscleGroup = (typeof MuscleGroups)[number];
 
-const ExerciseWeightTypes = ["Weighted", "Bodyweight"] as const;
-type ExerciseWeightType = (typeof ExerciseWeightTypes)[number];
-
-type WithSerializedId<T> = T & { _id: string };
+type WithSID<T> = Omit<T, "_id"> & { _id: string };
