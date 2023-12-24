@@ -1,7 +1,7 @@
 <script lang="ts">
   import AddIcon from "virtual:icons/material-symbols/add";
   import RemoveIcon from "virtual:icons/material-symbols/remove";
-  import { splitName, splitStructure } from "../splitStore";
+  import { exerciseSplits, splitName, splitStructure } from "../splitStore";
   import { page } from "$app/stores";
   import MyModal from "$lib/components/MyModal.svelte";
   import { goto } from "$app/navigation";
@@ -20,7 +20,7 @@
     }
   }
 
-  async function validateStructure() {
+  async function submitStructure() {
     let nonRestDays = 0;
     $splitStructure.forEach((day) => {
       if (day !== null) nonRestDays++;
@@ -31,6 +31,15 @@
       modal.show();
       return;
     }
+    $exerciseSplits = [];
+    $splitStructure.forEach((day) => {
+      if (day === null) {
+        $exerciseSplits.push(null);
+      } else {
+        $exerciseSplits.push({ name: day, exerciseTemplates: [] });
+      }
+    });
+    $exerciseSplits = $exerciseSplits;
     await goto(`/exerciseSplits/${$page.params.mode}/exercises`);
   }
 </script>
@@ -45,7 +54,7 @@
 <form
   id="structure-form"
   class="m-auto w-full max-w-sm flex flex-col"
-  on:submit|preventDefault={validateStructure}
+  on:submit|preventDefault={submitStructure}
 >
   <label class="form-control w-full mb-8">
     <div class="label">
