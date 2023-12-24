@@ -21,37 +21,25 @@ type CaloricStateValue = (typeof CaloricStates)[number]["value"];
 type RIRProgressionData = {
   specificRIR: number;
   cycles: number;
-}
+};
 
 type MesocycleTemplate = {
   name: string;
   startRIR: number;
   RIRProgression: RIRProgressionData[];
-  exerciseSplit: ({ name: string; exercises: SplitExercise[] } | null)[];
+  exerciseSplit: ExerciseSplit[];
   caloricBalance: CaloricStateValue;
   specialization?: MuscleGroup[];
-}
+};
 
 type ActiveMesocycle = {
   templateMesoId: string;
   startTimestamp: EpochTimeStamp;
   workouts: (string | null)[];
-}
-
-type Mesocycle = ActiveMesocycle & {
-  endTimestamp?: EpochTimeStamp;
 };
 
-type PerformedMesocycle = ActiveMesocycle & {
+type CompletedMesocycle = ActiveMesocycle & {
   endTimestamp: EpochTimeStamp;
 };
 
-type SplitExercise = {
-  name: string;
-  sets: number;
-  targetMuscleGroup: MuscleGroup;
-  repRangeStart: number;
-  repRangeEnd: number;
-  bodyweight: boolean;
-  note: string;
-}
+type Mesocycle = ActiveMesocycle | CompletedMesocycle;

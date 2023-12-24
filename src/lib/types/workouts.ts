@@ -29,21 +29,6 @@ const SorenessFeedback = [
 ] as const;
 type SorenessState = (typeof SorenessFeedback)[number]["value"];
 
-type Workout = {
-  startTimestamp: EpochTimeStamp;
-  referenceWorkout: string | null;
-  dayNumber: number;
-  cycleNumber: number;
-  difficultyRating: 1 | 2 | 3 | 4 | 5;
-  exercisesPerformed: WorkoutExercise[];
-  muscleGroupWorkloads: Partial<Record<MuscleGroup, WorkloadState | null>>;
-  plannedRIR: number;
-  muscleSorenessToNextWorkout: Partial<Record<MuscleGroup, SorenessState | null>>;
-  deload: boolean;
-  skipped: boolean;
-  performedMesocycleId: string;
-};
-
 const JointPainFeedback = [
   { name: "no pain", value: 0, bgColor: "checked:!bg-success" },
   { name: "some pain", value: 1, bgColor: "checked:!bg-warning" },
@@ -58,34 +43,4 @@ const PumpFeedback = [
 ] as const;
 type PumpState = (typeof PumpFeedback)[number]["value"];
 
-type WorkoutExerciseSet = {
-  reps: number;
-  load: number;
-  RIR: number;
-};
-type WorkoutExercise = {
-  name: string;
-  sets: WorkoutExerciseSet[];
-  repRangeStart: number;
-  repRangeEnd: number;
-  bodyweight?: number | null;
-  targetMuscleGroup: MuscleGroup;
-  jointPainRating: JoinPainState | null;
-  pumpRating: PumpState | null;
-  note?: string;
-};
-
-type WorkoutExerciseWithoutSetNumbers = Omit<WorkoutExercise, "sets"> & {
-  sets: Nullable<WorkoutExerciseSet>[];
-};
-
-type WorkoutBeingPerformed = {
-  startTimestamp: EpochTimeStamp;
-  referenceWorkout: string | null;
-  dayNumber: number;
-  cycleNumber: number;
-  performedMesocycleId: string;
-  exercisesPerformed: WorkoutExerciseWithoutSetNumbers[];
-  plannedRIR: number;
-  deload: boolean;
-};
+// TODO: NEW AND BETTER TYPE SYSTEM WITH NO REDUNDANCY
