@@ -1,7 +1,9 @@
-type ExerciseSplit = {
+type ExerciseSplit = (ExerciseSplitDay | null)[];
+
+type ExerciseSplitDay = {
   name: string;
   exerciseTemplates: ExerciseTemplate[];
-} | null;
+};
 
 type ExerciseTemplate = {
   name: string;
@@ -9,6 +11,6 @@ type ExerciseTemplate = {
   targetMuscleGroup: MuscleGroup;
   repRangeStart: number;
   repRangeEnd: number;
-  bodyweight: boolean;
+  involvesBodyweight: boolean;
   note: string;
 };

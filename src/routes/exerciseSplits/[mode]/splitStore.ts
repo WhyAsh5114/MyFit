@@ -6,4 +6,4 @@ export const splitStructure: Writable<(string | null)[]> = persisted(
   "splitStructure",
   Array(7).fill("")
 );
-export const exerciseSplits: Writable<ExerciseSplit[]> = persisted("exerciseSplits", []);
+export const exerciseSplit: Writable<ExerciseSplit> = persisted("exerciseSplit", []);
