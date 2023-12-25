@@ -7,21 +7,23 @@
   export let addExercise: (exercise: ExerciseTemplate) => boolean;
   export let editExercise: (idx: number, exercise: ExerciseTemplate) => boolean;
 
+  const emptyExercise = {
+    name: "",
+    sets: null,
+    targetMuscleGroup: null,
+    repRangeStart: null,
+    repRangeEnd: null,
+    involvesBodyweight: false,
+    note: ""
+  };
+
   let errorMsg = "";
   $: mode = editingExercise ? "edit" : "add";
 
   let modalExercise: Nullable<ExerciseTemplate>;
   $: modalExercise = editingExercise
     ? JSON.parse(JSON.stringify(editingExercise))
-    : {
-        name: "",
-        sets: null,
-        targetMuscleGroup: null,
-        repRangeStart: null,
-        repRangeEnd: null,
-        involvesBodyweight: false,
-        note: ""
-      };
+    : JSON.parse(JSON.stringify(emptyExercise));
   function addEditExercise() {
     const validExercise = JSON.parse(JSON.stringify(modalExercise)) as ExerciseTemplate;
     let success = true;
@@ -30,11 +32,12 @@
     } else if (mode === "edit" && editingExerciseIdx) {
       success = editExercise(editingExerciseIdx, validExercise) === false;
     }
-    
+
     if (!success) {
       errorMsg = `${validExercise.name} has already been added`;
     } else {
       modal.close();
+      modalExercise = JSON.parse(JSON.stringify(emptyExercise));
     }
   }
 </script>
