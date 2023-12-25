@@ -4,7 +4,7 @@ type CommonMesocycles = {
   exerciseSplit: MesocycleTemplate["exerciseSplit"];
 }[];
 
-export const commonMesocycles: CommonMesocycles = [
+/*export const commonMesocycles: CommonMesocycles = [
   {
     name: "Pull Push Legs",
     description:
@@ -261,3 +261,4 @@ export const commonMesocycles: CommonMesocycles = [
     ]
   }
 ];
+*/
