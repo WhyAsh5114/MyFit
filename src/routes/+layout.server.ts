@@ -1,6 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 
-const unprotectedRoutes = ["/", "/login"];
+const unprotectedRoutes = ["/", "/login", "/offline"];
 
 export const load = async ({ locals, url }) => {
   const session = await locals.getSession();
