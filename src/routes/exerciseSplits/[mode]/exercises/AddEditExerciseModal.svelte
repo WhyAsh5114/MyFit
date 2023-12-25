@@ -37,6 +37,7 @@
       errorMsg = `${validExercise.name} has already been added`;
     } else {
       modal.close();
+      errorMsg = "";
       modalExercise = JSON.parse(JSON.stringify(emptyExercise));
     }
   }
@@ -111,6 +112,11 @@
     </div>
     <textarea class="textarea textarea-bordered" placeholder="Notes" bind:value={modalExercise.note}
     ></textarea>
+    {#if errorMsg}
+      <p class="bg-error/50 text-sm p-2 rounded-md">
+        {errorMsg}
+      </p>
+    {/if}
   </form>
   <button class="btn btn-accent btn-block mt-4" form="{mode}-exercise-form" type="submit">
     <p>
@@ -118,7 +124,4 @@
       exercise
     </p>
   </button>
-  <p class="text-error font-semibold">
-    {errorMsg}
-  </p>
 </MyModal>
