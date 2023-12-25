@@ -1,7 +1,7 @@
 <script lang="ts">
   import AddIcon from "virtual:icons/material-symbols/add";
   import RemoveIcon from "virtual:icons/material-symbols/remove";
-  import { exerciseSplits, splitName, splitStructure } from "../splitStore";
+  import { exerciseSplit, splitName, splitStructure } from "../splitStore";
   import { page } from "$app/stores";
   import MyModal from "$lib/components/MyModal.svelte";
   import { goto } from "$app/navigation";
@@ -31,15 +31,15 @@
       modal.show();
       return;
     }
-    $exerciseSplits = [];
+    $exerciseSplit = [];
     $splitStructure.forEach((day) => {
       if (day === null) {
-        $exerciseSplits.push(null);
+        $exerciseSplit.push(null);
       } else {
-        $exerciseSplits.push({ name: day, exerciseTemplates: [] });
+        $exerciseSplit.push({ name: day, exerciseTemplates: [] });
       }
     });
-    $exerciseSplits = $exerciseSplits;
+    $exerciseSplit = $exerciseSplit;
     await goto(`/exerciseSplits/${$page.params.mode}/exercises`);
   }
 </script>
