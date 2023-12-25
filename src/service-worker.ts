@@ -26,12 +26,14 @@ self.addEventListener("message", (event) => {
 
 // Network first for everything except static assets
 registerRoute(
-  ({ request }) => !cacheFirstDestinations.includes(request.destination),
+  ({ request, url }) =>
+    !cacheFirstDestinations.includes(request.destination) && !url.pathname.startsWith("/auth"),
   new NetworkFirst(strategyOptions)
 );
 
 // Cache first for images, css
 registerRoute(
-  ({ request }) => cacheFirstDestinations.includes(request.destination),
+  ({ request, url }) =>
+    cacheFirstDestinations.includes(request.destination) && !url.pathname.startsWith("/auth"),
   new CacheFirst(strategyOptions)
 );
