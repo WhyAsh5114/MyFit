@@ -52,38 +52,37 @@
   });
 
   let reloading = false;
+  showInstallButton = true;
 </script>
 
-{#if showInstallButton}
-  <button
-    class="btn btn-accent mt-auto"
-    on:click={() => {
-      // @ts-expect-error Not standard API yet, so need this ignore
-      deferredPrompt.prompt();
-      deferredPrompt = null;
-    }}
-  >
-    <DownloadIcon class="w-6 h-6" />
-    Install app
-  </button>
-{/if}
-{#if $offlineReady}
-  <button class="btn gap-4">
-    App ready to work offline
-  </button>
-{:else if $needRefresh}
-  <button
-    class="btn gap-4"
-    on:click={() => {
-      updateServiceWorker(true);
-      reloading = true;
-    }}
-  >
-    {#if !reloading}
-      <ReloadIcon />
-      Update available
-    {:else}
-      <span class="loading loading-spinner" />
-    {/if}
-  </button>
-{/if}
+<div class="join grid" class:grid-cols-2={showInstallButton && ($offlineReady || $needRefresh)}>
+  {#if showInstallButton}
+    <button
+      class="join-item btn btn-accent mt-auto"
+      on:click={() => {
+        // @ts-expect-error Not standard API yet, so need this ignore
+        deferredPrompt.prompt();
+        deferredPrompt = null;
+      }}
+    >
+      <DownloadIcon class="w-6 h-6" />
+      Install
+    </button>
+  {/if}
+  {#if $needRefresh}
+    <button
+      class="join-item btn btn-neutral gap-4"
+      on:click={() => {
+        updateServiceWorker(true);
+        reloading = true;
+      }}
+    >
+      {#if !reloading}
+        <ReloadIcon />
+        Update
+      {:else}
+        <span class="loading loading-spinner" />
+      {/if}
+    </button>
+  {/if}
+</div>
