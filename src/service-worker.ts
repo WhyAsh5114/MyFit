@@ -8,7 +8,7 @@ import { registerRoute } from "workbox-routing";
 import { NetworkFirst, CacheFirst } from "workbox-strategies";
 declare let self: ServiceWorkerGlobalScope;
 
-const cacheFirstDestinations = ["styles", "css", "html"];
+const cacheFirstDestinations: RequestDestination[] = ["style", "manifest", "image"];
 const strategyOptions = {
   plugins: [
     new PrecacheFallbackPlugin({
@@ -16,6 +16,19 @@ const strategyOptions = {
     })
   ]
 };
+
+function routingStrategyFunction(mode: "networkFirst" | "cacheFirst", request: Request, url: URL) {
+  // Ignore /auth requests
+  if (url.pathname.startsWith("/auth")) return false;
+  // Decide whether or not asset should be cached (cacheFirstDestinations, and unplugin-icons)
+  let toCache = false;
+  if (cacheFirstDestinations.includes(request.destination) || url.pathname.includes("~icons")) {
+    toCache = true;
+  }
+  // If function used in cacheFirst strategy, return toCache value
+  // otherwise being used in networkFirst, which is naturally the assets which shouldn't be cached
+  return mode === "cacheFirst" ? toCache : !toCache;
+}
 
 cleanupOutdatedCaches();
 precacheAndRoute(self.__WB_MANIFEST);
@@ -26,14 +39,12 @@ self.addEventListener("message", (event) => {
 
 // Network first for everything except static assets
 registerRoute(
-  ({ request, url }) =>
-    !cacheFirstDestinations.includes(request.destination) && !url.pathname.startsWith("/auth"),
+  ({ request, url }) => routingStrategyFunction("networkFirst", request, url),
   new NetworkFirst(strategyOptions)
 );
 
 // Cache first for images, css
 registerRoute(
-  ({ request, url }) =>
-    cacheFirstDestinations.includes(request.destination) && !url.pathname.startsWith("/auth"),
+  ({ request, url }) => routingStrategyFunction("cacheFirst", request, url),
   new CacheFirst(strategyOptions)
 );
