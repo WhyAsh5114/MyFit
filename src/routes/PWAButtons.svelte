@@ -52,7 +52,6 @@
   });
 
   let reloading = false;
-  showInstallButton = true;
 </script>
 
 <div class="join grid" class:grid-cols-2={showInstallButton && ($offlineReady || $needRefresh)}>
