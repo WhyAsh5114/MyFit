@@ -2,7 +2,7 @@
   import "../app.postcss";
   import Hamburger from "virtual:icons/material-symbols/menu";
   import { pwaInfo } from "virtual:pwa-info";
-  import PwaButton from "./PWAButton.svelte";
+  import PwaButtons from "./PWAButtons.svelte";
   import UserButton from "./UserButton.svelte";
   import { navigating, page } from "$app/stores";
   import { onMount } from "svelte";
@@ -78,7 +78,7 @@
         <li><a href="/exerciseSplits">Exercise splits</a></li>
       </ul>
       <div class="flex flex-col gap-2 mt-auto">
-        <PwaButton />
+        <PwaButtons />
         <UserButton />
       </div>
     </div>

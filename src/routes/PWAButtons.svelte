@@ -66,11 +66,14 @@
     <DownloadIcon class="w-6 h-6" />
     Install app
   </button>
-{:else if $offlineReady}
-  App ready to work offline
+{/if}
+{#if $offlineReady}
+  <button class="btn gap-4">
+    App ready to work offline
+  </button>
 {:else if $needRefresh}
   <button
-    class="btn btn-accent gap-4"
+    class="btn gap-4"
     on:click={() => {
       updateServiceWorker(true);
       reloading = true;
