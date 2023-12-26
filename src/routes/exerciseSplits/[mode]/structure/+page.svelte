@@ -7,9 +7,8 @@
   import { goto } from "$app/navigation";
   $: ({ params } = $page);
 
-  let modal: HTMLDialogElement;
-  let modalTitle = "";
-  let modalText = "";
+  let atLeastOneWorkoutModal: HTMLDialogElement;
+  let deleteSplitDataModal: HTMLDialogElement;
 
   function modifyStructure(operation: "add" | "remove") {
     if (operation === "add") {
@@ -20,32 +19,59 @@
     }
   }
 
-  async function submitStructure() {
+  let notMatchedDays: Set<string> = new Set();
+
+  async function submitStructure(force = false) {
     let nonRestDays = 0;
     $splitStructure.forEach((day) => {
       if (day !== null) nonRestDays++;
     });
     if (nonRestDays === 0) {
-      modalTitle = "Error";
-      modalText = "Add at least one workout to the exercise split";
-      modal.show();
+      atLeastOneWorkoutModal.show();
       return;
     }
-    $exerciseSplit = [];
+
+    notMatchedDays.clear();
+    $exerciseSplit.forEach((splitDay) => {
+      if (splitDay) notMatchedDays.add(splitDay.name);
+    });
+    notMatchedDays = notMatchedDays;
+
+    const newExerciseSplit: ExerciseSplit = [];
     $splitStructure.forEach((day) => {
       if (day === null) {
-        $exerciseSplit.push(null);
+        newExerciseSplit.push(null);
       } else {
-        $exerciseSplit.push({ name: day, exerciseTemplates: [] });
+        const matchingDay = $exerciseSplit.find((splitDay) => splitDay?.name === day);
+        if (matchingDay) {
+          newExerciseSplit.push(matchingDay);
+          notMatchedDays.delete(matchingDay.name);
+        } else {
+          newExerciseSplit.push({ name: day, exerciseTemplates: [] });
+        }
       }
     });
-    $exerciseSplit = $exerciseSplit;
+    if (notMatchedDays.size > 0 && !force) {
+      deleteSplitDataModal.show();
+      return;
+    }
+    $exerciseSplit = newExerciseSplit;
     await goto(`/exerciseSplits/${$page.params.mode}/exercises`);
   }
 </script>
 
-<MyModal title={modalTitle} bind:dialogElement={modal}>
-  {modalText}
+<MyModal title="Error" bind:dialogElement={atLeastOneWorkoutModal}>
+  <p>Add at least one workout to the exercise split</p>
+</MyModal>
+
+<MyModal title="Warning" bind:dialogElement={deleteSplitDataModal}>
+  <p>
+    You'll lose any exercise data created for the following workout days:
+    <span class="font-semibold text-warning">{Array.from(notMatchedDays).join(", ")}</span>
+  </p>
+  <button class="btn btn-warning btn-block mt-4" on:click={() => submitStructure(true)}>
+    Yes, continue
+  </button>
 </MyModal>
 
 <h2><span class="capitalize">{params.mode}</span> exercise split</h2>
@@ -54,7 +80,7 @@
 <form
   id="structure-form"
   class="m-auto w-full max-w-sm flex flex-col"
-  on:submit|preventDefault={submitStructure}
+  on:submit|preventDefault={() => submitStructure()}
 >
   <label class="form-control w-full mb-8">
     <div class="label">
