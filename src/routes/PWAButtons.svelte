@@ -54,7 +54,7 @@
   let reloading = false;
 </script>
 
-<div class="join grid" class:grid-cols-2={showInstallButton && ($offlineReady || $needRefresh)}>
+<div class="join grid" class:grid-cols-2={showInstallButton && $needRefresh}>
   {#if showInstallButton}
     <button
       class="join-item btn btn-accent mt-auto"
