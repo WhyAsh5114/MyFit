@@ -72,10 +72,11 @@
       <select
         id="{mode}-exercise-target-muscle-group"
         class="select grow"
+        aria-label="{mode}-exercise-target-muscle-group"
         required
         bind:value={modalExercise.targetMuscleGroup}
       >
-        <option disabled selected value={null}>Pick one</option>
+        <option disabled selected value={null}>Select a muscle group</option>
         {#each muscleGroups as muscleGroup}
           <option>{muscleGroup}</option>
         {/each}
@@ -110,7 +111,11 @@
         bind:value={modalExercise.repRangeEnd}
       />
     </div>
-    <textarea class="textarea textarea-bordered" placeholder="Notes" bind:value={modalExercise.note}
+    <textarea
+      id="{mode}-exercise-note"
+      class="textarea textarea-bordered"
+      placeholder="Notes"
+      bind:value={modalExercise.note}
     ></textarea>
     {#if errorMsg}
       <p class="bg-error/50 text-sm p-2 rounded-md">
