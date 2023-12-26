@@ -2,11 +2,12 @@
   import AddEditExerciseModal from "./AddEditExerciseModal.svelte";
   import AddIcon from "virtual:icons/material-symbols/add";
   import MenuIcon from "virtual:icons/material-symbols/menu";
-  import CloseIcon from "virtual:icons/material-symbols/close";
   import EditIcon from "virtual:icons/material-symbols/edit-outline";
   import DeleteIcon from "virtual:icons/material-symbols/delete-outline";
   import UpArrow from "virtual:icons/mdi/arrow-up";
   import DownArrow from "virtual:icons/mdi/arrow-down";
+  import { flip } from "svelte/animate";
+  import { slide } from "svelte/transition";
 
   export let exerciseTemplates: ExerciseTemplate[];
   let editingExercise: ExerciseTemplate | null = null;
@@ -28,6 +29,23 @@
     exerciseTemplates = exerciseTemplates;
     return true;
   }
+  function deleteExercise(idx: number) {
+    exerciseTemplates.splice(idx, 1);
+    exerciseTemplates = exerciseTemplates;
+  }
+  function moveExercise(direction: "up" | "down", idx: number) {
+    if (direction == "up") {
+      [exerciseTemplates[idx], exerciseTemplates[idx - 1]] = [
+        exerciseTemplates[idx - 1],
+        exerciseTemplates[idx]
+      ];
+    } else {
+      [exerciseTemplates[idx], exerciseTemplates[idx + 1]] = [
+        exerciseTemplates[idx + 1],
+        exerciseTemplates[idx]
+      ];
+    }
+  }
 
   function showAddExerciseModal() {
     editingExercise = null;
@@ -40,14 +58,6 @@
   }
 
   function closeOtherMenus(e: Event & { currentTarget: EventTarget & HTMLDetailsElement }) {
-    const summary = e.currentTarget.firstChild as Element;
-    summary.removeChild(summary.firstElementChild as Element);
-    if (e.currentTarget.open) {
-      new CloseIcon({ target: summary });
-    } else {
-      new MenuIcon({ target: summary });
-      return;
-    }
     const allDetails = document.querySelectorAll("details");
     allDetails.forEach((detail) => {
       if (detail !== e.target) {
@@ -66,8 +76,12 @@
 />
 
 <div class="flex flex-col gap-1 h-px grow overflow-y-auto">
-  {#each exerciseTemplates as exercise, exerciseIdx}
-    <div class="flex flex-col bg-primary rounded-md p-2">
+  {#each exerciseTemplates as exercise, exerciseIdx (exercise.name)}
+    <div
+      class="flex flex-col bg-primary rounded-md p-2"
+      transition:slide|local={{ duration: 200 }}
+      animate:flip={{ duration: 200 }}
+    >
       <div class="flex items-center gap-2">
         <span class="font-semibold">{exercise.name}</span>
         {#if exercise.involvesBodyweight}
@@ -84,6 +98,8 @@
               <button
                 class="btn btn-sm btn-primary rounded-sm p-0 w-full"
                 aria-label="Move exercise up"
+                disabled={exerciseIdx === 0}
+                on:click={() => moveExercise("up", exerciseIdx)}
               >
                 <UpArrow />
               </button>
@@ -92,6 +108,8 @@
               <button
                 class="btn btn-sm btn-primary rounded-sm p-0 w-full"
                 aria-label="Move exercise down"
+                disabled={exerciseIdx === exerciseTemplates.length - 1}
+                on:click={() => moveExercise("down", exerciseIdx)}
               >
                 <DownArrow />
               </button>
@@ -109,6 +127,7 @@
               <button
                 class="btn btn-sm btn-error rounded-sm p-0 w-full"
                 aria-label="Delete exercise"
+                on:click={() => deleteExercise(exerciseIdx)}
               >
                 <DeleteIcon />
               </button>
