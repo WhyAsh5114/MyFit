@@ -37,10 +37,10 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] }
     },
 
-    //{
-    //  name: "firefox",
-    //  use: { ...devices["Desktop Firefox"] }
-    //},
+    {
+      name: "firefox",
+      use: { ...devices["Desktop Firefox"] }
+    },
 
     {
       name: "webkit",
@@ -73,7 +73,5 @@ export default defineConfig({
     command: "npm run build && npm run preview",
     port: 4173,
     reuseExistingServer: !process.env.CI
-  },
-  globalSetup: "./tests/global-teardown",
-  globalTeardown: "./tests/global-teardown"
+  }
 });
