@@ -56,5 +56,7 @@
 </div>
 
 {#key selectedSplitDayIndex}
-  <ExerciseSplitTable bind:exerciseTemplates={selectedSplitDay.exerciseTemplates} />
+  {#if selectedSplitDay}
+    <ExerciseSplitTable bind:exerciseTemplates={selectedSplitDay.exerciseTemplates} />
+  {/if}
 {/key}
