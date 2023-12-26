@@ -1,22 +1,22 @@
 <script lang="ts">
   import ExerciseSplitTable from "./ExerciseSplitTable.svelte";
-  import { exerciseSplit } from "../splitStore";
+  import { exerciseSplitDays } from "../splitStore";
   import CutIcon from "virtual:icons/material-symbols/cut";
   import CopyIcon from "virtual:icons/material-symbols/content-copy";
   import PasteIcon from "virtual:icons/material-symbols/content-paste";
   import { page } from "$app/stores";
   $: ({ params } = $page);
 
-  let selectedSplitDayIndex = $exerciseSplit.findIndex((splitDay) => splitDay !== null);
-  let selectedSplitDay = $exerciseSplit[selectedSplitDayIndex] as ExerciseSplitDay;
+  let selectedSplitDayIndex = $exerciseSplitDays.findIndex((splitDay) => splitDay !== null);
+  let selectedSplitDay = $exerciseSplitDays[selectedSplitDayIndex] as ExerciseSplitDay;
   let copiedExercises: ExerciseTemplate[] = [];
 
   $: updateSelectedSplitDay(selectedSplitDayIndex);
-  $: $exerciseSplit[selectedSplitDayIndex] = selectedSplitDay;
+  $: $exerciseSplitDays[selectedSplitDayIndex] = selectedSplitDay;
 
   function updateSelectedSplitDay(_selectedSplitDayIndex: number) {
-    if ($exerciseSplit[_selectedSplitDayIndex] !== null) {
-      selectedSplitDay = $exerciseSplit[_selectedSplitDayIndex] as ExerciseSplitDay;
+    if ($exerciseSplitDays[_selectedSplitDayIndex] !== null) {
+      selectedSplitDay = $exerciseSplitDays[_selectedSplitDayIndex] as ExerciseSplitDay;
     }
   }
 
@@ -31,7 +31,7 @@
       JSON.stringify(copiedExercises)
     ) as ExerciseTemplate[];
   }
-  
+
   function cutExercises() {
     copyExercises();
     selectedSplitDay.exerciseTemplates = [];
@@ -49,7 +49,7 @@
   </div>
   <div class="collapse-content backdrop-brightness-50">
     <div class="flex flex-wrap justify-center items-center gap-2 mt-4">
-      {#each $exerciseSplit as exerciseSplitDay, i}
+      {#each $exerciseSplitDays as exerciseSplitDay, i}
         <div class="join">
           <span class="join-item btn btn-sm">D{i + 1}</span>
           {#if exerciseSplitDay === null}

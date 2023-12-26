@@ -1,7 +1,7 @@
 <script lang="ts">
   import AddIcon from "virtual:icons/material-symbols/add";
   import RemoveIcon from "virtual:icons/material-symbols/remove";
-  import { exerciseSplit, splitName, splitStructure } from "../splitStore";
+  import { exerciseSplitDays, splitName, splitStructure } from "../splitStore";
   import { page } from "$app/stores";
   import MyModal from "$lib/components/MyModal.svelte";
   import { goto } from "$app/navigation";
@@ -34,39 +34,39 @@
 
   function updateNotMatchedDays() {
     notMatchedDays.clear();
-    $exerciseSplit.forEach((splitDay) => {
+    $exerciseSplitDays.forEach((splitDay) => {
       if (splitDay) notMatchedDays.add(splitDay.name);
     });
     notMatchedDays = notMatchedDays;
   }
-  
+
   function createNewExerciseSplit() {
-    const newExerciseSplit: ExerciseSplit = [];
+    const newSplitDays: ExerciseSplit["splitDays"] = [];
     $splitStructure.forEach((day) => {
       if (day === null) {
-        newExerciseSplit.push(null);
+        newSplitDays.push(null);
       } else {
-        const matchingDay = $exerciseSplit.find((splitDay) => splitDay?.name === day);
+        const matchingDay = $exerciseSplitDays.find((splitDay) => splitDay?.name === day);
         if (matchingDay) {
-          newExerciseSplit.push(matchingDay);
+          newSplitDays.push(matchingDay);
           notMatchedDays.delete(matchingDay.name);
         } else {
-          newExerciseSplit.push({ name: day, exerciseTemplates: [] });
+          newSplitDays.push({ name: day, exerciseTemplates: [] });
         }
       }
     });
-    return newExerciseSplit;
+    return newSplitDays;
   }
 
   async function submitStructure(force = false) {
     if (!validateStructure()) return;
     updateNotMatchedDays();
-    const newExerciseSplit = createNewExerciseSplit();
+    const newSplitDays = createNewExerciseSplit();
     if (notMatchedDays.size > 0 && !force) {
       deleteSplitDataModal.show();
       return;
     }
-    $exerciseSplit = newExerciseSplit;
+    $exerciseSplitDays = newSplitDays;
     await goto(`/exerciseSplits/${$page.params.mode}/exercises`);
   }
 </script>

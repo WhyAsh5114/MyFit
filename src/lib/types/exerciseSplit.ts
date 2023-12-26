@@ -1,4 +1,7 @@
-type ExerciseSplit = (ExerciseSplitDay | null)[];
+type ExerciseSplit = {
+  name: string;
+  splitDays: (ExerciseSplitDay | null)[];
+}
 
 type ExerciseSplitDay = {
   name: string;
