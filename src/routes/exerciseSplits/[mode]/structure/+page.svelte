@@ -9,6 +9,7 @@
 
   let atLeastOneWorkoutModal: HTMLDialogElement;
   let deleteSplitDataModal: HTMLDialogElement;
+  let notMatchedDays: Set<string> = new Set();
 
   function modifyStructure(operation: "add" | "remove") {
     if (operation === "add") {
@@ -19,24 +20,27 @@
     }
   }
 
-  let notMatchedDays: Set<string> = new Set();
-
-  async function submitStructure(force = false) {
+  function validateStructure() {
     let nonRestDays = 0;
     $splitStructure.forEach((day) => {
       if (day !== null) nonRestDays++;
     });
     if (nonRestDays === 0) {
       atLeastOneWorkoutModal.show();
-      return;
+      return false;
     }
+    return true;
+  }
 
+  function updateNotMatchedDays() {
     notMatchedDays.clear();
     $exerciseSplit.forEach((splitDay) => {
       if (splitDay) notMatchedDays.add(splitDay.name);
     });
     notMatchedDays = notMatchedDays;
-
+  }
+  
+  function createNewExerciseSplit() {
     const newExerciseSplit: ExerciseSplit = [];
     $splitStructure.forEach((day) => {
       if (day === null) {
@@ -51,6 +55,13 @@
         }
       }
     });
+    return newExerciseSplit;
+  }
+
+  async function submitStructure(force = false) {
+    if (!validateStructure()) return;
+    updateNotMatchedDays();
+    const newExerciseSplit = createNewExerciseSplit();
     if (notMatchedDays.size > 0 && !force) {
       deleteSplitDataModal.show();
       return;
