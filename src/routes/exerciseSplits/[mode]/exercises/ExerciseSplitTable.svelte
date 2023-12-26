@@ -9,6 +9,7 @@
   import { flip } from "svelte/animate";
   import { slide } from "svelte/transition";
 
+  export let readOnly = false;
   export let exerciseTemplates: ExerciseTemplate[];
   let editingExercise: ExerciseTemplate | null = null;
   let editingExerciseIdx: number | null = null;
@@ -83,57 +84,59 @@
       animate:flip={{ duration: 200 }}
     >
       <div class="flex items-center gap-2">
-        <span class="font-semibold">{exercise.name}</span>
+        <span class="font-semibold py-0.5">{exercise.name}</span>
         {#if exercise.involvesBodyweight}
           <span class="badge font-semibold">BW</span>
         {/if}
-        <details class="dropdown dropdown-end ml-auto" on:toggle={closeOtherMenus}>
-          <summary class="btn btn-sm p-0 btn-ghost">
-            <MenuIcon />
-          </summary>
-          <ul
-            class="p-2 shadow-lg grid grid-cols-2 dropdown-content z-[1] bg-neutral rounded-md w-32 gap-1"
-          >
-            <li>
-              <button
-                class="btn btn-sm btn-primary rounded-sm p-0 w-full"
-                aria-label="Move exercise up"
-                disabled={exerciseIdx === 0}
-                on:click={() => moveExercise("up", exerciseIdx)}
-              >
-                <UpArrow />
-              </button>
-            </li>
-            <li>
-              <button
-                class="btn btn-sm btn-primary rounded-sm p-0 w-full"
-                aria-label="Move exercise down"
-                disabled={exerciseIdx === exerciseTemplates.length - 1}
-                on:click={() => moveExercise("down", exerciseIdx)}
-              >
-                <DownArrow />
-              </button>
-            </li>
-            <li>
-              <button
-                class="btn btn-sm btn-primary rounded-sm p-0 w-full"
-                aria-label="Edit exercise"
-                on:click={() => showEditExerciseModal(exerciseIdx)}
-              >
-                <EditIcon />
-              </button>
-            </li>
-            <li>
-              <button
-                class="btn btn-sm btn-error rounded-sm p-0 w-full"
-                aria-label="Delete exercise"
-                on:click={() => deleteExercise(exerciseIdx)}
-              >
-                <DeleteIcon />
-              </button>
-            </li>
-          </ul>
-        </details>
+        {#if !readOnly}
+          <details class="dropdown dropdown-end ml-auto" on:toggle={closeOtherMenus}>
+            <summary class="btn btn-sm p-0 btn-ghost">
+              <MenuIcon />
+            </summary>
+            <ul
+              class="p-2 shadow-lg grid grid-cols-2 dropdown-content z-[1] bg-neutral rounded-md w-32 gap-1"
+            >
+              <li>
+                <button
+                  class="btn btn-sm btn-primary rounded-sm p-0 w-full"
+                  aria-label="Move exercise up"
+                  disabled={exerciseIdx === 0}
+                  on:click={() => moveExercise("up", exerciseIdx)}
+                >
+                  <UpArrow />
+                </button>
+              </li>
+              <li>
+                <button
+                  class="btn btn-sm btn-primary rounded-sm p-0 w-full"
+                  aria-label="Move exercise down"
+                  disabled={exerciseIdx === exerciseTemplates.length - 1}
+                  on:click={() => moveExercise("down", exerciseIdx)}
+                >
+                  <DownArrow />
+                </button>
+              </li>
+              <li>
+                <button
+                  class="btn btn-sm btn-primary rounded-sm p-0 w-full"
+                  aria-label="Edit exercise"
+                  on:click={() => showEditExerciseModal(exerciseIdx)}
+                >
+                  <EditIcon />
+                </button>
+              </li>
+              <li>
+                <button
+                  class="btn btn-sm btn-error rounded-sm p-0 w-full"
+                  aria-label="Delete exercise"
+                  on:click={() => deleteExercise(exerciseIdx)}
+                >
+                  <DeleteIcon />
+                </button>
+              </li>
+            </ul>
+          </details>
+        {/if}
       </div>
       <div class="flex items-center justify-between">
         <p class="text-sm">
