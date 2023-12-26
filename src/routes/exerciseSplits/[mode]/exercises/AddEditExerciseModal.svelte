@@ -23,6 +23,7 @@
   let modalExercise: Nullable<ExerciseTemplate>;
   $: updateModalExercise(editingExercise);
   function updateModalExercise(_exercise: ExerciseTemplate | null) {
+    errorMsg = "";
     if (_exercise) {
       modalExercise = JSON.parse(JSON.stringify(_exercise));
     } else {
@@ -35,7 +36,7 @@
     let success = true;
     if (mode === "add") {
       success = addExercise(validExercise);
-    } else if (mode === "edit" && editingExerciseIdx) {
+    } else if (mode === "edit" && editingExerciseIdx !== null) {
       success = editExercise(editingExerciseIdx, validExercise);
     }
 
