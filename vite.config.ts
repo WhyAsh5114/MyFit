@@ -19,7 +19,7 @@ export default defineConfig({
       scope: "/",
       base: "/",
       manifest: {
-        name: "MyFit v2",
+        name: "MyFit v3",
         short_name: "MyFit",
         start_url: "/",
         display: "standalone",

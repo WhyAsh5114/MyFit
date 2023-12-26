@@ -22,7 +22,7 @@ export const handle = sequence(
       GitHub({ clientId: AUTH_GITHUB_ID, clientSecret: AUTH_GITHUB_SECRET })
     ],
     adapter: MongoDBAdapter(clientPromise, {
-      databaseName: "MyFit_v2"
+      databaseName: "MyFit_v3"
     }),
     session: { strategy: "database" },
     callbacks: {
