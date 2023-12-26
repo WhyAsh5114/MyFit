@@ -9,6 +9,7 @@
 
   let selectedSplitDayIndex = $exerciseSplit.findIndex((splitDay) => splitDay !== null);
   let selectedSplitDay = $exerciseSplit[selectedSplitDayIndex] as ExerciseSplitDay;
+  let copiedExercises: ExerciseTemplate[] = [];
 
   $: updateSelectedSplitDay(selectedSplitDayIndex);
   $: $exerciseSplit[selectedSplitDayIndex] = selectedSplitDay;
@@ -19,17 +20,18 @@
     }
   }
 
-  let copiedExercises: ExerciseTemplate[] = [];
   function copyExercises() {
     copiedExercises = JSON.parse(
       JSON.stringify(selectedSplitDay.exerciseTemplates)
     ) as ExerciseTemplate[];
   }
+
   function pasteExercises() {
     selectedSplitDay.exerciseTemplates = JSON.parse(
       JSON.stringify(copiedExercises)
     ) as ExerciseTemplate[];
   }
+  
   function cutExercises() {
     copyExercises();
     selectedSplitDay.exerciseTemplates = [];
