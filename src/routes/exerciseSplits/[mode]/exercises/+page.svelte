@@ -1,6 +1,9 @@
 <script lang="ts">
   import ExerciseSplitTable from "./ExerciseSplitTable.svelte";
   import { exerciseSplit } from "../splitStore";
+  import CutIcon from "virtual:icons/material-symbols/cut";
+  import CopyIcon from "virtual:icons/material-symbols/content-copy";
+  import PasteIcon from "virtual:icons/material-symbols/content-paste";
   import { page } from "$app/stores";
   $: ({ params } = $page);
 
@@ -14,6 +17,22 @@
     if ($exerciseSplit[_selectedSplitDayIndex] !== null) {
       selectedSplitDay = $exerciseSplit[_selectedSplitDayIndex] as ExerciseSplitDay;
     }
+  }
+
+  let copiedExercises: ExerciseTemplate[] = [];
+  function copyExercises() {
+    copiedExercises = JSON.parse(
+      JSON.stringify(selectedSplitDay.exerciseTemplates)
+    ) as ExerciseTemplate[];
+  }
+  function pasteExercises() {
+    selectedSplitDay.exerciseTemplates = JSON.parse(
+      JSON.stringify(copiedExercises)
+    ) as ExerciseTemplate[];
+  }
+  function cutExercises() {
+    copyExercises();
+    selectedSplitDay.exerciseTemplates = [];
   }
 </script>
 
@@ -60,3 +79,28 @@
     <ExerciseSplitTable bind:exerciseTemplates={selectedSplitDay.exerciseTemplates} />
   {/if}
 {/key}
+
+<div class="join grid grid-cols-3 mt-1 gap-1">
+  <button
+    class="join-item btn btn-error"
+    disabled={selectedSplitDay.exerciseTemplates.length === 0}
+    on:click={() => cutExercises()}
+  >
+    <CutIcon /> Cut
+  </button>
+  <button
+    class="join-item btn btn-primary"
+    disabled={selectedSplitDay.exerciseTemplates.length === 0}
+    on:click={() => copyExercises()}
+  >
+    <CopyIcon /> Copy
+  </button>
+  <button
+    class="join-item btn btn-primary"
+    disabled={copiedExercises.length === 0 || selectedSplitDay.exerciseTemplates.length !== 0}
+    on:click={() => pasteExercises()}
+  >
+    <PasteIcon /> Paste
+  </button>
+</div>
+<button class="btn btn-accent btn-block mt-2"> Create exercise split </button>
