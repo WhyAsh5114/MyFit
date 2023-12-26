@@ -77,30 +77,30 @@
 {#key selectedSplitDayIndex}
   {#if selectedSplitDay}
     <ExerciseSplitTable bind:exerciseTemplates={selectedSplitDay.exerciseTemplates} />
+    <div class="join grid grid-cols-3 mt-1 gap-1">
+      <button
+        class="join-item btn btn-error"
+        disabled={selectedSplitDay.exerciseTemplates.length === 0}
+        on:click={() => cutExercises()}
+      >
+        <CutIcon /> Cut
+      </button>
+      <button
+        class="join-item btn btn-primary"
+        disabled={selectedSplitDay.exerciseTemplates.length === 0}
+        on:click={() => copyExercises()}
+      >
+        <CopyIcon /> Copy
+      </button>
+      <button
+        class="join-item btn btn-primary"
+        disabled={copiedExercises.length === 0 || selectedSplitDay.exerciseTemplates.length !== 0}
+        on:click={() => pasteExercises()}
+      >
+        <PasteIcon /> Paste
+      </button>
+    </div>
   {/if}
 {/key}
 
-<div class="join grid grid-cols-3 mt-1 gap-1">
-  <button
-    class="join-item btn btn-error"
-    disabled={selectedSplitDay.exerciseTemplates.length === 0}
-    on:click={() => cutExercises()}
-  >
-    <CutIcon /> Cut
-  </button>
-  <button
-    class="join-item btn btn-primary"
-    disabled={selectedSplitDay.exerciseTemplates.length === 0}
-    on:click={() => copyExercises()}
-  >
-    <CopyIcon /> Copy
-  </button>
-  <button
-    class="join-item btn btn-primary"
-    disabled={copiedExercises.length === 0 || selectedSplitDay.exerciseTemplates.length !== 0}
-    on:click={() => pasteExercises()}
-  >
-    <PasteIcon /> Paste
-  </button>
-</div>
 <button class="btn btn-accent btn-block mt-2"> Create exercise split </button>
