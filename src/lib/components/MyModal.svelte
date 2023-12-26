@@ -10,6 +10,8 @@
     titleColor = "text-accent";
   } else if (/error/i.test(title) || /delete/i.test(title)) {
     titleColor = "text-error";
+  } else if (/warning/i.test(title)) {
+    titleColor = "text-warning";
   }
 </script>
 
