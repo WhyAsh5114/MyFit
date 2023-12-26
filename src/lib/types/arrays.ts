@@ -1,3 +1,5 @@
+import type { ObjectId } from "bson";
+
 export const muscleGroups: typeof MuscleGroups = [
   "Chest",
   "Front delts",
@@ -13,6 +15,8 @@ export const muscleGroups: typeof MuscleGroups = [
   "Glutes",
   "Calves"
 ] as const;
+
+export type WithUserId<T> = T & { userId: ObjectId };
 
 export const caloricStates: typeof CaloricStates = [
   {
