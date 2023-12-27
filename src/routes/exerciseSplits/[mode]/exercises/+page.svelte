@@ -83,13 +83,10 @@
       modalText = await response.text();
       modal.show();
     } catch (error) {
-      if (error instanceof Error) {
-        console.log(error.cause, error.message, error.name);
-      }
-      if (!navigator.onLine) {
+      if (error instanceof Error && error.message === "Failed to fetch") {
         modalOnClose = invalidateAndRedirect;
         modalTitle = "Warning";
-        modalText = `Cannot create an exercise split due to a network error. The request has been saved for later and will be retried the connection is back online`;
+        modalText = `The request failed (potentially due to a network error), but it has been saved and will be retried when online`;
         modal.show();
       }
     }
