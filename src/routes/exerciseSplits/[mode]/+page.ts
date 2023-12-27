@@ -9,6 +9,8 @@ export const load = ({ url, params }) => {
     // TODO: Load split to edit into stores and return it
   }
 
+  if (params.mode !== "new") error(404, "Not found");
+
   const cloneId = url.searchParams.get("cloneId");
   if (cloneId) {
     // TODO: fetch split to clone from, and return it
