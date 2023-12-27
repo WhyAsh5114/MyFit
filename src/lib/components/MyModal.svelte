@@ -2,7 +2,7 @@
   export let dialogElement: HTMLDialogElement;
   export let title: string;
   export let titleColor = "text-accent";
-  export let onClose: () => void = () => {
+  export let modalOnClose: () => void = () => {
     /* Don't do anything on close by default */
   };
 
@@ -19,7 +19,7 @@
   bind:this={dialogElement}
   id={title}
   class="modal modal-bottom sm:modal-middle"
-  on:close={onClose}
+  on:close={modalOnClose}
 >
   <form class="modal-box bg-primary text-white" method="dialog">
     <button class="btn btn-sm btn-circle absolute right-2 top-2" data-testid="close-modal-button">
