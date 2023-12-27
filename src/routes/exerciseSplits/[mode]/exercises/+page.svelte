@@ -1,11 +1,19 @@
 <script lang="ts">
   import ExerciseSplitTable from "./ExerciseSplitTable.svelte";
-  import { exerciseSplitDays } from "../splitStore";
+  import { exerciseSplitDays, splitName } from "../splitStore";
   import CutIcon from "virtual:icons/material-symbols/cut";
   import CopyIcon from "virtual:icons/material-symbols/content-copy";
   import PasteIcon from "virtual:icons/material-symbols/content-paste";
   import { page } from "$app/stores";
+  import MyModal from "$lib/components/MyModal.svelte";
+  import { goto, invalidate } from "$app/navigation";
   $: ({ params } = $page);
+
+  let callingEndpoint = false;
+  let modal: HTMLDialogElement;
+  let modalTitle = "";
+  let modalText = "";
+  let modalOnClose = () => {};
 
   let selectedSplitDayIndex = $exerciseSplitDays.findIndex((splitDay) => splitDay !== null);
   let selectedSplitDay = $exerciseSplitDays[selectedSplitDayIndex] as ExerciseSplitDay;
@@ -36,7 +44,67 @@
     copyExercises();
     selectedSplitDay.exerciseTemplates = [];
   }
+
+  function validateSplit() {
+    const invalidSplitDays: string[] = [];
+    $exerciseSplitDays.forEach((splitDay) => {
+      if (splitDay === null) return;
+      if (splitDay.exerciseTemplates.length === 0) invalidSplitDays.push(splitDay.name);
+    });
+    if (invalidSplitDays.length > 0) {
+      modalTitle = "Error";
+      modalText =
+        "Add at least one exercise to the following workouts: " + invalidSplitDays.join(", ");
+      modal.show();
+      return false;
+    }
+    return true;
+  }
+
+  async function submitSplit() {
+    modalOnClose = () => {};
+    if (!validateSplit()) return;
+    const exerciseSplit: ExerciseSplit = {
+      name: $splitName,
+      splitDays: $exerciseSplitDays
+    };
+
+    callingEndpoint = true;
+    try {
+      const response = await fetch("/api/exerciseSplits", {
+        method: "POST",
+        body: JSON.stringify(exerciseSplit),
+        headers: {
+          "content-type": "application/json"
+        }
+      });
+      if (response.ok) modalOnClose = invalidateAndRedirect;
+      modalTitle = response.ok ? "Success" : "Error";
+      modalText = await response.text();
+      modal.show();
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.cause, error.message, error.name);
+      }
+      if (!navigator.onLine) {
+        modalOnClose = invalidateAndRedirect;
+        modalTitle = "Warning";
+        modalText = `Cannot create an exercise split due to a network error. The request has been saved for later and will be retried the connection is back online`;
+        modal.show();
+      }
+    }
+    callingEndpoint = false;
+  }
+
+  async function invalidateAndRedirect() {
+    await invalidate("/api/exerciseSplits");
+    await goto("/exerciseSplits");
+  }
 </script>
+
+<MyModal {modalOnClose} title={modalTitle} bind:dialogElement={modal}>
+  {modalText}
+</MyModal>
 
 <h2><span class="capitalize">{params.mode}</span> exercise split</h2>
 <h3>Exercises</h3>
@@ -105,4 +173,6 @@
   {/if}
 {/key}
 
-<button class="btn btn-accent btn-block mt-2"> Create exercise split </button>
+<button class="btn btn-accent btn-block mt-2" on:click={submitSplit}>
+  Create exercise split
+</button>

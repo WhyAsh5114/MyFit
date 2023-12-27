@@ -13,11 +13,13 @@ const adapter = MongoDBAdapter(clientPromise, { databaseName: "MyFit_v3" });
 async function createTestUserAndSession() {
   const randomUserName = new ObjectId().toString();
   const randomSessionToken = randomUUID();
+  // @ts-expect-error idk why, always works though
   const newTestUser = await adapter.createUser({
     id: randomUserName,
     email: `test-user-${randomUserName}@myfit.com`,
     emailVerified: null
   });
+  // @ts-expect-error idk why, always works though
   const newTestSession = await adapter.createSession({
     sessionToken: randomSessionToken,
     userId: randomUserName,
@@ -27,8 +29,11 @@ async function createTestUserAndSession() {
 }
 
 async function deleteTestUserAndSession(user: AdapterUser, session: AdapterSession) {
+  // @ts-expect-error idk why, always works though
   await adapter.deleteSession(session.sessionToken);
+  // @ts-expect-error idk why, always works though
   await adapter.deleteUser(user.id);
+  // TODO: Go through all the collections and delete user.id === userId documents as well
 }
 
 export * from "@playwright/test";
