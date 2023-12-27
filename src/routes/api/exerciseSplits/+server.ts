@@ -2,7 +2,26 @@ import clientPromise from "$lib/mongo/mongodb.js";
 import type { WithUserId } from "$lib/types/arrays";
 import { ObjectId } from "mongodb";
 
-export const GET = () => {};
+const client = await clientPromise;
+
+export const GET = async ({ locals }) => {
+  const session = await locals.getSession();
+  if (!session?.user?.id) {
+    return new Response("Not logged in", { status: 403 });
+  }
+
+  try {
+    const exerciseSplits = await client
+      .db()
+      .collection<WithUserId<ExerciseSplit>>("exerciseSplits")
+      .find({ userId: new ObjectId(session.user.id) })
+      .toArray();
+
+    return new Response(JSON.stringify(exerciseSplits), { status: 200 });
+  } catch (error) {
+    return new Response(JSON.stringify(error), { status: 500 });
+  }
+};
 
 export const POST = async ({ locals, request }) => {
   const session = await locals.getSession();
@@ -11,8 +30,6 @@ export const POST = async ({ locals, request }) => {
   }
 
   const exerciseSplit: ExerciseSplit = await request.json();
-  const client = await clientPromise;
-  
   try {
     await client
       .db()
