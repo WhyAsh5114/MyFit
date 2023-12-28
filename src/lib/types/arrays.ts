@@ -76,3 +76,13 @@ export const pumpFeedback: typeof PumpFeedback = [
   { name: "decent pump", value: 1, bgColor: "checked:!bg-success" },
   { name: "great pump", value: 2, bgColor: "checked:!bg-accent" }
 ] as const;
+
+export const setTypes: typeof SetTypes = [
+  "straight",
+  "drop",
+  "down",
+  "top",
+  "myorep",
+  "myorep match",
+  "giant"
+] as const;
