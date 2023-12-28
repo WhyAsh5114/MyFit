@@ -72,7 +72,7 @@
     <div class="join w-full grid grid-cols-3 gap-x-0.5 my-2">
       <input
         name="stat"
-        class="join-item btn btn-sm checked:!bg-accent checked:!text-black"
+        class="join-item btn btn-sm checked:!bg-secondary/80 checked:!text-black"
         aria-label="Sets"
         checked
         type="radio"
@@ -81,7 +81,7 @@
       />
       <input
         name="stat"
-        class="join-item btn btn-sm checked:!bg-accent checked:!text-black"
+        class="join-item btn btn-sm checked:!bg-secondary/80 checked:!text-black"
         aria-label="Frequency"
         type="radio"
         value="frequency"
@@ -89,14 +89,14 @@
       />
       <input
         name="stat"
-        class="join-item btn btn-sm checked:!bg-accent checked:!text-black"
+        class="join-item btn btn-sm checked:!bg-secondary/80 checked:!text-black"
         aria-label="Exercise variations"
         type="radio"
         value="exerciseVariations"
         bind:group={currentStat}
       />
     </div>
-    <div class="flex flex-col gap-1.5 mt-2">
+    <div class="flex flex-col gap-1.5 mt-2 h-48 overflow-y-auto">
       {#each muscleGroupStats.sort((a, b) => b[currentStat] - a[currentStat]) as stat}
         <div class="flex flex-col gap-0.5">
           <div class="flex justify-between text-xs">
