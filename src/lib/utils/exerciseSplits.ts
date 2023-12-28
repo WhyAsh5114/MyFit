@@ -16,3 +16,7 @@ export function getTotalSetsOfSplit(splitDays: ExerciseSplit["splitDays"]) {
     else return sets;
   }, 0);
 }
+
+export function getAverageSetsPerDayOfSplit(splitDays: ExerciseSplit["splitDays"]) {
+  return getTotalSetsOfSplit(splitDays) / getTotalNonRestDays(splitDays);
+}
