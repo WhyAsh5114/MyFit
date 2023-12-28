@@ -29,4 +29,4 @@
     </a>
   {/each}
 </div>
-<a class="btn btn-accent" href="/exerciseSplits/templates">Create new split</a>
+<a class="btn btn-accent mt-2" href="/exerciseSplits/templates">Create new split</a>
