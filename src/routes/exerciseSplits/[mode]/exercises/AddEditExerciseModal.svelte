@@ -1,19 +1,20 @@
 <script lang="ts">
   import MyModal from "$lib/components/MyModal.svelte";
-  import { muscleGroups } from "$lib/types/arrays";
+  import { muscleGroups, setTypes } from "$lib/types/arrays";
   export let editingExercise: ExerciseTemplate | null;
   export let editingExerciseIdx: number | null;
   export let modal: HTMLDialogElement;
   export let addExercise: (exercise: ExerciseTemplate) => boolean;
   export let editExercise: (idx: number, exercise: ExerciseTemplate) => boolean;
 
-  const emptyExercise = {
+  const emptyExercise: Nullable<ExerciseTemplate> = {
     name: "",
     sets: null,
     targetMuscleGroup: null,
     repRangeStart: null,
     repRangeEnd: null,
     involvesBodyweight: false,
+    setType: "straight",
     note: ""
   };
 
@@ -41,7 +42,7 @@
     }
 
     if (!success) {
-      errorMsg = `${validExercise.name} has already been added`;
+      errorMsg = `${validExercise.name} has already been added, choose a different name`;
     } else {
       modal.close();
       errorMsg = "";
@@ -51,8 +52,12 @@
 </script>
 
 <MyModal title={editingExercise ? "Edit exercise" : "Add exercise"} bind:dialogElement={modal}>
-  <form id="{mode}-exercise-form" class="flex flex-col" on:submit|preventDefault={addEditExercise}>
-    <label class="form-control">
+  <form
+    id="{mode}-exercise-form"
+    class="grid grid-cols-2 gap-x-2"
+    on:submit|preventDefault={addEditExercise}
+  >
+    <label class="form-control col-span-2">
       <div class="label">
         <span class="label-text">Exercise name</span>
       </div>
@@ -65,69 +70,97 @@
         bind:value={modalExercise.name}
       />
     </label>
-    <div class="flex gap-2">
-      <label class="form-control w-full max-w-xs">
-        <div class="label">
-          <span class="label-text">Muscle group</span>
-        </div>
-        <select
-          id="{mode}-exercise-target-muscle-group"
-          class="select grow"
-          required
-          bind:value={modalExercise.targetMuscleGroup}
-        >
-          <option disabled selected value={null}>Select a muscle group</option>
-          {#each muscleGroups as muscleGroup}
-            <option>{muscleGroup}</option>
-          {/each}
-        </select>
-      </label>
-      <label class="form-control w-1/3">
-        <div class="label">
-          <span class="label-text">Sets</span>
-        </div>
-        <input
-          id="{mode}-exercise-sets"
-          class="input input-bordered"
-          min={1}
-          placeholder="Type here"
-          required
-          type="number"
-          bind:value={modalExercise.sets}
-        />
-      </label>
-    </div>
-    <div class="flex gap-2">
-      <label class="form-control grow">
-        <div class="label">
-          <span class="label-text">Rep range start</span>
-        </div>
-        <input
-          id="{mode}-exercise-rep-range-start"
-          class="input input-bordered w-full"
-          min={1}
-          placeholder="From"
-          required
-          type="number"
-          bind:value={modalExercise.repRangeStart}
-        />
-      </label>
-      <label class="form-control grow">
-        <div class="label">
-          <span class="label-text">Rep range end</span>
-        </div>
-        <input
-          id="{mode}-exercise-rep-range-end"
-          class="input input-bordered w-full"
-          min={(modalExercise.repRangeStart ?? 0) + 1}
-          placeholder="To"
-          required
-          type="number"
-          bind:value={modalExercise.repRangeEnd}
-        />
-      </label>
-    </div>
     <label class="form-control">
+      <div class="label">
+        <span class="label-text">Muscle group</span>
+      </div>
+      <select
+        id="{mode}-exercise-target-muscle-group"
+        class="select grow"
+        required
+        bind:value={modalExercise.targetMuscleGroup}
+      >
+        <option disabled selected value={null}>Select a muscle group</option>
+        {#each muscleGroups as muscleGroup}
+          <option>{muscleGroup}</option>
+        {/each}
+      </select>
+    </label>
+    <label class="form-control">
+      <div class="label">
+        <span class="label-text">Sets</span>
+      </div>
+      <input
+        id="{mode}-exercise-sets"
+        class="input input-bordered"
+        min={1}
+        placeholder="Type here"
+        required
+        type="number"
+        bind:value={modalExercise.sets}
+      />
+    </label>
+    <label class="form-control grow">
+      <div class="label">
+        <span class="label-text">Rep range start</span>
+      </div>
+      <input
+        id="{mode}-exercise-rep-range-start"
+        class="input input-bordered w-full"
+        min={1}
+        placeholder="From"
+        required
+        type="number"
+        bind:value={modalExercise.repRangeStart}
+      />
+    </label>
+    <label class="form-control grow">
+      <div class="label">
+        <span class="label-text">Rep range end</span>
+      </div>
+      <input
+        id="{mode}-exercise-rep-range-end"
+        class="input input-bordered w-full"
+        min={(modalExercise.repRangeStart ?? 0) + 1}
+        placeholder="To"
+        required
+        type="number"
+        bind:value={modalExercise.repRangeEnd}
+      />
+    </label>
+    <label class="form-control">
+      <div class="label">
+        <span class="label-text">Set type</span>
+      </div>
+      <select
+        id="{mode}-exercise-set-type"
+        class="select capitalize"
+        required
+        bind:value={modalExercise.setType}
+      >
+        <option disabled selected value={null}>Select a muscle group</option>
+        {#each setTypes as setType}
+          <option class="capitalize" value={setType}>{setType} sets</option>
+        {/each}
+      </select>
+    </label>
+    <label class="form-control cursor-pointer">
+      <div class="label">
+        <span class="label-text">Involves bodyweight?</span>
+      </div>
+      <div class="flex gap-4 items-center bg-base-100 h-full rounded-lg px-3">
+        <input
+          id="{mode}-exercise-involves-bodyweight"
+          class="toggle border-secondary/50"
+          type="checkbox"
+          bind:checked={modalExercise.involvesBodyweight}
+        />
+        <span class="text-secondary label-text">
+          {modalExercise.involvesBodyweight ? "Yes" : "No"}
+        </span>
+      </div>
+    </label>
+    <label class="form-control col-span-2">
       <div class="label">
         <span class="label-text">Notes</span>
       </div>
@@ -138,19 +171,8 @@
         bind:value={modalExercise.note}
       ></textarea>
     </label>
-    <div class="form-control rounded-md bg-base-100 my-2 px-3">
-      <label class="label cursor-pointer">
-        <span class="label-text">Involves bodyweight?</span>
-        <input
-          id="{mode}-exercise-involves-bodyweight"
-          class="checkbox border-secondary/50"
-          type="checkbox"
-          bind:checked={modalExercise.involvesBodyweight}
-        />
-      </label>
-    </div>
     {#if errorMsg}
-      <p class="bg-error/50 text-sm p-2 rounded-md">
+      <p class="bg-error/50 text-sm p-2 rounded-md col-span-2 mt-2">
         {errorMsg}
       </p>
     {/if}
