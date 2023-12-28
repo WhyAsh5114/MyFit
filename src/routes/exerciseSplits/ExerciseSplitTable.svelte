@@ -148,6 +148,8 @@
     </div>
   {/each}
 </div>
-<button class="btn btn-primary" on:click={showAddExerciseModal}>
-  <AddIcon /> Add exercise
-</button>
+{#if !readOnly}
+  <button class="btn btn-primary" on:click={showAddExerciseModal}>
+    <AddIcon /> Add exercise
+  </button>
+{/if}
