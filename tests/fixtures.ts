@@ -104,10 +104,9 @@ export const test = baseTest.extend<
 
   autoTestFixture: [
     async ({ userAndSession }, use) => {
-      // Clear user data for each test, before AND after
+      // Clear user data for each test, once before each test should be enough
       await deleteUserData(userAndSession.user);
       await use("autoTestFixture");
-      await deleteUserData(userAndSession.user);
     },
     { scope: "test", auto: true }
   ]
