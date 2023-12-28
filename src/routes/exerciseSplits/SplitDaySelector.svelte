@@ -1,6 +1,6 @@
 <script lang="ts">
   export let exerciseSplitDays: ExerciseSplit["splitDays"];
-  export let selectedSplitDayIndex: number;
+  export let selectedSplitDayIndex = exerciseSplitDays.findIndex((splitDay) => splitDay !== null);
 </script>
 
 <div class="collapse collapse-arrow rounded-md bg-primary my-2">
