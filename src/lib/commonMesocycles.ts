@@ -100,7 +100,7 @@ export const commonSplits: CommonExerciseSplits = [
         name: "Legs A",
         exerciseTemplates: [
           {
-            involvesBodyweight: false,
+            involvesBodyweight: true,
             targetMuscleGroup: "Quads",
             name: "Barbell squat",
             sets: 3,
@@ -145,18 +145,18 @@ export const commonSplits: CommonExerciseSplits = [
         name: "Pull B",
         exerciseTemplates: [
           {
-            involvesBodyweight: true,
+            involvesBodyweight: false,
             targetMuscleGroup: "Back (vertical pulls)",
-            name: "Pull up",
+            name: "Lat pulldown",
             sets: 3,
-            repRangeStart: 5,
-            repRangeEnd: 15,
+            repRangeStart: 10,
+            repRangeEnd: 20,
             note: "",
             setType: "straight"
           },
           {
             involvesBodyweight: false,
-            name: "Barbell row",
+            name: "Machine rows",
             targetMuscleGroup: "Back (horizontal pulls)",
             sets: 3,
             repRangeStart: 10,
@@ -166,7 +166,7 @@ export const commonSplits: CommonExerciseSplits = [
           },
           {
             involvesBodyweight: false,
-            name: "Dumbbell curl",
+            name: "Preacher curl",
             targetMuscleGroup: "Biceps",
             sets: 3,
             repRangeStart: 10,
@@ -176,7 +176,7 @@ export const commonSplits: CommonExerciseSplits = [
           },
           {
             involvesBodyweight: false,
-            name: "Face pull",
+            name: "Rear delts fly",
             targetMuscleGroup: "Rear delts",
             sets: 3,
             repRangeStart: 10,
@@ -192,7 +192,7 @@ export const commonSplits: CommonExerciseSplits = [
           {
             involvesBodyweight: false,
             targetMuscleGroup: "Chest",
-            name: "Incline Barbell Press",
+            name: "Dumbbell Bench Press",
             sets: 3,
             repRangeStart: 5,
             repRangeEnd: 10,
@@ -201,7 +201,7 @@ export const commonSplits: CommonExerciseSplits = [
           },
           {
             involvesBodyweight: false,
-            name: "Overhead cable extension",
+            name: "Triceps pushdown",
             targetMuscleGroup: "Triceps",
             sets: 3,
             repRangeStart: 10,
@@ -211,7 +211,7 @@ export const commonSplits: CommonExerciseSplits = [
           },
           {
             involvesBodyweight: false,
-            name: "Dumbbell lateral raises",
+            name: "Cross body cable Y-raises",
             targetMuscleGroup: "Side delts",
             sets: 3,
             repRangeStart: 10,
@@ -221,7 +221,7 @@ export const commonSplits: CommonExerciseSplits = [
           },
           {
             involvesBodyweight: false,
-            name: "Cable lateral raise",
+            name: "Upright row",
             targetMuscleGroup: "Side delts",
             sets: 2,
             repRangeStart: 10,
@@ -235,9 +235,9 @@ export const commonSplits: CommonExerciseSplits = [
         name: "Legs B",
         exerciseTemplates: [
           {
-            involvesBodyweight: false,
+            involvesBodyweight: true,
             targetMuscleGroup: "Quads",
-            name: "Barbell squat",
+            name: "Front squat",
             sets: 3,
             repRangeStart: 5,
             repRangeEnd: 10,
@@ -246,7 +246,7 @@ export const commonSplits: CommonExerciseSplits = [
           },
           {
             involvesBodyweight: false,
-            name: "Good morning",
+            name: "Leg curl",
             targetMuscleGroup: "Hamstrings",
             sets: 2,
             repRangeStart: 10,
@@ -255,8 +255,8 @@ export const commonSplits: CommonExerciseSplits = [
             setType: "straight"
           },
           {
-            involvesBodyweight: false,
-            name: "Leg extension",
+            involvesBodyweight: true,
+            name: "Sissy squat",
             targetMuscleGroup: "Quads",
             sets: 3,
             repRangeStart: 10,
@@ -265,8 +265,8 @@ export const commonSplits: CommonExerciseSplits = [
             setType: "straight"
           },
           {
-            involvesBodyweight: true,
-            name: "Calf raise",
+            involvesBodyweight: false,
+            name: "Seated calf raise",
             targetMuscleGroup: "Calves",
             sets: 3,
             repRangeStart: 10,
