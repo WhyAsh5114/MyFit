@@ -145,6 +145,9 @@
         </p>
         <span class="badge badge-error font-semibold text-black">{exercise.targetMuscleGroup}</span>
       </div>
+      {#if exercise.note}
+        <p class="text-sm bg-info/75 rounded-sm text-black px-2 mt-1.5">{exercise.note}</p>
+      {/if}
     </div>
   {/each}
 </div>
