@@ -48,7 +48,7 @@ export const PUT = async ({ params, locals, request }) => {
       return new Response("Exercise split not found", { status: 404 });
     }
 
-    return new Response(JSON.stringify("Exercise split updated successfully"), { status: 200 });
+    return new Response("Exercise split updated successfully", { status: 200 });
   } catch (error) {
     return new Response(JSON.stringify(error), { status: 500 });
   }
@@ -71,7 +71,7 @@ export const DELETE = async ({ params, locals }) => {
       return new Response("Exercise split not found", { status: 404 });
     }
 
-    return new Response(JSON.stringify("Exercise split deleted successfully"), { status: 200 });
+    return new Response("Exercise split deleted successfully", { status: 200 });
   } catch (error) {
     return new Response(JSON.stringify(error), { status: 500 });
   }
