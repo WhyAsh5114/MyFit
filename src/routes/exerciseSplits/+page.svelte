@@ -1,4 +1,5 @@
 <script lang="ts">
+  import SplitDaysSchedule from "./SplitDaysSchedule.svelte";
   import { getTotalSetsOfSplit } from "$lib/utils/exerciseSplits.js";
 
   export let data;
@@ -17,15 +18,7 @@
               {getTotalSetsOfSplit(exerciseSplit.splitDays)} sets
             </span>
           </div>
-          <div class="flex flex-wrap w-full gap-1">
-            {#each exerciseSplit.splitDays as splitDay}
-              {#if splitDay}
-                <span class="badge">{splitDay.name}</span>
-              {:else}
-                <span class="badge badge-accent"></span>
-              {/if}
-            {/each}
-          </div>
+          <SplitDaysSchedule splitDays={exerciseSplit.splitDays} />
         </div>
       </a>
     {/each}
