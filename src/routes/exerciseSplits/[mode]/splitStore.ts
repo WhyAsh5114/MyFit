@@ -10,3 +10,15 @@ export const exerciseSplitDays: Writable<ExerciseSplit["splitDays"]> = persisted
   "exerciseSplit",
   []
 );
+
+export function clearExerciseSplitStores() {
+  splitName.set("");
+  splitStructure.set(Array(7).fill(""));
+  exerciseSplitDays.set([]);
+}
+
+export function setExerciseSplitStores(exerciseSplit: ExerciseSplit) {
+  splitName.set(exerciseSplit.name);
+  splitStructure.set(exerciseSplit.splitDays.map((splitDay) => splitDay?.name ?? null));
+  exerciseSplitDays.set(exerciseSplit.splitDays);
+}
