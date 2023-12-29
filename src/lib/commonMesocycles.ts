@@ -141,7 +141,6 @@ export const commonSplits: CommonExerciseSplits = [
           }
         ]
       },
-      null,
       {
         name: "Pull B",
         exerciseTemplates: [
