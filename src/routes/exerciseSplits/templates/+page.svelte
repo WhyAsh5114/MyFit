@@ -17,7 +17,7 @@
       title: "Use common splits",
       description: "Start from commonly used splits",
       link: "/exerciseSplits/templates/common",
-      disabled: true
+      disabled: false
     }
   ];
 </script>

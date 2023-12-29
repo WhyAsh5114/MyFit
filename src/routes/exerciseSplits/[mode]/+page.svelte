@@ -1,8 +1,8 @@
 <script lang="ts">
-  // eslint-disable-next-line svelte/valid-compile
+  import { setExerciseSplitStores } from "./splitStore.js";
   export let data;
 
-  // TODO: Load template into stores
+  if (data.template) setExerciseSplitStores(data.template);
 </script>
 
 <div class="grow">
