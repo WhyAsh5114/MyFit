@@ -278,5 +278,298 @@ export const commonSplits: CommonExerciseSplits = [
       },
       null
     ]
+  },
+  {
+    name: "Yoked split",
+    description:
+      "A split with a high focus on the yoked muscles (back, shoulders, arms) with 3x frequency, and others with 2x frequency (inspired by the RP look like Thor video)",
+    splitDays: [
+      {
+        name: "Back, Shoulders, Arms (1)",
+        exerciseTemplates: [
+          {
+            involvesBodyweight: false,
+            targetMuscleGroup: "Back (vertical pulls)",
+            name: "Lat pulldown",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Chest supported row",
+            targetMuscleGroup: "Back (horizontal pulls)",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Dumbbell curl",
+            targetMuscleGroup: "Biceps",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Dumbbell lateral raises",
+            targetMuscleGroup: "Side delts",
+            sets: 3,
+            repRangeStart: 15,
+            repRangeEnd: 30,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Overhead triceps extension",
+            targetMuscleGroup: "Triceps",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          }
+        ]
+      },
+      {
+        name: "Legs, Chest (1)",
+        exerciseTemplates: [
+          {
+            involvesBodyweight: true,
+            targetMuscleGroup: "Quads",
+            name: "Hack squat",
+            sets: 3,
+            repRangeStart: 5,
+            repRangeEnd: 15,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Leg extension",
+            targetMuscleGroup: "Quads",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Leg curl",
+            targetMuscleGroup: "Hamstrings",
+            sets: 2,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Incline dumbbell press",
+            targetMuscleGroup: "Chest",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Cable pec flyes",
+            targetMuscleGroup: "Chest",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: true,
+            name: "Calf raise",
+            targetMuscleGroup: "Calves",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          }
+        ]
+      },
+      {
+        name: "Back, Arms, Shoulders (2)",
+        exerciseTemplates: [
+          {
+            involvesBodyweight: true,
+            targetMuscleGroup: "Back (vertical pulls)",
+            name: "Pull up",
+            sets: 3,
+            repRangeStart: 5,
+            repRangeEnd: 10,
+            note: "Use assisted pull ups if needed to land within 5-10 rep range",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Barbell row",
+            targetMuscleGroup: "Back (horizontal pulls)",
+            sets: 3,
+            repRangeStart: 5,
+            repRangeEnd: 15,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Preacher curl",
+            targetMuscleGroup: "Biceps",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Tricep pushdown",
+            targetMuscleGroup: "Triceps",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Cable lateral raise",
+            targetMuscleGroup: "Side delts",
+            sets: 3,
+            repRangeStart: 15,
+            repRangeEnd: 25,
+            note: "",
+            setType: "straight"
+          }
+        ]
+      },
+      {
+        name: "Chest, Legs (2)",
+        exerciseTemplates: [
+          {
+            involvesBodyweight: false,
+            targetMuscleGroup: "Chest",
+            name: "Incline barbell press",
+            sets: 3,
+            repRangeStart: 5,
+            repRangeEnd: 15,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Machine chest press",
+            targetMuscleGroup: "Chest",
+            sets: 2,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: true,
+            name: "Dumbbell lunge",
+            targetMuscleGroup: "Quads",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: true,
+            name: "Dumbbell Romanian Deadlift",
+            targetMuscleGroup: "Hamstrings",
+            sets: 2,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: true,
+            name: "Calf raise",
+            targetMuscleGroup: "Calves",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          }
+        ]
+      },
+      {
+        name: "Back, Shoulders, Arms (3)",
+        exerciseTemplates: [
+          {
+            involvesBodyweight: false,
+            targetMuscleGroup: "Back (horizontal pulls)",
+            name: "Helms row",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Lat prayer",
+            targetMuscleGroup: "Back (vertical pulls)",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "EZ barbell curl",
+            targetMuscleGroup: "Biceps",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Cable upright row",
+            targetMuscleGroup: "Side delts",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          },
+          {
+            involvesBodyweight: false,
+            name: "Overhead triceps extension",
+            targetMuscleGroup: "Triceps",
+            sets: 3,
+            repRangeStart: 10,
+            repRangeEnd: 20,
+            note: "",
+            setType: "straight"
+          }
+        ]
+      },
+      null
+    ]
   }
 ];
