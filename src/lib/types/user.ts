@@ -4,6 +4,6 @@ type Nullable<T> = {
 
 type AllUserPreferences = {
   bodyweight: number;
-}
+};
 
 type UserPreferences = Partial<AllUserPreferences>;

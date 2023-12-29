@@ -76,10 +76,11 @@
   bind:modal={addEditExerciseModal}
 />
 
-<div class="flex flex-col gap-1 h-px grow overflow-y-auto">
+<div class="flex flex-col gap-1 h-px grow overflow-y-auto" data-testid="split-exercises-table">
   {#each exerciseTemplates as exercise, exerciseIdx (exercise.name)}
     <div
       class="flex flex-col bg-primary rounded-md p-2"
+      data-testid="exercise{exerciseIdx + 1}-card"
       transition:slide|local={{ duration: 200 }}
       animate:flip={{ duration: 200 }}
     >
@@ -90,7 +91,10 @@
         {/if}
         {#if !readOnly}
           <details class="dropdown dropdown-end ml-auto" on:toggle={closeOtherMenus}>
-            <summary class="btn btn-sm p-0 btn-ghost">
+            <summary
+              class="btn btn-sm p-0 btn-ghost"
+              data-testid="exercise{exerciseIdx + 1}-menu-button"
+            >
               <MenuIcon />
             </summary>
             <ul
