@@ -1,53 +1,53 @@
-type CommonMesocycles = {
-  name: string;
-  description: string;
-  exerciseSplit: MesocycleTemplate["exerciseSplit"];
-}[];
+type CommonExerciseSplits = (ExerciseSplit & { description: string })[];
 
-/*export const commonMesocycles: CommonMesocycles = [
+export const commonSplits: CommonExerciseSplits = [
   {
     name: "Pull Push Legs",
     description:
       "A common split with moderate volume. Six workouts per microcycle and a muscle group targeting frequency of 2x",
-    exerciseSplit: [
+    splitDays: [
       {
         name: "Pull A",
         exerciseTemplates: [
           {
-            bodyweight: true,
-            targetMuscleGroup: "Back",
+            involvesBodyweight: true,
+            targetMuscleGroup: "Back (vertical pulls)",
             name: "Pull up",
             sets: 3,
             repRangeStart: 5,
             repRangeEnd: 15,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Barbell row",
-            targetMuscleGroup: "Back",
+            targetMuscleGroup: "Back (horizontal pulls)",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Dumbbell curl",
             targetMuscleGroup: "Biceps",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Face pull",
             targetMuscleGroup: "Rear delts",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           }
         ]
       },
@@ -55,40 +55,44 @@ type CommonMesocycles = {
         name: "Push A",
         exerciseTemplates: [
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             targetMuscleGroup: "Chest",
             name: "Incline Barbell Press",
             sets: 3,
             repRangeStart: 5,
             repRangeEnd: 10,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Overhead cable extension",
             targetMuscleGroup: "Triceps",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Dumbbell lateral raises",
             targetMuscleGroup: "Side delts",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Cable lateral raise",
             targetMuscleGroup: "Side delts",
             sets: 2,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           }
         ]
       },
@@ -96,40 +100,44 @@ type CommonMesocycles = {
         name: "Legs A",
         exerciseTemplates: [
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             targetMuscleGroup: "Quads",
             name: "Barbell squat",
             sets: 3,
             repRangeStart: 5,
             repRangeEnd: 10,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Good morning",
             targetMuscleGroup: "Hamstrings",
             sets: 2,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Leg extension",
             targetMuscleGroup: "Quads",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: true,
+            involvesBodyweight: true,
             name: "Calf raise",
             targetMuscleGroup: "Calves",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           }
         ]
       },
@@ -138,40 +146,44 @@ type CommonMesocycles = {
         name: "Pull B",
         exerciseTemplates: [
           {
-            bodyweight: true,
-            targetMuscleGroup: "Back",
+            involvesBodyweight: true,
+            targetMuscleGroup: "Back (vertical pulls)",
             name: "Pull up",
             sets: 3,
             repRangeStart: 5,
             repRangeEnd: 15,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Barbell row",
-            targetMuscleGroup: "Back",
+            targetMuscleGroup: "Back (horizontal pulls)",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Dumbbell curl",
             targetMuscleGroup: "Biceps",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Face pull",
             targetMuscleGroup: "Rear delts",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           }
         ]
       },
@@ -179,40 +191,44 @@ type CommonMesocycles = {
         name: "Push B",
         exerciseTemplates: [
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             targetMuscleGroup: "Chest",
             name: "Incline Barbell Press",
             sets: 3,
             repRangeStart: 5,
             repRangeEnd: 10,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Overhead cable extension",
             targetMuscleGroup: "Triceps",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Dumbbell lateral raises",
             targetMuscleGroup: "Side delts",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Cable lateral raise",
             targetMuscleGroup: "Side delts",
             sets: 2,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           }
         ]
       },
@@ -220,40 +236,44 @@ type CommonMesocycles = {
         name: "Legs B",
         exerciseTemplates: [
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             targetMuscleGroup: "Quads",
             name: "Barbell squat",
             sets: 3,
             repRangeStart: 5,
             repRangeEnd: 10,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Good morning",
             targetMuscleGroup: "Hamstrings",
             sets: 2,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: false,
+            involvesBodyweight: false,
             name: "Leg extension",
             targetMuscleGroup: "Quads",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           },
           {
-            bodyweight: true,
+            involvesBodyweight: true,
             name: "Calf raise",
             targetMuscleGroup: "Calves",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
-            note: ""
+            note: "",
+            setType: "straight"
           }
         ]
       },
@@ -261,4 +281,3 @@ type CommonMesocycles = {
     ]
   }
 ];
-*/
