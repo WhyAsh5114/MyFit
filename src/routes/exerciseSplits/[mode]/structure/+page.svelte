@@ -7,6 +7,7 @@
   import { goto } from "$app/navigation";
   $: ({ params } = $page);
 
+  let noDuplicatesModal: HTMLDialogElement;
   let atLeastOneWorkoutModal: HTMLDialogElement;
   let deleteSplitDataModal: HTMLDialogElement;
   let notMatchedDays: Set<string> = new Set();
@@ -27,6 +28,13 @@
     });
     if (nonRestDays === 0) {
       atLeastOneWorkoutModal.show();
+      return false;
+    }
+
+    const noDuplicates = new Set($splitStructure.filter((splitDay) => splitDay !== null));
+    console.log(noDuplicates, nonRestDays);
+    if (noDuplicates.size < nonRestDays) {
+      noDuplicatesModal.show();
       return false;
     }
     return true;
@@ -70,6 +78,13 @@
     await goto(`/exerciseSplits/${$page.params.mode}/exercises`);
   }
 </script>
+
+<MyModal title="Error" bind:dialogElement={noDuplicatesModal}>
+  <p>
+    Avoid duplicate workout names, you can copy exercises if needed. For example:
+    <i class="text-accent">Pull A, Pull B</i> instead of <i class="text-error">Pull, Pull</i>
+  </p>
+</MyModal>
 
 <MyModal title="Error" bind:dialogElement={atLeastOneWorkoutModal}>
   <p>Add at least one workout to the exercise split</p>
