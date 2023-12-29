@@ -26,5 +26,53 @@ export const GET = async ({ params, locals }) => {
   }
 };
 
-export const PUT = () => {};
-export const DELETE = () => {};
+
+export const PUT = async ({ params, locals, request }) => {
+  const session = await locals.getSession();
+  if (!session?.user?.id) {
+    return new Response("Not logged in", { status: 403 });
+  }
+
+  const newExerciseSplit = (await request.json()) as ExerciseSplit;
+
+  try {
+    const exerciseSplit = await client
+      .db()
+      .collection<WithUserId<ExerciseSplit>>("exerciseSplits")
+      .findOneAndReplace(
+        { userId: new ObjectId(session.user.id), _id: new ObjectId(params.id) },
+        { userId: new ObjectId(session.user.id), ...newExerciseSplit }
+      );
+
+    if (exerciseSplit === null) {
+      return new Response("Exercise split not found", { status: 404 });
+    }
+
+    return new Response(JSON.stringify("Exercise split updated successfully"), { status: 200 });
+  } catch (error) {
+    return new Response(JSON.stringify(error), { status: 500 });
+  }
+};
+
+
+export const DELETE = async ({ params, locals }) => {
+  const session = await locals.getSession();
+  if (!session?.user?.id) {
+    return new Response("Not logged in", { status: 403 });
+  }
+
+  try {
+    const exerciseSplit = await client
+      .db()
+      .collection<WithUserId<ExerciseSplit>>("exerciseSplits")
+      .findOneAndDelete({ userId: new ObjectId(session.user.id), _id: new ObjectId(params.id) });
+
+    if (exerciseSplit === null) {
+      return new Response("Exercise split not found", { status: 404 });
+    }
+
+    return new Response(JSON.stringify("Exercise split deleted successfully"), { status: 200 });
+  } catch (error) {
+    return new Response(JSON.stringify(error), { status: 500 });
+  }
+};
