@@ -26,7 +26,6 @@ export const GET = async ({ params, locals }) => {
   }
 };
 
-
 export const PUT = async ({ params, locals, request }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
@@ -53,7 +52,6 @@ export const PUT = async ({ params, locals, request }) => {
     return new Response(JSON.stringify(error), { status: 500 });
   }
 };
-
 
 export const DELETE = async ({ params, locals }) => {
   const session = await locals.getSession();

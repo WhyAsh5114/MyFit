@@ -1,7 +1,12 @@
 <script lang="ts">
   import SplitDaySelector from "../../SplitDaySelector.svelte";
   import ExerciseSplitTable from "../../ExerciseSplitTable.svelte";
-  import { clearExerciseSplitStores, editingSplitId, exerciseSplitDays, splitName } from "../splitStore";
+  import {
+    clearExerciseSplitStores,
+    editingSplitId,
+    exerciseSplitDays,
+    splitName
+  } from "../splitStore";
   import CutIcon from "virtual:icons/material-symbols/cut";
   import CopyIcon from "virtual:icons/material-symbols/content-copy";
   import PasteIcon from "virtual:icons/material-symbols/content-paste";
