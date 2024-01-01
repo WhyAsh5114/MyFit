@@ -18,20 +18,30 @@
 
   async function deleteSplit() {
     callingEndpoint = true;
-    const response = await fetch(`/api/exerciseSplits/${exerciseSplit._id}`, { method: "DELETE" });
-    modalTitle = response.ok ? "Success" : "Error";
-    modalText = await response.text();
-
-    if (response.ok) {
-      modalOnClose = async () => {
-        await invalidate(`/api/exerciseSplits/${exerciseSplit._id}`);
-        await goto("/exerciseSplits");
-      };
+    try {
+      const response = await fetch(`/api/exerciseSplits/${exerciseSplit._id}`, {
+        method: "DELETE"
+      });
+      if (response.ok) modalOnClose = invalidateAndRedirect;
+      modalTitle = response.ok ? "Success" : "Error";
+      modalText = await response.text();
+      modal.show();
+    } catch (error) {
+      if (error instanceof Error && error.message === "Failed to fetch") {
+        modalOnClose = invalidateAndRedirect;
+        modalTitle = "Error";
+        modalText = `The request failed (potentially due to a network error). Editing & deleting operations cannot be performed when offline`;
+        modal.show();
+      }
     }
-
     confirmDeleteModal.close();
     modal.show();
     callingEndpoint = false;
+  }
+
+  async function invalidateAndRedirect() {
+    await invalidate(`/api/exerciseSplits/${exerciseSplit._id}`);
+    await goto("/exerciseSplits");
   }
 </script>
 
@@ -86,5 +96,7 @@
 
 <div class="join grid grid-cols-2 mt-auto">
   <button class="join-item btn btn-error" on:click={() => confirmDeleteModal.show()}>Delete</button>
-  <button class="join-item btn btn-primary">Edit</button>
+  <a class="join-item btn btn-primary" href="/exerciseSplits/edit?editId={exerciseSplit._id}">
+    Edit
+  </a>
 </div>
