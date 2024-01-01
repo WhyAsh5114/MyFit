@@ -14,6 +14,8 @@
   else clearExerciseSplitStores();
 </script>
 
+<h2><span class="capitalize">{params.mode}</span> exercise split</h2>
+
 <div class="grow">
   <!-- TODO: Info about creating an exercise split -->
 </div>
