@@ -19,7 +19,13 @@ export const load = async ({ url, params, fetch }) => {
     const errorCode = response.status as NumericRange<400, 599>;
     error(errorCode, await response.text());
   } else if (cloneId) {
-    // TODO: fetch split to clone from, and return it
+    const response = await fetch(`/api/exerciseSplits/${cloneId}`);
+    if (response.ok) {
+      const exerciseSplit = (await response.json()) as WithSID<ExerciseSplit>;
+      return { template: exerciseSplit, editingSplitId: null };
+    }
+    const errorCode = response.status as NumericRange<400, 599>;
+    error(errorCode, await response.text());
   } else if (Number.isInteger(commonIdx)) {
     const { commonSplits } = await import("$lib/commonMesocycles.js");
     return { template: commonSplits[commonIdx], editingSplitId: null };
