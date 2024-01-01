@@ -1,7 +1,7 @@
 <script lang="ts">
   import SplitDaySelector from "../../SplitDaySelector.svelte";
   import ExerciseSplitTable from "../../ExerciseSplitTable.svelte";
-  import { clearExerciseSplitStores, exerciseSplitDays, splitName } from "../splitStore";
+  import { clearExerciseSplitStores, editingSplitId, exerciseSplitDays, splitName } from "../splitStore";
   import CutIcon from "virtual:icons/material-symbols/cut";
   import CopyIcon from "virtual:icons/material-symbols/content-copy";
   import PasteIcon from "virtual:icons/material-symbols/content-paste";
@@ -70,6 +70,11 @@
       splitDays: $exerciseSplitDays
     };
 
+    if (params.mode === "new") await callCreateSplitEndpoint(exerciseSplit);
+    else if (params.mode === "edit") callEditSplitEndpoint(exerciseSplit);
+  }
+
+  async function callCreateSplitEndpoint(exerciseSplit: ExerciseSplit) {
     callingEndpoint = true;
     try {
       const response = await fetch("/api/exerciseSplits", {
@@ -88,6 +93,31 @@
         modalOnClose = invalidateAndRedirect;
         modalTitle = "Warning";
         modalText = `The request failed (potentially due to a network error), but it has been saved and will be retried when online`;
+        modal.show();
+      }
+    }
+    callingEndpoint = false;
+  }
+
+  async function callEditSplitEndpoint(exerciseSplit: ExerciseSplit) {
+    callingEndpoint = true;
+    try {
+      const response = await fetch(`/api/exerciseSplits/${$editingSplitId}`, {
+        method: "PUT",
+        body: JSON.stringify(exerciseSplit),
+        headers: {
+          "content-type": "application/json"
+        }
+      });
+      if (response.ok) modalOnClose = invalidateAndRedirect;
+      modalTitle = response.ok ? "Success" : "Error";
+      modalText = await response.text();
+      modal.show();
+    } catch (error) {
+      if (error instanceof Error && error.message === "Failed to fetch") {
+        modalOnClose = invalidateAndRedirect;
+        modalTitle = "Error";
+        modalText = `The request failed (potentially due to a network error). Editing & deleting operations cannot be performed when offline`;
         modal.show();
       }
     }
@@ -140,5 +170,9 @@
 {/if}
 
 <button class="btn btn-accent btn-block mt-2" on:click={submitSplit}>
-  Create exercise split
+  {#if params.mode === "new"}
+    Create exercise split
+  {:else if params.mode === "edit"}
+    Update exercise split
+  {/if}
 </button>
