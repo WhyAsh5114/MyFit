@@ -10,6 +10,7 @@ export const exerciseSplitDays: Writable<ExerciseSplit["splitDays"]> = persisted
   "exerciseSplit",
   []
 );
+export const editingSplitId: Writable<string | null> = persisted("editingSplitId", null);
 
 export function clearExerciseSplitStores() {
   splitName.set("");
