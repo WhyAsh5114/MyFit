@@ -569,6 +569,7 @@ export const commonSplits: CommonExerciseSplits = [
           }
         ]
       },
+      null,
       null
     ]
   }
