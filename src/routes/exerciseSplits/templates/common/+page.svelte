@@ -4,6 +4,9 @@
   import SplitDaysSchedule from "../../SplitDaysSchedule.svelte";
 </script>
 
+<h2>Use common splits</h2>
+<h3>Start from commonly used splits</h3>
+
 <div class="flex flex-col gap-2 h-px grow overflow-y-auto">
   {#each commonSplits as commonSplit, commonSplitIdx}
     <a
