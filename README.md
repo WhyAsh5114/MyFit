@@ -65,5 +65,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 MyFit is built with love by the open-source community and inspired by the RP Hypertrophy app.
 
 ---
-
-Feel free to customize the README further to include specific instructions, screenshots, or any additional information that you find relevant to your project. Good luck with your workout tracking app! 🏋️‍♂️💪
