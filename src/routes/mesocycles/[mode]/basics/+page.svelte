@@ -10,6 +10,7 @@
   } from "../newMesocycleStore";
   import { goto } from "$app/navigation";
   import { getTotalDuration } from "$lib/util/MesocycleTemplate";
+  import { page } from "$app/stores";
   export let data;
 
   const RIRColors = ["range-error", "range-warning", "range-accent", "range-success"];
@@ -96,7 +97,9 @@
       return false;
     }
     $mesocycleRIRProgression = RIRProgression;
-    await goto(`./split?mesocycleTemplateId=${data.mesocycleTemplate?.id}`);
+    await goto(
+      `/mesocycles/${$page.params.mode}/split?mesocycleTemplateId=${data.mesocycleTemplate?.id}`
+    );
   }
 </script>
 

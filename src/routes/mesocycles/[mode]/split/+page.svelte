@@ -3,6 +3,7 @@
   import { exerciseSplit } from "../newMesocycleStore";
   import { goto } from "$app/navigation";
   import MyModal from "$lib/components/MyModal.svelte";
+    import { page } from "$app/stores";
   export let data;
 
   let errorModal: HTMLDialogElement;
@@ -17,7 +18,9 @@
       errorModal.show();
       return false;
     }
-    await goto(`./exercises?mesocycleTemplateId=${data.mesocycleTemplate?.id}`);
+    await goto(
+      `/mesocycles/${$page.params.mode}/exercises?mesocycleTemplateId=${data.mesocycleTemplate?.id}`
+    );
   }
 </script>
 
