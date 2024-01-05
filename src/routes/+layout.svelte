@@ -76,6 +76,7 @@
         <li><a href="/workouts">Workouts</a></li>
         <li><a href="/mesocycles">Mesocycles</a></li>
         <li><a href="/exerciseSplits">Exercise splits</a></li>
+        <li><a href="/privacyPolicy">Privacy policy</a></li>
       </ul>
       <div class="flex flex-col gap-2 mt-auto">
         <PwaButtons />
