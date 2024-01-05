@@ -8,7 +8,7 @@ const config = {
     extend: {}
   },
 
-  plugins: [daisyui],
+  plugins: [require('@tailwindcss/typography'), daisyui],
   daisyui: {
     themes: [
       {

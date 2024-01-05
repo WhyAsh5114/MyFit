@@ -15,12 +15,14 @@
     "@iconify/json": "^2.2.142",
     "@sveltejs/adapter-vercel": "^3.1.0",
     "@sveltejs/kit": "^1.20.4",
+    "@tailwindcss/typography": "^0.5.10",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",
     "@vite-pwa/sveltekit": "^0.2.7",
     "autoprefixer": "^10.4.14",
     "daisyui": "^4.0.0",
     "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-svelte": "^2.35.1",
     "eslint-plugin-unused-imports": "^3.0.0",
     "kolorist": "^1.8.0",
@@ -34,8 +36,7 @@
     "tslib": "^2.4.1",
     "typescript": "^5.3.3",
     "unplugin-icons": "^0.18.0",
-    "vite": "^4.4.2",
-    "eslint-config-prettier": "^9.1.0"
+    "vite": "^4.4.2"
   },
   "type": "module",
   "dependencies": {
