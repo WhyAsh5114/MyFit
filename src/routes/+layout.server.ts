@@ -3,7 +3,7 @@ import clientPromise from "$lib/mongo/mongodb";
 import type { MesocycleDocument, MesocycleTemplateDocument } from "$lib/types/documents";
 import { ObjectId } from "mongodb";
 
-const unprotectedRoutes = ["/", "/login", "/v3notice"];
+const unprotectedRoutes = ["/", "/login", "/v3notice", "/privacy_policy"];
 
 export const load = async ({ locals, url, depends }) => {
   depends("mesocycle:active");
