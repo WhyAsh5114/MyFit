@@ -423,10 +423,7 @@
   <p>If you have any questions about this Privacy Policy, You can contact us:</p>
   <ul>
     <li>
-      By visiting this page on our website: <a
-        href="https://github.com/WhyAsh5114/MyFit/issues"
-        rel="external nofollow noopener">https://github.com/WhyAsh5114/MyFit/issues</a
-      >
+      <p>By email: myfit.auth@gmail.com</p>
     </li>
   </ul>
 </div>
