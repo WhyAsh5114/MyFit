@@ -3,7 +3,7 @@
   import { setStores } from "./newMesocycleStore.js";
   export let data;
   const steps = ["basics", "split", "exercises", "extras"];
-  $: currentPageIndex = steps.findIndex((step) => $page.url.pathname.endsWith(step));
+  $: currentPageIndex = steps.findIndex((step) => $page.url.pathname.includes(step));
 
   if (data.mesocycleTemplate) {
     setStores(data.mesocycleTemplate);
