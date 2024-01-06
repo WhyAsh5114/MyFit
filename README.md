@@ -2,8 +2,6 @@
 
 MyFit is a powerful workout tracking app designed to help you achieve your fitness goals effectively. Inspired by the RP Hypertrophy app, MyFit offers a comprehensive set of features including mesocycle creation, automatic volume management, exercise progression metrics, and a science-based recommendation algorithm. Whether you are a beginner or an experienced fitness enthusiast, MyFit is your ideal companion on your fitness journey.
 
-> **_Note for V1 users:_** The v1 app is still available for use on https://my-fit-v1.vercel.app
-
 ## Features
 
 - **Mesocycle Creation**: Plan your workouts efficiently with the mesocycle creation feature. Organize your training into structured cycles for optimal results.
