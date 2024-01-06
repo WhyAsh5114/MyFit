@@ -1,5 +1,11 @@
 import { redirect } from "@sveltejs/kit";
-const unprotectedRoutes = ["/", "/login", "/offline", "/exerciseSplits/templates", "/privacyPolicy"];
+const unprotectedRoutes = [
+  "/",
+  "/login",
+  "/offline",
+  "/exerciseSplits/templates",
+  "/privacyPolicy"
+];
 
 export const load = async ({ locals, url }) => {
   const session = await locals.getSession();
