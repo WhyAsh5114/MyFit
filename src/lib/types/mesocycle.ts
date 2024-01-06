@@ -23,23 +23,38 @@ type RIRProgressionData = {
   cycles: number;
 };
 
-type MesocycleTemplate = {
+type MuscleGroupSpecialization = {
+  muscleGroup: MuscleGroup;
+  type: "primary" | "secondary";
+};
+
+type PerformanceLossFixDate = {
+  dayNumber: number;
+  cycleNumber: number;
+};
+
+type Mesocycle = {
   name: string;
-  startRIR: number;
   RIRProgression: RIRProgressionData[];
-  exerciseSplit: ExerciseSplit[];
+  exerciseSplitId: string;
   caloricBalance: CaloricStateValue;
-  specialization?: MuscleGroup[];
-};
-
-type ActiveMesocycle = {
-  templateMesoId: string;
+  specialization: MuscleGroupSpecialization[] | null;
   startTimestamp: EpochTimeStamp;
+  endTimestamp: EpochTimeStamp | null;
   workouts: (string | null)[];
+  performanceLosses: {
+    exercises: {
+      name: string;
+      dayName: string;
+      fixDay: PerformanceLossFixDate;
+      accepted: boolean;
+    }[];
+    muscleGroups: {
+      muscleGroup: MuscleGroup;
+      recoveryDay: PerformanceLossFixDate;
+      slightlyLessVolumeDay: PerformanceLossFixDate;
+      accepted: boolean;
+    }[];
+    microcycle: { cycleNumber: number; fixCycleNumber: number; accepted: boolean };
+  };
 };
-
-type CompletedMesocycle = ActiveMesocycle & {
-  endTimestamp: EpochTimeStamp;
-};
-
-type Mesocycle = ActiveMesocycle | CompletedMesocycle;
