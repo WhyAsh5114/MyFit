@@ -25,5 +25,5 @@
     </ul>
   </div>
 {:else}
-  <a class="btn w-full" href="/login">Login</a>
+  <a class="btn btn-neutral w-full" href="/login">Login</a>
 {/if}

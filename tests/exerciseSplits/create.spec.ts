@@ -1,4 +1,7 @@
+import { commonSplits } from "$lib/commonMesocycles";
 import { test, expect } from "../fixtures";
+
+const commonExerciseSplit = commonSplits[0];
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -318,4 +321,45 @@ test("warn about exercise deletion when changing structure", async ({ page }) =>
   await expect(page.getByTestId("split-exercises-table")).toHaveText(
     "D 3 sets of 10 to 20 reps Back (horizontal pulls)"
   );
+});
+
+test("create a common split", async ({ page }) => {
+  await page.getByRole("link", { name: "Create new split" }).click();
+  await page.getByRole("link", { name: "Use common splits Start from" }).click();
+  await page.getByRole("link", { name: "Yoked split 15.00 sets/day A" }).click();
+  await page.getByRole("link", { name: "new exercise split" }).click();
+  await page.getByRole("button", { name: "Select exercises" }).click();
+  await page.getByRole("button", { name: "Create exercise split" }).click();
+  await page.locator("#Success").getByTestId("close-modal-button").click();
+  await expect(page.getByRole("link", { name: "Yoked split 75 sets Back," })).toBeVisible();
+  await page.getByRole("link", { name: "Create new split" }).click();
+  await page.getByRole("link", { name: "Use common splits Start from" }).click();
+  await page.getByRole("link", { name: "Pull Push Legs 11.33 sets/day" }).click();
+  await page.getByRole("link", { name: "new exercise split" }).click();
+  await page.getByRole("button", { name: "Select exercises" }).click();
+  await page.getByRole("button", { name: "Create exercise split" }).click();
+  await page.locator("#Success").getByTestId("close-modal-button").click();
+  await expect(page.getByRole("link", { name: "Pull Push Legs 68 sets Pull A" })).toBeVisible();
+});
+
+test("clone an old split", async ({ page }) => {
+  await page.goto("/");
+  await page.request.post("/api/exerciseSplits", {
+    data: JSON.stringify(commonExerciseSplit)
+  });
+  await page.getByRole("link", { name: "Exercise splits" }).click();
+  await expect(page.getByRole("main")).toContainText("Pull Push Legs");
+
+  await page.getByRole("link", { name: "Create new split" }).click();
+  await page.getByRole("link", { name: "Clone old splits Use one of" }).click();
+  await page.getByRole("link", { name: "Pull Push Legs 68 sets Pull A" }).click();
+  await page.getByRole("link", { name: "new exercise split" }).click();
+  await page.getByPlaceholder("Type here").fill("Pull Push Legs 2");
+  await page.getByRole("button", { name: "Select exercises" }).click();
+  await page.getByTestId("exercise1-menu-button").click();
+  await page.getByTestId("exercise1-card").getByLabel("Delete exercise").click();
+  await page.getByRole("button", { name: "Create exercise split" }).click();
+  await page.locator("#Success").getByTestId("close-modal-button").click();
+  await expect(page.getByRole("link", { name: "Pull Push Legs 68 sets Pull A" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Pull Push Legs 2 65 sets Pull" })).toBeVisible();
 });
