@@ -53,7 +53,7 @@
 
   function validateMesocycle() {
     const totalSpecializations = $primarySpecializations.length + $secondarySpecializations.length;
-    if (!totalSpecializations) {
+    if (!totalSpecializations && $useSpecializations) {
       modalTitle = "Error";
       modalText = "Add at least one specialization, or disable it to continue";
       modalOnClose = () => {};
