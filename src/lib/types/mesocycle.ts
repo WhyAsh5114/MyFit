@@ -55,6 +55,6 @@ type Mesocycle = {
       slightlyLessVolumeDay: PerformanceLossFixDate;
       accepted: boolean;
     }[];
-    microcycle: { cycleNumber: number; fixCycleNumber: number; accepted: boolean };
+    microcycle: { cycleNumber: number; fixCycleNumber: number; accepted: boolean } | null;
   };
 };
