@@ -66,13 +66,16 @@
   async function createOrEditMesocycle() {
     // TODO: add/edit
     if (!validateMesocycle()) return false;
-    const specialization: Mesocycle["specialization"] = [];
-    $primarySpecializations.forEach((muscleGroup) => {
-      specialization.push({ muscleGroup, type: "primary" });
-    });
-    $secondarySpecializations.forEach((muscleGroup) => {
-      specialization.push({ muscleGroup, type: "secondary" });
-    });
+    let specialization: Mesocycle["specialization"] = null;
+    if ($useSpecializations) {
+      specialization = [];
+      for (const muscleGroup of $primarySpecializations) {
+        specialization.push({ muscleGroup, type: "primary" });
+      }
+      for (const muscleGroup of $secondarySpecializations) {
+        specialization.push({ muscleGroup, type: "secondary" });
+      }
+    }
 
     const currentMesocycle: Omit<Mesocycle, "startTimestamp"> = {
       name: $mesocycleName,

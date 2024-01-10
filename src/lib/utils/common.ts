@@ -10,3 +10,15 @@ export function range(start: number, stop?: number, step?: number) {
   for (let i = start; step > 0 ? i < stop : i > stop; i += step) result.push(i);
   return result;
 }
+
+export function dateFormatter(timestamp: number | undefined) {
+  if (timestamp === undefined) {
+    timestamp = 0;
+  }
+  const date = new Date(timestamp);
+  return date.toLocaleDateString(undefined, {
+    day: "2-digit",
+    month: "short",
+    year: "2-digit"
+  });
+}
