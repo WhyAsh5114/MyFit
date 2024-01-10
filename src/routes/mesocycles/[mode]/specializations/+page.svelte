@@ -7,10 +7,21 @@
     primarySpecializations,
     secondarySpecializations,
     useSpecializations,
-    remainingMuscleGroups
+    remainingMuscleGroups,
+    mesocycleName,
+    mesocycleRIRProgression,
+    selectedSplitId,
+    mesocycleCaloricState
   } from "../mesocycleStore";
+  import MyModal from "$lib/components/MyModal.svelte";
+    import { goto, invalidate } from "$app/navigation";
   $: ({ params } = $page);
 
+  let modal: HTMLDialogElement;
+  let modalTitle = "";
+  let modalText = "";
+  let modalOnClose = () => {};
+  let callingEndpoint = false;
   let selectedMuscleGroup: null | MuscleGroup = null;
 
   function specializeMuscleGroup(category: "primary" | "secondary") {
@@ -40,11 +51,62 @@
     $remainingMuscleGroups = [...$remainingMuscleGroups, muscleGroup];
   }
 
+  function validateMesocycle() {
+    const totalSpecializations = $primarySpecializations.length + $secondarySpecializations.length;
+    if (!totalSpecializations) {
+      modalTitle = "Error";
+      modalText = "Add at least one specialization, or disable it to continue";
+      modalOnClose = () => {};
+      modal.show();
+      return false;
+    }
+    return true;
+  }
+
   async function createOrEditMesocycle() {
     // TODO: add/edit
-    // check for at least one specialization in either primary or secondary
+    if (!validateMesocycle()) return false;
+    const specialization: Mesocycle["specialization"] = [];
+    $primarySpecializations.forEach((muscleGroup) => {
+      specialization.push({ muscleGroup, type: "primary" });
+    });
+    $secondarySpecializations.forEach((muscleGroup) => {
+      specialization.push({ muscleGroup, type: "secondary" });
+    });
+
+    const currentMesocycle: Omit<Mesocycle, "startTimestamp"> = {
+      name: $mesocycleName,
+      RIRProgression: $mesocycleRIRProgression,
+      exerciseSplitId: $selectedSplitId as string,
+      caloricBalance: $mesocycleCaloricState,
+      endTimestamp: null,
+      workouts: [],
+      performanceLosses: { exercises: [], muscleGroups: [], microcycle: null },
+      specialization
+    };
+
+    callingEndpoint = true;
+    const response = await fetch("/api/mesocycles", {
+      method: "POST",
+      body: JSON.stringify(currentMesocycle),
+      headers: { "content-type": "application/json" }
+    });
+    modalTitle = response.ok ? "Success" : "Error";
+    modalText = await response.text();
+    if (response.ok) {
+      modalOnClose = async () => {
+        await invalidate("/api/mesocycles");
+        await goto("/mesocycles");
+      }
+    }
+    modal.show();
+    callingEndpoint = false;
   }
 </script>
+
+<MyModal {modalOnClose} title={modalTitle} bind:dialogElement={modal}>
+  {modalText}
+</MyModal>
 
 <h2><span class="capitalize">{params.mode}</span> mesocycle</h2>
 <h3>Specializations</h3>
@@ -62,7 +124,7 @@
 </div>
 
 {#if $useSpecializations}
-  <div class="flex flex-col gap-1 max-w-sm m-auto w-full">
+  <div class="flex flex-col gap-2 max-w-sm m-auto w-full">
     <div transition:slide>
       <label class="form-control w-full max-w-sm mx-auto">
         <div class="label">
@@ -79,7 +141,7 @@
           {/each}
         </select>
       </label>
-      <div class="join grid grid-cols-2 gap-1 mt-2 rounded-md max-w-sm mx-auto w-full">
+      <div class="join grid grid-cols-2 gap-1 mt-1 rounded-md max-w-sm mx-auto w-full">
         <button
           class="join-item btn btn-primary"
           on:click={() => specializeMuscleGroup("secondary")}
