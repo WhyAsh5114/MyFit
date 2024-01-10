@@ -14,7 +14,7 @@
     mesocycleCaloricState
   } from "../mesocycleStore";
   import MyModal from "$lib/components/MyModal.svelte";
-    import { goto, invalidate } from "$app/navigation";
+  import { goto, invalidate } from "$app/navigation";
   $: ({ params } = $page);
 
   let modal: HTMLDialogElement;
@@ -97,7 +97,7 @@
       modalOnClose = async () => {
         await invalidate("/api/mesocycles");
         await goto("/mesocycles");
-      }
+      };
     }
     modal.show();
     callingEndpoint = false;
