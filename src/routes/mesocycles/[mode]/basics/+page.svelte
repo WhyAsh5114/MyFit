@@ -7,17 +7,42 @@
     mesocycleCaloricState,
     mesocycleStartRIR,
     mesocycleDuration,
-    customizeRIRProgression
+    customizeRIRProgression,
+    mesocycleRIRProgression
   } from "../mesocycleStore";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
 
   $: ({ params } = $page);
+  let customRIRDurations = $mesocycleRIRProgression;
+
+  let oldDuration = $mesocycleDuration;
+  let oldStartRIR = $mesocycleStartRIR;
+  $: if ($mesocycleDuration !== oldDuration || $mesocycleStartRIR !== oldStartRIR) {
+    autoFillRIRProgressions($mesocycleDuration, $mesocycleStartRIR);
+  }
+
+  function autoFillRIRProgressions(duration: number, startRIR: number) {
+    const _customRIRDurations = [];
+    if (startRIR === 0) {
+      _customRIRDurations.push({ specificRIR: 0, cycles: duration });
+    } else {
+      const quotient = Math.floor((duration - 1) / startRIR);
+      const remainder = (duration - 1) % startRIR;
+      for (let i = startRIR; i >= 1; i--) {
+        _customRIRDurations.push({ specificRIR: i, cycles: quotient });
+      }
+      for (let i = 0; i < remainder; i++) {
+        _customRIRDurations[i].cycles++;
+      }
+      _customRIRDurations.push({ specificRIR: 0, cycles: 1 });
+      _customRIRDurations.reverse();
+    }
+    customRIRDurations = _customRIRDurations;
+  }
 
   async function submitForm() {
-    if (!$customizeRIRProgression) {
-      // TODO: auto-fill RIR durations
-    }
+    $mesocycleRIRProgression = customRIRDurations;
     await goto(`/mesocycles/${params.mode}/split`);
   }
 </script>
@@ -111,6 +136,7 @@
             placeholder="Cycles"
             required
             type="number"
+            bind:value={customRIRDurations[specificRIR].cycles}
           />
         </label>
       {/each}
