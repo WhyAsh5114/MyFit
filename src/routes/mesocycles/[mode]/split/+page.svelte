@@ -76,7 +76,7 @@
 <a
   class="btn btn-accent mt-2"
   class:btn-disabled={$selectedSplitId === null}
-  href="/mesocycles/{params.mode}/specializations"
+  href="/mesocycles/{params.mode}/exerciseStartingPoints"
 >
-  Select specializations
+  Select exercise starting points
 </a>

@@ -15,8 +15,10 @@
   } from "../mesocycleStore";
   import MyModal from "$lib/components/MyModal.svelte";
   import { goto, invalidate } from "$app/navigation";
+  export let data;
   $: ({ params } = $page);
 
+  let startNow = false;
   let modal: HTMLDialogElement;
   let modalTitle = "";
   let modalText = "";
@@ -65,7 +67,10 @@
 
   async function createOrEditMesocycle() {
     // TODO: add/edit
+    // TODO: offline mode (maybe enable offline mode just for workouts and nothing else)
+
     if (!validateMesocycle()) return false;
+
     let specialization: Mesocycle["specialization"] = null;
     if ($useSpecializations) {
       specialization = [];
@@ -91,7 +96,7 @@
     callingEndpoint = true;
     const response = await fetch("/api/mesocycles", {
       method: "POST",
-      body: JSON.stringify(currentMesocycle),
+      body: JSON.stringify({ currentMesocycle, startNow }),
       headers: { "content-type": "application/json" }
     });
     modalTitle = response.ok ? "Success" : "Error";
@@ -101,6 +106,8 @@
         await invalidate("/api/mesocycles");
         await goto("/mesocycles");
       };
+    } else {
+      modalOnClose = () => {};
     }
     modal.show();
     callingEndpoint = false;
@@ -204,7 +211,20 @@
   </div>
 {/if}
 
-<button class="btn btn-accent btn-block mt-auto" on:click={createOrEditMesocycle}>
+<div class="form-control">
+  <label class="label cursor-pointer">
+    <span class="label-text">Start immediately</span>
+    <input id="startMesocycleNow" class="toggle" type="checkbox" bind:checked={startNow} />
+  </label>
+</div>
+{#if data.activeMesocycles.length > 0 && startNow}
+  <p class="text-warning text-sm px-1">
+    Doing so will end the current mesocycle,
+    <span class="font-semibold italic">{data.activeMesocycles[0].name}</span>
+  </p>
+{/if}
+
+<button class="btn btn-accent btn-block mt-auto" on:click={() => createOrEditMesocycle()}>
   {#if params.mode === "new"}
     Create mesocycle
   {:else}
