@@ -44,7 +44,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@auth/core": "^0.20.0",
+    "@auth/core": "^0.21.0",
     "@auth/mongodb-adapter": "^2.0.4",
     "@auth/sveltekit": "^0.5.0",
     "@vercel/analytics": "^1.1.1",
