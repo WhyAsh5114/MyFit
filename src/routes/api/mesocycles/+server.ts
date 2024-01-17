@@ -21,8 +21,6 @@ export const GET = async ({ locals, url }) => {
       .collection<WithUserId<Mesocycle>>("mesocycles")
       .find(filter)
       .toArray();
-    
-    console.log(mesocycles);
 
     return new Response(JSON.stringify(mesocycles), { status: 200 });
   } catch (error) {
@@ -30,21 +28,44 @@ export const GET = async ({ locals, url }) => {
   }
 };
 
-export const POST = async ({ locals, request }) => {
+export type POSTRequestBody = {
+  currentMesocycle: Omit<Mesocycle, "startTimestamp">;
+  startNow: boolean;
+};
+
+export const POST = async ({ locals, request, fetch }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
     return new Response("Not logged in", { status: 403 });
   }
 
-  const mesocycleWithoutTimestamp: Omit<Mesocycle, "startTimestamp"> = await request.json();
+  const { currentMesocycle: mesocycleWithoutTimestamp, startNow }: POSTRequestBody =
+    await request.json();
+
   try {
+    if (startNow) {
+      const response = await fetch("/api/mesocycles?active");
+      const activeMesocycle: WithSID<WithUserId<Mesocycle>> | undefined = (
+        await response.json()
+      )[0];
+      if (activeMesocycle) {
+        await client
+          .db()
+          .collection<WithUserId<Mesocycle>>("mesocycles")
+          .updateOne(
+            { _id: new ObjectId(activeMesocycle._id), userId: new ObjectId(session.user.id) },
+            { endTimestamp: Number(new Date()) }
+          );
+      }
+    }
+
     await client
       .db()
       .collection<WithUserId<Mesocycle>>("mesocycles")
       .insertOne({
         ...mesocycleWithoutTimestamp,
         userId: new ObjectId(session.user.id),
-        startTimestamp: Number(new Date())
+        startTimestamp: startNow ? Number(new Date()) : null
       });
 
     return new Response("Mesocycle created successfully", { status: 200 });
