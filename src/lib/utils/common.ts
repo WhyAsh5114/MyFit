@@ -11,10 +11,9 @@ export function range(start: number, stop?: number, step?: number) {
   return result;
 }
 
-export function dateFormatter(timestamp: number | undefined) {
-  if (timestamp === undefined) {
-    timestamp = 0;
-  }
+export function dateFormatter(timestamp?: number | null) {
+  if (!timestamp) timestamp = 0;
+
   const date = new Date(timestamp);
   return date.toLocaleDateString(undefined, {
     day: "2-digit",
