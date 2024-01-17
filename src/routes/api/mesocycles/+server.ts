@@ -1,21 +1,28 @@
 import clientPromise from "$lib/mongo/mongodb.js";
 import type { WithUserId } from "$lib/types/arrays";
-import { ObjectId } from "mongodb";
+import { ObjectId, type Filter } from "mongodb";
 
 const client = await clientPromise;
 
-export const GET = async ({ locals }) => {
+export const GET = async ({ locals, url }) => {
   const session = await locals.getSession();
   if (!session?.user?.id) {
     return new Response("Not logged in", { status: 403 });
   }
 
   try {
+    const filter: Filter<WithUserId<Mesocycle>> = { userId: new ObjectId(session.user.id) };
+    if (url.searchParams.has("active")) {
+      filter.endTimestamp = null;
+    }
+
     const mesocycles = await client
       .db()
       .collection<WithUserId<Mesocycle>>("mesocycles")
-      .find({ userId: new ObjectId(session.user.id) })
+      .find(filter)
       .toArray();
+    
+    console.log(mesocycles);
 
     return new Response(JSON.stringify(mesocycles), { status: 200 });
   } catch (error) {
