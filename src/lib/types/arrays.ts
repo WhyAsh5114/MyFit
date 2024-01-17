@@ -11,7 +11,8 @@ export const muscleGroups: typeof MuscleGroups = [
   "Quads",
   "Hamstrings",
   "Glutes",
-  "Calves"
+  "Calves",
+  "Abs"
 ] as const;
 
 export const exerciseWeightTypes: typeof ExerciseWeightTypes = ["Weighted", "Bodyweight"] as const;

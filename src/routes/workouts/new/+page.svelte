@@ -56,7 +56,7 @@
   }
 
   let bodyweightInputValue = data.userBodyweight;
-  let editingBodyweightValue = bodyweightInputValue === null && bodyweightExercises;
+  let editingBodyweightValue: boolean = bodyweightInputValue === null && bodyweightExercises;
   async function submitForm() {
     if (todaysWorkout) {
       await goto("/workouts/new/exercises");
