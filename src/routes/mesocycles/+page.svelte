@@ -8,7 +8,7 @@
   }
 </script>
 
-<div class="flex flex-col gap-1 h-px grow">
+<div class="flex flex-col gap-1 h-px overflow-y-auto grow">
   {#each data.mesocycles as mesocycle}
     {@const caloricState = caloricStates.find((e) => e.value === mesocycle.caloricBalance)}
     <a class="btn rounded-md btn-primary h-fit" href="/mesocycles/view/{mesocycle._id}">
