@@ -27,3 +27,23 @@ export const secondarySpecializations: Writable<MuscleGroup[]> = persisted(
   "secondarySpecializations",
   []
 );
+export const startMesocycleNow: Writable<boolean> = persisted("startMesocycleNow", false);
+
+export function clearStores() {
+  mesocycleName.set("");
+  mesocycleCaloricState.set(0);
+  mesocycleDuration.set(6);
+  mesocycleStartRIR.set(3);
+  customizeRIRProgression.set(false);
+  mesocycleRIRProgression.set(
+    Array.from({ length: 3 }, (_, idx) => ({ specificRIR: idx, cycles: 0 }))
+  );
+  selectedSplitId.set(null);
+  remainingMuscleGroups.set(muscleGroups.slice());
+  useSpecializations.set(false);
+  primarySpecializations.set([]);
+  secondarySpecializations.set([]);
+  startMesocycleNow.set(false);
+}
+
+// TODO: export function for setting store

@@ -11,7 +11,8 @@
     mesocycleName,
     mesocycleRIRProgression,
     selectedSplitId,
-    mesocycleCaloricState
+    mesocycleCaloricState,
+    startMesocycleNow
   } from "../mesocycleStore";
   import MyModal from "$lib/components/MyModal.svelte";
   import { goto, invalidate } from "$app/navigation";
@@ -19,7 +20,6 @@
   export let data;
   $: ({ params } = $page);
 
-  let startNow = false;
   let modal: HTMLDialogElement;
   let modalTitle = "";
   let modalText = "";
@@ -95,7 +95,7 @@
     callingEndpoint = true;
     const response = await fetch("/api/mesocycles", {
       method: "POST",
-      body: JSON.stringify({ currentMesocycle, startNow }),
+      body: JSON.stringify({ currentMesocycle, startNow: $startMesocycleNow }),
       headers: { "content-type": "application/json" }
     });
     modalTitle = response.ok ? "Success" : "Error";
@@ -213,10 +213,15 @@
 <div class="form-control">
   <label class="label cursor-pointer">
     <span class="label-text">Start immediately</span>
-    <input id="startMesocycleNow" class="toggle" type="checkbox" bind:checked={startNow} />
+    <input
+      id="startMesocycleNow"
+      class="toggle"
+      type="checkbox"
+      bind:checked={$startMesocycleNow}
+    />
   </label>
 </div>
-{#if data.activeMesocycles.length > 0 && startNow}
+{#if data.activeMesocycles.length > 0 && $startMesocycleNow}
   <p class="text-warning text-sm px-1">
     Doing so will end the current mesocycle,
     <span class="font-semibold italic">{data.activeMesocycles[0].name}</span>
