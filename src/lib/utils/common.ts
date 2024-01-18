@@ -11,13 +11,13 @@ export function range(start: number, stop?: number, step?: number) {
   return result;
 }
 
-export function dateFormatter(timestamp?: number | null) {
+export function dateFormatter(timestamp?: number | null, year = true) {
   if (!timestamp) timestamp = 0;
 
   const date = new Date(timestamp);
   return date.toLocaleDateString(undefined, {
     day: "2-digit",
     month: "short",
-    year: "2-digit"
+    year: year ? "2-digit" : undefined
   });
 }

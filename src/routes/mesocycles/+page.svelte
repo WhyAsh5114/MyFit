@@ -14,13 +14,18 @@
     <a class="btn rounded-md btn-primary h-fit" href="/mesocycles/view/{mesocycle._id}">
       <div class="flex flex-col gap-1 py-2 w-full">
         <div class="flex justify-between items-center">
-          <span class="text-lg font-semibold">{mesocycle.name}</span>
-          <p class:text-accent={mesocycle.endTimestamp === null}>
-            {dateFormatter(mesocycle.startTimestamp)}
-            {#if mesocycle.endTimestamp}
-              {dateFormatter(mesocycle.endTimestamp)}
-            {/if}
-          </p>
+          <span class="text-lg font-semibold basis-7/12 truncate text-left">{mesocycle.name}</span>
+          {#if mesocycle.startTimestamp}
+            <p class:text-accent={mesocycle.endTimestamp === null}>
+              {dateFormatter(mesocycle.startTimestamp, false)}
+              {#if mesocycle.endTimestamp}
+                to
+                {dateFormatter(mesocycle.endTimestamp, false)}
+              {/if}
+            </p>
+          {:else}
+            <p>Not used</p>
+          {/if}
         </div>
         <div class="flex justify-between items-center font-normal">
           <span>{getExerciseSplitName(mesocycle.exerciseSplitId)}</span>
