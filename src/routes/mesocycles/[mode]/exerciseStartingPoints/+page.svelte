@@ -6,7 +6,7 @@
 <h2>New mesocycle</h2>
 <h3>Exercise starting points</h3>
 
-<!-- TODO -->
+<!-- TODO: info about creating a new mesocycle -->
 <div class="flex m-auto gap-2">
   <p class="font-extrabold text-3xl">In the works</p>
   <span class="loading loading-lg loading-infinity"></span>
