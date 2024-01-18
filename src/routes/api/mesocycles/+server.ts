@@ -13,6 +13,7 @@ export const GET = async ({ locals, url }) => {
   try {
     const filter: Filter<WithUserId<Mesocycle>> = { userId: new ObjectId(session.user.id) };
     if (url.searchParams.has("active")) {
+      filter.startTimestamp = { $ne: null };
       filter.endTimestamp = null;
     }
 
@@ -54,7 +55,7 @@ export const POST = async ({ locals, request, fetch }) => {
           .collection<WithUserId<Mesocycle>>("mesocycles")
           .updateOne(
             { _id: new ObjectId(activeMesocycle._id), userId: new ObjectId(session.user.id) },
-            { endTimestamp: Number(new Date()) }
+            { $set: { endTimestamp: Number(new Date()) } }
           );
       }
     }
@@ -70,6 +71,7 @@ export const POST = async ({ locals, request, fetch }) => {
 
     return new Response("Mesocycle created successfully", { status: 200 });
   } catch (error) {
+    console.error(error);
     return new Response(JSON.stringify(error), { status: 500 });
   }
 };
