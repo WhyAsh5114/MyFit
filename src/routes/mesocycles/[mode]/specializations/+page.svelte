@@ -15,6 +15,7 @@
   } from "../mesocycleStore";
   import MyModal from "$lib/components/MyModal.svelte";
   import { goto, invalidate } from "$app/navigation";
+  import { paramMap } from "$lib/types/arrays";
   export let data;
   $: ({ params } = $page);
 
@@ -67,8 +68,6 @@
 
   async function createOrEditMesocycle() {
     // TODO: add/edit
-    // TODO: offline mode (maybe enable offline mode just for workouts and nothing else)
-
     if (!validateMesocycle()) return false;
 
     let specialization: Mesocycle["specialization"] = null;
@@ -230,12 +229,8 @@
   on:click={() => createOrEditMesocycle()}
 >
   {#if !callingEndpoint}
-    {#if params.mode === "new"}
-      Create mesocycle
-    {:else}
-      Edit mesocycle
-    {/if}
+    {paramMap[params.mode].action} mesocycle
   {:else}
-    Creating mesocycle <span class="loading loading-spinner"></span>
+    {paramMap[params.mode].verb} mesocycle <span class="loading loading-spinner"></span>
   {/if}
 </button>

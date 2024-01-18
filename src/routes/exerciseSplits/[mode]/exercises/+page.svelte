@@ -13,6 +13,7 @@
   import { page } from "$app/stores";
   import MyModal from "$lib/components/MyModal.svelte";
   import { goto, invalidate } from "$app/navigation";
+  import { paramMap } from "$lib/types/arrays";
   $: ({ params } = $page);
 
   let callingEndpoint = false;
@@ -140,10 +141,10 @@
   </div>
 {/if}
 
-<button class="btn btn-accent btn-block mt-2" on:click={submitSplit}>
-  {#if params.mode === "new"}
-    Create exercise split
-  {:else if params.mode === "edit"}
-    Update exercise split
+<button class="btn btn-accent btn-block mt-2" disabled={callingEndpoint} on:click={submitSplit}>
+  {#if !callingEndpoint}
+    {paramMap[params.mode].action} exercise split
+  {:else}
+    {paramMap[params.mode].verb} exercise split <span class="loading loading-spinner"></span>
   {/if}
 </button>

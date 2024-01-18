@@ -87,3 +87,8 @@ export const setTypes: typeof SetTypes = [
   "myorep match",
   "giant"
 ] as const;
+
+export const paramMap: Record<string, { action: string; verb: string }> = {
+  new: { action: "Create", verb: "Creating" },
+  edit: { action: "Update", verb: "Updating" }
+};
