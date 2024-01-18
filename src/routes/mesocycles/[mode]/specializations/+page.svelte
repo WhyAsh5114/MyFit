@@ -224,10 +224,18 @@
   </p>
 {/if}
 
-<button class="btn btn-accent btn-block mt-auto" on:click={() => createOrEditMesocycle()}>
-  {#if params.mode === "new"}
-    Create mesocycle
+<button
+  class="btn btn-accent btn-block mt-auto"
+  disabled={callingEndpoint}
+  on:click={() => createOrEditMesocycle()}
+>
+  {#if !callingEndpoint}
+    {#if params.mode === "new"}
+      Create mesocycle
+    {:else}
+      Edit mesocycle
+    {/if}
   {:else}
-    Edit mesocycle
+    Creating mesocycle <span class="loading loading-spinner"></span>
   {/if}
 </button>
