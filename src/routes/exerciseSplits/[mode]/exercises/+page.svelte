@@ -74,58 +74,24 @@
       name: $splitName,
       splitDays: $exerciseSplitDays
     };
-
-    if (params.mode === "new") await callCreateSplitEndpoint(exerciseSplit);
-    else if (params.mode === "edit") callEditSplitEndpoint(exerciseSplit);
+    callCreateOrEditSplitEndpoint(exerciseSplit, params.mode);
   }
 
-  async function callCreateSplitEndpoint(exerciseSplit: ExerciseSplit) {
+  async function callCreateOrEditSplitEndpoint(exerciseSplit: ExerciseSplit, mode: string) {
     callingEndpoint = true;
-    try {
-      const response = await fetch("/api/exerciseSplits", {
-        method: "POST",
-        body: JSON.stringify(exerciseSplit),
-        headers: {
-          "content-type": "application/json"
-        }
-      });
-      if (response.ok) modalOnClose = invalidateAndRedirect;
-      modalTitle = response.ok ? "Success" : "Error";
-      modalText = await response.text();
-      modal.show();
-    } catch (error) {
-      if (error instanceof Error && error.message === "Failed to fetch") {
-        modalOnClose = invalidateAndRedirect;
-        modalTitle = "Warning";
-        modalText = `The request failed (potentially due to a network error), but it has been saved and will be retried when online`;
-        modal.show();
-      }
-    }
-    callingEndpoint = false;
-  }
+    let endpointURL = "/api/exerciseSplits";
+    if (mode === "edit") endpointURL += `/${$editingSplitId}`;
 
-  async function callEditSplitEndpoint(exerciseSplit: ExerciseSplit) {
-    callingEndpoint = true;
-    try {
-      const response = await fetch(`/api/exerciseSplits/${$editingSplitId}`, {
-        method: "PUT",
-        body: JSON.stringify(exerciseSplit),
-        headers: {
-          "content-type": "application/json"
-        }
-      });
-      if (response.ok) modalOnClose = invalidateAndRedirect;
-      modalTitle = response.ok ? "Success" : "Error";
-      modalText = await response.text();
-      modal.show();
-    } catch (error) {
-      if (error instanceof Error && error.message === "Failed to fetch") {
-        modalOnClose = invalidateAndRedirect;
-        modalTitle = "Error";
-        modalText = `The request failed (potentially due to a network error). Editing & deleting operations cannot be performed when offline`;
-        modal.show();
-      }
-    }
+    const response = await fetch(endpointURL, {
+      method: mode === "new" ? "POST" : "PUT",
+      body: JSON.stringify(exerciseSplit),
+      headers: { "content-type": "application/json" }
+    });
+
+    if (response.ok) modalOnClose = invalidateAndRedirect;
+    modalTitle = response.ok ? "Success" : "Error";
+    modalText = await response.text();
+    modal.show();
     callingEndpoint = false;
   }
 
