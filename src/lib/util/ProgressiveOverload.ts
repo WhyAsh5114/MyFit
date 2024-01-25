@@ -40,7 +40,7 @@ function matchSetVolumeWithNewLoad(
   const newSet: WorkoutExerciseSet = { reps: set.reps, load: newLoad, RIR: set.RIR };
   let newVolume = getSetVolume(exercise.bodyweight, newSet);
   let absoluteDifference = Math.abs(newVolume - oldVolume);
-  for (;;) {
+  for (let i = 0; i <= 100; i++) {
     if (newVolume > oldVolume) {
       newSet.reps--;
     } else {
@@ -68,6 +68,8 @@ export function applyProgressiveOverload(
   newBodyweight: number | null = null,
   plannedRIR: number | null = null
 ) {
+  let loopCounter = 0;
+
   // Don't modify instance
   exercises = JSON.parse(JSON.stringify(exercises));
 
@@ -81,7 +83,7 @@ export function applyProgressiveOverload(
 
     // Apply progressive overload
     let newTotalVolume = getTotalVolume(exercise.bodyweight, exercise.sets);
-    while (newTotalVolume < (1 + VOLUME_INCREASE_RATE) * originalTotalVolume) {
+    while (newTotalVolume < (1 + VOLUME_INCREASE_RATE) * originalTotalVolume && loopCounter < 100) {
       // This is rep change
       const minimumVolumeSet = exercise.sets.reduce(
         (min, set) =>
@@ -92,16 +94,21 @@ export function applyProgressiveOverload(
       );
       minimumVolumeSet.reps++;
       newTotalVolume = getTotalVolume(exercise.bodyweight, exercise.sets);
+      loopCounter++;
 
       // TODO: implement load change, choose optimal approach
     }
 
     exercise.sets.forEach((set, setNumber) => {
-      while (set.reps < exercise.repRangeStart) {
+    loopCounter = 0;
+      while (set.reps < exercise.repRangeStart && loopCounter < 100) {
         set = matchSetVolumeWithNewLoad(exercise, set, set.load - MINIMUM_LOAD_CHANGE);
+        loopCounter++;
       }
-      while (set.reps >= exercise.repRangeEnd) {
+    loopCounter = 0;
+      while (set.reps >= exercise.repRangeEnd && loopCounter < 100) {
         set = matchSetVolumeWithNewLoad(exercise, set, set.load + MINIMUM_LOAD_CHANGE);
+        loopCounter++;
       }
       exercise.sets[setNumber] = set;
       updateRIR(plannedRIR, set);
@@ -109,7 +116,8 @@ export function applyProgressiveOverload(
 
     // Apply progressive overload
     newTotalVolume = getTotalVolume(exercise.bodyweight, exercise.sets);
-    while (newTotalVolume < (1 + VOLUME_INCREASE_RATE) * originalTotalVolume) {
+    loopCounter = 0;
+    while (newTotalVolume < (1 + VOLUME_INCREASE_RATE) * originalTotalVolume && loopCounter < 100) {
       // This is rep change
       const minimumVolumeSet = exercise.sets.reduce(
         (min, set) =>
@@ -122,6 +130,7 @@ export function applyProgressiveOverload(
       newTotalVolume = getTotalVolume(exercise.bodyweight, exercise.sets);
 
       // TODO: implement load change, choose optimal approach
+      loopCounter++;
     }
 
     // Sort sets by load
