@@ -3,12 +3,11 @@ const unprotectedRoutes = [
   "/",
   "/login",
   "/offline",
-  "/exerciseSplits/templates",
   "/privacyPolicy"
 ];
 
 export const load = async ({ locals, url }) => {
-  const session = await locals.getSession();
+  const session = await locals.auth();
   if (!session && !unprotectedRoutes.includes(url.pathname)) {
     throw redirect(303, `/login?callbackURL=${url.pathname}`);
   }

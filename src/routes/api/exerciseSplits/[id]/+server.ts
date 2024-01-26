@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb";
 const client = await clientPromise;
 
 export const GET = async ({ params, locals }) => {
-  const session = await locals.getSession();
+  const session = await locals.auth();
   if (!session?.user?.id) {
     return new Response("Not logged in", { status: 403 });
   }
@@ -27,7 +27,7 @@ export const GET = async ({ params, locals }) => {
 };
 
 export const PUT = async ({ params, locals, request }) => {
-  const session = await locals.getSession();
+  const session = await locals.auth();
   if (!session?.user?.id) {
     return new Response("Not logged in", { status: 403 });
   }
@@ -54,7 +54,7 @@ export const PUT = async ({ params, locals, request }) => {
 };
 
 export const DELETE = async ({ params, locals }) => {
-  const session = await locals.getSession();
+  const session = await locals.auth();
   if (!session?.user?.id) {
     return new Response("Not logged in", { status: 403 });
   }

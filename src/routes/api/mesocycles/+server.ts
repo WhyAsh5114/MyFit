@@ -5,7 +5,7 @@ import { ObjectId, type Filter } from "mongodb";
 const client = await clientPromise;
 
 export const GET = async ({ locals, url }) => {
-  const session = await locals.getSession();
+  const session = await locals.auth();
   if (!session?.user?.id) {
     return new Response("Not logged in", { status: 403 });
   }
@@ -35,7 +35,7 @@ export type POSTRequestBody = {
 };
 
 export const POST = async ({ locals, request, fetch }) => {
-  const session = await locals.getSession();
+  const session = await locals.auth();
   if (!session?.user?.id) {
     return new Response("Not logged in", { status: 403 });
   }
