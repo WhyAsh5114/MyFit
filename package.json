@@ -15,7 +15,7 @@
   "devDependencies": {
     "@iconify/json": "^2.2.142",
     "@playwright/test": "^1.40.1",
-    "@sveltejs/adapter-vercel": "^4.0.0",
+    "@sveltejs/adapter-vercel": "^5.0.0",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "@tailwindcss/typography": "^0.5.10",
@@ -44,9 +44,9 @@
   },
   "type": "module",
   "dependencies": {
-    "@auth/core": "^0.21.0",
+    "@auth/core": "^0.23.0",
     "@auth/mongodb-adapter": "^2.0.4",
-    "@auth/sveltekit": "^0.7.0",
+    "@auth/sveltekit": "^0.9.0",
     "@vercel/analytics": "^1.1.1",
     "@vercel/speed-insights": "^1.0.0",
     "chart.js": "^4.4.1",

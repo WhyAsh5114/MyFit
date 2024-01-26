@@ -22,11 +22,8 @@ export const handle = SvelteKitAuth({
   session: { strategy: "database" },
   callbacks: {
     // Attach mongoDB user document ID for easier queries
-    // @ts-expect-error strategy: "database" is set, still giving error?
     async session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-      }
+      session.user.id = user.id;
       return session;
     }
   },
