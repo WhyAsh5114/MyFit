@@ -8,7 +8,8 @@
     "resolveJsonModule": true,
     "skipLibCheck": false,
     "sourceMap": true,
-    "strict": true
+    "strict": true,
+    "moduleResolution": "bundler"
   },
   "files": [
     "./node_modules/vite-plugin-pwa/client.d.ts",
