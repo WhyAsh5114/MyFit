@@ -125,7 +125,7 @@
       </button>
     {/if}
   {/if}
-  {#if mode === "performing"}
+  {#if mode !== "viewing"}
     <button class="join-item btn btn-primary w-1/2 grow" on:click={addExercise}>
       Add exercise
     </button>
