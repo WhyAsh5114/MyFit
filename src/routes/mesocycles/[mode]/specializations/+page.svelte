@@ -122,6 +122,18 @@
 
 <div class="form-control">
   <label class="label cursor-pointer">
+    <span class="label-text">Start immediately</span>
+    <input
+      id="startMesocycleNow"
+      class="toggle"
+      type="checkbox"
+      bind:checked={$startMesocycleNow}
+    />
+  </label>
+</div>
+
+<div class="form-control">
+  <label class="label cursor-pointer">
     <span class="label-text">Use specialization</span>
     <input
       id="use-specializtion"
@@ -210,17 +222,6 @@
   </div>
 {/if}
 
-<div class="form-control">
-  <label class="label cursor-pointer">
-    <span class="label-text">Start immediately</span>
-    <input
-      id="startMesocycleNow"
-      class="toggle"
-      type="checkbox"
-      bind:checked={$startMesocycleNow}
-    />
-  </label>
-</div>
 {#if data.activeMesocycles.length > 0 && $startMesocycleNow}
   <p class="text-warning text-sm px-1">
     Doing so will end the current mesocycle,
