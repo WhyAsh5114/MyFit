@@ -7,6 +7,8 @@
   import { navigating, page } from "$app/stores";
   import { onMount } from "svelte";
 
+  let drawerOpen = false;
+
   // eslint-disable-next-line svelte/no-immutable-reactive-statements
   $: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : "";
   let lg: MediaQueryList | undefined;
@@ -24,6 +26,12 @@
     inject({ mode: dev ? "development" : "production" });
     injectSpeedInsights();
   }
+
+  $: if ($navigating?.complete) closeDrawer($navigating.complete);
+  async function closeDrawer(navPromise: Promise<void>) {
+    await navPromise;
+    drawerOpen = false;
+  }
 </script>
 
 <svelte:head>
@@ -31,7 +39,7 @@
 </svelte:head>
 
 <div class="drawer lg:drawer-open">
-  <input id="drawer" class="drawer-toggle" type="checkbox" />
+  <input id="drawer" class="drawer-toggle" type="checkbox" bind:checked={drawerOpen} />
   <div class="drawer-content flex flex-col items-center justify-center h-screen">
     <!-- Page content here -->
     <div class="flex bg-primary w-full items-center py-2 lg:hidden" aria-hidden={!lg?.matches}>
