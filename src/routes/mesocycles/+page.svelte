@@ -8,6 +8,7 @@
   }
 </script>
 
+<h2>Mesocycles</h2>
 <div class="flex flex-col gap-1 h-px overflow-y-auto grow">
   {#each data.mesocycles as mesocycle}
     {@const caloricState = caloricStates.find((e) => e.value === mesocycle.caloricBalance)}
@@ -55,6 +56,11 @@
         {/if}
       </div>
     </a>
+  {:else}
+    <div class="flex flex-col bg-primary p-2 mb-auto rounded-md">
+      <span class="font-semibold text-warning text-lg">No mesocycles created</span>
+      <span>Create one by clicking the button below</span>
+    </div>
   {/each}
 </div>
 
