@@ -60,12 +60,12 @@ export const DELETE = async ({ params, locals }) => {
   }
 
   try {
-    const exerciseSplit = await client
+    const deleteResult = await client
       .db()
       .collection<WithUserId<ExerciseSplit>>("exerciseSplits")
-      .findOneAndDelete({ userId: new ObjectId(session.user.id), _id: new ObjectId(params.id) });
+      .deleteOne({ userId: new ObjectId(session.user.id), _id: new ObjectId(params.id) });
 
-    if (exerciseSplit === null) {
+    if (deleteResult.deletedCount === 0) {
       return new Response("Exercise split not found", { status: 404 });
     }
 
