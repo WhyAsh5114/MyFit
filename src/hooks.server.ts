@@ -1,6 +1,6 @@
 import { SvelteKitAuth } from "@auth/sveltekit";
-import Google from "@auth/core/providers/google";
-import GitHub from "@auth/core/providers/github";
+import Google from "@auth/sveltekit/providers/google";
+import GitHub from "@auth/sveltekit/providers/github";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "$lib/mongo/mongodb";
 import {
@@ -17,6 +17,7 @@ export const handle = SvelteKitAuth({
     Google({ clientId: AUTH_GOOGLE_ID, clientSecret: AUTH_GOOGLE_SECRET }),
     GitHub({ clientId: AUTH_GITHUB_ID, clientSecret: AUTH_GITHUB_SECRET })
   ],
+  // @ts-expect-error: still in beta...
   adapter: MongoDBAdapter(clientPromise, {
     databaseName: "MyFit_v3"
   }),
