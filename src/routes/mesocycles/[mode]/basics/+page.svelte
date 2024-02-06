@@ -20,6 +20,8 @@
   let oldStartRIR = $mesocycleStartRIR;
   $: if ($mesocycleDuration !== oldDuration || $mesocycleStartRIR !== oldStartRIR) {
     autoFillRIRProgressions($mesocycleDuration, $mesocycleStartRIR);
+    oldDuration = $mesocycleDuration;
+    oldStartRIR = $mesocycleStartRIR;
   }
 
   function autoFillRIRProgressions(duration: number, startRIR: number) {
@@ -27,8 +29,9 @@
     if (startRIR === 0) {
       _customRIRDurations.push({ specificRIR: 0, cycles: duration });
     } else {
-      const quotient = Math.floor((duration - 1) / startRIR);
-      const remainder = (duration - 1) % startRIR;
+      duration--; // For last week of mesocycle (0 RIR failure week)
+      const quotient = Math.floor(duration / startRIR);
+      const remainder = duration % startRIR;
       for (let i = startRIR; i >= 1; i--) {
         _customRIRDurations.push({ specificRIR: i, cycles: quotient });
       }
