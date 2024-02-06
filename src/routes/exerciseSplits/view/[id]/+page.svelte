@@ -60,7 +60,7 @@
       {#if !callingEndpoint}
         Yes, delete
       {:else}
-        <span class="loading loading-spinner"></span>
+        Deleting <span class="loading loading-spinner"></span>
       {/if}
     </button>
   </div>
