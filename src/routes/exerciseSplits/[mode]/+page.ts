@@ -16,8 +16,7 @@ export const load = async ({ url, params, fetch }) => {
       const exerciseSplit = (await response.json()) as WithSID<ExerciseSplit>;
       return {
         template: exerciseSplit,
-        editingSplitId: editId,
-        editingSplitName: exerciseSplit.name
+        editingSplitId: editId
       };
     }
     const errorCode = response.status as NumericRange<400, 599>;
@@ -26,14 +25,13 @@ export const load = async ({ url, params, fetch }) => {
     const response = await fetch(`/api/exerciseSplits/${cloneId}`);
     if (response.ok) {
       const exerciseSplit = (await response.json()) as WithSID<ExerciseSplit>;
-      return { template: exerciseSplit, cloningSplitName: exerciseSplit.name };
+      return { template: exerciseSplit };
     }
     const errorCode = response.status as NumericRange<400, 599>;
     error(errorCode, await response.text());
   } else if (Number.isInteger(commonIdx)) {
     const { commonSplits } = await import("$lib/commonMesocycles.js");
-    return { template: commonSplits[commonIdx], commonSplitName: commonSplits[commonIdx].name };
-  } else {
-    return { template: null, editingSplitId: null };
+    return { template: commonSplits[commonIdx] };
   }
+  return { template: null };
 };

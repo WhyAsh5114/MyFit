@@ -17,11 +17,11 @@
 <h2><span class="capitalize">{params.mode}</span> exercise split</h2>
 <h3>
   {#if url.searchParams.get("editId")}
-    Editing <span class="italic">{data.editingSplitName}</span>
+    Editing <span class="italic">{data.template?.name}</span>
   {:else if url.searchParams.get("cloneId")}
-    Cloning <span class="italic">{data.cloningSplitName}</span>
+    Cloning <span class="italic">{data.template?.name}</span>
   {:else if url.searchParams.get("commonIdx")}
-    Using common split <span class="italic">{data.commonSplitName}</span>
+    Using common split <span class="italic">{data.template?.name}</span>
   {:else}
     Starting from scratch
   {/if}
