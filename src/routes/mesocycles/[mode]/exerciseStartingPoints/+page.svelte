@@ -3,7 +3,7 @@
   $: ({ params } = $page);
 </script>
 
-<h2>New mesocycle</h2>
+<h2><span class="capitalize">{params.mode}</span> mesocycle</h2>
 <h3>Exercise starting points</h3>
 
 <!-- TODO: info about creating a new mesocycle -->
