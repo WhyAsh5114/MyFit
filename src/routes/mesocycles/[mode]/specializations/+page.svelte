@@ -12,7 +12,9 @@
     mesocycleRIRProgression,
     selectedSplitId,
     mesocycleCaloricState,
-    startMesocycleNow
+    startMesocycleNow,
+    editingMesocycleId,
+    clearMesocycleStores
   } from "../mesocycleStore";
   import MyModal from "$lib/components/MyModal.svelte";
   import { goto, invalidate } from "$app/navigation";
@@ -66,10 +68,7 @@
     return true;
   }
 
-  async function createOrEditMesocycle() {
-    // TODO: add/edit
-    if (!validateMesocycle()) return false;
-
+  function buildCurrentMesocycle() {
     let specializations: Mesocycle["specializations"] = null;
     if ($useSpecializations) {
       specializations = [];
@@ -80,7 +79,6 @@
         specializations.push({ muscleGroup, type: "secondary" });
       }
     }
-
     const currentMesocycle: Omit<Mesocycle, "startTimestamp"> = {
       name: $mesocycleName,
       RIRProgression: $mesocycleRIRProgression,
@@ -91,25 +89,41 @@
       performanceLosses: { exercises: [], muscleGroups: [], microcycle: null },
       specializations
     };
+    return currentMesocycle;
+  }
 
+  async function submitMesocycle() {
+    modalOnClose = () => {};
+    if (!validateMesocycle()) return;
+    const currentMesocycle = buildCurrentMesocycle();
+    callCreateOrEditMesocycleEndpoint(currentMesocycle, params.mode);
+  }
+
+  async function callCreateOrEditMesocycleEndpoint(
+    mesocycle: Omit<Mesocycle, "startTimestamp">,
+    mode: string
+  ) {
     callingEndpoint = true;
+    let endpointURL = "/api/mesocycles";
+    if (mode === "edit") endpointURL += `/${$editingMesocycleId}`;
+
     const response = await fetch("/api/mesocycles", {
-      method: "POST",
-      body: JSON.stringify({ currentMesocycle, startNow: $startMesocycleNow }),
+      method: mode === "new" ? "POST" : "PUT",
+      body: JSON.stringify({ mesocycle, startNow: $startMesocycleNow }),
       headers: { "content-type": "application/json" }
     });
+
+    if (response.ok) modalOnClose = invalidateAndRedirect;
     modalTitle = response.ok ? "Success" : "Error";
     modalText = await response.text();
-    if (response.ok) {
-      modalOnClose = async () => {
-        await invalidate("/api/mesocycles");
-        await goto("/mesocycles");
-      };
-    } else {
-      modalOnClose = () => {};
-    }
     modal.show();
     callingEndpoint = false;
+  }
+
+  async function invalidateAndRedirect() {
+    clearMesocycleStores();
+    await invalidate("/api/mesocycles");
+    await goto("/mesocycles");
   }
 </script>
 
@@ -231,7 +245,7 @@
 <button
   class="btn btn-accent btn-block mt-auto"
   disabled={callingEndpoint}
-  on:click={() => createOrEditMesocycle()}
+  on:click={submitMesocycle}
 >
   {#if !callingEndpoint}
     {paramMap[params.mode].action} mesocycle
