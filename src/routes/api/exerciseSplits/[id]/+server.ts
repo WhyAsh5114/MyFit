@@ -35,15 +35,15 @@ export const PUT = async ({ params, locals, request }) => {
   const newExerciseSplit = (await request.json()) as ExerciseSplit;
 
   try {
-    const exerciseSplit = await client
+    const updateResult = await client
       .db()
       .collection<WithUserId<ExerciseSplit>>("exerciseSplits")
-      .findOneAndReplace(
+      .replaceOne(
         { userId: new ObjectId(session.user.id), _id: new ObjectId(params.id) },
         { userId: new ObjectId(session.user.id), ...newExerciseSplit }
       );
 
-    if (exerciseSplit === null) {
+    if (updateResult.modifiedCount === 0) {
       return new Response("Exercise split not found", { status: 404 });
     }
 
