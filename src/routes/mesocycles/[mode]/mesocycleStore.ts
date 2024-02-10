@@ -1,6 +1,11 @@
 import { persisted } from "svelte-persisted-store";
 import { type Writable } from "svelte/store";
 import { muscleGroups } from "$lib/types/arrays";
+import {
+  getPrimarySpecializations,
+  getSecondarySpecializations,
+  getTotalDuration
+} from "$lib/utils/mesocycle";
 
 export const mesocycleName = persisted("mesocycleName", "");
 export const mesocycleCaloricState: Writable<CaloricStateValue> = persisted(
@@ -47,3 +52,17 @@ export function clearStores() {
 }
 
 // TODO: export function for setting store
+export function setStores(mesocycle: WithSID<Mesocycle>) {
+  mesocycleName.set(mesocycle.name);
+  mesocycleCaloricState.set(mesocycle.caloricBalance);
+  mesocycleDuration.set(getTotalDuration(mesocycle.RIRProgression));
+  mesocycleStartRIR.set(mesocycle.RIRProgression.length - 1);
+  customizeRIRProgression.set(false);
+  mesocycleRIRProgression.set(mesocycle.RIRProgression);
+  selectedSplitId.set(mesocycle.exerciseSplitId);
+  remainingMuscleGroups.set(muscleGroups.slice());
+  useSpecializations.set(mesocycle.specializations !== null ? true : false);
+  primarySpecializations.set(getPrimarySpecializations(mesocycle.specializations));
+  secondarySpecializations.set(getSecondarySpecializations(mesocycle.specializations));
+  startMesocycleNow.set(false);
+}
