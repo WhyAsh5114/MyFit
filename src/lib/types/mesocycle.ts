@@ -38,7 +38,7 @@ type Mesocycle = {
   RIRProgression: RIRProgressionData[];
   exerciseSplitId: string;
   caloricBalance: CaloricStateValue;
-  specialization: MuscleGroupSpecialization[] | null;
+  specializations: MuscleGroupSpecialization[] | null;
   startTimestamp: EpochTimeStamp | null;
   endTimestamp: EpochTimeStamp | null;
   workouts: (string | null)[];

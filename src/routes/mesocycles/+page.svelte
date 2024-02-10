@@ -32,10 +32,10 @@
           <span>{getExerciseSplitName(mesocycle.exerciseSplitId)}</span>
           <span>{caloricState?.name}</span>
         </div>
-        {#if mesocycle.specialization}
+        {#if mesocycle.specializations}
           <div class="grid grid-cols-2 gap-2">
             <div class="flex flex-wrap gap-1 mt-1">
-              {#each mesocycle.specialization as specialization}
+              {#each mesocycle.specializations as specialization}
                 {#if specialization.type === "primary"}
                   <span class="badge badge-accent truncate">
                     {specialization.muscleGroup}
@@ -44,7 +44,7 @@
               {/each}
             </div>
             <div class="flex flex-wrap gap-1 mt-1 justify-end">
-              {#each mesocycle.specialization as specialization}
+              {#each mesocycle.specializations as specialization}
                 {#if specialization.type === "secondary"}
                   <span class="badge truncate">
                     {specialization.muscleGroup}

@@ -70,14 +70,14 @@
     // TODO: add/edit
     if (!validateMesocycle()) return false;
 
-    let specialization: Mesocycle["specialization"] = null;
+    let specializations: Mesocycle["specializations"] = null;
     if ($useSpecializations) {
-      specialization = [];
+      specializations = [];
       for (const muscleGroup of $primarySpecializations) {
-        specialization.push({ muscleGroup, type: "primary" });
+        specializations.push({ muscleGroup, type: "primary" });
       }
       for (const muscleGroup of $secondarySpecializations) {
-        specialization.push({ muscleGroup, type: "secondary" });
+        specializations.push({ muscleGroup, type: "secondary" });
       }
     }
 
@@ -89,7 +89,7 @@
       endTimestamp: null,
       workouts: [],
       performanceLosses: { exercises: [], muscleGroups: [], microcycle: null },
-      specialization
+      specializations
     };
 
     callingEndpoint = true;

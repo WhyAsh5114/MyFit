@@ -80,11 +80,11 @@
       {/each}
     </div>
   </div>
-  {#if mesocycle.specialization !== null}
+  {#if mesocycle.specializations !== null}
     <div class="stat col-span-2">
       <div class="stat-title">Specializations</div>
       <div class="flex flex-wrap">
-        {#each mesocycle.specialization as specialization}
+        {#each mesocycle.specializations as specialization}
           <span
             class="badge"
             class:badge-accent={specialization.type === "primary"}
@@ -107,5 +107,5 @@
       Deleting <span class="loading loading-spinner"></span>
     {/if}
   </button>
-  <button class="join-item btn btn-primary">Edit</button>
+  <a class="join-item btn btn-primary" href="/mesocycles/edit?editId={mesocycle._id}">Edit</a>
 </div>
