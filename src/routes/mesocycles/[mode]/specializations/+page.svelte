@@ -131,6 +131,12 @@
     />
   </label>
 </div>
+{#if data.activeMesocycles.length > 0 && $startMesocycleNow}
+  <p class="text-warning text-sm px-1 -mt-2">
+    Doing so will end the current mesocycle,
+    <span class="font-semibold italic">{data.activeMesocycles[0].name}</span>
+  </p>
+{/if}
 
 <div class="form-control">
   <label class="label cursor-pointer">
@@ -220,13 +226,6 @@
       </div>
     </div>
   </div>
-{/if}
-
-{#if data.activeMesocycles.length > 0 && $startMesocycleNow}
-  <p class="text-warning text-sm px-1">
-    Doing so will end the current mesocycle,
-    <span class="font-semibold italic">{data.activeMesocycles[0].name}</span>
-  </p>
 {/if}
 
 <button
