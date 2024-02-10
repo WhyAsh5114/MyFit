@@ -33,8 +33,9 @@ export const secondarySpecializations: Writable<MuscleGroup[]> = persisted(
   []
 );
 export const startMesocycleNow: Writable<boolean> = persisted("startMesocycleNow", false);
+export const editingMesocycleId: Writable<string | null> = persisted("editingMesocycleId", null);
 
-export function clearStores() {
+export function clearMesocycleStores() {
   mesocycleName.set("");
   mesocycleCaloricState.set(0);
   mesocycleDuration.set(6);
@@ -52,7 +53,7 @@ export function clearStores() {
 }
 
 // TODO: export function for setting store
-export function setStores(mesocycle: WithSID<Mesocycle>) {
+export function setMesocycleStores(mesocycle: WithSID<Mesocycle>) {
   mesocycleName.set(mesocycle.name);
   mesocycleCaloricState.set(mesocycle.caloricBalance);
   mesocycleDuration.set(getTotalDuration(mesocycle.RIRProgression));

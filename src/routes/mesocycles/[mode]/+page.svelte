@@ -1,8 +1,10 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import { editingMesocycleId } from "./mesocycleStore.js";
   export let data;
 
   $: ({ params } = $page);
+  $editingMesocycleId = data.editingMesocycleId ?? null;
 
   if (data.template) {
     // set stores

@@ -11,7 +11,7 @@ export const load = async ({ params, url, fetch }) => {
     const response = await fetch(`/api/mesocycles/${editId}`);
     if (response.ok) {
       const mesocycle = (await response.json()) as WithSID<Mesocycle>;
-      return { template: mesocycle };
+      return { template: mesocycle, editingMesocycleId: mesocycle._id };
     }
     const errorCode = response.status as NumericRange<400, 599>;
     error(errorCode, await response.text());
