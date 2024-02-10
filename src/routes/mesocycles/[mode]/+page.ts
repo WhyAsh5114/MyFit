@@ -1,16 +1,21 @@
-import { error } from "@sveltejs/kit";
+import { error, type NumericRange } from "@sveltejs/kit";
 
-export const load = async ({ params }) => {
+export const load = async ({ params, url, fetch }) => {
   const mode = params.mode;
   if (mode !== "new" && mode !== "edit") {
     error(404, "Not found");
   }
 
-  let template: Mesocycle | null = null;
-  if (mode === "edit") {
-    // TODO: load mesocycle here
-    template = null;
+  const editId = url.searchParams.get("editId");
+  if (editId) {
+    const response = await fetch(`/api/mesocycles/${editId}`);
+    if (response.ok) {
+      const mesocycle = (await response.json()) as WithSID<Mesocycle>;
+      return { template: mesocycle };
+    }
+    const errorCode = response.status as NumericRange<400, 599>;
+    error(errorCode, await response.text());
   }
 
-  return { template };
+  return {};
 };
