@@ -1,9 +1,16 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { getTotalSetsOfSplit } from "$lib/utils/exerciseSplits.js";
   import SplitDaysSchedule from "../../SplitDaysSchedule.svelte";
+  import { setExerciseSplitStores } from "../../[mode]/splitStore";
 
   export let data;
   $: ({ exerciseSplits } = data);
+
+  async function loadStoresAndRedirect(exerciseSplit: ExerciseSplit) {
+    setExerciseSplitStores(exerciseSplit);
+    await goto("/exerciseSplits/new?templateType=clone");
+  }
 </script>
 
 <h2>Clone old splits</h2>
@@ -12,9 +19,9 @@
 <div class="flex flex-col h-px grow overflow-y-auto gap-1">
   {#if exerciseSplits.length > 0}
     {#each exerciseSplits as exerciseSplit}
-      <a
+      <button
         class="btn btn-primary rounded-md h-fit"
-        href="/exerciseSplits/new?cloneId={exerciseSplit._id}"
+        on:click={() => loadStoresAndRedirect(exerciseSplit)}
       >
         <div class="flex flex-col gap-1 py-2 w-full">
           <div class="flex justify-between items-center">
@@ -24,8 +31,8 @@
             </span>
           </div>
           <SplitDaysSchedule splitDays={exerciseSplit.splitDays} />
-        </div></a
-      >
+        </div>
+      </button>
     {/each}
   {:else}
     <div class="flex flex-col bg-primary p-2 mb-auto rounded-md">

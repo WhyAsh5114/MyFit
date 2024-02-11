@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto, invalidate } from "$app/navigation";
   import MyModal from "$lib/components/MyModal.svelte";
+  import { setExerciseSplitStores, editingSplitId } from "../../[mode]/splitStore";
   import ViewSplitExercises from "./ViewSplitExercises.svelte";
   import ViewSplitStats from "./ViewSplitStats.svelte";
 
@@ -18,23 +19,13 @@
 
   async function deleteSplit() {
     callingEndpoint = true;
-    try {
-      const response = await fetch(`/api/exerciseSplits/${exerciseSplit._id}`, {
-        method: "DELETE"
-      });
-      if (response.ok) modalOnClose = invalidateAndRedirect;
-      modalTitle = response.ok ? "Success" : "Error";
-      modalText = await response.text();
-      modal.show();
-    } catch (error) {
-      if (error instanceof Error && error.message === "Failed to fetch") {
-        modalOnClose = invalidateAndRedirect;
-        modalTitle = "Error";
-        modalText = `The request failed (potentially due to a network error). Editing & deleting operations cannot be performed when offline`;
-        modal.show();
-      }
-    }
+    const response = await fetch(`/api/exerciseSplits/${exerciseSplit._id}`, {
+      method: "DELETE"
+    });
+    if (response.ok) modalOnClose = invalidateAndRedirect;
     confirmDeleteModal.close();
+    modalTitle = response.ok ? "Success" : "Error";
+    modalText = await response.text();
     modal.show();
     callingEndpoint = false;
   }
@@ -42,6 +33,12 @@
   async function invalidateAndRedirect() {
     await invalidate(`/api/exerciseSplits/${exerciseSplit._id}`);
     await goto("/exerciseSplits");
+  }
+
+  async function editExerciseSplit(exerciseSplit: WithSID<ExerciseSplit>) {
+    $editingSplitId = exerciseSplit._id;
+    setExerciseSplitStores(exerciseSplit);
+    await goto(`/exerciseSplits/edit?editId=${exerciseSplit._id}`);
   }
 </script>
 
@@ -96,7 +93,7 @@
 
 <div class="join grid grid-cols-2 mt-auto">
   <button class="join-item btn btn-error" on:click={() => confirmDeleteModal.show()}>Delete</button>
-  <a class="join-item btn btn-primary" href="/exerciseSplits/edit?editId={exerciseSplit._id}">
+  <button class="join-item btn btn-primary" on:click={() => editExerciseSplit(exerciseSplit)}>
     Edit
-  </a>
+  </button>
 </div>
