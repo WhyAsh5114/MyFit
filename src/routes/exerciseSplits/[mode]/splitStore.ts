@@ -1,14 +1,14 @@
 import { persisted } from "svelte-persisted-store";
 import { get, type Writable } from "svelte/store";
 
-export const emptyExerciseSplitStore = {
+export const defaultExerciseSplit = {
   name: "",
   splitDays: Array.from({ length: 7 }, () => ({ name: "", exerciseTemplates: [] }))
 };
 
 export const originalExerciseSplit: Writable<ExerciseSplit> = persisted(
   "originalExerciseSplit",
-  emptyExerciseSplitStore
+  JSON.parse(JSON.stringify(defaultExerciseSplit))
 );
 export const splitName = persisted("splitName", "");
 export const splitStructure: Writable<(string | null)[]> = persisted(

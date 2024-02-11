@@ -12,7 +12,7 @@
   $: templateType = url.searchParams.get("templateType");
 
   async function resetSplitAndRedirect() {
-    setExerciseSplitStores($originalExerciseSplit as ExerciseSplit);
+    setExerciseSplitStores($originalExerciseSplit);
     await goto(`/exerciseSplits/${params.mode}/structure`);
   }
 </script>

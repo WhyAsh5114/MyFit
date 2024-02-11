@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { emptyExerciseSplitStore, setExerciseSplitStores } from "../[mode]/splitStore";
+  import { defaultExerciseSplit, setExerciseSplitStores } from "../[mode]/splitStore";
 
   const options = [
     {
@@ -7,7 +7,7 @@
       description: "Create a brand new exercise split from scratch",
       link: "/exerciseSplits/new",
       onClick: () => {
-        setExerciseSplitStores(emptyExerciseSplitStore);
+        setExerciseSplitStores(JSON.parse(JSON.stringify(defaultExerciseSplit)));
       }
     },
     {
