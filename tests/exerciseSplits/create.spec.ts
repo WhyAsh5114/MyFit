@@ -326,7 +326,7 @@ test("warn about exercise deletion when changing structure", async ({ page }) =>
 test("create a common split", async ({ page }) => {
   await page.getByRole("link", { name: "Create new split" }).click();
   await page.getByRole("link", { name: "Use common splits Start from" }).click();
-  await page.getByRole("link", { name: "Yoked split 15.00 sets/day A" }).click();
+  await page.getByRole("button", { name: "Yoked split 15.00 sets/day A" }).click();
   await page.getByRole("link", { name: "new exercise split" }).click();
   await page.getByRole("button", { name: "Select exercises" }).click();
   await page.getByRole("button", { name: "Create exercise split" }).click();
@@ -334,7 +334,7 @@ test("create a common split", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Yoked split 75 sets Back," })).toBeVisible();
   await page.getByRole("link", { name: "Create new split" }).click();
   await page.getByRole("link", { name: "Use common splits Start from" }).click();
-  await page.getByRole("link", { name: "Pull Push Legs 11.33 sets/day" }).click();
+  await page.getByRole("button", { name: "Pull Push Legs 11.33 sets/day" }).click();
   await page.getByRole("link", { name: "new exercise split" }).click();
   await page.getByRole("button", { name: "Select exercises" }).click();
   await page.getByRole("button", { name: "Create exercise split" }).click();
@@ -352,7 +352,7 @@ test("clone an old split", async ({ page }) => {
 
   await page.getByRole("link", { name: "Create new split" }).click();
   await page.getByRole("link", { name: "Clone old splits Use one of" }).click();
-  await page.getByRole("link", { name: "Pull Push Legs 68 sets Pull A" }).click();
+  await page.getByRole("button", { name: "Pull Push Legs 68 sets Pull A" }).click();
   await page.getByRole("link", { name: "new exercise split" }).click();
   await page.getByPlaceholder("Type here").fill("Pull Push Legs 2");
   await page.getByRole("button", { name: "Select exercises" }).click();

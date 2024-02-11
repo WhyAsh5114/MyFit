@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 
 test("edit the created split", async ({ page }) => {
   await page.getByRole("link", { name: "Yoked split 75 sets Back," }).click();
-  await page.getByRole("link", { name: "Edit" }).click();
+  await page.getByRole("button", { name: "Edit" }).click();
   await page.getByRole("link", { name: "edit exercise split" }).click();
   await page.getByPlaceholder("Type here").fill("Yoked split (edited)");
   await page.locator("#mark-day4-as-rest").check();
