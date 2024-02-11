@@ -42,7 +42,7 @@
   function updateNotMatchedDays() {
     notMatchedDays.clear();
     $exerciseSplitDays.forEach((splitDay) => {
-      if (splitDay) notMatchedDays.add(splitDay.name);
+      if (splitDay?.name) notMatchedDays.add(splitDay.name);
     });
     notMatchedDays = notMatchedDays;
   }
