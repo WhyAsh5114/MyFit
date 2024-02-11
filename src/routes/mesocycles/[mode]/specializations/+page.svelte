@@ -104,15 +104,18 @@
     mode: string
   ) {
     callingEndpoint = true;
-    let endpointURL = "/api/mesocycles";
-    let requestBody: { currentMesocycle: Omit<Mesocycle, "startTimestamp">; startNow?: boolean } = {
-      currentMesocycle
-    };
+    let endpointURL;
+    let requestBody;
 
-    if (mode === "new") requestBody.startNow = $startMesocycleNow;
-    if (mode === "edit") endpointURL += `/${$editingMesocycleId}`;
+    if (mode === "new") {
+      endpointURL = "/api/mesocycles";
+      requestBody = { currentMesocycle, startNow: $startMesocycleNow };
+    } else {
+      endpointURL = `/api/mesocycles/${$editingMesocycleId}`;
+      requestBody = currentMesocycle;
+    }
 
-    const response = await fetch("/api/mesocycles", {
+    const response = await fetch(endpointURL, {
       method: mode === "new" ? "POST" : "PUT",
       body: JSON.stringify(requestBody),
       headers: { "content-type": "application/json" }
