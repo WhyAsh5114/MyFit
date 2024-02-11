@@ -39,7 +39,6 @@ async function deleteTestUserAndSession(user: AdapterUser, session: AdapterSessi
 
 export async function deleteUserData(userId: string) {
   const client = await clientPromise;
-  console.log(userId);
   await client
     .db()
     .collection<WithUserId<ExerciseSplit>>("exerciseSplits")

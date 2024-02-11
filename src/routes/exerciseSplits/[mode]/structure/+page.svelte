@@ -32,7 +32,6 @@
     }
 
     const noDuplicates = new Set($splitStructure.filter((splitDay) => splitDay !== null));
-    console.log(noDuplicates, nonRestDays);
     if (noDuplicates.size < nonRestDays) {
       noDuplicatesModal.show();
       return false;
