@@ -18,9 +18,7 @@ export const handle = SvelteKitAuth({
     GitHub({ clientId: AUTH_GITHUB_ID, clientSecret: AUTH_GITHUB_SECRET })
   ],
   // @ts-expect-error: still in beta...
-  adapter: MongoDBAdapter(clientPromise, {
-    databaseName: "MyFit_v3"
-  }),
+  adapter: MongoDBAdapter(clientPromise),
   session: { strategy: "database" },
   callbacks: {
     // Attach mongoDB user document ID for easier queries

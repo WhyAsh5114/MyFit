@@ -9,7 +9,7 @@ import { ObjectId } from "bson";
 import type { AdapterSession, AdapterUser } from "@auth/core/adapters";
 import { type WithUserId } from "$lib/types/arrays";
 dotenv.config();
-const adapter = MongoDBAdapter(clientPromise, { databaseName: "MyFit_v3" });
+const adapter = MongoDBAdapter(clientPromise);
 
 async function createTestUserAndSession() {
   const randomUserName = new ObjectId().toString();
@@ -34,24 +34,26 @@ async function deleteTestUserAndSession(user: AdapterUser, session: AdapterSessi
   await adapter.deleteSession(session.sessionToken);
   // @ts-expect-error idk why, always works though
   await adapter.deleteUser(user.id);
+  await deleteUserData(user.id);
 }
 
-async function deleteUserData(user: AdapterUser) {
+export async function deleteUserData(userId: string) {
   const client = await clientPromise;
+  console.log(userId);
   await client
     .db()
     .collection<WithUserId<ExerciseSplit>>("exerciseSplits")
-    .deleteMany({ userId: new ObjectId(user.id) });
+    .deleteMany({ userId: new ObjectId(userId) });
   await client
     .db()
     .collection<WithUserId<Mesocycle>>("mesocycles")
-    .deleteMany({ userId: new ObjectId(user.id) });
+    .deleteMany({ userId: new ObjectId(userId) });
 
   // TODO: change type to Workout
   await client
     .db()
     .collection<WithUserId<ExerciseSplit>>("workouts")
-    .deleteMany({ userId: new ObjectId(user.id) });
+    .deleteMany({ userId: new ObjectId(userId) });
 }
 
 export * from "@playwright/test";
@@ -105,7 +107,7 @@ export const test = baseTest.extend<
   autoTestFixture: [
     async ({ userAndSession }, use) => {
       // Clear user data for each test, once before each test should be enough
-      await deleteUserData(userAndSession.user);
+      await deleteUserData(userAndSession.user.id);
       await use("autoTestFixture");
     },
     { scope: "test", auto: true }
