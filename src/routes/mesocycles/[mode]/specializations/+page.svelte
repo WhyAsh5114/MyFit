@@ -136,7 +136,7 @@
 
 <div class="form-control">
   <label class="label cursor-pointer">
-    <span class="label-text">Start immediately</span>
+    <span class="label-text text-base font-semibold">Start immediately</span>
     <input
       id="startMesocycleNow"
       class="toggle"
@@ -146,7 +146,7 @@
   </label>
 </div>
 {#if data.activeMesocycles.length > 0 && $startMesocycleNow}
-  <p class="text-warning text-sm px-1 -mt-2">
+  <p class="text-warning text-sm px-1 -mt-2" transition:slide={{ duration: 200 }}>
     Doing so will end the current mesocycle,
     <span class="font-semibold italic">{data.activeMesocycles[0].name}</span>
   </p>
@@ -154,7 +154,7 @@
 
 <div class="form-control">
   <label class="label cursor-pointer">
-    <span class="label-text">Use specialization</span>
+    <span class="label-text text-base font-semibold">Use specialization</span>
     <input
       id="use-specializtion"
       class="toggle"
@@ -165,9 +165,9 @@
 </div>
 
 {#if $useSpecializations}
-  <div class="flex flex-col gap-2 max-w-sm m-auto w-full">
-    <div transition:slide>
-      <label class="form-control w-full max-w-sm mx-auto">
+  <div class="flex flex-col gap-2 mx-auto w-full -mt-4">
+    <div transition:slide={{ duration: 200 }}>
+      <label class="form-control w-full mx-auto">
         <div class="label">
           <span class="label-text">Select a muscle group to specialize</span>
         </div>
@@ -182,7 +182,7 @@
           {/each}
         </select>
       </label>
-      <div class="join grid grid-cols-2 gap-1 mt-1 rounded-md max-w-sm mx-auto w-full">
+      <div class="join grid grid-cols-2 gap-1 mt-1 rounded-md mx-auto w-full">
         <button
           class="join-item btn btn-primary"
           on:click={() => specializeMuscleGroup("secondary")}
@@ -197,7 +197,7 @@
         </button>
       </div>
     </div>
-    <div class="flex flex-col gap-1" transition:slide>
+    <div class="flex flex-col gap-1" transition:slide={{ duration: 200 }}>
       <div class="collapse collapse-arrow rounded-md bg-primary">
         <input id="primary-specializations" name="specialization-accordion" checked type="radio" />
         <div class="collapse-title text-accent text-lg font-medium">Primary specializations</div>

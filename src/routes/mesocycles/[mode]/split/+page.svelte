@@ -21,7 +21,7 @@
 <h2><span class="capitalize">{params.mode}</span> mesocycle</h2>
 <h3>Split</h3>
 
-<label class="form-control w-full max-w-sm">
+<label class="form-control w-full">
   <div class="label">
     <span class="label-text">Search for an exercise split</span>
   </div>
