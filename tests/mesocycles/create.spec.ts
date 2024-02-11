@@ -1,4 +1,5 @@
 import { commonSplits } from "$lib/commonMesocycles";
+import { dateFormatter } from "$lib/utils/common";
 import { test, expect } from "../fixtures";
 
 const commonExerciseSplit = commonSplits[0];
@@ -91,4 +92,54 @@ test("mesocycle creation validation logic", async ({ page }) => {
   );
 });
 
-// TODO tests: start immediately logic, Read, Update, Delete
+test("active, inactive, and start immediately", async ({ page }) => {
+  await page.getByRole("link", { name: "Create new mesocycle" }).click();
+  await page.getByRole("link", { name: "new mesocycle" }).click();
+  await page.getByPlaceholder("Type here").fill("Inactive");
+  await page.getByRole("button", { name: "Select exercise split" }).click();
+  await page.getByRole("button", { name: "Pull Push Legs 68 sets Pull A" }).click();
+  await page.getByRole("link", { name: "Select exercise starting" }).click();
+  await page.getByRole("link", { name: "Select specializations" }).click();
+  await page.getByRole("button", { name: "Create mesocycle" }).click();
+  await page.getByTestId("close-modal-button").click();
+  await expect(page.getByRole("main")).toContainText(
+    "Inactive Not used Pull Push Legs Iso-caloric"
+  );
+
+  await page.getByRole("link", { name: "Create new mesocycle" }).click();
+  await page.getByRole("link", { name: "new mesocycle" }).click();
+  await page.getByPlaceholder("Type here").click();
+  await page.getByPlaceholder("Type here").fill("Active");
+  await page.getByRole("button", { name: "Select exercise split" }).click();
+  await page.getByRole("button", { name: "Pull Push Legs 68 sets Pull A" }).click();
+  await page.getByRole("link", { name: "Select exercise starting" }).click();
+  await page.getByRole("link", { name: "Select specializations" }).click();
+  await page.getByLabel("Start immediately").check();
+  await page.getByRole("button", { name: "Create mesocycle" }).click();
+  await page.getByTestId("close-modal-button").click();
+  await expect(page.getByRole("main")).toContainText(
+    `Active ${dateFormatter(Number(new Date()), false)} Pull Push Legs Iso-caloric`
+  );
+
+  await page.getByRole("link", { name: "Create new mesocycle" }).click();
+  await page.getByRole("link", { name: "new mesocycle" }).click();
+  await page.getByPlaceholder("Type here").click();
+  await page.getByPlaceholder("Type here").fill("ForcedActive");
+  await page.getByRole("button", { name: "Select exercise split" }).click();
+  await page.getByRole("button", { name: "Pull Push Legs 68 sets Pull A" }).click();
+  await page.getByRole("link", { name: "Select exercise starting" }).click();
+  await page.getByRole("link", { name: "Select specializations" }).click();
+  await page.getByLabel("Start immediately").check();
+  await expect(page.getByText("Doing so will end the current")).toBeVisible();
+  await expect(page.getByRole("paragraph")).toContainText(
+    "Doing so will end the current mesocycle, Active"
+  );
+  await page.getByRole("button", { name: "Create mesocycle" }).click();
+  await page.getByTestId("close-modal-button").click();
+  await expect(page.getByRole("main")).toContainText(
+    `Active ${dateFormatter(Number(new Date()), false)} to ${dateFormatter(Number(new Date()), false)} Pull Push Legs Iso-caloric`
+  );
+  await expect(page.getByRole("main")).toContainText(
+    `ForcedActive ${dateFormatter(Number(new Date()), false)} Pull Push Legs Iso-caloric`
+  );
+});
