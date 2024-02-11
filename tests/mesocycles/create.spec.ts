@@ -18,7 +18,7 @@ test("show no mesocycles created", async ({ page }) => {
 });
 
 test("create mesocycle from UI", async ({ page }) => {
-  await page.getByRole("link", { name: "Create new mesocycle" }).click();
+  await page.getByRole("button", { name: "Create new mesocycle" }).click();
   await page.getByRole("link", { name: "new mesocycle" }).click();
   await page.getByPlaceholder("Type here").fill("MesocycleName");
   await page.getByLabel("Caloric state Hypo-caloric (").selectOption("1");
@@ -37,7 +37,7 @@ test("create mesocycle from UI", async ({ page }) => {
 });
 
 test("mesocycle creation validation logic", async ({ page }) => {
-  await page.getByRole("link", { name: "Create new mesocycle" }).click();
+  await page.getByRole("button", { name: "Create new mesocycle" }).click();
   await page.getByRole("link", { name: "new mesocycle" }).click();
   await page.getByPlaceholder("Type here").fill("MesocycleName");
   await page.getByLabel("Caloric state Hypo-caloric (").selectOption("1");
@@ -93,7 +93,7 @@ test("mesocycle creation validation logic", async ({ page }) => {
 });
 
 test("active, inactive, and start immediately", async ({ page }) => {
-  await page.getByRole("link", { name: "Create new mesocycle" }).click();
+  await page.getByRole("button", { name: "Create new mesocycle" }).click();
   await page.getByRole("link", { name: "new mesocycle" }).click();
   await page.getByPlaceholder("Type here").fill("Inactive");
   await page.getByRole("button", { name: "Select exercise split" }).click();
@@ -106,7 +106,7 @@ test("active, inactive, and start immediately", async ({ page }) => {
     "Inactive Not used Pull Push Legs Iso-caloric"
   );
 
-  await page.getByRole("link", { name: "Create new mesocycle" }).click();
+  await page.getByRole("button", { name: "Create new mesocycle" }).click();
   await page.getByRole("link", { name: "new mesocycle" }).click();
   await page.getByPlaceholder("Type here").click();
   await page.getByPlaceholder("Type here").fill("Active");
@@ -121,7 +121,7 @@ test("active, inactive, and start immediately", async ({ page }) => {
     `Active ${dateFormatter(Number(new Date()), false)} Pull Push Legs Iso-caloric`
   );
 
-  await page.getByRole("link", { name: "Create new mesocycle" }).click();
+  await page.getByRole("button", { name: "Create new mesocycle" }).click();
   await page.getByRole("link", { name: "new mesocycle" }).click();
   await page.getByPlaceholder("Type here").click();
   await page.getByPlaceholder("Type here").fill("ForcedActive");
