@@ -17,7 +17,7 @@ export const mesocycleStartRIR = persisted("mesocycleStartRIR", 3);
 export const customizeRIRProgression = persisted("customizeRIRProgression", false);
 export const mesocycleRIRProgression: Writable<Mesocycle["RIRProgression"]> = persisted(
   "mesocycleRIRProgression",
-  Array.from({ length: 3 }, (_, idx) => ({ specificRIR: idx, cycles: 0 }))
+  Array.from({ length: 4 }, (_, idx) => ({ specificRIR: idx, cycles: 0 }))
 );
 
 export const selectedSplitId: Writable<null | string> = persisted("selectedSplitId", null);
@@ -42,7 +42,7 @@ export function clearMesocycleStores() {
   mesocycleStartRIR.set(3);
   customizeRIRProgression.set(false);
   mesocycleRIRProgression.set(
-    Array.from({ length: 3 }, (_, idx) => ({ specificRIR: idx, cycles: 0 }))
+    Array.from({ length: 4 }, (_, idx) => ({ specificRIR: idx, cycles: 0 }))
   );
   selectedSplitId.set(null);
   remainingMuscleGroups.set(muscleGroups.slice());
@@ -52,7 +52,6 @@ export function clearMesocycleStores() {
   startMesocycleNow.set(false);
 }
 
-// TODO: export function for setting store
 export function setMesocycleStores(mesocycle: WithSID<Mesocycle>) {
   mesocycleName.set(mesocycle.name);
   mesocycleCaloricState.set(mesocycle.caloricBalance);
