@@ -83,7 +83,7 @@
   {#if mesocycle.specializations !== null}
     <div class="stat col-span-2">
       <div class="stat-title">Specializations</div>
-      <div class="flex flex-wrap">
+      <div class="flex flex-wrap gap-1 font-semibold mt-2">
         {#each mesocycle.specializations as specialization}
           <span
             class="badge"
