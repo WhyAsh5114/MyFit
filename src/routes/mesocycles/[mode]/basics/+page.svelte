@@ -42,6 +42,7 @@
       _customRIRDurations.reverse();
     }
     customRIRDurations = _customRIRDurations;
+    $mesocycleRIRProgression = JSON.parse(JSON.stringify(customRIRDurations));
   }
 
   async function submitForm() {
