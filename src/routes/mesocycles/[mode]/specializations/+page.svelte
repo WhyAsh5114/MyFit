@@ -100,16 +100,21 @@
   }
 
   async function callCreateOrEditMesocycleEndpoint(
-    mesocycle: Omit<Mesocycle, "startTimestamp">,
+    currentMesocycle: Omit<Mesocycle, "startTimestamp">,
     mode: string
   ) {
     callingEndpoint = true;
     let endpointURL = "/api/mesocycles";
+    let requestBody: { currentMesocycle: Omit<Mesocycle, "startTimestamp">; startNow?: boolean } = {
+      currentMesocycle
+    };
+
+    if (mode === "new") requestBody.startNow = $startMesocycleNow;
     if (mode === "edit") endpointURL += `/${$editingMesocycleId}`;
 
     const response = await fetch("/api/mesocycles", {
       method: mode === "new" ? "POST" : "PUT",
-      body: JSON.stringify({ mesocycle, startNow: $startMesocycleNow }),
+      body: JSON.stringify(requestBody),
       headers: { "content-type": "application/json" }
     });
 
@@ -134,22 +139,24 @@
 <h2><span class="capitalize">{params.mode}</span> mesocycle</h2>
 <h3>Specializations</h3>
 
-<div class="form-control">
-  <label class="label cursor-pointer">
-    <span class="label-text text-base font-semibold">Start immediately</span>
-    <input
-      id="startMesocycleNow"
-      class="toggle"
-      type="checkbox"
-      bind:checked={$startMesocycleNow}
-    />
-  </label>
-</div>
-{#if data.activeMesocycles.length > 0 && $startMesocycleNow}
-  <p class="text-warning text-sm px-1 -mt-2" transition:slide={{ duration: 200 }}>
-    Doing so will end the current mesocycle,
-    <span class="font-semibold italic">{data.activeMesocycles[0].name}</span>
-  </p>
+{#if params.mode === "new"}
+  <div class="form-control">
+    <label class="label cursor-pointer">
+      <span class="label-text text-base font-semibold">Start immediately</span>
+      <input
+        id="startMesocycleNow"
+        class="toggle"
+        type="checkbox"
+        bind:checked={$startMesocycleNow}
+      />
+    </label>
+  </div>
+  {#if data.activeMesocycles.length > 0 && $startMesocycleNow}
+    <p class="text-warning text-sm px-1 -mt-2" transition:slide={{ duration: 200 }}>
+      Doing so will end the current mesocycle,
+      <span class="font-semibold italic">{data.activeMesocycles[0].name}</span>
+    </p>
+  {/if}
 {/if}
 
 <div class="form-control">
