@@ -13,8 +13,7 @@
     selectedSplitId,
     mesocycleCaloricState,
     startMesocycleNow,
-    editingMesocycleId,
-    clearMesocycleStores
+    editingMesocycleId
   } from "../mesocycleStore";
   import MyModal from "$lib/components/MyModal.svelte";
   import { goto, invalidate } from "$app/navigation";
@@ -129,7 +128,6 @@
   }
 
   async function invalidateAndRedirect() {
-    clearMesocycleStores();
     await invalidate("/api/mesocycles");
     await goto("/mesocycles");
   }

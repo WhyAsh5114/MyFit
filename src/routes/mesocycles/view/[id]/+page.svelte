@@ -4,6 +4,7 @@
   import { caloricStates } from "$lib/types/arrays.js";
   import { dateFormatter } from "$lib/utils/common";
   import PlayIcon from "virtual:icons/mdi/play";
+  import { setMesocycleStores } from "../../[mode]/mesocycleStore";
 
   export let data;
   $: ({ mesocycle, exerciseSplit } = data);
@@ -29,6 +30,11 @@
     }
     callingEndpoint = false;
     modal.show();
+  }
+
+  async function editMesocycle() {
+    setMesocycleStores(mesocycle);
+    await goto(`/mesocycles/edit?editId=${mesocycle._id}`);
   }
 </script>
 
@@ -107,5 +113,5 @@
       Deleting <span class="loading loading-spinner"></span>
     {/if}
   </button>
-  <a class="join-item btn btn-primary" href="/mesocycles/edit?editId={mesocycle._id}">Edit</a>
+  <button class="join-item btn btn-primary" on:click={editMesocycle}> Edit </button>
 </div>

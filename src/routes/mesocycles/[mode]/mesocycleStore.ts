@@ -1,5 +1,5 @@
 import { persisted } from "svelte-persisted-store";
-import { type Writable } from "svelte/store";
+import { get, type Writable } from "svelte/store";
 import { muscleGroups } from "$lib/types/arrays";
 import {
   getPrimarySpecializations,
@@ -7,6 +7,31 @@ import {
   getTotalDuration
 } from "$lib/utils/mesocycle";
 
+type StoreMesocycleType = {
+  name: string;
+  RIRProgression: Mesocycle["RIRProgression"];
+  specializations: Mesocycle["specializations"];
+  caloricBalance: Mesocycle["caloricBalance"];
+  exerciseSplitId: Mesocycle["exerciseSplitId"] | null;
+};
+
+export const defaultMesocycle: StoreMesocycleType = {
+  name: "",
+  RIRProgression: [
+    { specificRIR: 3, cycles: 2 },
+    { specificRIR: 2, cycles: 2 },
+    { specificRIR: 1, cycles: 1 },
+    { specificRIR: 0, cycles: 1 }
+  ],
+  caloricBalance: 0,
+  specializations: null,
+  exerciseSplitId: null
+};
+
+export const originalMesocycle = persisted(
+  "originalMesocycle",
+  JSON.parse(JSON.stringify(defaultMesocycle))
+);
 export const mesocycleName = persisted("mesocycleName", "");
 export const mesocycleCaloricState: Writable<CaloricStateValue> = persisted(
   "mesocycleCaloricState",
@@ -17,7 +42,12 @@ export const mesocycleStartRIR = persisted("mesocycleStartRIR", 3);
 export const customizeRIRProgression = persisted("customizeRIRProgression", false);
 export const mesocycleRIRProgression: Writable<Mesocycle["RIRProgression"]> = persisted(
   "mesocycleRIRProgression",
-  Array.from({ length: 4 }, (_, idx) => ({ specificRIR: idx, cycles: 0 }))
+  [
+    { specificRIR: 3, cycles: 2 },
+    { specificRIR: 2, cycles: 2 },
+    { specificRIR: 1, cycles: 1 },
+    { specificRIR: 0, cycles: 1 }
+  ]
 );
 
 export const selectedSplitId: Writable<null | string> = persisted("selectedSplitId", null);
@@ -35,24 +65,8 @@ export const secondarySpecializations: Writable<MuscleGroup[]> = persisted(
 export const startMesocycleNow: Writable<boolean> = persisted("startMesocycleNow", false);
 export const editingMesocycleId: Writable<string | null> = persisted("editingMesocycleId", null);
 
-export function clearMesocycleStores() {
-  mesocycleName.set("");
-  mesocycleCaloricState.set(0);
-  mesocycleDuration.set(6);
-  mesocycleStartRIR.set(3);
-  customizeRIRProgression.set(false);
-  mesocycleRIRProgression.set(
-    Array.from({ length: 4 }, (_, idx) => ({ specificRIR: idx, cycles: 0 }))
-  );
-  selectedSplitId.set(null);
-  remainingMuscleGroups.set(muscleGroups.slice());
-  useSpecializations.set(false);
-  primarySpecializations.set([]);
-  secondarySpecializations.set([]);
-  startMesocycleNow.set(false);
-}
-
-export function setMesocycleStores(mesocycle: WithSID<Mesocycle>) {
+export function setMesocycleStores(mesocycle: StoreMesocycleType) {
+  originalMesocycle.set(mesocycle);
   mesocycleName.set(mesocycle.name);
   mesocycleCaloricState.set(mesocycle.caloricBalance);
   mesocycleDuration.set(getTotalDuration(mesocycle.RIRProgression));
@@ -65,4 +79,12 @@ export function setMesocycleStores(mesocycle: WithSID<Mesocycle>) {
   primarySpecializations.set(getPrimarySpecializations(mesocycle.specializations));
   secondarySpecializations.set(getSecondarySpecializations(mesocycle.specializations));
   startMesocycleNow.set(false);
+}
+
+export function didMesocycleStoresChange() {
+  const mesocycle = get(originalMesocycle);
+  if (mesocycle.name !== get(mesocycleName)) return true;
+  // TODO: match the rest of the props
+
+  return false;
 }

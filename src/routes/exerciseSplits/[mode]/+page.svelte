@@ -40,6 +40,7 @@
     to consider when making your exercise split:
   </p>
   <h2>Frequency</h2>
+  <!-- TODO: finish this info page -->
 </article>
 
 {#if didExerciseSplitStoresChange()}

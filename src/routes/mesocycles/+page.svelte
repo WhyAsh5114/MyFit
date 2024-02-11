@@ -1,10 +1,17 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { caloricStates } from "$lib/types/arrays.js";
   import { dateFormatter } from "$lib/utils/common.js";
+  import { defaultMesocycle, setMesocycleStores } from "./[mode]/mesocycleStore.js";
   export let data;
 
   function getExerciseSplitName(id: string) {
     return data.exerciseSplits.find((split) => split._id === id)?.name;
+  }
+
+  async function createNewMesocycle() {
+    setMesocycleStores(JSON.parse(JSON.stringify(defaultMesocycle)));
+    await goto("/mesocycles/new");
   }
 </script>
 
@@ -64,4 +71,4 @@
   {/each}
 </div>
 
-<a class="btn btn-accent mt-2" href="/mesocycles/new">Create new mesocycle</a>
+<button class="btn btn-accent mt-2" on:click={createNewMesocycle}>Create new mesocycle</button>
