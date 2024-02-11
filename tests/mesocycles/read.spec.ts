@@ -1,6 +1,7 @@
 import { commonSplits } from "$lib/commonMesocycles";
 import { dateFormatter } from "$lib/utils/common";
 import { expect, test } from "../fixtures";
+import { basicMesocycle } from "./basicMesocycle";
 
 const commonExerciseSplit = commonSplits[0];
 
@@ -15,37 +16,7 @@ test.beforeEach(async ({ page }) => {
 
   const exerciseSplitId = page.url().split("/").at(-1) as string;
   const requestBody: { currentMesocycle: Omit<Mesocycle, "startTimestamp">; startNow: boolean } = {
-    currentMesocycle: {
-      name: "MesocycleName",
-      RIRProgression: [
-        {
-          specificRIR: 0,
-          cycles: 1
-        },
-        {
-          specificRIR: 1,
-          cycles: 3
-        },
-        {
-          specificRIR: 2,
-          cycles: 3
-        },
-        {
-          specificRIR: 3,
-          cycles: 3
-        }
-      ],
-      exerciseSplitId,
-      caloricBalance: 0,
-      endTimestamp: null,
-      workouts: [],
-      performanceLosses: {
-        exercises: [],
-        muscleGroups: [],
-        microcycle: null
-      },
-      specializations: null
-    },
+    currentMesocycle: { ...basicMesocycle, exerciseSplitId },
     startNow: true
   };
   await page.request.post("/api/mesocycles", {
