@@ -2,7 +2,6 @@
   import SplitDaySelector from "../../SplitDaySelector.svelte";
   import ExerciseSplitTable from "../../ExerciseSplitTable.svelte";
   import {
-    clearExerciseSplitStores,
     editingSplitId,
     exerciseSplitDays,
     splitName
@@ -97,7 +96,6 @@
   }
 
   async function invalidateAndRedirect() {
-    clearExerciseSplitStores();
     await invalidate("/api/exerciseSplits");
     await goto("/exerciseSplits");
   }
