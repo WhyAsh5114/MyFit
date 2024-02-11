@@ -8,12 +8,9 @@
     secondarySpecializations,
     useSpecializations,
     remainingMuscleGroups,
-    mesocycleName,
-    mesocycleRIRProgression,
-    selectedSplitId,
-    mesocycleCaloricState,
     startMesocycleNow,
-    editingMesocycleId
+    editingMesocycleId,
+    buildMesocycleFromStores
   } from "../mesocycleStore";
   import MyModal from "$lib/components/MyModal.svelte";
   import { goto, invalidate } from "$app/navigation";
@@ -67,34 +64,10 @@
     return true;
   }
 
-  function buildCurrentMesocycle() {
-    let specializations: Mesocycle["specializations"] = null;
-    if ($useSpecializations) {
-      specializations = [];
-      for (const muscleGroup of $primarySpecializations) {
-        specializations.push({ muscleGroup, type: "primary" });
-      }
-      for (const muscleGroup of $secondarySpecializations) {
-        specializations.push({ muscleGroup, type: "secondary" });
-      }
-    }
-    const currentMesocycle: Omit<Mesocycle, "startTimestamp"> = {
-      name: $mesocycleName,
-      RIRProgression: $mesocycleRIRProgression,
-      exerciseSplitId: $selectedSplitId as string,
-      caloricBalance: $mesocycleCaloricState,
-      endTimestamp: null,
-      workouts: [],
-      performanceLosses: { exercises: [], muscleGroups: [], microcycle: null },
-      specializations
-    };
-    return currentMesocycle;
-  }
-
   async function submitMesocycle() {
     modalOnClose = () => {};
     if (!validateMesocycle()) return;
-    const currentMesocycle = buildCurrentMesocycle();
+    const currentMesocycle = buildMesocycleFromStores();
     callCreateOrEditMesocycleEndpoint(currentMesocycle, params.mode);
   }
 

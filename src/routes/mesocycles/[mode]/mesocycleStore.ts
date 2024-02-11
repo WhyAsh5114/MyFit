@@ -28,7 +28,7 @@ export const defaultMesocycle: StoreMesocycleType = {
   exerciseSplitId: null
 };
 
-export const originalMesocycle = persisted(
+export const originalMesocycle: Writable<StoreMesocycleType> = persisted(
   "originalMesocycle",
   JSON.parse(JSON.stringify(defaultMesocycle))
 );
@@ -87,4 +87,28 @@ export function didMesocycleStoresChange() {
   // TODO: match the rest of the props
 
   return false;
+}
+
+export function buildMesocycleFromStores() {
+  let specializations: Mesocycle["specializations"] = null;
+  if (get(useSpecializations)) {
+    specializations = [];
+    for (const muscleGroup of get(primarySpecializations)) {
+      specializations.push({ muscleGroup, type: "primary" });
+    }
+    for (const muscleGroup of get(secondarySpecializations)) {
+      specializations.push({ muscleGroup, type: "secondary" });
+    }
+  }
+  const currentMesocycle: Omit<Mesocycle, "startTimestamp"> = {
+    name: get(mesocycleName),
+    RIRProgression: get(mesocycleRIRProgression),
+    exerciseSplitId: get(selectedSplitId) as string,
+    caloricBalance: get(mesocycleCaloricState),
+    endTimestamp: null,
+    workouts: [],
+    performanceLosses: { exercises: [], muscleGroups: [], microcycle: null },
+    specializations
+  };
+  return currentMesocycle;
 }
