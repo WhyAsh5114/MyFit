@@ -72,5 +72,6 @@ export default defineConfig({
     command: "npm run build && npm run preview",
     port: 4173,
     reuseExistingServer: !process.env.CI
-  }
+  },
+  globalTeardown: "./tests/global-teardown"
 });
