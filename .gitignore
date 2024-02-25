@@ -16,3 +16,5 @@ dev-dist
 /blob-report/
 /playwright/.cache/
 authenticatedStorageStates
+.next
+next-env.d.ts
