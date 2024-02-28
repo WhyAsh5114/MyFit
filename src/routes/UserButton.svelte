@@ -20,10 +20,7 @@
     <DropdownMenu.Trigger>
       <Button variant="ghost" class="px-1.5">
         <Avatar.Root class="w-6 h-6">
-          <Avatar.Image
-            src={data.session.user?.image}
-            alt="profile-picture"
-          />
+          <Avatar.Image src={data.session.user?.image} alt="profile-picture" />
           <Avatar.Fallback>{getInitials(data.session.user?.name)}</Avatar.Fallback>
         </Avatar.Root>
       </Button>
