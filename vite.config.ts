@@ -1,7 +1,6 @@
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vite";
 import { SvelteKitPWA } from "@vite-pwa/sveltekit";
-import Icons from "unplugin-icons/vite";
 
 export default defineConfig({
   define: {
@@ -59,7 +58,6 @@ export default defineConfig({
         enabled: true,
         type: "module"
       }
-    }),
-    Icons({ compiler: "svelte" })
+    })
   ]
 });
