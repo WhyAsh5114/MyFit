@@ -1,4 +1,4 @@
-<div class="prose">
+<div class="prose invert-0 dark:invert">
   <h1>Privacy Policy</h1>
   <p>Last updated: January 04, 2024</p>
   <p>
