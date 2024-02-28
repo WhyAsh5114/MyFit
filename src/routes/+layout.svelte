@@ -45,15 +45,17 @@
 <ModeWatcher />
 <div class="flex w-full border-b items-center p-2 gap-1">
   <Sheet.Root>
-    <Sheet.Trigger>
-      <Button variant="ghost" class="px-2">
-        <Icon icon="mdi:menu" width={20} height={20} />
-      </Button>
+    <Sheet.Trigger class="px-2" aria-label="menu">
+      <Icon icon="mdi:menu" class="w-5 h-5" />
     </Sheet.Trigger>
     <Sheet.Content side="left">
-      <Sheet.Title class="flex items-center gap-2 mb-3">
-        <img src="/favicon.png" alt="logo" width={40} height={40} />
-        <span class="text-xl font-bold">MyFit</span>
+      <Sheet.Title asChild>
+        <Button variant="link" class="px-0">
+          <a href="/" class="flex items-center gap-2 mb-3">
+            <img src="/favicon.png" alt="logo" width={40} height={40} />
+            <span class="text-xl font-bold">MyFit</span>
+          </a>
+        </Button>
       </Sheet.Title>
       <div class="flex flex-col items-start pl-4">
         <Button variant="link">
@@ -76,4 +78,7 @@
   </a>
   <ThemeSwitch />
   <UserButton />
+</div>
+<div class="flex flex-col p-4 h-px grow overflow-y-auto">
+  <slot />
 </div>
