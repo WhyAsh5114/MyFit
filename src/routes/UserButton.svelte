@@ -18,7 +18,7 @@
 {#if data.session}
   <DropdownMenu.Root>
     <DropdownMenu.Trigger>
-      <Button variant="outline" class="px-1.5">
+      <Button variant="ghost" class="px-1.5">
         <Avatar.Root class="w-6 h-6">
           <Avatar.Image
             src={data.session.user?.image}
@@ -39,5 +39,5 @@
     </DropdownMenu.Content>
   </DropdownMenu.Root>
 {:else}
-  <Button variant="outline" on:click={() => signIn()}>Login</Button>
+  <Button variant="ghost" on:click={() => signIn()}>Login</Button>
 {/if}
