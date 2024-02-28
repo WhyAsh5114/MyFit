@@ -79,6 +79,6 @@
   <ThemeSwitch />
   <UserButton />
 </div>
-<div class="flex flex-col p-4 h-px grow overflow-y-auto">
+<div class="flex flex-col h-px grow overflow-y-auto p-1 py-6 px-4">
   <slot />
 </div>
