@@ -51,13 +51,24 @@
       </Button>
     </Sheet.Trigger>
     <Sheet.Content side="left">
-      <Sheet.Header>
-        <Sheet.Title>Are you sure absolutely sure?</Sheet.Title>
-        <Sheet.Description>
-          This action cannot be undone. This will permanently delete your account and remove your
-          data from our servers.
-        </Sheet.Description>
-      </Sheet.Header>
+      <Sheet.Title class="flex items-center gap-2 mb-3">
+        <img src="/favicon.png" alt="logo" width={40} height={40} />
+        <span class="text-xl font-bold">MyFit</span>
+      </Sheet.Title>
+      <div class="flex flex-col items-start pl-4">
+        <Button variant="link">
+          <a href="/workouts">Workouts</a>
+        </Button>
+        <Button variant="link">
+          <a href="/mesocycles">Mesocycles</a>
+        </Button>
+        <Button variant="link">
+          <a href="/exerciseSplits">Exercise splits</a>
+        </Button>
+        <Button variant="link">
+          <a href="/privacyPolicy">Privacy policy</a>
+        </Button>
+      </div>
     </Sheet.Content>
   </Sheet.Root>
   <a href="/" class="ml-1 mr-auto">
@@ -66,58 +77,3 @@
   <ThemeSwitch />
   <UserButton />
 </div>
-<!-- <div class="drawer lg:drawer-open">
-	<input id="drawer" class="drawer-toggle" type="checkbox" bind:checked={drawerOpen} />
-	<div class="drawer-content flex flex-col items-center justify-center h-screen">
-		Page content here
-		<div class="flex bg-primary w-full items-center py-2 lg:hidden" aria-hidden={!lg?.matches}>
-			<label class="btn btn-ghost drawer-button lg:hidden" aria-hidden={!lg?.matches} for="drawer">
-				<Hamburger class="w-6 h-6" />
-			</label>
-			<a class="flex items-center" href="/">
-				<img class="-mb-1 mr-1" alt="logo" height="48" src="/favicon.png" width="48" />
-				<h1 class="text-2xl font-bold text-white">MyFit</h1>
-			</a>
-			{#if $navigating}
-				<div class="grid w-10 h-10 place-items-center ml-auto px-2">
-					<span class="loading loading-ring text-accent" />
-				</div>
-			{/if}
-		</div>
-		<main class="h-px grow overflow-y-auto p-2 w-full max-w-2xl flex flex-col">
-			<slot />
-		</main>
-	</div>
-	<div class="drawer-side z-10">
-		<label
-			class="drawer-overlay"
-			aria-hidden={!lg?.matches}
-			aria-label="close sidebar"
-			for="drawer"
-		/>
-		<div class="menu p-4 w-80 min-h-full text-base-content bg-primary">
-			Sidebar content here
-			<ul>
-				<li>
-					<a class="w-full items-center py-2 hidden lg:flex" href="/">
-						<img class="-mb-1 mr-1" alt="logo" height="48" src="/favicon.png" width="48" />
-						<h1 class="text-2xl font-bold text-white">MyFit</h1>
-						{#if $navigating}
-							<div class="grid w-10 h-10 place-items-center ml-auto px-2">
-								<span class="loading loading-ring text-accent" />
-							</div>
-						{/if}
-					</a>
-				</li>
-				<li><a href="/workouts">Workouts</a></li>
-				<li><a href="/mesocycles">Mesocycles</a></li>
-				<li><a href="/exerciseSplits">Exercise splits</a></li>
-				<li><a href="/privacyPolicy">Privacy policy</a></li>
-			</ul>
-			<div class="flex flex-col gap-2 mt-auto">
-				<PwaButtons />
-				<UserButton />
-			</div>
-		</div>
-	</div>
-</div> -->
