@@ -50,7 +50,7 @@
         <Button>Use template</Button>
         <Button>Clone older split</Button>
         <Button variant="secondary" class="col-span-2">
-          <a href="/exercise_splits/new" class="w-full">Start from scratch</a>
+          <a href="/exerciseSplits/new" class="w-full">Start from scratch</a>
         </Button>
       </div>
       <Drawer.Close>
