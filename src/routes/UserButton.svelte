@@ -1,29 +1,43 @@
-<script>
+<script lang="ts">
   import { page } from "$app/stores";
-  import { signOut } from "@auth/sveltekit/client";
+  import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+  import * as Avatar from "$lib/components/ui/avatar";
+  import { Button } from "$lib/components/ui/button";
+  import { signOut, signIn } from "@auth/sveltekit/client";
 
   $: ({ data } = $page);
+
+  function getInitials(name?: string | null) {
+    if (!name) return "";
+    const words = name.split(" ");
+    const initials = words.map((word) => word.charAt(0).toUpperCase());
+    return initials.join("");
+  }
 </script>
 
 {#if data.session}
-  <div class="dropdown dropdown-top">
-    <button class="btn btn-neutral flex w-full justify-start h-14">
-      <img
-        class="rounded-full avatar"
-        alt="profile"
-        height="36"
-        referrerpolicy="no-referrer"
-        src={data.session.user?.image}
-        width="36"
-      />
-      <span class="grow text-center uppercase font-bold">{data.session.user?.name}</span>
-    </button>
-    <ul class="dropdown-content z-[1] menu p-2 shadow bg-neutral rounded-md w-52 my-1">
-      <li><a href="/profile">Profile</a></li>
-      <li><a href="/settings">Settings</a></li>
-      <li><button class="text-error" on:click={async () => signOut()}>Logout</button></li>
-    </ul>
-  </div>
+  <DropdownMenu.Root>
+    <DropdownMenu.Trigger>
+      <Button variant="outline" class="px-1.5">
+        <Avatar.Root class="w-6 h-6">
+          <Avatar.Image
+            src={data.session.user?.image}
+            alt="profile-picture"
+          />
+          <Avatar.Fallback>{getInitials(data.session.user?.name)}</Avatar.Fallback>
+        </Avatar.Root>
+      </Button>
+    </DropdownMenu.Trigger>
+    <DropdownMenu.Content>
+      <DropdownMenu.Group>
+        <DropdownMenu.Item>Profile</DropdownMenu.Item>
+        <DropdownMenu.Item>Settings</DropdownMenu.Item>
+        <DropdownMenu.Item on:click={() => signOut()} class="text-red-500"
+          >Log out</DropdownMenu.Item
+        >
+      </DropdownMenu.Group>
+    </DropdownMenu.Content>
+  </DropdownMenu.Root>
 {:else}
-  <a class="btn btn-neutral w-full" href="/login">Login</a>
+  <Button variant="outline" on:click={() => signIn()}>Login</Button>
 {/if}

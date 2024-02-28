@@ -1,9 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import DownloadIcon from "virtual:icons/material-symbols/download";
   import { useRegisterSW } from "virtual:pwa-register/svelte";
   import type { Writable } from "svelte/store";
-  import ReloadIcon from "virtual:icons/tabler/reload";
+  import Icon from "@iconify/svelte";
 
   let deferredPrompt: Event | null;
   let needRefresh: Writable<boolean>;
@@ -57,14 +56,14 @@
 <div class="join grid" class:grid-cols-2={showInstallButton && $needRefresh}>
   {#if showInstallButton}
     <button
-      class="join-item btn btn-accent mt-auto"
+      class="join-item btn btn-accent"
       on:click={() => {
         // @ts-expect-error Not standard API yet, so need this ignore
         deferredPrompt.prompt();
         deferredPrompt = null;
       }}
     >
-      <DownloadIcon class="w-6 h-6" />
+      <Icon icon="material-symbols:download" class="w-6 h-6" />
       Install
     </button>
   {/if}
@@ -77,7 +76,7 @@
       }}
     >
       {#if !reloading}
-        <ReloadIcon />
+        <Icon icon="tabler:reload" />
         Update
       {:else}
         <span class="loading loading-spinner" />
