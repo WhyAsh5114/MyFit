@@ -6,6 +6,7 @@
   } from "./splitStore.js";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
+  import Button from "$lib/components/ui/button/button.svelte";
 
   $: ({ params, url } = $page);
   $: ({ name: originalName } = $originalExerciseSplit);
@@ -30,7 +31,7 @@
   {/if}
 </h3>
 
-<div class="divider divider-secondary"></div>
+<div class="my-6"></div>
 
 <article class="grow prose max-w-none overflow-y-auto">
   <h1>Exercise splits</h1>
@@ -53,7 +54,9 @@
     </a>
   </div>
 {:else}
-  <a class="btn btn-accent" href="/exerciseSplits/{params.mode}/structure">
-    <p><span class="capitalize">{params.mode}</span> exercise split</p>
-  </a>
+  <Button>
+    <a class="w-full" href="/exerciseSplits/{params.mode}/structure">
+      <p><span class="capitalize">{params.mode}</span> exercise split</p>
+    </a>
+  </Button>
 {/if}
