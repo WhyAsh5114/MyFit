@@ -1,62 +1,29 @@
 <script lang="ts">
-  import {
-    setExerciseSplitStores,
-    didExerciseSplitStoresChange,
-    originalExerciseSplit
-  } from "./splitStore.js";
+  import StructureTabContent from "./StructureTabContent.svelte";
+  import * as Tabs from "$lib/components/ui/tabs";
   import { page } from "$app/stores";
-  import { goto } from "$app/navigation";
-  import Button from "$lib/components/ui/button/button.svelte";
+  import ExercisesTabContent from "./ExercisesTabContent.svelte";
 
-  $: ({ params, url } = $page);
-  $: ({ name: originalName } = $originalExerciseSplit);
-  $: templateType = url.searchParams.get("templateType");
-
-  async function resetSplitAndRedirect() {
-    setExerciseSplitStores($originalExerciseSplit);
-    await goto(`/exerciseSplits/${params.mode}/structure`);
-  }
+  $: ({ params } = $page);
+  let currentTab: string | undefined = "structure";
 </script>
 
 <h2><span class="capitalize">{params.mode}</span> exercise split</h2>
-<h3>
-  {#if url.searchParams.get("editId")}
-    Editing <span class="italic">{originalName}</span>
-  {:else if templateType === "clone"}
-    Cloning <span class="italic">{originalName}</span>
-  {:else if templateType === "common"}
-    Using common split <span class="italic">{originalName}</span>
-  {:else}
-    Starting from scratch
-  {/if}
-</h3>
 
-<div class="my-6"></div>
-
-<article class="grow prose max-w-none overflow-y-auto">
-  <h1>Exercise splits</h1>
-  <p>
-    An exercise split is the plan for your workouts during a week, which we call a microcycle.
-    Usually, it lasts for 7 days, but our app also supports different durations. Here are some tips
-    to consider when making your exercise split:
-  </p>
-  <h2>Frequency</h2>
-  <!-- TODO: finish this info page -->
-</article>
-
-{#if didExerciseSplitStoresChange()}
-  <div class="join grid grid-cols-2">
-    <button class="join-item btn btn-error" on:click={resetSplitAndRedirect}>
-      Reset changes
-    </button>
-    <a class="join-item btn btn-primary" href="/exerciseSplits/{params.mode}/structure">
-      <p>Continue {params.mode === "new" ? "creating" : "editing"}</p>
-    </a>
-  </div>
-{:else}
-  <Button>
-    <a class="w-full" href="/exerciseSplits/{params.mode}/structure">
-      <p><span class="capitalize">{params.mode}</span> exercise split</p>
-    </a>
-  </Button>
-{/if}
+<Tabs.Root
+  value={currentTab}
+  onValueChange={(v) => (currentTab = v)}
+  class="w-full mt-4 grow flex flex-col"
+>
+  <Tabs.List class="w-full grid grid-cols-3">
+    <Tabs.Trigger value="structure">Structure</Tabs.Trigger>
+    <Tabs.Trigger value="exercises">Exercises</Tabs.Trigger>
+    <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
+  </Tabs.List>
+  <Tabs.Content value="structure">
+    <StructureTabContent bind:currentTab />
+  </Tabs.Content>
+  <Tabs.Content value="exercises">
+    <ExercisesTabContent bind:currentTab />
+  </Tabs.Content>
+</Tabs.Root>
