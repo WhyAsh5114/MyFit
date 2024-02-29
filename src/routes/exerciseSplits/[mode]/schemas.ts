@@ -24,11 +24,29 @@ export const structureTabFormSchema = z.object({
 export const exerciseTemplateFormSchema = z
   .object({
     exerciseName: z.string().min(2),
-    sets: z.coerce.number().int().min(1),
-    targetMuscleGroup: z.enum(muscleGroups),
+    sets: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .default("" as unknown as number),
+    targetMuscleGroup: z
+      .enum(muscleGroups, {
+        errorMap: () => {
+          return { message: "Select a muscle group" };
+        }
+      })
+      .default("" as unknown as MuscleGroup),
     setType: z.enum(setTypes),
-    repRangeStart: z.coerce.number().int().min(1),
-    repRangeEnd: z.coerce.number().int(),
+    repRangeStart: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .default("" as unknown as number),
+    repRangeEnd: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .default("" as unknown as number),
     involvesBodyweight: z.boolean(),
     note: z.string().optional()
   })
