@@ -100,12 +100,13 @@ export function applyProgressiveOverload(
     }
 
     exercise.sets.forEach((set, setNumber) => {
-    loopCounter = 0;
+      loopCounter = 0;
       while (set.reps < exercise.repRangeStart && loopCounter < 100) {
+        if (set.load - MINIMUM_LOAD_CHANGE <= 0) break;
         set = matchSetVolumeWithNewLoad(exercise, set, set.load - MINIMUM_LOAD_CHANGE);
         loopCounter++;
       }
-    loopCounter = 0;
+      loopCounter = 0;
       while (set.reps >= exercise.repRangeEnd && loopCounter < 100) {
         set = matchSetVolumeWithNewLoad(exercise, set, set.load + MINIMUM_LOAD_CHANGE);
         loopCounter++;
