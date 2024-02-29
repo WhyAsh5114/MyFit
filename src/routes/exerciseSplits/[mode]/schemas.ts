@@ -36,7 +36,7 @@ export const exerciseTemplateFormSchema = z
         }
       })
       .default("" as unknown as MuscleGroup),
-    setType: z.enum(setTypes),
+    setType: z.enum(setTypes).default("straight"),
     repRangeStart: z.coerce
       .number()
       .int()
