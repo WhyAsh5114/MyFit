@@ -13,12 +13,12 @@ type ExerciseSplitDay = {
 };
 
 type ExerciseTemplate = {
-  name: string;
+  exerciseName: string;
   sets: number;
   targetMuscleGroup: MuscleGroup;
   setType: ExerciseSetType;
   repRangeStart: number;
   repRangeEnd: number;
   involvesBodyweight: boolean;
-  note: string;
+  note?: string;
 };
