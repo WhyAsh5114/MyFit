@@ -21,7 +21,7 @@
   });
 </script>
 
-<Tabs.Root value={selectedSplitDayIdx.toString()} class="grow flex flex-col">
+<Tabs.Root value={selectedSplitDayIdx.toString()} class="h-full flex flex-col">
   <Tabs.List class="flex bg-background p-0 overflow-x-auto justify-start">
     {#each exerciseSplit.exerciseSplitDays as splitDay, idx}
       <Tabs.Trigger
@@ -45,21 +45,24 @@
   </Tabs.List>
   {#each exerciseSplit.exerciseSplitDays as splitDay, idx}
     <Tabs.Content value={idx.toString()}>
-      <Card.Root class="grow flex flex-col border-none">
+      <Card.Root class="h-full flex flex-col border-none">
         <Card.Header class="px-1 py-2">
           <Card.Title>{splitDay?.exerciseSplitDayName}</Card.Title>
           <Card.Description>Day {idx + 1}</Card.Description>
         </Card.Header>
-        <Card.Content class="h-full px-1 py-2"></Card.Content>
-        <Card.Footer class="flex flex-col gap-1.5 px-1 py-2 h-fit">
+        <Card.Content class="h-px grow overflow-y-auto px-1 py-2"></Card.Content>
+        <Card.Footer class="flex flex-col gap-1.5 p-1 h-fit">
           <div class="grid grid-cols-3 w-full gap-1">
             <Button variant="outline">Cut</Button>
             <Button variant="outline">Copy</Button>
             <Button variant="outline">Paste</Button>
           </div>
-          <ExerciseDrawer />
         </Card.Footer>
       </Card.Root>
     </Tabs.Content>
   {/each}
+  <div class="grid grid-cols-2 gap-1 px-1">
+    <ExerciseDrawer />
+    <Button>Next</Button>
+  </div>
 </Tabs.Root>

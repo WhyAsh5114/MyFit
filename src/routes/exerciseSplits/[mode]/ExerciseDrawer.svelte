@@ -36,7 +36,6 @@
         value: $formData.targetMuscleGroup
       }
     : undefined;
-
   $: selectedSetType = $formData.setType
     ? {
         label: $formData.setType,
@@ -47,7 +46,7 @@
 
 <Drawer.Root bind:open dismissible={false}>
   <Drawer.Trigger class="w-full">
-    <Button class="w-full" on:click={() => (open = true)}>Add exercise</Button>
+    <Button variant="secondary" class="w-full" on:click={() => (open = true)}>Add exercise</Button>
   </Drawer.Trigger>
   <Drawer.Content>
     <Drawer.Header>
