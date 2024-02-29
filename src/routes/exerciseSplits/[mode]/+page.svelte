@@ -1,7 +1,7 @@
 <script lang="ts">
-  import StructureTabContent from "./StructureTabContent.svelte";
   import * as Tabs from "$lib/components/ui/tabs";
   import { page } from "$app/stores";
+  import StructureTabContent from "./StructureTabContent.svelte";
   import ExercisesTabContent from "./ExercisesTabContent.svelte";
 
   $: ({ params } = $page);

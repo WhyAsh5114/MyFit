@@ -1,6 +1,5 @@
 <script lang="ts">
   import ExerciseDrawer from "./ExerciseDrawer.svelte";
-
   import * as Card from "$lib/components/ui/card";
   import * as Tabs from "$lib/components/ui/tabs";
   import { exerciseSplitStore } from "./splitStore";

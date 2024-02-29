@@ -14,10 +14,8 @@
   const form = superForm(defaults(zod(structureTabFormSchema)), {
     SPA: true,
     validators: zod(structureTabFormSchema),
-    onUpdate: ({ form }) => {
-      if (form.valid) {
-        submitStructure();
-      }
+    onUpdated: ({ form }) => {
+      if (form.valid) submitStructure();
     },
     resetForm: false,
     invalidateAll: false
