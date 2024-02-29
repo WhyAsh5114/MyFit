@@ -45,8 +45,8 @@
 <ModeWatcher />
 <div class="flex w-full border-b items-center p-2 gap-1">
   <Sheet.Root>
-    <Sheet.Trigger class="px-2" aria-label="menu">
-      <Icon icon="mdi:menu" class="w-5 h-5" />
+    <Sheet.Trigger class="pl-2" aria-label="menu">
+      <Icon icon="material-symbols:menu" class="w-6 h-6" />
     </Sheet.Trigger>
     <Sheet.Content side="left">
       <Sheet.Title asChild>
