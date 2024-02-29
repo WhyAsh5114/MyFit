@@ -18,7 +18,8 @@
       if (form.valid) submitStructure();
     },
     resetForm: false,
-    invalidateAll: false
+    invalidateAll: false,
+    id: "exercise-split-structure-form"
   });
   const { form: formData, enhance } = form;
 
