@@ -13,6 +13,11 @@
     exerciseSplitDays: []
   };
 
+  function addExercise(exerciseTemplate: ExerciseTemplate) {
+    exerciseSplit.exerciseSplitDays[selectedSplitDayIdx]?.exerciseTemplates.push(exerciseTemplate);
+    exerciseSplit = exerciseSplit;
+  }
+
   onMount(() => {
     selectedSplitDayIdx = $exerciseSplitStore.exerciseSplitDays.findIndex(
       (splitDay) => splitDay !== null
@@ -44,25 +49,31 @@
     {/each}
   </Tabs.List>
   {#each exerciseSplit.exerciseSplitDays as splitDay, idx}
-    <Tabs.Content value={idx.toString()}>
-      <Card.Root class="h-full flex flex-col border-none">
-        <Card.Header class="px-1 py-2">
-          <Card.Title>{splitDay?.exerciseSplitDayName}</Card.Title>
-          <Card.Description>Day {idx + 1}</Card.Description>
-        </Card.Header>
-        <Card.Content class="h-px grow overflow-y-auto px-1 py-2"></Card.Content>
-        <Card.Footer class="flex flex-col gap-1.5 p-1 h-fit">
-          <div class="grid grid-cols-3 w-full gap-1">
-            <Button variant="outline">Cut</Button>
-            <Button variant="outline">Copy</Button>
-            <Button variant="outline">Paste</Button>
-          </div>
-        </Card.Footer>
-      </Card.Root>
-    </Tabs.Content>
+    {#if splitDay}
+      <Tabs.Content value={idx.toString()}>
+        <Card.Root class="h-full flex flex-col border-none">
+          <Card.Header class="px-1 py-2">
+            <Card.Title>{splitDay?.exerciseSplitDayName}</Card.Title>
+            <Card.Description>Day {idx + 1}</Card.Description>
+          </Card.Header>
+          <Card.Content class="h-px grow overflow-y-auto px-1 py-2">
+            {#each splitDay.exerciseTemplates as exerciseTemplate}
+              <p>{exerciseTemplate.exerciseName}</p>
+            {/each}
+          </Card.Content>
+          <Card.Footer class="flex flex-col gap-1.5 p-1 h-fit">
+            <div class="grid grid-cols-3 w-full gap-1">
+              <Button variant="outline">Cut</Button>
+              <Button variant="outline">Copy</Button>
+              <Button variant="outline">Paste</Button>
+            </div>
+          </Card.Footer>
+        </Card.Root>
+      </Tabs.Content>
+    {/if}
   {/each}
   <div class="grid grid-cols-2 gap-1 px-1">
-    <ExerciseDrawer />
+    <ExerciseDrawer {addExercise} />
     <Button>Next</Button>
   </div>
 </Tabs.Root>

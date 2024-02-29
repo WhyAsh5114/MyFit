@@ -10,17 +10,16 @@
   import { exerciseTemplateFormSchema } from "./schemas";
   import { Input } from "$lib/components/ui/input";
   import { muscleGroups, setTypes } from "$lib/types/arrays";
+  export let addExercise: (exerciseTemplate: ExerciseTemplate) => void;
 
   const form = superForm(defaults(zod(exerciseTemplateFormSchema)), {
     SPA: true,
     validators: zod(exerciseTemplateFormSchema),
     onUpdate: ({ form }) => {
       if (form.valid) {
-        console.log(form.data);
-      } else {
-        console.log(form.errors);
-        validateForm({ update: true });
-      }
+        addExercise(form.data);
+        open = false;
+      } else validateForm({ update: true });
     },
     resetForm: false,
     invalidateAll: false,
