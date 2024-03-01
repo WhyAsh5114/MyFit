@@ -9,7 +9,7 @@
   export let openEditExercise: (idx: number) => void;
 </script>
 
-<div class="flex flex-col p-2 border rounded-md gap-0.5">
+<div class="flex flex-col p-2 border rounded-md gap-0.5 bg-background/50 backdrop-blur-sm">
   <div class="flex items-center gap-0.5">
     <span class="text-sm mr-auto truncate">{exerciseTemplate.exerciseName}</span>
     <DropdownMenu.Root>
