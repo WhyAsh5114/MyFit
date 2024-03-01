@@ -84,7 +84,13 @@
       exerciseSplitName: $formData.exerciseSplitName,
       exerciseSplitDays: $formData.exerciseSplitDays.map((splitDayName) => {
         if (splitDayName === null) return null;
-        return { exerciseSplitDayName: splitDayName, exerciseTemplates: [] };
+        return {
+          exerciseSplitDayName: splitDayName,
+          exerciseTemplates:
+            $exerciseSplitStore.exerciseSplitDays.find(
+              (splitDay) => splitDay?.exerciseSplitDayName === splitDayName
+            )?.exerciseTemplates ?? ([] as ExerciseTemplate[])
+        };
       })
     };
     currentTab = "exercises";
