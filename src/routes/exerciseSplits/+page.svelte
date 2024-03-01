@@ -53,8 +53,8 @@
           <a href="/exerciseSplits/new" class="w-full">Start from scratch</a>
         </Button>
       </div>
-      <Drawer.Close>
-        <Button class="w-full" variant="outline">Cancel</Button>
+      <Drawer.Close asChild let:builder>
+        <Button builders={[builder]} class="w-full" variant="outline">Cancel</Button>
       </Drawer.Close>
     </Drawer.Footer>
   </Drawer.Content>

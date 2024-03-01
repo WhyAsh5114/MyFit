@@ -122,23 +122,22 @@
             on:finalize={handleFinalize}
             class="flex flex-col gap-1 h-px grow overflow-y-auto"
           >
-            {#each currentSplitDay.exerciseTemplates as exerciseTemplate, idx (exerciseTemplate.name)}
-              <div
-                class="relative"
-                animate:flip={{ duration: 200 }}
-              >
-                <ExerciseTemplateCard
-                  {idx}
-                  {exerciseTemplate}
-                  {startDrag}
-                  {handleKeyDown}
-                  {openEditExercise}
-                />
-                {#if exerciseTemplate[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
-                  <div in:fade={{ duration: 200, easing: cubicIn }} class="custom-shadow-item" />
-                {/if}
-              </div>
-            {/each}
+            {#key selectedSplitDayIdx}
+              {#each currentSplitDay.exerciseTemplates as exerciseTemplate, idx (exerciseTemplate.name)}
+                <div class="relative" animate:flip={{ duration: 200 }}>
+                  <ExerciseTemplateCard
+                    {idx}
+                    {exerciseTemplate}
+                    {startDrag}
+                    {handleKeyDown}
+                    {openEditExercise}
+                  />
+                  {#if exerciseTemplate[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
+                    <div in:fade={{ duration: 200, easing: cubicIn }} class="custom-shadow-item" />
+                  {/if}
+                </div>
+              {/each}
+            {/key}
           </div>
         </Card.Content>
         <Card.Footer class="flex flex-col gap-1.5 py-1 px-0 h-fit">
