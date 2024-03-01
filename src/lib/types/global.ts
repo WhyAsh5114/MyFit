@@ -3,8 +3,7 @@ const MuscleGroups = [
   "Front delts",
   "Side delts",
   "Rear delts",
-  "Back (vertical pulls)",
-  "Back (horizontal pulls)",
+  "Lats",
   "Traps",
   "Triceps",
   "Biceps",
@@ -12,7 +11,8 @@ const MuscleGroups = [
   "Quads",
   "Hamstrings",
   "Glutes",
-  "Calves"
+  "Calves",
+  "Abs"
 ] as const;
 type MuscleGroup = (typeof MuscleGroups)[number];
 

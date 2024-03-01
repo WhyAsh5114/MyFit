@@ -5,8 +5,7 @@ export const muscleGroups: typeof MuscleGroups = [
   "Front delts",
   "Side delts",
   "Rear delts",
-  "Back (vertical pulls)",
-  "Back (horizontal pulls)",
+  "Lats",
   "Traps",
   "Triceps",
   "Biceps",
@@ -14,7 +13,8 @@ export const muscleGroups: typeof MuscleGroups = [
   "Quads",
   "Hamstrings",
   "Glutes",
-  "Calves"
+  "Calves",
+  "Abs"
 ] as const;
 
 export type WithUserId<T> = T & { userId: ObjectId };
