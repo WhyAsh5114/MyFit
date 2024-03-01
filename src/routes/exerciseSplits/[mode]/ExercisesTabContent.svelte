@@ -47,6 +47,31 @@
     editingExercise = { ...currentSplitDay.exerciseTemplates[idx], idx };
   }
 
+  function editExercise(exerciseTemplate: ExerciseTemplate & { idx: number }) {
+    if (!currentSplitDay) return false;
+    if (
+      currentSplitDay.exerciseTemplates.find((_exerciseTemplate, _idx) => {
+        return _exerciseTemplate.name === exerciseTemplate.name && _idx !== _idx;
+      })
+    ) {
+      return false;
+    }
+    currentSplitDay.exerciseTemplates = currentSplitDay.exerciseTemplates.map(
+      (_exerciseTemplate, _idx) => {
+        if (_idx === exerciseTemplate.idx) {
+          const exerciseTemplateToSet = exerciseTemplate as ExerciseTemplate & { idx?: number };
+          delete exerciseTemplateToSet.idx;
+          return exerciseTemplateToSet;
+        } else {
+          return _exerciseTemplate;
+        }
+      }
+    );
+    exerciseSplit = exerciseSplit;
+    $exerciseSplitStore = exerciseSplit;
+    return true;
+  }
+
   function deleteExercise(idx: number) {
     if (!currentSplitDay) return;
     currentSplitDay.exerciseTemplates = currentSplitDay.exerciseTemplates.filter(
@@ -162,7 +187,7 @@
     </Tabs.Content>
   {/if}
   <div class="grid grid-cols-2 gap-1">
-    <ExerciseDrawer bind:editingExercise {addExercise} />
+    <ExerciseDrawer bind:editingExercise {addExercise} {editExercise} />
     <Button on:click={() => (currentTab = "overview")}>Next</Button>
   </div>
 </Tabs.Root>

@@ -13,6 +13,7 @@
 
   export let addExercise: (exerciseTemplate: ExerciseTemplate) => boolean;
   export let editingExercise: (ExerciseTemplate & { idx: number }) | null;
+  export let editExercise: (exerciseTemplate: ExerciseTemplate & { idx: number }) => boolean;
 
   let exerciseDrawerOpen = false;
 
@@ -21,7 +22,12 @@
     validators: zod(exerciseTemplateFormSchema),
     onUpdate: ({ form }) => {
       if (form.valid) {
-        if (addExercise(form.data)) {
+        if (editingExercise) {
+          if (editExercise({ ...form.data, idx: editingExercise.idx })) {
+            exerciseDrawerOpen = false;
+            form.data = JSON.parse(JSON.stringify(exerciseTemplateFormDefaults));
+          } else form.errors.name = ["Exercise names should be unique"];
+        } else if (addExercise(form.data)) {
           exerciseDrawerOpen = false;
           form.data = JSON.parse(JSON.stringify(exerciseTemplateFormDefaults));
         } else form.errors.name = ["Exercise names should be unique"];
