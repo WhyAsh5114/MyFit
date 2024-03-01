@@ -37,8 +37,8 @@
 </div>
 
 <Drawer.Root>
-  <Drawer.Trigger>
-    <Button class="w-full">Create new exercise split</Button>
+  <Drawer.Trigger asChild let:builder>
+    <Button builders={[builder]} class="w-full">Create new exercise split</Button>
   </Drawer.Trigger>
   <Drawer.Content>
     <Drawer.Header>
