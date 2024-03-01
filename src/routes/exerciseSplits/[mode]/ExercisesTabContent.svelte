@@ -5,8 +5,8 @@
   import { exerciseSplitStore } from "./splitStore";
   import { Button } from "$lib/components/ui/button";
   import ExerciseTemplateCard from "../ExerciseTemplateCard.svelte";
-  import { dndzone, type DndEvent } from "svelte-dnd-action";
-  import { SHADOW_ITEM_MARKER_PROPERTY_NAME } from "svelte-dnd-action";
+  import { dndzone, type DndEvent, SOURCES } from "svelte-dnd-action";
+  import { SHADOW_ITEM_MARKER_PROPERTY_NAME, TRIGGERS } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import { fade } from "svelte/transition";
   import { cubicIn } from "svelte/easing";
@@ -17,6 +17,7 @@
     exerciseTemplates: (ExerciseTemplate & { isDndShadowItem?: boolean })[];
   };
 
+  let dragDisabled = true;
   let selectedSplitDayIdx = 0;
   let exerciseSplit: ExerciseSplit = {
     name: "",
@@ -28,24 +29,54 @@
   ] as CustomExerciseSplitDay | null;
 
   function addExercise(exerciseTemplate: ExerciseTemplate) {
+    if (
+      currentSplitDay?.exerciseTemplates.find((exercise) => {
+        return exercise.name === exerciseTemplate.name;
+      })
+    ) {
+      return false;
+    }
     currentSplitDay?.exerciseTemplates.push(exerciseTemplate);
     exerciseSplit = exerciseSplit;
     $exerciseSplitStore = exerciseSplit;
+    return true;
   }
 
   function openEditExercise(idx: number) {
     if (currentSplitDay) editingExercise = { ...currentSplitDay.exerciseTemplates[idx], idx };
   }
 
-  function handleSort(e: CustomEvent<DndEvent>) {
+  function handleConsider(e: CustomEvent<DndEvent<ExerciseTemplate>>) {
     if (!currentSplitDay) return;
-    currentSplitDay.exerciseTemplates = e.detail.items as ExerciseTemplate[];
+    const {
+      items: newItems,
+      info: { source, trigger }
+    } = e.detail;
+    currentSplitDay.exerciseTemplates = newItems;
     exerciseSplit = exerciseSplit;
     $exerciseSplitStore = exerciseSplit;
+    if (source === SOURCES.KEYBOARD && trigger === TRIGGERS.DRAG_STOPPED) dragDisabled = true;
+  }
+  function handleFinalize(e: CustomEvent<DndEvent<ExerciseTemplate>>) {
+    if (!currentSplitDay) return;
+    const {
+      items: newItems,
+      info: { source }
+    } = e.detail;
+    currentSplitDay.exerciseTemplates = newItems;
+    exerciseSplit = exerciseSplit;
+    $exerciseSplitStore = exerciseSplit;
+    if (source === SOURCES.POINTER) dragDisabled = true;
   }
 
-  $: {
-    exerciseSplit = $exerciseSplitStore;
+  $: exerciseSplit = $exerciseSplitStore;
+
+  function startDrag(e: DragEvent) {
+    dragDisabled = false;
+  }
+
+  function handleKeyDown(e: KeyboardEvent) {
+    if ((e.key === "Enter" || e.key === " ") && dragDisabled) dragDisabled = false;
   }
 </script>
 
@@ -78,21 +109,31 @@
           <Card.Title>{currentSplitDay.name}</Card.Title>
           <Card.Description>Day {selectedSplitDayIdx + 1}</Card.Description>
         </Card.Header>
-        <Card.Content class="py-2 h-full w-full px-0">
+        <Card.Content class="py-2 h-full w-full px-0 flex flex-col">
           <div
             use:dndzone={{
               items: currentSplitDay.exerciseTemplates,
               flipDurationMs: 200,
               dropTargetClasses: ["border-none"],
-              dropTargetStyle: {}
+              dropTargetStyle: {},
+              dragDisabled
             }}
-            on:consider={handleSort}
-            on:finalize={handleSort}
-            class="flex flex-col gap-1"
+            on:consider={handleConsider}
+            on:finalize={handleFinalize}
+            class="flex flex-col gap-1 h-px grow overflow-y-auto"
           >
             {#each currentSplitDay.exerciseTemplates as exerciseTemplate, idx (exerciseTemplate.name)}
-              <div class="relative" animate:flip={{ duration: 200 }}>
-                <ExerciseTemplateCard {idx} {exerciseTemplate} {openEditExercise} />
+              <div
+                class="relative"
+                animate:flip={{ duration: 200 }}
+              >
+                <ExerciseTemplateCard
+                  {idx}
+                  {exerciseTemplate}
+                  {startDrag}
+                  {handleKeyDown}
+                  {openEditExercise}
+                />
                 {#if exerciseTemplate[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
                   <div in:fade={{ duration: 200, easing: cubicIn }} class="custom-shadow-item" />
                 {/if}
