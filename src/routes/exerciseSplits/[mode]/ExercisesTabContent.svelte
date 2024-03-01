@@ -43,7 +43,17 @@
   }
 
   function openEditExercise(idx: number) {
-    if (currentSplitDay) editingExercise = { ...currentSplitDay.exerciseTemplates[idx], idx };
+    if (!currentSplitDay) return;
+    editingExercise = { ...currentSplitDay.exerciseTemplates[idx], idx };
+  }
+
+  function deleteExercise(idx: number) {
+    if (!currentSplitDay) return;
+    currentSplitDay.exerciseTemplates = currentSplitDay.exerciseTemplates.filter(
+      (_, _idx) => _idx !== idx
+    );
+    exerciseSplit = exerciseSplit;
+    $exerciseSplitStore = exerciseSplit;
   }
 
   function handleConsider(e: CustomEvent<DndEvent<ExerciseTemplate>>) {
@@ -131,6 +141,7 @@
                     {startDrag}
                     {handleKeyDown}
                     {openEditExercise}
+                    {deleteExercise}
                   />
                   {#if exerciseTemplate[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
                     <div in:fade={{ duration: 200, easing: cubicIn }} class="custom-shadow-item" />

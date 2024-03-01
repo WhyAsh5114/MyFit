@@ -6,6 +6,7 @@
   export let idx: number;
   export let exerciseTemplate: ExerciseTemplate;
   export let openEditExercise: (idx: number) => void;
+  export let deleteExercise: (idx: number) => void;
 
   export let startDrag: (e: any) => void;
   export let handleKeyDown: (e: any) => void;
@@ -30,7 +31,9 @@
       <DropdownMenu.Content align="end">
         <DropdownMenu.Group>
           <DropdownMenu.Item on:click={() => openEditExercise(idx)}>Edit</DropdownMenu.Item>
-          <DropdownMenu.Item class="text-red-500">Delete</DropdownMenu.Item>
+          <DropdownMenu.Item class="text-red-500" on:click={() => deleteExercise(idx)}>
+            Delete
+          </DropdownMenu.Item>
         </DropdownMenu.Group>
       </DropdownMenu.Content>
     </DropdownMenu.Root>
