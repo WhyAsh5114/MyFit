@@ -26,7 +26,7 @@
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   </div>
-  <div class="flex items-center">
+  <div class="flex items-center gap-0.5">
     <span class="text-xs text-muted-foreground mr-auto">
       {exerciseTemplate.sets}
       {exerciseTemplate.setType} sets of {exerciseTemplate.repRangeStart} to {exerciseTemplate.repRangeEnd}

@@ -72,18 +72,18 @@
               <ExerciseTemplateCard {idx} {exerciseTemplate} {openEditExercise} />
             {/each}
           </Card.Content>
-          <Card.Footer class="flex flex-col gap-1.5 p-1 h-fit">
+          <Card.Footer class="flex flex-col gap-1.5 py-1 px-0 h-fit">
             <div class="grid grid-cols-3 w-full gap-1">
-              <Button variant="outline">Cut</Button>
-              <Button variant="outline">Copy</Button>
-              <Button variant="outline">Paste</Button>
+              <Button variant="secondary">Cut</Button>
+              <Button variant="secondary">Copy</Button>
+              <Button variant="secondary">Paste</Button>
             </div>
           </Card.Footer>
         </Card.Root>
       </Tabs.Content>
     {/if}
   {/each}
-  <div class="grid grid-cols-2 gap-1 px-1">
+  <div class="grid grid-cols-2 gap-1">
     <ExerciseDrawer bind:editingExercise {addExercise} />
     <Button on:click={() => (currentTab = "overview")}>Next</Button>
   </div>

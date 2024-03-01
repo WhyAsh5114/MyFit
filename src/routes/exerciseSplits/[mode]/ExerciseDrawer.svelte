@@ -25,7 +25,6 @@
         exerciseDrawerOpen = false;
       } else validateForm({ update: true });
     },
-    resetForm: false,
     invalidateAll: false,
     id: "exercise-split-exercise-template-form"
   });
