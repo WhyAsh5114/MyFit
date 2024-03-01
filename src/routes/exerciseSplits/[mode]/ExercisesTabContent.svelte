@@ -4,31 +4,26 @@
   import * as Tabs from "$lib/components/ui/tabs";
   import { exerciseSplitStore } from "./splitStore";
   import { Button } from "$lib/components/ui/button";
-  import { onMount } from "svelte";
   import ExerciseTemplateCard from "../ExerciseTemplateCard.svelte";
   import { dndzone, type DndEvent } from "svelte-dnd-action";
-  import {
-    overrideItemIdKeyNameBeforeInitialisingDndZones,
-    SHADOW_ITEM_MARKER_PROPERTY_NAME
-  } from "svelte-dnd-action";
+  import { SHADOW_ITEM_MARKER_PROPERTY_NAME } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import { fade } from "svelte/transition";
   import { cubicIn } from "svelte/easing";
-  overrideItemIdKeyNameBeforeInitialisingDndZones("exerciseName");
   export let currentTab;
 
   type CustomExerciseSplitDay = {
-    exerciseSplitDayName: string;
+    name: string;
     exerciseTemplates: (ExerciseTemplate & { isDndShadowItem?: boolean })[];
   };
 
   let selectedSplitDayIdx = 0;
   let exerciseSplit: ExerciseSplit = {
-    exerciseSplitName: "",
-    exerciseSplitDays: []
+    name: "",
+    splitDays: []
   };
   let editingExercise: (ExerciseTemplate & { idx: number }) | null = null;
-  $: currentSplitDay = exerciseSplit.exerciseSplitDays[
+  $: currentSplitDay = exerciseSplit.splitDays[
     selectedSplitDayIdx
   ] as CustomExerciseSplitDay | null;
 
@@ -49,17 +44,14 @@
     $exerciseSplitStore = exerciseSplit;
   }
 
-  onMount(() => {
-    selectedSplitDayIdx = $exerciseSplitStore.exerciseSplitDays.findIndex(
-      (splitDay) => splitDay !== null
-    );
+  $: {
     exerciseSplit = $exerciseSplitStore;
-  });
+  }
 </script>
 
 <Tabs.Root value={selectedSplitDayIdx.toString()} class="h-full flex flex-col">
   <Tabs.List class="flex bg-background p-0 overflow-x-auto justify-start">
-    {#each exerciseSplit.exerciseSplitDays as splitDay, idx}
+    {#each exerciseSplit.splitDays as splitDay, idx}
       <Tabs.Trigger
         disabled={splitDay === null}
         value={idx.toString()}
@@ -74,7 +66,7 @@
             ? ''
             : 'border-background'}"
         >
-          {splitDay?.exerciseSplitDayName ?? "Rest"}
+          {splitDay?.name ?? "Rest"}
         </Button>
       </Tabs.Trigger>
     {/each}
@@ -83,7 +75,7 @@
     <Tabs.Content value={selectedSplitDayIdx.toString()}>
       <Card.Root class="h-full flex flex-col border-none">
         <Card.Header class="px-1 py-2">
-          <Card.Title>{currentSplitDay.exerciseSplitDayName}</Card.Title>
+          <Card.Title>{currentSplitDay.name}</Card.Title>
           <Card.Description>Day {selectedSplitDayIdx + 1}</Card.Description>
         </Card.Header>
         <Card.Content class="py-2 h-full w-full px-0">
@@ -98,7 +90,7 @@
             on:finalize={handleSort}
             class="flex flex-col gap-1"
           >
-            {#each currentSplitDay.exerciseTemplates as exerciseTemplate, idx (exerciseTemplate.exerciseName)}
+            {#each currentSplitDay.exerciseTemplates as exerciseTemplate, idx (exerciseTemplate.name)}
               <div class="relative" animate:flip={{ duration: 200 }}>
                 <ExerciseTemplateCard {idx} {exerciseTemplate} {openEditExercise} />
                 {#if exerciseTemplate[SHADOW_ITEM_MARKER_PROPERTY_NAME]}

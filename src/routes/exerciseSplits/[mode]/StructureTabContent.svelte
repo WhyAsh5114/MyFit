@@ -24,49 +24,47 @@
   const { form: formData, enhance } = form;
 
   onMount(() => {
-    $formData.exerciseSplitName = $exerciseSplitStore.exerciseSplitName;
-    $formData.exerciseSplitDays = $exerciseSplitStore.exerciseSplitDays.map(
-      (splitDay) => splitDay?.exerciseSplitDayName ?? null
-    );
+    $formData.name = $exerciseSplitStore.name;
+    $formData.splitDays = $exerciseSplitStore.splitDays.map((splitDay) => splitDay?.name ?? null);
   });
 
   let deleteSplitDataModal: HTMLDialogElement;
   let notMatchedDays: Set<string> = new Set();
 
   function addDay() {
-    const dayName = $formData.exerciseSplitDayName || null;
-    $formData.exerciseSplitDays = [...$formData.exerciseSplitDays, dayName];
-    $formData.exerciseSplitDayName = "";
+    const dayName = $formData.splitDayName || null;
+    $formData.splitDays = [...$formData.splitDays, dayName];
+    $formData.splitDayName = "";
   }
 
   function removeDay(idx: number) {
-    $formData.exerciseSplitDays = $formData.exerciseSplitDays.filter((_, _idx) => _idx !== idx);
+    $formData.splitDays = $formData.splitDays.filter((_, _idx) => _idx !== idx);
   }
 
   function updateNotMatchedDays() {
     notMatchedDays.clear();
-    $exerciseSplitStore.exerciseSplitDays.forEach((splitDay) => {
-      if (splitDay?.exerciseSplitDayName) notMatchedDays.add(splitDay.exerciseSplitDayName);
+    $exerciseSplitStore.splitDays.forEach((splitDay) => {
+      if (splitDay?.name) notMatchedDays.add(splitDay.name);
     });
     notMatchedDays = notMatchedDays;
   }
 
   function createNewExerciseSplit() {
-    const newSplitDays: ExerciseSplit["exerciseSplitDays"] = [];
-    $exerciseSplitStore.exerciseSplitDays
-      .map((splitDay) => splitDay?.exerciseSplitDayName ?? null)
-      .forEach((splitDayName) => {
-        if (splitDayName === null) {
+    const newSplitDays: ExerciseSplit["splitDays"] = [];
+    $exerciseSplitStore.splitDays
+      .map((splitDay) => splitDay?.name ?? null)
+      .forEach((name) => {
+        if (name === null) {
           newSplitDays.push(null);
         } else {
-          const matchingDay = $exerciseSplitStore.exerciseSplitDays.find(
-            (splitDay) => splitDay?.exerciseSplitDayName === splitDayName
+          const matchingDay = $exerciseSplitStore.splitDays.find(
+            (splitDay) => splitDay?.name === name
           );
           if (matchingDay) {
             newSplitDays.push(matchingDay);
-            notMatchedDays.delete(matchingDay.exerciseSplitDayName);
+            notMatchedDays.delete(matchingDay.name);
           } else {
-            newSplitDays.push({ exerciseSplitDayName: splitDayName, exerciseTemplates: [] });
+            newSplitDays.push({ name: name, exerciseTemplates: [] });
           }
         }
       });
@@ -81,15 +79,14 @@
       return;
     }
     $exerciseSplitStore = {
-      exerciseSplitName: $formData.exerciseSplitName,
-      exerciseSplitDays: $formData.exerciseSplitDays.map((splitDayName) => {
-        if (splitDayName === null) return null;
+      name: $formData.name,
+      splitDays: $formData.splitDays.map((name) => {
+        if (name === null) return null;
         return {
-          exerciseSplitDayName: splitDayName,
+          name: name,
           exerciseTemplates:
-            $exerciseSplitStore.exerciseSplitDays.find(
-              (splitDay) => splitDay?.exerciseSplitDayName === splitDayName
-            )?.exerciseTemplates ?? ([] as ExerciseTemplate[])
+            $exerciseSplitStore.splitDays.find((splitDay) => splitDay?.name === name)
+              ?.exerciseTemplates ?? ([] as ExerciseTemplate[])
         };
       })
     };
@@ -98,24 +95,24 @@
 </script>
 
 <form on:submit|preventDefault method="POST" use:enhance class="p-4 space-y-8 border rounded-md">
-  <Form.Field {form} name="exerciseSplitName">
+  <Form.Field {form} name="name">
     <Form.Control let:attrs>
       <Form.Label>Exercise split name</Form.Label>
-      <Input {...attrs} placeholder="Type here" bind:value={$formData.exerciseSplitName} />
+      <Input {...attrs} autocomplete="off" placeholder="Type here" bind:value={$formData.name} />
     </Form.Control>
     <Form.FieldErrors />
   </Form.Field>
-  <Form.Field {form} name="exerciseSplitDayName">
+  <Form.Field {form} name="splitDayName">
     <Form.Control let:attrs>
       <Form.Label>Workout days</Form.Label>
       <div class="flex gap-2">
         <Input
           {...attrs}
-          placeholder="Day {$formData.exerciseSplitDays.length + 1} name"
-          bind:value={$formData.exerciseSplitDayName}
+          placeholder="Day {$formData.splitDays.length + 1} name"
+          bind:value={$formData.splitDayName}
         />
         <Button type="button" variant="secondary" on:click={addDay}>
-          {#if $formData.exerciseSplitDayName}
+          {#if $formData.splitDayName}
             Add workout
           {:else}
             Add rest day
@@ -125,13 +122,13 @@
     </Form.Control>
     <Form.FieldErrors />
   </Form.Field>
-  <Form.Field {form} name="exerciseSplitDays">
+  <Form.Field {form} name="splitDays">
     <Form.Control>
       <Form.Label asChild>
         <span class="text-sm font-medium">Microcycle structure</span>
       </Form.Label>
       <div class="flex w-full flex-wrap gap-1">
-        {#each $formData.exerciseSplitDays as splitDay, idx}
+        {#each $formData.splitDays as splitDay, idx}
           <div class="flex">
             {#if splitDay}
               <Badge class="flex gap-1">

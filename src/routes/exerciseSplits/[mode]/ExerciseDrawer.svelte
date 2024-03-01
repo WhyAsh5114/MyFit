@@ -71,10 +71,15 @@
     </Drawer.Header>
     <form on:submit|preventDefault method="POST" use:enhance class="gap-2">
       <div class="grid grid-cols-2 gap-2 max-h-[30rem] overflow-y-auto px-4">
-        <Form.Field {form} name="exerciseName" class="col-span-2">
+        <Form.Field {form} name="name" class="col-span-2">
           <Form.Control let:attrs>
             <Form.Label>Exercise name</Form.Label>
-            <Input {...attrs} placeholder="Type here" bind:value={$formData.exerciseName} />
+            <Input
+              autocomplete="off"
+              {...attrs}
+              placeholder="Type here"
+              bind:value={$formData.name}
+            />
           </Form.Control>
           <Form.FieldErrors />
         </Form.Field>

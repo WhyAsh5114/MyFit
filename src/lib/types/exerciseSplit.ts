@@ -3,17 +3,17 @@ const SetTypes = ["straight", "drop", "down", "top", "myorep", "myorep match", "
 type ExerciseSetType = (typeof SetTypes)[number];
 
 type ExerciseSplit = {
-  exerciseSplitName: string;
-  exerciseSplitDays: (ExerciseSplitDay | null)[];
+  name: string;
+  splitDays: (ExerciseSplitDay | null)[];
 };
 
 type ExerciseSplitDay = {
-  exerciseSplitDayName: string;
+  name: string;
   exerciseTemplates: ExerciseTemplate[];
 };
 
 type ExerciseTemplate = {
-  exerciseName: string;
+  name: string;
   sets: number;
   targetMuscleGroup: MuscleGroup;
   setType: ExerciseSetType;

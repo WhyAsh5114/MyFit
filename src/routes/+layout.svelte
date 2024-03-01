@@ -10,6 +10,8 @@
   import Icon from "@iconify/svelte";
   import { ModeWatcher } from "mode-watcher";
   import ThemeSwitch from "$lib/components/ThemeSwitch.svelte";
+  import { overrideItemIdKeyNameBeforeInitialisingDndZones } from "svelte-dnd-action";
+  overrideItemIdKeyNameBeforeInitialisingDndZones("name");
 
   let drawerOpen = false;
 

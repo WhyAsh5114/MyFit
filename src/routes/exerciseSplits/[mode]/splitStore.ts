@@ -4,11 +4,11 @@ import type { Writable } from "svelte/store";
 export const originalExerciseSplitStore: Writable<ExerciseSplit> = persisted(
   "originalExerciseSplitStore",
   {
-    exerciseSplitName: "",
-    exerciseSplitDays: []
+    name: "",
+    splitDays: []
   }
 );
 export const exerciseSplitStore: Writable<ExerciseSplit> = persisted("exerciseSplitStore", {
-  exerciseSplitName: "",
-  exerciseSplitDays: []
+  name: "",
+  splitDays: []
 });

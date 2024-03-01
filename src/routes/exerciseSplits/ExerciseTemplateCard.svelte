@@ -11,7 +11,7 @@
 
 <div class="flex flex-col p-2 border rounded-md gap-0.5 bg-background/50 backdrop-blur-sm">
   <div class="flex items-center gap-0.5">
-    <span class="text-sm mr-auto truncate">{exerciseTemplate.exerciseName}</span>
+    <span class="text-sm mr-auto truncate">{exerciseTemplate.name}</span>
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
         <Button class="py-0 px-0.5 h-fit" variant="ghost">
