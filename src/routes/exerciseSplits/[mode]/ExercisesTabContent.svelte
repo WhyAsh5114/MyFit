@@ -192,7 +192,7 @@
   </div>
 </Tabs.Root>
 
-<style>
+<style lang="postcss">
   .custom-shadow-item {
     position: absolute;
     top: 0;

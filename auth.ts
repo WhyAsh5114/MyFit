@@ -3,6 +3,7 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "$lib/mongo/mongodb";
 import github from "@auth/sveltekit/providers/github";
 import google from "@auth/sveltekit/providers/google";
+import { AUTH_SECRET } from "$env/static/private";
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
   adapter: MongoDBAdapter(clientPromise),
@@ -15,5 +16,6 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
       return session;
     }
   },
-  trustHost: true
+  trustHost: true,
+  secret: AUTH_SECRET
 });
