@@ -10,7 +10,11 @@
   import { exerciseTemplateFormSchema } from "./schemas";
   import { Input } from "$lib/components/ui/input";
   import { muscleGroups, setTypes } from "$lib/types/arrays";
+
   export let addExercise: (exerciseTemplate: ExerciseTemplate) => void;
+  export let editingExercise: (ExerciseTemplate & { idx: number }) | null;
+
+  let exerciseDrawerOpen = false;
 
   const form = superForm(defaults(zod(exerciseTemplateFormSchema)), {
     SPA: true,
@@ -18,7 +22,7 @@
     onUpdate: ({ form }) => {
       if (form.valid) {
         addExercise(form.data);
-        open = false;
+        exerciseDrawerOpen = false;
       } else validateForm({ update: true });
     },
     resetForm: false,
@@ -26,9 +30,15 @@
     id: "exercise-split-exercise-template-form"
   });
   const { form: formData, enhance, validateForm } = form;
-  console.log($formData);
 
-  let open = false;
+  $: mode = editingExercise ? "Edit" : "Add";
+  $: exerciseDrawerOpen = editingExercise ? true : false;
+  $: if (editingExercise) {
+    $formData = editingExercise;
+  } else {
+    form.reset();
+  }
+
   $: selectedMuscleGroup = $formData.targetMuscleGroup
     ? {
         label: $formData.targetMuscleGroup,
@@ -43,13 +53,22 @@
     : undefined;
 </script>
 
-<Drawer.Root bind:open dismissible={false}>
+<Drawer.Root bind:open={exerciseDrawerOpen} dismissible={false}>
   <Drawer.Trigger class="w-full">
-    <Button variant="secondary" class="w-full" on:click={() => (open = true)}>Add exercise</Button>
+    <Button
+      variant="secondary"
+      class="w-full"
+      on:click={() => {
+        editingExercise = null;
+        exerciseDrawerOpen = true;
+      }}
+    >
+      Add exercise
+    </Button>
   </Drawer.Trigger>
   <Drawer.Content>
     <Drawer.Header>
-      <Drawer.Title>Add exercise</Drawer.Title>
+      <Drawer.Title>{mode} exercise</Drawer.Title>
     </Drawer.Header>
     <form on:submit|preventDefault method="POST" use:enhance class="gap-2">
       <div class="grid grid-cols-2 gap-2 max-h-[30rem] overflow-y-auto px-4">
@@ -148,8 +167,10 @@
         </Form.Field>
       </div>
       <div class="grid grid-cols-2 gap-2 p-4">
-        <Button type="button" variant="destructive" on:click={() => (open = false)}>Close</Button>
-        <Form.Button class="w-full">Add exercise</Form.Button>
+        <Button type="button" variant="destructive" on:click={() => (exerciseDrawerOpen = false)}>
+          Close
+        </Button>
+        <Form.Button class="w-full">{mode} exercise</Form.Button>
       </div>
     </form>
   </Drawer.Content>
