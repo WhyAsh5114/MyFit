@@ -7,36 +7,38 @@
   import * as Select from "$lib/components/ui/select";
   import { superForm, defaults } from "sveltekit-superforms";
   import { zod } from "sveltekit-superforms/adapters";
-  import { exerciseTemplateFormSchema } from "./schemas";
+  import { exerciseTemplateFormDefaults, exerciseTemplateFormSchema } from "./schemas";
   import { Input } from "$lib/components/ui/input";
   import { muscleGroups, setTypes } from "$lib/types/arrays";
 
-  export let addExercise: (exerciseTemplate: ExerciseTemplate) => void;
+  export let addExercise: (exerciseTemplate: ExerciseTemplate) => boolean;
   export let editingExercise: (ExerciseTemplate & { idx: number }) | null;
 
   let exerciseDrawerOpen = false;
 
-  const form = superForm(defaults(zod(exerciseTemplateFormSchema)), {
+  const form = superForm(defaults(exerciseTemplateFormDefaults, zod(exerciseTemplateFormSchema)), {
     SPA: true,
     validators: zod(exerciseTemplateFormSchema),
     onUpdate: ({ form }) => {
       if (form.valid) {
-        addExercise(form.data);
-        exerciseDrawerOpen = false;
-      } else validateForm({ update: true });
+        if (addExercise(form.data)) {
+          exerciseDrawerOpen = false;
+          form.data = JSON.parse(JSON.stringify(exerciseTemplateFormDefaults));
+        } else form.errors.name = ["Exercise names should be unique"];
+      } else {
+        validateForm({ update: true });
+      }
     },
     invalidateAll: false,
-    id: "exercise-split-exercise-template-form"
+    id: "exercise-split-exercise-template-form",
+    resetForm: false
   });
   const { form: formData, enhance, validateForm } = form;
 
   $: mode = editingExercise ? "Edit" : "Add";
   $: exerciseDrawerOpen = editingExercise ? true : false;
-  $: if (editingExercise) {
-    $formData = editingExercise;
-  } else {
-    form.reset();
-  }
+  $: if (editingExercise) $formData = editingExercise;
+  else form.reset();
 
   $: selectedMuscleGroup = $formData.targetMuscleGroup
     ? {
