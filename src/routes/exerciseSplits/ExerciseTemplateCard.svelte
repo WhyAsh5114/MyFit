@@ -45,8 +45,9 @@
       reps
     </span>
     {#if exerciseTemplate.involvesBodyweight}
-      <Badge variant="secondary">BW</Badge>
+      <Badge variant="outline">BW</Badge>
     {/if}
-    <Badge class="whitespace-nowrap">{exerciseTemplate.targetMuscleGroup}</Badge>
+    <Badge class="whitespace-nowrap" variant="secondary">{exerciseTemplate.targetMuscleGroup}</Badge
+    >
   </div>
 </div>
