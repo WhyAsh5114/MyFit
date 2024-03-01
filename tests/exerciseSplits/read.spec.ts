@@ -21,6 +21,6 @@ test("show some stats", async ({ page }) => {
 
   await page.getByLabel("Exercises").check();
   await expect(page.getByTestId("split-exercises-table")).toContainText(
-    "Pull up BW 3 sets of 5 to 15 reps Back (vertical pulls)"
+    "Pull up BW 3 sets of 5 to 15 reps Lats"
   );
 });

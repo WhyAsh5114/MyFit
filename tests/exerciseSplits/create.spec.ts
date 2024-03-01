@@ -126,35 +126,35 @@ test("test exercise operations (add, delete, edit, move, BW, data display)", asy
 
   await page.getByRole("button", { name: "Add exercise", exact: true }).click();
   await page.getByLabel("Exercise name").fill("Upper 1 Exercise 2");
-  await page.getByLabel("Muscle group Select a muscle").selectOption("Back (vertical pulls)");
+  await page.getByLabel("Muscle group Select a muscle").selectOption("Lats");
   await page.getByLabel("Sets", { exact: true }).fill("5");
   await page.getByPlaceholder("From").fill("5");
   await page.getByPlaceholder("To").fill("10");
   await page.getByLabel("Involves bodyweight?  No").check();
   await page.getByRole("button", { name: "add exercise", exact: true }).click();
   await expect(page.getByTestId("exercise2-card")).toHaveText(
-    "Upper 1 Exercise 2 BW 5 sets of 5 to 10 reps Back (vertical pulls)"
+    "Upper 1 Exercise 2 BW 5 sets of 5 to 10 reps Lats"
   );
 
   await expect(page.getByTestId("split-exercises-table")).toHaveText(
-    "Upper 1 Exercise 1 3 sets of 10 to 20 reps Chest Upper 1 Exercise 1 Note Upper 1 Exercise 2 BW 5 sets of 5 to 10 reps Back (vertical pulls)"
+    "Upper 1 Exercise 1 3 sets of 10 to 20 reps Chest Upper 1 Exercise 1 Note Upper 1 Exercise 2 BW 5 sets of 5 to 10 reps Lats"
   );
   await page.getByTestId("exercise1-card").locator("summary").click();
   await page.getByTestId("exercise1-card").getByLabel("Delete exercise").click();
   await expect(page.getByTestId("split-exercises-table")).toHaveText(
-    "Upper 1 Exercise 2 BW 5 sets of 5 to 10 reps Back (vertical pulls)"
+    "Upper 1 Exercise 2 BW 5 sets of 5 to 10 reps Lats"
   );
 
   await page.getByTestId("exercise1-menu-button").click();
   await page.getByLabel("Edit exercise").click();
   await page.getByLabel("Exercise name").fill("Upper 1 Exercise 1");
   await page.getByLabel("Sets", { exact: true }).fill("3");
-  await page.getByLabel("Muscle group Select a muscle").selectOption("Back (horizontal pulls)");
+  await page.getByLabel("Muscle group Select a muscle").selectOption("Traps");
   await page.getByLabel("Notes").fill("Upper 1 Exercise 1 Note (edited)");
   await page.getByRole("button", { name: "edit exercise", exact: true }).click();
   await expect(page.getByTestId("exercise1-card")).toHaveCount(1); // Wait for edit to complete and update UI
   await expect(page.getByTestId("exercise1-card")).toHaveText(
-    "Upper 1 Exercise 1 BW 3 sets of 5 to 10 reps Back (horizontal pulls) Upper 1 Exercise 1 Note (edited)"
+    "Upper 1 Exercise 1 BW 3 sets of 5 to 10 reps Traps Upper 1 Exercise 1 Note (edited)"
   );
 
   await page.getByRole("button", { name: "Add exercise", exact: true }).click();
@@ -165,13 +165,13 @@ test("test exercise operations (add, delete, edit, move, BW, data display)", asy
   await page.getByPlaceholder("To").fill("10");
   await page.getByRole("button", { name: "add exercise", exact: true }).click();
   await expect(page.getByTestId("exercise1-card")).toHaveText(
-    "Upper 1 Exercise 1 BW 3 sets of 5 to 10 reps Back (horizontal pulls) Upper 1 Exercise 1 Note (edited)"
+    "Upper 1 Exercise 1 BW 3 sets of 5 to 10 reps Traps Upper 1 Exercise 1 Note (edited)"
   );
   await expect(page.getByTestId("exercise2-card")).toHaveText(
     "Upper 1 Exercise 2 3 sets of 5 to 10 reps Chest"
   );
   await expect(page.getByTestId("split-exercises-table")).toHaveText(
-    "Upper 1 Exercise 1 BW 3 sets of 5 to 10 reps Back (horizontal pulls) Upper 1 Exercise 1 Note (edited) Upper 1 Exercise 2 3 sets of 5 to 10 reps Chest"
+    "Upper 1 Exercise 1 BW 3 sets of 5 to 10 reps Traps Upper 1 Exercise 1 Note (edited) Upper 1 Exercise 2 3 sets of 5 to 10 reps Chest"
   );
   await page.getByTestId("exercise2-card").locator("summary").click();
   await page.getByTestId("exercise2-card").getByLabel("Move exercise up").click();
@@ -180,10 +180,10 @@ test("test exercise operations (add, delete, edit, move, BW, data display)", asy
     "Upper 1 Exercise 2 3 sets of 5 to 10 reps Chest"
   );
   await expect(page.getByTestId("exercise2-card")).toHaveText(
-    "Upper 1 Exercise 1 BW 3 sets of 5 to 10 reps Back (horizontal pulls) Upper 1 Exercise 1 Note (edited)"
+    "Upper 1 Exercise 1 BW 3 sets of 5 to 10 reps Traps Upper 1 Exercise 1 Note (edited)"
   );
   await expect(page.getByTestId("split-exercises-table")).toHaveText(
-    "Upper 1 Exercise 2 3 sets of 5 to 10 reps Chest Upper 1 Exercise 1 BW 3 sets of 5 to 10 reps Back (horizontal pulls) Upper 1 Exercise 1 Note (edited)"
+    "Upper 1 Exercise 2 3 sets of 5 to 10 reps Chest Upper 1 Exercise 1 BW 3 sets of 5 to 10 reps Traps Upper 1 Exercise 1 Note (edited)"
   );
 });
 
@@ -267,7 +267,7 @@ test("warn about exercise deletion when changing structure", async ({ page }) =>
   await page.getByLabel("B", { exact: true }).check();
   await page.getByRole("button", { name: "Add exercise", exact: true }).click();
   await page.getByLabel("Exercise name").fill("B");
-  await page.getByLabel("Muscle group Select a muscle").selectOption("Back (vertical pulls)");
+  await page.getByLabel("Muscle group Select a muscle").selectOption("Lats");
   await page.getByLabel("Sets", { exact: true }).fill("3");
   await page.getByPlaceholder("From").fill("10");
   await page.getByPlaceholder("To").fill("20");
@@ -285,7 +285,7 @@ test("warn about exercise deletion when changing structure", async ({ page }) =>
   await page.getByLabel("D", { exact: true }).check();
   await page.getByRole("button", { name: "Add exercise", exact: true }).click();
   await page.getByLabel("Exercise name").fill("D");
-  await page.getByLabel("Muscle group Select a muscle").selectOption("Back (horizontal pulls)");
+  await page.getByLabel("Muscle group Select a muscle").selectOption("Traps");
   await page.getByLabel("Sets", { exact: true }).fill("3");
   await page.getByPlaceholder("From").fill("10");
   await page.getByPlaceholder("To").fill("20");
@@ -319,7 +319,7 @@ test("warn about exercise deletion when changing structure", async ({ page }) =>
   );
   await page.getByLabel("D", { exact: true }).check();
   await expect(page.getByTestId("split-exercises-table")).toHaveText(
-    "D 3 sets of 10 to 20 reps Back (horizontal pulls)"
+    "D 3 sets of 10 to 20 reps Traps"
   );
 });
 

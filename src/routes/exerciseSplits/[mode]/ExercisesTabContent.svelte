@@ -85,6 +85,6 @@
   {/each}
   <div class="grid grid-cols-2 gap-1 px-1">
     <ExerciseDrawer bind:editingExercise {addExercise} />
-    <Button>Next</Button>
+    <Button on:click={() => (currentTab = "overview")}>Next</Button>
   </div>
 </Tabs.Root>

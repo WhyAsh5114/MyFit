@@ -11,7 +11,7 @@ export const commonSplits: CommonExerciseSplits = [
         exerciseTemplates: [
           {
             involvesBodyweight: true,
-            targetMuscleGroup: "Back (vertical pulls)",
+            targetMuscleGroup: "Lats",
             name: "Pull up",
             sets: 3,
             repRangeStart: 5,
@@ -22,7 +22,7 @@ export const commonSplits: CommonExerciseSplits = [
           {
             involvesBodyweight: false,
             name: "Barbell row",
-            targetMuscleGroup: "Back (horizontal pulls)",
+            targetMuscleGroup: "Traps",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
@@ -146,7 +146,7 @@ export const commonSplits: CommonExerciseSplits = [
         exerciseTemplates: [
           {
             involvesBodyweight: false,
-            targetMuscleGroup: "Back (vertical pulls)",
+            targetMuscleGroup: "Lats",
             name: "Lat pulldown",
             sets: 3,
             repRangeStart: 10,
@@ -157,7 +157,7 @@ export const commonSplits: CommonExerciseSplits = [
           {
             involvesBodyweight: false,
             name: "Machine rows",
-            targetMuscleGroup: "Back (horizontal pulls)",
+            targetMuscleGroup: "Traps",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
@@ -289,7 +289,7 @@ export const commonSplits: CommonExerciseSplits = [
         exerciseTemplates: [
           {
             involvesBodyweight: false,
-            targetMuscleGroup: "Back (vertical pulls)",
+            targetMuscleGroup: "Lats",
             name: "Lat pulldown",
             sets: 3,
             repRangeStart: 10,
@@ -300,7 +300,7 @@ export const commonSplits: CommonExerciseSplits = [
           {
             involvesBodyweight: false,
             name: "Chest supported row",
-            targetMuscleGroup: "Back (horizontal pulls)",
+            targetMuscleGroup: "Traps",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
@@ -409,7 +409,7 @@ export const commonSplits: CommonExerciseSplits = [
         exerciseTemplates: [
           {
             involvesBodyweight: true,
-            targetMuscleGroup: "Back (vertical pulls)",
+            targetMuscleGroup: "Lats",
             name: "Pull up",
             sets: 3,
             repRangeStart: 5,
@@ -420,7 +420,7 @@ export const commonSplits: CommonExerciseSplits = [
           {
             involvesBodyweight: false,
             name: "Barbell row",
-            targetMuscleGroup: "Back (horizontal pulls)",
+            targetMuscleGroup: "Traps",
             sets: 3,
             repRangeStart: 5,
             repRangeEnd: 15,
@@ -519,7 +519,7 @@ export const commonSplits: CommonExerciseSplits = [
         exerciseTemplates: [
           {
             involvesBodyweight: false,
-            targetMuscleGroup: "Back (horizontal pulls)",
+            targetMuscleGroup: "Traps",
             name: "Helms row",
             sets: 3,
             repRangeStart: 10,
@@ -530,7 +530,7 @@ export const commonSplits: CommonExerciseSplits = [
           {
             involvesBodyweight: false,
             name: "Lat prayer",
-            targetMuscleGroup: "Back (vertical pulls)",
+            targetMuscleGroup: "Lats",
             sets: 3,
             repRangeStart: 10,
             repRangeEnd: 20,
