@@ -10,6 +10,7 @@
   import Icon from "@iconify/svelte";
   import { ModeWatcher } from "mode-watcher";
   import ThemeSwitch from "$lib/components/ThemeSwitch.svelte";
+  import { Toaster } from "$lib/components/ui/sonner";
   import { overrideItemIdKeyNameBeforeInitialisingDndZones } from "svelte-dnd-action";
   overrideItemIdKeyNameBeforeInitialisingDndZones("name");
 
@@ -44,7 +45,9 @@
   {@html webManifestLink}
 </svelte:head>
 
+<Toaster />
 <ModeWatcher />
+
 <div class="flex w-full border-b items-center p-2 gap-1">
   <Sheet.Root>
     <Sheet.Trigger class="pl-2" aria-label="menu">
