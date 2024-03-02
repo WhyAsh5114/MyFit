@@ -5,7 +5,7 @@
   import { Badge } from "$lib/components/ui/badge";
   import { Button } from "$lib/components/ui/button";
   import Icon from "@iconify/svelte";
-  import { exerciseSplitStore } from "./splitStore";
+  import { exerciseSplitStore, selectedSplitDayIdx } from "./splitStore";
   import { defaults, superForm } from "sveltekit-superforms";
   import { zod } from "sveltekit-superforms/adapters";
   import { structureTabFormSchema } from "./schemas";
@@ -70,6 +70,7 @@
         };
       })
     };
+    $selectedSplitDayIdx = $exerciseSplitStore.splitDays.findIndex((splitDay) => splitDay !== null);
     currentTab = "exercises";
   }
 </script>
@@ -119,7 +120,11 @@
               </Badge>
             {:else}
               <Badge class="flex gap-1" variant="outline">
-                <Button variant="outline" class="p-0 h-fit border-0" on:click={() => removeDay(idx)}>
+                <Button
+                  variant="outline"
+                  class="p-0 h-fit border-0"
+                  on:click={() => removeDay(idx)}
+                >
                   <Icon icon="material-symbols:close" />
                 </Button>
                 Rest
