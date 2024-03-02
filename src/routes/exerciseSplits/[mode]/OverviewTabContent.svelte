@@ -4,6 +4,7 @@
   import Button from "$lib/components/ui/button/button.svelte";
   import { muscleGroups } from "$lib/types/arrays";
   import { exerciseSplitStore } from "./splitStore";
+  import { mode } from "mode-watcher";
   import { Line } from "svelte-chartjs";
   import {
     Chart as ChartJS,
@@ -13,7 +14,8 @@
     LineElement,
     LinearScale,
     PointElement,
-    CategoryScale
+    CategoryScale,
+    type ChartData
   } from "chart.js";
 
   ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale);
@@ -49,6 +51,7 @@
       datasets: [
         {
           label: "Volume",
+          lineTension: 0.2,
           data: $exerciseSplitStore.splitDays.map(
             (splitDay) =>
               splitDay?.exerciseTemplates.reduce((setsForDay, exerciseTemplate) => {
@@ -56,7 +59,8 @@
                   ? setsForDay + exerciseTemplate.sets
                   : setsForDay;
               }, 0) ?? 0
-          )
+          ),
+          borderColor: `hsl(0, 0%, ${$mode === "light" ? "20%" : "80%"})`
         }
       ]
     };
@@ -83,7 +87,7 @@
                 responsive: true,
                 scales: {
                   y: { min: -0, max: Math.max(...data.datasets[0].data) + 2 }
-                },
+                }
               }}
             />
           </Accordion.Content>
