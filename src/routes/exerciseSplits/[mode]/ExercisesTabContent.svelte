@@ -9,7 +9,7 @@
   import { SHADOW_ITEM_MARKER_PROPERTY_NAME, TRIGGERS } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import { fade } from "svelte/transition";
-  import { cubicIn } from "svelte/easing";
+  import { cn } from "$lib/utils";
   export let currentTab;
 
   type CustomExerciseSplitDay = {
@@ -117,46 +117,42 @@
 <Tabs.Root value={selectedSplitDayIdx.toString()} class="h-full flex flex-col">
   <Tabs.List class="flex bg-background p-0 overflow-x-auto justify-start">
     {#each exerciseSplit.splitDays as splitDay, idx}
-      <Tabs.Trigger
-        disabled={splitDay === null}
-        value={idx.toString()}
-        on:click={() => {
-          if (splitDay) selectedSplitDayIdx = idx;
-        }}
-        class="p-0"
-      >
+      <Tabs.Trigger value={idx.toString()} on:click={() => (selectedSplitDayIdx = idx)} class="p-0">
         <Button
           variant={idx === selectedSplitDayIdx ? "outline" : "ghost"}
-          class="hover:bg-background border {idx === selectedSplitDayIdx
-            ? ''
-            : 'border-background'}"
+          class={cn("hover:bg-background border border-background", {
+            "border-border": idx === selectedSplitDayIdx,
+            "text-muted-foreground": splitDay === null
+          })}
         >
           {splitDay?.name ?? "Rest"}
         </Button>
       </Tabs.Trigger>
     {/each}
   </Tabs.List>
-  {#if currentSplitDay}
+  {#key selectedSplitDayIdx}
     <Tabs.Content value={selectedSplitDayIdx.toString()}>
       <Card.Root class="h-full flex flex-col border-none">
         <Card.Header class="px-1 py-2">
-          <Card.Title>{currentSplitDay.name}</Card.Title>
+          <Card.Title class={cn({ "text-muted-foreground": currentSplitDay === null })}>
+            {currentSplitDay?.name ?? "Rest day"}
+          </Card.Title>
           <Card.Description>Day {selectedSplitDayIdx + 1}</Card.Description>
         </Card.Header>
         <Card.Content class="py-2 h-full w-full px-0 flex flex-col">
-          <div
-            use:dndzone={{
-              items: currentSplitDay.exerciseTemplates,
-              flipDurationMs: 200,
-              dropTargetClasses: ["border-none"],
-              dropTargetStyle: {},
-              dragDisabled
-            }}
-            on:consider={handleConsider}
-            on:finalize={handleFinalize}
-            class="flex flex-col gap-1 h-px grow overflow-y-auto"
-          >
-            {#key selectedSplitDayIdx}
+          {#if currentSplitDay}
+            <div
+              use:dndzone={{
+                items: currentSplitDay.exerciseTemplates,
+                flipDurationMs: 200,
+                dropTargetClasses: ["border-none"],
+                dropTargetStyle: {},
+                dragDisabled
+              }}
+              on:consider={handleConsider}
+              on:finalize={handleFinalize}
+              class="flex flex-col gap-1 h-px grow overflow-y-auto"
+            >
               {#each currentSplitDay.exerciseTemplates as exerciseTemplate, idx (exerciseTemplate.name)}
                 <div class="relative" animate:flip={{ duration: 200 }}>
                   <ExerciseTemplateCard
@@ -168,7 +164,7 @@
                     {deleteExercise}
                   />
                   {#if exerciseTemplate[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
-                    <div in:fade={{ duration: 200, easing: cubicIn }} class="custom-shadow-item" />
+                    <div in:fade={{ duration: 200 }} class="custom-shadow-item" />
                   {/if}
                 </div>
               {:else}
@@ -176,8 +172,12 @@
                   No exercises added
                 </div>
               {/each}
-            {/key}
-          </div>
+            </div>
+          {:else}
+            <div class="border rounded-lg grow grid place-items-center">
+              <span class="text-2xl text-center text-muted-foreground">Rest and relax</span>
+            </div>
+          {/if}
         </Card.Content>
         <Card.Footer class="flex flex-col gap-1.5 py-1 px-0 h-fit">
           <div class="grid grid-cols-3 w-full gap-1">
@@ -188,7 +188,7 @@
         </Card.Footer>
       </Card.Root>
     </Tabs.Content>
-  {/if}
+  {/key}
   <div class="grid grid-cols-2 gap-1">
     <ExerciseDrawer bind:editingExercise {addExercise} {editExercise} />
     <Button on:click={() => (currentTab = "overview")}>Next</Button>
