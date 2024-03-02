@@ -27,8 +27,8 @@
     </DropdownMenu.Trigger>
     <DropdownMenu.Content>
       <DropdownMenu.Group>
-        <DropdownMenu.Item>Profile</DropdownMenu.Item>
-        <DropdownMenu.Item>Settings</DropdownMenu.Item>
+        <DropdownMenu.Item><a href="/profile">Profile</a></DropdownMenu.Item>
+        <DropdownMenu.Item><a href="/settings">Settings</a></DropdownMenu.Item>
         <DropdownMenu.Item on:click={() => signOut()} class="text-red-500"
           >Log out</DropdownMenu.Item
         >
