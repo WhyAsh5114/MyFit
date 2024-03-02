@@ -1,4 +1,5 @@
 <script lang="ts">
+  import OverviewTabContent from "./OverviewTabContent.svelte";
   import * as Tabs from "$lib/components/ui/tabs";
   import { page } from "$app/stores";
   import StructureTabContent from "./StructureTabContent.svelte";
@@ -25,5 +26,8 @@
   </Tabs.Content>
   <Tabs.Content value="exercises">
     <ExercisesTabContent bind:currentTab />
+  </Tabs.Content>
+  <Tabs.Content value="overview">
+    <OverviewTabContent />
   </Tabs.Content>
 </Tabs.Root>
