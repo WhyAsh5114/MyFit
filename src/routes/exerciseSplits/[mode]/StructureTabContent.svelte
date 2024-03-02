@@ -111,15 +111,15 @@
         {#each $formData.splitDays as splitDay, idx}
           <div class="flex">
             {#if splitDay}
-              <Badge class="flex gap-1">
+              <Badge class="flex gap-1" variant="secondary">
                 <Button variant="ghost" class="p-0 h-fit" on:click={() => removeDay(idx)}>
                   <Icon icon="material-symbols:close" />
                 </Button>
                 {splitDay}
               </Badge>
             {:else}
-              <Badge class="flex gap-1" variant="secondary">
-                <Button variant="ghost" class="p-0 h-fit" on:click={() => removeDay(idx)}>
+              <Badge class="flex gap-1" variant="outline">
+                <Button variant="outline" class="p-0 h-fit border-0" on:click={() => removeDay(idx)}>
                   <Icon icon="material-symbols:close" />
                 </Button>
                 Rest
