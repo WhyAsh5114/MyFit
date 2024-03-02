@@ -11,6 +11,7 @@
   import { Input } from "$lib/components/ui/input";
   import { muscleGroups, setTypes } from "$lib/types/arrays";
 
+  export let onRestDay: boolean;
   export let addExercise: (exerciseTemplate: ExerciseTemplate) => boolean;
   export let editingExercise: (ExerciseTemplate & { idx: number }) | null;
   export let editExercise: (exerciseTemplate: ExerciseTemplate & { idx: number }) => boolean;
@@ -61,9 +62,11 @@
 </script>
 
 <Drawer.Root bind:open={exerciseDrawerOpen} dismissible={false}>
-  <Drawer.Trigger class="w-full">
+  <Drawer.Trigger class="w-full" asChild let:builder>
     <Button
+      builders={[builder]}
       variant="secondary"
+      disabled={onRestDay}
       class="w-full"
       on:click={() => {
         editingExercise = null;

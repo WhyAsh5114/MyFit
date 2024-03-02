@@ -10,6 +10,7 @@
   import { flip } from "svelte/animate";
   import { fade } from "svelte/transition";
   import { cn } from "$lib/utils";
+  import { toast } from "svelte-sonner";
   export let currentTab;
 
   type CustomExerciseSplitDay = {
@@ -112,6 +113,19 @@
   function handleKeyDown(e: KeyboardEvent) {
     if ((e.key === "Enter" || e.key === " ") && dragDisabled) dragDisabled = false;
   }
+
+  function submitExercises() {
+    const emptyWorkouts = $exerciseSplitStore.splitDays
+      .filter((splitDay) => splitDay?.exerciseTemplates.length === 0)
+      .map((splitDay) => splitDay?.name);
+    if (emptyWorkouts.length > 0) {
+      toast.error("Error", {
+        description: "Add at least one exercise to workouts: " + emptyWorkouts.join(", ")
+      });
+      return;
+    }
+    currentTab = "overview";
+  }
 </script>
 
 <Tabs.Root value={selectedSplitDayIdx.toString()} class="h-full flex flex-col">
@@ -122,7 +136,7 @@
           variant={idx === selectedSplitDayIdx ? "outline" : "ghost"}
           class={cn("hover:bg-background border border-background", {
             "border-border": idx === selectedSplitDayIdx,
-            "text-muted-foreground": splitDay === null
+            italic: splitDay === null
           })}
         >
           {splitDay?.name ?? "Rest"}
@@ -174,24 +188,29 @@
               {/each}
             </div>
           {:else}
-            <div class="border rounded-lg grow grid place-items-center">
-              <span class="text-2xl text-center text-muted-foreground">Rest and relax</span>
+            <div class="flex flex-col p-2 border rounded-md text-sm text-muted-foreground">
+              Rest and relax
             </div>
           {/if}
         </Card.Content>
         <Card.Footer class="flex flex-col gap-1.5 py-1 px-0 h-fit">
           <div class="grid grid-cols-3 w-full gap-1">
-            <Button variant="secondary">Cut</Button>
-            <Button variant="secondary">Copy</Button>
-            <Button variant="secondary">Paste</Button>
+            <Button variant="secondary" disabled={currentSplitDay === null}>Cut</Button>
+            <Button variant="secondary" disabled={currentSplitDay === null}>Copy</Button>
+            <Button variant="secondary" disabled={currentSplitDay === null}>Paste</Button>
           </div>
         </Card.Footer>
       </Card.Root>
     </Tabs.Content>
   {/key}
   <div class="grid grid-cols-2 gap-1">
-    <ExerciseDrawer bind:editingExercise {addExercise} {editExercise} />
-    <Button on:click={() => (currentTab = "overview")}>Next</Button>
+    <ExerciseDrawer
+      onRestDay={currentSplitDay === null}
+      bind:editingExercise
+      {addExercise}
+      {editExercise}
+    />
+    <Button on:click={submitExercises}>Next</Button>
   </div>
 </Tabs.Root>
 
