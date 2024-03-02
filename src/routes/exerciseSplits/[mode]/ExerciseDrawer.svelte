@@ -170,7 +170,7 @@
         </Form.Field>
         <Form.Field {form} name="note" class="col-span-2">
           <Form.Control let:attrs>
-            <Form.Label>Bio</Form.Label>
+            <Form.Label>Note</Form.Label>
             <Textarea
               {...attrs}
               placeholder="Exercise cues, machine heights, etc."
