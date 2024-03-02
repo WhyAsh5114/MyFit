@@ -1,5 +1,4 @@
 <script lang="ts">
-  import SplitDaysSchedule from "./SplitDaysSchedule.svelte";
   import { getTotalSetsOfSplit } from "$lib/utils/exerciseSplits.js";
   import { onMount } from "svelte";
   import type { WithId } from "mongodb";
@@ -16,24 +15,6 @@
 <h2>Exercise splits</h2>
 
 <div class="h-px flex flex-col grow overflow-y-auto gap-1">
-  {#each exerciseSplits as exerciseSplit}
-    <a class="btn rounded-md btn-primary h-fit" href="/exerciseSplits/view/{exerciseSplit._id}">
-      <div class="flex flex-col gap-1 py-2 w-full">
-        <div class="flex justify-between items-center">
-          <span class="text-lg font-semibold">{exerciseSplit.name}</span>
-          <span class="font-normal">
-            {getTotalSetsOfSplit(exerciseSplit.splitDays)} sets
-          </span>
-        </div>
-        <SplitDaysSchedule splitDays={exerciseSplit.splitDays} />
-      </div>
-    </a>
-  {:else}
-    <div class="flex flex-col bg-primary p-2 mb-auto rounded-md">
-      <span class="font-semibold text-warning text-lg">No splits created</span>
-      <span>Create one by clicking the button below</span>
-    </div>
-  {/each}
 </div>
 
 <Drawer.Root>
