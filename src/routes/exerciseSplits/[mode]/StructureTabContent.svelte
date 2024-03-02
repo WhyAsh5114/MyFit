@@ -134,7 +134,7 @@
     <Form.FieldErrors />
   </Form.Field>
   <div class="flex w-full justify-end">
-    <Form.Button>Next</Form.Button>
+    <Form.Button>Save & Next</Form.Button>
   </div>
 </form>
 

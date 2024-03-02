@@ -239,7 +239,7 @@
       {addExercise}
       {editExercise}
     />
-    <Button on:click={submitExercises}>Next</Button>
+    <Button on:click={submitExercises}>Save & Next</Button>
   </div>
 </Tabs.Root>
 
