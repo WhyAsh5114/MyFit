@@ -16,12 +16,7 @@
     CategoryScale
   } from "chart.js";
 
-  const foregroundColorValue = "hsl(0, 0%, 98%)";
-  const mutedForegroundColorValue = "hsl(0, 0%, 63.9%)";
-
   ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale);
-  ChartJS.defaults.color = mutedForegroundColorValue;
-  ChartJS.defaults.borderColor = `hsl(0, 0%, 32%)`;
 
   function getTotalSetsOfMuscleGroup(muscleGroup: MuscleGroup) {
     return $exerciseSplitStore.splitDays.reduce((totalSets, splitDay) => {
@@ -54,9 +49,6 @@
       datasets: [
         {
           label: "Volume",
-          borderColor: mutedForegroundColorValue,
-          pointBorderColor: foregroundColorValue,
-          pointBackgroundColor: foregroundColorValue,
           data: $exerciseSplitStore.splitDays.map(
             (splitDay) =>
               splitDay?.exerciseTemplates.reduce((setsForDay, exerciseTemplate) => {
@@ -89,7 +81,9 @@
               {data}
               options={{
                 responsive: true,
-                scales: { y: { min: 0, max: Math.max(...data.datasets[0].data) + 2 } }
+                scales: {
+                  y: { min: -0, max: Math.max(...data.datasets[0].data) + 2 }
+                },
               }}
             />
           </Accordion.Content>
