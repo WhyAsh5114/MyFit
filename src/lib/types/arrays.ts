@@ -1,5 +1,3 @@
-import type { ObjectId } from "bson";
-
 export const muscleGroups: typeof MuscleGroups = [
   "Chest",
   "Front delts",
@@ -16,8 +14,6 @@ export const muscleGroups: typeof MuscleGroups = [
   "Calves",
   "Abs"
 ] as const;
-
-export type WithUserId<T> = T & { userId: ObjectId };
 
 export const caloricStates: typeof CaloricStates = [
   {
@@ -87,8 +83,3 @@ export const setTypes: typeof SetTypes = [
   "myorep match",
   "giant"
 ] as const;
-
-export const paramMap: Record<string, { action: string; verb: string }> = {
-  new: { action: "Create", verb: "Creating" },
-  edit: { action: "Update", verb: "Updating" }
-};

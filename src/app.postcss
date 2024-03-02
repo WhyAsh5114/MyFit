@@ -70,19 +70,17 @@
 
 @layer base {
   * {
-    @apply border-border inter;
+    @apply border-border;
+    font-family: "Inter", sans-serif;
   }
   body {
     @apply bg-background text-foreground;
   }
 }
 
-.inter {
-  font-family: "Inter", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 500;
-  font-style: normal;
-  font-variation-settings: "slnt" 0;
+@font-face {
+  font-family: "Inter";
+  src: url("/Inter-VariableFont_slnt,wght.ttf") format("truetype");
 }
 
 html,

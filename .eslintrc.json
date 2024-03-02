@@ -30,7 +30,7 @@
   "ignorePatterns": [
     "postcss.config.cjs",
     "svelte.config.js",
-    "tailwind.config.cjs",
+    "tailwind.config.js",
     "src/service-worker.ts",
     "playwright.config.ts"
   ],
