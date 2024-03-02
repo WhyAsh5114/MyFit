@@ -81,16 +81,12 @@
 
   function copyExercises() {
     if (!selectedSplitDay) return;
-    copiedExercises = JSON.parse(
-      JSON.stringify(selectedSplitDay.exerciseTemplates)
-    ) as ExerciseTemplate[];
+    copiedExercises = JSON.parse(JSON.stringify(selectedSplitDay.exerciseTemplates));
   }
 
   function pasteExercises() {
     if (!selectedSplitDay) return;
-    selectedSplitDay.exerciseTemplates = JSON.parse(
-      JSON.stringify(copiedExercises)
-    ) as ExerciseTemplate[];
+    selectedSplitDay.exerciseTemplates = JSON.parse(JSON.stringify(copiedExercises));
   }
 
   function cutExercises() {
@@ -208,19 +204,29 @@
         </Card.Content>
         <Card.Footer class="flex flex-col gap-1.5 py-1 px-0 h-fit">
           <div class="grid grid-cols-3 w-full gap-1">
-            <Button variant="secondary" disabled={selectedSplitDay === null} on:click={cutExercises}
-              >Cut</Button
-            >
             <Button
               variant="secondary"
-              disabled={selectedSplitDay === null}
-              on:click={copyExercises}>Copy</Button
+              disabled={selectedSplitDay === null ||
+                selectedSplitDay.exerciseTemplates.length === 0}
+              on:click={cutExercises}
             >
+              Cut
+            </Button>
             <Button
               variant="secondary"
-              disabled={selectedSplitDay === null}
-              on:click={pasteExercises}>Paste</Button
+              disabled={selectedSplitDay === null ||
+                selectedSplitDay.exerciseTemplates.length === 0}
+              on:click={copyExercises}
             >
+              Copy
+            </Button>
+            <Button
+              variant="secondary"
+              disabled={selectedSplitDay === null || copiedExercises.length === 0}
+              on:click={pasteExercises}
+            >
+              Paste
+            </Button>
           </div>
         </Card.Footer>
       </Card.Root>
