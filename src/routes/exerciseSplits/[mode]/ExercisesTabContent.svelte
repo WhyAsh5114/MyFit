@@ -19,49 +19,46 @@
   };
 
   let dragDisabled = true;
-  let selectedSplitDayIdx = $exerciseSplitStore.splitDays.findIndex(
-    (splitDay) => splitDay !== null
-  );
-  let exerciseSplit: ExerciseSplit = {
-    name: "",
-    splitDays: []
-  };
   let editingExercise: (ExerciseTemplate & { idx: number }) | null = null;
+  let copiedExercises: ExerciseTemplate[] = [];
 
-  $: currentSplitDay = exerciseSplit.splitDays[
-    selectedSplitDayIdx
-  ] as CustomExerciseSplitDay | null;
-  $: exerciseSplit = $exerciseSplitStore;
+  let selectedSplitDayIdx = $exerciseSplitStore.splitDays.findIndex((split) => split !== null);
+  let selectedSplitDay: CustomExerciseSplitDay | null;
+  $: updateSelectedWorkout(selectedSplitDayIdx);
+  $: $exerciseSplitStore.splitDays[selectedSplitDayIdx] = selectedSplitDay;
+
+  function updateSelectedWorkout(selectedSplitDayIdx: number) {
+    selectedSplitDay = $exerciseSplitStore.splitDays[selectedSplitDayIdx];
+  }
 
   function addExercise(exerciseTemplate: ExerciseTemplate) {
-    if (!currentSplitDay) return false;
+    if (!selectedSplitDay) return false;
     if (
-      currentSplitDay.exerciseTemplates.find((exercise) => {
+      selectedSplitDay.exerciseTemplates.find((exercise) => {
         return exercise.name === exerciseTemplate.name;
       })
     ) {
       return false;
     }
-    currentSplitDay.exerciseTemplates.push(exerciseTemplate);
-    $exerciseSplitStore = exerciseSplit;
+    selectedSplitDay.exerciseTemplates = [...selectedSplitDay.exerciseTemplates, exerciseTemplate];
     return true;
   }
 
   function openEditExercise(idx: number) {
-    if (!currentSplitDay) return;
-    editingExercise = { ...currentSplitDay.exerciseTemplates[idx], idx };
+    if (!selectedSplitDay) return;
+    editingExercise = { ...selectedSplitDay.exerciseTemplates[idx], idx };
   }
 
   function editExercise(exerciseTemplate: ExerciseTemplate & { idx: number }) {
-    if (!currentSplitDay) return false;
+    if (!selectedSplitDay) return false;
     if (
-      currentSplitDay.exerciseTemplates.find((_exerciseTemplate, _idx) => {
+      selectedSplitDay.exerciseTemplates.find((_exerciseTemplate, _idx) => {
         return _exerciseTemplate.name === exerciseTemplate.name && _idx !== _idx;
       })
     ) {
       return false;
     }
-    currentSplitDay.exerciseTemplates = currentSplitDay.exerciseTemplates.map(
+    selectedSplitDay.exerciseTemplates = selectedSplitDay.exerciseTemplates.map(
       (_exerciseTemplate, _idx) => {
         if (_idx === exerciseTemplate.idx) {
           const exerciseTemplateToSet = exerciseTemplate as ExerciseTemplate & { idx?: number };
@@ -72,37 +69,53 @@
         }
       }
     );
-    $exerciseSplitStore = exerciseSplit;
     return true;
   }
 
   function deleteExercise(idx: number) {
-    if (!currentSplitDay) return;
-    currentSplitDay.exerciseTemplates = currentSplitDay.exerciseTemplates.filter(
+    if (!selectedSplitDay) return;
+    selectedSplitDay.exerciseTemplates = selectedSplitDay.exerciseTemplates.filter(
       (_, _idx) => _idx !== idx
     );
-    $exerciseSplitStore = exerciseSplit;
+  }
+
+  function copyExercises() {
+    if (!selectedSplitDay) return;
+    copiedExercises = JSON.parse(
+      JSON.stringify(selectedSplitDay.exerciseTemplates)
+    ) as ExerciseTemplate[];
+  }
+
+  function pasteExercises() {
+    if (!selectedSplitDay) return;
+    selectedSplitDay.exerciseTemplates = JSON.parse(
+      JSON.stringify(copiedExercises)
+    ) as ExerciseTemplate[];
+  }
+
+  function cutExercises() {
+    if (!selectedSplitDay) return;
+    copyExercises();
+    selectedSplitDay.exerciseTemplates = [];
   }
 
   function handleConsider(e: CustomEvent<DndEvent<ExerciseTemplate>>) {
-    if (!currentSplitDay) return;
+    if (!selectedSplitDay) return;
     const {
       items: newItems,
       info: { source, trigger }
     } = e.detail;
-    currentSplitDay.exerciseTemplates = newItems;
-    $exerciseSplitStore = exerciseSplit;
+    selectedSplitDay.exerciseTemplates = newItems;
     if (source === SOURCES.KEYBOARD && trigger === TRIGGERS.DRAG_STOPPED) dragDisabled = true;
   }
-  
+
   function handleFinalize(e: CustomEvent<DndEvent<ExerciseTemplate>>) {
-    if (!currentSplitDay) return;
+    if (!selectedSplitDay) return;
     const {
       items: newItems,
       info: { source }
     } = e.detail;
-    currentSplitDay.exerciseTemplates = newItems;
-    $exerciseSplitStore = exerciseSplit;
+    selectedSplitDay.exerciseTemplates = newItems;
     if (source === SOURCES.POINTER) dragDisabled = true;
   }
 
@@ -130,7 +143,7 @@
 
 <Tabs.Root value={selectedSplitDayIdx.toString()} class="h-full flex flex-col">
   <Tabs.List class="flex bg-background p-0 overflow-x-auto justify-start">
-    {#each exerciseSplit.splitDays as splitDay, idx}
+    {#each $exerciseSplitStore.splitDays as splitDay, idx}
       <Tabs.Trigger value={idx.toString()} on:click={() => (selectedSplitDayIdx = idx)} class="p-0">
         <Button
           variant={idx === selectedSplitDayIdx ? "outline" : "ghost"}
@@ -148,16 +161,16 @@
     <Tabs.Content value={selectedSplitDayIdx.toString()}>
       <Card.Root class="h-full flex flex-col border-none">
         <Card.Header class="px-1 py-2">
-          <Card.Title class={cn({ "text-muted-foreground": currentSplitDay === null })}>
-            {currentSplitDay?.name ?? "Rest day"}
+          <Card.Title class={cn({ "text-muted-foreground": selectedSplitDay === null })}>
+            {selectedSplitDay?.name ?? "Rest day"}
           </Card.Title>
           <Card.Description>Day {selectedSplitDayIdx + 1}</Card.Description>
         </Card.Header>
         <Card.Content class="py-2 h-full w-full px-0 flex flex-col">
-          {#if currentSplitDay}
+          {#if selectedSplitDay}
             <div
               use:dndzone={{
-                items: currentSplitDay.exerciseTemplates,
+                items: selectedSplitDay.exerciseTemplates,
                 flipDurationMs: 200,
                 dropTargetClasses: ["border-none"],
                 dropTargetStyle: {},
@@ -167,7 +180,7 @@
               on:finalize={handleFinalize}
               class="flex flex-col gap-1 h-px grow overflow-y-auto"
             >
-              {#each currentSplitDay.exerciseTemplates as exerciseTemplate, idx (exerciseTemplate.name)}
+              {#each selectedSplitDay.exerciseTemplates as exerciseTemplate, idx (exerciseTemplate.name)}
                 <div class="relative" animate:flip={{ duration: 200 }}>
                   <ExerciseTemplateCard
                     {idx}
@@ -195,9 +208,19 @@
         </Card.Content>
         <Card.Footer class="flex flex-col gap-1.5 py-1 px-0 h-fit">
           <div class="grid grid-cols-3 w-full gap-1">
-            <Button variant="secondary" disabled={currentSplitDay === null}>Cut</Button>
-            <Button variant="secondary" disabled={currentSplitDay === null}>Copy</Button>
-            <Button variant="secondary" disabled={currentSplitDay === null}>Paste</Button>
+            <Button variant="secondary" disabled={selectedSplitDay === null} on:click={cutExercises}
+              >Cut</Button
+            >
+            <Button
+              variant="secondary"
+              disabled={selectedSplitDay === null}
+              on:click={copyExercises}>Copy</Button
+            >
+            <Button
+              variant="secondary"
+              disabled={selectedSplitDay === null}
+              on:click={pasteExercises}>Paste</Button
+            >
           </div>
         </Card.Footer>
       </Card.Root>
@@ -205,7 +228,7 @@
   {/key}
   <div class="grid grid-cols-2 gap-1">
     <ExerciseDrawer
-      onRestDay={currentSplitDay === null}
+      onRestDay={selectedSplitDay === null}
       bind:editingExercise
       {addExercise}
       {editExercise}
