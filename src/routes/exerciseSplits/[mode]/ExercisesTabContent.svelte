@@ -31,6 +31,7 @@
   $: currentSplitDay = exerciseSplit.splitDays[
     selectedSplitDayIdx
   ] as CustomExerciseSplitDay | null;
+  $: exerciseSplit = $exerciseSplitStore;
 
   function addExercise(exerciseTemplate: ExerciseTemplate) {
     if (!currentSplitDay) return false;
@@ -93,6 +94,7 @@
     $exerciseSplitStore = exerciseSplit;
     if (source === SOURCES.KEYBOARD && trigger === TRIGGERS.DRAG_STOPPED) dragDisabled = true;
   }
+  
   function handleFinalize(e: CustomEvent<DndEvent<ExerciseTemplate>>) {
     if (!currentSplitDay) return;
     const {
@@ -103,8 +105,6 @@
     $exerciseSplitStore = exerciseSplit;
     if (source === SOURCES.POINTER) dragDisabled = true;
   }
-
-  $: exerciseSplit = $exerciseSplitStore;
 
   function startDrag(e: DragEvent) {
     dragDisabled = false;
