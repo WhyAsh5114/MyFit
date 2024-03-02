@@ -1,5 +1,5 @@
 import { persisted } from "svelte-persisted-store";
-import { writable, type Writable } from "svelte/store";
+import { get, writable, type Writable } from "svelte/store";
 
 export const originalExerciseSplitStore: Writable<ExerciseSplit> = persisted(
   "originalExerciseSplitStore",
@@ -13,4 +13,6 @@ export const exerciseSplitStore: Writable<ExerciseSplit> = persisted("exerciseSp
   splitDays: []
 });
 
-export const selectedSplitDayIdx = writable(-1);
+export const selectedSplitDayIdx = writable(
+  get(exerciseSplitStore).splitDays.findIndex((splitDay) => splitDay !== null)
+);
