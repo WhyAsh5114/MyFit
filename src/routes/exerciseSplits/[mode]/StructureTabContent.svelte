@@ -1,5 +1,6 @@
 <script lang="ts">
   import * as Form from "$lib/components/ui/form";
+  import * as Drawer from "$lib/components/ui/drawer";
   import { Input } from "$lib/components/ui/input";
   import { Badge } from "$lib/components/ui/badge";
   import { Button } from "$lib/components/ui/button";
@@ -11,6 +12,9 @@
   import { onMount } from "svelte";
   export let currentTab;
 
+  let warningDrawerOpen = false;
+  let lostExercisesDays: string[] = [];
+
   const form = superForm(defaults(zod(structureTabFormSchema)), {
     SPA: true,
     validators: zod(structureTabFormSchema),
@@ -21,18 +25,19 @@
     invalidateAll: false,
     id: "exercise-split-structure-form"
   });
-  const { form: formData, enhance } = form;
+  const { form: formData, enhance, errors } = form;
 
   onMount(() => {
     $formData.name = $exerciseSplitStore.name;
     $formData.splitDays = $exerciseSplitStore.splitDays.map((splitDay) => splitDay?.name ?? null);
   });
 
-  let deleteSplitDataModal: HTMLDialogElement;
-  let notMatchedDays: Set<string> = new Set();
-
   function addDay() {
     const dayName = $formData.splitDayName || null;
+    if (dayName && $formData.splitDays.includes(dayName)) {
+      $errors.splitDayName = ["Workout names should be unique"];
+      return;
+    }
     $formData.splitDays = [...$formData.splitDays, dayName];
     $formData.splitDayName = "";
   }
@@ -41,43 +46,18 @@
     $formData.splitDays = $formData.splitDays.filter((_, _idx) => _idx !== idx);
   }
 
-  function updateNotMatchedDays() {
-    notMatchedDays.clear();
-    $exerciseSplitStore.splitDays.forEach((splitDay) => {
-      if (splitDay?.name) notMatchedDays.add(splitDay.name);
-    });
-    notMatchedDays = notMatchedDays;
-  }
+  function submitStructure(force = false) {
+    const newSplitDays = $formData.splitDays.filter((splitDay) => splitDay !== null) as string[];
+    const oldSplitDays = $exerciseSplitStore.splitDays
+      .filter((splitDay) => splitDay !== null && splitDay.exerciseTemplates.length > 0)
+      .map((splitDay) => splitDay?.name) as string[];
 
-  function createNewExerciseSplit() {
-    const newSplitDays: ExerciseSplit["splitDays"] = [];
-    $exerciseSplitStore.splitDays
-      .map((splitDay) => splitDay?.name ?? null)
-      .forEach((name) => {
-        if (name === null) {
-          newSplitDays.push(null);
-        } else {
-          const matchingDay = $exerciseSplitStore.splitDays.find(
-            (splitDay) => splitDay?.name === name
-          );
-          if (matchingDay) {
-            newSplitDays.push(matchingDay);
-            notMatchedDays.delete(matchingDay.name);
-          } else {
-            newSplitDays.push({ name: name, exerciseTemplates: [] });
-          }
-        }
-      });
-    return newSplitDays;
-  }
-
-  async function submitStructure(force = false) {
-    updateNotMatchedDays();
-    const newSplitDays = createNewExerciseSplit();
-    if (notMatchedDays.size > 0 && !force) {
-      deleteSplitDataModal.show();
+    lostExercisesDays = oldSplitDays.filter((splitDay) => !newSplitDays.includes(splitDay));
+    if (lostExercisesDays.length > 0 && !force) {
+      warningDrawerOpen = true;
       return;
     }
+
     $exerciseSplitStore = {
       name: $formData.name,
       splitDays: $formData.splitDays.map((name) => {
@@ -157,3 +137,21 @@
     <Form.Button>Next</Form.Button>
   </div>
 </form>
+
+<Drawer.Root open={warningDrawerOpen} onClose={() => (warningDrawerOpen = false)}>
+  <Drawer.Content>
+    <Drawer.Header>
+      <Drawer.Title>Warning</Drawer.Title>
+      <Drawer.Description>
+        You will lose created exercise data from the following days:
+        <span class="font-semibold">{lostExercisesDays.join(", ")}</span>
+      </Drawer.Description>
+    </Drawer.Header>
+    <Drawer.Footer>
+      <Button variant="destructive">Continue</Button>
+      <Drawer.Close asChild let:builder>
+        <Button variant="outline" builders={[builder]}>Cancel</Button>
+      </Drawer.Close>
+    </Drawer.Footer>
+  </Drawer.Content>
+</Drawer.Root>
