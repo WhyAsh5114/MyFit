@@ -47,7 +47,8 @@
     {#if exerciseTemplate.involvesBodyweight}
       <Badge variant="outline">BW</Badge>
     {/if}
-    <Badge class="whitespace-nowrap" variant="secondary">{exerciseTemplate.targetMuscleGroup}</Badge
-    >
+    <Badge class="whitespace-nowrap" variant="secondary">
+      {exerciseTemplate.targetMuscleGroup}
+    </Badge>
   </div>
 </div>

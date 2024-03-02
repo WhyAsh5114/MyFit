@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { getTotalSetsOfSplit } from "$lib/utils/exerciseSplits.js";
   import { onMount } from "svelte";
   import type { WithId } from "mongodb";
   import { Button } from "$lib/components/ui/button";
