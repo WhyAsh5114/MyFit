@@ -2,7 +2,7 @@
   import ExerciseDrawer from "./ExerciseDrawer.svelte";
   import * as Card from "$lib/components/ui/card";
   import * as Tabs from "$lib/components/ui/tabs";
-  import { exerciseSplitStore } from "./splitStore";
+  import { exerciseSplitStore, selectedSplitDayIdx } from "./splitStore";
   import { Button } from "$lib/components/ui/button";
   import ExerciseTemplateCard from "../ExerciseTemplateCard.svelte";
   import { dndzone, type DndEvent, SOURCES } from "svelte-dnd-action";
@@ -22,13 +22,14 @@
   let editingExercise: (ExerciseTemplate & { idx: number }) | null = null;
   let copiedExercises: ExerciseTemplate[] = [];
 
-  let selectedSplitDayIdx = $exerciseSplitStore.splitDays.findIndex((split) => split !== null);
   let selectedSplitDay: CustomExerciseSplitDay | null;
-  $: updateSelectedWorkout(selectedSplitDayIdx);
-  $: $exerciseSplitStore.splitDays[selectedSplitDayIdx] = selectedSplitDay;
+  $: updateSelectedWorkout($selectedSplitDayIdx);
+  $: if (selectedSplitDay !== undefined) {
+    $exerciseSplitStore.splitDays[$selectedSplitDayIdx] = selectedSplitDay;
+  }
 
-  function updateSelectedWorkout(selectedSplitDayIdx: number) {
-    selectedSplitDay = $exerciseSplitStore.splitDays[selectedSplitDayIdx];
+  function updateSelectedWorkout($selectedSplitDayIdx: number) {
+    selectedSplitDay = $exerciseSplitStore.splitDays[$selectedSplitDayIdx];
   }
 
   function addExercise(exerciseTemplate: ExerciseTemplate) {
@@ -137,14 +138,18 @@
   }
 </script>
 
-<Tabs.Root value={selectedSplitDayIdx.toString()} class="h-full flex flex-col">
+<Tabs.Root value={$selectedSplitDayIdx.toString()} class="h-full flex flex-col">
   <Tabs.List class="flex bg-background p-0 overflow-x-auto justify-start">
     {#each $exerciseSplitStore.splitDays as splitDay, idx}
-      <Tabs.Trigger value={idx.toString()} on:click={() => (selectedSplitDayIdx = idx)} class="p-0">
+      <Tabs.Trigger
+        value={idx.toString()}
+        on:click={() => ($selectedSplitDayIdx = idx)}
+        class="p-0"
+      >
         <Button
-          variant={idx === selectedSplitDayIdx ? "outline" : "ghost"}
+          variant={idx === $selectedSplitDayIdx ? "outline" : "ghost"}
           class={cn("hover:bg-background border border-background", {
-            "border-border": idx === selectedSplitDayIdx,
+            "border-border": idx === $selectedSplitDayIdx,
             italic: splitDay === null
           })}
         >
@@ -153,14 +158,14 @@
       </Tabs.Trigger>
     {/each}
   </Tabs.List>
-  {#key selectedSplitDayIdx}
-    <Tabs.Content value={selectedSplitDayIdx.toString()}>
+  {#if $selectedSplitDayIdx !== -1}
+    <Tabs.Content value={$selectedSplitDayIdx.toString()}>
       <Card.Root class="h-full flex flex-col border-none">
         <Card.Header class="px-1 py-2">
           <Card.Title class={cn({ "text-muted-foreground": selectedSplitDay === null })}>
             {selectedSplitDay?.name ?? "Rest day"}
           </Card.Title>
-          <Card.Description>Day {selectedSplitDayIdx + 1}</Card.Description>
+          <Card.Description>Day {$selectedSplitDayIdx + 1}</Card.Description>
         </Card.Header>
         <Card.Content class="py-2 h-full w-full px-0 flex flex-col">
           {#if selectedSplitDay}
@@ -206,23 +211,21 @@
           <div class="grid grid-cols-3 w-full gap-1">
             <Button
               variant="secondary"
-              disabled={selectedSplitDay === null ||
-                selectedSplitDay.exerciseTemplates.length === 0}
+              disabled={!selectedSplitDay || selectedSplitDay.exerciseTemplates.length === 0}
               on:click={cutExercises}
             >
               Cut
             </Button>
             <Button
               variant="secondary"
-              disabled={selectedSplitDay === null ||
-                selectedSplitDay.exerciseTemplates.length === 0}
+              disabled={!selectedSplitDay || selectedSplitDay.exerciseTemplates.length === 0}
               on:click={copyExercises}
             >
               Copy
             </Button>
             <Button
               variant="secondary"
-              disabled={selectedSplitDay === null || copiedExercises.length === 0}
+              disabled={!selectedSplitDay || copiedExercises.length === 0}
               on:click={pasteExercises}
             >
               Paste
@@ -231,15 +234,24 @@
         </Card.Footer>
       </Card.Root>
     </Tabs.Content>
-  {/key}
+  {:else}
+    <div
+      class="border p-4 rounded-md grow mb-10 text-muted-foreground flex flex-col items-center justify-center text-center"
+    >
+      <span class="text-lg font-semibold">Fill the previous form.</span>
+      <span>You aren't supposed to be here yet!</span>
+    </div>
+  {/if}
   <div class="grid grid-cols-2 gap-1">
     <ExerciseDrawer
-      onRestDay={selectedSplitDay === null}
+      onRestDay={!selectedSplitDay}
       bind:editingExercise
       {addExercise}
       {editExercise}
     />
-    <Button on:click={submitExercises}>Save & Next</Button>
+    <Button on:click={submitExercises} disabled={selectedSplitDay === undefined}>
+      Save & Next
+    </Button>
   </div>
 </Tabs.Root>
 
