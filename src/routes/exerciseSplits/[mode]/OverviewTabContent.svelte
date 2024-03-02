@@ -14,8 +14,7 @@
     LineElement,
     LinearScale,
     PointElement,
-    CategoryScale,
-    type ChartData
+    CategoryScale
   } from "chart.js";
 
   ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale);

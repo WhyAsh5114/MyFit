@@ -10,7 +10,7 @@
     const style = getComputedStyle(document.body);
     const foregroundColor = style.getPropertyValue("--foreground").split(" ").join(", ");
     const foregroundMutedColor = style.getPropertyValue("--muted-foreground").split(" ").join(", ");
-    Chart.defaults.color = `hsl(${foregroundColor})`;
+    Chart.defaults.color = `hsl(${foregroundMutedColor})`;
     Chart.defaults.borderColor = `hsl(0, 0%, ${$mode === 'light' ? '64%' : '32%'})`;
     Chart.defaults.font.weight = 500;
     Chart.defaults.font.size = 13;
