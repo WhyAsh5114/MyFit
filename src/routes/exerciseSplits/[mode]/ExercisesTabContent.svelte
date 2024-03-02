@@ -24,6 +24,8 @@
     splitDays: []
   };
   let editingExercise: (ExerciseTemplate & { idx: number }) | null = null;
+
+  $: selectedSplitDayIdx = $exerciseSplitStore.splitDays.findIndex((splitDay) => splitDay !== null);
   $: currentSplitDay = exerciseSplit.splitDays[
     selectedSplitDayIdx
   ] as CustomExerciseSplitDay | null;
