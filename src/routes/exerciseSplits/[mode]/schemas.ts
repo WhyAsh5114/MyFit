@@ -23,7 +23,7 @@ export const structureTabFormSchema = z.object({
 
 export const exerciseTemplateFormSchema = z
   .object({
-    name: z.string().min(2),
+    name: z.string().min(1),
     sets: z.coerce.number().int().min(1),
     targetMuscleGroup: z.enum(muscleGroups, {
       errorMap: () => {

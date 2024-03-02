@@ -18,28 +18,29 @@
   };
 
   let dragDisabled = true;
-  let selectedSplitDayIdx = 0;
+  let selectedSplitDayIdx = $exerciseSplitStore.splitDays.findIndex(
+    (splitDay) => splitDay !== null
+  );
   let exerciseSplit: ExerciseSplit = {
     name: "",
     splitDays: []
   };
   let editingExercise: (ExerciseTemplate & { idx: number }) | null = null;
 
-  $: selectedSplitDayIdx = $exerciseSplitStore.splitDays.findIndex((splitDay) => splitDay !== null);
   $: currentSplitDay = exerciseSplit.splitDays[
     selectedSplitDayIdx
   ] as CustomExerciseSplitDay | null;
 
   function addExercise(exerciseTemplate: ExerciseTemplate) {
+    if (!currentSplitDay) return false;
     if (
-      currentSplitDay?.exerciseTemplates.find((exercise) => {
+      currentSplitDay.exerciseTemplates.find((exercise) => {
         return exercise.name === exerciseTemplate.name;
       })
     ) {
       return false;
     }
-    currentSplitDay?.exerciseTemplates.push(exerciseTemplate);
-    exerciseSplit = exerciseSplit;
+    currentSplitDay.exerciseTemplates.push(exerciseTemplate);
     $exerciseSplitStore = exerciseSplit;
     return true;
   }
@@ -69,7 +70,6 @@
         }
       }
     );
-    exerciseSplit = exerciseSplit;
     $exerciseSplitStore = exerciseSplit;
     return true;
   }
@@ -79,7 +79,6 @@
     currentSplitDay.exerciseTemplates = currentSplitDay.exerciseTemplates.filter(
       (_, _idx) => _idx !== idx
     );
-    exerciseSplit = exerciseSplit;
     $exerciseSplitStore = exerciseSplit;
   }
 
@@ -90,7 +89,6 @@
       info: { source, trigger }
     } = e.detail;
     currentSplitDay.exerciseTemplates = newItems;
-    exerciseSplit = exerciseSplit;
     $exerciseSplitStore = exerciseSplit;
     if (source === SOURCES.KEYBOARD && trigger === TRIGGERS.DRAG_STOPPED) dragDisabled = true;
   }
@@ -101,7 +99,6 @@
       info: { source }
     } = e.detail;
     currentSplitDay.exerciseTemplates = newItems;
-    exerciseSplit = exerciseSplit;
     $exerciseSplitStore = exerciseSplit;
     if (source === SOURCES.POINTER) dragDisabled = true;
   }
@@ -173,6 +170,10 @@
                   {#if exerciseTemplate[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
                     <div in:fade={{ duration: 200, easing: cubicIn }} class="custom-shadow-item" />
                   {/if}
+                </div>
+              {:else}
+                <div class="flex flex-col p-2 border rounded-md text-sm text-muted-foreground">
+                  No exercises added
                 </div>
               {/each}
             {/key}
