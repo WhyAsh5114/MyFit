@@ -1,10 +1,27 @@
 <script lang="ts">
   import * as Accordion from "$lib/components/ui/accordion";
-    import { Badge } from "$lib/components/ui/badge";
+  import { Badge } from "$lib/components/ui/badge";
   import Button from "$lib/components/ui/button/button.svelte";
-  import { Progress } from "$lib/components/ui/progress";
   import { muscleGroups } from "$lib/types/arrays";
   import { exerciseSplitStore } from "./splitStore";
+  import { Line } from "svelte-chartjs";
+  import {
+    Chart as ChartJS,
+    Title,
+    Tooltip,
+    Legend,
+    LineElement,
+    LinearScale,
+    PointElement,
+    CategoryScale
+  } from "chart.js";
+
+  const foregroundColorValue = "hsl(0, 0%, 98%)";
+  const mutedForegroundColorValue = "hsl(0, 0%, 63.9%)";
+
+  ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale);
+  ChartJS.defaults.color = mutedForegroundColorValue;
+  ChartJS.defaults.borderColor = `hsl(0, 0%, 32%)`;
 
   function getTotalSetsOfMuscleGroup(muscleGroup: MuscleGroup) {
     return $exerciseSplitStore.splitDays.reduce((totalSets, splitDay) => {
@@ -30,12 +47,35 @@
         : totalFrequency;
     }, 0);
   }
+
+  function generateData(muscleGroup: MuscleGroup) {
+    return {
+      labels: $exerciseSplitStore.splitDays.map((_, idx) => `D${idx + 1}`),
+      datasets: [
+        {
+          label: "Volume",
+          borderColor: mutedForegroundColorValue,
+          pointBorderColor: foregroundColorValue,
+          pointBackgroundColor: foregroundColorValue,
+          data: $exerciseSplitStore.splitDays.map(
+            (splitDay) =>
+              splitDay?.exerciseTemplates.reduce((setsForDay, exerciseTemplate) => {
+                return exerciseTemplate.targetMuscleGroup === muscleGroup
+                  ? setsForDay + exerciseTemplate.sets
+                  : setsForDay;
+              }, 0) ?? 0
+          )
+        }
+      ]
+    };
+  }
 </script>
 
 {#key $exerciseSplitStore}
   <div class="flex flex-col h-full gap-2">
     <Accordion.Root class="h-px overflow-y-auto grow px-2 border rounded-md text-sm">
       {#each muscleGroups as muscleGroup}
+        {@const data = generateData(muscleGroup)}
         <Accordion.Item value={muscleGroup}>
           <Accordion.Trigger>
             <div class="flex w-full px-2 items-center gap-1">
@@ -45,8 +85,13 @@
             </div>
           </Accordion.Trigger>
           <Accordion.Content>
-            <Progress class="w-1/2 h-2 mb-1" value={33} />
-            <Progress class="w-1/2 h-2" value={45} />
+            <Line
+              {data}
+              options={{
+                responsive: true,
+                scales: { y: { min: 0, max: Math.max(...data.datasets[0].data) + 2 } }
+              }}
+            />
           </Accordion.Content>
         </Accordion.Item>
       {/each}
