@@ -1,5 +1,4 @@
 import clientPromise from "$lib/mongo/mongodb";
-import type { WithUserId } from "$lib/types/arrays";
 import { ObjectId } from "mongodb";
 
 const client = await clientPromise;
@@ -13,8 +12,8 @@ export const GET = async ({ params, locals }) => {
   try {
     const exerciseSplit = await client
       .db()
-      .collection<WithUserId<ExerciseSplit>>("exerciseSplits")
-      .findOne({ userId: new ObjectId(session.user.id), _id: new ObjectId(params.id) });
+      .collection<WithUID<ExerciseSplit>>("exerciseSplits")
+      .findOne({ userId: session.user.id, _id: new ObjectId(params.id) });
 
     if (exerciseSplit === null) {
       return new Response("Exercise split not found", { status: 404 });
@@ -22,6 +21,7 @@ export const GET = async ({ params, locals }) => {
 
     return new Response(JSON.stringify(exerciseSplit), { status: 200 });
   } catch (error) {
+    console.error(error);
     return new Response(JSON.stringify(error), { status: 500 });
   }
 };
@@ -37,10 +37,10 @@ export const PUT = async ({ params, locals, request }) => {
   try {
     const updateResult = await client
       .db()
-      .collection<WithUserId<ExerciseSplit>>("exerciseSplits")
+      .collection<WithUID<ExerciseSplit>>("exerciseSplits")
       .replaceOne(
-        { userId: new ObjectId(session.user.id), _id: new ObjectId(params.id) },
-        { userId: new ObjectId(session.user.id), ...newExerciseSplit }
+        { userId: session.user.id, _id: new ObjectId(params.id) },
+        { userId: session.user.id, ...newExerciseSplit }
       );
 
     if (updateResult.modifiedCount === 0) {
@@ -62,8 +62,8 @@ export const DELETE = async ({ params, locals }) => {
   try {
     const deleteResult = await client
       .db()
-      .collection<WithUserId<ExerciseSplit>>("exerciseSplits")
-      .deleteOne({ userId: new ObjectId(session.user.id), _id: new ObjectId(params.id) });
+      .collection<WithUID<ExerciseSplit>>("exerciseSplits")
+      .deleteOne({ userId: session.user.id, _id: new ObjectId(params.id) });
 
     if (deleteResult.deletedCount === 0) {
       return new Response("Exercise split not found", { status: 404 });
