@@ -57,7 +57,7 @@
       <Sheet.Title asChild>
         <Button variant="link" class="px-0">
           <a href="/" class="flex items-center gap-2 mb-3">
-            <img src="/favicon.png" alt="logo" width={40} height={40} />
+            <img src="/favicon.webp" alt="logo" width={40} height={40} />
             <span class="text-xl font-bold">MyFit</span>
           </a>
         </Button>
@@ -79,7 +79,7 @@
     </Sheet.Content>
   </Sheet.Root>
   <a href="/" class="ml-1 mr-auto">
-    <img src="/favicon.png" alt="logo" width={40} height={40} />
+    <img src="/favicon.webp" alt="logo" width={40} height={40} />
   </a>
   <ThemeSwitch />
   <UserButton />
