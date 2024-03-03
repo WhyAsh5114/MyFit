@@ -8,7 +8,7 @@
   import { dndzone, type DndEvent, SOURCES } from "svelte-dnd-action";
   import { SHADOW_ITEM_MARKER_PROPERTY_NAME, TRIGGERS } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
-  import { fade } from "svelte/transition";
+  import { fade, slide } from "svelte/transition";
   import { cn } from "$lib/utils";
   import { toast } from "svelte-sonner";
   export let currentTab;
@@ -182,7 +182,11 @@
               class="flex flex-col gap-1 h-px grow overflow-y-auto"
             >
               {#each selectedSplitDay.exerciseTemplates as exerciseTemplate, idx (exerciseTemplate.name)}
-                <div class="relative" animate:flip={{ duration: 200 }}>
+                <div
+                  class="relative"
+                  animate:flip={{ duration: 200 }}
+                  transition:slide={{ duration: 200 }}
+                >
                   <ExerciseTemplateCard
                     {idx}
                     {exerciseTemplate}

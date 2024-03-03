@@ -10,12 +10,14 @@
 
   export let startDrag: (e: any) => void;
   export let handleKeyDown: (e: any) => void;
+
+  let isContextMenuOpen = false;
 </script>
 
 <div class="flex flex-col p-2 border rounded-md gap-0.5 bg-background/50 backdrop-blur-sm">
   <div class="flex items-center gap-0.5">
     <span class="text-sm mr-auto truncate">{exerciseTemplate.name}</span>
-    <DropdownMenu.Root>
+    <DropdownMenu.Root open={isContextMenuOpen} onOpenChange={(v) => (isContextMenuOpen = v)}>
       <DropdownMenu.Trigger asChild let:builder>
         <button
           use:builder.action
@@ -31,7 +33,13 @@
       <DropdownMenu.Content align="end">
         <DropdownMenu.Group>
           <DropdownMenu.Item on:click={() => openEditExercise(idx)}>Edit</DropdownMenu.Item>
-          <DropdownMenu.Item class="text-red-500" on:click={() => deleteExercise(idx)}>
+          <DropdownMenu.Item
+            class="text-red-500"
+            on:click={() => {
+              deleteExercise(idx);
+              isContextMenuOpen = false;
+            }}
+          >
             Delete
           </DropdownMenu.Item>
         </DropdownMenu.Group>
