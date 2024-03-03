@@ -5,7 +5,7 @@
   import * as Drawer from "$lib/components/ui/drawer";
   import * as Form from "$lib/components/ui/form";
   import * as Select from "$lib/components/ui/select";
-  import { superForm, defaults } from "sveltekit-superforms";
+  import { superForm, defaults, type SuperValidated } from "sveltekit-superforms";
   import { zod } from "sveltekit-superforms/adapters";
   import { exerciseTemplateFormDefaults, exerciseTemplateFormSchema } from "./schemas";
   import { Input } from "$lib/components/ui/input";
@@ -17,6 +17,14 @@
   export let editExercise: (exerciseTemplate: ExerciseTemplate & { idx: number }) => boolean;
 
   let exerciseDrawerOpen = false;
+  const handleSubmit = (result: boolean, form: SuperValidated<ExerciseTemplate>) => {
+    if (result) {
+      exerciseDrawerOpen = false;
+      form.data = exerciseTemplateFormDefaults;
+    } else {
+      form.errors.name = ["Exercise names should be unique"];
+    }
+  };
 
   const form = superForm(defaults(exerciseTemplateFormDefaults, zod(exerciseTemplateFormSchema)), {
     SPA: true,
@@ -24,28 +32,24 @@
     onUpdate: ({ form }) => {
       if (form.valid) {
         if (editingExercise) {
-          if (editExercise({ ...form.data, idx: editingExercise.idx })) {
-            exerciseDrawerOpen = false;
-            form.data = JSON.parse(JSON.stringify(exerciseTemplateFormDefaults));
-          } else form.errors.name = ["Exercise names should be unique"];
-        } else if (addExercise(form.data)) {
-          exerciseDrawerOpen = false;
-          form.data = JSON.parse(JSON.stringify(exerciseTemplateFormDefaults));
-        } else form.errors.name = ["Exercise names should be unique"];
+          handleSubmit(editExercise({ ...form.data, idx: editingExercise.idx }), form);
+        } else {
+          handleSubmit(addExercise(form.data), form);
+        }
       } else {
         validateForm({ update: true });
       }
     },
     invalidateAll: false,
     id: "exercise-split-exercise-template-form",
-    resetForm: false
+    resetForm: false,
+    customValidity: true
   });
   const { form: formData, enhance, validateForm } = form;
 
   $: mode = editingExercise ? "Edit" : "Add";
   $: exerciseDrawerOpen = editingExercise ? true : false;
-  $: if (editingExercise) $formData = editingExercise;
-  else form.reset();
+  $: editingExercise ? ($formData = editingExercise) : form.reset();
 
   $: selectedMuscleGroup = $formData.targetMuscleGroup
     ? {
@@ -92,7 +96,6 @@
               bind:value={$formData.name}
             />
           </Form.Control>
-          <Form.FieldErrors />
         </Form.Field>
         <Form.Field {form} name="targetMuscleGroup">
           <Form.Control let:attrs>
@@ -114,7 +117,6 @@
             </Select.Root>
             <input hidden bind:value={$formData.targetMuscleGroup} name={attrs.name} />
           </Form.Control>
-          <Form.FieldErrors />
         </Form.Field>
         <Form.Field {form} name="involvesBodyweight">
           <Form.Control let:attrs>
@@ -129,7 +131,6 @@
             <Form.Label>Sets</Form.Label>
             <Input {...attrs} placeholder="Type here" bind:value={$formData.sets} />
           </Form.Control>
-          <Form.FieldErrors />
         </Form.Field>
         <Form.Field {form} name="setType">
           <Form.Control let:attrs>
@@ -152,21 +153,18 @@
             </Select.Root>
             <input hidden bind:value={$formData.setType} name={attrs.name} />
           </Form.Control>
-          <Form.FieldErrors />
         </Form.Field>
         <Form.Field {form} name="repRangeStart">
           <Form.Control let:attrs>
             <Form.Label>Rep range start</Form.Label>
             <Input {...attrs} placeholder="Type here" bind:value={$formData.repRangeStart} />
           </Form.Control>
-          <Form.FieldErrors />
         </Form.Field>
         <Form.Field {form} name="repRangeEnd">
           <Form.Control let:attrs>
             <Form.Label>Rep range end</Form.Label>
             <Input {...attrs} placeholder="Type here" bind:value={$formData.repRangeEnd} />
           </Form.Control>
-          <Form.FieldErrors />
         </Form.Field>
         <Form.Field {form} name="note" class="col-span-2">
           <Form.Control let:attrs>
@@ -178,7 +176,6 @@
               bind:value={$formData.note}
             />
           </Form.Control>
-          <Form.FieldErrors />
         </Form.Field>
       </div>
       <div class="grid grid-cols-2 gap-2 p-4">
