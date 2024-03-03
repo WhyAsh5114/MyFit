@@ -49,7 +49,7 @@
 <ModeWatcher />
 
 <div class="flex w-full border-b items-center p-2 gap-1">
-  <Sheet.Root>
+  <Sheet.Root open={drawerOpen} onOpenChange={(v) => (drawerOpen = v)}>
     <Sheet.Trigger class="pl-2" aria-label="menu">
       <Icon icon="material-symbols:menu" class="w-6 h-6" />
     </Sheet.Trigger>
@@ -70,7 +70,7 @@
           <a href="/mesocycles">Mesocycles</a>
         </Button>
         <Button variant="link">
-          <a href="/exerciseSplits">Exercise splits</a>
+          <a href="/exercise-splits">Exercise splits</a>
         </Button>
         <Button variant="link">
           <a href="/privacyPolicy">Privacy policy</a>
