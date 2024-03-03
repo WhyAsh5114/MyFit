@@ -7,6 +7,7 @@
   import { mode } from "mode-watcher";
   import { Line } from "svelte-chartjs";
   import * as Select from "$lib/components/ui/select";
+  import { toast } from "svelte-sonner";
   import Loader2 from "lucide-svelte/icons/loader-2";
   import {
     Chart as ChartJS,
@@ -18,6 +19,7 @@
     PointElement,
     CategoryScale
   } from "chart.js";
+  import { goto, invalidate } from "$app/navigation";
 
   ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale);
   const sortByOptions = [
@@ -93,9 +95,20 @@
     });
   }
 
-  function createExerciseSplit() {
+  async function createExerciseSplit() {
     callingEndpoint = true;
-    
+    const response = await fetch("/api/exercise-splits", {
+      method: "POST",
+      body: JSON.stringify($exerciseSplitStore)
+    });
+    if (response.ok) {
+      toast.success(await response.text());
+      await invalidate("/api/exercise-splits");
+      await goto("/exercise-splits");
+      $exerciseSplitStore = { name: "", splitDays: [] };
+    } else {
+      toast.error(await response.text());
+    }
   }
 </script>
 
