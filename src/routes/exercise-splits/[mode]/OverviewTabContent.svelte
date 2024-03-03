@@ -6,6 +6,8 @@
   import { exerciseSplitStore } from "./splitStore";
   import { mode } from "mode-watcher";
   import { Line } from "svelte-chartjs";
+  import * as Select from "$lib/components/ui/select";
+  import Loader2 from "lucide-svelte/icons/loader-2";
   import {
     Chart as ChartJS,
     Title,
@@ -18,6 +20,14 @@
   } from "chart.js";
 
   ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale);
+  const sortByOptions = [
+    "Volume (descending)",
+    "Volume (ascending)",
+    "Frequency (descending)",
+    "Frequency (ascending)"
+  ];
+  let selectedSortOption = { value: "Volume (descending)", label: "Volume (descending)" };
+  let callingEndpoint = false;
 
   function getTotalSetsOfMuscleGroup(muscleGroup: MuscleGroup) {
     return $exerciseSplitStore.splitDays.reduce((totalSets, splitDay) => {
@@ -50,7 +60,6 @@
       datasets: [
         {
           label: "Volume",
-          lineTension: 0.2,
           data: $exerciseSplitStore.splitDays.map(
             (splitDay) =>
               splitDay?.exerciseTemplates.reduce((setsForDay, exerciseTemplate) => {
@@ -64,35 +73,84 @@
       ]
     };
   }
+
+  function sortMuscleGroups(sortOption?: string) {
+    if (sortOption === "Volume (ascending)") {
+      return muscleGroups.toSorted((a, b) => {
+        return getTotalSetsOfMuscleGroup(a) - getTotalSetsOfMuscleGroup(b);
+      });
+    } else if (sortOption === "Frequency (descending)") {
+      return muscleGroups.toSorted((a, b) => {
+        return getTotalFrequencyOfMuscleGroup(b) - getTotalFrequencyOfMuscleGroup(a);
+      });
+    } else if (sortOption === "Frequency (ascending)") {
+      return muscleGroups.toSorted((a, b) => {
+        return getTotalFrequencyOfMuscleGroup(a) - getTotalFrequencyOfMuscleGroup(b);
+      });
+    }
+    return muscleGroups.toSorted((a, b) => {
+      return getTotalSetsOfMuscleGroup(b) - getTotalSetsOfMuscleGroup(a);
+    });
+  }
+
+  function createExerciseSplit() {
+    callingEndpoint = true;
+    
+  }
 </script>
 
-{#key $exerciseSplitStore}
-  <div class="flex flex-col h-full gap-2">
-    <Accordion.Root class="h-px overflow-y-auto grow px-2 border rounded-md text-sm">
-      {#each muscleGroups as muscleGroup}
-        {@const data = generateData(muscleGroup)}
-        <Accordion.Item value={muscleGroup}>
-          <Accordion.Trigger>
-            <div class="flex w-full px-2 items-center gap-1">
-              <span class="mr-auto">{muscleGroup}</span>
-              <Badge variant="outline">{getTotalFrequencyOfMuscleGroup(muscleGroup)}x freq</Badge>
-              <Badge variant="secondary">{getTotalSetsOfMuscleGroup(muscleGroup)} sets</Badge>
-            </div>
-          </Accordion.Trigger>
-          <Accordion.Content>
-            <Line
-              {data}
-              options={{
-                responsive: true,
-                scales: {
-                  y: { min: -0, max: Math.max(...data.datasets[0].data) + 2 }
-                }
-              }}
-            />
-          </Accordion.Content>
-        </Accordion.Item>
-      {/each}
-    </Accordion.Root>
-    <Button>Save exercise split</Button>
+<div class="flex flex-col h-full gap-2">
+  <div class="flex gap-2 items-center">
+    <span class="text-sm font-semibold whitespace-nowrap basis-16 text-center shrink-0"
+      >Sort by</span
+    >
+    <Select.Root portal={null} bind:selected={selectedSortOption}>
+      <Select.Trigger class="grow">
+        <Select.Value />
+      </Select.Trigger>
+      <Select.Content>
+        <Select.Group>
+          {#each sortByOptions as option}
+            <Select.Item value={option} label={option}>{option}</Select.Item>
+          {/each}
+        </Select.Group>
+      </Select.Content>
+      <Select.Input name="favoriteFruit" />
+    </Select.Root>
   </div>
-{/key}
+  {#key $exerciseSplitStore}
+    <div class="flex flex-col grow gap-2">
+      <Accordion.Root class="h-px overflow-y-auto grow px-2 border rounded-md text-sm">
+        {#each sortMuscleGroups(selectedSortOption.value) as muscleGroup}
+          {@const data = generateData(muscleGroup)}
+          <Accordion.Item value={muscleGroup}>
+            <Accordion.Trigger>
+              <div class="flex w-full px-2 items-center gap-1">
+                <span class="mr-auto">{muscleGroup}</span>
+                <Badge variant="outline">{getTotalFrequencyOfMuscleGroup(muscleGroup)}x freq</Badge>
+                <Badge variant="secondary">{getTotalSetsOfMuscleGroup(muscleGroup)} sets</Badge>
+              </div>
+            </Accordion.Trigger>
+            <Accordion.Content>
+              <Line
+                {data}
+                options={{
+                  responsive: true,
+                  scales: {
+                    y: { min: -0, max: Math.max(...data.datasets[0].data) + 2 }
+                  }
+                }}
+              />
+            </Accordion.Content>
+          </Accordion.Item>
+        {/each}
+      </Accordion.Root>
+    </div>
+  {/key}
+  <Button disabled={callingEndpoint} on:click={createExerciseSplit}>
+    {#if callingEndpoint}
+      <Loader2 class="mr-2 h-4 w-4 animate-spin" />
+    {/if}
+    Create exercise split
+  </Button>
+</div>
