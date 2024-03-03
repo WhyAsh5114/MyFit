@@ -110,27 +110,21 @@
       </Form.Label>
       <div class="flex w-full flex-wrap gap-1">
         {#each $formData.splitDays as splitDay, idx}
-          <div class="flex">
-            {#if splitDay}
-              <Badge class="flex gap-1" variant="secondary">
-                <Button variant="ghost" class="p-0 h-fit" on:click={() => removeDay(idx)}>
-                  <Icon icon="material-symbols:close" />
-                </Button>
-                {splitDay}
-              </Badge>
-            {:else}
-              <Badge class="flex gap-1" variant="outline">
-                <Button
-                  variant="outline"
-                  class="p-0 h-fit border-0"
-                  on:click={() => removeDay(idx)}
-                >
-                  <Icon icon="material-symbols:close" />
-                </Button>
-                Rest
-              </Badge>
-            {/if}
-          </div>
+          {#if splitDay}
+            <Badge class="flex gap-1" variant="secondary">
+              <Button variant="ghost" class="p-0 h-fit" on:click={() => removeDay(idx)}>
+                <Icon icon="material-symbols:close" />
+              </Button>
+              {splitDay}
+            </Badge>
+          {:else}
+            <Badge class="flex gap-1" variant="outline">
+              <Button variant="outline" class="p-0 h-fit border-0" on:click={() => removeDay(idx)}>
+                <Icon icon="material-symbols:close" />
+              </Button>
+              Rest
+            </Badge>
+          {/if}
         {:else}
           <Badge variant="outline">Added workout days will be shown here</Badge>
         {/each}
