@@ -1,7 +1,4 @@
 import clientPromise from "$lib/mongo/mongodb.js";
-import type { WithUserId } from "$lib/types/arrays";
-import { ObjectId } from "mongodb";
-
 const client = await clientPromise;
 
 export const GET = async ({ locals }) => {
@@ -13,8 +10,8 @@ export const GET = async ({ locals }) => {
   try {
     const exerciseSplits = await client
       .db()
-      .collection<WithUserId<ExerciseSplit>>("exerciseSplits")
-      .find({ userId: new ObjectId(session.user.id) })
+      .collection<WithUID<ExerciseSplit>>("exerciseSplits")
+      .find({ userId: session.user.id })
       .toArray();
 
     return new Response(JSON.stringify(exerciseSplits), { status: 200 });
@@ -33,8 +30,8 @@ export const POST = async ({ locals, request }) => {
   try {
     await client
       .db()
-      .collection<WithUserId<ExerciseSplit>>("exerciseSplits")
-      .insertOne({ ...exerciseSplit, userId: new ObjectId(session.user.id) });
+      .collection<WithUID<ExerciseSplit>>("exerciseSplits")
+      .insertOne({ ...exerciseSplit, userId: session.user.id });
 
     return new Response("Exercise split created successfully", { status: 200 });
   } catch (error) {

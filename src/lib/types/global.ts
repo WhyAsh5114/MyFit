@@ -16,4 +16,4 @@ const MuscleGroups = [
 ] as const;
 type MuscleGroup = (typeof MuscleGroups)[number];
 
-type WithSID<T> = Omit<T, "_id"> & { _id: string };
+type WithUID<T> = T & { userId: string };
