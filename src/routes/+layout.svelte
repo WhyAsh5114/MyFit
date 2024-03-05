@@ -9,9 +9,9 @@
 </script>
 
 <ModeWatcher />
-<header class="flex items-center gap-2 border-b px-2 py-1">
+<header class="flex items-center gap-2 border-b px-3 py-1">
 	<Sheet.Root>
-		<Sheet.Trigger class="px-1" aria-label="Menu">
+		<Sheet.Trigger aria-label="Menu">
 			<Menu />
 		</Sheet.Trigger>
 		<Sheet.Content side="left">
