@@ -38,10 +38,13 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@auth/mongodb-adapter": "^2.5.0",
+		"@auth/sveltekit": "^0.14.0",
 		"bits-ui": "^0.19.3",
 		"clsx": "^2.1.0",
 		"lucide-svelte": "^0.344.0",
 		"mode-watcher": "^0.2.2",
+		"mongodb": "^6.4.0",
 		"tailwind-merge": "^2.2.1",
 		"tailwind-variants": "^0.2.0"
 	}
