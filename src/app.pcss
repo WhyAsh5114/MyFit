@@ -71,10 +71,18 @@
 @layer base {
 	* {
 		@apply border-border;
+		font-family: 'Inter', sans-serif;
 	}
 	body {
 		@apply bg-background text-foreground;
 	}
+}
+
+@font-face {
+	font-family: 'Inter';
+	src: url('/Inter-VariableFont_slnt,wght.ttf') format('truetype');
+	font-style: normal;
+	font-display: swap;
 }
 
 body {
