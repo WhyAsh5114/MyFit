@@ -84,7 +84,7 @@
 		{/if}
 	</div>
 </header>
-<main class="mx-auto flex h-px max-w-2xl grow flex-col overflow-y-auto px-2 py-6 lg:h-screen">
+<main class="mx-auto w-full flex h-px max-w-2xl grow flex-col overflow-y-auto px-2 py-6 lg:h-screen">
 	<slot />
 </main>
 
