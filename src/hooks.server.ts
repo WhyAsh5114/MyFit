@@ -1,6 +1,6 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
-import clientPromise from './src/lib/mongo/mongodb';
+import clientPromise from '../src/lib/mongo/mongodb';
 import github from '@auth/core/providers/github';
 import google from '@auth/core/providers/google';
 
