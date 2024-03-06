@@ -6,8 +6,6 @@
 	import ModeToggle from '$lib/components/ModeToggle.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { page } from '$app/stores';
-	import GoogleIcon from 'virtual:icons/mdi/google';
-	import GitHubIcon from 'virtual:icons/mdi/github';
 	import Menu from 'lucide-svelte/icons/menu';
 	import UserAvatar from './UserAvatar.svelte';
 	import UserDropdown from './UserDropdown.svelte';
