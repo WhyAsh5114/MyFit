@@ -4,7 +4,7 @@ import clientPromise from '../src/lib/mongo/mongodb';
 import github from '@auth/core/providers/github';
 import google from '@auth/core/providers/google';
 
-export const { handle, signIn, signOut } = SvelteKitAuth({
+export const { handle } = SvelteKitAuth({
 	adapter: MongoDBAdapter(clientPromise),
 	basePath: '/auth',
 	providers: [google, github],
