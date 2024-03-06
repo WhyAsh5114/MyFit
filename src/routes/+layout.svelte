@@ -45,7 +45,7 @@
 	</div>
 	<div class="hidden h-screen flex-col lg:flex">horizontal navbar</div>
 </header>
-<main class="flex h-px max-w-2xl mx-auto grow flex-col overflow-y-auto px-2 py-6 lg:h-screen">
+<main class="mx-auto flex h-px max-w-2xl grow flex-col overflow-y-auto px-2 py-6 lg:h-screen">
 	<slot />
 </main>
 
