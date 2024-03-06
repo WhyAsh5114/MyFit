@@ -42,6 +42,7 @@
 		"@auth/sveltekit": "^0.14.0",
 		"bits-ui": "^0.19.3",
 		"clsx": "^2.1.0",
+		"dotenv": "^16.4.5",
 		"lucide-svelte": "^0.344.0",
 		"mode-watcher": "^0.2.2",
 		"mongodb": "^6.4.0",
