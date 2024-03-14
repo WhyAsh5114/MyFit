@@ -14,8 +14,8 @@
 	import UserDropdown from './(components)/UserDropdown.svelte';
 	import NavLinks from './(components)/NavLinks.svelte';
 	import LoginProviderMenu from './(components)/LoginProviderMenu.svelte';
-	import PwaButtonsMobile from './(components)/PWAButtonsMobile.svelte';
-	
+	import PWAButtons from './(components)/PWAButtons.svelte';
+
 	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 </script>
 
@@ -59,7 +59,7 @@
 				height={40}
 			/>
 		</a>
-		<PwaButtonsMobile />
+		<PWAButtons />
 		<ModeToggle />
 		{#if $page.data.session}
 			<DropdownMenu.Root>
@@ -91,10 +91,11 @@
 			</a>
 		</Button>
 		<NavLinks />
+		<PWAButtons />
 		{#if $page.data.session}
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger asChild let:builder>
-					<Button builders={[builder]} variant="secondary" class="h-14 justify-around">
+					<Button builders={[builder]} variant="secondary" size="lg" class="mt-2 justify-around">
 						<UserAvatar session={$page.data.session} />
 						<span class="text-base font-semibold">{$page.data.session.user?.name}</span>
 					</Button>
@@ -104,7 +105,12 @@
 		{:else}
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger asChild let:builder>
-					<Button variant="secondary" builders={[builder]} class="h-14 justify-around text-base">
+					<Button
+						variant="secondary"
+						builders={[builder]}
+						size="lg"
+						class="mt-2 justify-around text-base"
+					>
 						Login
 					</Button>
 				</DropdownMenu.Trigger>
