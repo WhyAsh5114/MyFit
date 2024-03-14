@@ -7,6 +7,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 
+	let reloading = false;
 	let deferredPrompt: Event | null;
 	let needRefresh: Writable<boolean>;
 	let offlineReady: Writable<boolean>;
@@ -51,36 +52,72 @@
 			}
 		}));
 	});
-
-	let reloading = false;
 </script>
 
-{#if $needRefresh}
-	<Button
-		variant="ghost"
-		size="icon"
-		on:click={() => {
-			updateServiceWorker(true);
-			reloading = true;
-		}}
-	>
-		{#if !reloading}
-			<ReloadIcon class="h-5 w-5" />
-		{:else}
-			<LoaderCircle class="h-5 w-5 animate-spin" />
-		{/if}
-	</Button>
-{:else if showInstallButton}
-	<Button
-		variant="ghost"
-		size="icon"
-		aria-label="Download"
-		on:click={() => {
-			// @ts-expect-error Not standard API yet, so need this ignore
-			deferredPrompt.prompt();
-			deferredPrompt = null;
-		}}
-	>
-		<DownloadIcon class="h-6 w-6" />
-	</Button>
-{/if}
+<div class="block lg:hidden">
+	{#if $needRefresh}
+		<Button
+			variant="ghost"
+			size="icon"
+			on:click={() => {
+				updateServiceWorker(true);
+				reloading = true;
+			}}
+		>
+			{#if !reloading}
+				<ReloadIcon class="h-5 w-5" />
+			{:else}
+				<LoaderCircle class="h-5 w-5 animate-spin" />
+			{/if}
+		</Button>
+	{:else if showInstallButton}
+		<Button
+			variant="ghost"
+			size="icon"
+			aria-label="Download"
+			on:click={() => {
+				// @ts-expect-error Not standard API yet, so need this ignore
+				deferredPrompt.prompt();
+				deferredPrompt = null;
+			}}
+		>
+			<DownloadIcon class="h-6 w-6" />
+		</Button>
+	{/if}
+</div>
+
+<div class="hidden lg:block">
+	{#if $needRefresh}
+		<Button
+			variant="outline"
+			class="w-full gap-2 text-base"
+			size="lg"
+			disabled={reloading}
+			on:click={() => {
+				updateServiceWorker(true);
+				reloading = true;
+			}}
+		>
+			{#if !reloading}
+				<ReloadIcon class="h-5 w-5" />
+			{:else}
+				<LoaderCircle class="h-5 w-5 animate-spin" />
+			{/if}
+			Reload
+		</Button>
+	{:else if showInstallButton}
+		<Button
+			variant="outline"
+			class="w-full gap-2 text-base"
+			size="lg"
+			aria-label="Download"
+			on:click={() => {
+				// @ts-expect-error Not standard API yet, so need this ignore
+				deferredPrompt.prompt();
+				deferredPrompt = null;
+			}}
+		>
+			<DownloadIcon class="h-6 w-6" /> Download
+		</Button>
+	{/if}
+</div>
