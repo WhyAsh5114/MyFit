@@ -11,19 +11,20 @@
 	import UserDropdown from './UserDropdown.svelte';
 	import NavLinks from './NavLinks.svelte';
 	import LoginProviderMenu from './LoginProviderMenu.svelte';
-	import { pwaInfo } from 'virtual:pwa-info'; 
-  $: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '' 
+	import { pwaInfo } from 'virtual:pwa-info';
+	import PwaButtons from './PWAButtons.svelte';
+	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 </script>
 
-<svelte:head> 
- 	{@html webManifestLink} 
+<svelte:head>
+	{@html webManifestLink}
 </svelte:head>
 
 <ModeWatcher />
-<header class="horizontal-screen flex shrink-0 items-center gap-2 border-b px-3 py-1">
+<header class="horizontal-screen flex shrink-0 items-center border-b p-1">
 	<div class="contents lg:hidden">
 		<Sheet.Root>
-			<Sheet.Trigger aria-label="Menu">
+			<Sheet.Trigger aria-label="Menu" class="px-2">
 				<Menu />
 			</Sheet.Trigger>
 			<Sheet.Content side="left">
@@ -31,7 +32,13 @@
 					<Sheet.Title>
 						<Button variant="link" class="justify-start">
 							<a class="flex items-center gap-2" href="/">
-								<img src="/favicon.webp" alt="MyFit logo" width={52} height={52} />
+								<img
+									class="invert dark:invert-0"
+									src="/favicon.webp"
+									alt="MyFit logo"
+									width={52}
+									height={52}
+								/>
 								<h1 class="text-2xl font-bold">MyFit</h1>
 							</a>
 						</Button>
@@ -41,8 +48,15 @@
 			</Sheet.Content>
 		</Sheet.Root>
 		<a href="/" class="mx-1 mr-auto">
-			<img src="/favicon.webp" alt="MyFit logo" width={40} height={40} />
+			<img
+				class="invert dark:invert-0"
+				src="/favicon.webp"
+				alt="MyFit logo"
+				width={40}
+				height={40}
+			/>
 		</a>
+		<PwaButtons />
 		<ModeToggle />
 		{#if $page.data.session}
 			<DropdownMenu.Root>
@@ -54,7 +68,7 @@
 		{:else}
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger asChild let:builder>
-					<Button variant="ghost" class="px-1" builders={[builder]}>Login</Button>
+					<Button size="sm" variant="ghost" builders={[builder]}>Login</Button>
 				</DropdownMenu.Trigger>
 				<LoginProviderMenu />
 			</DropdownMenu.Root>
@@ -63,7 +77,13 @@
 	<div class="hidden h-screen w-full flex-col p-10 lg:flex">
 		<Button variant="link" class="justify-start">
 			<a class="flex items-center gap-2" href="/">
-				<img src="/favicon.webp" alt="MyFit logo" width={72} height={72} />
+				<img
+					class="invert dark:invert-0"
+					src="/favicon.webp"
+					alt="MyFit logo"
+					width={72}
+					height={72}
+				/>
 				<h1 class="text-4xl font-bold">MyFit</h1>
 			</a>
 		</Button>
