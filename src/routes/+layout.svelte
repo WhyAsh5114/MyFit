@@ -11,7 +11,13 @@
 	import UserDropdown from './UserDropdown.svelte';
 	import NavLinks from './NavLinks.svelte';
 	import LoginProviderMenu from './LoginProviderMenu.svelte';
+	import { pwaInfo } from 'virtual:pwa-info'; 
+  $: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '' 
 </script>
+
+<svelte:head> 
+ 	{@html webManifestLink} 
+</svelte:head>
 
 <ModeWatcher />
 <header class="horizontal-screen flex shrink-0 items-center gap-2 border-b px-3 py-1">
