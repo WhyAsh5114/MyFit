@@ -109,7 +109,7 @@
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger asChild let:builder>
 					<Button
-						variant="secondary"
+						variant="outline"
 						builders={[builder]}
 						size="lg"
 						class="mt-2 justify-around text-base"
