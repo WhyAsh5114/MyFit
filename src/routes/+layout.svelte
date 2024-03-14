@@ -1,18 +1,21 @@
 <script lang="ts">
 	import '../app.pcss';
+	import { page } from '$app/stores';
+	import { pwaInfo } from 'virtual:pwa-info';
 	import { ModeWatcher } from 'mode-watcher';
+	import Menu from 'lucide-svelte/icons/menu';
+
 	import * as Sheet from '$lib/components/ui/sheet';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import ModeToggle from '$lib/components/ModeToggle.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { page } from '$app/stores';
-	import Menu from 'lucide-svelte/icons/menu';
-	import UserAvatar from './UserAvatar.svelte';
-	import UserDropdown from './UserDropdown.svelte';
-	import NavLinks from './NavLinks.svelte';
-	import LoginProviderMenu from './LoginProviderMenu.svelte';
-	import { pwaInfo } from 'virtual:pwa-info';
-	import PwaButtons from './PWAButtons.svelte';
+
+	import UserAvatar from './(components)/UserAvatar.svelte';
+	import UserDropdown from './(components)/UserDropdown.svelte';
+	import NavLinks from './(components)/NavLinks.svelte';
+	import LoginProviderMenu from './(components)/LoginProviderMenu.svelte';
+	import PwaButtonsMobile from './(components)/PWAButtonsMobile.svelte';
+	
 	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 </script>
 
@@ -56,7 +59,7 @@
 				height={40}
 			/>
 		</a>
-		<PwaButtons />
+		<PwaButtonsMobile />
 		<ModeToggle />
 		{#if $page.data.session}
 			<DropdownMenu.Root>
