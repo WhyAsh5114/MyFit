@@ -91,7 +91,10 @@
 			</a>
 		</Button>
 		<NavLinks />
-		<PWAButtons />
+		<div class="flex gap-2">
+			<ModeToggle variant="outline" size="lg" />
+			<PWAButtons />
+		</div>
 		{#if $page.data.session}
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger asChild let:builder>
