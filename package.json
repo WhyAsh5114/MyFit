@@ -46,8 +46,8 @@
 		"bits-ui": "^0.19.3",
 		"clsx": "^2.1.0",
 		"dotenv": "^16.4.5",
-		"lucide-svelte": "^0.350.0",
-		"mode-watcher": "^0.2.2",
+		"lucide-svelte": "^0.357.0",
+		"mode-watcher": "^0.3.0",
 		"mongodb": "^6.4.0",
 		"tailwind-merge": "^2.2.1",
 		"tailwind-variants": "^0.2.0"
