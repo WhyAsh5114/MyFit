@@ -43,7 +43,7 @@
 	"dependencies": {
 		"@auth/mongodb-adapter": "^2.5.0",
 		"@auth/sveltekit": "^0.14.0",
-		"bits-ui": "^0.19.3",
+		"bits-ui": "^0.19.7",
 		"clsx": "^2.1.0",
 		"dotenv": "^16.4.5",
 		"lucide-svelte": "^0.357.0",
