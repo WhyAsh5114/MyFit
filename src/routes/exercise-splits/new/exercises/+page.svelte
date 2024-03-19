@@ -5,6 +5,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
 	import { exerciseSplitStore } from '../exerciseSplitStore';
+	import { toast } from 'svelte-sonner';
 
 	import CopyIcon from 'virtual:icons/carbon/copy';
 	import PasteIcon from 'virtual:icons/carbon/paste';
@@ -12,6 +13,7 @@
 	import MenuIcon from 'virtual:icons/material-symbols/menu';
 	import DndComponent from './(components)/DndComponent.svelte';
 	import ExerciseDrawer from './(components)/ExerciseDrawer.svelte';
+	import { goto } from '$app/navigation';
 
 	type CustomExerciseSplitDay = {
 		name: string;
@@ -87,6 +89,20 @@
 		if (!selectedSplitDay) return;
 		copyExercises();
 		selectedSplitDay.exerciseTemplates = [];
+	}
+
+	function submitExercises() {
+		const emptyWorkoutsNames = $exerciseSplitStore.splitDays
+			.filter((splitDay) => splitDay !== null && splitDay.exerciseTemplates.length === 0)
+			.map((splitDay) => splitDay?.name);
+		if (emptyWorkoutsNames.length > 0) {
+			toast.error('Error', {
+				description:
+					'Add at least one exercise to the following workouts: ' + emptyWorkoutsNames.join(', ')
+			});
+			return;
+		}
+		goto('/exercise-splits/new/overview');
 	}
 </script>
 
@@ -171,5 +187,5 @@
 	<Button variant="secondary">
 		<a href="/exercise-splits/new/structure" class="w-full">Back</a>
 	</Button>
-	<Button>Next</Button>
+	<Button on:click={submitExercises}>Next</Button>
 </div>
