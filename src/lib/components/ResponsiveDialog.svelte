@@ -37,7 +37,7 @@
 					</Dialog.Description>
 				{/if}
 			</Dialog.Header>
-			<slot title="content" />
+			<slot name="content" />
 		</Dialog.Content>
 	</Dialog.Root>
 {:else}
@@ -54,7 +54,7 @@
 					</Drawer.Description>
 				{/if}
 			</Drawer.Header>
-			<slot title="content" />
+			<slot name="content" />
 			<Drawer.Footer class="pt-2">
 				<Drawer.Close asChild let:builder>
 					<Button variant="destructive" builders={[builder]}>Cancel</Button>
