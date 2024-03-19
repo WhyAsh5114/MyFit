@@ -2,11 +2,14 @@
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
 	import { exerciseSplitStore } from '../exerciseSplitStore';
+	import AddIcon from 'virtual:icons/material-symbols/add';
 	import CopyIcon from 'virtual:icons/carbon/copy';
 	import PasteIcon from 'virtual:icons/carbon/paste';
 	import CutIcon from 'virtual:icons/material-symbols/cut';
+	import MenuIcon from 'virtual:icons/material-symbols/menu';
 
 	let splitDays = $exerciseSplitStore.splitDays;
 	let selectedDayIndex = splitDays.findIndex((splitDay) => splitDay !== null).toString();
@@ -33,20 +36,42 @@
 		<div class="flex flex-col p-2">
 			<div class="flex items-center gap-3">
 				<div class="mr-auto flex flex-col">
-					<span class="text-lg font-semibold">{selectedSplitDay.name}</span>
+					<span class="truncate text-lg font-semibold">{selectedSplitDay.name}</span>
 					<span class="font-sembold text-sm text-muted-foreground">
 						Day {parseInt(selectedDayIndex) + 1}
 					</span>
 				</div>
-				<Button size="icon" variant="outline" aria-label="copy exercises">
-					<CopyIcon />
+				<Button
+					size="icon"
+					class="justify-center gap-2 rounded-md border py-2"
+					aria-label="add exercise"
+					variant="outline"
+				>
+					<AddIcon />
 				</Button>
-				<Button size="icon" variant="outline" aria-label="paste exercises">
-					<PasteIcon />
-				</Button>
-				<Button size="icon" variant="outline" aria-label="cut exercises">
-					<CutIcon />
-				</Button>
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger asChild let:builder>
+						<Button
+							size="icon"
+							variant="outline"
+							aria-label="workout day actions"
+							builders={[builder]}
+						>
+							<MenuIcon />
+						</Button>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content align="end">
+						<DropdownMenu.Item class="gap-2">
+							<CopyIcon /> Copy
+						</DropdownMenu.Item>
+						<DropdownMenu.Item class="gap-2">
+							<PasteIcon /> Paste
+						</DropdownMenu.Item>
+						<DropdownMenu.Item class="gap-2">
+							<CutIcon /> Cut
+						</DropdownMenu.Item>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
 			</div>
 		</div>
 	{/if}
