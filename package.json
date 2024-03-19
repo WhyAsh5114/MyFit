@@ -49,6 +49,7 @@
 		"lucide-svelte": "^0.359.0",
 		"mode-watcher": "^0.3.0",
 		"mongodb": "^6.4.0",
+		"svelte-sonner": "^0.3.19",
 		"tailwind-merge": "^2.2.1",
 		"tailwind-variants": "^0.2.0",
 		"vaul-svelte": "^0.3.0"

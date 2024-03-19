@@ -10,8 +10,6 @@
 	let reloading = false;
 	let deferredPrompt: Event | null;
 	let needRefresh: Writable<boolean>;
-	// TODO: add a toast that offline ready, maybe?
-	let offlineReady: Writable<boolean>;
 	let showInstallButton = false;
 	let updateServiceWorker: (_arg0: boolean) => void;
 	onMount(() => {
@@ -25,7 +23,7 @@
 			deferredPrompt = null;
 		});
 
-		({ needRefresh, updateServiceWorker, offlineReady } = useRegisterSW({
+		({ needRefresh, updateServiceWorker } = useRegisterSW({
 			onRegisteredSW(swUrl, r) {
 				r &&
 					setInterval(async () => {

@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import { pwaInfo } from 'virtual:pwa-info';
 	import { ModeWatcher } from 'mode-watcher';
+	import { Toaster } from '$lib/components/ui/sonner';
 	import Menu from 'lucide-svelte/icons/menu';
 
 	import * as Sheet from '$lib/components/ui/sheet';
@@ -24,6 +25,7 @@
 </svelte:head>
 
 <ModeWatcher />
+<Toaster />
 <header class="horizontal-screen flex shrink-0 items-center border-b p-1">
 	<div class="contents lg:hidden">
 		<Sheet.Root>
