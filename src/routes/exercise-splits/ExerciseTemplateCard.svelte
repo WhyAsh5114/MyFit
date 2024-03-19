@@ -2,6 +2,8 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import MenuIcon from 'virtual:icons/material-symbols/menu';
+	import EditIcon from 'virtual:icons/material-symbols/edit';
+	import DeleteIcon from 'virtual:icons/material-symbols/delete';
 
 	export let idx: number;
 	export let exerciseTemplate: ExerciseTemplate;
@@ -32,15 +34,17 @@
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content align="end">
 				<DropdownMenu.Group>
-					<DropdownMenu.Item on:click={() => openEditExercise(idx)}>Edit</DropdownMenu.Item>
+					<DropdownMenu.Item on:click={() => openEditExercise(idx)} class="gap-2">
+						<EditIcon /> Edit
+					</DropdownMenu.Item>
 					<DropdownMenu.Item
-						class="text-red-500"
+						class="text-red-500 gap-2"
 						on:click={() => {
 							deleteExercise(idx);
 							isContextMenuOpen = false;
 						}}
 					>
-						Delete
+						<DeleteIcon /> Delete
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 			</DropdownMenu.Content>
