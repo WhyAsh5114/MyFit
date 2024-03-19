@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { muscleGroups, setTypes } from '$lib/arrays';
+	import { exerciseListByMuscleGroup, muscleGroups, setTypes } from '$lib/arrays';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -8,7 +8,19 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import * as Sheet from '$lib/components/ui/sheet';
+	import * as Command from '$lib/components/ui/command';
 	import AddIcon from 'virtual:icons/material-symbols/add';
+
+	let exerciseSearchString = '';
+	$: exerciseList = exerciseListByMuscleGroup.map((exerciseListForMuscleGroup) => {
+		exerciseListForMuscleGroup = structuredClone(exerciseListForMuscleGroup);
+		exerciseListForMuscleGroup.exercises = exerciseListForMuscleGroup.exercises.filter(
+			(exercise) => {
+				return exercise.name.toLowerCase().includes(exerciseSearchString.toLowerCase());
+			}
+		);
+		return exerciseListForMuscleGroup;
+	});
 </script>
 
 <Sheet.Root>
@@ -21,10 +33,25 @@
 		<Sheet.Header>
 			<Sheet.Title>Add exercise</Sheet.Title>
 		</Sheet.Header>
-		<form on:submit|preventDefault class="grid h-fit grid-cols-2 gap-x-2 gap-y-4 mt-8">
+		<form on:submit|preventDefault class="mt-8 grid h-fit grid-cols-2 gap-x-2 gap-y-4">
 			<div class="col-span-2 flex w-full flex-col gap-1.5">
-				<Label for="exercise-name">Exercise name</Label>
-				<Input id="exercise-name" placeholder="Type here" />
+				<span class="text-sm font-medium">Exercise name</span>
+				<Command.Root class="bg-background">
+					<Command.Input bind:value={exerciseSearchString} placeholder="Type here or search..." />
+					{#if exerciseSearchString}
+						<Command.List>
+							{#each exerciseList as exercisesForMuscleGroup}
+								{#if exercisesForMuscleGroup.exercises.length > 0}
+									<Command.Group heading={exercisesForMuscleGroup.muscleGroup}>
+										{#each exercisesForMuscleGroup.exercises as exercise}
+											<Command.Item>{exercise.name}</Command.Item>
+										{/each}
+									</Command.Group>
+								{/if}
+							{/each}
+						</Command.List>
+					{/if}
+				</Command.Root>
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
 				<Select.Root name="exercise-target-muscle-group">
