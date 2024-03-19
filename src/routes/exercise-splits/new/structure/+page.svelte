@@ -9,6 +9,7 @@
 	import * as Table from '$lib/components/ui/table';
 	import AddIcon from 'virtual:icons/material-symbols/add';
 	import RemoveIcon from 'virtual:icons/material-symbols/remove';
+	import { goto } from '$app/navigation';
 
 	let splitName = $exerciseSplitStore.name;
 	let splitDayNames = $exerciseSplitStore.splitDays.map((splitDay) => splitDay?.name ?? null);
@@ -34,6 +35,7 @@
 			}
 			return { name: splitDay, exerciseTemplates: [] };
 		});
+		goto('/exercise-splits/new/exercises');
 	}
 </script>
 
