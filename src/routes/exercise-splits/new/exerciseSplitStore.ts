@@ -3,5 +3,7 @@ import type { Writable } from 'svelte/store';
 
 export const exerciseSplit: Writable<ExerciseSplit> = persisted('exerciseSplit', {
 	name: '',
-	splitDays: []
+	splitDays: Array.from({ length: 7 }).map(() => {
+		return { name: '', exerciseTemplates: [] };
+	})
 });
