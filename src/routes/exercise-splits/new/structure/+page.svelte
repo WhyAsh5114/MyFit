@@ -64,10 +64,7 @@
 <H2>New exercise split</H2>
 <H3>Structure</H3>
 
-<form
-	on:submit|preventDefault={() => submitStructure()}
-	class="mt-4 flex h-px grow flex-col gap-2 overflow-y-auto"
->
+<form on:submit|preventDefault={() => submitStructure()} class="mt-4 flex h-px grow flex-col gap-2">
 	<div class="flex w-full flex-col gap-1.5 px-1">
 		<Label for="splitName">Exercise split name</Label>
 		<Input id="splitName" placeholder="Type here" bind:value={splitName} required />
@@ -105,7 +102,7 @@
 			{/each}
 		</Table.Body>
 	</Table.Root>
-	<div class="my-1 mt-auto grid grid-cols-2 gap-1">
+	<div class="mt-auto grid grid-cols-2 gap-1">
 		<Button
 			variant="secondary"
 			aria-label="remove workout day"

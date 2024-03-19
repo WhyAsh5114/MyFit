@@ -38,7 +38,7 @@
 						<EditIcon /> Edit
 					</DropdownMenu.Item>
 					<DropdownMenu.Item
-						class="text-red-500 gap-2"
+						class="gap-2 text-red-500"
 						on:click={() => {
 							deleteExercise(idx);
 							isContextMenuOpen = false;
