@@ -11,16 +11,26 @@
 	import * as Command from '$lib/components/ui/command';
 	import AddIcon from 'virtual:icons/material-symbols/add';
 
-	let exerciseSearchString = '';
+	let searching = false;
+	let currentExercise: Partial<ExerciseTemplate> = {
+		name: '',
+		setType: 'straight'
+	};
+
 	$: exerciseList = exerciseListByMuscleGroup.map((exerciseListForMuscleGroup) => {
 		exerciseListForMuscleGroup = structuredClone(exerciseListForMuscleGroup);
 		exerciseListForMuscleGroup.exercises = exerciseListForMuscleGroup.exercises.filter(
 			(exercise) => {
-				return exercise.name.toLowerCase().includes(exerciseSearchString.toLowerCase());
+				return exercise.name.toLowerCase().includes(currentExercise.name?.toLowerCase() ?? '');
 			}
 		);
 		return exerciseListForMuscleGroup;
 	});
+
+	function selectExercise(exercise: ExerciseTemplate) {
+		currentExercise = exercise;
+		searching = false;
+	}
 </script>
 
 <Sheet.Root>
@@ -36,25 +46,40 @@
 		<form on:submit|preventDefault class="mt-8 grid h-fit grid-cols-2 gap-x-2 gap-y-4">
 			<div class="col-span-2 flex w-full flex-col gap-1.5">
 				<span class="text-sm font-medium">Exercise name</span>
-				<Command.Root class="bg-background">
-					<Command.Input bind:value={exerciseSearchString} placeholder="Type here or search..." />
-					{#if exerciseSearchString}
-						<Command.List>
-							{#each exerciseList as exercisesForMuscleGroup}
-								{#if exercisesForMuscleGroup.exercises.length > 0}
-									<Command.Group heading={exercisesForMuscleGroup.muscleGroup}>
-										{#each exercisesForMuscleGroup.exercises as exercise}
-											<Command.Item>{exercise.name}</Command.Item>
-										{/each}
-									</Command.Group>
-								{/if}
-							{/each}
+				<Command.Root class="bg-background" shouldFilter={false}>
+					<Command.Input
+						bind:value={currentExercise.name}
+						placeholder="Type here or search..."
+						onFocus={() => (searching = true)}
+					/>
+					{#if searching}
+						<Command.List class="bg-muted">
+							<ScrollArea class="max-h-40">
+								{#each exerciseList as exercisesForMuscleGroup}
+									{#if exercisesForMuscleGroup.exercises.length > 0}
+										<Command.Group heading={exercisesForMuscleGroup.muscleGroup}>
+											{#each exercisesForMuscleGroup.exercises as exercise}
+												<Command.Item onSelect={() => selectExercise(exercise)}>
+													{exercise.name}
+												</Command.Item>
+											{/each}
+										</Command.Group>
+									{/if}
+								{/each}
+							</ScrollArea>
 						</Command.List>
 					{/if}
 				</Command.Root>
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
-				<Select.Root name="exercise-target-muscle-group">
+				<Select.Root
+					name="exercise-target-muscle-group"
+					selected={{
+						value: currentExercise.targetMuscleGroup,
+						label: currentExercise.targetMuscleGroup
+					}}
+					onSelectedChange={(v) => (currentExercise.targetMuscleGroup = v?.value)}
+				>
 					<Select.Label class="p-0 text-sm font-medium leading-none">
 						Target muscle group
 					</Select.Label>
@@ -77,15 +102,26 @@
 						includeInput
 						id="exercise-involves-bodyweight"
 						name="exercise-involves-bodyweight"
+						bind:checked={currentExercise.involvesBodyweight}
 					/>
 				</div>
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
 				<Label for="exercise-sets">Sets</Label>
-				<Input type="number" min={1} id="exercise-sets" placeholder="Type here" />
+				<Input
+					type="number"
+					min={1}
+					id="exercise-sets"
+					placeholder="Type here"
+					bind:value={currentExercise.sets}
+				/>
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
-				<Select.Root name="exercise-set-type">
+				<Select.Root
+					name="exercise-set-type"
+					selected={{ value: currentExercise.setType, label: currentExercise.setType }}
+					onSelectedChange={(v) => (currentExercise.setType = v?.value)}
+				>
 					<Select.Label class="p-0 text-sm font-medium leading-none">Set type</Select.Label>
 					<Select.Trigger>
 						<Select.Value class="capitalize" placeholder="Pick one" />
@@ -99,11 +135,23 @@
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
 				<Label for="exercise-rep-range-start">Rep range start</Label>
-				<Input id="exercise-rep-range-start" min={1} type="number" placeholder="Type here" />
+				<Input
+					id="exercise-rep-range-start"
+					min={1}
+					type="number"
+					placeholder="Type here"
+					bind:value={currentExercise.repRangeStart}
+				/>
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
 				<Label for="exercise-rep-range-end">Rep range end</Label>
-				<Input id="exercise-rep-range-end" type="number" placeholder="Type here" />
+				<Input
+					id="exercise-rep-range-end"
+					min={currentExercise.repRangeStart ?? 0 + 1}
+					type="number"
+					placeholder="Type here"
+					bind:value={currentExercise.repRangeEnd}
+				/>
 			</div>
 			<div class="col-span-2 flex w-full flex-col gap-1.5">
 				<Label for="exercise-note">Note</Label>
@@ -111,6 +159,7 @@
 					id="exercise-note"
 					placeholder="Exercise cues, machine heights, etc."
 					class="resize-none"
+					bind:value={currentExercise.note}
 				/>
 			</div>
 			<Button type="submit" class="col-span-2">Add exercise</Button>
