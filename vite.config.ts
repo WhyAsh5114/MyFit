@@ -23,8 +23,8 @@ export default defineConfig({
 				short_name: 'MyFit',
 				start_url: '/',
 				display: 'standalone',
-				background_color: '#000000',
-				theme_color: '#0a0a0a',
+				background_color: '#0a0a0a',
+				theme_color: '#3079ca',
 				orientation: 'portrait',
 				description: "A fitness app with all the logging and tracking options you'll ever need",
 				icons: [

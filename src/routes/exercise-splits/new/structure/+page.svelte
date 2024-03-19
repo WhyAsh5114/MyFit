@@ -73,6 +73,7 @@
 					</Table.Cell>
 					<Table.Cell class="px-0 text-center">
 						<Checkbox
+							aria-label="day-{i + 1}-is-rest"
 							id="day-{i + 1}-is-rest"
 							checked={splitDayName === null}
 							on:click={() => changeDayStatus(i)}
@@ -83,10 +84,17 @@
 		</Table.Body>
 	</Table.Root>
 	<div class="my-1 mt-auto grid grid-cols-2 gap-1">
-		<Button variant="secondary" on:click={removeDay} disabled={splitDayNames.length === 1}
-			><RemoveIcon /></Button
+		<Button
+			variant="secondary"
+			aria-label="remove workout day"
+			on:click={removeDay}
+			disabled={splitDayNames.length === 1}
 		>
-		<Button variant="secondary" on:click={addDay}><AddIcon /></Button>
+			<RemoveIcon />
+		</Button>
+		<Button variant="secondary" aria-label="add workout day" on:click={addDay}>
+			<AddIcon />
+		</Button>
 		<Button class="col-span-2" type="submit">Next</Button>
 	</div>
 </form>
