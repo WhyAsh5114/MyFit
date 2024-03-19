@@ -2,9 +2,8 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { mediaQuery } from 'svelte-legos';
+	import { onMount } from 'svelte';
 
-	export let buttonText: string;
 	export let variant:
 		| 'outline'
 		| 'link'
@@ -17,13 +16,17 @@
 	export let description: string | undefined = undefined;
 
 	let open = false;
-	const isDesktop = mediaQuery('(min-width: 768px)');
+	let isDesktop = false;
+
+	onMount(() => {
+		isDesktop = window.matchMedia('(min-width: 768px)').matches;
+	});
 </script>
 
-{#if $isDesktop}
+{#if isDesktop}
 	<Dialog.Root bind:open>
 		<Dialog.Trigger asChild let:builder>
-			<Button {variant} builders={[builder]}>{buttonText}</Button>
+			<Button {variant} builders={[builder]}><slot name="buttonContent" /></Button>
 		</Dialog.Trigger>
 		<Dialog.Content class="sm:max-w-[425px]">
 			<Dialog.Header>
@@ -34,13 +37,13 @@
 					</Dialog.Description>
 				{/if}
 			</Dialog.Header>
-			<slot />
+			<slot title="content" />
 		</Dialog.Content>
 	</Dialog.Root>
 {:else}
 	<Drawer.Root bind:open>
 		<Drawer.Trigger asChild let:builder>
-			<Button {variant} builders={[builder]}>{buttonText}</Button>
+			<Button {variant} builders={[builder]}><slot name="buttonContent" /></Button>
 		</Drawer.Trigger>
 		<Drawer.Content>
 			<Drawer.Header class="text-left">
@@ -51,7 +54,7 @@
 					</Drawer.Description>
 				{/if}
 			</Drawer.Header>
-			<slot />
+			<slot title="content" />
 			<Drawer.Footer class="pt-2">
 				<Drawer.Close asChild let:builder>
 					<Button variant="destructive" builders={[builder]}>Cancel</Button>
