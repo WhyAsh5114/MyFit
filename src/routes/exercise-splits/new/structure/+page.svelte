@@ -28,12 +28,14 @@
 	}
 
 	function submitStructure() {
+		const oldSplitDays = structuredClone($exerciseSplitStore.splitDays);
 		$exerciseSplitStore.name = splitName;
 		$exerciseSplitStore.splitDays = splitDayNames.map((splitDay) => {
-			if (splitDay === null) {
-				return splitDay;
-			}
-			return { name: splitDay, exerciseTemplates: [] };
+			if (splitDay === null) return splitDay;
+			const matchedSplitDay = oldSplitDays.find((oldSplitDay) => {
+				return oldSplitDay?.name === splitDay;
+			});
+			return { name: splitDay, exerciseTemplates: matchedSplitDay?.exerciseTemplates ?? [] };
 		});
 		goto('/exercise-splits/new/exercises');
 	}
@@ -55,7 +57,7 @@
 			<Table.Row>
 				<Table.Head class="w-12"></Table.Head>
 				<Table.Head class="text-foreground">Name</Table.Head>
-				<Table.Head class="text-foreground text-center">Rest</Table.Head>
+				<Table.Head class="text-center text-foreground">Rest</Table.Head>
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
