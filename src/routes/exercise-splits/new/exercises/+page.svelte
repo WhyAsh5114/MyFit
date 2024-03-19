@@ -18,6 +18,7 @@
 		exerciseTemplates: (ExerciseTemplate & { isDndShadowItem?: boolean })[];
 	};
 
+	let exerciseDrawerOpen = false;
 	let splitDays = $exerciseSplitStore.splitDays;
 	let selectedDayIndex = splitDays.findIndex((splitDay) => splitDay !== null).toString();
 	let selectedSplitDay: CustomExerciseSplitDay | null;
@@ -39,6 +40,25 @@
 	function openEditExercise(idx: number) {
 		if (!selectedSplitDay) return;
 		editingExercise = { ...selectedSplitDay.exerciseTemplates[idx], idx };
+		exerciseDrawerOpen = true;
+	}
+
+	function editExercise(exerciseTemplate: ExerciseTemplate & { idx: number }) {
+		if (!selectedSplitDay) return false;
+		const duplicate = selectedSplitDay.exerciseTemplates.find((_exerciseTemplate, _idx) => {
+			return _exerciseTemplate.name === exerciseTemplate.name && _idx !== _idx;
+		});
+		if (duplicate) return false;
+		selectedSplitDay.exerciseTemplates = selectedSplitDay.exerciseTemplates.map(
+			(_exerciseTemplate, _idx) => {
+				if (_idx === exerciseTemplate.idx) {
+					const exerciseTemplateToSet = exerciseTemplate as ExerciseTemplate & { idx?: number };
+					delete exerciseTemplateToSet.idx;
+					return exerciseTemplateToSet;
+				} else return _exerciseTemplate;
+			}
+		);
+		return true;
 	}
 
 	function deleteExercise(idx: number) {
@@ -89,7 +109,12 @@
 						Day {parseInt(selectedDayIndex) + 1}
 					</span>
 				</div>
-				<ExerciseDrawer {addExercise} />
+				<ExerciseDrawer
+					{addExercise}
+					{editExercise}
+					bind:editingExercise
+					bind:open={exerciseDrawerOpen}
+				/>
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
 						<Button

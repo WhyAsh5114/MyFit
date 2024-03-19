@@ -12,13 +12,17 @@
 	import { toast } from 'svelte-sonner';
 	import AddIcon from 'virtual:icons/material-symbols/add';
 	export let addExercise: (exercise: ExerciseTemplate) => boolean;
+	export let editExercise: (exerciseTemplate: ExerciseTemplate & { idx: number }) => boolean;
+	export let editingExercise: (ExerciseTemplate & { idx: number }) | null;
+	export let open: boolean;
 
-	let open = false;
+	$: mode = editingExercise ? 'Edit' : 'Add';
 	let searching = false;
 	let currentExercise: Partial<ExerciseTemplate> = {
 		name: '',
 		setType: 'straight'
 	};
+	$: if (editingExercise) currentExercise = editingExercise;
 
 	$: exerciseList = exerciseListByMuscleGroup.map((exerciseListForMuscleGroup) => {
 		exerciseListForMuscleGroup = structuredClone(exerciseListForMuscleGroup);
@@ -37,7 +41,10 @@
 
 	function submitForm() {
 		const exerciseTemplate = JSON.parse(JSON.stringify(currentExercise)) as ExerciseTemplate;
-		if (addExercise(exerciseTemplate)) {
+		if (mode === 'Add' && addExercise(exerciseTemplate)) {
+			open = false;
+			currentExercise = { name: '', setType: 'straight' };
+		} else if (editingExercise && editExercise({ ...exerciseTemplate, idx: editingExercise.idx })) {
 			open = false;
 			currentExercise = { name: '', setType: 'straight' };
 		} else {
@@ -50,13 +57,22 @@
 
 <Sheet.Root bind:open>
 	<Sheet.Trigger asChild let:builder>
-		<Button builders={[builder]} variant="outline" aria-label="add exercise" size="icon">
+		<Button
+			builders={[builder]}
+			variant="outline"
+			aria-label="{mode} exercise"
+			size="icon"
+			on:click={() => {
+				editingExercise = null;
+				currentExercise = { name: '', setType: 'straight' };
+			}}
+		>
 			<AddIcon />
 		</Button>
 	</Sheet.Trigger>
 	<Sheet.Content class="w-11/12">
 		<Sheet.Header>
-			<Sheet.Title>Add exercise</Sheet.Title>
+			<Sheet.Title>{mode} exercise</Sheet.Title>
 		</Sheet.Header>
 		<form on:submit|preventDefault={submitForm} class="mt-8 grid h-fit grid-cols-2 gap-x-2 gap-y-4">
 			<div class="col-span-2 flex w-full flex-col gap-1.5">
@@ -165,7 +181,7 @@
 				<Label for="exercise-rep-range-end">Rep range end</Label>
 				<Input
 					id="exercise-rep-range-end"
-					min={(currentExercise.repRangeStart ?? 0) + 1}
+					min={parseInt((currentExercise.repRangeStart ?? 0).toString()) + 1}
 					type="number"
 					placeholder="Type here"
 					bind:value={currentExercise.repRangeEnd}
@@ -181,7 +197,7 @@
 					bind:value={currentExercise.note}
 				/>
 			</div>
-			<Button type="submit" class="col-span-2">Add exercise</Button>
+			<Button type="submit" class="col-span-2">{mode} exercise</Button>
 		</form>
 	</Sheet.Content>
 </Sheet.Root>
