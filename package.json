@@ -43,10 +43,10 @@
 	"dependencies": {
 		"@auth/mongodb-adapter": "^2.5.0",
 		"@auth/sveltekit": "^0.14.0",
-		"bits-ui": "^0.19.7",
+		"bits-ui": "^0.20.0",
 		"clsx": "^2.1.0",
 		"dotenv": "^16.4.5",
-		"lucide-svelte": "^0.357.0",
+		"lucide-svelte": "^0.359.0",
 		"mode-watcher": "^0.3.0",
 		"mongodb": "^6.4.0",
 		"tailwind-merge": "^2.2.1",
