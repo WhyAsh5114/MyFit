@@ -105,14 +105,14 @@
 	<div class="mt-auto grid grid-cols-2 gap-1">
 		<Button
 			variant="secondary"
-			aria-label="remove workout day"
+			class="gap-2"
 			on:click={removeDay}
 			disabled={splitDayNames.length === 1}
 		>
-			<RemoveIcon />
+			<RemoveIcon /> Remove
 		</Button>
-		<Button variant="secondary" aria-label="add workout day" on:click={addDay}>
-			<AddIcon />
+		<Button variant="secondary" class="gap-2" on:click={addDay}>
+			<AddIcon /> Add
 		</Button>
 		<Button class="col-span-2" type="submit">Next</Button>
 	</div>
