@@ -10,7 +10,7 @@
 		overrideItemIdKeyNameBeforeInitialisingDndZones
 	} from 'svelte-dnd-action';
 	overrideItemIdKeyNameBeforeInitialisingDndZones('name');
-	import ExerciseTemplateCard from '../../ExerciseTemplateCard.svelte';
+	import ExerciseTemplateCard from '../../../ExerciseTemplateCard.svelte';
 
 	export let itemList: (ExerciseTemplate & { isDndShadowItem?: boolean })[];
 	export let openEditExercise: (idx: number) => void;

@@ -10,8 +10,8 @@
 	import PasteIcon from 'virtual:icons/carbon/paste';
 	import CutIcon from 'virtual:icons/material-symbols/cut';
 	import MenuIcon from 'virtual:icons/material-symbols/menu';
-	import DndComponent from './DndComponent.svelte';
-	import ExerciseDrawer from './ExerciseDrawer.svelte';
+	import DndComponent from './(components)/DndComponent.svelte';
+	import ExerciseDrawer from './(components)/ExerciseDrawer.svelte';
 
 	type CustomExerciseSplitDay = {
 		name: string;

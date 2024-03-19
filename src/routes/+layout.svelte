@@ -77,14 +77,14 @@
 			</a>
 		</Button>
 		<NavLinks />
-		<div class="flex gap-2">
+		<div class="flex gap-1">
 			<ModeToggle variant="outline" size="lg" />
 			<PWAButtons />
 		</div>
 		{#if $page.data.session}
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger asChild let:builder>
-					<Button builders={[builder]} variant="secondary" size="lg" class="mt-2 justify-around">
+					<Button builders={[builder]} variant="secondary" size="lg" class="mt-1 justify-around">
 						<UserAvatar session={$page.data.session} />
 						<span class="text-base font-semibold">{$page.data.session.user?.name}</span>
 					</Button>
@@ -98,7 +98,7 @@
 						variant="outline"
 						builders={[builder]}
 						size="lg"
-						class="mt-2 justify-around text-base"
+						class="mt-1 justify-around text-base"
 					>
 						Login
 					</Button>
