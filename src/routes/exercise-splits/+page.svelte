@@ -6,13 +6,27 @@
 	import AddIcon from 'virtual:icons/material-symbols/add';
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 </script>
 
 <H2 text="Exercise splits" />
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-2">
 		<Input id="search-exercise-splits" placeholder="Search" />
-		<Button><AddIcon class="h-5 w-5" /></Button>
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger asChild let:builder>
+				<Button builders={[builder]}><AddIcon /></Button>
+			</DropdownMenu.Trigger>
+			<DropdownMenu.Content align="end">
+				<DropdownMenu.Group>
+					<DropdownMenu.Item>
+						<a href="/exercise-splits/new">Start from scratch</a>
+					</DropdownMenu.Item>
+					<DropdownMenu.Item>Use template</DropdownMenu.Item>
+					<DropdownMenu.Item>Clone older split</DropdownMenu.Item>
+				</DropdownMenu.Group>
+			</DropdownMenu.Content>
+		</DropdownMenu.Root>
 	</div>
 	<div class="flex h-px grow flex-col overflow-y-auto border"></div>
 	<Pagination.Root count={50} perPage={5} siblingCount={0} let:pages let:currentPage>
