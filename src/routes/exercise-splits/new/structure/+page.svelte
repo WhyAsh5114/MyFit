@@ -5,5 +5,3 @@
 
 <H2>New exercise split</H2>
 <H3>Structure</H3>
-
-

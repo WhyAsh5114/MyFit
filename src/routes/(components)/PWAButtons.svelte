@@ -87,7 +87,7 @@
 	{/if}
 </div>
 
-<div class="hidden lg:block grow">
+<div class="hidden grow lg:block">
 	{#if $needRefresh}
 		<Button
 			variant="outline"

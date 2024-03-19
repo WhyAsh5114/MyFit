@@ -4,17 +4,17 @@
 
 <ul class="mb-auto lg:mt-8">
 	<li>
-		<Button variant="link" class="lg:text-base text-foreground">
+		<Button variant="link" class="text-foreground lg:text-base">
 			<a href="/exercise-splits">Workouts</a>
 		</Button>
 	</li>
 	<li>
-		<Button variant="link" class="lg:text-base text-foreground">
+		<Button variant="link" class="text-foreground lg:text-base">
 			<a href="/exercise-splits">Mesocycles</a>
 		</Button>
 	</li>
 	<li>
-		<Button variant="link" class="lg:text-base text-foreground">
+		<Button variant="link" class="text-foreground lg:text-base">
 			<a href="/exercise-splits">Exercise splits</a>
 		</Button>
 	</li>

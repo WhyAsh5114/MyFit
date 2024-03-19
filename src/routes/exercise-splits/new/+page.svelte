@@ -10,7 +10,7 @@
 {#if true}
 	<Button class="mt-auto">Create new split</Button>
 {:else}
-	<div class="grid grid-cols-2 gap-2 mt-auto">
+	<div class="mt-auto grid grid-cols-2 gap-2">
 		<Button variant="destructive">Overwrite changes</Button>
 		<Button>Continue editing</Button>
 	</div>

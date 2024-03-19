@@ -35,12 +35,7 @@
 					<Sheet.Title>
 						<Button variant="link" class="justify-start text-foreground">
 							<a class="flex items-center gap-2" href="/">
-								<img
-									src="/favicon.webp"
-									alt="MyFit logo"
-									width={52}
-									height={52}
-								/>
+								<img src="/favicon.webp" alt="MyFit logo" width={52} height={52} />
 								<h1 class="text-2xl font-bold">MyFit</h1>
 							</a>
 						</Button>
@@ -50,12 +45,7 @@
 			</Sheet.Content>
 		</Sheet.Root>
 		<a href="/" class="mx-1 mr-auto">
-			<img
-				src="/favicon.webp"
-				alt="MyFit logo"
-				width={40}
-				height={40}
-			/>
+			<img src="/favicon.webp" alt="MyFit logo" width={40} height={40} />
 		</a>
 		<PWAButtons />
 		<ModeToggle />
@@ -78,12 +68,7 @@
 	<div class="hidden h-screen w-full flex-col p-10 lg:flex">
 		<Button variant="link" class="justify-start text-foreground">
 			<a class="flex items-center gap-2" href="/">
-				<img
-					src="/favicon.webp"
-					alt="MyFit logo"
-					width={72}
-					height={72}
-				/>
+				<img src="/favicon.webp" alt="MyFit logo" width={72} height={72} />
 				<h1 class="text-4xl font-bold">MyFit</h1>
 			</a>
 		</Button>
