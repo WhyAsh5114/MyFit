@@ -12,7 +12,7 @@
 
 <ResponsiveDialog title="Add exercise" size="icon" ariaLabel="add exercise" variant="outline">
 	<AddIcon slot="buttonContent" />
-	<form slot="content" on:submit|preventDefault class="grid grid-cols-2 gap-x-2 gap-y-4 px-4 h-fit">
+	<form slot="content" on:submit|preventDefault class="grid grid-cols-2 gap-x-2 gap-y-4 px-4">
 		<div class="col-span-2 flex w-full flex-col gap-1.5">
 			<Label for="exercise-name">Exercise name</Label>
 			<Input id="exercise-name" placeholder="Type here" />
