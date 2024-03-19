@@ -33,10 +33,9 @@
 			<Sheet.Content side="left">
 				<Sheet.Header class="items-start">
 					<Sheet.Title>
-						<Button variant="link" class="justify-start">
+						<Button variant="link" class="justify-start text-foreground">
 							<a class="flex items-center gap-2" href="/">
 								<img
-									class="invert dark:invert-0"
 									src="/favicon.webp"
 									alt="MyFit logo"
 									width={52}
@@ -52,7 +51,6 @@
 		</Sheet.Root>
 		<a href="/" class="mx-1 mr-auto">
 			<img
-				class="invert dark:invert-0"
 				src="/favicon.webp"
 				alt="MyFit logo"
 				width={40}
@@ -78,10 +76,9 @@
 		{/if}
 	</div>
 	<div class="hidden h-screen w-full flex-col p-10 lg:flex">
-		<Button variant="link" class="justify-start">
+		<Button variant="link" class="justify-start text-foreground">
 			<a class="flex items-center gap-2" href="/">
 				<img
-					class="invert dark:invert-0"
 					src="/favicon.webp"
 					alt="MyFit logo"
 					width={72}
