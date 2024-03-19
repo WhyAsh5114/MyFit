@@ -51,7 +51,7 @@
 				<slot name="buttonContent" />
 			</Button>
 		</Drawer.Trigger>
-		<Drawer.Content>
+		<Drawer.Content class="h-fit">
 			<Drawer.Header>
 				<Drawer.Title>{title}</Drawer.Title>
 				{#if description}
