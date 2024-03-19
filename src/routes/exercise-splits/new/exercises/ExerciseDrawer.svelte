@@ -39,12 +39,12 @@
 		const exerciseTemplate = JSON.parse(JSON.stringify(currentExercise)) as ExerciseTemplate;
 		if (addExercise(exerciseTemplate)) {
 			open = false;
+			currentExercise = { name: '', setType: 'straight' };
 		} else {
 			toast.error('Error', {
 				description: 'Exercise names should be unique'
 			});
 		}
-		currentExercise = { name: '', setType: 'straight' };
 	}
 </script>
 

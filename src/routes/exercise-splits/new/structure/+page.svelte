@@ -55,7 +55,7 @@
 			<Table.Row>
 				<Table.Head class="w-12"></Table.Head>
 				<Table.Head class="text-foreground">Name</Table.Head>
-				<Table.Head class="text-foreground">Rest</Table.Head>
+				<Table.Head class="text-foreground text-center">Rest</Table.Head>
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
