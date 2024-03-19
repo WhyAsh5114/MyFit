@@ -27,6 +27,11 @@
 	let editingExercise: (ExerciseTemplate & { idx: number }) | null = null;
 	let copiedExercises: ExerciseTemplate[] = [];
 
+	$: syncWithStore(selectedSplitDay);
+	function syncWithStore(splitDay: ExerciseSplitDay | null) {
+		$exerciseSplitStore.splitDays[parseInt(selectedDayIndex)] = splitDay;
+	}
+
 	function addExercise(exerciseTemplate: ExerciseTemplate) {
 		if (!selectedSplitDay) return false;
 		const duplicate = selectedSplitDay.exerciseTemplates.find((exercise) => {
