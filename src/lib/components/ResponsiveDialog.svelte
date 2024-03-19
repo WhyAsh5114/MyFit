@@ -61,7 +61,7 @@
 				{/if}
 			</Drawer.Header>
 			<slot name="content" />
-			<Drawer.Footer class="pt-2">
+			<Drawer.Footer class="pt-2 shrink">
 				<Drawer.Close asChild let:builder>
 					<Button variant="destructive" builders={[builder]}>Cancel</Button>
 				</Drawer.Close>
