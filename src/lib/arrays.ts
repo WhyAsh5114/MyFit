@@ -210,7 +210,7 @@ export const exerciseListByMuscleGroup: {
 				setType: 'straight',
 				sets: 3,
 				targetMuscleGroup: 'Quads',
-				involvesBodyweight: false
+				involvesBodyweight: true
 			},
 			{
 				name: 'Leg press',
@@ -270,7 +270,7 @@ export const exerciseListByMuscleGroup: {
 				setType: 'straight',
 				sets: 3,
 				targetMuscleGroup: 'Calves',
-				involvesBodyweight: false
+				involvesBodyweight: true
 			}
 		]
 	},
@@ -284,7 +284,7 @@ export const exerciseListByMuscleGroup: {
 				setType: 'straight',
 				sets: 3,
 				targetMuscleGroup: 'Abs',
-				involvesBodyweight: false
+				involvesBodyweight: true
 			},
 			{
 				name: 'Leg raises',
@@ -293,7 +293,7 @@ export const exerciseListByMuscleGroup: {
 				setType: 'straight',
 				sets: 3,
 				targetMuscleGroup: 'Abs',
-				involvesBodyweight: false
+				involvesBodyweight: true
 			}
 		]
 	}
