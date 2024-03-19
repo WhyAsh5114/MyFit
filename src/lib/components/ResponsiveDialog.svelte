@@ -4,6 +4,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { onMount } from 'svelte';
 
+	export let dismissible = true;
 	export let variant:
 		| 'outline'
 		| 'link'
@@ -45,13 +46,13 @@
 		</Dialog.Content>
 	</Dialog.Root>
 {:else}
-	<Drawer.Root bind:open>
+	<Drawer.Root bind:open {dismissible}>
 		<Drawer.Trigger asChild let:builder>
 			<Button {variant} {size} aria-label={ariaLabel} builders={[builder]}>
 				<slot name="buttonContent" />
 			</Button>
 		</Drawer.Trigger>
-		<Drawer.Content>
+		<Drawer.Content class="h-fit">
 			<Drawer.Header>
 				<Drawer.Title>{title}</Drawer.Title>
 				{#if description}

@@ -7,12 +7,19 @@
 	import * as Select from '$lib/components/ui/select';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import AddIcon from 'virtual:icons/material-symbols/add';
 </script>
 
-<ResponsiveDialog title="Add exercise" size="icon" ariaLabel="add exercise" variant="outline">
+<ResponsiveDialog
+	title="Add exercise"
+	size="icon"
+	ariaLabel="add exercise"
+	variant="outline"
+	dismissible={false}
+>
 	<AddIcon slot="buttonContent" />
-	<form slot="content" on:submit|preventDefault class="grid grid-cols-2 gap-x-2 gap-y-4 px-4">
+	<form slot="content" on:submit|preventDefault class="grid grid-cols-2 gap-x-2 gap-y-4 px-4 h-fit">
 		<div class="col-span-2 flex w-full flex-col gap-1.5">
 			<Label for="exercise-name">Exercise name</Label>
 			<Input id="exercise-name" placeholder="Type here" />
@@ -26,9 +33,11 @@
 					<Select.Value placeholder="Pick one" />
 				</Select.Trigger>
 				<Select.Content>
-					{#each muscleGroups as muscleGroup}
-						<Select.Item value={muscleGroup} label={muscleGroup} />
-					{/each}
+					<ScrollArea class="h-64">
+						{#each muscleGroups as muscleGroup}
+							<Select.Item value={muscleGroup} label={muscleGroup} />
+						{/each}
+					</ScrollArea>
 				</Select.Content>
 			</Select.Root>
 		</div>
