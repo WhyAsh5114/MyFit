@@ -6,12 +6,12 @@
 	import { Button } from '$lib/components/ui/button';
 	import { exerciseSplitStore } from '../exerciseSplitStore';
 
-	import AddIcon from 'virtual:icons/material-symbols/add';
 	import CopyIcon from 'virtual:icons/carbon/copy';
 	import PasteIcon from 'virtual:icons/carbon/paste';
 	import CutIcon from 'virtual:icons/material-symbols/cut';
 	import MenuIcon from 'virtual:icons/material-symbols/menu';
 	import DndComponent from './DndComponent.svelte';
+	import ExerciseDrawer from './ExerciseDrawer.svelte';
 
 	type CustomExerciseSplitDay = {
 		name: string;
@@ -89,15 +89,7 @@
 						Day {parseInt(selectedDayIndex) + 1}
 					</span>
 				</div>
-				
-				<Button
-					size="icon"
-					class="justify-center gap-2 rounded-md border py-2"
-					aria-label="add exercise"
-					variant="outline"
-				>
-					<AddIcon />
-				</Button>
+				<ExerciseDrawer />
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
 						<Button

@@ -46,7 +46,7 @@
 	on:submit|preventDefault={submitStructure}
 	class="mt-4 flex h-px grow flex-col gap-2 overflow-y-auto"
 >
-	<div class="flex w-full max-w-sm flex-col gap-1.5 px-1">
+	<div class="flex w-full flex-col gap-1.5 px-1">
 		<Label for="splitName">Exercise split name</Label>
 		<Input id="splitName" placeholder="Type here" bind:value={splitName} required />
 	</div>
