@@ -7,12 +7,16 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { Button } from '$lib/components/ui/button';
 	import * as Table from '$lib/components/ui/table';
+	import { toast } from 'svelte-sonner';
+	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 	import AddIcon from 'virtual:icons/material-symbols/add';
 	import RemoveIcon from 'virtual:icons/material-symbols/remove';
 	import { goto } from '$app/navigation';
 
 	let splitName = $exerciseSplitStore.name;
 	let splitDayNames = $exerciseSplitStore.splitDays.map((splitDay) => splitDay?.name ?? null);
+	let warningDrawerOpen = false;
+	let missingDays: string[] = [];
 
 	function changeDayStatus(idx: number) {
 		splitDayNames[idx] = splitDayNames[idx] === null ? '' : null;
@@ -27,8 +31,24 @@
 		splitDayNames = splitDayNames;
 	}
 
-	function submitStructure() {
+	function submitStructure(force = false) {
+		if (splitDayNames.filter((splitDay) => splitDay !== null).length === 0) {
+			toast.error('Error', { description: 'Add at least one workout to the microcycle' });
+			return;
+		}
+
 		const oldSplitDays = structuredClone($exerciseSplitStore.splitDays);
+		const oldSplitDayNames = oldSplitDays
+			.filter((splitDay) => splitDay !== null && splitDay.exerciseTemplates.length > 0)
+			.map((splitDay) => splitDay?.name ?? null);
+		missingDays = oldSplitDayNames.filter(
+			(item) => !splitDayNames.includes(item) && item !== null
+		) as string[];
+		if (missingDays.length > 0 && !force) {
+			warningDrawerOpen = true;
+			return;
+		}
+
 		$exerciseSplitStore.name = splitName;
 		$exerciseSplitStore.splitDays = splitDayNames.map((splitDay) => {
 			if (splitDay === null) return splitDay;
@@ -45,7 +65,7 @@
 <H3>Structure</H3>
 
 <form
-	on:submit|preventDefault={submitStructure}
+	on:submit|preventDefault={() => submitStructure()}
 	class="mt-4 flex h-px grow flex-col gap-2 overflow-y-auto"
 >
 	<div class="flex w-full flex-col gap-1.5 px-1">
@@ -100,3 +120,16 @@
 		<Button class="col-span-2" type="submit">Next</Button>
 	</div>
 </form>
+
+<ResponsiveDialog
+	title="Warning"
+	needTrigger={false}
+	bind:open={warningDrawerOpen}
+	cancelVariant="default"
+>
+	<p>
+		You will lose exercise data for the following workout days:
+		<span class="font-semibold text-red-500">{missingDays.join(', ')}</span>
+	</p>
+	<Button variant="destructive" on:click={() => submitStructure(true)}>Ok, proceed</Button>
+</ResponsiveDialog>
