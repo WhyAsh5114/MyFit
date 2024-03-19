@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { exerciseListByMuscleGroup, muscleGroups, setTypes } from '$lib/arrays';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -9,8 +8,11 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import * as Sheet from '$lib/components/ui/sheet';
 	import * as Command from '$lib/components/ui/command';
+
+	import { exerciseListByMuscleGroup, muscleGroups, setTypes } from '$lib/arrays';
 	import { toast } from 'svelte-sonner';
 	import AddIcon from 'virtual:icons/material-symbols/add';
+
 	export let addExercise: (exercise: ExerciseTemplate) => boolean;
 	export let editExercise: (exerciseTemplate: ExerciseTemplate & { idx: number }) => boolean;
 	export let editingExercise: (ExerciseTemplate & { idx: number }) | null;
@@ -40,11 +42,11 @@
 	}
 
 	function submitForm() {
-		const exerciseTemplate = JSON.parse(JSON.stringify(currentExercise)) as ExerciseTemplate;
-		if (mode === 'Add' && addExercise(exerciseTemplate)) {
-			open = false;
-			currentExercise = { name: '', setType: 'straight' };
-		} else if (editingExercise && editExercise({ ...exerciseTemplate, idx: editingExercise.idx })) {
+		const exerciseTemplate = structuredClone(currentExercise) as ExerciseTemplate;
+		if (
+			(mode === 'Add' && addExercise(exerciseTemplate)) ||
+			(editingExercise && editExercise({ ...exerciseTemplate, idx: editingExercise.idx }))
+		) {
 			open = false;
 			currentExercise = { name: '', setType: 'straight' };
 		} else {
