@@ -43,7 +43,7 @@
 						if (resp.status === 200) {
 							await r.update();
 						}
-					}, 600000 /* Every 10 minutes */);
+					}, 60000);
 				console.log(`SW Registered: ${r}`);
 			},
 			onRegisterError(error) {
