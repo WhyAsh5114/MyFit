@@ -12,6 +12,8 @@
 		| 'secondary'
 		| 'ghost'
 		| undefined = 'outline';
+	export let size: 'default' | 'sm' | 'lg' | 'icon' | undefined = 'default';
+	export let ariaLabel = '';
 	export let title: string;
 	export let description: string | undefined = undefined;
 
@@ -26,7 +28,9 @@
 {#if isDesktop}
 	<Dialog.Root bind:open>
 		<Dialog.Trigger asChild let:builder>
-			<Button {variant} builders={[builder]}><slot name="buttonContent" /></Button>
+			<Button {variant} {size} aria-label={ariaLabel} builders={[builder]}>
+				<slot name="buttonContent" />
+			</Button>
 		</Dialog.Trigger>
 		<Dialog.Content class="sm:max-w-[425px]">
 			<Dialog.Header>
@@ -43,7 +47,9 @@
 {:else}
 	<Drawer.Root bind:open>
 		<Drawer.Trigger asChild let:builder>
-			<Button {variant} builders={[builder]}><slot name="buttonContent" /></Button>
+			<Button {variant} {size} aria-label={ariaLabel} builders={[builder]}>
+				<slot name="buttonContent" />
+			</Button>
 		</Drawer.Trigger>
 		<Drawer.Content>
 			<Drawer.Header class="text-left">
