@@ -9,7 +9,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 </script>
 
-<H2 text="Exercise splits" />
+<H2>Exercise splits</H2>
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-2">
 		<Input id="search-exercise-splits" placeholder="Search" />
