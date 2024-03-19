@@ -46,6 +46,7 @@
 		"@auth/sveltekit": "^0.14.0",
 		"bits-ui": "^0.20.0",
 		"clsx": "^2.1.0",
+		"cmdk-sv": "^0.0.15",
 		"dotenv": "^16.4.5",
 		"lucide-svelte": "^0.359.0",
 		"mode-watcher": "^0.3.0",
