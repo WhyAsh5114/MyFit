@@ -1,0 +1,62 @@
+<script lang="ts">
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import * as Drawer from '$lib/components/ui/drawer/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { mediaQuery } from 'svelte-legos';
+
+	export let buttonText: string;
+	export let variant:
+		| 'outline'
+		| 'link'
+		| 'default'
+		| 'destructive'
+		| 'secondary'
+		| 'ghost'
+		| undefined = 'outline';
+	export let title: string;
+	export let description: string | undefined = undefined;
+
+	let open = false;
+	const isDesktop = mediaQuery('(min-width: 768px)');
+</script>
+
+{#if $isDesktop}
+	<Dialog.Root bind:open>
+		<Dialog.Trigger asChild let:builder>
+			<Button {variant} builders={[builder]}>{buttonText}</Button>
+		</Dialog.Trigger>
+		<Dialog.Content class="sm:max-w-[425px]">
+			<Dialog.Header>
+				<Dialog.Title>{title}</Dialog.Title>
+				{#if description}
+					<Dialog.Description>
+						{description}
+					</Dialog.Description>
+				{/if}
+			</Dialog.Header>
+			<slot />
+		</Dialog.Content>
+	</Dialog.Root>
+{:else}
+	<Drawer.Root bind:open>
+		<Drawer.Trigger asChild let:builder>
+			<Button {variant} builders={[builder]}>{buttonText}</Button>
+		</Drawer.Trigger>
+		<Drawer.Content>
+			<Drawer.Header class="text-left">
+				<Drawer.Title>{title}</Drawer.Title>
+				{#if description}
+					<Drawer.Description>
+						{description}
+					</Drawer.Description>
+				{/if}
+			</Drawer.Header>
+			<slot />
+			<Drawer.Footer class="pt-2">
+				<Drawer.Close asChild let:builder>
+					<Button variant="destructive" builders={[builder]}>Cancel</Button>
+				</Drawer.Close>
+			</Drawer.Footer>
+		</Drawer.Content>
+	</Drawer.Root>
+{/if}
