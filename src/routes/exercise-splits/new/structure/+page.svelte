@@ -16,12 +16,21 @@
 	function changeDayStatus(idx: number) {
 		splitDayNames[idx] = splitDayNames[idx] === null ? '' : null;
 	}
+
+	function addDay() {
+		splitDayNames = [...splitDayNames, ''];
+	}
+
+	function removeDay() {
+		splitDayNames.pop();
+		splitDayNames = splitDayNames;
+	}
 </script>
 
 <H2>New exercise split</H2>
 <H3>Structure</H3>
 
-<form on:submit|preventDefault class="flex h-px grow flex-col gap-2 overflow-y-auto mt-4">
+<form on:submit|preventDefault class="mt-4 flex h-px grow flex-col gap-2 overflow-y-auto">
 	<div class="flex w-full max-w-sm flex-col gap-1.5">
 		<Label for="splitName">Exercise split name</Label>
 		<Input id="splitName" placeholder="Type here" bind:value={splitName} required />
@@ -29,7 +38,7 @@
 	<Table.Root>
 		<Table.Header>
 			<Table.Row>
-				<Table.Head></Table.Head>
+				<Table.Head class="w-12"></Table.Head>
 				<Table.Head class="text-foreground">Name</Table.Head>
 				<Table.Head class="text-foreground">Rest</Table.Head>
 			</Table.Row>
@@ -58,9 +67,9 @@
 			{/each}
 		</Table.Body>
 	</Table.Root>
-	<div class="my-1 grid grid-cols-2 gap-1">
-		<Button variant="secondary"><RemoveIcon /></Button>
-		<Button variant="secondary"><AddIcon /></Button>
+	<div class="my-1 mt-auto grid grid-cols-2 gap-1">
+		<Button variant="secondary" on:click={removeDay} disabled={splitDayNames.length === 1}><RemoveIcon /></Button>
+		<Button variant="secondary" on:click={addDay}><AddIcon /></Button>
 		<Button class="col-span-2" type="submit">Next</Button>
 	</div>
 </form>
