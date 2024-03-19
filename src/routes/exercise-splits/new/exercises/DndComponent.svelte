@@ -6,8 +6,10 @@
 		type DndEvent,
 		SOURCES,
 		SHADOW_ITEM_MARKER_PROPERTY_NAME,
-		TRIGGERS
+		TRIGGERS,
+		overrideItemIdKeyNameBeforeInitialisingDndZones
 	} from 'svelte-dnd-action';
+	overrideItemIdKeyNameBeforeInitialisingDndZones('name');
 	import ExerciseTemplateCard from '../../ExerciseTemplateCard.svelte';
 
 	export let itemList: (ExerciseTemplate & { isDndShadowItem?: boolean })[];
