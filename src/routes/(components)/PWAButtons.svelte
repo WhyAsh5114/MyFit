@@ -3,7 +3,7 @@
 	import { useRegisterSW } from 'virtual:pwa-register/svelte';
 	import type { Writable } from 'svelte/store';
 	import DownloadIcon from 'virtual:icons/material-symbols/download';
-	import ReloadIcon from 'virtual:icons/tabler/reload';
+	import UpdateIcon from 'virtual:icons/material-symbols/update';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 
@@ -64,7 +64,7 @@
 			}}
 		>
 			{#if !reloading}
-				<ReloadIcon class="h-5 w-5" />
+				<UpdateIcon class="h-5 w-5" />
 			{:else}
 				<LoaderCircle class="h-5 w-5 animate-spin" />
 			{/if}
@@ -98,7 +98,7 @@
 			}}
 		>
 			{#if !reloading}
-				<ReloadIcon class="h-5 w-5" />
+				<UpdateIcon class="h-5 w-5" />
 			{:else}
 				<LoaderCircle class="h-5 w-5 animate-spin" />
 			{/if}
