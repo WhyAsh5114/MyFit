@@ -3,15 +3,15 @@
 	import { Label } from '$lib/components/ui/label';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
-	import { exerciseSplit } from '../exerciseSplitStore';
+	import { exerciseSplitStore } from '../exerciseSplitStore';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { Button } from '$lib/components/ui/button';
 	import * as Table from '$lib/components/ui/table';
 	import AddIcon from 'virtual:icons/material-symbols/add';
 	import RemoveIcon from 'virtual:icons/material-symbols/remove';
 
-	let splitName = $exerciseSplit.name;
-	let splitDayNames = $exerciseSplit.splitDays.map((splitDay) => splitDay?.name ?? null);
+	let splitName = $exerciseSplitStore.name;
+	let splitDayNames = $exerciseSplitStore.splitDays.map((splitDay) => splitDay?.name ?? null);
 
 	function changeDayStatus(idx: number) {
 		splitDayNames[idx] = splitDayNames[idx] === null ? '' : null;
@@ -25,13 +25,26 @@
 		splitDayNames.pop();
 		splitDayNames = splitDayNames;
 	}
+
+	function submitStructure() {
+		$exerciseSplitStore.name = splitName;
+		$exerciseSplitStore.splitDays = splitDayNames.map((splitDay) => {
+			if (splitDay === null) {
+				return splitDay;
+			}
+			return { name: splitDay, exerciseTemplates: [] };
+		});
+	}
 </script>
 
 <H2>New exercise split</H2>
 <H3>Structure</H3>
 
-<form on:submit|preventDefault class="mt-4 flex h-px grow flex-col gap-2 overflow-y-auto">
-	<div class="flex w-full max-w-sm flex-col gap-1.5">
+<form
+	on:submit|preventDefault={submitStructure}
+	class="mt-4 flex h-px grow flex-col gap-2 overflow-y-auto"
+>
+	<div class="flex w-full max-w-sm flex-col gap-1.5 px-1">
 		<Label for="splitName">Exercise split name</Label>
 		<Input id="splitName" placeholder="Type here" bind:value={splitName} required />
 	</div>
@@ -68,7 +81,9 @@
 		</Table.Body>
 	</Table.Root>
 	<div class="my-1 mt-auto grid grid-cols-2 gap-1">
-		<Button variant="secondary" on:click={removeDay} disabled={splitDayNames.length === 1}><RemoveIcon /></Button>
+		<Button variant="secondary" on:click={removeDay} disabled={splitDayNames.length === 1}
+			><RemoveIcon /></Button
+		>
 		<Button variant="secondary" on:click={addDay}><AddIcon /></Button>
 		<Button class="col-span-2" type="submit">Next</Button>
 	</div>
