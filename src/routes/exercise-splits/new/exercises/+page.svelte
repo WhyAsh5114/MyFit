@@ -89,7 +89,7 @@
 						Day {parseInt(selectedDayIndex) + 1}
 					</span>
 				</div>
-				<ExerciseDrawer />
+				<ExerciseDrawer {addExercise} />
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
 						<Button
@@ -102,13 +102,25 @@
 						</Button>
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content align="end">
-						<DropdownMenu.Item class="gap-2">
+						<DropdownMenu.Item
+							class="gap-2"
+							disabled={selectedSplitDay.exerciseTemplates.length === 0}
+							on:click={copyExercises}
+						>
 							<CopyIcon /> Copy
 						</DropdownMenu.Item>
-						<DropdownMenu.Item class="gap-2">
+						<DropdownMenu.Item
+							class="gap-2"
+							disabled={copiedExercises.length === 0}
+							on:click={pasteExercises}
+						>
 							<PasteIcon /> Paste
 						</DropdownMenu.Item>
-						<DropdownMenu.Item class="gap-2">
+						<DropdownMenu.Item
+							class="gap-2"
+							disabled={selectedSplitDay.exerciseTemplates.length === 0}
+							on:click={cutExercises}
+						>
 							<CutIcon /> Cut
 						</DropdownMenu.Item>
 					</DropdownMenu.Content>

@@ -55,7 +55,7 @@
 	}}
 	on:consider={handleConsider}
 	on:finalize={handleFinalize}
-	class="flex h-px grow flex-col gap-1 overflow-y-auto"
+	class="flex h-px grow flex-col gap-1 overflow-y-auto px-2"
 >
 	{#each itemList as exerciseTemplate, idx (exerciseTemplate.name)}
 		<div class="relative" animate:flip={{ duration: 200 }}>
@@ -77,3 +77,18 @@
 		</div>
 	{/each}
 </div>
+
+<style lang="postcss">
+	.custom-shadow-item {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		visibility: visible;
+		opacity: 0.5;
+		margin: 0;
+		box-sizing: border-box;
+		@apply rounded-md bg-secondary;
+	}
+</style>

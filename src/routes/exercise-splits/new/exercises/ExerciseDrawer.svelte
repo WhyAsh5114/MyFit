@@ -9,8 +9,11 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import * as Sheet from '$lib/components/ui/sheet';
 	import * as Command from '$lib/components/ui/command';
+	import { toast } from 'svelte-sonner';
 	import AddIcon from 'virtual:icons/material-symbols/add';
+	export let addExercise: (exercise: ExerciseTemplate) => boolean;
 
+	let open = false;
 	let searching = false;
 	let currentExercise: Partial<ExerciseTemplate> = {
 		name: '',
@@ -31,9 +34,21 @@
 		currentExercise = exercise;
 		searching = false;
 	}
+
+	function submitForm() {
+		const exerciseTemplate = JSON.parse(JSON.stringify(currentExercise)) as ExerciseTemplate;
+		if (addExercise(exerciseTemplate)) {
+			open = false;
+		} else {
+			toast.error('Error', {
+				description: 'Exercise names should be unique'
+			});
+		}
+		currentExercise = { name: '', setType: 'straight' };
+	}
 </script>
 
-<Sheet.Root>
+<Sheet.Root bind:open>
 	<Sheet.Trigger asChild let:builder>
 		<Button builders={[builder]} variant="outline" aria-label="add exercise" size="icon">
 			<AddIcon />
@@ -43,7 +58,7 @@
 		<Sheet.Header>
 			<Sheet.Title>Add exercise</Sheet.Title>
 		</Sheet.Header>
-		<form on:submit|preventDefault class="mt-8 grid h-fit grid-cols-2 gap-x-2 gap-y-4">
+		<form on:submit|preventDefault={submitForm} class="mt-8 grid h-fit grid-cols-2 gap-x-2 gap-y-4">
 			<div class="col-span-2 flex w-full flex-col gap-1.5">
 				<span class="text-sm font-medium">Exercise name</span>
 				<Command.Root class="bg-background" shouldFilter={false}>
@@ -51,9 +66,10 @@
 						bind:value={currentExercise.name}
 						placeholder="Type here or search..."
 						onFocus={() => (searching = true)}
+						required
 					/>
 					{#if searching}
-						<Command.List class="bg-muted max-h-32">
+						<Command.List class="max-h-32 bg-muted">
 							{#each exerciseList as exercisesForMuscleGroup}
 								{#if exercisesForMuscleGroup.exercises.length > 0}
 									<Command.Group heading={exercisesForMuscleGroup.muscleGroup}>
@@ -77,6 +93,7 @@
 						label: currentExercise.targetMuscleGroup
 					}}
 					onSelectedChange={(v) => (currentExercise.targetMuscleGroup = v?.value)}
+					required
 				>
 					<Select.Label class="p-0 text-sm font-medium leading-none">
 						Target muscle group
@@ -112,6 +129,7 @@
 					id="exercise-sets"
 					placeholder="Type here"
 					bind:value={currentExercise.sets}
+					required
 				/>
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
@@ -119,6 +137,7 @@
 					name="exercise-set-type"
 					selected={{ value: currentExercise.setType, label: currentExercise.setType }}
 					onSelectedChange={(v) => (currentExercise.setType = v?.value)}
+					required
 				>
 					<Select.Label class="p-0 text-sm font-medium leading-none">Set type</Select.Label>
 					<Select.Trigger>
@@ -139,16 +158,18 @@
 					type="number"
 					placeholder="Type here"
 					bind:value={currentExercise.repRangeStart}
+					required
 				/>
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
 				<Label for="exercise-rep-range-end">Rep range end</Label>
 				<Input
 					id="exercise-rep-range-end"
-					min={currentExercise.repRangeStart ?? 0 + 1}
+					min={(currentExercise.repRangeStart ?? 0) + 1}
 					type="number"
 					placeholder="Type here"
 					bind:value={currentExercise.repRangeEnd}
+					required
 				/>
 			</div>
 			<div class="col-span-2 flex w-full flex-col gap-1.5">
