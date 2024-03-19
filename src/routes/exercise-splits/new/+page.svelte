@@ -8,7 +8,9 @@
 <H3>Starting from scratch</H3>
 
 {#if true}
-	<Button class="mt-auto">Create new split</Button>
+	<Button class="mt-auto">
+		<a href="/exercise-splits/new/structure" class="w-full">Create new split</a>
+	</Button>
 {:else}
 	<div class="mt-auto grid grid-cols-2 gap-2">
 		<Button variant="destructive">Overwrite changes</Button>
