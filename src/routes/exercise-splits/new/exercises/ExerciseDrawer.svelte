@@ -53,20 +53,18 @@
 						onFocus={() => (searching = true)}
 					/>
 					{#if searching}
-						<Command.List class="bg-muted">
-							<ScrollArea class="max-h-40">
-								{#each exerciseList as exercisesForMuscleGroup}
-									{#if exercisesForMuscleGroup.exercises.length > 0}
-										<Command.Group heading={exercisesForMuscleGroup.muscleGroup}>
-											{#each exercisesForMuscleGroup.exercises as exercise}
-												<Command.Item onSelect={() => selectExercise(exercise)}>
-													{exercise.name}
-												</Command.Item>
-											{/each}
-										</Command.Group>
-									{/if}
-								{/each}
-							</ScrollArea>
+						<Command.List class="bg-muted max-h-32">
+							{#each exerciseList as exercisesForMuscleGroup}
+								{#if exercisesForMuscleGroup.exercises.length > 0}
+									<Command.Group heading={exercisesForMuscleGroup.muscleGroup}>
+										{#each exercisesForMuscleGroup.exercises as exercise}
+											<Command.Item onSelect={() => selectExercise(exercise)}>
+												{exercise.name}
+											</Command.Item>
+										{/each}
+									</Command.Group>
+								{/if}
+							{/each}
 						</Command.List>
 					{/if}
 				</Command.Root>
