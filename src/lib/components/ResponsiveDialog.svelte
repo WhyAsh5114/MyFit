@@ -52,7 +52,7 @@
 			</Button>
 		</Drawer.Trigger>
 		<Drawer.Content>
-			<Drawer.Header class="text-left">
+			<Drawer.Header>
 				<Drawer.Title>{title}</Drawer.Title>
 				{#if description}
 					<Drawer.Description>
