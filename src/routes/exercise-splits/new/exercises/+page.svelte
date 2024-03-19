@@ -5,16 +5,64 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
 	import { exerciseSplitStore } from '../exerciseSplitStore';
+
 	import AddIcon from 'virtual:icons/material-symbols/add';
 	import CopyIcon from 'virtual:icons/carbon/copy';
 	import PasteIcon from 'virtual:icons/carbon/paste';
 	import CutIcon from 'virtual:icons/material-symbols/cut';
 	import MenuIcon from 'virtual:icons/material-symbols/menu';
+	import DndComponent from './DndComponent.svelte';
+
+	type CustomExerciseSplitDay = {
+		name: string;
+		exerciseTemplates: (ExerciseTemplate & { isDndShadowItem?: boolean })[];
+	};
 
 	let splitDays = $exerciseSplitStore.splitDays;
 	let selectedDayIndex = splitDays.findIndex((splitDay) => splitDay !== null).toString();
-
+	let selectedSplitDay: CustomExerciseSplitDay | null;
 	$: selectedSplitDay = splitDays[parseInt(selectedDayIndex)];
+
+	let editingExercise: (ExerciseTemplate & { idx: number }) | null = null;
+	let copiedExercises: ExerciseTemplate[] = [];
+
+	function addExercise(exerciseTemplate: ExerciseTemplate) {
+		if (!selectedSplitDay) return false;
+		const duplicate = selectedSplitDay.exerciseTemplates.find((exercise) => {
+			return exercise.name === exerciseTemplate.name;
+		});
+		if (duplicate) return false;
+		selectedSplitDay.exerciseTemplates = [...selectedSplitDay.exerciseTemplates, exerciseTemplate];
+		return true;
+	}
+
+	function openEditExercise(idx: number) {
+		if (!selectedSplitDay) return;
+		editingExercise = { ...selectedSplitDay.exerciseTemplates[idx], idx };
+	}
+
+	function deleteExercise(idx: number) {
+		if (!selectedSplitDay) return;
+		selectedSplitDay.exerciseTemplates = selectedSplitDay.exerciseTemplates.filter(
+			(_, _idx) => _idx !== idx
+		);
+	}
+
+	function copyExercises() {
+		if (!selectedSplitDay) return;
+		copiedExercises = JSON.parse(JSON.stringify(selectedSplitDay.exerciseTemplates));
+	}
+
+	function pasteExercises() {
+		if (!selectedSplitDay) return;
+		selectedSplitDay.exerciseTemplates = JSON.parse(JSON.stringify(copiedExercises));
+	}
+
+	function cutExercises() {
+		if (!selectedSplitDay) return;
+		copyExercises();
+		selectedSplitDay.exerciseTemplates = [];
+	}
 </script>
 
 <H2>New exercise split</H2>
@@ -41,6 +89,7 @@
 						Day {parseInt(selectedDayIndex) + 1}
 					</span>
 				</div>
+				
 				<Button
 					size="icon"
 					class="justify-center gap-2 rounded-md border py-2"
@@ -76,6 +125,13 @@
 		</div>
 	{/if}
 </Tabs.Root>
+{#if selectedSplitDay}
+	<DndComponent
+		{openEditExercise}
+		{deleteExercise}
+		bind:itemList={selectedSplitDay.exerciseTemplates}
+	/>
+{/if}
 
 <div class="mt-auto grid grid-cols-2 gap-1">
 	<Button variant="secondary">
