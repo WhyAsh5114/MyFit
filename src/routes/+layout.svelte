@@ -26,7 +26,7 @@
 
 <ModeWatcher />
 <Toaster />
-<header class="horizontal-screen flex shrink-0 items-center border-b p-1">
+<header class="horizontal-screen flex gap-2 shrink-0 items-center border-b p-1 bg-muted">
 	<div class="contents lg:hidden">
 		<Sheet.Root>
 			<Sheet.Trigger aria-label="Menu" class="px-2">
@@ -54,7 +54,9 @@
 		{#if $page.data.session}
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger>
-					<UserAvatar session={$page.data.session} />
+					<Button size="icon" variant="ghost">
+						<UserAvatar session={$page.data.session} />
+					</Button>
 				</DropdownMenu.Trigger>
 				<UserDropdown />
 			</DropdownMenu.Root>
