@@ -13,7 +13,7 @@
 	export let itemList: (ExerciseTemplate & { isDndShadowItem?: boolean })[];
 	export let openEditExercise: (idx: number) => void;
 	export let deleteExercise: (idx: number) => void;
-  
+
 	let dragDisabled = true;
 
 	function handleConsider(e: CustomEvent<DndEvent<ExerciseTemplate>>) {

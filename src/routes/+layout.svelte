@@ -26,7 +26,7 @@
 
 <ModeWatcher />
 <Toaster />
-<header class="horizontal-screen flex gap-2 shrink-0 items-center border-b p-1 bg-muted">
+<header class="horizontal-screen flex shrink-0 items-center gap-2 border-b bg-muted p-1">
 	<div class="contents lg:hidden">
 		<Sheet.Root>
 			<Sheet.Trigger aria-label="Menu" class="px-2">
@@ -109,7 +109,7 @@
 	</div>
 </header>
 <main
-	class="mx-auto flex h-px w-full max-w-2xl grow flex-col overflow-y-auto px-2 pt-6 pb-2 lg:h-screen"
+	class="mx-auto flex h-px w-full max-w-2xl grow flex-col overflow-y-auto px-2 pb-2 pt-6 lg:h-screen"
 >
 	<slot />
 </main>
