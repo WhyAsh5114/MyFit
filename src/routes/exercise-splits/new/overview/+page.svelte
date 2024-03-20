@@ -9,6 +9,7 @@
 	import PerMuscleGroupChartComponent from './(components)/PerMuscleGroupChartComponent.svelte';
 	import { muscleGroups } from '$lib/arrays';
 	import { exerciseSplitStore } from '../exerciseSplitStore';
+	import PerDayChartComponent from './(components)/PerDayChartComponent.svelte';
 
 	const sortedMuscleGroups = muscleGroups.toSorted((a, b) => getTotalVolume(b) - getTotalVolume(a));
 	let selectedMuscleGroups = sortedMuscleGroups.slice(0, 3);
@@ -57,7 +58,9 @@
 			{/each}
 		</ToggleGroup.Root>
 	</Tabs.Content>
-	<Tabs.Content value="/day">Change your password here.</Tabs.Content>
+	<Tabs.Content value="/day">
+		<PerDayChartComponent />
+	</Tabs.Content>
 </Tabs.Root>
 
 <div class="grid grid-cols-2 gap-1">

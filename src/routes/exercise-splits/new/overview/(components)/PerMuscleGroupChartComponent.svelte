@@ -44,23 +44,24 @@
 		const g = parseInt(baseColor.substring(2, 4), 16);
 		const b = parseInt(baseColor.substring(4, 6), 16);
 
-		const step = Math.floor(255 / (count + 5));
+		const step = Math.floor(255 / (count + 3));
 		const colors: string[] = [];
 
-		for (let i = 1; i <= count; i++) {
+		for (let i = 1; i <= count / 2 + 1; i++) {
 			const newR = Math.max(r - i * step, 0);
 			const newG = Math.max(g - i * step, 0);
 			const newB = Math.max(b - i * step, 0);
 			const shade = `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
 			colors.push(shade);
 		}
-		for (let i = 1; i <= count; i++) {
+		for (let i = 1; i <= count / 2; i++) {
 			const newR = Math.min(r + i * step, 255);
 			const newG = Math.min(g + i * step, 255);
 			const newB = Math.min(b + i * step, 255);
 			const tint = `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
 			colors.push(tint);
 		}
+		console.log(colors);
 		return colors;
 	}
 
