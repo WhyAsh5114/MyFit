@@ -7,7 +7,7 @@
 
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import { toast } from 'svelte-sonner';
-	import { muscleGroups } from '$lib/arrays';
+	import { muscleGroups } from '$lib/constants';
 	import { exerciseSplitStore } from '../exerciseSplitStore';
 	import PerMuscleGroupChartComponent from './(components)/PerMuscleGroupChartComponent.svelte';
 	import PerDayChartComponent from './(components)/PerDayChartComponent.svelte';
@@ -27,7 +27,7 @@
 			toast.success('Success', { description: await response.text() });
 			goto('/exercise-splits');
 		} else {
-			toast.error('Error', { description: await response.text() });
+			toast.error(`Error ${response.status}`, { description: await response.text() });
 		}
 		$exerciseSplitStore = {
 			name: '',

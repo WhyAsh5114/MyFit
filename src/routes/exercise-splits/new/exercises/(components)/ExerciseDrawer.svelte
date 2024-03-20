@@ -9,7 +9,7 @@
 	import * as Sheet from '$lib/components/ui/sheet';
 	import * as Command from '$lib/components/ui/command';
 
-	import { exerciseListByMuscleGroup, muscleGroups, setTypes } from '$lib/arrays';
+	import { exerciseListByMuscleGroup, muscleGroups, setTypes } from '$lib/constants';
 	import { toast } from 'svelte-sonner';
 	import AddIcon from 'virtual:icons/material-symbols/add';
 

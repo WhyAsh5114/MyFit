@@ -1,3 +1,5 @@
+export const EXERCISE_SPLITS_PER_PAGE = 5;
+
 export const muscleGroups: typeof MuscleGroups = [
 	'Chest',
 	'Front delts',
