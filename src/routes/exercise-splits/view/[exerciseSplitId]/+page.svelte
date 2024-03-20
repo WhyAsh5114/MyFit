@@ -60,10 +60,10 @@
 	}
 
 	function editExerciseSplit() {
+		$editingExerciseSplitIdStore = exerciseSplit._id;
 		const exerciseSplitWithoutId: ExerciseSplit & { _id?: string } = exerciseSplit;
 		delete exerciseSplitWithoutId._id;
 		$exerciseSplitStore = exerciseSplitWithoutId;
-		$editingExerciseSplitIdStore = exerciseSplit._id;
 		goto('/exercise-splits/edit');
 	}
 </script>
