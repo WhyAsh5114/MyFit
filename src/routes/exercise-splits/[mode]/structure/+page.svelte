@@ -76,7 +76,7 @@
 			});
 			return { name: splitDay, exerciseTemplates: matchedSplitDay?.exerciseTemplates ?? [] };
 		});
-		goto('/exercise-splits/new/exercises');
+		goto(`./exercises`);
 	}
 </script>
 

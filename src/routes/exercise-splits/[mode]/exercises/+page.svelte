@@ -102,7 +102,7 @@
 			});
 			return;
 		}
-		goto('/exercise-splits/new/overview');
+		goto('./overview');
 	}
 </script>
 
@@ -182,7 +182,7 @@
 
 <div class="mt-2 grid grid-cols-2 gap-1">
 	<Button variant="secondary">
-		<a href="/exercise-splits/new/structure" class="w-full">Back</a>
+		<a href="./structure" class="w-full">Back</a>
 	</Button>
 	<Button on:click={submitExercises}>Next</Button>
 </div>
