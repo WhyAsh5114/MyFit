@@ -3,8 +3,10 @@
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group';
+	import * as Tabs from '$lib/components/ui/tabs';
+
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
-	import ChartComponent from './ChartComponent.svelte';
+	import PerMuscleGroupChartComponent from './(components)/PerMuscleGroupChartComponent.svelte';
 	import { muscleGroups } from '$lib/arrays';
 	import { exerciseSplitStore } from '../exerciseSplitStore';
 
@@ -34,22 +36,29 @@
 <H2>New exercise split</H2>
 <H3>Overview</H3>
 
-<div class="flex h-px grow flex-col">
-	<ChartComponent {selectedMuscleGroups} />
-	<ToggleGroup.Root
-		variant="outline"
-		type="multiple"
-		size="sm"
-		class="grid grid-cols-3"
-		bind:value={selectedMuscleGroups}
-	>
-		{#each sortedMuscleGroups as muscleGroup}
-			<ToggleGroup.Item class="aria-pressed:bg-foreground" value={muscleGroup}>
-				{muscleGroup}
-			</ToggleGroup.Item>
-		{/each}
-	</ToggleGroup.Root>
-</div>
+<Tabs.Root value="/muscleGroup" class="mb-auto w-full">
+	<Tabs.List class="grid grid-cols-2">
+		<Tabs.Trigger value="/muscleGroup">/muscleGroup</Tabs.Trigger>
+		<Tabs.Trigger value="/day">/day</Tabs.Trigger>
+	</Tabs.List>
+	<Tabs.Content value="/muscleGroup">
+		<PerMuscleGroupChartComponent {selectedMuscleGroups} />
+		<ToggleGroup.Root
+			variant="outline"
+			type="multiple"
+			size="sm"
+			class="grid grid-cols-3"
+			bind:value={selectedMuscleGroups}
+		>
+			{#each sortedMuscleGroups as muscleGroup}
+				<ToggleGroup.Item class="aria-pressed:bg-foreground" value={muscleGroup}>
+					{muscleGroup}
+				</ToggleGroup.Item>
+			{/each}
+		</ToggleGroup.Root>
+	</Tabs.Content>
+	<Tabs.Content value="/day">Change your password here.</Tabs.Content>
+</Tabs.Root>
 
 <div class="grid grid-cols-2 gap-1">
 	<Button variant="secondary">

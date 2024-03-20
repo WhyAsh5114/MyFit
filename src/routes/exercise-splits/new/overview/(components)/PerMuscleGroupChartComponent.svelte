@@ -10,7 +10,7 @@
 		PointElement,
 		CategoryScale
 	} from 'chart.js';
-	import { exerciseSplitStore } from '../exerciseSplitStore';
+	import { exerciseSplitStore } from '../../exerciseSplitStore';
 
 	export let selectedMuscleGroups: MuscleGroup[];
 	$: selectedMuscleGroups, (data = generateData());
