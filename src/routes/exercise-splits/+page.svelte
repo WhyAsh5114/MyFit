@@ -21,20 +21,23 @@
 	let exerciseSplitsCount: number;
 	let exerciseSplits: WithSID<ExerciseSplit>[] | null | undefined;
 
-	onMount(() => loadExerciseSplits(1));
+	onMount(() => loadExerciseSplits(1, true));
 
-	async function loadExerciseSplits(pageNumber: number) {
+	async function loadExerciseSplits(pageNumber: number, includeTotalCount = false) {
 		exerciseSplits = undefined;
 		let fetchURL = `/api/exercise-splits?page=${pageNumber}`;
 		if (searchString) fetchURL += `&search=${searchString}`;
+		if (includeTotalCount) fetchURL += '&includeTotalCount';
 
 		const response = await fetch(fetchURL);
 		if (response.ok) {
-			({ exerciseSplits, exerciseSplitsCount } = await response.json());
+			if (includeTotalCount) ({ exerciseSplits, exerciseSplitsCount } = await response.json());
+			else ({ exerciseSplits } = await response.json());
 		} else {
 			toast.error(`Error ${response.status}`, { description: await response.text() });
 			exerciseSplits = null;
 		}
+		console.log(includeTotalCount, exerciseSplitsCount);
 	}
 </script>
 
@@ -42,7 +45,7 @@
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
 		<Input bind:value={searchString} id="search-exercise-splits" placeholder="Search" />
-		<Button variant="secondary" on:click={() => loadExerciseSplits(1)}><SearchIcon /></Button>
+		<Button variant="secondary" on:click={() => loadExerciseSplits(1, true)}><SearchIcon /></Button>
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild let:builder>
 				<Button builders={[builder]}><AddIcon /></Button>

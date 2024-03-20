@@ -13,6 +13,7 @@ export const GET = async ({ locals, url }) => {
 	if (isNaN(pageNumber) || pageNumber < 0)
 		return new Response('Invalid page number', { status: 400 });
 	const searchString = url.searchParams.get('search');
+	const includeTotalCount = url.searchParams.has('includeTotalCount');
 
 	try {
 		const findQuery: Filter<WithUID<ExerciseSplit>> = {
@@ -20,20 +21,24 @@ export const GET = async ({ locals, url }) => {
 		};
 		if (searchString) findQuery.name = { $regex: new RegExp(searchString, 'i') };
 
-		const exerciseSplitsCount = await client
-			.db()
-			.collection<WithUID<ExerciseSplit>>('exerciseSplits')
-			.countDocuments(findQuery);
+		const responseBody: { exerciseSplits: ExerciseSplit[]; exerciseSplitsCount?: number } = {
+			exerciseSplits: await client
+				.db()
+				.collection<WithUID<ExerciseSplit>>('exerciseSplits')
+				.find(findQuery)
+				.skip(EXERCISE_SPLITS_PER_PAGE * pageNumber)
+				.limit(EXERCISE_SPLITS_PER_PAGE)
+				.toArray()
+		};
 
-		const exerciseSplits = await client
-			.db()
-			.collection<WithUID<ExerciseSplit>>('exerciseSplits')
-			.find(findQuery)
-			.skip(EXERCISE_SPLITS_PER_PAGE * pageNumber)
-			.limit(EXERCISE_SPLITS_PER_PAGE)
-			.toArray();
+		if (includeTotalCount) {
+			responseBody.exerciseSplitsCount = await client
+				.db()
+				.collection<WithUID<ExerciseSplit>>('exerciseSplits')
+				.countDocuments(findQuery);
+		}
 
-		return new Response(JSON.stringify({ exerciseSplits, exerciseSplitsCount }), { status: 200 });
+		return new Response(JSON.stringify(responseBody), { status: 200 });
 	} catch (error) {
 		return new Response(JSON.stringify(error), { status: 500 });
 	}
