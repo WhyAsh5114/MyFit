@@ -12,6 +12,7 @@
 	import PerMuscleGroupChartComponent from './(components)/PerMuscleGroupChartComponent.svelte';
 	import PerDayChartComponent from './(components)/PerDayChartComponent.svelte';
 	import { goto } from '$app/navigation';
+	import { Card } from '$lib/components/ui/card';
 
 	const sortedMuscleGroups = muscleGroups.toSorted((a, b) => getTotalVolume(b) - getTotalVolume(a));
 	let selectedMuscleGroups = sortedMuscleGroups.slice(0, 3);
@@ -62,23 +63,27 @@
 		<Tabs.Trigger value="/day">/day</Tabs.Trigger>
 	</Tabs.List>
 	<Tabs.Content value="/muscleGroup">
-		<PerMuscleGroupChartComponent {selectedMuscleGroups} />
-		<ToggleGroup.Root
-			variant="outline"
-			type="multiple"
-			size="sm"
-			class="grid grid-cols-3"
-			bind:value={selectedMuscleGroups}
-		>
-			{#each sortedMuscleGroups as muscleGroup}
-				<ToggleGroup.Item class="aria-pressed:bg-foreground" value={muscleGroup}>
-					{muscleGroup}
-				</ToggleGroup.Item>
-			{/each}
-		</ToggleGroup.Root>
+		<Card class="p-2">
+			<PerMuscleGroupChartComponent {selectedMuscleGroups} />
+			<ToggleGroup.Root
+				variant="outline"
+				type="multiple"
+				size="sm"
+				class="grid grid-cols-3"
+				bind:value={selectedMuscleGroups}
+			>
+				{#each sortedMuscleGroups as muscleGroup}
+					<ToggleGroup.Item class="aria-pressed:bg-foreground" value={muscleGroup}>
+						{muscleGroup}
+					</ToggleGroup.Item>
+				{/each}
+			</ToggleGroup.Root>
+		</Card>
 	</Tabs.Content>
 	<Tabs.Content value="/day">
-		<PerDayChartComponent />
+		<Card class="p-2">
+			<PerDayChartComponent />
+		</Card>
 	</Tabs.Content>
 </Tabs.Root>
 

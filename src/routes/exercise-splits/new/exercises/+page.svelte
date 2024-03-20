@@ -14,6 +14,7 @@
 	import DndComponent from './(components)/DndComponent.svelte';
 	import ExerciseDrawer from './(components)/ExerciseDrawer.svelte';
 	import { goto } from '$app/navigation';
+	import { Card } from '$lib/components/ui/card';
 
 	type CustomExerciseSplitDay = {
 		name: string;
@@ -109,7 +110,7 @@
 <H2>New exercise split</H2>
 <H3>Exercises</H3>
 
-<Tabs.Root bind:value={selectedDayIndex}>
+<Tabs.Root bind:value={selectedDayIndex} class="flex grow flex-col">
 	<Tabs.List class="w-full justify-start overflow-x-auto">
 		{#each splitDays as splitDay, i}
 			<Tabs.Trigger
@@ -122,7 +123,7 @@
 		{/each}
 	</Tabs.List>
 	{#if selectedSplitDay}
-		<div class="flex flex-col p-2">
+		<Card class="mt-2 flex h-px grow flex-col overflow-y-auto p-2">
 			<div class="flex items-center gap-3">
 				<div class="mr-auto flex flex-col">
 					<span class="truncate text-lg font-semibold">{selectedSplitDay.name}</span>
@@ -172,18 +173,16 @@
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
 			</div>
-		</div>
+			<DndComponent
+				{openEditExercise}
+				{deleteExercise}
+				bind:itemList={selectedSplitDay.exerciseTemplates}
+			/>
+		</Card>
 	{/if}
 </Tabs.Root>
-{#if selectedSplitDay}
-	<DndComponent
-		{openEditExercise}
-		{deleteExercise}
-		bind:itemList={selectedSplitDay.exerciseTemplates}
-	/>
-{/if}
 
-<div class="mt-auto grid grid-cols-2 gap-1">
+<div class="mt-2 grid grid-cols-2 gap-1">
 	<Button variant="secondary">
 		<a href="/exercise-splits/new/structure" class="w-full">Back</a>
 	</Button>
