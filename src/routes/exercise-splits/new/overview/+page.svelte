@@ -9,8 +9,8 @@
 	import { toast } from 'svelte-sonner';
 	import { muscleGroups } from '$lib/constants';
 	import { exerciseSplitStore } from '../exerciseSplitStore';
-	import PerMuscleGroupChartComponent from './(components)/PerMuscleGroupChartComponent.svelte';
-	import PerDayChartComponent from './(components)/PerDayChartComponent.svelte';
+	import PerMuscleGroupChartComponent from '../../(components)/PerMuscleGroupChartComponent.svelte';
+	import PerDayChartComponent from '../../(components)/PerDayChartComponent.svelte';
 	import { goto } from '$app/navigation';
 	import { Card } from '$lib/components/ui/card';
 
@@ -64,7 +64,10 @@
 	</Tabs.List>
 	<Tabs.Content value="/muscleGroup">
 		<Card class="p-2">
-			<PerMuscleGroupChartComponent {selectedMuscleGroups} />
+			<PerMuscleGroupChartComponent
+				splitDays={$exerciseSplitStore.splitDays}
+				{selectedMuscleGroups}
+			/>
 			<ToggleGroup.Root
 				variant="outline"
 				type="multiple"
@@ -82,7 +85,7 @@
 	</Tabs.Content>
 	<Tabs.Content value="/day">
 		<Card class="p-2">
-			<PerDayChartComponent />
+			<PerDayChartComponent splitDays={$exerciseSplitStore.splitDays} />
 		</Card>
 	</Tabs.Content>
 </Tabs.Root>

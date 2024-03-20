@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { Bar } from 'svelte-chartjs';
 	import { Chart, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
-	import { exerciseSplitStore } from '../../exerciseSplitStore';
+	export let splitDays: ExerciseSplit['splitDays'];
 	Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
 	const data = {
-		labels: $exerciseSplitStore.splitDays.map((_, idx) => `D${idx + 1}`),
+		labels: splitDays.map((_, idx) => `D${idx + 1}`),
 		datasets: [
 			{
 				label: 'Volume',
-				data: $exerciseSplitStore.splitDays.map((splitDay, idx) => {
+				data: splitDays.map((splitDay, idx) => {
 					if (!splitDay) return 0;
 					return splitDay.exerciseTemplates.reduce((totalSets, exercise) => {
 						return totalSets + exercise.sets;

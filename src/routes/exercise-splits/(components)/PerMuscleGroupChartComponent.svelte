@@ -10,22 +10,22 @@
 		PointElement,
 		CategoryScale
 	} from 'chart.js';
-	import { exerciseSplitStore } from '../../exerciseSplitStore';
 
+	export let splitDays: ExerciseSplit['splitDays'];
 	export let selectedMuscleGroups: MuscleGroup[];
 	$: selectedMuscleGroups, (data = generateData());
 
 	function generateData() {
 		const shadesAndTints = generateShadesAndTints('3079ca', selectedMuscleGroups.length);
 		return {
-			labels: $exerciseSplitStore.splitDays.map((_, idx) => `D${idx + 1}`),
+			labels: splitDays.map((_, idx) => `D${idx + 1}`),
 			datasets: selectedMuscleGroups.map((muscleGroup, idx) => {
 				return {
 					label: muscleGroup,
 					lineTension: 0.3,
 					borderColor: shadesAndTints[idx],
 					pointBackgroundColor: shadesAndTints[idx],
-					data: $exerciseSplitStore.splitDays.map((splitDay) => {
+					data: splitDays.map((splitDay) => {
 						if (!splitDay) return 0;
 						return splitDay.exerciseTemplates.reduce((totalSets, exercise) => {
 							return exercise.targetMuscleGroup === muscleGroup
