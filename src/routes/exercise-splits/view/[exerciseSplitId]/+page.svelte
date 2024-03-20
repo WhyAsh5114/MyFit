@@ -10,6 +10,7 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import EditIcon from 'virtual:icons/material-symbols/edit';
+	import DeleteIcon from 'virtual:icons/material-symbols/delete';
 	import ExerciseTemplateCard from '../../(components)/ExerciseTemplateCard.svelte';
 	import PerDayChartComponent from '../../(components)/PerDayChartComponent.svelte';
 	import PerMuscleGroupComponent from '../../(components)/PerMuscleGroupComponent.svelte';
@@ -66,7 +67,8 @@
 					<PerDayChartComponent splitDays={exerciseSplit.splitDays} />
 				</Card.Content>
 				<Card.Footer>
-					<Button class="ml-auto gap-2"><EditIcon />Edit</Button>
+					<Button variant="destructive" class="gap-2"><DeleteIcon /> Delete</Button>
+					<Button class="ml-auto gap-2"><EditIcon /> Edit</Button>
 				</Card.Footer>
 			</Card.Root>
 		</Tabs.Content>
@@ -138,21 +140,8 @@
 					<Skeleton class="h-40 w-full" />
 				</Card.Content>
 				<Card.Footer>
+					<Skeleton class="h-10 w-20" />
 					<Skeleton class="ml-auto h-10 w-20" />
-				</Card.Footer>
-			</Card.Root>
-		</Tabs.Content>
-		<Tabs.Content value="exercises">
-			<Card.Root>
-				<Card.Header>
-					<Card.Title>Password</Card.Title>
-					<Card.Description>
-						Change your password here. After saving, you'll be logged out.
-					</Card.Description>
-				</Card.Header>
-				<Card.Content class="space-y-2"></Card.Content>
-				<Card.Footer>
-					<Button>Save password</Button>
 				</Card.Footer>
 			</Card.Root>
 		</Tabs.Content>
