@@ -35,7 +35,9 @@
 			toast.error('Error', { description: 'Add at least one workout to the microcycle' });
 			return false;
 		}
-		if (new Set(splitDayNames).size < splitDayNames.length) {
+
+		const nonRestDays = splitDayNames.filter((splitDay) => splitDay !== null);
+		if (new Set(nonRestDays).size < nonRestDays.length) {
 			toast.error('Error', {
 				description:
 					'Workouts names should be unique. For example: Push A, Push B instead of Push, Push'
