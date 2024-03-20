@@ -6,17 +6,36 @@
 	import * as Tabs from '$lib/components/ui/tabs';
 
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
-	import PerMuscleGroupChartComponent from './(components)/PerMuscleGroupChartComponent.svelte';
+	import { toast } from 'svelte-sonner';
 	import { muscleGroups } from '$lib/arrays';
 	import { exerciseSplitStore } from '../exerciseSplitStore';
+	import PerMuscleGroupChartComponent from './(components)/PerMuscleGroupChartComponent.svelte';
 	import PerDayChartComponent from './(components)/PerDayChartComponent.svelte';
+	import { goto } from '$app/navigation';
 
 	const sortedMuscleGroups = muscleGroups.toSorted((a, b) => getTotalVolume(b) - getTotalVolume(a));
 	let selectedMuscleGroups = sortedMuscleGroups.slice(0, 3);
 	let callingEndpoint = false;
 
-	function createExerciseSplit() {
+	async function createExerciseSplit() {
 		callingEndpoint = true;
+		const response = await fetch('/api/exercise-splits', {
+			method: 'POST',
+			body: JSON.stringify($exerciseSplitStore)
+		});
+		if (response.ok) {
+			toast.success('Success', { description: await response.text() });
+			goto('/exercise-splits');
+		} else {
+			toast.error('Error', { description: await response.text() });
+		}
+		$exerciseSplitStore = {
+			name: '',
+			splitDays: Array.from({ length: 7 }).map(() => {
+				return { name: '', exerciseTemplates: [] };
+			})
+		};
+		callingEndpoint = false;
 	}
 
 	function getTotalVolume(muscleGroup: MuscleGroup) {
