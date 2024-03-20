@@ -9,15 +9,13 @@
 		datasets: [
 			{
 				label: 'Volume',
-				data: splitDays.map((splitDay, idx) => {
+				data: splitDays.map((splitDay, _) => {
 					if (!splitDay) return 0;
 					return splitDay.exerciseTemplates.reduce((totalSets, exercise) => {
 						return totalSets + exercise.sets;
 					}, 0);
 				}),
-				backgroundColor: '#3079ca',
-				borderWidth: 2,
-				borderColor: '#3079ca'
+				backgroundColor: '#1E4B7C'
 			}
 		]
 	};
