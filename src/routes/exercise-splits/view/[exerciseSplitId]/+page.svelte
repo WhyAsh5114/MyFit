@@ -5,17 +5,22 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import { Badge } from '$lib/components/ui/badge';
+	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import EditIcon from 'virtual:icons/material-symbols/edit';
 	import DeleteIcon from 'virtual:icons/material-symbols/delete';
 	import ExerciseTemplateCard from '../../(components)/ExerciseTemplateCard.svelte';
 	import PerDayChartComponent from '../../(components)/PerDayChartComponent.svelte';
 	import PerMuscleGroupComponent from '../../(components)/PerMuscleGroupComponent.svelte';
 
-	let exerciseSplit: ExerciseSplit;
+	let exerciseSplit: WithSID<ExerciseSplit>;
+	let deleteConfirmDrawerOpen = false;
+	let callingEndpoint = false;
 	let splitDays: ExerciseSplit['splitDays'];
 	let selectedDayIndex: string;
 	let selectedSplitDay: ExerciseSplitDay | null;
@@ -38,6 +43,20 @@
 		openEditExercise: () => {},
 		deleteExercise: () => {}
 	};
+
+	async function deleteExerciseSplit() {
+		callingEndpoint = true;
+		const response = await fetch(`/api/exercise-splits/${exerciseSplit._id}`, { method: 'DELETE' });
+		callingEndpoint = false;
+
+		if (response.ok) {
+			deleteConfirmDrawerOpen = false;
+			toast.success('Success', {
+				description: `Exercise split deleted successfully`
+			});
+			goto('/exercise-splits');
+		} else toast.error(`Error ${response.status}`, { description: await response.text() });
+	}
 </script>
 
 <H2>View exercise split</H2>
@@ -67,7 +86,13 @@
 					<PerDayChartComponent splitDays={exerciseSplit.splitDays} />
 				</Card.Content>
 				<Card.Footer>
-					<Button variant="destructive" class="gap-2"><DeleteIcon /> Delete</Button>
+					<Button
+						variant="destructive"
+						class="gap-2"
+						on:click={() => (deleteConfirmDrawerOpen = true)}
+					>
+						<DeleteIcon /> Delete
+					</Button>
 					<Button class="ml-auto gap-2"><EditIcon /> Edit</Button>
 				</Card.Footer>
 			</Card.Root>
@@ -147,3 +172,21 @@
 		</Tabs.Content>
 	</Tabs.Root>
 {/if}
+
+<ResponsiveDialog
+	title="Are you sure?"
+	needTrigger={false}
+	bind:open={deleteConfirmDrawerOpen}
+	cancelVariant="default"
+>
+	<p>
+		Delete split <span class="font-semibold">{exerciseSplit.name}</span>? This action cannot be
+		undone.
+	</p>
+	<Button variant="destructive" on:click={deleteExerciseSplit} disabled={callingEndpoint}>
+		{#if callingEndpoint}
+			<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
+		{/if}
+		Yes, delete
+	</Button>
+</ResponsiveDialog>
