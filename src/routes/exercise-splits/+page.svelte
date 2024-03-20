@@ -3,10 +3,22 @@
 	import { Input } from '$lib/components/ui/input';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Pagination from '$lib/components/ui/pagination';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { Badge } from '$lib/components/ui/badge';
+	import { Skeleton } from '$lib/components/ui/skeleton';
 	import AddIcon from 'virtual:icons/material-symbols/add';
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
+	import { getTotalSetsOfSplit } from '$lib/utils/exerciseSplits';
+
+	let exerciseSplits: WithSID<ExerciseSplit>[];
+	onMount(async () => {
+		const response = await fetch('/api/exercise-splits');
+		if (response.ok) exerciseSplits = await response.json();
+		else toast.error('Error', { description: await response.text() });
+	});
 </script>
 
 <H2>Exercise splits</H2>
@@ -28,7 +40,41 @@
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</div>
-	<div class="flex h-px grow flex-col overflow-y-auto border"></div>
+	<div class="flex h-px grow flex-col gap-1 overflow-y-auto">
+		{#if exerciseSplits}
+			{#each exerciseSplits as exerciseSplit}
+				<div class="flex flex-col gap-2 rounded-md border p-2">
+					<div class="flex items-center justify-between">
+						<span class="text-lg font-semibold">{exerciseSplit.name}</span>
+						<span class="text-sm text-muted-foreground"
+							>{getTotalSetsOfSplit(exerciseSplit.splitDays)} sets</span
+						>
+					</div>
+					<div class="flex w-full flex-wrap gap-1">
+						{#each exerciseSplit.splitDays as splitDay}
+							<Badge variant={splitDay ? 'secondary' : 'outline'}>
+								{splitDay?.name ?? 'Rest'}
+							</Badge>
+						{/each}
+					</div>
+				</div>
+			{/each}
+		{:else}
+			{#each Array(5) as i}
+				<div class="flex flex-col gap-2 rounded-md border p-2">
+					<div class="flex items-center justify-between">
+						<Skeleton class="h-7 w-28" />
+						<Skeleton class="h-[22px] w-16 rounded-full" />
+					</div>
+					<div class="flex w-full flex-wrap gap-1">
+						{#each Array(7) as j}
+							<Skeleton class="h-[22px] w-16 rounded-full" />
+						{/each}
+					</div>
+				</div>
+			{/each}
+		{/if}
+	</div>
 	<Pagination.Root count={50} perPage={5} siblingCount={0} let:pages let:currentPage>
 		<Pagination.Content>
 			<Pagination.Item>
