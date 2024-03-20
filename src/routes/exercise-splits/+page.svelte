@@ -37,11 +37,11 @@
 			toast.error(`Error ${response.status}`, { description: await response.text() });
 			exerciseSplits = null;
 		}
-		console.log(includeTotalCount, exerciseSplitsCount);
 	}
 </script>
 
 <H2>Exercise splits</H2>
+
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
 		<Input bind:value={searchString} id="search-exercise-splits" placeholder="Search" />
@@ -64,7 +64,10 @@
 	<div class="flex h-px grow flex-col gap-1 overflow-y-auto">
 		{#if exerciseSplits}
 			{#each exerciseSplits as exerciseSplit}
-				<div class="flex flex-col gap-2 rounded-md border p-2">
+				<a
+					class="flex flex-col gap-2 rounded-md border p-2"
+					href="/exercise-splits/view/{exerciseSplit._id}"
+				>
 					<div class="flex items-center justify-between">
 						<span class="text-lg font-semibold">{exerciseSplit.name}</span>
 						<span class="text-sm text-muted-foreground">
@@ -78,7 +81,7 @@
 							</Badge>
 						{/each}
 					</div>
-				</div>
+				</a>
 			{/each}
 		{:else if exerciseSplits === undefined}
 			{#each Array(EXERCISE_SPLITS_PER_PAGE) as _}
