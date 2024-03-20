@@ -17,6 +17,7 @@
 	import ExerciseTemplateCard from '../../(components)/ExerciseTemplateCard.svelte';
 	import PerDayChartComponent from '../../(components)/PerDayChartComponent.svelte';
 	import PerMuscleGroupComponent from '../../(components)/PerMuscleGroupComponent.svelte';
+	import { editingExerciseSplitIdStore, exerciseSplitStore } from '../../[mode]/exerciseSplitStore';
 
 	let exerciseSplit: WithSID<ExerciseSplit>;
 	let deleteConfirmDrawerOpen = false;
@@ -57,6 +58,14 @@
 			goto('/exercise-splits');
 		} else toast.error(`Error ${response.status}`, { description: await response.text() });
 	}
+
+	function editExerciseSplit() {
+		const exerciseSplitWithoutId: ExerciseSplit & { _id?: string } = exerciseSplit;
+		delete exerciseSplitWithoutId._id;
+		$exerciseSplitStore = exerciseSplitWithoutId;
+		$editingExerciseSplitIdStore = exerciseSplit._id;
+		goto('/exercise-splits/edit');
+	}
 </script>
 
 <H2>View exercise split</H2>
@@ -93,7 +102,7 @@
 					>
 						<DeleteIcon /> Delete
 					</Button>
-					<Button class="ml-auto gap-2"><EditIcon /> Edit</Button>
+					<Button class="ml-auto gap-2" on:click={editExerciseSplit}><EditIcon /> Edit</Button>
 				</Card.Footer>
 			</Card.Root>
 		</Tabs.Content>
