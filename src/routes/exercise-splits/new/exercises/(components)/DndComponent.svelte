@@ -55,7 +55,7 @@
 	}}
 	on:consider={handleConsider}
 	on:finalize={handleFinalize}
-	class="flex h-px grow flex-col gap-1 overflow-y-auto mt-2"
+	class="mt-2 flex h-px grow flex-col gap-1 overflow-y-auto"
 >
 	{#each itemList as exerciseTemplate, idx (exerciseTemplate.name)}
 		<div class="relative" animate:flip={{ duration: 200 }}>

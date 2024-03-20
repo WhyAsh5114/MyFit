@@ -1,10 +1,9 @@
 <script lang="ts">
-
 	import Button from '$lib/components/ui/button/button.svelte';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';
-	
+
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import { toast } from 'svelte-sonner';
 	import { exerciseSplitStore } from '../exerciseSplitStore';

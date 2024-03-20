@@ -4,25 +4,25 @@
 	import Sun from 'lucide-svelte/icons/sun';
 	import Moon from 'lucide-svelte/icons/moon';
 	import { setMode, resetMode, mode } from 'mode-watcher';
-  import { Chart } from "chart.js";
-  import { onMount } from "svelte";
+	import { Chart } from 'chart.js';
+	import { onMount } from 'svelte';
 
 	export let size: 'icon' | 'lg' = 'icon';
 	export let variant: 'ghost' | 'outline' = 'ghost';
 
 	function updateChartJSColors() {
-    const style = getComputedStyle(document.body);
-    const foregroundColor = style.getPropertyValue("--foreground").split(" ").join(", ");
-    const foregroundMutedColor = style.getPropertyValue("--muted-foreground").split(" ").join(", ");
-    Chart.defaults.color = `hsl(${foregroundMutedColor})`;
-    Chart.defaults.borderColor = `hsl(0, 0%, ${$mode === 'light' ? '64%' : '16%'})`;
-    Chart.defaults.font.weight = 500;
-    Chart.defaults.font.size = 13;
-  }
+		const style = getComputedStyle(document.body);
+		const foregroundColor = style.getPropertyValue('--foreground').split(' ').join(', ');
+		const foregroundMutedColor = style.getPropertyValue('--muted-foreground').split(' ').join(', ');
+		Chart.defaults.color = `hsl(${foregroundMutedColor})`;
+		Chart.defaults.borderColor = `hsl(0, 0%, ${$mode === 'light' ? '64%' : '16%'})`;
+		Chart.defaults.font.weight = 500;
+		Chart.defaults.font.size = 13;
+	}
 
-  onMount(() => {
-    updateChartJSColors();
-  });
+	onMount(() => {
+		updateChartJSColors();
+	});
 </script>
 
 <DropdownMenu.Root>
