@@ -61,7 +61,6 @@
 			const tint = `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
 			colors.push(tint);
 		}
-		console.log(colors);
 		return colors;
 	}
 
