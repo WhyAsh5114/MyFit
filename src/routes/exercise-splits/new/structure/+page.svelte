@@ -31,24 +31,44 @@
 		splitDayNames = splitDayNames;
 	}
 
-	function submitStructure(force = false) {
+	function validateStructure() {
 		if (splitDayNames.filter((splitDay) => splitDay !== null).length === 0) {
 			toast.error('Error', { description: 'Add at least one workout to the microcycle' });
-			return;
+			return false;
 		}
+		if (new Set(splitDayNames).size < splitDayNames.length) {
+			toast.error('Error', {
+				description:
+					'Workouts names should be unique. For example: Push A, Push B instead of Push, Push'
+			});
+			return false;
+		}
+		return true;
+	}
 
+	function checkAndWarnMissing() {
 		const oldSplitDays = structuredClone($exerciseSplitStore.splitDays);
 		const oldSplitDayNames = oldSplitDays
 			.filter((splitDay) => splitDay !== null && splitDay.exerciseTemplates.length > 0)
 			.map((splitDay) => splitDay?.name ?? null);
+
 		missingDays = oldSplitDayNames.filter(
 			(item) => !splitDayNames.includes(item) && item !== null
 		) as string[];
-		if (missingDays.length > 0 && !force) {
+		if (missingDays.length > 0) {
 			warningDrawerOpen = true;
+			return true;
+		}
+		return false;
+	}
+
+	function submitStructure(force = false) {
+		if (!validateStructure()) return;
+		if (!force && checkAndWarnMissing()) {
 			return;
 		}
 
+		const oldSplitDays = structuredClone($exerciseSplitStore.splitDays);
 		$exerciseSplitStore.name = splitName;
 		$exerciseSplitStore.splitDays = splitDayNames.map((splitDay) => {
 			if (splitDay === null) return splitDay;
