@@ -6,14 +6,18 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Skeleton } from '$lib/components/ui/skeleton';
+
 	import AddIcon from 'virtual:icons/material-symbols/add';
+	import SearchIcon from 'virtual:icons/material-symbols/search';
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
+
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { getTotalSetsOfSplit } from '$lib/utils/exerciseSplits';
 	import { EXERCISE_SPLITS_PER_PAGE } from '$lib/constants';
 
+	let searchString = '';
 	let exerciseSplitsCount: number;
 	let exerciseSplits: WithSID<ExerciseSplit>[] | null | undefined;
 
@@ -21,7 +25,10 @@
 
 	async function loadExerciseSplits(pageNumber: number) {
 		exerciseSplits = undefined;
-		const response = await fetch(`/api/exercise-splits?page=${pageNumber}`);
+		let fetchURL = `/api/exercise-splits?page=${pageNumber}`;
+		if (searchString) fetchURL += `&search=${searchString}`;
+
+		const response = await fetch(fetchURL);
 		if (response.ok) {
 			({ exerciseSplits, exerciseSplitsCount } = await response.json());
 		} else {
@@ -33,8 +40,9 @@
 
 <H2>Exercise splits</H2>
 <div class="flex grow flex-col gap-2">
-	<div class="flex gap-2">
-		<Input id="search-exercise-splits" placeholder="Search" />
+	<div class="flex gap-1">
+		<Input bind:value={searchString} id="search-exercise-splits" placeholder="Search" />
+		<Button variant="secondary" on:click={() => loadExerciseSplits(1)}><SearchIcon /></Button>
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild let:builder>
 				<Button builders={[builder]}><AddIcon /></Button>
