@@ -1,21 +1,18 @@
 <script lang="ts">
+
 	import Button from '$lib/components/ui/button/button.svelte';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
-	import * as ToggleGroup from '$lib/components/ui/toggle-group';
 	import * as Tabs from '$lib/components/ui/tabs';
-
+	
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import { toast } from 'svelte-sonner';
-	import { muscleGroups } from '$lib/constants';
 	import { exerciseSplitStore } from '../exerciseSplitStore';
-	import PerMuscleGroupChartComponent from '../../(components)/PerMuscleGroupChartComponent.svelte';
+	import PerMuscleGroupComponent from '../../(components)/PerMuscleGroupComponent.svelte';
 	import PerDayChartComponent from '../../(components)/PerDayChartComponent.svelte';
 	import { goto } from '$app/navigation';
 	import { Card } from '$lib/components/ui/card';
 
-	const sortedMuscleGroups = muscleGroups.toSorted((a, b) => getTotalVolume(b) - getTotalVolume(a));
-	let selectedMuscleGroups = sortedMuscleGroups.slice(0, 3);
 	let callingEndpoint = false;
 
 	async function createExerciseSplit() {
@@ -64,23 +61,7 @@
 	</Tabs.List>
 	<Tabs.Content value="/muscleGroup">
 		<Card class="p-2">
-			<PerMuscleGroupChartComponent
-				splitDays={$exerciseSplitStore.splitDays}
-				{selectedMuscleGroups}
-			/>
-			<ToggleGroup.Root
-				variant="outline"
-				type="multiple"
-				size="sm"
-				class="grid grid-cols-3"
-				bind:value={selectedMuscleGroups}
-			>
-				{#each sortedMuscleGroups as muscleGroup}
-					<ToggleGroup.Item class="aria-pressed:bg-foreground" value={muscleGroup}>
-						{muscleGroup}
-					</ToggleGroup.Item>
-				{/each}
-			</ToggleGroup.Root>
+			<PerMuscleGroupComponent splitDays={$exerciseSplitStore.splitDays} />
 		</Card>
 	</Tabs.Content>
 	<Tabs.Content value="/day">
