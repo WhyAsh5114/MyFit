@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+type WithUID<T> = T & { userId: string };
+
 const MuscleGroups = [
 	'Chest',
 	'Front delts',
