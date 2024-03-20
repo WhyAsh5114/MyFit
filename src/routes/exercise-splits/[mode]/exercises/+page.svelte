@@ -1,5 +1,4 @@
 <script lang="ts">
-	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
@@ -107,7 +106,6 @@
 	}
 </script>
 
-<H2>New exercise split</H2>
 <H3>Exercises</H3>
 
 <Tabs.Root bind:value={selectedDayIndex} class="flex grow flex-col">

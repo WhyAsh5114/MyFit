@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
-	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';
 
@@ -34,36 +33,21 @@
 		};
 		callingEndpoint = false;
 	}
-
-	function getTotalVolume(muscleGroup: MuscleGroup) {
-		return $exerciseSplitStore.splitDays.reduce((totalSets, splitDay) => {
-			if (!splitDay) return totalSets;
-			return (
-				totalSets +
-				splitDay.exerciseTemplates.reduce(
-					(setsForDay, exercise) =>
-						exercise.targetMuscleGroup === muscleGroup ? setsForDay + exercise.sets : setsForDay,
-					0
-				)
-			);
-		}, 0);
-	}
 </script>
 
-<H2>New exercise split</H2>
 <H3>Overview</H3>
 
-<Tabs.Root value="/muscleGroup" class="mb-auto w-full">
+<Tabs.Root value="Per muscle group" class="mb-auto w-full">
 	<Tabs.List class="grid grid-cols-2">
-		<Tabs.Trigger value="/muscleGroup">/muscleGroup</Tabs.Trigger>
-		<Tabs.Trigger value="/day">/day</Tabs.Trigger>
+		<Tabs.Trigger value="Per muscle group">Per muscle group</Tabs.Trigger>
+		<Tabs.Trigger value="Per day">Per day</Tabs.Trigger>
 	</Tabs.List>
-	<Tabs.Content value="/muscleGroup">
+	<Tabs.Content value="Per muscle group">
 		<Card class="p-2">
 			<PerMuscleGroupComponent splitDays={$exerciseSplitStore.splitDays} />
 		</Card>
 	</Tabs.Content>
-	<Tabs.Content value="/day">
+	<Tabs.Content value="Per day">
 		<Card class="p-2">
 			<PerDayChartComponent splitDays={$exerciseSplitStore.splitDays} />
 		</Card>

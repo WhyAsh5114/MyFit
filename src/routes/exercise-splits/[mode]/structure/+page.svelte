@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import { exerciseSplitStore } from '../exerciseSplitStore';
 	import { Checkbox } from '$lib/components/ui/checkbox';
@@ -81,7 +80,6 @@
 	}
 </script>
 
-<H2>New exercise split</H2>
 <H3>Structure</H3>
 
 <form on:submit|preventDefault={() => submitStructure()} class="mt-4 flex h-px grow flex-col gap-2">

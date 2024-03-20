@@ -1,18 +1,29 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import { page } from '$app/stores';
+	import { exerciseSplitStore } from './exerciseSplitStore';
 
 	const mode = $page.params.mode;
 </script>
 
-<H2><span class="capitalize">{mode}</span> exercise split</H2>
-<H3>Starting from scratch</H3>
+<H3>
+	{#if mode === 'new'}
+		Starting from scratch
+	{:else}
+		Editing <span class="font-bold">{$exerciseSplitStore.name}</span>
+	{/if}
+</H3>
 
 {#if true}
 	<Button class="mt-auto">
-		<a href="/exercise-splits/new/structure" class="w-full">Create new split</a>
+		<a href="/exercise-splits/{mode}/structure" class="w-full">
+			{#if mode === 'new'}
+				Create new split
+			{:else}
+				Edit split
+			{/if}
+		</a>
 	</Button>
 {:else}
 	<div class="mt-auto grid grid-cols-2 gap-2">
