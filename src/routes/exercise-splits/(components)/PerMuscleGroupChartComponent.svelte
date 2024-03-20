@@ -22,7 +22,6 @@
 			datasets: selectedMuscleGroups.map((muscleGroup, idx) => {
 				return {
 					label: muscleGroup,
-					lineTension: 0.3,
 					borderColor: shadesAndTints[idx],
 					pointBackgroundColor: shadesAndTints[idx],
 					data: splitDays.map((splitDay) => {
