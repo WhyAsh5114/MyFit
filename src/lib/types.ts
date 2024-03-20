@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+type WithSID<T> = T & { _id: string };
 type WithUID<T> = T & { userId: string };
 
 const MuscleGroups = [
