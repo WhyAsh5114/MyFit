@@ -12,6 +12,7 @@
 	import { exerciseListByMuscleGroup, muscleGroups, setTypes } from '$lib/constants';
 	import { toast } from 'svelte-sonner';
 	import AddIcon from 'virtual:icons/material-symbols/add';
+	import NumberInput from '$lib/components/ui/number-input/number-input.svelte';
 
 	export let addExercise: (exercise: ExerciseTemplate) => boolean;
 	export let editExercise: (exerciseTemplate: ExerciseTemplate & { idx: number }) => boolean;
@@ -141,8 +142,7 @@
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
 				<Label for="exercise-sets">Sets</Label>
-				<Input
-					type="number"
+				<NumberInput
 					min={1}
 					id="exercise-sets"
 					placeholder="Type here"
@@ -170,10 +170,9 @@
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
 				<Label for="exercise-rep-range-start">Rep range start</Label>
-				<Input
+				<NumberInput
 					id="exercise-rep-range-start"
 					min={1}
-					type="number"
 					placeholder="Type here"
 					bind:value={currentExercise.repRangeStart}
 					required
@@ -181,10 +180,9 @@
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
 				<Label for="exercise-rep-range-end">Rep range end</Label>
-				<Input
+				<NumberInput
 					id="exercise-rep-range-end"
-					min={parseInt((currentExercise.repRangeStart ?? 0).toString()) + 1}
-					type="number"
+					min={(currentExercise.repRangeStart ?? 0) + 1}
 					placeholder="Type here"
 					bind:value={currentExercise.repRangeEnd}
 					required
