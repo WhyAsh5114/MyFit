@@ -186,7 +186,6 @@
 	title="Are you sure?"
 	needTrigger={false}
 	bind:open={deleteConfirmDrawerOpen}
-	cancelVariant="default"
 >
 	<p>
 		Delete split <span class="font-semibold">{exerciseSplit.name}</span>? This action cannot be

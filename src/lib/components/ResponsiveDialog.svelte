@@ -23,7 +23,7 @@
 		| 'destructive'
 		| 'secondary'
 		| 'ghost'
-		| undefined = 'destructive';
+		| undefined = 'outline';
 	export let title: string;
 	export let description: string | undefined = undefined;
 	export let open = false;

@@ -142,7 +142,6 @@
 	title="Warning"
 	needTrigger={false}
 	bind:open={warningDrawerOpen}
-	cancelVariant="default"
 >
 	<p>
 		You will lose exercise data for the following workout days:
