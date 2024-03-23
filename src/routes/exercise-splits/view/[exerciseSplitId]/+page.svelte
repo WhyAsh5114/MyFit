@@ -5,18 +5,22 @@
 	import * as Card from '$lib/components/ui/card';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import * as Tabs from '$lib/components/ui/tabs';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 
+	import ExerciseTemplateCard from '../../(components)/ExerciseTemplateCard.svelte';
+	import PerDayChartComponent from '../../(components)/PerDayChartComponent.svelte';
+	import PerMuscleGroupComponent from '../../(components)/PerMuscleGroupComponent.svelte';
+
+	import CloneIcon from 'virtual:icons/clarity/clone-line';
+	import DeleteIcon from 'virtual:icons/material-symbols/delete';
+	import MenuIcon from 'virtual:icons/material-symbols/menu';
+	import EditIcon from 'virtual:icons/material-symbols/edit';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import DeleteIcon from 'virtual:icons/material-symbols/delete';
-	import EditIcon from 'virtual:icons/material-symbols/edit';
-	import ExerciseTemplateCard from '../../(components)/ExerciseTemplateCard.svelte';
-	import PerDayChartComponent from '../../(components)/PerDayChartComponent.svelte';
-	import PerMuscleGroupComponent from '../../(components)/PerMuscleGroupComponent.svelte';
 	import { editingExerciseSplitIdStore, exerciseSplitStore } from '../../[mode]/exerciseSplitStore';
 
 	let exerciseSplit: WithSID<ExerciseSplit>;
@@ -66,6 +70,10 @@
 		$exerciseSplitStore = exerciseSplitWithoutId;
 		goto('/exercise-splits/edit');
 	}
+
+	function cloneSplit() {
+		// TODO
+	}
 </script>
 
 <H2>View exercise split</H2>
@@ -80,7 +88,25 @@
 		<Tabs.Content value="info">
 			<Card.Root>
 				<Card.Header>
-					<Card.Title>{exerciseSplit.name}</Card.Title>
+					<Card.Title class="flex justify-between">
+						{exerciseSplit.name}
+						<DropdownMenu.Root>
+							<DropdownMenu.Trigger><MenuIcon /></DropdownMenu.Trigger>
+							<DropdownMenu.Content align="end">
+								<DropdownMenu.Group>
+									<DropdownMenu.Item class="gap-2" on:click={cloneSplit}>
+										<CloneIcon /> Clone
+									</DropdownMenu.Item>
+									<DropdownMenu.Item
+										class="gap-2 text-red-500"
+										on:click={() => (deleteConfirmDrawerOpen = true)}
+									>
+										<DeleteIcon /> Delete
+									</DropdownMenu.Item>
+								</DropdownMenu.Group>
+							</DropdownMenu.Content>
+						</DropdownMenu.Root>
+					</Card.Title>
 					<Card.Description>
 						<div class="mt-1 flex flex-wrap gap-1">
 							{#each exerciseSplit.splitDays as splitDay}
@@ -95,13 +121,6 @@
 					<PerDayChartComponent splitDays={exerciseSplit.splitDays} />
 				</Card.Content>
 				<Card.Footer>
-					<Button
-						variant="destructive"
-						class="gap-2"
-						on:click={() => (deleteConfirmDrawerOpen = true)}
-					>
-						<DeleteIcon /> Delete
-					</Button>
 					<Button class="ml-auto gap-2" on:click={editExerciseSplit}><EditIcon /> Edit</Button>
 				</Card.Footer>
 			</Card.Root>
@@ -174,7 +193,6 @@
 					<Skeleton class="h-40 w-full" />
 				</Card.Content>
 				<Card.Footer>
-					<Skeleton class="h-10 w-20" />
 					<Skeleton class="ml-auto h-10 w-20" />
 				</Card.Footer>
 			</Card.Root>
