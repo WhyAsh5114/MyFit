@@ -49,13 +49,15 @@
 
 	function checkAndWarnMissing() {
 		const oldSplitDays = structuredClone($exerciseSplitStore.splitDays);
-		const oldSplitDayNames = oldSplitDays
-			.filter((splitDay) => splitDay !== null && splitDay.exerciseTemplates.length > 0)
-			.map((splitDay) => splitDay?.name ?? null);
-
-		missingDays = oldSplitDayNames.filter(
-			(item) => !splitDayNames.includes(item) && item !== null
-		) as string[];
+		missingDays = oldSplitDays
+			.map((splitDay, idx) => {
+				if (!splitDayNames[idx] && splitDay !== null && splitDay.exerciseTemplates.length > 0) {
+					return `Day ${idx + 1}`;
+				} else {
+					return null;
+				}
+			})
+			.filter((splitDayName) => splitDayName !== null) as string[];
 		if (missingDays.length > 0) {
 			warningDrawerOpen = true;
 			return true;
@@ -69,14 +71,13 @@
 			return;
 		}
 
-		const oldSplitDays = structuredClone($exerciseSplitStore.splitDays);
 		$exerciseSplitStore.name = splitName;
-		$exerciseSplitStore.splitDays = splitDayNames.map((splitDay) => {
+		$exerciseSplitStore.splitDays = splitDayNames.map((splitDay, idx) => {
 			if (splitDay === null) return splitDay;
-			const matchedSplitDay = oldSplitDays.find((oldSplitDay) => {
-				return oldSplitDay?.name === splitDay;
-			});
-			return { name: splitDay, exerciseTemplates: matchedSplitDay?.exerciseTemplates ?? [] };
+			return {
+				name: splitDay,
+				exerciseTemplates: $exerciseSplitStore.splitDays[idx]?.exerciseTemplates ?? []
+			};
 		});
 		goto(`./exercises`);
 	}
@@ -138,11 +139,7 @@
 	</div>
 </form>
 
-<ResponsiveDialog
-	title="Warning"
-	needTrigger={false}
-	bind:open={warningDrawerOpen}
->
+<ResponsiveDialog title="Warning" needTrigger={false} bind:open={warningDrawerOpen}>
 	<p>
 		You will lose exercise data for the following workout days:
 		<span class="font-semibold text-red-500">{missingDays.join(', ')}</span>
