@@ -1,21 +1,23 @@
 <script lang="ts">
-	import H2 from '$lib/components/ui/typography/H2.svelte';
-	import { Input } from '$lib/components/ui/input';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Pagination from '$lib/components/ui/pagination';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Badge } from '$lib/components/ui/badge';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { Input } from '$lib/components/ui/input';
+	import * as Pagination from '$lib/components/ui/pagination';
 	import { Skeleton } from '$lib/components/ui/skeleton';
+	import H2 from '$lib/components/ui/typography/H2.svelte';
 
-	import AddIcon from 'virtual:icons/material-symbols/add';
-	import SearchIcon from 'virtual:icons/material-symbols/search';
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
+	import AddIcon from 'virtual:icons/material-symbols/add';
+	import SearchIcon from 'virtual:icons/material-symbols/search';
 
+	import { goto } from '$app/navigation';
+	import { EXERCISE_SPLITS_PER_PAGE } from '$lib/constants';
+	import { getTotalSetsOfSplit } from '$lib/utils/exerciseSplits';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { getTotalSetsOfSplit } from '$lib/utils/exerciseSplits';
-	import { EXERCISE_SPLITS_PER_PAGE } from '$lib/constants';
+	import { exerciseSplitStore } from './[mode]/exerciseSplitStore';
 
 	let searchString = '';
 	let exerciseSplitsCount: number;
@@ -38,6 +40,16 @@
 			exerciseSplits = null;
 		}
 	}
+
+	function createSplitFromScratch() {
+		$exerciseSplitStore = {
+			name: '',
+			splitDays: Array.from({ length: 7 }).map(() => {
+				return { name: '', exerciseTemplates: [] };
+			})
+		};
+		goto('/exercise-splits/new');
+	}
 </script>
 
 <H2>Exercise splits</H2>
@@ -52,8 +64,8 @@
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content align="end">
 				<DropdownMenu.Group>
-					<DropdownMenu.Item>
-						<a href="/exercise-splits/new">Start from scratch</a>
+					<DropdownMenu.Item on:click={createSplitFromScratch}>
+						Start from scratch
 					</DropdownMenu.Item>
 					<DropdownMenu.Item>Use template</DropdownMenu.Item>
 					<DropdownMenu.Item>Clone older split</DropdownMenu.Item>

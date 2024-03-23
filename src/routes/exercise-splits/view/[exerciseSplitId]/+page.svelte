@@ -1,19 +1,19 @@
 <script lang="ts">
-	import H2 from '$lib/components/ui/typography/H2.svelte';
-	import * as Tabs from '$lib/components/ui/tabs';
-	import * as Card from '$lib/components/ui/card';
-	import { Button } from '$lib/components/ui/button';
-	import { Skeleton } from '$lib/components/ui/skeleton';
-	import { Badge } from '$lib/components/ui/badge';
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
+	import { Badge } from '$lib/components/ui/badge';
+	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$lib/components/ui/card';
+	import { Skeleton } from '$lib/components/ui/skeleton';
+	import * as Tabs from '$lib/components/ui/tabs';
+	import H2 from '$lib/components/ui/typography/H2.svelte';
 
-	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
-	import EditIcon from 'virtual:icons/material-symbols/edit';
 	import DeleteIcon from 'virtual:icons/material-symbols/delete';
+	import EditIcon from 'virtual:icons/material-symbols/edit';
 	import ExerciseTemplateCard from '../../(components)/ExerciseTemplateCard.svelte';
 	import PerDayChartComponent from '../../(components)/PerDayChartComponent.svelte';
 	import PerMuscleGroupComponent from '../../(components)/PerMuscleGroupComponent.svelte';
@@ -182,11 +182,7 @@
 	</Tabs.Root>
 {/if}
 
-<ResponsiveDialog
-	title="Are you sure?"
-	needTrigger={false}
-	bind:open={deleteConfirmDrawerOpen}
->
+<ResponsiveDialog title="Are you sure?" needTrigger={false} bind:open={deleteConfirmDrawerOpen}>
 	<p>
 		Delete split <span class="font-semibold">{exerciseSplit.name}</span>? This action cannot be
 		undone.
