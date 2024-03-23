@@ -76,7 +76,7 @@
 	<div class="flex h-px grow flex-col gap-1 overflow-y-auto">
 		{#if exerciseSplits}
 			{#each exerciseSplits as exerciseSplit}
-				<Button variant="outline" class="h-fit p-2">
+				<Button variant="outline" class="h-fit p-2 hover:border-foreground hover:bg-background">
 					<a class="flex w-full flex-col gap-2" href="/exercise-splits/view/{exerciseSplit._id}">
 						<div class="flex items-center justify-between">
 							<span class="text-lg font-semibold">{exerciseSplit.name}</span>
