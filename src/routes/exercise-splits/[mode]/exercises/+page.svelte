@@ -3,24 +3,27 @@
 	import * as Tabs from '$lib/components/ui/tabs';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
-	import { exerciseSplitStore } from '../exerciseSplitStore';
-	import { toast } from 'svelte-sonner';
+	import * as Select from '$lib/components/ui/select';
+	import { Card } from '$lib/components/ui/card';
+	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
+	import DndComponent from './(components)/DndComponent.svelte';
+	import ExerciseDrawer from './(components)/ExerciseDrawer.svelte';
 
 	import CopyIcon from 'virtual:icons/carbon/copy';
 	import PasteIcon from 'virtual:icons/carbon/paste';
 	import CutIcon from 'virtual:icons/material-symbols/cut';
 	import MenuIcon from 'virtual:icons/material-symbols/menu';
-	import DndComponent from './(components)/DndComponent.svelte';
-	import ExerciseDrawer from './(components)/ExerciseDrawer.svelte';
+	import SwapIcon from 'virtual:icons/ph/swap';
+
+	import { toast } from 'svelte-sonner';
+	import { exerciseSplitStore } from '../exerciseSplitStore';
 	import { goto } from '$app/navigation';
-	import { Card } from '$lib/components/ui/card';
 
 	type CustomExerciseSplitDay = {
 		name: string;
 		exerciseTemplates: (ExerciseTemplate & { isDndShadowItem?: boolean })[];
 	};
 
-	let exerciseDrawerOpen = false;
 	let splitDays = $exerciseSplitStore.splitDays;
 	let selectedDayIndex = splitDays.findIndex((splitDay) => splitDay !== null).toString();
 	let selectedSplitDay: CustomExerciseSplitDay | null;
@@ -28,6 +31,9 @@
 
 	let editingExercise: (ExerciseTemplate & { idx: number }) | null = null;
 	let copiedExercises: ExerciseTemplate[] = [];
+	let exerciseDrawerOpen = false;
+	let swapDialogOpen = false;
+	let swapExercisesTo: undefined | { value: number; label: string };
 
 	$: syncWithStore(selectedSplitDay);
 	function syncWithStore(splitDay: ExerciseSplitDay | null) {
@@ -89,6 +95,17 @@
 		if (!selectedSplitDay) return;
 		copyExercises();
 		selectedSplitDay.exerciseTemplates = [];
+	}
+
+	function swapExercises() {
+		if (!swapExercisesTo || !selectedSplitDay) return;
+		const swappingToSplitDay = splitDays[swapExercisesTo.value] as ExerciseSplitDay;
+		[selectedSplitDay.exerciseTemplates, swappingToSplitDay.exerciseTemplates] = [
+			swappingToSplitDay.exerciseTemplates,
+			selectedSplitDay.exerciseTemplates
+		];
+		swapDialogOpen = false;
+		swapExercisesTo = undefined;
 	}
 
 	function submitExercises() {
@@ -156,7 +173,8 @@
 						</DropdownMenu.Item>
 						<DropdownMenu.Item
 							class="gap-2"
-							disabled={copiedExercises.length === 0}
+							disabled={copiedExercises.length === 0 ||
+								selectedSplitDay.exerciseTemplates.length > 0}
 							on:click={pasteExercises}
 						>
 							<PasteIcon /> Paste
@@ -167,6 +185,13 @@
 							on:click={cutExercises}
 						>
 							<CutIcon /> Cut
+						</DropdownMenu.Item>
+						<DropdownMenu.Item
+							class="gap-2"
+							disabled={selectedSplitDay.exerciseTemplates.length === 0}
+							on:click={() => (swapDialogOpen = true)}
+						>
+							<SwapIcon /> Swap
 						</DropdownMenu.Item>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
@@ -186,3 +211,31 @@
 	</Button>
 	<Button on:click={submitExercises}>Next</Button>
 </div>
+
+<ResponsiveDialog title="Swap exercises" needTrigger={false} bind:open={swapDialogOpen}>
+	<p>
+		Swap <span class="font-semibold">
+			{selectedSplitDay?.name}
+			<span class="text-muted-foreground">(Day {parseInt(selectedDayIndex) + 1})</span>
+		</span> exercises with:
+	</p>
+	<form on:submit|preventDefault={swapExercises} class="flex w-full gap-2">
+		<Select.Root bind:selected={swapExercisesTo} required>
+			<Select.Trigger class="grow">
+				<Select.Value placeholder="Select one" />
+			</Select.Trigger>
+			<Select.Content>
+				{#each splitDays as splitDay, idx}
+					{#if splitDay}
+						<Select.Item value={idx} disabled={idx === parseInt(selectedDayIndex)}>
+							{splitDay.name} (Day {idx + 1})
+						</Select.Item>
+					{:else if splitDay === null}
+						<Select.Item value={idx} disabled>Rest (Day {idx + 1})</Select.Item>
+					{/if}
+				{/each}
+			</Select.Content>
+		</Select.Root>
+		<Button type="submit" class="shrink-0">Swap exercises</Button>
+	</form>
+</ResponsiveDialog>
