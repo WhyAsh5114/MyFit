@@ -18,4 +18,9 @@
 			<a href="/exercise-splits">Exercise splits</a>
 		</Button>
 	</li>
+	<li>
+		<Button variant="link" class="text-foreground lg:text-base">
+			<a href="/privacy-policy">Privacy policy</a>
+		</Button>
+	</li>
 </ul>
