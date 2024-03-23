@@ -64,24 +64,25 @@
 	<div class="flex h-px grow flex-col gap-1 overflow-y-auto">
 		{#if exerciseSplits}
 			{#each exerciseSplits as exerciseSplit}
-				<a
-					class="flex flex-col gap-2 rounded-md border p-2"
-					href="/exercise-splits/view/{exerciseSplit._id}"
-				>
-					<div class="flex items-center justify-between">
-						<span class="text-lg font-semibold">{exerciseSplit.name}</span>
-						<span class="text-sm text-muted-foreground">
-							{getTotalSetsOfSplit(exerciseSplit.splitDays)} sets
-						</span>
-					</div>
-					<div class="flex w-full flex-wrap gap-1">
-						{#each exerciseSplit.splitDays as splitDay}
-							<Badge variant={splitDay ? 'secondary' : 'outline'}>
-								{splitDay?.name ?? 'Rest'}
-							</Badge>
-						{/each}
-					</div>
-				</a>
+				<Button variant="outline" class="h-fit p-2">
+					<a class="flex w-full flex-col gap-2" href="/exercise-splits/view/{exerciseSplit._id}">
+						<div class="flex items-center justify-between">
+							<span class="text-lg font-semibold">{exerciseSplit.name}</span>
+							<span class="text-sm text-muted-foreground">
+								{getTotalSetsOfSplit(exerciseSplit.splitDays)} sets
+							</span>
+						</div>
+						<div class="flex w-full flex-wrap gap-1">
+							{#each exerciseSplit.splitDays as splitDay}
+								<Badge variant={splitDay ? 'secondary' : 'outline'}>
+									{splitDay?.name ?? 'Rest'}
+								</Badge>
+							{/each}
+						</div>
+					</a>
+				</Button>
+			{:else}
+				<div class="border p-2 text-muted-foreground rounded-md">No exercise splits created</div>
 			{/each}
 		{:else if exerciseSplits === undefined}
 			{#each Array(EXERCISE_SPLITS_PER_PAGE) as _}
@@ -97,6 +98,8 @@
 					</div>
 				</div>
 			{/each}
+		{:else}
+			<div class="rounded-md border p-2 text-muted-foreground">An error occurred</div>
 		{/if}
 	</div>
 
@@ -139,5 +142,7 @@
 				</Pagination.Item>
 			</Pagination.Content>
 		</Pagination.Root>
+	{:else if exerciseSplits !== null}
+		<Skeleton class="h-10 w-full" />
 	{/if}
 </div>
