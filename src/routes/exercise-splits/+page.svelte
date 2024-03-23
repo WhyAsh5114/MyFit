@@ -67,8 +67,9 @@
 					<DropdownMenu.Item on:click={createSplitFromScratch}>
 						Start from scratch
 					</DropdownMenu.Item>
-					<DropdownMenu.Item>Use template</DropdownMenu.Item>
-					<DropdownMenu.Item>Clone older split</DropdownMenu.Item>
+					<DropdownMenu.Item on:click={() => goto('/exercise-splits/templates')}>
+						Use template
+					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
