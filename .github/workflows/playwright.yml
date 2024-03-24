@@ -1,4 +1,6 @@
 name: Playwright Tests
+env:
+  MONGODB_URI: '${{ secrets.MONGODB_URI }}'
 on:
   push:
     branches: [main, master, v3-shadcn]
