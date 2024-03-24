@@ -94,6 +94,9 @@
 							<DropdownMenu.Trigger><MenuIcon /></DropdownMenu.Trigger>
 							<DropdownMenu.Content align="end">
 								<DropdownMenu.Group>
+									<DropdownMenu.Item class="gap-2" on:click={editExerciseSplit}>
+										<EditIcon /> Edit
+									</DropdownMenu.Item>
 									<DropdownMenu.Item class="gap-2" on:click={cloneSplit}>
 										<CloneIcon /> Clone
 									</DropdownMenu.Item>
@@ -120,9 +123,6 @@
 				<Card.Content class="space-y-2">
 					<PerDayChartComponent splitDays={exerciseSplit.splitDays} />
 				</Card.Content>
-				<Card.Footer>
-					<Button class="ml-auto gap-2" on:click={editExerciseSplit}><EditIcon /> Edit</Button>
-				</Card.Footer>
 			</Card.Root>
 		</Tabs.Content>
 		<Tabs.Content value="exercises" class="grow">
@@ -192,9 +192,6 @@
 				<Card.Content class="space-y-2">
 					<Skeleton class="h-40 w-full" />
 				</Card.Content>
-				<Card.Footer>
-					<Skeleton class="ml-auto h-10 w-20" />
-				</Card.Footer>
 			</Card.Root>
 		</Tabs.Content>
 	</Tabs.Root>
