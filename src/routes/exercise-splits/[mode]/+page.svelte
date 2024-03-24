@@ -5,11 +5,19 @@
 	import { exerciseSplitStore } from './exerciseSplitStore';
 
 	const mode = $page.params.mode;
+	const cloning = $page.url.searchParams.has('clone');
+	const usingTemplate = $page.url.searchParams.has('template');
 </script>
 
 <H3>
 	{#if mode === 'new'}
-		Starting from scratch
+		{#if cloning}
+			Cloning <span class="font-bold">{$exerciseSplitStore.name}</span>
+		{:else if usingTemplate}
+			Templating <span class="font-bold">{$exerciseSplitStore.name}</span>
+		{:else}
+			Starting from scratch
+		{/if}
 	{:else}
 		Editing <span class="font-bold">{$exerciseSplitStore.name}</span>
 	{/if}

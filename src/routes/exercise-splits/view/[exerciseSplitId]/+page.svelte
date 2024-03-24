@@ -63,16 +63,21 @@
 		} else toast.error(`Error ${response.status}`, { description: await response.text() });
 	}
 
+	function getSplitWithoutId() {
+		const exerciseSplitWithoutId: ExerciseSplit & { _id?: string } = structuredClone(exerciseSplit);
+		delete exerciseSplitWithoutId._id;
+		return exerciseSplitWithoutId as ExerciseSplit;
+	}
+
 	function editExerciseSplit() {
 		$editingExerciseSplitIdStore = exerciseSplit._id;
-		const exerciseSplitWithoutId: ExerciseSplit & { _id?: string } = exerciseSplit;
-		delete exerciseSplitWithoutId._id;
-		$exerciseSplitStore = exerciseSplitWithoutId;
+		$exerciseSplitStore = getSplitWithoutId();
 		goto('/exercise-splits/edit');
 	}
 
 	function cloneSplit() {
-		// TODO
+		$exerciseSplitStore = getSplitWithoutId();
+		goto('/exercise-splits/new?clone');
 	}
 </script>
 
