@@ -1,10 +1,9 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { Button } from '$lib/components/ui/button';
-	import { page } from '$app/stores';
-	import { signIn } from '@auth/sveltekit/client';
 	import GoogleIcon from 'virtual:icons/mdi/google';
 	import GitHubIcon from 'virtual:icons/mdi/github';
+	import { page } from '$app/stores';
+	import { signIn } from '@auth/sveltekit/client';
 
 	const providerList = [
 		{ name: 'google', logo: GoogleIcon },
