@@ -67,7 +67,7 @@ export const exerciseListByMuscleGroup: {
 				involvesBodyweight: false
 			},
 			{
-				name: 'Front raise',
+				name: 'Front raises',
 				repRangeStart: 10,
 				repRangeEnd: 20,
 				setType: 'straight',
@@ -298,5 +298,263 @@ export const exerciseListByMuscleGroup: {
 				involvesBodyweight: true
 			}
 		]
+	}
+];
+
+export const templateExerciseSplits: { description: string; exerciseSplit: ExerciseSplit }[] = [
+	{
+		description: 'Standard 7-day split with 2x frequency for most major muscle groups',
+		exerciseSplit: {
+			name: 'Push Pull Legs',
+			splitDays: [
+				{
+					name: 'Push A',
+					exerciseTemplates: [
+						{
+							name: 'Bench press',
+							sets: 3,
+							targetMuscleGroup: 'Chest',
+							setType: 'straight',
+							repRangeStart: 5,
+							repRangeEnd: 10,
+							involvesBodyweight: false
+						},
+						{
+							name: 'Push ups',
+							sets: 3,
+							targetMuscleGroup: 'Chest',
+							setType: 'straight',
+							repRangeStart: 10,
+							repRangeEnd: 20,
+							involvesBodyweight: true
+						},
+						{
+							name: 'Overhead triceps extensions',
+							sets: 3,
+							targetMuscleGroup: 'Triceps',
+							setType: 'straight',
+							repRangeStart: 10,
+							repRangeEnd: 20,
+							involvesBodyweight: false
+						},
+						{
+							name: 'Dumbbell lateral raises',
+							sets: 3,
+							targetMuscleGroup: 'Side delts',
+							setType: 'straight',
+							repRangeStart: 20,
+							repRangeEnd: 30,
+							involvesBodyweight: false
+						}
+					]
+				},
+				{
+					name: 'Pull A',
+					exerciseTemplates: [
+						{
+							name: 'Pull up',
+							sets: 3,
+							targetMuscleGroup: 'Lats',
+							setType: 'straight',
+							repRangeStart: 5,
+							repRangeEnd: 15,
+							involvesBodyweight: true
+						},
+						{
+							name: 'Barbell rows',
+							sets: 3,
+							targetMuscleGroup: 'Traps',
+							setType: 'straight',
+							repRangeStart: 10,
+							repRangeEnd: 15,
+							involvesBodyweight: false
+						},
+						{
+							name: 'Dumbbell curls',
+							sets: 3,
+							targetMuscleGroup: 'Biceps',
+							setType: 'straight',
+							repRangeStart: 15,
+							repRangeEnd: 20,
+							involvesBodyweight: false
+						},
+						{
+							name: 'Upright rows',
+							sets: 3,
+							targetMuscleGroup: 'Side delts',
+							setType: 'straight',
+							repRangeStart: 10,
+							repRangeEnd: 20,
+							involvesBodyweight: false
+						}
+					]
+				},
+				{
+					name: 'Legs A',
+					exerciseTemplates: [
+						{
+							name: 'Barbell squats',
+							sets: 3,
+							targetMuscleGroup: 'Quads',
+							setType: 'down',
+							repRangeStart: 5,
+							repRangeEnd: 10,
+							involvesBodyweight: true
+						},
+						{
+							name: 'Leg extensions',
+							sets: 2,
+							targetMuscleGroup: 'Quads',
+							setType: 'straight',
+							repRangeStart: 15,
+							repRangeEnd: 20,
+							involvesBodyweight: false
+						},
+						{
+							name: 'Leg curls',
+							sets: 2,
+							targetMuscleGroup: 'Hamstrings',
+							setType: 'straight',
+							repRangeStart: 10,
+							repRangeEnd: 20,
+							involvesBodyweight: false
+						},
+						{
+							name: 'Calf raises',
+							sets: 3,
+							targetMuscleGroup: 'Calves',
+							setType: 'straight',
+							repRangeStart: 10,
+							repRangeEnd: 15,
+							involvesBodyweight: true
+						}
+					]
+				},
+				{
+					name: 'Push B',
+					exerciseTemplates: [
+						{
+							name: 'Incline dumbbell press',
+							sets: 3,
+							targetMuscleGroup: 'Chest',
+							setType: 'straight',
+							repRangeStart: 10,
+							repRangeEnd: 20,
+							involvesBodyweight: false
+						},
+						{
+							name: 'Pec flyes',
+							sets: 3,
+							targetMuscleGroup: 'Chest',
+							setType: 'straight',
+							repRangeStart: 10,
+							repRangeEnd: 20,
+							involvesBodyweight: true
+						},
+						{
+							name: 'Overhead triceps extensions',
+							sets: 3,
+							targetMuscleGroup: 'Triceps',
+							setType: 'straight',
+							repRangeStart: 10,
+							repRangeEnd: 20,
+							involvesBodyweight: false
+						},
+						{
+							name: 'Dumbbell lateral raises',
+							sets: 3,
+							targetMuscleGroup: 'Side delts',
+							setType: 'straight',
+							repRangeStart: 20,
+							repRangeEnd: 30,
+							involvesBodyweight: false
+						}
+					]
+				},
+				{
+					name: 'Pull B',
+					exerciseTemplates: [
+						{
+							name: 'Wide grip pull ups',
+							sets: 3,
+							targetMuscleGroup: 'Lats',
+							setType: 'straight',
+							repRangeStart: 5,
+							repRangeEnd: 15,
+							involvesBodyweight: true
+						},
+						{
+							name: 'Dumbbell rows',
+							sets: 3,
+							targetMuscleGroup: 'Traps',
+							setType: 'straight',
+							repRangeStart: 10,
+							repRangeEnd: 15,
+							involvesBodyweight: false
+						},
+						{
+							name: 'Preacher curls',
+							sets: 3,
+							targetMuscleGroup: 'Biceps',
+							setType: 'straight',
+							repRangeStart: 15,
+							repRangeEnd: 20,
+							involvesBodyweight: false
+						},
+						{
+							name: 'Cable upright rows',
+							sets: 3,
+							targetMuscleGroup: 'Side delts',
+							setType: 'straight',
+							repRangeStart: 10,
+							repRangeEnd: 20,
+							involvesBodyweight: false
+						}
+					]
+				},
+				{
+					name: 'Legs B',
+					exerciseTemplates: [
+						{
+							name: 'Leg press',
+							sets: 3,
+							targetMuscleGroup: 'Quads',
+							setType: 'down',
+							repRangeStart: 5,
+							repRangeEnd: 10,
+							involvesBodyweight: false
+						},
+						{
+							name: 'Lunges',
+							sets: 2,
+							targetMuscleGroup: 'Quads',
+							setType: 'straight',
+							repRangeStart: 15,
+							repRangeEnd: 20,
+							involvesBodyweight: false
+						},
+						{
+							name: 'Good mornings',
+							sets: 2,
+							targetMuscleGroup: 'Hamstrings',
+							setType: 'straight',
+							repRangeStart: 10,
+							repRangeEnd: 20,
+							involvesBodyweight: false
+						},
+						{
+							name: 'Single legged calf raises',
+							sets: 3,
+							targetMuscleGroup: 'Calves',
+							setType: 'straight',
+							repRangeStart: 10,
+							repRangeEnd: 15,
+							involvesBodyweight: true
+						}
+					]
+				},
+				null
+			]
+		}
 	}
 ];

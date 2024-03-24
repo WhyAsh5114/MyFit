@@ -1,4 +1,4 @@
-<div class="prose lg:prose-xl prose-neutral dark:prose-invert max-w-none">
+<div class="prose prose-neutral max-w-none dark:prose-invert lg:prose-xl">
 	<h1>Privacy Policy</h1>
 	<p>Last updated: January 04, 2024</p>
 	<p>
