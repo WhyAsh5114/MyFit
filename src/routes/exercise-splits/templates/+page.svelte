@@ -30,7 +30,7 @@
 				{getTotalSetsOfSplit(exerciseSplit.splitDays)} sets
 			</span>
 		</div>
-		<p class="-mt-1.5 whitespace-pre-wrap text-justify w-full font-normal text-muted-foreground">
+		<p class="-mt-1.5 w-full whitespace-pre-wrap text-justify font-normal text-muted-foreground">
 			{description}
 		</p>
 		<div class="flex w-full flex-wrap gap-1">

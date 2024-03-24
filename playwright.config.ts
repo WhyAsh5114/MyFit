@@ -26,7 +26,7 @@ const config: PlaywrightTestConfig = {
 		{
 			name: 'firefox',
 			use: { ...devices['Desktop Firefox'] }
-		},
+		}
 
 		// TODO: add back when https://github.com/microsoft/playwright/issues/30083 fixed: {
 		// 	name: 'webkit',

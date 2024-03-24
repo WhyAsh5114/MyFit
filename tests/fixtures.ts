@@ -44,10 +44,7 @@ export async function deleteUserData(userId: string) {
 	// 	.deleteMany({ userId });
 
 	// TODO: change type to Workout
-	await client
-		.db()
-		.collection<WithUID<ExerciseSplit>>('workouts')
-		.deleteMany({ userId });
+	await client.db().collection<WithUID<ExerciseSplit>>('workouts').deleteMany({ userId });
 }
 
 export * from '@playwright/test';
