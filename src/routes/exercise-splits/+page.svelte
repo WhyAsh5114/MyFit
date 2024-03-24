@@ -116,7 +116,7 @@
 		{/if}
 	</div>
 
-	{#if exerciseSplitsCount !== undefined}
+	{#if exerciseSplitsCount > 0}
 		<Pagination.Root
 			count={exerciseSplitsCount}
 			perPage={EXERCISE_SPLITS_PER_PAGE}
@@ -155,7 +155,7 @@
 				</Pagination.Item>
 			</Pagination.Content>
 		</Pagination.Root>
-	{:else if exerciseSplits !== null}
+	{:else if exerciseSplits !== null && exerciseSplitsCount !== 0}
 		<Skeleton class="h-10 w-full" />
 	{/if}
 </div>
