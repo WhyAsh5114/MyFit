@@ -1,6 +1,8 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { signOut } from '@auth/sveltekit/client';
+
+	// TODO: profile and settings page, then links here
 </script>
 
 <DropdownMenu.Content align="start">
