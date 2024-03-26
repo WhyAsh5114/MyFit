@@ -20,9 +20,23 @@ const MuscleGroups = [
 ] as const;
 type MuscleGroup = (typeof MuscleGroups)[number];
 
-const SetTypes = ['straight', 'drop', 'down', 'top', 'myorep', 'myorep match', 'giant'] as const;
+const SetTypes = ['Straight', 'Drop', 'Down', 'Top', 'Myorep', 'Myorep match', 'Giant'] as const;
+type SetType = (typeof SetTypes)[number];
 
-type ExerciseSetType = (typeof SetTypes)[number];
+type ExerciseSetType =
+	| StraightSet
+	| DownSet
+	| DropSet
+	| MyorepMatchSet
+	| MyorepSet
+	| GiantSet
+	| TopSet;
+
+type GenericExerciseSetType<Type extends string> = {
+	type: Type;
+	repRangeStart: number;
+	repRangeEnd: number;
+};
 
 type ExerciseSplit = {
 	name: string;
@@ -39,8 +53,27 @@ type ExerciseTemplate = {
 	sets: number;
 	targetMuscleGroup: MuscleGroup;
 	setType: ExerciseSetType;
-	repRangeStart: number;
-	repRangeEnd: number;
 	involvesBodyweight: boolean;
 	note?: string;
 };
+
+type StraightSet = GenericExerciseSetType<'Straight'>;
+type MyorepMatchSet = GenericExerciseSetType<'Myorep match'>;
+type MyorepSet = GenericExerciseSetType<'Myorep'>;
+type GiantSet = GenericExerciseSetType<'Giant'>;
+
+type DownSet = GenericExerciseSetType<'Down'> & {
+	decrementType: 'Percentage' | 'Absolute load';
+	decrement: number;
+};
+
+type DropSet = GenericExerciseSetType<'Drop'> & {
+	decrementType: 'Percentage' | 'Absolute load';
+	decrement: number;
+};
+
+type TopSet = GenericExerciseSetType<'Top'> & {
+	incrementType: 'Percentage' | 'Absolute load';
+	increment: number;
+};
+
