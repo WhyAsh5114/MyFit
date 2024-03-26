@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
 	import { Switch } from '$lib/components/ui/switch';
@@ -21,9 +20,11 @@
 
 	$: mode = editingExercise ? 'Edit' : 'Add';
 	let searching = false;
-	let currentExercise: Partial<ExerciseTemplate> = {
+	let currentExercise: Partial<Omit<ExerciseTemplate, 'setType'>> & {
+		setType: Partial<ExerciseSetType>;
+	} = {
 		name: '',
-		setType: 'straight'
+		setType: { type: 'Straight' }
 	};
 	$: if (editingExercise) currentExercise = editingExercise;
 
@@ -49,7 +50,7 @@
 			(editingExercise && editExercise({ ...exerciseTemplate, idx: editingExercise.idx }))
 		) {
 			open = false;
-			currentExercise = { name: '', setType: 'straight' };
+			currentExercise = { name: '', setType: { type: 'Straight' } };
 		} else {
 			toast.error('Error', {
 				description: 'Exercise names should be unique'
@@ -67,7 +68,7 @@
 			size="icon"
 			on:click={() => {
 				editingExercise = null;
-				currentExercise = { name: '', setType: 'straight' };
+				currentExercise = { name: '', setType: { type: 'Straight' } };
 			}}
 		>
 			<AddIcon />
@@ -153,17 +154,17 @@
 			<div class="flex w-full flex-col gap-1.5">
 				<Select.Root
 					name="exercise-set-type"
-					selected={{ value: currentExercise.setType, label: currentExercise.setType }}
-					onSelectedChange={(v) => (currentExercise.setType = v?.value)}
+					selected={{ value: currentExercise.setType.type, label: currentExercise.setType.type }}
+					onSelectedChange={(v) => (currentExercise.setType.type = v?.value ?? 'Straight')}
 					required
 				>
 					<Select.Label class="p-0 text-sm font-medium leading-none">Set type</Select.Label>
 					<Select.Trigger>
-						<Select.Value class="capitalize" placeholder="Pick one" />
+						<Select.Value placeholder="Pick one" />
 					</Select.Trigger>
 					<Select.Content>
 						{#each setTypes as setType}
-							<Select.Item class="capitalize" value={setType} label={setType} />
+							<Select.Item value={setType} label={setType} />
 						{/each}
 					</Select.Content>
 				</Select.Root>
@@ -174,7 +175,7 @@
 					id="exercise-rep-range-start"
 					min={1}
 					placeholder="Type here"
-					bind:value={currentExercise.repRangeStart}
+					bind:value={currentExercise.setType.repRangeStart}
 					required
 				/>
 			</div>
@@ -182,12 +183,54 @@
 				<Label for="exercise-rep-range-end">Rep range end</Label>
 				<NumberInput
 					id="exercise-rep-range-end"
-					min={(currentExercise.repRangeStart ?? 0) + 1}
+					min={(currentExercise.setType.repRangeStart ?? 0) + 1}
 					placeholder="Type here"
-					bind:value={currentExercise.repRangeEnd}
+					bind:value={currentExercise.setType.repRangeEnd}
 					required
 				/>
 			</div>
+			{#if currentExercise.setType.type === 'Drop' || currentExercise.setType.type === 'Down' || currentExercise.setType.type === 'Top'}
+				<div class="flex w-full flex-col gap-1.5">
+					<Select.Root
+						name="exercise-set-change-type"
+						selected={{
+							value: currentExercise.setType.changeType ?? 'Percentage',
+							label: currentExercise.setType.changeType ?? 'Percentage'
+						}}
+						onSelectedChange={(v) => {
+							if (
+								currentExercise.setType.type === 'Drop' ||
+								currentExercise.setType.type === 'Down' ||
+								currentExercise.setType.type === 'Top'
+							)
+								currentExercise.setType.changeType = v?.value ?? 'Percentage';
+						}}
+						required
+					>
+						<Select.Label class="p-0 text-sm font-medium leading-none">
+							Load change type
+						</Select.Label>
+						<Select.Trigger>
+							<Select.Value placeholder="Pick one" />
+						</Select.Trigger>
+						<Select.Content>
+							{#each ['Percentage', 'Absolute load'] as changeType}
+								<Select.Item value={changeType} label={changeType} />
+							{/each}
+						</Select.Content>
+					</Select.Root>
+				</div>
+				<div class="flex w-full flex-col gap-1.5">
+					<Label for="exercise-rep-range-end">Load change</Label>
+					<NumberInput
+						id="exercise-set-decrement"
+						min={(currentExercise.setType.repRangeStart ?? 0) + 1}
+						placeholder="Type here"
+						bind:value={currentExercise.setType.changeAmount}
+						required
+					/>
+				</div>
+			{/if}
 			<div class="col-span-2 flex w-full flex-col gap-1.5">
 				<Label for="exercise-note">Note</Label>
 				<Textarea

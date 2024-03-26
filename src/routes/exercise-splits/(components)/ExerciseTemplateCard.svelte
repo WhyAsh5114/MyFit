@@ -54,10 +54,10 @@
 		{/if}
 	</div>
 	<div class="flex items-center gap-0.5">
-		<span class="mr-auto text-xs text-muted-foreground">
+		<span class="mr-auto text-xs lowercase text-muted-foreground">
 			{exerciseTemplate.sets}
-			{exerciseTemplate.setType} sets of {exerciseTemplate.repRangeStart} to {exerciseTemplate.repRangeEnd}
-			reps
+			{exerciseTemplate.setType.type} sets of
+			{exerciseTemplate.setType.repRangeStart} to {exerciseTemplate.setType.repRangeEnd} reps
 		</span>
 		{#if exerciseTemplate.involvesBodyweight}
 			<Badge variant="outline">BW</Badge>
