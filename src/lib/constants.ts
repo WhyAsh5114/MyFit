@@ -460,8 +460,8 @@ export const templateExerciseSplits: { description: string; exerciseSplit: Exerc
 								type: 'Down',
 								repRangeStart: 5,
 								repRangeEnd: 10,
-								decrementType: 'Absolute load',
-								decrement: 5
+								changeType: 'Absolute load',
+								changeAmount: 5
 							},
 							involvesBodyweight: true
 						},
@@ -609,8 +609,8 @@ export const templateExerciseSplits: { description: string; exerciseSplit: Exerc
 								type: 'Down',
 								repRangeStart: 5,
 								repRangeEnd: 10,
-								decrementType: 'Percentage',
-								decrement: 0.1
+								changeType: 'Percentage',
+								changeAmount: 0.1
 							},
 							involvesBodyweight: false
 						},

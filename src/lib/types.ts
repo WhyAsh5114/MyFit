@@ -32,12 +32,6 @@ type ExerciseSetType =
 	| GiantSet
 	| TopSet;
 
-type GenericExerciseSetType<Type extends string> = {
-	type: Type;
-	repRangeStart: number;
-	repRangeEnd: number;
-};
-
 type ExerciseSplit = {
 	name: string;
 	splitDays: (ExerciseSplitDay | null)[];
@@ -57,23 +51,22 @@ type ExerciseTemplate = {
 	note?: string;
 };
 
+type GenericExerciseSetType<Type extends string> = {
+	type: Type;
+	repRangeStart: number;
+	repRangeEnd: number;
+};
+
+type ChangingSetProperties = {
+	changeType: 'Percentage' | 'Absolute load';
+	changeAmount: number;
+};
+
 type StraightSet = GenericExerciseSetType<'Straight'>;
 type MyorepMatchSet = GenericExerciseSetType<'Myorep match'>;
 type MyorepSet = GenericExerciseSetType<'Myorep'>;
 type GiantSet = GenericExerciseSetType<'Giant'>;
 
-type DownSet = GenericExerciseSetType<'Down'> & {
-	decrementType: 'Percentage' | 'Absolute load';
-	decrement: number;
-};
-
-type DropSet = GenericExerciseSetType<'Drop'> & {
-	decrementType: 'Percentage' | 'Absolute load';
-	decrement: number;
-};
-
-type TopSet = GenericExerciseSetType<'Top'> & {
-	incrementType: 'Percentage' | 'Absolute load';
-	increment: number;
-};
-
+type DownSet = GenericExerciseSetType<'Down'> & ChangingSetProperties;
+type DropSet = GenericExerciseSetType<'Drop'> & ChangingSetProperties;
+type TopSet = GenericExerciseSetType<'Top'> & ChangingSetProperties;
