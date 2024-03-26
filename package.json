@@ -46,10 +46,10 @@
 	"dependencies": {
 		"@auth/mongodb-adapter": "^2.5.0",
 		"@auth/sveltekit": "^0.14.0",
-		"bits-ui": "^0.20.0",
+		"bits-ui": "^0.21.0",
 		"chart.js": "^4.4.2",
 		"clsx": "^2.1.0",
-		"cmdk-sv": "^0.0.15",
+		"cmdk-sv": "^0.0.16",
 		"dotenv": "^16.4.5",
 		"lucide-svelte": "^0.363.0",
 		"mode-watcher": "^0.3.0",

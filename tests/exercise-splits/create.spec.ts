@@ -20,7 +20,7 @@ test('successfully create a split', async ({ page }) => {
 	await page.getByLabel('Add exercise').click();
 	await page.getByRole('option', { name: 'Barbell bench press' }).click();
 	await page.getByRole('dialog').getByRole('button', { name: 'Add exercise' }).click();
-  
+
 	await page.getByLabel('Add exercise').click();
 	await page.getByPlaceholder('Type here or search...').fill('Custom exercise');
 	await page.locator('#UYgnKEimNx').click();
