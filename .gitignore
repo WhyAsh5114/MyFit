@@ -14,3 +14,4 @@ dev-dist
 test-results
 playwright-report
 authenticatedStorageStates
+auth.json
