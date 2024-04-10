@@ -77,15 +77,11 @@ export function getPlannedRIR(
   { exerciseSplit, RIRProgression }: MesocycleTemplate,
   workouts: (string | null)[]
 ) {
+  const progressionPrefixSum = RIRProgression.map(({ cycles }) => cycles).reduce(
+    (acc, val, i) => acc.concat(i > 0 ? acc[i - 1] + val : val),
+    [] as number[]
+  );
   const cycleNumber = getCycleNumber(exerciseSplit, workouts);
-  let cyclesPassed = 0;
-  let plannedRIR = -1;
-  for (const { specificRIR, cycles } of RIRProgression) {
-    cyclesPassed += cycles;
-    if (cycleNumber < cyclesPassed) {
-      plannedRIR = specificRIR;
-      break;
-    }
-  }
-  return plannedRIR;
+  const plannedRIR = progressionPrefixSum.findIndex((el) => el >= cycleNumber);
+  return RIRProgression[plannedRIR].specificRIR;
 }
