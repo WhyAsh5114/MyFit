@@ -5,6 +5,7 @@
   import { getTotalSets } from "$lib/util/MesocycleTemplate";
   import {
     allExercisesSetsCompleted,
+    exercisesPerformed,
     sorenessData,
     workloadData,
     workoutBeingPerformed
@@ -55,6 +56,7 @@
   async function closeModal() {
     redirecting = true;
     $workoutBeingPerformed = null;
+    $exercisesPerformed = null;
     $allExercisesSetsCompleted = [];
     $workloadData = {};
     $sorenessData = {};
