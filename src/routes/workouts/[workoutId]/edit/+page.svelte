@@ -65,6 +65,8 @@
 
 <WorkoutExercisesTable
   mode="editing"
+  referenceWorkout={data.referenceWorkout}
+  userBodyweight={data.userBodyweight}
   bind:exercises={data.workout.exercisesPerformed}
   bind:allExercisesSetsCompleted
   bind:muscleGroupWorkloads={data.workout.muscleGroupWorkloads}

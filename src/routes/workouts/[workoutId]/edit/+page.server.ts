@@ -1,5 +1,8 @@
 import { error } from "@sveltejs/kit";
 import { getMuscleGroups } from "$lib/util/MesocycleTemplate";
+import clientPromise from "$lib/mongo/mongodb";
+import type { UserPreferencesDocument, WorkoutDocument } from "$lib/types/documents";
+import { ObjectId } from "mongodb";
 
 export const load = async ({ locals, parent, fetch }) => {
   const session = await locals.getSession();
@@ -49,5 +52,29 @@ export const load = async ({ locals, parent, fetch }) => {
   const workoutsThatPreviouslyTargeted: APIGetWorkoutsThatPreviouslyTargetedResponse =
     await response.json();
 
-  return { workout, previousWorkoutSorenessValues, workoutsThatPreviouslyTargeted };
+  const client = await clientPromise;
+  const userPreferences = await client
+    .db()
+    .collection<Omit<UserPreferencesDocument, "userId">>("userPreferences")
+    .findOne({ userId: new ObjectId(session.user.id) }, { projection: { _id: 0, userId: 0 } });
+
+  let referenceWorkout = null;
+  if (workout.referenceWorkout) {
+    referenceWorkout = JSON.parse(
+      JSON.stringify(
+        await client
+          .db()
+          .collection<WorkoutDocument>("workouts")
+          .findOne({ _id: new ObjectId(workout.referenceWorkout) })
+      )
+    );
+  }
+
+  return {
+    workout,
+    referenceWorkout,
+    previousWorkoutSorenessValues,
+    workoutsThatPreviouslyTargeted,
+    userBodyweight: userPreferences?.bodyweight || null
+  };
 };
