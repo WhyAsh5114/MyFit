@@ -1,7 +1,8 @@
 <script lang="ts">
 	import * as Avatar from '$lib/components/ui/avatar';
 	import type { Session } from '@auth/sveltekit';
-	export let session: Session;
+
+	let { session }: { session: Session } = $props();
 
 	function getInitials(name?: string | null) {
 		if (!name) return '';
