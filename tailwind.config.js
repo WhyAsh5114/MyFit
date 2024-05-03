@@ -5,6 +5,7 @@ const config = {
 	darkMode: ['class'],
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	safelist: ['dark'],
+	plugins: [require('@tailwindcss/typography')],
 	theme: {
 		container: {
 			center: true,
