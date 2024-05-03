@@ -73,6 +73,7 @@
         <li><a href="/mesocycles">Mesocycles</a></li>
         <li><a href="/workouts">Workouts</a></li>
         <li><a href="/privacy_policy">Privacy policy</a></li>
+        <li><a href="/v3_blog">V3 blog</a></li>
       </ul>
       <div class="flex flex-col gap-2 mt-auto">
         <PwaButton />

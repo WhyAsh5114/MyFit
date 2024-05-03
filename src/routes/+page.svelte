@@ -20,7 +20,3 @@
   No active mesocycle found
   <a class="btn btn-accent mt-1" href="/mesocycles">Go to mesocycles</a>
 {/if}
-
-<a class="flex mt-auto bg-primary p-2 rounded-md" href="/v3notice">
-  <p><span class="font-semibold text-accent">Important notice!</span> Click here to read</p>
-</a>
