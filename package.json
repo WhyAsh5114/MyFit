@@ -38,6 +38,17 @@
 		"@prisma/client": "^5.13.0",
 		"clsx": "^2.1.1",
 		"tailwind-merge": "^2.3.0",
-		"tailwind-variants": "^0.2.1"
+		"tailwind-variants": "^0.2.1",
+		"@internationalized/date": "^3.5.2",
+		"bits-ui": "^0.21.4",
+		"chart.js": "^4.4.2",
+		"cmdk-sv": "^0.0.17",
+		"dotenv": "^16.4.5",
+		"mode-watcher": "^0.3.0",
+		"mongodb": "^6.4.0",
+		"paneforge": "^0.0.4",
+		"svelte-persisted-store": "^0.9.1",
+		"svelte-sonner": "^0.3.19",
+		"vaul-svelte": "^0.3.0"
 	}
 }
