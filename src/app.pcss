@@ -7,31 +7,30 @@
 		--background: 0 0% 100%;
 		--foreground: 0 0% 3.9%;
 
-		--muted: 0 0% 96.1%;
-		--muted-foreground: 0 0% 45.1%;
-
-		--popover: 0 0% 100%;
-		--popover-foreground: 0 0% 3.9%;
+		--primary: 211.56 61.6% 45.02%;
+		--primary-foreground: 0 0% 100%;
 
 		--card: 0 0% 100%;
-		--card-foreground: 0 0% 3.9%;
+		--card-foreground: 212 60% 4.9%;
 
-		--border: 0 0% 89.8%;
-		--input: 0 0% 89.8%;
+		--popover: 0 0% 100%;
+		--popover-foreground: 212 60% 4.9%;
 
-		--primary: 0 0% 9%;
-		--primary-foreground: 0 0% 98%;
+		--secondary: 211.3 58.97% 92.35%;
+		--secondary-foreground: 0 0% 0%;
 
-		--secondary: 0 0% 96.1%;
-		--secondary-foreground: 0 0% 9%;
+		--muted: 210 61.54% 94.9%;
+		--muted-foreground: 0 0% 40%;
 
-		--accent: 0 0% 96.1%;
-		--accent-foreground: 0 0% 9%;
+		--accent: 210 61.54% 94.9%;
+		--accent-foreground: 211.56 61.6% 49.02%;
 
-		--destructive: 0 72.2% 50.6%;
-		--destructive-foreground: 0 0% 98%;
+		--destructive: 0 84.2% 60.2%;
+		--destructive-foreground: 210 40% 98%;
 
-		--ring: 0 0% 3.9%;
+		--border: 0 0% 90.2%;
+		--input: 0 0% 90.2%;
+		--ring: 211.56 61.6% 49.02%;
 
 		--radius: 0.5rem;
 	}
@@ -40,39 +39,52 @@
 		--background: 0 0% 3.9%;
 		--foreground: 0 0% 98%;
 
-		--muted: 0 0% 14.9%;
-		--muted-foreground: 0 0% 63.9%;
+		--primary: 211.56 61.6% 45.02%;
+		--primary-foreground: 0 0% 100%;
 
-		--popover: 0 0% 3.9%;
-		--popover-foreground: 0 0% 98%;
+		--card: 0 0% 0%;
+		--card-foreground: 211.3 58.97% 92.35%;
 
-		--card: 0 0% 3.9%;
-		--card-foreground: 0 0% 98%;
+		--popover: 0 0% 0%;
+		--popover-foreground: 211.3 58.97% 92.35%;
+
+		--secondary: 212.22 61.36% 17.25%;
+		--secondary-foreground: 0 0% 100%;
+
+		--muted: 240 12.28% 11.18%;
+		--muted-foreground: 240 1.2% 60.78%;
+
+		--accent: 212.22 61.36% 17.25%;
+		--accent-foreground: 211.3 58.97% 92.35%;
+
+		--destructive: 0 84.2% 60.2%;
+		--destructive-foreground: 210 40% 98%;
 
 		--border: 0 0% 14.9%;
 		--input: 0 0% 14.9%;
+		--ring: 211.56 61.6% 49.02%;
 
-		--primary: 0 0% 98%;
-		--primary-foreground: 0 0% 9%;
-
-		--secondary: 0 0% 14.9%;
-		--secondary-foreground: 0 0% 98%;
-
-		--accent: 0 0% 14.9%;
-		--accent-foreground: 0 0% 98%;
-
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 0 0% 98%;
-
-		--ring: 0 0% 83.1%;
+		--radius: 0.5rem;
 	}
 }
 
 @layer base {
 	* {
 		@apply border-border;
+		font-family: 'Inter', sans-serif;
 	}
 	body {
 		@apply bg-background text-foreground;
 	}
+}
+
+@font-face {
+	font-family: 'Inter';
+	src: url('/Inter-VariableFont_slnt,wght.ttf') format('truetype');
+	font-style: normal;
+	font-display: swap;
+}
+
+body {
+	@apply flex !h-screen w-screen flex-col lg:flex-row;
 }
