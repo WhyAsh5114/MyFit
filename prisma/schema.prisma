@@ -59,6 +59,39 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
+enum MuscleGroup {
+  Chest
+  FrontDelts
+  SideDelts
+  RearDelts
+  Lats
+  Traps
+  Triceps
+  Biceps
+  Forearms
+  Quads
+  Hamstrings
+  Glutes
+  Calves
+  Abs
+}
+
+enum SetType {
+  Default
+  Straight
+  Drop
+  Down
+  Top
+  Myorep
+  MyorepMatch
+  Giant
+}
+
+enum ChangeType {
+  Percentage
+  AbsoluteLoad
+}
+
 model ExerciseSplit {
   id                Int                @id @default(autoincrement())
   name              String
@@ -68,18 +101,26 @@ model ExerciseSplit {
 }
 
 model ExerciseSplitDay {
-  id        Int     @id @default(autoincrement())
-  name      String
-  isRestDay Boolean @default(false)
-
-  exercises       Exercise[]
-  exerciseSplit   ExerciseSplit @relation(fields: [exerciseSplitId], references: [id])
+  id              Int                @id @default(autoincrement())
+  name            String
+  isRestDay       Boolean            @default(false)
+  exercises       ExerciseTemplate[]
+  exerciseSplit   ExerciseSplit      @relation(fields: [exerciseSplitId], references: [id])
   exerciseSplitId Int
 }
 
-model Exercise {
+model ExerciseTemplate {
   id                 Int              @id @default(autoincrement())
   name               String
-  exerciseSplitDayId Int
+  sets               Int
+  targetMuscleGroup  MuscleGroup
+  involvesBodyweight Boolean
+  setType            SetType
+  repRangeStart      Int
+  repRangeEnd        Int
+  changeType         ChangeType?
+  changeAmount       Int?
+  note               String?
   exerciseSplitDay   ExerciseSplitDay @relation(fields: [exerciseSplitDayId], references: [id])
+  exerciseSplitDayId Int
 }
