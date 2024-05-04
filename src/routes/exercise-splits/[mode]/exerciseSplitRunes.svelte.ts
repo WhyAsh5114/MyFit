@@ -31,6 +31,14 @@ export function createExerciseSplit() {
 		}
 	}
 
+	function validateSplitStructure() {
+		const splitDayNames = splitDays
+			.filter((splitDay) => !splitDay.isRestDay)
+			.map((splitDay) => splitDay.name);
+
+		return new Set(splitDayNames).size === splitDayNames.length;
+	}
+
 	function getDataLossDays() {
 		let dataLossDays: number[] = [];
 		for (let i = 0; i < splitExercises.length; i++) {
@@ -60,8 +68,12 @@ export function createExerciseSplit() {
 		addSplitDay,
 		removeSplitDay,
 		toggleSplitDay,
+		validateSplitStructure,
 		getDataLossDays,
-		updateSplitExercisesStructure
+		updateSplitExercisesStructure,
+		get splitExercises() {
+			return splitExercises;
+		}
 	};
 }
 

@@ -10,11 +10,19 @@
 	import RemoveIcon from 'virtual:icons/lucide/minus';
 	import { exerciseSplit } from '../exerciseSplitRunes.svelte';
 	import { goto } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
 
 	let dataLossDays: number[] = $state([]);
 	let warningDialogOpen = $state(false);
 
 	async function submitStructure(warningAcknowledged = false) {
+		if (!exerciseSplit.validateSplitStructure()) {
+			toast.error('Error', {
+				description:
+					'Workout names should be unique. For example: Push A, Push B instead of Push, Push'
+			});
+			return;
+		}
 		dataLossDays = exerciseSplit.getDataLossDays();
 		if (!warningAcknowledged && dataLossDays.length > 0) {
 			warningDialogOpen = true;
@@ -43,7 +51,6 @@
 			bind:value={exerciseSplit.splitName}
 		/>
 	</div>
-
 	<span class="mb-1.5 text-sm font-medium">Exercise split structure</span>
 	<Table.Root>
 		<Table.Header class="border-t">
