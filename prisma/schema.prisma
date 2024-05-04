@@ -119,7 +119,7 @@ model ExerciseTemplate {
   repRangeStart      Int
   repRangeEnd        Int
   changeType         ChangeType?
-  changeAmount       Int?
+  changeAmount       Float?
   note               String?
   exerciseSplitDay   ExerciseSplitDay @relation(fields: [exerciseSplitDayId], references: [id])
   exerciseSplitDayId Int
