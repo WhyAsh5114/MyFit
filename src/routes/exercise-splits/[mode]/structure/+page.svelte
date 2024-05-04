@@ -1,5 +1,6 @@
-<script>
+<script lang="ts">
 	import H3 from '$lib/components/ui/typography/H3.svelte';
+	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 	import * as Table from '$lib/components/ui/table';
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
@@ -8,10 +9,31 @@
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import RemoveIcon from 'virtual:icons/lucide/minus';
 	import { exerciseSplit } from '../exerciseSplitRunes.svelte';
+	import { goto } from '$app/navigation';
+
+	let dataLossDays: number[] = $state([]);
+	let warningDialogOpen = $state(false);
+
+	async function submitStructure(warningAcknowledged = false) {
+		dataLossDays = exerciseSplit.getDataLossDays();
+		if (!warningAcknowledged && dataLossDays.length > 0) {
+			warningDialogOpen = true;
+			return;
+		}
+		exerciseSplit.updateSplitExercisesStructure();
+		await goto('./exercises');
+	}
 </script>
 
 <H3>Structure</H3>
-<form class="contents" id="exercise-split-structure-form" onsubmit={() => console.log('hey')}>
+<form
+	class="contents"
+	id="exercise-split-structure-form"
+	onsubmit={(e) => {
+		e.preventDefault();
+		submitStructure();
+	}}
+>
 	<div class="mb-4 flex w-full flex-col gap-1.5">
 		<Label for="exercise-split-name">Exercise split name</Label>
 		<Input
@@ -73,3 +95,11 @@
 	</Button>
 </div>
 <Button type="submit" form="exercise-split-structure-form">Next</Button>
+
+<ResponsiveDialog title="Warning" needTrigger={false} bind:open={warningDialogOpen}>
+	<p>
+		You'll lose exercise data from the following days:
+		<span class="font-semibold text-yellow-500">{dataLossDays.join(', ')}</span>. Continue?
+	</p>
+	<Button class="destructive">Continue</Button>
+</ResponsiveDialog>
