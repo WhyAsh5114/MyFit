@@ -68,8 +68,10 @@ model ExerciseSplit {
 }
 
 model ExerciseSplitDay {
-  id              Int           @id @default(autoincrement())
-  name            String
+  id        Int     @id @default(autoincrement())
+  name      String
+  isRestDay Boolean @default(false)
+
   exercises       Exercise[]
   exerciseSplit   ExerciseSplit @relation(fields: [exerciseSplitId], references: [id])
   exerciseSplitId Int
