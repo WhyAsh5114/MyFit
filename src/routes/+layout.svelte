@@ -7,6 +7,7 @@
 	import DesktopLayout from './(components)/DesktopLayout.svelte';
 	import { onMount } from 'svelte';
 
+	const { children } = $props()
 	const webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 	let isMobile: undefined | boolean = $state(undefined);
 
@@ -25,7 +26,7 @@
 <ModeWatcher />
 <Toaster />
 {#if isMobile === true}
-	<MobileLayout><slot /></MobileLayout>
+	<MobileLayout>{@render children()}</MobileLayout>
 {:else if isMobile === false}
-	<DesktopLayout><slot /></DesktopLayout>
+	<DesktopLayout>{@render children()}</DesktopLayout>
 {/if}
