@@ -47,7 +47,7 @@
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content align="end">
 				<DropdownMenu.Group>
-					<DropdownMenu.Item>Start from scratch</DropdownMenu.Item>
+					<DropdownMenu.Item href="/exercise-splits/new/structure">Start from scratch</DropdownMenu.Item>
 					<DropdownMenu.Item href="/exercise-splits/templates">Use template</DropdownMenu.Item>
 				</DropdownMenu.Group>
 			</DropdownMenu.Content>
