@@ -7,6 +7,9 @@
 	import DesktopLayout from './(components)/DesktopLayout.svelte';
 	import { onMount } from 'svelte';
 
+	import { overrideItemIdKeyNameBeforeInitialisingDndZones } from 'svelte-dnd-action';
+	overrideItemIdKeyNameBeforeInitialisingDndZones('name');
+
 	const { children } = $props()
 	const webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 	let isMobile: undefined | boolean = $state(undefined);
