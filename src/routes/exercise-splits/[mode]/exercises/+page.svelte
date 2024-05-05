@@ -10,11 +10,11 @@
 	import SwapIcon from 'virtual:icons/ph/swap';
 	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
 	import ExerciseSplitDrawer from './ExerciseSplitDrawer.svelte';
-	import ExerciseTemplateCard from '../../(components)/ExerciseTemplateCard.svelte';
+	import DndComponent from './DndComponent.svelte';
 </script>
 
 <H3>Exercises</H3>
-<Tabs.Root class="w-full" bind:value={exerciseSplitRunes.selectedSplitDayName}>
+<Tabs.Root class="w-full grow flex flex-col" bind:value={exerciseSplitRunes.selectedSplitDayName}>
 	<Tabs.List class="flex justify-start overflow-x-auto">
 		{#each exerciseSplitRunes.splitExercises as _, idx}
 			{@const { name, isRestDay } = exerciseSplitRunes.splitDays[idx]}
@@ -25,38 +25,42 @@
 	</Tabs.List>
 	{#each exerciseSplitRunes.splitExercises as _, idx}
 		{@const splitDay = exerciseSplitRunes.splitDays[idx]}
-		<Tabs.Content value={splitDay.name}>
-			<div class="flex items-center gap-4">
-				<div class="mr-auto flex flex-col">
-					<span class="text-xl font-semibold">{splitDay.name}</span>
-					<span class="font-medium text-muted-foreground">Day {idx + 1}</span>
+		<Tabs.Content value={splitDay.name} class="grow">
+			<div class="flex flex-col h-full gap-2">
+				<div class="flex items-center gap-4">
+					<div class="mr-auto flex flex-col">
+						<span class="text-xl font-semibold">{splitDay.name}</span>
+						<span class="font-medium text-muted-foreground">Day {idx + 1}</span>
+					</div>
+					<ExerciseSplitDrawer />
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger asChild let:builder>
+							<Button builders={[builder]} size="icon" variant="outline"><MenuIcon /></Button>
+						</DropdownMenu.Trigger>
+						<DropdownMenu.Content>
+							<DropdownMenu.Group>
+								<DropdownMenu.Item class="gap-2">
+									<CutIcon /> Cut
+								</DropdownMenu.Item>
+								<DropdownMenu.Item class="gap-2">
+									<CopyIcon /> Copy
+								</DropdownMenu.Item>
+								<DropdownMenu.Item class="gap-2">
+									<PasteIcon /> Paste
+								</DropdownMenu.Item>
+								<DropdownMenu.Item class="gap-2">
+									<SwapIcon /> Swap
+								</DropdownMenu.Item>
+							</DropdownMenu.Group>
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
 				</div>
-				<ExerciseSplitDrawer />
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger asChild let:builder>
-						<Button builders={[builder]} size="icon" variant="outline"><MenuIcon /></Button>
-					</DropdownMenu.Trigger>
-					<DropdownMenu.Content>
-						<DropdownMenu.Group>
-							<DropdownMenu.Item class="gap-2">
-								<CutIcon /> Cut
-							</DropdownMenu.Item>
-							<DropdownMenu.Item class="gap-2">
-								<CopyIcon /> Copy
-							</DropdownMenu.Item>
-							<DropdownMenu.Item class="gap-2">
-								<PasteIcon /> Paste
-							</DropdownMenu.Item>
-							<DropdownMenu.Item class="gap-2">
-								<SwapIcon /> Swap
-							</DropdownMenu.Item>
-						</DropdownMenu.Group>
-					</DropdownMenu.Content>
-				</DropdownMenu.Root>
+				<div class="flex h-px grow flex-col overflow-y-auto">
+					<DndComponent
+						itemList={exerciseSplitRunes.splitExercises[exerciseSplitRunes.selectedSplitDayIndex]}
+					/>
+				</div>
 			</div>
-			{#each exerciseSplitRunes.splitExercises[exerciseSplitRunes.selectedSplitDayIndex] as exerciseTemplate, idx}
-				<ExerciseTemplateCard {exerciseTemplate} {idx} dragDisabled />
-			{/each}
 		</Tabs.Content>
 	{/each}
 </Tabs.Root>

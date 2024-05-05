@@ -17,7 +17,7 @@
 		readOnly = false,
 		idx,
 		exerciseTemplate,
-		dragDisabled
+		dragDisabled = $bindable()
 	}: ExerciseTemplateCardProps = $props();
 
 	let isContextMenuOpen = $state(false);
@@ -25,7 +25,7 @@
 
 <div class="flex flex-col gap-0.5 rounded-md border bg-card/50 p-2 backdrop-blur-sm">
 	<div class="flex items-center gap-0.5">
-		<span class="mr-auto truncate text-sm">{exerciseTemplate.name}</span>
+		<span class="mr-auto truncate">{exerciseTemplate.name}</span>
 		{#if !readOnly}
 			<DropdownMenu.Root open={isContextMenuOpen} onOpenChange={(v) => (isContextMenuOpen = v)}>
 				<DropdownMenu.Trigger asChild let:builder>
@@ -64,7 +64,7 @@
 		{/if}
 	</div>
 	<div class="flex items-center gap-0.5">
-		<span class="mr-auto text-[13px] lowercase text-muted-foreground">
+		<span class="mr-auto text-sm lowercase text-muted-foreground">
 			{exerciseTemplate.sets}
 			{exerciseTemplate.setType} sets of
 			{exerciseTemplate.repRangeStart} to {exerciseTemplate.repRangeEnd} reps
@@ -77,7 +77,7 @@
 		</Badge>
 	</div>
 	{#if exerciseTemplate.note}
-		<div class="mt-1 flex items-center bg-secondary px-1 py-0.5 text-xs">
+		<div class="mt-1 flex items-center bg-secondary px-1 py-0.5 text-sm">
 			{exerciseTemplate.note}
 		</div>
 	{/if}

@@ -78,11 +78,13 @@ export function createExerciseSplitRunes() {
 	function addExercise(exerciseTemplate: ExerciseTemplate) {
 		if (exerciseNameExists(exerciseTemplate.name)) return false;
 		splitExercises[selectedSplitDayIndex].push(exerciseTemplate);
+		saveStoresToLocalStorage();
 		return true;
 	}
 
 	function deleteExercise(exerciseIdx: number) {
 		splitExercises[selectedSplitDayIndex].splice(exerciseIdx, 1);
+		saveStoresToLocalStorage();
 	}
 
 	function saveStoresToLocalStorage() {
