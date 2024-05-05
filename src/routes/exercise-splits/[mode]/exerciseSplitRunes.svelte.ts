@@ -8,12 +8,13 @@ export type ExerciseSplit = Omit<ExerciseSplitModel, 'id' | 'userId'>;
 export type ExerciseSplitDay = Omit<ExerciseSplitDayModel, 'id' | 'exerciseSplitId'>;
 export type ExerciseTemplate = Omit<ExerciseTemplateModel, 'id' | 'exerciseSplitDayId'>;
 
-export function createExerciseSplit() {
+export function createExerciseSplitRunes() {
 	let splitName = $state('');
 	let splitDays: ExerciseSplitDay[] = $state(
 		Array.from({ length: 7 }).map(() => ({ name: '', isRestDay: false }))
 	);
 	let splitExercises: ExerciseTemplate[][] = $state([]);
+	let editingExercise: ExerciseTemplate | undefined = $state(undefined);
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('exerciseSplitRunes');
@@ -61,6 +62,16 @@ export function createExerciseSplit() {
 		return true;
 	}
 
+	function addExercise(exerciseTemplate: ExerciseTemplate, splitName: string) {
+		const splitDayIndex = splitDays.findIndex((splitDay) => splitDay.name === splitName);
+		splitExercises[splitDayIndex].push(exerciseTemplate);
+	}
+
+	function deleteExercise(exerciseIdx: number, splitName: string) {
+		const splitDayIndex = splitDays.findIndex((splitDay) => splitDay.name === splitName);
+		splitExercises[splitDayIndex].splice(exerciseIdx, 1);
+	}
+
 	function saveStoresToLocalStorage() {
 		localStorage.setItem(
 			'exerciseSplitRunes',
@@ -81,14 +92,22 @@ export function createExerciseSplit() {
 		get splitExercises() {
 			return splitExercises;
 		},
+		get editingExercise(): ExerciseTemplate | undefined {
+			return editingExercise;
+		},
+		set editingExercise(exerciseTemplate: ExerciseTemplate) {
+			editingExercise = exerciseTemplate;
+		},
 		addSplitDay,
 		removeSplitDay,
 		toggleSplitDay,
 		validateSplitStructure,
 		getDataLossDays,
 		updateSplitExercisesStructure,
+		addExercise,
+		deleteExercise,
 		saveStoresToLocalStorage
 	};
 }
 
-export const exerciseSplit = createExerciseSplit();
+export const exerciseSplitRunes = createExerciseSplitRunes();
