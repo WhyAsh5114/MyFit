@@ -8,7 +8,7 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import RemoveIcon from 'virtual:icons/lucide/minus';
-	import { exerciseSplit } from '../exerciseSplitRunes.svelte';
+	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 
@@ -16,19 +16,19 @@
 	let warningDialogOpen = $state(false);
 
 	async function submitStructure(warningAcknowledged = false) {
-		if (!exerciseSplit.validateSplitStructure()) {
+		if (!exerciseSplitRunes.validateSplitStructure()) {
 			toast.error('Error', {
 				description:
 					'Workout names should be unique. For example: Push A, Push B instead of Push, Push'
 			});
 			return;
 		}
-		dataLossDays = exerciseSplit.getDataLossDays();
+		dataLossDays = exerciseSplitRunes.getDataLossDays();
 		if (!warningAcknowledged && dataLossDays.length > 0) {
 			warningDialogOpen = true;
 			return;
 		}
-		exerciseSplit.updateSplitExercisesStructure();
+		exerciseSplitRunes.updateSplitExercisesStructure();
 		await goto('./exercises');
 	}
 </script>
@@ -48,7 +48,7 @@
 			id="exercise-split-name"
 			placeholder="Type here"
 			required
-			bind:value={exerciseSplit.splitName}
+			bind:value={exerciseSplitRunes.splitName}
 		/>
 	</div>
 	<span class="mb-1.5 text-sm font-medium">Exercise split structure</span>
@@ -61,7 +61,7 @@
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
-			{#each exerciseSplit.splitDays as splitDay, dayNumber}
+			{#each exerciseSplitRunes.splitDays as splitDay, dayNumber}
 				<Table.Row>
 					<Table.Cell>{dayNumber + 1}</Table.Cell>
 					<Table.Cell>
@@ -78,7 +78,7 @@
 							checked={splitDay.isRestDay}
 							onCheckedChange={(checked) => {
 								if (checked === 'indeterminate') return;
-								exerciseSplit.toggleSplitDay(dayNumber, checked);
+								exerciseSplitRunes.toggleSplitDay(dayNumber, checked);
 							}}
 						/>
 					</Table.Cell>
@@ -92,12 +92,12 @@
 	<Button
 		variant="secondary"
 		class="gap-2"
-		onclick={exerciseSplit.removeSplitDay}
-		disabled={exerciseSplit.splitDays.length === 1}
+		onclick={exerciseSplitRunes.removeSplitDay}
+		disabled={exerciseSplitRunes.splitDays.length === 1}
 	>
 		<RemoveIcon /> Remove
 	</Button>
-	<Button variant="secondary" class="gap-2" onclick={exerciseSplit.addSplitDay}>
+	<Button variant="secondary" class="gap-2" onclick={exerciseSplitRunes.addSplitDay}>
 		<AddIcon /> Add
 	</Button>
 </div>
