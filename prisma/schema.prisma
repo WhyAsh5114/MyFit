@@ -77,7 +77,6 @@ enum MuscleGroup {
 }
 
 enum SetType {
-  Default
   Straight
   Drop
   Down
