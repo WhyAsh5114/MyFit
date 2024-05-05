@@ -11,15 +11,10 @@
 	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
 	import ExerciseSplitDrawer from './ExerciseSplitDrawer.svelte';
 	import ExerciseTemplateCard from '../../(components)/ExerciseTemplateCard.svelte';
-
-	let selectedSplitDayIndex = $state(
-		exerciseSplitRunes.splitDays.findIndex((splitDay) => !splitDay.isRestDay)
-	);
-	let selectedSplitDayName = $derived(exerciseSplitRunes.splitDays[selectedSplitDayIndex].name);
 </script>
 
 <H3>Exercises</H3>
-<Tabs.Root class="w-full" value={selectedSplitDayName}>
+<Tabs.Root class="w-full" bind:value={exerciseSplitRunes.selectedSplitDayName}>
 	<Tabs.List class="flex justify-start overflow-x-auto">
 		{#each exerciseSplitRunes.splitExercises as _, idx}
 			{@const { name, isRestDay } = exerciseSplitRunes.splitDays[idx]}
@@ -36,7 +31,7 @@
 					<span class="text-xl font-semibold">{splitDay.name}</span>
 					<span class="font-medium text-muted-foreground">Day {idx + 1}</span>
 				</div>
-				<ExerciseSplitDrawer {selectedSplitDayName} />
+				<ExerciseSplitDrawer />
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
 						<Button builders={[builder]} size="icon" variant="outline"><MenuIcon /></Button>
@@ -59,8 +54,8 @@
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
 			</div>
-			{#each exerciseSplitRunes.splitExercises[selectedSplitDayIndex] as exerciseTemplate, idx}
-				<ExerciseTemplateCard {exerciseTemplate} {idx} {selectedSplitDayName} dragDisabled />
+			{#each exerciseSplitRunes.splitExercises[exerciseSplitRunes.selectedSplitDayIndex] as exerciseTemplate, idx}
+				<ExerciseTemplateCard {exerciseTemplate} {idx} dragDisabled />
 			{/each}
 		</Tabs.Content>
 	{/each}

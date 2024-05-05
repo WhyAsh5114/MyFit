@@ -11,15 +11,13 @@
 		idx: number;
 		exerciseTemplate: ExerciseTemplate;
 		dragDisabled: boolean;
-		selectedSplitDayName: string;
 	};
 
 	let {
 		readOnly = false,
 		idx,
 		exerciseTemplate,
-		dragDisabled,
-		selectedSplitDayName
+		dragDisabled
 	}: ExerciseTemplateCardProps = $props();
 
 	let isContextMenuOpen = $state(false);
@@ -54,7 +52,7 @@
 						<DropdownMenu.Item
 							class="gap-2 text-red-500"
 							on:click={() => {
-								exerciseSplitRunes.deleteExercise(idx, selectedSplitDayName);
+								exerciseSplitRunes.deleteExercise(idx);
 								isContextMenuOpen = false;
 							}}
 						>

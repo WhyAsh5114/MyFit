@@ -10,24 +10,29 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { MuscleGroup, SetType } from '@prisma/client';
 	import { exerciseSplitRunes, type ExerciseTemplate } from '../exerciseSplitRunes.svelte';
+	import { toast } from 'svelte-sonner';
 
-	type ExerciseDrawerProps = {
-		selectedSplitDayName: string;
-		editingExercise?: ExerciseTemplate | undefined;
-	};
-	let { editingExercise = undefined, selectedSplitDayName }: ExerciseDrawerProps = $props();
+	type ExerciseDrawerProps = { editingExercise?: ExerciseTemplate | undefined };
+	let { editingExercise = undefined }: ExerciseDrawerProps = $props();
 
-	let open = $state(false);
-	let mode = $derived(editingExercise === undefined ? 'Add' : 'Edit');
-	let searching = $state(false);
-	let currentExercise: Partial<ExerciseTemplate> = {
+	const defaultExercise: Partial<ExerciseTemplate> = {
 		name: '',
 		setType: 'Default',
 		involvesBodyweight: false
 	};
 
+	let open = $state(false);
+	let mode = $derived(editingExercise === undefined ? 'Add' : 'Edit');
+	let searching = $state(false);
+	let currentExercise: Partial<ExerciseTemplate> = $state(structuredClone(defaultExercise));
+
 	function submitForm() {
-		exerciseSplitRunes.addExercise(currentExercise as ExerciseTemplate, selectedSplitDayName);
+		const result = exerciseSplitRunes.addExercise(currentExercise as ExerciseTemplate);
+		if (!result) {
+			toast.error('Error', { description: 'Exercise names should be unique' });
+			return;
+		}
+		currentExercise = structuredClone(defaultExercise);
 		open = false;
 	}
 </script>

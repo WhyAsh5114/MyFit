@@ -14,6 +14,11 @@ export function createExerciseSplitRunes() {
 		Array.from({ length: 7 }).map(() => ({ name: '', isRestDay: false }))
 	);
 	let splitExercises: ExerciseTemplate[][] = $state([]);
+
+	let selectedSplitDayName: string = $state('');
+	let selectedSplitDayIndex: number = $derived(
+		splitDays.findIndex((splitDay) => splitDay.name === selectedSplitDayName)
+	);
 	let editingExercise: ExerciseTemplate | undefined = $state(undefined);
 
 	if (globalThis.localStorage) {
@@ -58,18 +63,26 @@ export function createExerciseSplitRunes() {
 		for (let i = 0; i < splitDays.length; i++) {
 			if (splitDays[i].isRestDay || splitExercises[i] === undefined) splitExercises[i] = [];
 		}
+		selectedSplitDayName = splitDays.find((splitDay) => !splitDay.isRestDay)?.name as string;
 		saveStoresToLocalStorage();
+	}
+
+	function exerciseNameExists(exerciseName: string) {
+		const splitDayIndex = splitDays.findIndex((splitDay) => splitDay.name === selectedSplitDayName);
+		const exercise = splitExercises[splitDayIndex].find(
+			(exerciseTemplate) => exerciseTemplate.name === exerciseName
+		);
+		return exercise !== undefined;
+	}
+
+	function addExercise(exerciseTemplate: ExerciseTemplate) {
+		if (exerciseNameExists(exerciseTemplate.name)) return false;
+		splitExercises[selectedSplitDayIndex].push(exerciseTemplate);
 		return true;
 	}
 
-	function addExercise(exerciseTemplate: ExerciseTemplate, splitName: string) {
-		const splitDayIndex = splitDays.findIndex((splitDay) => splitDay.name === splitName);
-		splitExercises[splitDayIndex].push(exerciseTemplate);
-	}
-
-	function deleteExercise(exerciseIdx: number, splitName: string) {
-		const splitDayIndex = splitDays.findIndex((splitDay) => splitDay.name === splitName);
-		splitExercises[splitDayIndex].splice(exerciseIdx, 1);
+	function deleteExercise(exerciseIdx: number) {
+		splitExercises[selectedSplitDayIndex].splice(exerciseIdx, 1);
 	}
 
 	function saveStoresToLocalStorage() {
@@ -97,6 +110,15 @@ export function createExerciseSplitRunes() {
 		},
 		set editingExercise(exerciseTemplate: ExerciseTemplate) {
 			editingExercise = exerciseTemplate;
+		},
+		get selectedSplitDayName() {
+			return selectedSplitDayName;
+		},
+		set selectedSplitDayName(splitDayName: string) {
+			selectedSplitDayName = splitDayName;
+		},
+		get selectedSplitDayIndex() {
+			return selectedSplitDayIndex;
 		},
 		addSplitDay,
 		removeSplitDay,
