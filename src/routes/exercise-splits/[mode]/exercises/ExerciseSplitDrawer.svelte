@@ -12,9 +12,6 @@
 	import { exerciseSplitRunes, type ExerciseTemplate } from '../exerciseSplitRunes.svelte';
 	import { toast } from 'svelte-sonner';
 
-	type ExerciseDrawerProps = { editingExercise?: ExerciseTemplate | undefined };
-	let { editingExercise = undefined }: ExerciseDrawerProps = $props();
-
 	const defaultExercise: Partial<ExerciseTemplate> = {
 		name: '',
 		setType: 'Straight',
@@ -22,24 +19,46 @@
 	};
 
 	let open = $state(false);
-	let mode = $derived(editingExercise === undefined ? 'Add' : 'Edit');
+	let mode = $derived(exerciseSplitRunes.editingExercise === undefined ? 'Add' : 'Edit');
 	let searching = $state(false);
 	let currentExercise: Partial<ExerciseTemplate> = $state(structuredClone(defaultExercise));
 
+	$effect(() => {
+		if (exerciseSplitRunes.editingExercise) {
+			currentExercise = structuredClone($state.snapshot(exerciseSplitRunes.editingExercise));
+			open = true;
+		}
+	});
+
+	function resetDrawerState() {
+		exerciseSplitRunes.editingExercise = undefined;
+		currentExercise = structuredClone(defaultExercise);
+	}
+
 	function submitForm() {
-		const result = exerciseSplitRunes.addExercise(currentExercise as ExerciseTemplate);
+		let result: boolean;
+		const finishedExercise = currentExercise as ExerciseTemplate;
+		if (mode === 'Add') result = exerciseSplitRunes.addExercise(finishedExercise);
+		else result = exerciseSplitRunes.editExercise(finishedExercise);
+
 		if (!result) {
 			toast.error('Error', { description: 'Exercise names should be unique' });
 			return;
 		}
-		currentExercise = structuredClone(defaultExercise);
+		resetDrawerState();
 		open = false;
 	}
 </script>
 
 <Sheet.Root closeOnOutsideClick={false} bind:open>
 	<Sheet.Trigger asChild let:builder>
-		<Button size="icon" variant="outline" builders={[builder]} aria-label="add-exercise">
+		<Button
+			size="icon"
+			variant="outline"
+			builders={[builder]}
+			aria-label="add-exercise"
+			onclick={resetDrawerState}
+		>
 			<AddIcon />
 		</Button>
 	</Sheet.Trigger>

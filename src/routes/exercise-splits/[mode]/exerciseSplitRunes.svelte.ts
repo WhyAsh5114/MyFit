@@ -67,10 +67,10 @@ export function createExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
-	function exerciseNameExists(exerciseName: string) {
+	function exerciseNameExists(exerciseName: string, exceptIndex?: number) {
 		const splitDayIndex = splitDays.findIndex((splitDay) => splitDay.name === selectedSplitDayName);
 		const exercise = splitExercises[splitDayIndex].find(
-			(exerciseTemplate) => exerciseTemplate.name === exerciseName
+			(exerciseTemplate, idx) => exerciseTemplate.name === exerciseName && idx !== exceptIndex
 		);
 		return exercise !== undefined;
 	}
@@ -85,6 +85,15 @@ export function createExerciseSplitRunes() {
 	function deleteExercise(exerciseIdx: number) {
 		splitExercises[selectedSplitDayIndex].splice(exerciseIdx, 1);
 		saveStoresToLocalStorage();
+	}
+
+	function editExercise(exerciseTemplate: ExerciseTemplate) {
+		if (!editingExercise) return false;
+		const editingExerciseIndex = splitExercises[selectedSplitDayIndex].indexOf(editingExercise);
+		if (exerciseNameExists(exerciseTemplate.name, editingExerciseIndex)) return false;
+		splitExercises[selectedSplitDayIndex][editingExerciseIndex] = exerciseTemplate;
+		saveStoresToLocalStorage();
+		return true;
 	}
 
 	function saveStoresToLocalStorage() {
@@ -110,7 +119,7 @@ export function createExerciseSplitRunes() {
 		get editingExercise(): ExerciseTemplate | undefined {
 			return editingExercise;
 		},
-		set editingExercise(exerciseTemplate: ExerciseTemplate) {
+		set editingExercise(exerciseTemplate: ExerciseTemplate | undefined) {
 			editingExercise = exerciseTemplate;
 		},
 		get selectedSplitDayName() {
@@ -129,6 +138,7 @@ export function createExerciseSplitRunes() {
 		getDataLossDays,
 		updateSplitExercisesStructure,
 		addExercise,
+		editExercise,
 		deleteExercise,
 		saveStoresToLocalStorage
 	};
