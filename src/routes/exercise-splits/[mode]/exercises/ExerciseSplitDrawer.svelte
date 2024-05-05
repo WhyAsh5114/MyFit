@@ -17,7 +17,7 @@
 
 	const defaultExercise: Partial<ExerciseTemplate> = {
 		name: '',
-		setType: 'Default',
+		setType: 'Straight',
 		involvesBodyweight: false
 	};
 
