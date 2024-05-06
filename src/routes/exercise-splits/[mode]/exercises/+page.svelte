@@ -10,7 +10,7 @@
 	import SwapIcon from 'virtual:icons/ph/swap';
 	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
 	import ExerciseSplitDrawer from './ExerciseSplitDrawer.svelte';
-	import DndComponent from './DndComponent.svelte';
+	import DndComponent from './(components)/DndComponent.svelte';
 </script>
 
 <H3>Exercises</H3>
@@ -39,6 +39,7 @@
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>
 						<DropdownMenu.Group>
+							<!-- TODO: cut, copy, paste, swap -->
 							<DropdownMenu.Item class="gap-2">
 								<CutIcon /> Cut
 							</DropdownMenu.Item>

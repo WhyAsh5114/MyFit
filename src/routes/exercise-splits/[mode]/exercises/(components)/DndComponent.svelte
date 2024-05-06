@@ -2,8 +2,8 @@
 	import { flip } from 'svelte/animate';
 	import { fade } from 'svelte/transition';
 	import { dndzone, type DndEvent, SHADOW_ITEM_MARKER_PROPERTY_NAME } from 'svelte-dnd-action';
-	import ExerciseTemplateCard from '../../(components)/ExerciseTemplateCard.svelte';
-	import type { ExerciseTemplate } from '../exerciseSplitRunes.svelte';
+	import ExerciseTemplateCard from '../../../(components)/ExerciseTemplateCard.svelte';
+	import type { ExerciseTemplate } from '../../exerciseSplitRunes.svelte';
 
 	let { itemList }: { itemList: (ExerciseTemplate & { isDndShadowItem?: boolean })[] } = $props();
 	let dragDisabled = $state(true);

@@ -9,7 +9,7 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { MuscleGroup, SetType } from '@prisma/client';
-	import { exerciseSplitRunes, type ExerciseTemplate } from '../exerciseSplitRunes.svelte';
+	import { exerciseSplitRunes, type ExerciseTemplate } from '../../exerciseSplitRunes.svelte';
 	import { toast } from 'svelte-sonner';
 
 	const defaultExercise: Partial<ExerciseTemplate> = {
