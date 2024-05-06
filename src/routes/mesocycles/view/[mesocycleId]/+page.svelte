@@ -124,10 +124,6 @@
         <div class="skeleton h-56 w-full bg-primary brightness-50 rounded-md" />
       {:then workouts}
         <VolumeGraph {workouts} />
-        <a class="btn mt-2 text-accent gap-4" href="/mesocycles/view/${data.mesocycle.id}/insights">
-          <InsightsIcon class="h-6 w-6" />
-          More insights
-        </a>
       {/await}
     </div>
   {/if}
