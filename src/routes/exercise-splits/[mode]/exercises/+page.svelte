@@ -12,8 +12,23 @@
 	import ExerciseSplitDrawer from './(components)/ExerciseSplitDrawer.svelte';
 	import DndComponent from './(components)/DndComponent.svelte';
 	import SwapExercisesDialog from './(components)/SwapExercisesDialog.svelte';
+	import { toast } from 'svelte-sonner';
+	import { goto } from '$app/navigation';
 
 	let swapDialogOpen = $state(false);
+
+	function submitExercises() {
+		const noExerciseAddedDays = exerciseSplitRunes.splitDays.filter((splitDay, idx) => {
+			return !splitDay.isRestDay && exerciseSplitRunes.splitExercises[idx].length === 0;
+		});
+		if (noExerciseAddedDays.length > 0) {
+			toast.error('Error', {
+				description: `Add at least one exercise in: ${noExerciseAddedDays.map((splitDay) => splitDay.name).join(', ')}`
+			});
+			return;
+		}
+		goto('./overview');
+	}
 </script>
 
 <H3>Exercises</H3>
@@ -38,11 +53,17 @@
 				<ExerciseSplitDrawer />
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
-						<Button builders={[builder]} size="icon" variant="outline"><MenuIcon /></Button>
+						<Button
+							builders={[builder]}
+							size="icon"
+							variant="outline"
+							aria-label="exercise-split-functions"
+						>
+							<MenuIcon />
+						</Button>
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>
 						<DropdownMenu.Group>
-							<!-- TODO: cut, copy, paste, swap -->
 							<DropdownMenu.Item
 								class="gap-2"
 								onclick={exerciseSplitRunes.cutExercises}
@@ -77,5 +98,10 @@
 		</div>
 	</Tabs.Content>
 </Tabs.Root>
+
+<div class="mt-2 grid grid-cols-2 gap-1">
+	<Button variant="secondary" href="./structure">Previous</Button>
+	<Button onclick={submitExercises}>Next</Button>
+</div>
 
 <SwapExercisesDialog bind:open={swapDialogOpen} />
