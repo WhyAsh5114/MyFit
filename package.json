@@ -13,7 +13,7 @@
 	"devDependencies": {
 		"@iconify/json": "^2.2.206",
 		"@sveltejs/adapter-auto": "^3.0.0",
-		"@sveltejs/kit": "^2.0.0",
+		"@sveltejs/kit": "^2.5.8",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@tailwindcss/typography": "^0.5.13",
 		"@vite-pwa/sveltekit": "^0.5.0",
@@ -45,7 +45,6 @@
 		"cmdk-sv": "^0.0.17",
 		"dotenv": "^16.4.5",
 		"mode-watcher": "^0.3.0",
-		"mongodb": "^6.4.0",
 		"paneforge": "^0.0.4",
 		"svelte-persisted-store": "^0.9.1",
 		"svelte-sonner": "^0.3.19",
