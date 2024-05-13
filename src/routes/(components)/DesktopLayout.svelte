@@ -16,11 +16,9 @@
 </script>
 
 <header class="flex h-screen w-96 flex-col bg-muted p-10">
-	<Button variant="link" class="justify-start text-foreground">
-		<a class="flex items-center gap-2" href="/">
-			<img src="/favicon.webp" alt="MyFit logo" width={72} height={72} />
-			<h1 class="text-4xl font-bold">MyFit</h1>
-		</a>
+	<Button variant="link" class="justify-start gap-2 text-foreground" href="/">
+		<img src="/favicon.webp" alt="MyFit logo" width={72} height={72} />
+		<h1 class="text-4xl font-bold">MyFit</h1>
 	</Button>
 	<NavLinks />
 	<div class="flex gap-1">

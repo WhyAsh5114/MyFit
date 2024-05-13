@@ -28,13 +28,12 @@
 				<Sheet.Title>
 					<Button
 						variant="link"
-						class="justify-start text-foreground"
+						class="justify-start gap-2 text-foreground"
+						href="/"
 						onclick={() => (sheetOpen = false)}
 					>
-						<a class="flex items-center gap-2" href="/">
-							<img src="/favicon.webp" alt="MyFit logo" width={52} height={52} />
-							<h1 class="text-2xl font-bold">MyFit</h1>
-						</a>
+						<img src="/favicon.webp" alt="MyFit logo" width={52} height={52} />
+						<h1 class="text-2xl font-bold">MyFit</h1>
 					</Button>
 				</Sheet.Title>
 			</Sheet.Header>

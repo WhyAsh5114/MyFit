@@ -17,8 +17,9 @@
 				variant="link"
 				class="text-foreground lg:text-base"
 				onclick={() => (sheetOpen = false)}
+				{href}
 			>
-				<a {href}>{text}</a>
+				{text}
 			</Button>
 		</li>
 	{/each}
