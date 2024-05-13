@@ -3,12 +3,14 @@
 	import { fade } from 'svelte/transition';
 	import { dndzone, type DndEvent, SHADOW_ITEM_MARKER_PROPERTY_NAME } from 'svelte-dnd-action';
 	import ExerciseTemplateCard from '../../../(components)/ExerciseTemplateCard.svelte';
-	import type { ExerciseTemplate } from '../../exerciseSplitRunes.svelte';
+	import type { ExerciseTemplateRuneType } from '../../exerciseSplitRunes.svelte';
 
-	let { itemList }: { itemList: (ExerciseTemplate & { isDndShadowItem?: boolean })[] } = $props();
+	type PropsType = { itemList: (ExerciseTemplateRuneType & { isDndShadowItem?: boolean })[] };
+
+	let { itemList }: PropsType = $props();
 	let dragDisabled = $state(true);
 
-	function handleSort(e: CustomEvent<DndEvent<ExerciseTemplate>>) {
+	function handleSort(e: CustomEvent<DndEvent<ExerciseTemplateRuneType>>) {
 		console.log('hmm');
 		const { items: newItems } = e.detail;
 		itemList = newItems;

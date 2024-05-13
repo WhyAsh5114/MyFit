@@ -8,11 +8,14 @@
 	import { Switch } from '$lib/components/ui/switch';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { MuscleGroup, SetType } from '@prisma/client';
-	import { exerciseSplitRunes, type ExerciseTemplate } from '../../exerciseSplitRunes.svelte';
+	import {
+		exerciseSplitRunes,
+		type ExerciseTemplateRuneType
+	} from '../../exerciseSplitRunes.svelte';
 	import { toast } from 'svelte-sonner';
+	import { MuscleGroup, SetType } from '@prisma/client';
 
-	const defaultExercise: Partial<ExerciseTemplate> = {
+	const defaultExercise: Partial<ExerciseTemplateRuneType> = {
 		name: '',
 		setType: 'Straight',
 		involvesBodyweight: false
@@ -21,7 +24,7 @@
 	let open = $state(false);
 	let mode = $derived(exerciseSplitRunes.editingExercise === undefined ? 'Add' : 'Edit');
 	let searching = $state(false);
-	let currentExercise: Partial<ExerciseTemplate> = $state(structuredClone(defaultExercise));
+	let currentExercise: Partial<ExerciseTemplateRuneType> = $state(structuredClone(defaultExercise));
 
 	$effect(() => {
 		if (exerciseSplitRunes.editingExercise) {
@@ -37,7 +40,7 @@
 
 	function submitForm() {
 		let result: boolean;
-		const finishedExercise = currentExercise as ExerciseTemplate;
+		const finishedExercise = currentExercise as ExerciseTemplateRuneType;
 		if (mode === 'Add') result = exerciseSplitRunes.addExercise(finishedExercise);
 		else result = exerciseSplitRunes.editExercise(finishedExercise);
 
@@ -78,8 +81,8 @@
 					/>
 					{#if searching}
 						<Command.List class="max-h-32 bg-muted">
-							{#each [] as exercisesForMuscleGroup}
-								<!-- TODO: exercises list-->
+							<!-- TODO: exercises list-->
+							<!-- {#each [] as exercisesForMuscleGroup}
 								{#if exercisesForMuscleGroup.exercises.length > 0}
 									<Command.Group heading={exercisesForMuscleGroup.muscleGroup}>
 										{#each exercisesForMuscleGroup.exercises as exercise}
@@ -89,7 +92,7 @@
 										{/each}
 									</Command.Group>
 								{/if}
-							{/each}
+							{/each} -->
 						</Command.List>
 					{/if}
 				</Command.Root>

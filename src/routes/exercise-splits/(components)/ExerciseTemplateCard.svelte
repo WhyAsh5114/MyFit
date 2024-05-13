@@ -4,12 +4,12 @@
 	import MenuIcon from 'virtual:icons/lucide/menu';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import DeleteIcon from 'virtual:icons/lucide/trash';
-	import { exerciseSplitRunes, type ExerciseTemplate } from '../[mode]/exerciseSplitRunes.svelte';
+	import { exerciseSplitRunes, type ExerciseTemplateRuneType } from '../[mode]/exerciseSplitRunes.svelte';
 
 	type ExerciseTemplateCardProps = {
 		readOnly?: boolean;
 		idx: number;
-		exerciseTemplate: ExerciseTemplate;
+		exerciseTemplate: ExerciseTemplateRuneType;
 		dragDisabled: boolean;
 	};
 
