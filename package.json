@@ -46,6 +46,7 @@
 		"dotenv": "^16.4.5",
 		"mode-watcher": "^0.3.0",
 		"paneforge": "^0.0.4",
+		"svelte-chartjs": "^3.1.5",
 		"svelte-persisted-store": "^0.9.1",
 		"svelte-sonner": "^0.3.19",
 		"tailwind-merge": "^2.3.0",
