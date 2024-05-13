@@ -20,6 +20,7 @@ export function createExerciseSplitRunes() {
 		splitDays.findIndex((splitDay) => splitDay.name === selectedSplitDayName)
 	);
 	let editingExercise: ExerciseTemplate | undefined = $state(undefined);
+	let copiedExercises: ExerciseTemplate[] | undefined = $state(undefined);
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('exerciseSplitRunes');
@@ -96,6 +97,20 @@ export function createExerciseSplitRunes() {
 		return true;
 	}
 
+	function copyExercises() {
+		copiedExercises = structuredClone($state.snapshot(splitExercises[selectedSplitDayIndex]));
+	}
+
+	function pasteExercises() {
+		if (!copiedExercises || splitExercises[selectedSplitDayIndex].length > 0) return;
+		splitExercises[selectedSplitDayIndex] = copiedExercises;
+	}
+
+	function cutExercises() {
+		copyExercises();
+		splitExercises[selectedSplitDayIndex] = [];
+	}
+
 	function saveStoresToLocalStorage() {
 		localStorage.setItem(
 			'exerciseSplitRunes',
@@ -140,6 +155,9 @@ export function createExerciseSplitRunes() {
 		addExercise,
 		editExercise,
 		deleteExercise,
+		copyExercises,
+		pasteExercises,
+		cutExercises,
 		saveStoresToLocalStorage
 	};
 }

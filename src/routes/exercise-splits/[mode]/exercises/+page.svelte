@@ -40,13 +40,13 @@
 					<DropdownMenu.Content>
 						<DropdownMenu.Group>
 							<!-- TODO: cut, copy, paste, swap -->
-							<DropdownMenu.Item class="gap-2">
+							<DropdownMenu.Item class="gap-2" onclick={exerciseSplitRunes.cutExercises}>
 								<CutIcon /> Cut
 							</DropdownMenu.Item>
-							<DropdownMenu.Item class="gap-2">
+							<DropdownMenu.Item class="gap-2" onclick={exerciseSplitRunes.copyExercises}>
 								<CopyIcon /> Copy
 							</DropdownMenu.Item>
-							<DropdownMenu.Item class="gap-2">
+							<DropdownMenu.Item class="gap-2" onclick={exerciseSplitRunes.pasteExercises}>
 								<PasteIcon /> Paste
 							</DropdownMenu.Item>
 							<DropdownMenu.Item class="gap-2">
