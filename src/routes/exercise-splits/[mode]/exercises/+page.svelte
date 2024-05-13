@@ -11,6 +11,9 @@
 	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
 	import ExerciseSplitDrawer from './(components)/ExerciseSplitDrawer.svelte';
 	import DndComponent from './(components)/DndComponent.svelte';
+	import SwapExercisesDialog from './(components)/SwapExercisesDialog.svelte';
+
+	let swapDialogOpen = $state(false);
 </script>
 
 <H3>Exercises</H3>
@@ -61,7 +64,7 @@
 							>
 								<PasteIcon /> Paste
 							</DropdownMenu.Item>
-							<DropdownMenu.Item class="gap-2">
+							<DropdownMenu.Item class="gap-2" onclick={() => (swapDialogOpen = true)}>
 								<SwapIcon /> Swap
 							</DropdownMenu.Item>
 						</DropdownMenu.Group>
@@ -74,3 +77,5 @@
 		</div>
 	</Tabs.Content>
 </Tabs.Root>
+
+<SwapExercisesDialog bind:open={swapDialogOpen} />

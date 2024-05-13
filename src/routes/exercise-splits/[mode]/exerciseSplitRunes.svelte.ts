@@ -117,6 +117,14 @@ export function createExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
+	function swapExercises(swapFromIndex: number) {
+		[splitExercises[selectedSplitDayIndex], splitExercises[swapFromIndex]] = [
+			splitExercises[swapFromIndex],
+			splitExercises[selectedSplitDayIndex]
+		];
+		saveStoresToLocalStorage();
+	}
+
 	function saveStoresToLocalStorage() {
 		localStorage.setItem(
 			'exerciseSplitRunes',
@@ -170,6 +178,7 @@ export function createExerciseSplitRunes() {
 		copyExercises,
 		pasteExercises,
 		cutExercises,
+		swapExercises,
 		saveStoresToLocalStorage
 	};
 }
