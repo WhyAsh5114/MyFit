@@ -19,6 +19,10 @@ export function createExerciseSplitRunes() {
 	let selectedSplitDayIndex: number = $derived(
 		splitDays.findIndex((splitDay) => splitDay.name === selectedSplitDayName)
 	);
+	let selectedSplitDayExercises: ExerciseTemplate[] = $derived(
+		splitExercises[selectedSplitDayIndex]
+	);
+
 	let editingExercise: ExerciseTemplate | undefined = $state(undefined);
 	let copiedExercises: ExerciseTemplate[] | undefined = $state(undefined);
 
@@ -147,6 +151,12 @@ export function createExerciseSplitRunes() {
 		},
 		get selectedSplitDayIndex() {
 			return selectedSplitDayIndex;
+		},
+		get selectedSplitDayExercises() {
+			return selectedSplitDayExercises;
+		},
+		get copiedExercises() {
+			return copiedExercises;
 		},
 		addSplitDay,
 		removeSplitDay,

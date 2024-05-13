@@ -40,13 +40,25 @@
 					<DropdownMenu.Content>
 						<DropdownMenu.Group>
 							<!-- TODO: cut, copy, paste, swap -->
-							<DropdownMenu.Item class="gap-2" onclick={exerciseSplitRunes.cutExercises}>
+							<DropdownMenu.Item
+								class="gap-2"
+								onclick={exerciseSplitRunes.cutExercises}
+								disabled={exerciseSplitRunes.selectedSplitDayExercises.length === 0}
+							>
 								<CutIcon /> Cut
 							</DropdownMenu.Item>
-							<DropdownMenu.Item class="gap-2" onclick={exerciseSplitRunes.copyExercises}>
+							<DropdownMenu.Item
+								class="gap-2"
+								onclick={exerciseSplitRunes.copyExercises}
+								disabled={exerciseSplitRunes.selectedSplitDayExercises.length === 0}
+							>
 								<CopyIcon /> Copy
 							</DropdownMenu.Item>
-							<DropdownMenu.Item class="gap-2" onclick={exerciseSplitRunes.pasteExercises}>
+							<DropdownMenu.Item
+								class="gap-2"
+								onclick={exerciseSplitRunes.pasteExercises}
+								disabled={exerciseSplitRunes.copiedExercises === undefined}
+							>
 								<PasteIcon /> Paste
 							</DropdownMenu.Item>
 							<DropdownMenu.Item class="gap-2">
@@ -57,9 +69,7 @@
 				</DropdownMenu.Root>
 			</div>
 			<div class="flex h-px grow flex-col overflow-y-auto">
-				<DndComponent
-					itemList={exerciseSplitRunes.splitExercises[exerciseSplitRunes.selectedSplitDayIndex]}
-				/>
+				<DndComponent itemList={exerciseSplitRunes.selectedSplitDayExercises} />
 			</div>
 		</div>
 	</Tabs.Content>
