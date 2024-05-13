@@ -29,6 +29,7 @@
 			return;
 		}
 		exerciseSplitRunes.updateSplitExercisesStructure();
+		warningDialogOpen = false;
 		await goto('./exercises');
 	}
 </script>
@@ -106,7 +107,9 @@
 <ResponsiveDialog title="Warning" needTrigger={false} bind:open={warningDialogOpen}>
 	<p>
 		You'll lose exercise data from the following days:
-		<span class="font-semibold text-yellow-500">{dataLossDays.join(', ')}</span>. Continue?
+		<span class="font-semibold text-yellow-500">
+			{dataLossDays.map((day) => `Day ${day + 1}`).join(', ')}
+		</span>. Continue?
 	</p>
-	<Button class="destructive">Continue</Button>
+	<Button variant="destructive" onclick={() => submitStructure(true)}>Continue</Button>
 </ResponsiveDialog>
