@@ -9,7 +9,7 @@
 	import MenuIcon from 'virtual:icons/lucide/menu';
 	import SwapIcon from 'virtual:icons/ph/swap';
 	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
-	import ExerciseSplitDrawer from './ExerciseSplitDrawer.svelte';
+	import ExerciseSplitDrawer from './(components)/ExerciseSplitDrawer.svelte';
 	import DndComponent from './(components)/DndComponent.svelte';
 </script>
 
