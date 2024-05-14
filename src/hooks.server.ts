@@ -10,5 +10,11 @@ export const { handle } = SvelteKitAuth({
 	adapter: PrismaAdapter(prisma),
 	basePath: '/auth',
 	providers: [google, github],
-	trustHost: true
+	trustHost: true,
+	callbacks: {
+		session({ session, user }) {
+			session.userId = user.id;
+			return session;
+		}
+	}
 });
