@@ -3,10 +3,24 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import Sun from 'virtual:icons/lucide/sun';
 	import Moon from 'virtual:icons/lucide/moon';
-	import { setMode, resetMode } from 'mode-watcher';
+	import { setMode, resetMode, mode } from 'mode-watcher';
+	import { Chart } from 'chart.js';
+	import { onMount } from 'svelte';
 
-	export let size: 'icon' | 'lg' = 'icon';
-	export let variant: 'ghost' | 'outline' = 'ghost';
+	type PropsType = { size?: 'icon' | 'lg'; variant?: 'ghost' | 'outline' };
+	let { size = 'icon', variant = 'ghost' }: PropsType = $props();
+
+	function updateChartJSColors() {
+		const style = getComputedStyle(document.body);
+		const foregroundColor = style.getPropertyValue('--foreground').split(' ').join(', ');
+		const foregroundMutedColor = style.getPropertyValue('--muted-foreground').split(' ').join(', ');
+		Chart.defaults.color = `hsl(${foregroundMutedColor})`;
+		Chart.defaults.borderColor = `hsl(0, 0%, ${$mode === 'light' ? '64%' : '16%'})`;
+		Chart.defaults.font.weight = 500;
+		Chart.defaults.font.family = "'Inter', sans-serif";
+	}
+
+	onMount(updateChartJSColors);
 </script>
 
 <DropdownMenu.Root>
