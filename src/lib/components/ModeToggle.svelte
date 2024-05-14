@@ -12,10 +12,13 @@
 
 	function updateChartJSColors() {
 		const style = getComputedStyle(document.body);
+		const primaryColor = style.getPropertyValue('--primary').split(' ').join(', ');
 		const foregroundColor = style.getPropertyValue('--foreground').split(' ').join(', ');
 		const foregroundMutedColor = style.getPropertyValue('--muted-foreground').split(' ').join(', ');
-		Chart.defaults.color = `hsl(${foregroundMutedColor})`;
+		
+		Chart.defaults.backgroundColor = `hsl(${primaryColor})`;
 		Chart.defaults.borderColor = `hsl(0, 0%, ${$mode === 'light' ? '64%' : '16%'})`;
+		Chart.defaults.color = `hsl(${foregroundMutedColor})`;
 		Chart.defaults.font.weight = 500;
 		Chart.defaults.font.family = "'Inter', sans-serif";
 	}
