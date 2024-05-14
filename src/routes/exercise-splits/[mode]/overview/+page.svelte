@@ -6,6 +6,30 @@
 	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
 	import PerMuscleGroupComponent from '../exercises/(components)/PerMuscleGroupComponent.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import type { RequestType } from '../../+server';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
+	import { toast } from 'svelte-sonner';
+	import { goto } from '$app/navigation';
+
+	let callingEndpoint = $state(false);
+
+	async function saveExerciseSplit() {
+		callingEndpoint = true;
+		const response = await fetch('/exercise-splits', {
+			method: 'POST',
+			body: JSON.stringify({
+				splitName: exerciseSplitRunes.splitName,
+				splitDays: exerciseSplitRunes.splitDays,
+				splitExercises: exerciseSplitRunes.splitExercises
+			} satisfies RequestType)
+		});
+		callingEndpoint = false;
+
+		if (response.ok) {
+			toast.success('Success', { description: await response.text() });
+			goto('/exercise-splits');
+		} else toast.error('Error', { description: await response.text() });
+	}
 </script>
 
 <H3>Overview</H3>
@@ -20,13 +44,18 @@
 		</Card.Root>
 	</Tabs.Content>
 	<Tabs.Content value="Per muscle group">
-		<Card.Root class="h-80 p-4 flex flex-col gap-2">
+		<Card.Root class="flex h-80 flex-col gap-2 p-4">
 			<PerMuscleGroupComponent splitExercises={exerciseSplitRunes.splitExercises} />
 		</Card.Root>
 	</Tabs.Content>
 </Tabs.Root>
 
-<div class="grid grid-cols-2 gap-1 mt-auto">
+<div class="mt-auto grid grid-cols-2 gap-1">
 	<Button variant="secondary" href="./exercises">Previous</Button>
-	<Button>Save</Button>
+	<Button class="gap-2" onclick={saveExerciseSplit} disabled={callingEndpoint}>
+		{#if callingEndpoint}
+			<LoaderCircle class="animate-spin" />
+		{/if}
+		Save
+	</Button>
 </div>
