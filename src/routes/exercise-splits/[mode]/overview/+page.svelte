@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
@@ -13,14 +12,6 @@
 	import PerMuscleGroupComponent from '../exercises/(components)/PerMuscleGroupComponent.svelte';
 
 	let callingEndpoint = $state(false);
-
-	$effect(() => {
-		if (!$page.form) return;
-		if ($page.form.success) {
-			toast.success('Success', { description: $page.form.message });
-			goto('/exercise-splits');
-		} else toast.error('Error', { description: $page.form.message });
-	});
 </script>
 
 <H3>Overview</H3>
@@ -56,7 +47,14 @@
 			});
 
 			formData.set('exerciseSplitRuneData', exerciseSplitRuneData);
-			return async ({ update }) => update({ invalidateAll: false });
+			return async ({ result }) => {
+				if (result.type === 'success') {
+					toast.success('Success', { description: result.data?.message as string });
+					goto('/exercise-splits');
+				} else if (result.type === 'failure') {
+					toast.error('Error', { description: result.data?.message as string });
+				}
+			};
 		}}
 	>
 		<Button class="gap-2" type="submit" disabled={callingEndpoint}>
