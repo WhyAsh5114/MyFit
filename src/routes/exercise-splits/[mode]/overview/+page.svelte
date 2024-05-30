@@ -1,35 +1,26 @@
 <script lang="ts">
-	import H3 from '$lib/components/ui/typography/H3.svelte';
-	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import PerDayChartComponent from '../exercises/(components)/PerDayChartComponent.svelte';
-	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
-	import PerMuscleGroupComponent from '../exercises/(components)/PerMuscleGroupComponent.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import type { RequestType } from '../../+server';
-	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-	import { toast } from 'svelte-sonner';
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import H3 from '$lib/components/ui/typography/H3.svelte';
+	import { toast } from 'svelte-sonner';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
+	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
+	import PerDayChartComponent from '../exercises/(components)/PerDayChartComponent.svelte';
+	import PerMuscleGroupComponent from '../exercises/(components)/PerMuscleGroupComponent.svelte';
 
 	let callingEndpoint = $state(false);
 
-	async function saveExerciseSplit() {
-		callingEndpoint = true;
-		const response = await fetch('/exercise-splits', {
-			method: 'POST',
-			body: JSON.stringify({
-				splitName: exerciseSplitRunes.splitName,
-				splitDays: exerciseSplitRunes.splitDays,
-				splitExercises: exerciseSplitRunes.splitExercises
-			} satisfies RequestType)
-		});
-		callingEndpoint = false;
-
-		if (response.ok) {
-			toast.success('Success', { description: await response.text() });
+	$effect(() => {
+		if (!$page.form) return;
+		if ($page.form.success) {
+			toast.success('Success', { description: $page.form.message });
 			goto('/exercise-splits');
-		} else toast.error('Error', { description: await response.text() });
-	}
+		} else toast.error('Error', { description: $page.form.message });
+	});
 </script>
 
 <H3>Overview</H3>
@@ -52,10 +43,27 @@
 
 <div class="mt-auto grid grid-cols-2 gap-1">
 	<Button variant="secondary" href="./exercises">Previous</Button>
-	<Button class="gap-2" onclick={saveExerciseSplit} disabled={callingEndpoint}>
-		{#if callingEndpoint}
-			<LoaderCircle class="animate-spin" />
-		{/if}
-		Save
-	</Button>
+	<form
+		method="POST"
+		class="contents"
+		action="?/create_exercise_split"
+		use:enhance={({ formData }) => {
+			callingEndpoint = true;
+			const exerciseSplitRuneData = JSON.stringify({
+				splitName: exerciseSplitRunes.splitName,
+				splitDays: exerciseSplitRunes.splitDays,
+				splitExercises: exerciseSplitRunes.splitExercises
+			});
+
+			formData.set('exerciseSplitRuneData', exerciseSplitRuneData);
+			return async ({ update }) => update({ invalidateAll: false });
+		}}
+	>
+		<Button class="gap-2" type="submit" disabled={callingEndpoint}>
+			{#if callingEndpoint}
+				<LoaderCircle class="animate-spin" />
+			{/if}
+			Save
+		</Button>
+	</form>
 </div>
