@@ -10,6 +10,7 @@
 	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
 	import PerDayChartComponent from '../exercises/(components)/PerDayChartComponent.svelte';
 	import PerMuscleGroupComponent from '../exercises/(components)/PerMuscleGroupComponent.svelte';
+	import type { ExerciseSplitRuneDataType } from './+page.server';
 
 	let callingEndpoint = $state(false);
 </script>
@@ -44,7 +45,7 @@
 				splitName: exerciseSplitRunes.splitName,
 				splitDays: exerciseSplitRunes.splitDays,
 				splitExercises: exerciseSplitRunes.splitExercises
-			});
+			} satisfies ExerciseSplitRuneDataType);
 
 			formData.set('exerciseSplitRuneData', exerciseSplitRuneData);
 			return async ({ result }) => {

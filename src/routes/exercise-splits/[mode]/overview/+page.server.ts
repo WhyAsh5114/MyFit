@@ -5,7 +5,7 @@ import type {
 	ExerciseTemplateRuneType
 } from '../exerciseSplitRunes.svelte';
 
-type ExerciseSplitRuneDataType = {
+export type ExerciseSplitRuneDataType = {
 	splitName: string;
 	splitDays: ExerciseSplitDayRuneType[];
 	splitExercises: ExerciseTemplateRuneType[][];
@@ -22,6 +22,7 @@ export const actions = {
 
 		try {
 			const exerciseSplitRuneData = JSON.parse(data.toString()) as ExerciseSplitRuneDataType;
+      // TODO: maybe use interactive transactions to reduce query time from 3.6 seconds...
 			await prisma.exerciseSplit.create({
 				data: {
 					name: exerciseSplitRuneData.splitName,
