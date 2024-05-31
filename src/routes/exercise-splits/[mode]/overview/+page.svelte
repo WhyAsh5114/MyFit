@@ -10,7 +10,7 @@
 	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
 	import PerDayChartComponent from '../exercises/(components)/PerDayChartComponent.svelte';
 	import PerMuscleGroupComponent from '../exercises/(components)/PerMuscleGroupComponent.svelte';
-	import type { ExerciseSplitRuneDataType } from './+page.server';
+	import type { ExerciseSplitRuneDataType } from '../../+page.server';
 
 	let callingEndpoint = $state(false);
 </script>
@@ -38,7 +38,7 @@
 	<form
 		method="POST"
 		class="contents"
-		action="?/create_exercise_split"
+		action="/exercise-splits?/create_exercise_split"
 		use:enhance={({ formData }) => {
 			callingEndpoint = true;
 			const exerciseSplitRuneData = JSON.stringify({
