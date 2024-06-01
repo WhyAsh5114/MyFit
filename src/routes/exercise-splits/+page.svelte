@@ -1,5 +1,4 @@
 <script lang="ts">
-	export let data;
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Input } from '$lib/components/ui/input';
@@ -12,12 +11,13 @@
 	import { page } from '$app/stores';
 	import { type ExerciseSplit } from '@prisma/client';
 
-	let exerciseSplits: ExerciseSplit[] | 'loading' = 'loading';
-	let searchString = $page.url.searchParams.get('search') ?? '';
+	let { data } = $props();
+	let exerciseSplits: ExerciseSplit[] | 'loading' = $state('loading');
+	let searchString = $state($page.url.searchParams.get('search') ?? '');
 
 	afterNavigate(async () => {
-		exerciseSplits = await data.exerciseSplits;
-		console.log(exerciseSplits);
+		if (exerciseSplits === 'loading') exerciseSplits = await data.exerciseSplits;
+		else exerciseSplits.push(...(await data.exerciseSplits));
 	});
 
 	function updateParams(param: string | number) {
@@ -25,9 +25,9 @@
 		if (typeof param === 'string') {
 			if (searchString) url.searchParams.set('search', searchString);
 			else url.searchParams.delete('search');
-			url.searchParams.delete('pageNumber');
+			url.searchParams.delete('cursorId');
 		} else {
-			url.searchParams.set('pageNumber', param.toString());
+			url.searchParams.set('cursorId', param.toString());
 		}
 		goto(url);
 	}
@@ -47,19 +47,29 @@
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content align="end">
 				<DropdownMenu.Group>
-					<DropdownMenu.Item href="/exercise-splits/new/structure">Start from scratch</DropdownMenu.Item>
+					<DropdownMenu.Item href="/exercise-splits/new/structure">
+						Start from scratch
+					</DropdownMenu.Item>
 					<DropdownMenu.Item href="/exercise-splits/templates">Use template</DropdownMenu.Item>
 				</DropdownMenu.Group>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</div>
 	<div class="flex h-px grow flex-col gap-1 overflow-y-auto">
-		<!-- {#if exerciseSplits === 'loading'}
-			<ExerciseSplitsLoading />
-		{:else if exerciseSplits === 'error'}
-			<div class="muted-text-box">An error occurred</div>
+		{#if exerciseSplits === 'loading'}
+			Loading...
 		{:else}
-			<ExerciseSplitsContent {exerciseSplits} {exerciseSplitsCount} {updateParams} />
-		{/if} -->
+			{#each exerciseSplits as exerciseSplit}
+				<span>{exerciseSplit.name}</span>
+			{/each}
+			<Button
+				onclick={() => {
+					const lastExerciseSplit = exerciseSplits.at(-1) as ExerciseSplit;
+					updateParams(lastExerciseSplit.id);
+				}}
+			>
+				Load more
+			</Button>
+		{/if}
 	</div>
 </div>

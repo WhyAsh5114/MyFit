@@ -11,15 +11,20 @@ export type ExerciseSplitRuneDataType = {
 	splitExercises: ExerciseTemplateRuneType[][];
 };
 
-export const load = async ({ parent }) => {
+export const load = async ({ parent, url }) => {
 	const { session } = await parent();
+	const cursorId = url.searchParams.get('cursorId');
+	const cursor = cursorId ? { id: parseInt(cursorId) } : undefined;
 
-	const exerciseSplitsCount = prisma.exerciseSplit.count();
 	const exerciseSplits = prisma.exerciseSplit.findMany({
-		where: { userId: session?.user?.id },
-		include: { exerciseSplitDays: { select: { name: true, isRestDay: true } } }
+		take: 5,
+		skip: cursor ? 1 : 0,
+		cursor,
+		where: { userId: session.user.id },
+		orderBy: { id: 'asc' }
 	});
-	return { exerciseSplits, exerciseSplitsCount };
+
+	return { exerciseSplits };
 };
 
 export const actions = {
