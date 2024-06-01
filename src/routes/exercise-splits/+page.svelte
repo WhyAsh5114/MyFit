@@ -6,18 +6,30 @@
 
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import SearchIcon from 'virtual:icons/lucide/search';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { type ExerciseSplit } from '@prisma/client';
+	import type { ExerciseSplit, ExerciseSplitDay } from '@prisma/client';
+	import { Badge } from '$lib/components/ui/badge/index.js';
+	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+
+	type ExerciseSplitWithSplitDays = (ExerciseSplit & { exerciseSplitDays: ExerciseSplitDay[] })[];
 
 	let { data } = $props();
-	let exerciseSplits: ExerciseSplit[] | 'loading' = $state('loading');
+	let exerciseSplits: ExerciseSplitWithSplitDays | 'loading' = $state('loading');
 	let searchString = $state($page.url.searchParams.get('search') ?? '');
+	let loadingMore = $state(false);
+	let hasMore = $state(true);
 
 	afterNavigate(async () => {
-		if (exerciseSplits === 'loading') exerciseSplits = await data.exerciseSplits;
-		else exerciseSplits.push(...(await data.exerciseSplits));
+		const serverExerciseSplits = await data.exerciseSplits;
+		if (serverExerciseSplits.length !== data.exerciseSplitsTake) hasMore = false;
+		if (exerciseSplits === 'loading') exerciseSplits = serverExerciseSplits;
+		else {
+			exerciseSplits.push(...serverExerciseSplits);
+			loadingMore = false;
+		}
 	});
 
 	function updateParams(param: string | number) {
@@ -26,9 +38,7 @@
 			if (searchString) url.searchParams.set('search', searchString);
 			else url.searchParams.delete('search');
 			url.searchParams.delete('cursorId');
-		} else {
-			url.searchParams.set('cursorId', param.toString());
-		}
+		} else url.searchParams.set('cursorId', param.toString());
 		goto(url);
 	}
 </script>
@@ -57,19 +67,37 @@
 	</div>
 	<div class="flex h-px grow flex-col gap-1 overflow-y-auto">
 		{#if exerciseSplits === 'loading'}
-			Loading...
+			{#each Array(data.exerciseSplitsTake) as _}
+				<div class="flex h-12 items-center justify-between rounded-md border bg-card p-2">
+					<Skeleton class="text-lg-skeleton" />
+					<Skeleton class="badge-skeleton" />
+				</div>
+			{/each}
+			<Skeleton class="h-10 w-full" />
 		{:else}
 			{#each exerciseSplits as exerciseSplit}
-				<span>{exerciseSplit.name}</span>
+				<div class="flex h-12 items-center justify-between rounded-md border bg-card p-2">
+					<span class="text-lg font-semibold">{exerciseSplit.name}</span>
+					<Badge>{exerciseSplit.exerciseSplitDays.length} days / cycle</Badge>
+				</div>
 			{/each}
-			<Button
-				onclick={() => {
-					const lastExerciseSplit = exerciseSplits.at(-1) as ExerciseSplit;
-					updateParams(lastExerciseSplit.id);
-				}}
-			>
-				Load more
-			</Button>
+			{#if hasMore}
+				<Button
+					variant="outline"
+					class="gap-2"
+					disabled={loadingMore}
+					onclick={() => {
+						const lastExerciseSplit = exerciseSplits.at(-1) as ExerciseSplit;
+						loadingMore = true;
+						updateParams(lastExerciseSplit.id);
+					}}
+				>
+					Load more
+					{#if loadingMore}
+						<LoaderCircle class="animate-spin" />
+					{/if}
+				</Button>
+			{/if}
 		{/if}
 	</div>
 </div>

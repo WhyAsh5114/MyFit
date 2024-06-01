@@ -16,15 +16,17 @@ export const load = async ({ parent, url }) => {
 	const cursorId = url.searchParams.get('cursorId');
 	const cursor = cursorId ? { id: parseInt(cursorId) } : undefined;
 
+	const take = 10;
 	const exerciseSplits = prisma.exerciseSplit.findMany({
-		take: 5,
+		take,
 		skip: cursor ? 1 : 0,
 		cursor,
 		where: { userId: session.user.id },
-		orderBy: { id: 'asc' }
+		orderBy: { id: 'asc' },
+		include: { exerciseSplitDays: true }
 	});
 
-	return { exerciseSplits };
+	return { exerciseSplits, exerciseSplitsTake: take };
 };
 
 export const actions = {
