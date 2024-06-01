@@ -12,7 +12,7 @@
 	import PerMuscleGroupComponent from '../exercises/(components)/PerMuscleGroupComponent.svelte';
 	import type { ExerciseSplitRuneDataType } from '../../+page.server';
 
-	let callingEndpoint = $state(false);
+	let savingExerciseSplit = $state(false);
 </script>
 
 <H3>Overview</H3>
@@ -40,7 +40,7 @@
 		class="contents"
 		action="/exercise-splits?/create_exercise_split"
 		use:enhance={({ formData }) => {
-			callingEndpoint = true;
+			savingExerciseSplit = true;
 			const exerciseSplitRuneData = JSON.stringify({
 				splitName: exerciseSplitRunes.splitName,
 				splitDays: exerciseSplitRunes.splitDays,
@@ -58,11 +58,11 @@
 			};
 		}}
 	>
-		<Button class="gap-2" type="submit" disabled={callingEndpoint}>
-			{#if callingEndpoint}
+		<Button class="gap-2" type="submit" disabled={savingExerciseSplit}>
+			Save
+			{#if savingExerciseSplit}
 				<LoaderCircle class="animate-spin" />
 			{/if}
-			Save
 		</Button>
 	</form>
 </div>
