@@ -79,7 +79,7 @@
 				<Button
 					variant="outline"
 					class="flex h-12 items-center justify-between rounded-md border bg-card p-2"
-					href="/exercise-splits/view/{exerciseSplit.id}"
+					href="/exercise-splits/{exerciseSplit.id}"
 				>
 					<span class="text-lg font-semibold">{exerciseSplit.name}</span>
 					<Badge>{exerciseSplit.exerciseSplitDays.length} days / cycle</Badge>

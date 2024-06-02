@@ -1,9 +1,9 @@
 import prisma from '$lib/prisma.js';
-import { fail } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import type {
 	ExerciseSplitDayRuneType,
 	ExerciseTemplateRuneType
-} from './[mode]/exerciseSplitRunes.svelte';
+} from './new/exerciseSplitRunes.svelte';
 
 export type ExerciseSplitRuneDataType = {
 	splitName: string;
@@ -13,6 +13,8 @@ export type ExerciseSplitRuneDataType = {
 
 export const load = async ({ parent, url }) => {
 	const { session } = await parent();
+	if (!session?.user?.id) error(401, 'Not logged in');
+
 	const cursorId = url.searchParams.get('cursorId');
 	const cursor = cursorId ? { id: parseInt(cursorId) } : undefined;
 

@@ -7,7 +7,7 @@
 	import {
 		exerciseSplitRunes,
 		type ExerciseTemplateRuneType
-	} from '../[mode]/exerciseSplitRunes.svelte';
+	} from '../new/exerciseSplitRunes.svelte';
 
 	type ExerciseTemplateCardProps = {
 		readOnly?: boolean;
