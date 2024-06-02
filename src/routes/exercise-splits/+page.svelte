@@ -76,10 +76,14 @@
 			<Skeleton class="h-10 w-full" />
 		{:else}
 			{#each exerciseSplits as exerciseSplit}
-				<div class="flex h-12 items-center justify-between rounded-md border bg-card p-2">
+				<Button
+					variant="outline"
+					class="flex h-12 items-center justify-between rounded-md border bg-card p-2"
+					href="/exercise-splits/view/{exerciseSplit.id}"
+				>
 					<span class="text-lg font-semibold">{exerciseSplit.name}</span>
 					<Badge>{exerciseSplit.exerciseSplitDays.length} days / cycle</Badge>
-				</div>
+				</Button>
 			{/each}
 			{#if hasMore}
 				<Button
