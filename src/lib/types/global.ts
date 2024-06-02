@@ -13,7 +13,9 @@ const MuscleGroups = [
   "Glutes",
   "Calves",
   "Abs",
-  "Neck"
+  "Neck",
+  "Adductors",
+  "Abductors"
 ] as const;
 type MuscleGroup = (typeof MuscleGroups)[number];
 
