@@ -14,10 +14,10 @@
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 
-	type ExerciseSplitWithSplitDays = (ExerciseSplit & { exerciseSplitDays: ExerciseSplitDay[] })[];
+	type ExerciseSplitsWithSplitDays = (ExerciseSplit & { exerciseSplitDays: ExerciseSplitDay[] })[];
 
 	let { data } = $props();
-	let exerciseSplits: ExerciseSplitWithSplitDays | 'loading' = $state('loading');
+	let exerciseSplits: ExerciseSplitsWithSplitDays | 'loading' = $state('loading');
 	let searchString = $state($page.url.searchParams.get('search') ?? '');
 	let loadingMore = $state(false);
 	let hasMore = $state(true);
