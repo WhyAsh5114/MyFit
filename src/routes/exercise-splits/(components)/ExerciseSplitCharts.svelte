@@ -37,11 +37,10 @@
 
 	function getTotalFrequency(muscleGroup: MuscleGroup) {
 		return splitExercises.reduce((totalFrequency, splitDayExercises) => {
-			return totalFrequency +
-				splitDayExercises.filter((exercise) => exercise.targetMuscleGroup === muscleGroup).length >
-				0
-				? 1
-				: 0;
+			const hasTargetedExercise = splitDayExercises.some(
+				(exercise) => exercise.targetMuscleGroup === muscleGroup
+			);
+			return totalFrequency + (hasTargetedExercise ? 1 : 0);
 		}, 0);
 	}
 
