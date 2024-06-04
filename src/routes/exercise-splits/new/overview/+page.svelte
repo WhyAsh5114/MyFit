@@ -35,7 +35,7 @@
 			formData.set('exerciseSplitRuneData', exerciseSplitRuneData);
 			return async ({ result }) => {
 				if (result.type === 'success') {
-					toast.success('Success', { description: result.data?.message as string });
+					toast.success(result.data?.message as string);
 					goto('/exercise-splits');
 				} else if (result.type === 'failure') {
 					toast.error(result.data?.message as string);
