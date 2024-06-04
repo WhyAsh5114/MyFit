@@ -8,13 +8,12 @@
 	import SearchIcon from 'virtual:icons/lucide/search';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 
-	import { goto } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 	import { InfiniteLoader, loaderState } from 'svelte-infinite';
 	import { page } from '$app/stores';
 	import type { ExerciseSplit, ExerciseSplitDay } from '@prisma/client';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import type { ActionResult } from '@sveltejs/kit';
 	import { deserialize } from '$app/forms';
@@ -26,23 +25,24 @@
 	let exerciseSplits: ExerciseSplitsWithSplitDays | 'loading' = $state('loading');
 	let searchString = $state($page.url.searchParams.get('search') ?? '');
 
-	onMount(async () => {
+	afterNavigate(async () => {
 		exerciseSplits = await data.exerciseSplits;
 	});
 
-	async function updateParams(param: string | number) {
+	function updateSearchParam(e: Event) {
+		e.preventDefault();
 		const url = new URL($page.url);
-		if (typeof param === 'string') {
-			if (searchString) url.searchParams.set('search', searchString);
-			else url.searchParams.delete('search');
-		}
-		await goto(url);
+		if (searchString) url.searchParams.set('search', searchString);
+		else url.searchParams.delete('search');
+
+		exerciseSplits = 'loading';
+		loaderState.reset();
+		goto(url);
 	}
 
 	async function loadMore() {
 		const lastExerciseSplit = exerciseSplits.at(-1);
 		if (typeof lastExerciseSplit === 'string' || lastExerciseSplit === undefined) {
-
 			return;
 		}
 		const response = await fetch('?/load_more_exercise_splits', {
@@ -68,10 +68,17 @@
 
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
-		<Input bind:value={searchString} id="search-exercise-splits" placeholder="Search" />
-		<Button variant="secondary" aria-label="search" onclick={() => updateParams(searchString)}>
-			<SearchIcon />
-		</Button>
+		<form class="contents" onsubmit={(e) => updateSearchParam(e)}>
+			<Input
+				bind:value={searchString}
+				id="search-exercise-splits"
+				placeholder="Search"
+				type="search"
+			/>
+			<Button variant="secondary" aria-label="search" type="submit">
+				<SearchIcon />
+			</Button>
+		</form>
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild let:builder>
 				<Button builders={[builder]} aria-label="exercise-split-new-options"><AddIcon /></Button>
@@ -106,9 +113,7 @@
 						<Badge>{exerciseSplit.exerciseSplitDays.length} days / cycle</Badge>
 					</Button>
 				{:else}
-					<div class="muted-text-box">
-						No exercise splits created
-					</div>
+					<div class="muted-text-box">No exercise splits created</div>
 				{/each}
 				{#snippet loading()}
 					<LoaderCircle class="animate-spin" />

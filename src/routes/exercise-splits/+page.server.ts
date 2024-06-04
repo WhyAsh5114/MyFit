@@ -4,6 +4,7 @@ import type {
 	ExerciseSplitDayRuneType,
 	ExerciseTemplateRuneType
 } from './new/exerciseSplitRunes.svelte';
+import { Prisma } from '@prisma/client';
 
 export type ExerciseSplitRuneDataType = {
 	splitName: string;
@@ -13,13 +14,17 @@ export type ExerciseSplitRuneDataType = {
 
 const take = 10;
 
-export const load = async ({ parent }) => {
+export const load = async ({ parent, url }) => {
 	const { session } = await parent();
 	if (!session?.user?.id) error(401, 'Not logged in');
 
+	const whereClause: Prisma.ExerciseSplitWhereInput = { userId: session.user.id };
+	const searchString = url.searchParams.get('search');
+	if (searchString) whereClause.name = { contains: searchString };
+
 	const exerciseSplits = prisma.exerciseSplit.findMany({
 		take,
-		where: { userId: session.user.id },
+		where: whereClause,
 		orderBy: { id: 'desc' },
 		include: { exerciseSplitDays: true }
 	});
