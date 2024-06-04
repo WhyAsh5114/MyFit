@@ -8,6 +8,7 @@
 		exerciseSplitRunes,
 		type ExerciseTemplateRuneType
 	} from '../new/exerciseSplitRunes.svelte';
+	import { convertCamelCaseToNormal } from '$lib/utils';
 
 	type ExerciseTemplateCardProps = {
 		readOnly?: boolean;
@@ -75,7 +76,7 @@
 			<Badge variant="outline">BW</Badge>
 		{/if}
 		<Badge class="whitespace-nowrap" variant="secondary">
-			{exerciseTemplate.targetMuscleGroup}
+			{convertCamelCaseToNormal(exerciseTemplate.targetMuscleGroup)}
 		</Badge>
 	</div>
 	{#if exerciseTemplate.note}
