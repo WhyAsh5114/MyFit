@@ -7,7 +7,7 @@ export const load = async ({ params, parent }) => {
 
 	const exerciseSplit = prisma.exerciseSplit.findUnique({
 		where: { userId: session.user.id, id: parseInt(params.exerciseSplitId) },
-		include: { exerciseSplitDays: true }
+		include: { exerciseSplitDays: { include: { exercises: true } } }
 	});
 
 	return { exerciseSplit };

@@ -1,17 +1,27 @@
 <script lang="ts">
 	import H2 from '$lib/components/ui/typography/H2.svelte';
+	import * as Tabs from '$lib/components/ui/tabs';
+	import * as Card from '$lib/components/ui/card';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Button } from '$lib/components/ui/button';
 	import MenuIcon from 'virtual:icons/lucide/menu';
-
-	import type { ExerciseSplit, ExerciseSplitDay } from '@prisma/client';
+	import CloneIcon from 'virtual:icons/clarity/clone-line';
+	import EditIcon from 'virtual:icons/lucide/pencil';
+	
+	import type { ExerciseSplit, ExerciseSplitDay, ExerciseTemplate } from '@prisma/client';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import ExerciseSplitSkeleton from './(components)/ExerciseSplitSkeleton.svelte';
+	import ExercisesTableComponent from './(components)/ExercisesTableComponent.svelte';
+	import ExerciseSplitOverviewCharts from '../(components)/ExerciseSplitOverviewCharts.svelte';
+	import ExerciseSplitViewCharts from './(components)/ExerciseSplitViewCharts.svelte';
 
-	type ExerciseSplitWithSplitDays = ExerciseSplit & { exerciseSplitDays: ExerciseSplitDay[] };
+	type FullExerciseSplit = ExerciseSplit & {
+		exerciseSplitDays: (ExerciseSplitDay & { exercises: ExerciseTemplate[] })[];
+	};
 
 	let { data } = $props();
-	let exerciseSplit: ExerciseSplitWithSplitDays | 'loading' = $state('loading');
+	let exerciseSplit: FullExerciseSplit | 'loading' = $state('loading');
 
 	onMount(async () => {
 		const serverExerciseSplit = await data.exerciseSplit;
@@ -21,28 +31,62 @@
 </script>
 
 <H2>View exercise split</H2>
-{#if exerciseSplit === 'loading'}{:else}
-	<div class="flex flex-col gap-4 rounded-md border bg-card p-4">
-		<div class="flex justify-between">
-			<div class="flex flex-col">
-				<span class="text-sm text-muted-foreground">Exercise split name</span>
-				<span class="font-semibold">{exerciseSplit.name}</span>
-			</div>
-			<Button size="icon" variant="ghost">
-				<MenuIcon />
-			</Button>
-		</div>
-		<div class="flex flex-col gap-1">
-			<span class="text-sm text-muted-foreground">Exercise split schedule</span>
-			<div class="flex flex-wrap gap-1">
-				{#each exerciseSplit.exerciseSplitDays as splitDay}
-					{#if splitDay.isRestDay}
-						<Badge variant="outline">Rest</Badge>
-					{:else}
-						<Badge variant="secondary">{splitDay.name}</Badge>
-					{/if}
-				{/each}
-			</div>
-		</div>
-	</div>
+{#if exerciseSplit === 'loading'}
+	<ExerciseSplitSkeleton />
+{:else}
+	<Tabs.Root value="info" class="flex w-full grow flex-col">
+		<Tabs.List class="grid w-full grid-cols-3">
+			<Tabs.Trigger value="info">Info</Tabs.Trigger>
+			<Tabs.Trigger value="exercises">Exercises</Tabs.Trigger>
+			<Tabs.Trigger value="stats">Stats</Tabs.Trigger>
+		</Tabs.List>
+		<Tabs.Content value="info">
+			<Card.Root>
+				<Card.Header>
+					<Card.Title class="flex justify-between">
+						{exerciseSplit.name}
+						<DropdownMenu.Root>
+							<DropdownMenu.Trigger aria-label="exercise-split-options">
+								<MenuIcon />
+							</DropdownMenu.Trigger>
+							<DropdownMenu.Content align="end">
+								<DropdownMenu.Group>
+									<DropdownMenu.Item class="gap-2" href="/">
+										<EditIcon /> Edit
+									</DropdownMenu.Item>
+									<DropdownMenu.Item class="gap-2" href="/">
+										<CloneIcon /> Clone
+									</DropdownMenu.Item>
+								</DropdownMenu.Group>
+							</DropdownMenu.Content>
+						</DropdownMenu.Root>
+					</Card.Title>
+					<Card.Description>
+						<div class="mt-1 flex flex-wrap gap-1">
+							{#each exerciseSplit.exerciseSplitDays as splitDay}
+								<Badge variant={splitDay.isRestDay ? 'outline' : 'secondary'}>
+									{splitDay.isRestDay ? 'Rest' : splitDay.name}
+								</Badge>
+							{/each}
+						</div>
+					</Card.Description>
+				</Card.Header>
+				<Card.Content>
+					<ExerciseSplitViewCharts
+						exercises={exerciseSplit.exerciseSplitDays.flatMap((splitDay) => splitDay.exercises)}
+					/>
+				</Card.Content>
+			</Card.Root>
+		</Tabs.Content>
+		<Tabs.Content value="exercises" class="grow">
+			<ExercisesTableComponent exerciseSplitDays={exerciseSplit.exerciseSplitDays} />
+		</Tabs.Content>
+		<Tabs.Content value="stats">
+			<Card.Root class="p-4">
+				<ExerciseSplitOverviewCharts
+					splitExercises={exerciseSplit.exerciseSplitDays.map((splitDay) => splitDay.exercises)}
+				/>
+			</Card.Root>
+		</Tabs.Content>
+	</Tabs.Root>
 {/if}

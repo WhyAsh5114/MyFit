@@ -7,7 +7,7 @@
 	import { toast } from 'svelte-sonner';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
-	import ExerciseSplitCharts from '../../(components)/ExerciseSplitCharts.svelte';
+	import ExerciseSplitCharts from '../../(components)/ExerciseSplitOverviewCharts.svelte';
 	import type { ExerciseSplitRuneDataType } from '../../+page.server';
 
 	let savingExerciseSplit = $state(false);
