@@ -67,8 +67,7 @@
 		{/if}
 	</div>
 	<div class="flex items-center gap-0.5">
-		<span class="mr-auto text-sm lowercase text-muted-foreground">
-			{exerciseTemplate.sets}
+		<span class="mr-auto text-sm text-muted-foreground">
 			{exerciseTemplate.setType} sets of
 			{exerciseTemplate.repRangeStart} to {exerciseTemplate.repRangeEnd} reps
 		</span>
