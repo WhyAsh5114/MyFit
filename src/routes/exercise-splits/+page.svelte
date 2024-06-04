@@ -8,38 +8,59 @@
 	import SearchIcon from 'virtual:icons/lucide/search';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 
-	import { afterNavigate, goto } from '$app/navigation';
+	import { goto } from '$app/navigation';
+	import { InfiniteLoader, loaderState } from 'svelte-infinite';
 	import { page } from '$app/stores';
 	import type { ExerciseSplit, ExerciseSplitDay } from '@prisma/client';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
+	import type { ActionResult } from '@sveltejs/kit';
+	import { deserialize } from '$app/forms';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 
 	type ExerciseSplitsWithSplitDays = (ExerciseSplit & { exerciseSplitDays: ExerciseSplitDay[] })[];
 
 	let { data } = $props();
 	let exerciseSplits: ExerciseSplitsWithSplitDays | 'loading' = $state('loading');
 	let searchString = $state($page.url.searchParams.get('search') ?? '');
-	let loadingMore = $state(false);
-	let hasMore = $state(true);
 
-	afterNavigate(async () => {
-		const serverExerciseSplits = await data.exerciseSplits;
-		if (serverExerciseSplits.length !== data.exerciseSplitsTake) hasMore = false;
-		if (exerciseSplits === 'loading') exerciseSplits = serverExerciseSplits;
-		else {
-			exerciseSplits.push(...serverExerciseSplits);
-			loadingMore = false;
-		}
+	onMount(async () => {
+		exerciseSplits = await data.exerciseSplits;
 	});
 
-	function updateParams(param: string | number) {
+	async function updateParams(param: string | number) {
 		const url = new URL($page.url);
 		if (typeof param === 'string') {
 			if (searchString) url.searchParams.set('search', searchString);
 			else url.searchParams.delete('search');
-			url.searchParams.delete('cursorId');
-		} else url.searchParams.set('cursorId', param.toString());
-		goto(url);
+		}
+		await goto(url);
+	}
+
+	async function loadMore() {
+		const lastExerciseSplit = exerciseSplits.at(-1);
+		if (typeof lastExerciseSplit === 'string' || lastExerciseSplit === undefined) {
+
+			return;
+		}
+		const response = await fetch('?/load_more_exercise_splits', {
+			method: 'POST',
+			body: JSON.stringify({ cursorId: lastExerciseSplit.id })
+		});
+		const result: ActionResult = deserialize(await response.text());
+
+		if (result.type === 'failure') {
+			toast.error(result.data?.message);
+			loaderState.error();
+			return;
+		} else if (result.type === 'success') {
+			const newExerciseSplits = result.data as ExerciseSplitsWithSplitDays;
+			if (exerciseSplits === 'loading') exerciseSplits = newExerciseSplits;
+			else exerciseSplits.push(...newExerciseSplits);
+			if (newExerciseSplits.length !== data.exerciseSplitsTake) loaderState.complete();
+		}
 	}
 </script>
 
@@ -73,35 +94,36 @@
 					<Skeleton class="badge-skeleton" />
 				</div>
 			{/each}
-			<Skeleton class="h-10 w-full" />
 		{:else}
-			{#each exerciseSplits as exerciseSplit}
-				<Button
-					variant="outline"
-					class="flex h-12 items-center justify-between rounded-md border bg-card p-2"
-					href="/exercise-splits/{exerciseSplit.id}"
-				>
-					<span class="text-lg font-semibold">{exerciseSplit.name}</span>
-					<Badge>{exerciseSplit.exerciseSplitDays.length} days / cycle</Badge>
-				</Button>
-			{/each}
-			{#if hasMore}
-				<Button
-					variant="outline"
-					class="gap-2"
-					disabled={loadingMore}
-					onclick={() => {
-						const lastExerciseSplit = exerciseSplits.at(-1) as ExerciseSplit;
-						loadingMore = true;
-						updateParams(lastExerciseSplit.id);
-					}}
-				>
-					Load more
-					{#if loadingMore}
-						<LoaderCircle class="animate-spin" />
-					{/if}
-				</Button>
-			{/if}
+			<InfiniteLoader triggerLoad={loadMore}>
+				{#each exerciseSplits as exerciseSplit}
+					<Button
+						variant="outline"
+						class="mb-1 flex h-12 items-center justify-between rounded-md border bg-card p-2"
+						href="/exercise-splits/{exerciseSplit.id}"
+					>
+						<span class="text-lg font-semibold">{exerciseSplit.name}</span>
+						<Badge>{exerciseSplit.exerciseSplitDays.length} days / cycle</Badge>
+					</Button>
+				{:else}
+					<div class="muted-text-box">
+						No exercise splits created
+					</div>
+				{/each}
+				{#snippet loading()}
+					<LoaderCircle class="animate-spin" />
+				{/snippet}
+				{#snippet error(load)}
+					<Button variant="outline" onclick={load}>An error occurred. Retry?</Button>
+				{/snippet}
+				{#snippet noData()}
+					<div class="flex items-center justify-start gap-2 font-semibold text-muted-foreground">
+						<Separator class="h-0.5 w-20" />
+						<span class="whitespace-nowrap">That's all!</span>
+						<Separator class="h-0.5 w-20" />
+					</div>
+				{/snippet}
+			</InfiniteLoader>
 		{/if}
 	</div>
 </div>
