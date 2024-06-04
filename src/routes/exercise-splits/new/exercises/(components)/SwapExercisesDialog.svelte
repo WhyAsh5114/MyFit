@@ -19,7 +19,7 @@
 <ResponsiveDialog title="Swap exercises" needTrigger={false} bind:open>
 	<p>
 		Swap <span class="font-semibold">
-			{exerciseSplitRunes.selectedSplitDayName}
+			{exerciseSplitRunes.splitDays[exerciseSplitRunes.selectedSplitDayIndex].name}
 			<span class="text-muted-foreground">(Day {exerciseSplitRunes.selectedSplitDayIndex + 1})</span
 			>
 		</span> exercises with:
