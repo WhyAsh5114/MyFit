@@ -3,7 +3,6 @@
   import MyModal from "$lib/components/MyModal.svelte";
   import { dateFormatter } from "$lib/util/CommonFunctions.js";
   import VolumeGraph from "./VolumeGraph.svelte";
-  import InsightsIcon from "virtual:icons/ic/baseline-insights";
   export let data;
 
   let callingEndpoint = false;
@@ -123,7 +122,7 @@
       {#await Promise.all(data.streamed.workoutsStreamArray)}
         <div class="skeleton h-56 w-full bg-primary brightness-50 rounded-md" />
       {:then workouts}
-        <VolumeGraph {workouts} />
+        <VolumeGraph {workouts} mesocycleTemplate={data.mesocycleTemplate}  />
       {/await}
     </div>
   {/if}
