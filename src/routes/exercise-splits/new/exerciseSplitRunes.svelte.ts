@@ -122,6 +122,16 @@ export function createExerciseSplitRunes() {
 		);
 	}
 
+	function resetStores() {
+		splitName = '';
+		splitDays = Array.from({ length: 7 }).map(() => ({ name: '', isRestDay: false }));
+		splitExercises = [];
+		selectedSplitDayIndex = 0;
+		editingExercise = undefined;
+		copiedExercises = undefined;
+		saveStoresToLocalStorage();
+	}
+
 	return {
 		get splitName() {
 			return splitName;
@@ -163,7 +173,8 @@ export function createExerciseSplitRunes() {
 		pasteExercises,
 		cutExercises,
 		swapExercises,
-		saveStoresToLocalStorage
+		saveStoresToLocalStorage,
+		resetStores
 	};
 }
 
