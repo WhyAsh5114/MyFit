@@ -13,8 +13,8 @@
 	import { toast } from 'svelte-sonner';
 	import ExerciseSplitSkeleton from './(components)/ExerciseSplitSkeleton.svelte';
 	import ExercisesTableComponent from './(components)/ExercisesTableComponent.svelte';
-	import ExerciseSplitOverviewCharts from '../(components)/ExerciseSplitOverviewCharts.svelte';
-	import ExerciseSplitViewCharts from './(components)/ExerciseSplitViewCharts.svelte';
+	import ExerciseSplitExercisesCharts from '../(components)/ExerciseSplitExercisesCharts.svelte';
+	import ExerciseSplitMuscleGroupsCharts from '../(components)/ExerciseSplitMuscleGroupsCharts.svelte';
 
 	type FullExerciseSplit = ExerciseSplit & {
 		exerciseSplitDays: (ExerciseSplitDay & { exercises: ExerciseTemplate[] })[];
@@ -72,7 +72,7 @@
 					</Card.Description>
 				</Card.Header>
 				<Card.Content>
-					<ExerciseSplitViewCharts
+					<ExerciseSplitMuscleGroupsCharts
 						exercises={exerciseSplit.exerciseSplitDays.flatMap((splitDay) => splitDay.exercises)}
 					/>
 				</Card.Content>
@@ -83,7 +83,7 @@
 		</Tabs.Content>
 		<Tabs.Content value="stats">
 			<Card.Root class="p-4">
-				<ExerciseSplitOverviewCharts
+				<ExerciseSplitExercisesCharts
 					splitExercises={exerciseSplit.exerciseSplitDays.map((splitDay) => splitDay.exercises)}
 				/>
 			</Card.Root>
