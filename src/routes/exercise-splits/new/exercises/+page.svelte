@@ -28,9 +28,9 @@
 			return !splitDay.isRestDay && exerciseSplitRunes.splitExercises[idx].length === 0;
 		});
 		if (noExerciseAddedDays.length > 0) {
-			toast.error(
-				`Add at least one exercise in: ${noExerciseAddedDays.map((splitDay) => splitDay.name).join(', ')}`
-			);
+			toast.error(`Add at least one exercise to each workout`, {
+				description: `Missing in: ${noExerciseAddedDays.map((splitDay) => splitDay.name).join(', ')}`
+			});
 			return;
 		}
 		goto('./overview');
