@@ -36,7 +36,8 @@
 			return async ({ result }) => {
 				if (result.type === 'success') {
 					toast.success(result.data?.message as string);
-					goto('/exercise-splits');
+					await goto('/exercise-splits');
+					exerciseSplitRunes.resetStores();
 				} else if (result.type === 'failure') {
 					toast.error(result.data?.message as string);
 				}
