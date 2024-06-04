@@ -74,6 +74,10 @@ enum MuscleGroup {
   Glutes
   Calves
   Abs
+  Neck
+  Adductors
+  Abductors
+  Custom
 }
 
 enum SetType {
@@ -111,8 +115,8 @@ model ExerciseSplitDay {
 model ExerciseTemplate {
   id                 Int              @id @default(autoincrement())
   name               String
-  sets               Int
   targetMuscleGroup  MuscleGroup
+  customMuscleGroup  String?
   involvesBodyweight Boolean
   setType            SetType
   repRangeStart      Int
