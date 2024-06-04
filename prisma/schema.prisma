@@ -103,6 +103,9 @@ model ExerciseSplit {
   userId            String
   exerciseSplitDays ExerciseSplitDay[]
   makePublic        Boolean            @default(false)
+  templatedFromId   Int?
+  templatedFrom     ExerciseSplit?     @relation("TemplateRelation", fields: [templatedFromId], references: [id])
+  templatedBy       ExerciseSplit[]    @relation("TemplateRelation")
 }
 
 model ExerciseSplitDay {
