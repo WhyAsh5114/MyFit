@@ -11,14 +11,7 @@ export function createExerciseSplitRunes() {
 	);
 	let splitExercises: ExerciseTemplateRuneType[][] = $state([]);
 
-	let selectedSplitDayName: string = $state('');
-	let selectedSplitDayIndex: number = $derived(
-		splitDays.findIndex((splitDay) => splitDay.name === selectedSplitDayName)
-	);
-	let selectedSplitDayExercises: ExerciseTemplateRuneType[] = $derived(
-		splitExercises[selectedSplitDayIndex]
-	);
-
+	let selectedSplitDayIndex: number = $state(0);
 	let editingExercise: ExerciseTemplateRuneType | undefined = $state(undefined);
 	let copiedExercises: ExerciseTemplateRuneType[] | undefined = $state(undefined);
 
@@ -54,8 +47,9 @@ export function createExerciseSplitRunes() {
 	function getDataLossDays() {
 		let dataLossDays: number[] = [];
 		for (let i = 0; i < splitExercises.length; i++) {
+			if (splitDays[i] === undefined && splitExercises[i].length === 0) continue;
 			if (splitDays[i] === undefined && splitExercises[i].length > 0) dataLossDays.push(i);
-			if (splitDays[i].isRestDay && splitExercises[i].length > 0) dataLossDays.push(i);
+			else if (splitDays[i].isRestDay && splitExercises[i].length > 0) dataLossDays.push(i);
 		}
 		return dataLossDays;
 	}
@@ -64,13 +58,13 @@ export function createExerciseSplitRunes() {
 		for (let i = 0; i < splitDays.length; i++) {
 			if (splitDays[i].isRestDay || splitExercises[i] === undefined) splitExercises[i] = [];
 		}
-		selectedSplitDayName = splitDays.find((splitDay) => !splitDay.isRestDay)?.name as string;
+		for (let i = splitDays.length; i < splitExercises.length; i++) splitExercises.pop();
+		selectedSplitDayIndex = splitDays.findIndex((splitDay) => !splitDay.isRestDay);
 		saveStoresToLocalStorage();
 	}
 
 	function exerciseNameExists(exerciseName: string, exceptIndex?: number) {
-		const splitDayIndex = splitDays.findIndex((splitDay) => splitDay.name === selectedSplitDayName);
-		const exercise = splitExercises[splitDayIndex].find(
+		const exercise = splitExercises[selectedSplitDayIndex].find(
 			(exerciseTemplate, idx) => exerciseTemplate.name === exerciseName && idx !== exceptIndex
 		);
 		return exercise !== undefined;
@@ -147,17 +141,11 @@ export function createExerciseSplitRunes() {
 		set editingExercise(exerciseTemplate: ExerciseTemplateRuneType | undefined) {
 			editingExercise = exerciseTemplate;
 		},
-		get selectedSplitDayName() {
-			return selectedSplitDayName;
-		},
-		set selectedSplitDayName(splitDayName: string) {
-			selectedSplitDayName = splitDayName;
-		},
 		get selectedSplitDayIndex() {
 			return selectedSplitDayIndex;
 		},
-		get selectedSplitDayExercises() {
-			return selectedSplitDayExercises;
+		set selectedSplitDayIndex(idx: number) {
+			selectedSplitDayIndex = idx;
 		},
 		get copiedExercises() {
 			return copiedExercises;
