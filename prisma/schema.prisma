@@ -102,6 +102,7 @@ model ExerciseSplit {
   user              User               @relation(fields: [userId], references: [id])
   userId            String
   exerciseSplitDays ExerciseSplitDay[]
+  makePublic        Boolean            @default(false)
 }
 
 model ExerciseSplitDay {
