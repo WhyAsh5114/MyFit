@@ -84,3 +84,10 @@ export function generateShadesAndTints(count: number): string[] {
 export function arraySum(arr: number[]) {
 	return arr.reduce((acc, val) => acc + val, 0);
 }
+
+export function convertCamelCaseToNormal(text: string): string {
+	return text
+		.replace(/([a-z])([A-Z])/g, '$1 $2')
+		.toLowerCase()
+		.replace(/(^\w|\s\w)/g, (match) => match.toUpperCase());
+}
