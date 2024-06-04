@@ -97,7 +97,7 @@ export function createExerciseSplitRunes() {
 
 	function pasteExercises() {
 		if (!copiedExercises || splitExercises[selectedSplitDayIndex].length > 0) return;
-		splitExercises[selectedSplitDayIndex] = copiedExercises;
+		splitExercises[selectedSplitDayIndex] = structuredClone(copiedExercises);
 		saveStoresToLocalStorage();
 	}
 
