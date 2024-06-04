@@ -11,7 +11,8 @@
 	import PWAButtons from './PWAButtons.svelte';
 
 	import MenuIcon from 'virtual:icons/lucide/menu';
-	import { page } from '$app/stores';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
+	import { navigating, page } from '$app/stores';
 	import type { Snippet } from 'svelte';
 
 	let { children }: { children: Snippet } = $props();
@@ -41,7 +42,13 @@
 		</Sheet.Content>
 	</Sheet.Root>
 	<a href="/" class="mx-1 mr-auto">
-		<img src="/favicon.webp" alt="MyFit logo" width={40} height={40} />
+		{#if $navigating}
+			<div class="h-10 w-10 flex items-center justify-center">
+				<LoaderCircle width={24} height={24} class="animate-spin text-primary" />
+			</div>
+		{:else}
+			<img src="/favicon.webp" alt="MyFit logo" width={40} height={40} />
+		{/if}
 	</a>
 	<PWAButtons isMobile={true} />
 	<ModeToggle />

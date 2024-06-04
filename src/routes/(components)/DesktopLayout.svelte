@@ -9,7 +9,8 @@
 	import LoginProviderMenu from './LoginProviderMenu.svelte';
 	import PWAButtons from './PWAButtons.svelte';
 
-	import { page } from '$app/stores';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
+	import { navigating, page } from '$app/stores';
 	import type { Snippet } from 'svelte';
 
 	let { children }: { children: Snippet } = $props();
@@ -17,7 +18,13 @@
 
 <header class="flex h-screen w-96 flex-col bg-muted p-10">
 	<Button variant="link" class="justify-start gap-2 text-foreground" href="/">
-		<img src="/favicon.webp" alt="MyFit logo" width={72} height={72} />
+		{#if $navigating}
+			<div class="h-[72px] w-[72px] flex items-center justify-center">
+				<LoaderCircle width={48} height={48} class="animate-spin text-primary" />
+			</div>
+		{:else}
+			<img src="/favicon.webp" alt="MyFit logo" width={72} height={72} />
+		{/if}
 		<h1 class="text-4xl font-bold">MyFit</h1>
 	</Button>
 	<NavLinks />
