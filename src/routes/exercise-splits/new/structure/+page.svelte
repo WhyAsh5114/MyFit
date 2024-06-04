@@ -17,10 +17,9 @@
 
 	async function submitStructure(warningAcknowledged = false) {
 		if (!exerciseSplitRunes.validateSplitStructure()) {
-			toast.error('Error', {
-				description:
-					'Workout names should be unique. For example: Push A, Push B instead of Push, Push'
-			});
+			toast.error(
+				'Workout names should be unique. For example: Push A, Push B instead of Push, Push'
+			);
 			return;
 		}
 		dataLossDays = exerciseSplitRunes.getDataLossDays();

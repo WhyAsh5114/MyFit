@@ -16,15 +16,21 @@
 	import { goto } from '$app/navigation';
 
 	let swapDialogOpen = $state(false);
+	let splitDayName = $derived(
+		exerciseSplitRunes.splitDays[exerciseSplitRunes.selectedSplitDayIndex].name
+	);
+	let selectedSplitDayExercises = $derived(
+		exerciseSplitRunes.splitExercises[exerciseSplitRunes.selectedSplitDayIndex]
+	);
 
 	function submitExercises() {
 		const noExerciseAddedDays = exerciseSplitRunes.splitDays.filter((splitDay, idx) => {
 			return !splitDay.isRestDay && exerciseSplitRunes.splitExercises[idx].length === 0;
 		});
 		if (noExerciseAddedDays.length > 0) {
-			toast.error('Error', {
-				description: `Add at least one exercise in: ${noExerciseAddedDays.map((splitDay) => splitDay.name).join(', ')}`
-			});
+			toast.error(
+				`Add at least one exercise in: ${noExerciseAddedDays.map((splitDay) => splitDay.name).join(', ')}`
+			);
 			return;
 		}
 		goto('./overview');
@@ -32,7 +38,15 @@
 </script>
 
 <H3>Exercises</H3>
-<Tabs.Root class="flex w-full grow flex-col" bind:value={exerciseSplitRunes.selectedSplitDayName}>
+<Tabs.Root
+	class="flex w-full grow flex-col"
+	value={splitDayName}
+	onValueChange={(v) => {
+		exerciseSplitRunes.selectedSplitDayIndex = exerciseSplitRunes.splitDays.findIndex(
+			(splitDay) => splitDay.name === v
+		);
+	}}
+>
 	<Tabs.List class="flex justify-start overflow-x-auto">
 		{#each exerciseSplitRunes.splitExercises as _, idx}
 			{@const { name, isRestDay } = exerciseSplitRunes.splitDays[idx]}
@@ -41,11 +55,11 @@
 			</Tabs.Trigger>
 		{/each}
 	</Tabs.List>
-	<Tabs.Content value={exerciseSplitRunes.selectedSplitDayName} class="grow">
+	<Tabs.Content value={splitDayName} class="grow">
 		<div class="flex h-full flex-col gap-2">
 			<div class="flex items-center gap-4">
 				<div class="mr-auto flex flex-col">
-					<span class="text-xl font-semibold">{exerciseSplitRunes.selectedSplitDayName}</span>
+					<span class="text-xl font-semibold">{splitDayName}</span>
 					<span class="font-medium text-muted-foreground">
 						Day {exerciseSplitRunes.selectedSplitDayIndex + 1}
 					</span>
@@ -67,14 +81,14 @@
 							<DropdownMenu.Item
 								class="gap-2"
 								onclick={exerciseSplitRunes.cutExercises}
-								disabled={exerciseSplitRunes.selectedSplitDayExercises.length === 0}
+								disabled={selectedSplitDayExercises.length === 0}
 							>
 								<CutIcon /> Cut
 							</DropdownMenu.Item>
 							<DropdownMenu.Item
 								class="gap-2"
 								onclick={exerciseSplitRunes.copyExercises}
-								disabled={exerciseSplitRunes.selectedSplitDayExercises.length === 0}
+								disabled={selectedSplitDayExercises.length === 0}
 							>
 								<CopyIcon /> Copy
 							</DropdownMenu.Item>
@@ -93,7 +107,7 @@
 				</DropdownMenu.Root>
 			</div>
 			<div class="flex h-px grow flex-col overflow-y-auto">
-				<DndComponent itemList={exerciseSplitRunes.selectedSplitDayExercises} />
+				<DndComponent itemList={selectedSplitDayExercises} />
 			</div>
 		</div>
 	</Tabs.Content>

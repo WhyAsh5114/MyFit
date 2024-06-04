@@ -46,7 +46,7 @@
 		else result = exerciseSplitRunes.editExercise(finishedExercise);
 
 		if (!result) {
-			toast.error('Error', { description: 'Exercise names should be unique' });
+			toast.error('Exercise names should be unique');
 			return;
 		}
 		resetDrawerState();
