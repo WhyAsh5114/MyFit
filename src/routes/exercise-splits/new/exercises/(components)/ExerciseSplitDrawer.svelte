@@ -14,6 +14,7 @@
 	} from '../../exerciseSplitRunes.svelte';
 	import { toast } from 'svelte-sonner';
 	import { MuscleGroup, SetType } from '@prisma/client';
+	import { convertCamelCaseToNormal } from '$lib/utils';
 
 	const defaultExercise: Partial<ExerciseTemplateRuneType> = {
 		name: '',
@@ -97,7 +98,11 @@
 					{/if}
 				</Command.Root>
 			</div>
-			<div class="flex w-full flex-col gap-1.5">
+			<div
+				class="flex w-full flex-col gap-1.5 {currentExercise.targetMuscleGroup === 'Custom'
+					? 'col-span-1'
+					: 'col-span-2'}"
+			>
 				<!-- TODO: required doesn't work, can be submitted without a target muscle group! -->
 				<Select.Root
 					name="exercise-target-muscle-group"
@@ -114,13 +119,24 @@
 					<Select.Trigger>
 						<Select.Value placeholder="Pick one" />
 					</Select.Trigger>
-					<Select.Content>
+					<Select.Content class="h-48 overflow-y-auto">
 						{#each Object.keys(MuscleGroup) as muscleGroup}
-							<Select.Item value={muscleGroup} label={muscleGroup} />
+							<Select.Item value={muscleGroup} label={convertCamelCaseToNormal(muscleGroup)} />
 						{/each}
 					</Select.Content>
 				</Select.Root>
 			</div>
+			{#if currentExercise.targetMuscleGroup === 'Custom'}
+				<div class="flex w-full flex-col gap-1.5">
+					<Label for="exercise-custom-muscle-group">Muscle group</Label>
+					<Input
+						id="exercise-custom-muscle-group"
+						placeholder="Type here"
+						bind:value={currentExercise.customMuscleGroup}
+						required
+					/>
+				</div>
+			{/if}
 			<div class="flex w-full flex-col gap-1.5">
 				<Label for="exercise-involves-bodyweight">Involves bodyweight</Label>
 				<div class="flex items-center rounded-md border px-2 py-1.5">
@@ -131,17 +147,6 @@
 						bind:checked={currentExercise.involvesBodyweight}
 					/>
 				</div>
-			</div>
-			<div class="flex w-full flex-col gap-1.5">
-				<Label for="exercise-sets">Sets</Label>
-				<Input
-					min={1}
-					type="number"
-					id="exercise-sets"
-					placeholder="Type here"
-					bind:value={currentExercise.sets}
-					required
-				/>
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
 				<Select.Root
@@ -159,7 +164,7 @@
 					</Select.Trigger>
 					<Select.Content>
 						{#each Object.keys(SetType) as setTemplate}
-							<Select.Item value={setTemplate} label={setTemplate} />
+							<Select.Item value={setTemplate} label={convertCamelCaseToNormal(setTemplate)} />
 						{/each}
 					</Select.Content>
 				</Select.Root>
