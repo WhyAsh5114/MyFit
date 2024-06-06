@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate';
 	import { fade } from 'svelte/transition';
-	import { dndzone, type DndEvent, SHADOW_ITEM_MARKER_PROPERTY_NAME } from 'svelte-dnd-action';
+	import {
+		dragHandleZone,
+		type DndEvent,
+		SHADOW_ITEM_MARKER_PROPERTY_NAME
+	} from 'svelte-dnd-action';
 	import ExerciseTemplateCard from '../../../(components)/ExerciseTemplateCard.svelte';
 	import type { ExerciseTemplateRuneType } from '../../exerciseSplitRunes.svelte';
 
@@ -11,16 +15,14 @@
 	let dragDisabled = $state(true);
 
 	function handleSort(e: CustomEvent<DndEvent<ExerciseTemplateRuneType>>) {
-		console.log('hmm');
 		const { items: newItems } = e.detail;
 		itemList = newItems;
 		dragDisabled = true;
 	}
 </script>
 
-<!-- TODO: DND not working, check later -->
 <div
-	use:dndzone={{
+	use:dragHandleZone={{
 		items: itemList,
 		flipDurationMs: 200,
 		dropTargetClasses: ['border-none'],

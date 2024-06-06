@@ -4,11 +4,13 @@
 	import MenuIcon from 'virtual:icons/lucide/menu';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import DeleteIcon from 'virtual:icons/lucide/trash';
+	import GripVertical from 'virtual:icons/lucide/grip-vertical';
 	import {
 		exerciseSplitRunes,
 		type ExerciseTemplateRuneType
 	} from '../new/exerciseSplitRunes.svelte';
 	import { convertCamelCaseToNormal } from '$lib/utils';
+	import { dragHandle } from 'svelte-dnd-action';
 
 	type ExerciseTemplateCardProps = {
 		readOnly?: boolean;
@@ -31,17 +33,20 @@
 	<div class="flex items-center gap-0.5">
 		<span class="mr-auto truncate">{exerciseTemplate.name}</span>
 		{#if !readOnly}
+			<div
+				use:dragHandle
+				role="button"
+				tabindex="0"
+				onmousedown={() => (dragDisabled = false)}
+				ontouchstart={() => (dragDisabled = false)}
+				onmouseup={() => (dragDisabled = true)}
+				ontouchend={() => (dragDisabled = true)}
+			>
+				<GripVertical />
+			</div>
 			<DropdownMenu.Root open={isContextMenuOpen} onOpenChange={(v) => (isContextMenuOpen = v)}>
 				<DropdownMenu.Trigger asChild let:builder>
-					<button
-						use:builder.action
-						{...builder}
-						class="px-0.5 py-0"
-						onmousedown={() => (dragDisabled = false)}
-						ontouchstart={() => (dragDisabled = false)}
-						onmouseup={() => (dragDisabled = true)}
-						ontouchend={() => (dragDisabled = true)}
-					>
+					<button use:builder.action {...builder} class="px-0.5 py-0">
 						<MenuIcon class="h-4 w-4" />
 					</button>
 				</DropdownMenu.Trigger>
