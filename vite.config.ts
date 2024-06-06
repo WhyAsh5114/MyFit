@@ -487,7 +487,8 @@ export default defineConfig({
 			}
 		}),
 		Icons({
-			compiler: 'svelte'
+			compiler: 'svelte',
+			defaultClass: 'pointer-events-none'
 		})
 	]
 });
