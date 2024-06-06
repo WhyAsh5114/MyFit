@@ -9,15 +9,14 @@
 	import ExerciseTemplateCard from '../../../(components)/ExerciseTemplateCard.svelte';
 	import type { ExerciseTemplateRuneType } from '../../exerciseSplitRunes.svelte';
 
-	type PropsType = { itemList: (ExerciseTemplateRuneType & { isDndShadowItem?: boolean })[] };
+	type PropsType = {
+		itemList: (ExerciseTemplateRuneType & { isDndShadowItem?: boolean })[];
+		reordering: boolean;
+	};
 
-	let { itemList }: PropsType = $props();
-	let dragDisabled = $state(true);
-
+	let { itemList = $bindable(), reordering }: PropsType = $props();
 	function handleSort(e: CustomEvent<DndEvent<ExerciseTemplateRuneType>>) {
-		const { items: newItems } = e.detail;
-		itemList = newItems;
-		dragDisabled = true;
+		itemList = e.detail.items;
 	}
 </script>
 
@@ -26,8 +25,7 @@
 		items: itemList,
 		flipDurationMs: 200,
 		dropTargetClasses: ['border-none'],
-		dropTargetStyle: {},
-		dragDisabled
+		dropTargetStyle: {}
 	}}
 	onconsider={handleSort}
 	onfinalize={handleSort}
@@ -35,7 +33,7 @@
 >
 	{#each itemList as exerciseTemplate, idx (exerciseTemplate.name)}
 		<div class="relative" animate:flip={{ duration: 200 }}>
-			<ExerciseTemplateCard {idx} {exerciseTemplate} bind:dragDisabled />
+			<ExerciseTemplateCard {idx} {exerciseTemplate} {reordering} />
 			{#if exerciseTemplate[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
 				<div in:fade={{ duration: 200 }} class="custom-shadow-item"></div>
 			{/if}

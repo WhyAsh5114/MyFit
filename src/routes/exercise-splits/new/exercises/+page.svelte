@@ -8,6 +8,8 @@
 	import CutIcon from 'virtual:icons/lucide/scissors';
 	import MenuIcon from 'virtual:icons/lucide/menu';
 	import SwapIcon from 'virtual:icons/ph/swap';
+	import ReorderIcon from 'virtual:icons/lucide/git-compare-arrows';
+	import EditIcon from 'virtual:icons/lucide/pencil';
 	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
 	import ExerciseSplitDrawer from './(components)/ExerciseSplitDrawer.svelte';
 	import DndComponent from './(components)/DndComponent.svelte';
@@ -16,6 +18,7 @@
 	import { goto } from '$app/navigation';
 
 	let swapDialogOpen = $state(false);
+	let reordering = $state(false);
 	let splitDayName = $derived(
 		exerciseSplitRunes.splitDays[exerciseSplitRunes.selectedSplitDayIndex].name
 	);
@@ -57,7 +60,7 @@
 	</Tabs.List>
 	<Tabs.Content value={splitDayName} class="grow">
 		<div class="flex h-full flex-col gap-2">
-			<div class="flex items-center gap-4">
+			<div class="flex items-center gap-2">
 				<div class="mr-auto flex flex-col">
 					<span class="text-xl font-semibold">{splitDayName}</span>
 					<span class="font-medium text-muted-foreground">
@@ -65,6 +68,13 @@
 					</span>
 				</div>
 				<ExerciseSplitDrawer />
+				<Button size="icon" variant="outline" onclick={() => (reordering = !reordering)}>
+					{#if !reordering}
+						<ReorderIcon />
+					{:else}
+						<EditIcon />
+					{/if}
+				</Button>
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
 						<Button
@@ -107,7 +117,12 @@
 				</DropdownMenu.Root>
 			</div>
 			<div class="flex h-px grow flex-col overflow-y-auto">
-				<DndComponent itemList={selectedSplitDayExercises} />
+				<DndComponent
+					bind:itemList={exerciseSplitRunes.splitExercises[
+						exerciseSplitRunes.selectedSplitDayIndex
+					]}
+					{reordering}
+				/>
 			</div>
 		</div>
 	</Tabs.Content>

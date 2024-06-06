@@ -46,7 +46,6 @@
 						{idx}
 						{...emptyFunctions}
 						readOnly
-						dragDisabled
 						exerciseTemplate={exercise}
 					/>
 				{/each}

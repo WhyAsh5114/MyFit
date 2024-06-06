@@ -16,16 +16,10 @@
 		readOnly?: boolean;
 		idx: number;
 		exerciseTemplate: ExerciseTemplateRuneType;
-		dragDisabled: boolean;
+		reordering?: boolean;
 	};
 
-	let {
-		readOnly = false,
-		idx,
-		exerciseTemplate,
-		dragDisabled = $bindable()
-	}: ExerciseTemplateCardProps = $props();
-
+	let { readOnly = false, idx, exerciseTemplate, reordering }: ExerciseTemplateCardProps = $props();
 	let isContextMenuOpen = $state(false);
 </script>
 
@@ -33,43 +27,38 @@
 	<div class="flex items-center gap-0.5">
 		<span class="mr-auto truncate">{exerciseTemplate.name}</span>
 		{#if !readOnly}
-			<div
-				use:dragHandle
-				role="button"
-				tabindex="0"
-				onmousedown={() => (dragDisabled = false)}
-				ontouchstart={() => (dragDisabled = false)}
-				onmouseup={() => (dragDisabled = true)}
-				ontouchend={() => (dragDisabled = true)}
-			>
-				<GripVertical />
-			</div>
-			<DropdownMenu.Root open={isContextMenuOpen} onOpenChange={(v) => (isContextMenuOpen = v)}>
-				<DropdownMenu.Trigger asChild let:builder>
-					<button use:builder.action {...builder} class="px-0.5 py-0">
-						<MenuIcon class="h-4 w-4" />
-					</button>
-				</DropdownMenu.Trigger>
-				<DropdownMenu.Content align="end">
-					<DropdownMenu.Group>
-						<DropdownMenu.Item
-							on:click={() => (exerciseSplitRunes.editingExercise = exerciseTemplate)}
-							class="gap-2"
-						>
-							<EditIcon /> Edit
-						</DropdownMenu.Item>
-						<DropdownMenu.Item
-							class="gap-2 text-red-500"
-							on:click={() => {
-								exerciseSplitRunes.deleteExercise(idx);
-								isContextMenuOpen = false;
-							}}
-						>
-							<DeleteIcon /> Delete
-						</DropdownMenu.Item>
-					</DropdownMenu.Group>
-				</DropdownMenu.Content>
-			</DropdownMenu.Root>
+			{#if reordering}
+				<div use:dragHandle role="button" tabindex="0">
+					<GripVertical />
+				</div>
+			{:else}
+				<DropdownMenu.Root open={isContextMenuOpen} onOpenChange={(v) => (isContextMenuOpen = v)}>
+					<DropdownMenu.Trigger asChild let:builder>
+						<button use:builder.action {...builder} class="px-0.5 py-0">
+							<MenuIcon class="h-4 w-4" />
+						</button>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content align="end">
+						<DropdownMenu.Group>
+							<DropdownMenu.Item
+								on:click={() => (exerciseSplitRunes.editingExercise = exerciseTemplate)}
+								class="gap-2"
+							>
+								<EditIcon /> Edit
+							</DropdownMenu.Item>
+							<DropdownMenu.Item
+								class="gap-2 text-red-500"
+								on:click={() => {
+									exerciseSplitRunes.deleteExercise(idx);
+									isContextMenuOpen = false;
+								}}
+							>
+								<DeleteIcon /> Delete
+							</DropdownMenu.Item>
+						</DropdownMenu.Group>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+			{/if}
 		{/if}
 	</div>
 	<div class="flex items-center gap-0.5">
