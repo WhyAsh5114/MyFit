@@ -26,6 +26,7 @@
 	let searchString = $state($page.url.searchParams.get('search') ?? '');
 
 	afterNavigate(async () => {
+		loaderState.reset();
 		exerciseSplits = await data.exerciseSplits;
 	});
 
@@ -36,7 +37,6 @@
 		else url.searchParams.delete('search');
 
 		exerciseSplits = 'loading';
-		loaderState.reset();
 		goto(url);
 	}
 

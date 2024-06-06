@@ -58,7 +58,6 @@ export const actions = {
 		if (!data) return fail(400, { message: "Exercise split wasn't received" });
 
 		const exerciseSplitRuneData = JSON.parse(data.toString()) as ExerciseSplitRuneDataType;
-		// TODO: maybe use interactive transactions to reduce query time from 3.6 seconds...
 		await prisma.exerciseSplit.create({
 			data: {
 				name: exerciseSplitRuneData.splitName,
