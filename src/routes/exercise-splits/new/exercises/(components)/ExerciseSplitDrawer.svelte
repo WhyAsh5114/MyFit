@@ -15,6 +15,7 @@
 	import { toast } from 'svelte-sonner';
 	import { MuscleGroup, SetType } from '@prisma/client';
 	import { convertCamelCaseToNormal } from '$lib/utils';
+	import { commonExercisePerMuscleGroup } from '$lib/commonExercises';
 
 	const defaultExercise: Partial<ExerciseTemplateRuneType> = {
 		name: '',
@@ -33,6 +34,11 @@
 			open = true;
 		}
 	});
+
+	function selectExercise(exercise: ExerciseTemplateRuneType) {
+		currentExercise = structuredClone(exercise);
+		searching = false;
+	}
 
 	function resetDrawerState() {
 		exerciseSplitRunes.editingExercise = undefined;
@@ -66,14 +72,14 @@
 			<AddIcon />
 		</Button>
 	</Sheet.Trigger>
-	<Sheet.Content side="right" class="w-11/12 px-4">
+	<Sheet.Content side="right" class="w-11/12 px-4 overflow-y-auto">
 		<Sheet.Header>
 			<Sheet.Title>{mode} exercise</Sheet.Title>
 		</Sheet.Header>
 		<form onsubmit={submitForm} class="mt-8 grid h-fit grid-cols-2 gap-x-2 gap-y-4">
 			<div class="col-span-2 flex w-full flex-col gap-1.5">
 				<span class="text-sm font-medium">Exercise name</span>
-				<Command.Root class="bg-background" shouldFilter={false}>
+				<Command.Root class="bg-background">
 					<Command.Input
 						bind:value={currentExercise.name}
 						placeholder="Type here or search..."
@@ -82,8 +88,7 @@
 					/>
 					{#if searching}
 						<Command.List class="max-h-32 bg-muted">
-							<!-- TODO: exercises list-->
-							<!-- {#each [] as exercisesForMuscleGroup}
+							{#each commonExercisePerMuscleGroup as exercisesForMuscleGroup}
 								{#if exercisesForMuscleGroup.exercises.length > 0}
 									<Command.Group heading={exercisesForMuscleGroup.muscleGroup}>
 										{#each exercisesForMuscleGroup.exercises as exercise}
@@ -93,7 +98,7 @@
 										{/each}
 									</Command.Group>
 								{/if}
-							{/each} -->
+							{/each}
 						</Command.List>
 					{/if}
 				</Command.Root>
