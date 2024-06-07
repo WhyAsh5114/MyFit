@@ -28,6 +28,7 @@
 	afterNavigate(async () => {
 		loaderState.reset();
 		exerciseSplits = await data.exerciseSplits;
+		if (data.exerciseSplits.length !== data.exerciseSplitsTake) loaderState.complete();
 	});
 
 	function updateSearchParam(e: Event) {
@@ -42,9 +43,8 @@
 
 	async function loadMore() {
 		const lastExerciseSplit = exerciseSplits.at(-1);
-		if (typeof lastExerciseSplit === 'string' || lastExerciseSplit === undefined) {
-			return;
-		}
+		if (typeof lastExerciseSplit === 'string' || lastExerciseSplit === undefined) return;
+
 		const response = await fetch('?/load_more_exercise_splits', {
 			method: 'POST',
 			body: JSON.stringify({ cursorId: lastExerciseSplit.id })

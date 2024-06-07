@@ -42,6 +42,7 @@ export const actions = {
 
 		return await prisma.exerciseSplit.findMany({
 			take,
+			skip: 1,
 			where: { userId: session.user.id },
 			orderBy: { id: 'desc' },
 			include: { exerciseSplitDays: true },
