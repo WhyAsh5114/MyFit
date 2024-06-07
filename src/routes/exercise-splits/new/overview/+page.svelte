@@ -11,8 +11,8 @@
 	import { toast } from 'svelte-sonner';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
-	import ExerciseSplitExercisesCharts from '../../(components)/ExerciseSplitExercisesCharts.svelte';
 	import ExerciseSplitMuscleGroupsCharts from '../../(components)/ExerciseSplitMuscleGroupsCharts.svelte';
+	import ExerciseSplitExercisesCharts from '../../(components)/ExerciseSplitExercisesCharts.svelte';
 	import type { ExerciseSplitRuneDataType } from '../../+page.server';
 
 	let makeExerciseSplitPublic = $state(false);
@@ -51,14 +51,14 @@
 	</Tabs.Content>
 	<Tabs.Content value="exercises">
 		<Card.Root class="p-4">
-			<ExerciseSplitMuscleGroupsCharts
+			<ExerciseSplitExercisesCharts
 				exercises={exerciseSplitRunes.splitExercises.flatMap((e) => e)}
 			/>
 		</Card.Root>
 	</Tabs.Content>
 	<Tabs.Content value="muscleGroups">
 		<Card.Root class="p-4">
-			<ExerciseSplitExercisesCharts splitExercises={exerciseSplitRunes.splitExercises} />
+			<ExerciseSplitMuscleGroupsCharts splitExercises={exerciseSplitRunes.splitExercises} />
 		</Card.Root>
 	</Tabs.Content>
 </Tabs.Root>

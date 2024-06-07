@@ -1,111 +1,139 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
+	import { convertCamelCaseToNormal } from '$lib/utils';
+	import { SetType } from '@prisma/client';
+	import type { Selected } from 'bits-ui';
 	import type { ExerciseTemplateRuneType } from '../new/exerciseSplitRunes.svelte';
 	import {
+		ArcElement,
+		CategoryScale,
 		Chart,
+		DoughnutController,
+		Legend,
+		LinearScale,
+		PolarAreaController,
+		RadialLinearScale,
+		Tooltip,
+		LineController,
+		PointElement,
+		LineElement,
+		Filler
+	} from 'chart.js';
+	Chart.register(
 		Tooltip,
 		Legend,
-		BarController,
-		BarElement,
+		DoughnutController,
 		CategoryScale,
-		LinearScale
-	} from 'chart.js';
-	import { MuscleGroup } from '@prisma/client';
-	import type { Selected } from 'bits-ui';
-	import { convertCamelCaseToNormal } from '$lib/utils';
-	Chart.register(Tooltip, Legend, BarController, BarElement, CategoryScale, LinearScale);
-
-	let { splitExercises }: { splitExercises: ExerciseTemplateRuneType[][] } = $props();
-	let chartCanvasElement: HTMLCanvasElement;
-	let chart: Chart;
-
-	const muscleGroups = Object.keys(MuscleGroup) as MuscleGroup[];
-	const sortedMuscleGroups = muscleGroups.toSorted(
-		(a, b) => getTotalExercises(b) - getTotalExercises(a)
+		LinearScale,
+		ArcElement,
+		PolarAreaController,
+		RadialLinearScale,
+		LineController,
+		PointElement,
+		LineElement,
+		Filler
 	);
 
-	let selectedMuscleGroups: Selected<MuscleGroup>[] = $state(
-		sortedMuscleGroups
-			.slice(0, 3)
-			.map((muscleGroup) => ({ value: muscleGroup, label: convertCamelCaseToNormal(muscleGroup) }))
-	);
+	let { exercises }: { exercises: ExerciseTemplateRuneType[] } = $props();
+	const chartTypes = ['Bodyweight & weighted', 'Rep ranges', 'Set types'];
 
-	let currentFilter: Selected<'Frequency' | 'Exercises'> = $state({
-		value: 'Frequency',
-		label: 'Frequency'
-	});
-
-	function getTotalFrequency(muscleGroup: MuscleGroup) {
-		return splitExercises.reduce((totalFrequency, splitDayExercises) => {
-			const hasTargetedExercise = splitDayExercises.some(
-				(exercise) => exercise.targetMuscleGroup === muscleGroup
-			);
-			return totalFrequency + (hasTargetedExercise ? 1 : 0);
-		}, 0);
-	}
-
-	function getTotalExercises(muscleGroup: MuscleGroup) {
-		return splitExercises.reduce((totalExercises, splitDayExercises) => {
-			return (
-				totalExercises +
-				splitDayExercises.filter((exercise) => exercise.targetMuscleGroup === muscleGroup).length
-			);
-		}, 0);
-	}
+	let chart:
+		| Chart<'doughnut', number[], string>
+		| Chart<'polarArea', number[], string>
+		| Chart<'line', number[], number>;
+	let chartCanvas: HTMLCanvasElement;
+	let selectedChartType: Selected<string> = $state({ value: chartTypes[1], label: chartTypes[1] });
 
 	$effect(() => {
+		const style = getComputedStyle(document.body);
+		const primaryColor = style.getPropertyValue('--primary').split(' ').join(', ');
+		const secondaryColor = style.getPropertyValue('--secondary').split(' ').join(', ');
+		const mutedForegroundColor = style.getPropertyValue('--muted-foreground').split(' ').join(', ');
+
 		if (chart) chart.destroy();
-		const dataFunction = currentFilter.value == 'Frequency' ? getTotalFrequency : getTotalExercises;
-		chart = new Chart(chartCanvasElement, {
-			type: 'bar',
-			data: {
-				labels: selectedMuscleGroups.map((item) => convertCamelCaseToNormal(item.label as string)),
-				datasets: [
-					{
-						label: currentFilter.value,
-						data: selectedMuscleGroups.map((item) => dataFunction(item.value))
-					}
-				]
-			},
-			options: {
-				maintainAspectRatio: false,
-				scales: {
-					y: {
-						suggestedMax: Math.round(
-							Math.max(...selectedMuscleGroups.map((item) => dataFunction(item.value))) * 1.5
-						)
+		if (selectedChartType.value === chartTypes[0]) {
+			const bodyweightExercises = exercises.filter(
+				(exercise) => exercise.involvesBodyweight
+			).length;
+			chart = new Chart(chartCanvas, {
+				type: 'doughnut',
+				data: {
+					labels: ['Weighted', 'Bodyweight'],
+					datasets: [
+						{
+							data: [exercises.length - bodyweightExercises, bodyweightExercises],
+							backgroundColor: [`hsl(${primaryColor})`, `hsl(${secondaryColor})`],
+							borderWidth: 0
+						}
+					]
+				}
+			});
+		} else if (selectedChartType.value === chartTypes[1]) {
+			const maxReps = Math.max(...exercises.map((exercise) => exercise.repRangeEnd));
+			const data = Array(maxReps + 1).fill(0);
+			exercises.forEach((exercise) => {
+				for (let i = exercise.repRangeStart; i < exercise.repRangeEnd; i++) data[i]++;
+			});
+			chart = new Chart(chartCanvas, {
+				type: 'line',
+				data: {
+					labels: data.map((_, idx) => idx),
+					datasets: [
+						{
+							data,
+							fill: {
+								target: 'origin',
+								above: `hsl(${secondaryColor})`
+							},
+							borderWidth: 0,
+							pointBorderWidth: 0
+						}
+					]
+				},
+				options: { plugins: { legend: { display: false } }, elements: { point: { radius: 0 } } }
+			});
+		} else {
+			const setTypes = Object.keys(SetType);
+			const data = setTypes.map(
+				(setType) => exercises.filter((exercise) => exercise.setType === setType).length
+			);
+			chart = new Chart(chartCanvas, {
+				type: 'polarArea',
+				data: {
+					labels: setTypes.map((setType) => convertCamelCaseToNormal(setType)),
+					datasets: [
+						{
+							data,
+							backgroundColor: [`hsl(${primaryColor})`, `hsl(${secondaryColor})`],
+							borderWidth: 0
+						}
+					]
+				},
+				options: {
+					scales: {
+						r: {
+							ticks: {
+								color: `hsl(${mutedForegroundColor})`,
+								backdropColor: 'rgba(0, 0, 0, 0)'
+							}
+						}
 					}
 				}
-			}
-		});
+			});
+		}
 	});
 </script>
 
-<div class="mb-2 w-full grow">
-	<canvas bind:this={chartCanvasElement} id="chart-canvas"></canvas>
-</div>
+<Select.Root bind:selected={selectedChartType}>
+	<Select.Label class="mb-0.5 p-0">View chart</Select.Label>
+	<Select.Trigger class="w-full">
+		<Select.Value />
+	</Select.Trigger>
+	<Select.Content>
+		{#each chartTypes as chartType}
+			<Select.Item value={chartType}>{chartType}</Select.Item>
+		{/each}
+	</Select.Content>
+</Select.Root>
 
-<div class="flex flex-col gap-1">
-	<Select.Root bind:selected={currentFilter}>
-		<Select.Label class="p-0">Filter</Select.Label>
-		<Select.Trigger class="mb-2 w-full">
-			<Select.Value placeholder="Select filter" />
-		</Select.Trigger>
-		<Select.Content class="max-h-48 overflow-y-auto">
-			{#each ['Frequency', 'Exercises'] as filter}
-				<Select.Item value={filter}>{filter}</Select.Item>
-			{/each}
-		</Select.Content>
-	</Select.Root>
-	<Select.Root multiple bind:selected={selectedMuscleGroups}>
-		<Select.Label class="p-0">Selected muscle groups</Select.Label>
-		<Select.Trigger class="w-full">
-			<Select.Value placeholder="Select muscle groups" />
-		</Select.Trigger>
-		<Select.Content class="max-h-48 overflow-y-auto">
-			{#each Object.keys(MuscleGroup) as muscleGroup}
-				<Select.Item value={muscleGroup}>{convertCamelCaseToNormal(muscleGroup)}</Select.Item>
-			{/each}
-		</Select.Content>
-	</Select.Root>
-</div>
+<canvas bind:this={chartCanvas} class="my-4 max-h-96"></canvas>
