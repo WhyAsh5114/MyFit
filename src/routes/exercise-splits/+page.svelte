@@ -113,7 +113,7 @@
 						<Badge>{exerciseSplit.exerciseSplitDays.length} days / cycle</Badge>
 					</Button>
 				{:else}
-					<div class="muted-text-box">No exercise splits created</div>
+					<div class="muted-text-box">No exercise splits found</div>
 				{/each}
 				{#snippet loading()}
 					<LoaderCircle class="animate-spin" />
