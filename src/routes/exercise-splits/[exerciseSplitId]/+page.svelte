@@ -4,9 +4,12 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Badge } from '$lib/components/ui/badge';
+	import { Button } from '$lib/components/ui/button';
 	import MenuIcon from 'virtual:icons/lucide/menu';
 	import CloneIcon from 'virtual:icons/clarity/clone-line';
+	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import EditIcon from 'virtual:icons/lucide/pencil';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 
 	import type { ExerciseSplit, ExerciseSplitDay, ExerciseTemplate } from '@prisma/client';
 	import { onMount } from 'svelte';
@@ -15,6 +18,9 @@
 	import ExercisesTableComponent from './(components)/ExercisesTableComponent.svelte';
 	import ExerciseSplitMuscleGroupsCharts from '../(components)/ExerciseSplitMuscleGroupsCharts.svelte';
 	import ExerciseSplitExercisesCharts from '../(components)/ExerciseSplitExercisesCharts.svelte';
+	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
+	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 
 	type FullExerciseSplit = ExerciseSplit & {
 		exerciseSplitDays: (ExerciseSplitDay & { exercises: ExerciseTemplate[] })[];
@@ -22,6 +28,8 @@
 
 	let { data } = $props();
 	let exerciseSplit: FullExerciseSplit | 'loading' = $state('loading');
+	let deleteConfirmDrawerOpen = $state(false);
+	let callingDeleteEndpoint = $state(false);
 
 	onMount(async () => {
 		const serverExerciseSplit = await data.exerciseSplit;
@@ -57,6 +65,12 @@
 									<DropdownMenu.Item class="gap-2" href="/">
 										<CloneIcon /> Clone
 									</DropdownMenu.Item>
+									<DropdownMenu.Item
+										class="gap-2 text-red-500"
+										onclick={() => (deleteConfirmDrawerOpen = true)}
+									>
+										<DeleteIcon /> Delete
+									</DropdownMenu.Item>
 								</DropdownMenu.Group>
 							</DropdownMenu.Content>
 						</DropdownMenu.Root>
@@ -89,4 +103,34 @@
 			</Card.Root>
 		</Tabs.Content>
 	</Tabs.Root>
+	<ResponsiveDialog title="Are you sure?" needTrigger={false} bind:open={deleteConfirmDrawerOpen}>
+		<p>
+			Delete split <span class="font-semibold">{exerciseSplit.name}</span>? This action cannot be
+			undone.
+		</p>
+		<form
+			action="?/delete_exercise_split"
+			method="post"
+			class="contents"
+			use:enhance={() => {
+				callingDeleteEndpoint = true;
+				return async ({ result }) => {
+					if (result.type === 'success') {
+						toast.success(result.data?.message as string);
+						await goto('/exercise-splits');
+					} else if (result.type === 'failure') {
+						toast.error(result.data?.message as string);
+					}
+					callingDeleteEndpoint = false;
+				};
+			}}
+		>
+			<Button variant="destructive" type="submit" disabled={callingDeleteEndpoint}>
+				Yes, delete
+				{#if callingDeleteEndpoint}
+					<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
+				{/if}
+			</Button>
+		</form>
+	</ResponsiveDialog>
 {/if}

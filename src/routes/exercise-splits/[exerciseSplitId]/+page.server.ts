@@ -1,5 +1,5 @@
 import prisma from '$lib/prisma.js';
-import { error } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 
 export const load = async ({ params, parent }) => {
 	const { session } = await parent();
@@ -14,4 +14,16 @@ export const load = async ({ params, parent }) => {
 	});
 
 	return { exerciseSplit };
+};
+
+export const actions = {
+	delete_exercise_split: async ({ locals, params }) => {
+		const session = await locals.auth();
+		if (!session?.user?.id) return fail(403, { message: 'Not logged in' });
+
+		await prisma.exerciseSplit.delete({
+			where: { userId: session.user.id, id: parseInt(params.exerciseSplitId) }
+		});
+		return { message: 'Exercise split deleted successfully' };
+	}
 };
