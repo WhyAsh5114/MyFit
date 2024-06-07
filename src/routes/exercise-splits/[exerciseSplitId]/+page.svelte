@@ -7,7 +7,7 @@
 	import MenuIcon from 'virtual:icons/lucide/menu';
 	import CloneIcon from 'virtual:icons/clarity/clone-line';
 	import EditIcon from 'virtual:icons/lucide/pencil';
-	
+
 	import type { ExerciseSplit, ExerciseSplitDay, ExerciseTemplate } from '@prisma/client';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';

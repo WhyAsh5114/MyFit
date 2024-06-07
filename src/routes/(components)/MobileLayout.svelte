@@ -43,7 +43,7 @@
 	</Sheet.Root>
 	<a href="/" class="mx-1 mr-auto">
 		{#if $navigating}
-			<div class="h-10 w-10 flex items-center justify-center">
+			<div class="flex h-10 w-10 items-center justify-center">
 				<LoaderCircle width={24} height={24} class="animate-spin text-primary" />
 			</div>
 		{:else}

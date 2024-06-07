@@ -42,12 +42,7 @@
 			</div>
 			<div class="mt-2 flex h-full flex-col gap-1 overflow-y-auto">
 				{#each selectedSplitDay.exercises as exercise, idx}
-					<ExerciseTemplateCard
-						{idx}
-						{...emptyFunctions}
-						readOnly
-						exerciseTemplate={exercise}
-					/>
+					<ExerciseTemplateCard {idx} {...emptyFunctions} readOnly exerciseTemplate={exercise} />
 				{/each}
 			</div>
 		</Card.Root>

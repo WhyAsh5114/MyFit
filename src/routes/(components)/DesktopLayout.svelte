@@ -19,7 +19,7 @@
 <header class="flex h-screen w-96 flex-col bg-muted p-10">
 	<Button variant="link" class="justify-start gap-2 text-foreground" href="/">
 		{#if $navigating}
-			<div class="h-[72px] w-[72px] flex items-center justify-center">
+			<div class="flex h-[72px] w-[72px] items-center justify-center">
 				<LoaderCircle width={48} height={48} class="animate-spin text-primary" />
 			</div>
 		{:else}

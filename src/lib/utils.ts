@@ -85,7 +85,8 @@ export function arraySum(arr: number[]) {
 	return arr.reduce((acc, val) => acc + val, 0);
 }
 
-export function convertCamelCaseToNormal(text: string): string {
+export function convertCamelCaseToNormal(text?: string): string {
+	if (!text) return '';
 	return text
 		.replace(/([a-z])([A-Z])/g, '$1 $2')
 		.toLowerCase()
