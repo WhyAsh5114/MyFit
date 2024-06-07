@@ -17,7 +17,7 @@
 
 <H3>Overview</H3>
 <Tabs.Root value="exercises" class="w-full">
-	<Tabs.List class="grid grid-cols-3">
+	<Tabs.List class="grid grid-cols-2">
 		<Tabs.Trigger value="exercises">Exercises</Tabs.Trigger>
 		<Tabs.Trigger value="muscleGroups">Muscle groups</Tabs.Trigger>
 	</Tabs.List>

@@ -4,6 +4,10 @@ export type ExerciseSplitRuneType = Omit<ExerciseSplit, 'id' | 'userId'>;
 export type ExerciseSplitDayRuneType = Omit<ExerciseSplitDay, 'id' | 'exerciseSplitId'>;
 export type ExerciseTemplateRuneType = Omit<ExerciseTemplate, 'id' | 'exerciseSplitDayId'>;
 
+export type FullExerciseSplitRuneType = ExerciseSplitRuneType & {
+	exerciseSplitDays: (ExerciseSplitDayRuneType & { exercises: ExerciseTemplateRuneType[] })[];
+};
+
 export function createExerciseSplitRunes() {
 	let splitName = $state('');
 	let splitDays: ExerciseSplitDayRuneType[] = $state(
@@ -132,6 +136,19 @@ export function createExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
+	function loadExerciseSplit(exerciseSplit: FullExerciseSplitRuneType) {
+		splitName = exerciseSplit.name;
+		splitDays = exerciseSplit.exerciseSplitDays.map((splitDay) => ({
+			name: splitDay.name,
+			isRestDay: splitDay.isRestDay
+		}));
+		splitExercises = exerciseSplit.exerciseSplitDays.map((splitDay) => splitDay.exercises);
+		selectedSplitDayIndex = 0;
+		editingExercise = undefined;
+		copiedExercises = undefined;
+		saveStoresToLocalStorage();
+	}
+
 	return {
 		get splitName() {
 			return splitName;
@@ -174,7 +191,8 @@ export function createExerciseSplitRunes() {
 		cutExercises,
 		swapExercises,
 		saveStoresToLocalStorage,
-		resetStores
+		resetStores,
+		loadExerciseSplit
 	};
 }
 
