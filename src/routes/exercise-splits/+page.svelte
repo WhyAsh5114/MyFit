@@ -122,11 +122,13 @@
 					<Button variant="outline" onclick={load}>An error occurred. Retry?</Button>
 				{/snippet}
 				{#snippet noData()}
-					<div class="flex items-center justify-start gap-2 font-semibold text-muted-foreground">
-						<Separator class="h-0.5 w-20" />
-						<span class="whitespace-nowrap">That's all!</span>
-						<Separator class="h-0.5 w-20" />
-					</div>
+					{#if exerciseSplits.length > 0}
+						<div class="flex items-center justify-start gap-2 font-semibold text-muted-foreground">
+							<Separator class="h-0.5 w-20" />
+							<span class="whitespace-nowrap">That's all!</span>
+							<Separator class="h-0.5 w-20" />
+						</div>
+					{/if}
 				{/snippet}
 			</InfiniteLoader>
 		{/if}
