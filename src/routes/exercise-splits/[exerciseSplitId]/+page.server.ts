@@ -5,6 +5,9 @@ export const load = async ({ params, parent }) => {
 	const { session } = await parent();
 	if (!session?.user?.id) error(401, 'Not logged in');
 
+	const exerciseSplitId = parseInt(params.exerciseSplitId);
+	if (isNaN(exerciseSplitId) || exerciseSplitId < 0) error(400, 'Invalid exercise split ID');
+
 	const exerciseSplit = prisma.exerciseSplit.findUnique({
 		where: { userId: session.user.id, id: parseInt(params.exerciseSplitId) },
 		include: { exerciseSplitDays: { include: { exercises: true } } }
