@@ -1,5 +1,6 @@
 import type { FullExerciseSplitRuneType } from '../routes/exercise-splits/new/exerciseSplitRunes.svelte';
 
+// TODO: add more templates
 export const exerciseSplitTemplates: {
 	description: string;
 	exerciseSplit: FullExerciseSplitRuneType;
