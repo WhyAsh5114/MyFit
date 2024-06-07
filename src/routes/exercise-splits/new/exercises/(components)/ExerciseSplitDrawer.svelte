@@ -13,7 +13,7 @@
 		type ExerciseTemplateRuneType
 	} from '../../exerciseSplitRunes.svelte';
 	import { toast } from 'svelte-sonner';
-	import { MuscleGroup, SetType } from '@prisma/client';
+	import { ChangeType, MuscleGroup, SetType } from '@prisma/client';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { commonExercisePerMuscleGroup } from '$lib/commonExercises';
 
@@ -72,7 +72,7 @@
 			<AddIcon />
 		</Button>
 	</Sheet.Trigger>
-	<Sheet.Content side="right" class="w-11/12 px-4 overflow-y-auto">
+	<Sheet.Content side="right" class="w-11/12 overflow-y-auto px-4">
 		<Sheet.Header>
 			<Sheet.Title>{mode} exercise</Sheet.Title>
 		</Sheet.Header>
@@ -113,7 +113,7 @@
 					name="exercise-target-muscle-group"
 					selected={{
 						value: currentExercise.targetMuscleGroup,
-						label: currentExercise.targetMuscleGroup
+						label: convertCamelCaseToNormal(currentExercise.targetMuscleGroup)
 					}}
 					onSelectedChange={(v) => (currentExercise.targetMuscleGroup = v?.value)}
 					required
@@ -158,7 +158,7 @@
 					name="exercise-set-type"
 					selected={{
 						value: currentExercise.setType,
-						label: currentExercise.setType
+						label: convertCamelCaseToNormal(currentExercise.setType)
 					}}
 					onSelectedChange={(v) => (currentExercise.setType = v?.value ?? 'Straight')}
 					required
@@ -202,7 +202,9 @@
 						name="exercise-set-change-type"
 						selected={{
 							value: currentExercise.changeType ?? 'Percentage',
-							label: currentExercise.changeType ?? 'Percentage'
+							label: currentExercise.changeType
+								? convertCamelCaseToNormal(currentExercise.changeType)
+								: 'Percentage'
 						}}
 						onSelectedChange={(v) => {
 							if (
@@ -221,8 +223,8 @@
 							<Select.Value placeholder="Pick one" />
 						</Select.Trigger>
 						<Select.Content>
-							{#each ['Percentage', 'Absolute load'] as changeType}
-								<Select.Item value={changeType} label={changeType} />
+							{#each Object.keys(ChangeType) as changeType}
+								<Select.Item value={changeType} label={convertCamelCaseToNormal(changeType)} />
 							{/each}
 						</Select.Content>
 					</Select.Root>
