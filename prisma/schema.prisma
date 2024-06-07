@@ -109,7 +109,7 @@ model ExerciseSplitDay {
   name            String
   isRestDay       Boolean            @default(false)
   exercises       ExerciseTemplate[]
-  exerciseSplit   ExerciseSplit      @relation(fields: [exerciseSplitId], references: [id])
+  exerciseSplit   ExerciseSplit      @relation(fields: [exerciseSplitId], references: [id], onDelete: Cascade)
   exerciseSplitId Int
 }
 
@@ -125,6 +125,6 @@ model ExerciseTemplate {
   changeType         ChangeType?
   changeAmount       Float?
   note               String?
-  exerciseSplitDay   ExerciseSplitDay @relation(fields: [exerciseSplitDayId], references: [id])
+  exerciseSplitDay   ExerciseSplitDay @relation(fields: [exerciseSplitDayId], references: [id], onDelete: Cascade)
   exerciseSplitDayId Int
 }
