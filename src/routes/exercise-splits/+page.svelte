@@ -28,7 +28,7 @@
 	afterNavigate(async () => {
 		loaderState.reset();
 		exerciseSplits = await data.exerciseSplits;
-		if (data.exerciseSplits.length !== data.exerciseSplitsTake) loaderState.complete();
+		if (exerciseSplits.length !== data.exerciseSplitsTake) loaderState.complete();
 	});
 
 	function updateSearchParam(e: Event) {
