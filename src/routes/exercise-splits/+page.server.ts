@@ -10,7 +10,6 @@ export type ExerciseSplitRuneDataType = {
 	splitName: string;
 	splitDays: ExerciseSplitDayRuneType[];
 	splitExercises: ExerciseTemplateRuneType[][];
-	makePublic: boolean;
 };
 
 const take = 10;
@@ -62,7 +61,6 @@ export const actions = {
 			data: {
 				name: exerciseSplitRuneData.splitName,
 				userId: session.user.id,
-				makePublic: exerciseSplitRuneData.makePublic,
 				exerciseSplitDays: {
 					create: exerciseSplitRuneData.splitDays.map((splitDay, idx) => ({
 						...splitDay,
