@@ -14,7 +14,7 @@
 
 	function templateExerciseSplit(exerciseSplit: FullExerciseSplitRuneType) {
 		exerciseSplitRunes.loadExerciseSplit(exerciseSplit);
-		goto('/exercise-splits/manage/structure?mode=new');
+		goto('/exercise-splits/manage/structure');
 	}
 </script>
 

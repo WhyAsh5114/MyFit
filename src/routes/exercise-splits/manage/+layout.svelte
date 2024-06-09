@@ -3,7 +3,8 @@
 	import { page } from '$app/stores';
 
 	const { children } = $props();
+	const editId = $page.url.searchParams.get('editId');
 </script>
 
-<H2><span class="capitalize">{$page.url.searchParams.get('mode')}</span> exercise split</H2>
+<H2>{editId ? 'Edit' : 'New'} exercise split</H2>
 {@render children()}
