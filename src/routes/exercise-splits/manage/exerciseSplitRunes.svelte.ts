@@ -9,6 +9,7 @@ export type FullExerciseSplitRuneType = ExerciseSplitRuneType & {
 };
 
 export function createExerciseSplitRunes() {
+	let editingExerciseSplitId: number | null = $state(null);
 	let splitName = $state('');
 	let splitDays: ExerciseSplitDayRuneType[] = $state(
 		Array.from({ length: 7 }).map(() => ({ name: '', isRestDay: false }))
@@ -21,7 +22,8 @@ export function createExerciseSplitRunes() {
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('exerciseSplitRunes');
-		if (savedState) ({ splitName, splitDays, splitExercises } = JSON.parse(savedState));
+		if (savedState)
+			({ splitName, splitDays, splitExercises, editingExerciseSplitId } = JSON.parse(savedState));
 	}
 
 	function addSplitDay() {
@@ -122,11 +124,12 @@ export function createExerciseSplitRunes() {
 	function saveStoresToLocalStorage() {
 		localStorage.setItem(
 			'exerciseSplitRunes',
-			JSON.stringify({ splitName, splitDays, splitExercises })
+			JSON.stringify({ splitName, splitDays, splitExercises, editingExerciseSplitId })
 		);
 	}
 
 	function resetStores() {
+		editingExerciseSplitId = null;
 		splitName = '';
 		splitDays = Array.from({ length: 7 }).map(() => ({ name: '', isRestDay: false }));
 		splitExercises = [];
@@ -136,7 +139,8 @@ export function createExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
-	function loadExerciseSplit(exerciseSplit: FullExerciseSplitRuneType) {
+	function loadExerciseSplit(exerciseSplit: FullExerciseSplitRuneType, editingId?: number) {
+		editingExerciseSplitId = editingId ?? null;
 		splitName = exerciseSplit.name;
 		splitDays = exerciseSplit.exerciseSplitDays.map((splitDay) => ({
 			name: splitDay.name,
@@ -176,6 +180,12 @@ export function createExerciseSplitRunes() {
 		},
 		get copiedExercises() {
 			return copiedExercises;
+		},
+		get editingExerciseSplitId() {
+			return editingExerciseSplitId;
+		},
+		set editingExerciseSplitId(id: number | null) {
+			editingExerciseSplitId = id;
 		},
 		addSplitDay,
 		removeSplitDay,

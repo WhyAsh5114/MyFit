@@ -40,7 +40,9 @@
 	<form
 		method="POST"
 		class="contents"
-		action="/exercise-splits?/create_exercise_split"
+		action={exerciseSplitRunes.editingExerciseSplitId
+			? `/exercise-splits/${exerciseSplitRunes.editingExerciseSplitId}?/edit_exercise_split`
+			: '/exercise-splits?/create_exercise_split'}
 		use:enhance={({ formData }) => {
 			savingExerciseSplit = true;
 			const exerciseSplitRuneData = JSON.stringify({

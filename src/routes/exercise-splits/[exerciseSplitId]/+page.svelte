@@ -21,6 +21,11 @@
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import {
+		exerciseSplitRunes,
+		type ExerciseTemplateRuneType,
+		type FullExerciseSplitRuneType
+	} from '../manage/exerciseSplitRunes.svelte';
 
 	type FullExerciseSplit = ExerciseSplit & {
 		exerciseSplitDays: (ExerciseSplitDay & { exercises: ExerciseTemplate[] })[];
@@ -36,6 +41,30 @@
 		if (serverExerciseSplit) exerciseSplit = serverExerciseSplit;
 		else toast.error('Exercise split not found');
 	});
+
+	function editExerciseSplit() {
+		if (exerciseSplit === 'loading') return;
+		const noIdsSplit: FullExerciseSplitRuneType = {
+			name: exerciseSplit.name,
+			exerciseSplitDays: exerciseSplit.exerciseSplitDays.map((splitDay) => {
+				return {
+					name: splitDay.name,
+					isRestDay: splitDay.isRestDay,
+					exercises: splitDay.exercises.map((exerciseTemplate) => {
+						const exerciseTemplateRuneType: ExerciseTemplateRuneType & {
+							id?: number;
+							exerciseSplitDayId?: number;
+						} = exerciseTemplate;
+						delete exerciseTemplateRuneType.id;
+						delete exerciseTemplateRuneType.exerciseSplitDayId;
+						return exerciseTemplateRuneType;
+					})
+				};
+			})
+		};
+		exerciseSplitRunes.loadExerciseSplit(noIdsSplit, exerciseSplit.id);
+		goto(`/exercise-splits/manage/structure`);
+	}
 </script>
 
 <H2>View exercise split</H2>
@@ -59,7 +88,7 @@
 							</DropdownMenu.Trigger>
 							<DropdownMenu.Content align="end">
 								<DropdownMenu.Group>
-									<DropdownMenu.Item class="gap-2" href="/">
+									<DropdownMenu.Item class="gap-2" onclick={editExerciseSplit}>
 										<EditIcon /> Edit
 									</DropdownMenu.Item>
 									<DropdownMenu.Item class="gap-2" href="/">
@@ -128,7 +157,7 @@
 			<Button variant="destructive" type="submit" disabled={callingDeleteEndpoint}>
 				Yes, delete
 				{#if callingDeleteEndpoint}
-					<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
+					<LoaderCircle class="ml-2 h-4 w-4 animate-spin" />
 				{/if}
 			</Button>
 		</form>
