@@ -1,5 +1,5 @@
 import type { MuscleGroup } from '@prisma/client';
-import type { ExerciseTemplateRuneType } from '../routes/exercise-splits/new/exerciseSplitRunes.svelte';
+import type { ExerciseTemplateRuneType } from '../routes/exercise-splits/manage/exerciseSplitRunes.svelte';
 
 // TODO: extend this list
 export const commonExercisePerMuscleGroup: {

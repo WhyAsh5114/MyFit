@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
-	import type { ExerciseTemplateRuneType } from '../new/exerciseSplitRunes.svelte';
+	import type { ExerciseTemplateRuneType } from '../manage/exerciseSplitRunes.svelte';
 	import {
 		Chart,
 		Tooltip,

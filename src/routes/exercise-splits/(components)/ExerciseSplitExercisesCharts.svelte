@@ -3,7 +3,7 @@
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { SetType } from '@prisma/client';
 	import type { Selected } from 'bits-ui';
-	import type { ExerciseTemplateRuneType } from '../new/exerciseSplitRunes.svelte';
+	import type { ExerciseTemplateRuneType } from '../manage/exerciseSplitRunes.svelte';
 	import {
 		ArcElement,
 		CategoryScale,

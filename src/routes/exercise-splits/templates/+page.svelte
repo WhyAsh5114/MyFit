@@ -9,12 +9,12 @@
 	import {
 		exerciseSplitRunes,
 		type FullExerciseSplitRuneType
-	} from '../new/exerciseSplitRunes.svelte';
+	} from '../manage/exerciseSplitRunes.svelte';
 	import { goto } from '$app/navigation';
 
 	function templateExerciseSplit(exerciseSplit: FullExerciseSplitRuneType) {
 		exerciseSplitRunes.loadExerciseSplit(exerciseSplit);
-		goto('/exercise-splits/new/structure');
+		goto('/exercise-splits/manage/structure?mode=new');
 	}
 </script>
 

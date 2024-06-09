@@ -8,7 +8,7 @@
 	import {
 		exerciseSplitRunes,
 		type ExerciseTemplateRuneType
-	} from '../new/exerciseSplitRunes.svelte';
+	} from '../manage/exerciseSplitRunes.svelte';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { dragHandle } from 'svelte-dnd-action';
 

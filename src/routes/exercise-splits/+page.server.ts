@@ -3,7 +3,7 @@ import { error, fail } from '@sveltejs/kit';
 import type {
 	ExerciseSplitDayRuneType,
 	ExerciseTemplateRuneType
-} from './new/exerciseSplitRunes.svelte';
+} from './manage/exerciseSplitRunes.svelte';
 import { Prisma } from '@prisma/client';
 
 export type ExerciseSplitRuneDataType = {

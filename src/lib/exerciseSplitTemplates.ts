@@ -1,4 +1,4 @@
-import type { FullExerciseSplitRuneType } from '../routes/exercise-splits/new/exerciseSplitRunes.svelte';
+import type { FullExerciseSplitRuneType } from '../routes/exercise-splits/manage/exerciseSplitRunes.svelte';
 
 // TODO: add more templates
 export const exerciseSplitTemplates: {
