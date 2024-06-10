@@ -18,6 +18,7 @@ model User {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   exerciseSplits ExerciseSplit[]
+  Mesocycle      Mesocycle[]
 }
 
 model Account {
@@ -99,9 +100,10 @@ enum ChangeType {
 model ExerciseSplit {
   id                Int                @id @default(autoincrement())
   name              String
-  user              User               @relation(fields: [userId], references: [id])
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            String
   exerciseSplitDays ExerciseSplitDay[]
+  usedByMesocycles  Mesocycle[]
 }
 
 model ExerciseSplitDay {
@@ -127,4 +129,40 @@ model ExerciseTemplate {
   note               String?
   exerciseSplitDay   ExerciseSplitDay @relation(fields: [exerciseSplitDayId], references: [id], onDelete: Cascade)
   exerciseSplitDayId Int
+}
+
+model Mesocycle {
+  id                         Int                         @id @default(autoincrement())
+  name                       String
+  user                       User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                     String
+  exerciseSplit              ExerciseSplit               @relation(fields: [exerciseSplitId], references: [id])
+  exerciseSplitId            Int
+  mesocycleExerciseSplitDays MesocycleExerciseSplitDay[]
+}
+
+model MesocycleExerciseSplitDay {
+  id                         Int                         @id @default(autoincrement())
+  name                       String
+  isRestDay                  Boolean
+  mesocycle                  Mesocycle                   @relation(fields: [mesocycleId], references: [id], onDelete: Cascade)
+  mesocycleId                Int
+  mesocycleSplitDayExercises MesocycleExerciseTemplate[]
+}
+
+model MesocycleExerciseTemplate {
+  id                          Int                       @id @default(autoincrement())
+  name                        String
+  targetMuscleGroup           MuscleGroup
+  customMuscleGroup           String?
+  involvesBodyweight          Boolean
+  sets                        Int
+  setType                     SetType
+  repRangeStart               Int
+  repRangeEnd                 Int
+  changeType                  ChangeType?
+  changeAmount                Float?
+  note                        String?
+  mesocycleExerciseSplitDay   MesocycleExerciseSplitDay @relation(fields: [mesocycleExerciseSplitDayId], references: [id], onDelete: Cascade)
+  mesocycleExerciseSplitDayId Int
 }
