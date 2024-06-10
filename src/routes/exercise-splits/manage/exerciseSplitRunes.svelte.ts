@@ -4,6 +4,9 @@ export type ExerciseSplitRuneType = Omit<ExerciseSplit, 'id' | 'userId'>;
 export type ExerciseSplitDayRuneType = Omit<ExerciseSplitDay, 'id' | 'exerciseSplitId'>;
 export type ExerciseTemplateRuneType = Omit<ExerciseTemplate, 'id' | 'exerciseSplitDayId'>;
 
+export type FullExerciseSplit = ExerciseSplit & {
+	exerciseSplitDays: (ExerciseSplitDay & { exercises: ExerciseTemplate[] })[];
+};
 export type FullExerciseSplitRuneType = ExerciseSplitRuneType & {
 	exerciseSplitDays: (ExerciseSplitDayRuneType & { exercises: ExerciseTemplateRuneType[] })[];
 };
