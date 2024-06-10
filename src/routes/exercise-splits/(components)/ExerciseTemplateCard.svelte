@@ -70,7 +70,9 @@
 			<Badge variant="outline">BW</Badge>
 		{/if}
 		<Badge class="whitespace-nowrap" variant="secondary">
-			{convertCamelCaseToNormal(exerciseTemplate.targetMuscleGroup)}
+			{exerciseTemplate.targetMuscleGroup === 'Custom'
+				? exerciseTemplate.customMuscleGroup
+				: convertCamelCaseToNormal(exerciseTemplate.targetMuscleGroup)}
 		</Badge>
 	</div>
 	{#if exerciseTemplate.note}
