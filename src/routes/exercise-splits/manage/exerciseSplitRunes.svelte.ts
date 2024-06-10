@@ -12,12 +12,12 @@ export type FullExerciseSplitRuneType = ExerciseSplitRuneType & {
 };
 
 export function createExerciseSplitRunes() {
-	let editingExerciseSplitId: number | null = $state(null);
 	let splitName = $state('');
 	let splitDays: ExerciseSplitDayRuneType[] = $state(
 		Array.from({ length: 7 }).map(() => ({ name: '', isRestDay: false }))
 	);
 	let splitExercises: ExerciseTemplateRuneType[][] = $state([]);
+	let editingExerciseSplitId: number | null = $state(null);
 
 	let selectedSplitDayIndex: number = $state(0);
 	let editingExercise: ExerciseTemplateRuneType | undefined = $state(undefined);
