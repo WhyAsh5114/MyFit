@@ -14,7 +14,7 @@
 		<Card.Root>
 			<Card.Header>
 				<Card.Title>
-					<Skeleton class="h-[18px] w-32 rounded-md" />
+					<Skeleton class="text-lg-skeleton w-32 rounded-md" />
 				</Card.Title>
 				<Card.Description>
 					<div class="mt-1 flex flex-wrap gap-1">
@@ -25,6 +25,8 @@
 				</Card.Description>
 			</Card.Header>
 			<Card.Content class="space-y-2">
+				<Skeleton class="mb-0.5 h-5 w-28" />
+				<Skeleton class="h-10 w-full" />
 				<Skeleton class="h-40 w-full" />
 			</Card.Content>
 		</Card.Root>
