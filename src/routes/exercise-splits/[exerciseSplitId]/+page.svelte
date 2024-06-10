@@ -11,7 +11,6 @@
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 
-	import type { ExerciseSplit, ExerciseSplitDay, ExerciseTemplate } from '@prisma/client';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import ExerciseSplitSkeleton from './(components)/ExerciseSplitSkeleton.svelte';
@@ -24,12 +23,9 @@
 	import {
 		exerciseSplitRunes,
 		type ExerciseTemplateRuneType,
+		type FullExerciseSplit,
 		type FullExerciseSplitRuneType
 	} from '../manage/exerciseSplitRunes.svelte';
-
-	type FullExerciseSplit = ExerciseSplit & {
-		exerciseSplitDays: (ExerciseSplitDay & { exercises: ExerciseTemplate[] })[];
-	};
 
 	let { data } = $props();
 	let exerciseSplit: FullExerciseSplit | 'loading' = $state('loading');
@@ -42,8 +38,7 @@
 		else toast.error('Exercise split not found');
 	});
 
-	function editExerciseSplit() {
-		if (exerciseSplit === 'loading') return;
+	function getExerciseSplitWithoutIds(exerciseSplit: FullExerciseSplit) {
 		const noIdsSplit: FullExerciseSplitRuneType = {
 			name: exerciseSplit.name,
 			exerciseSplitDays: exerciseSplit.exerciseSplitDays.map((splitDay) => {
@@ -62,7 +57,19 @@
 				};
 			})
 		};
-		exerciseSplitRunes.loadExerciseSplit(noIdsSplit, exerciseSplit.id);
+		return noIdsSplit;
+	}
+
+	function loadExerciseSplit(mode: 'edit' | 'clone') {
+		if (exerciseSplit === 'loading') return;
+		if (mode === 'edit') {
+			exerciseSplitRunes.loadExerciseSplit(
+				getExerciseSplitWithoutIds(exerciseSplit),
+				exerciseSplit.id
+			);
+		} else if (mode === 'clone') {
+			exerciseSplitRunes.loadExerciseSplit(getExerciseSplitWithoutIds(exerciseSplit));
+		}
 		goto(`/exercise-splits/manage/structure`);
 	}
 </script>
@@ -88,10 +95,10 @@
 							</DropdownMenu.Trigger>
 							<DropdownMenu.Content align="end">
 								<DropdownMenu.Group>
-									<DropdownMenu.Item class="gap-2" onclick={editExerciseSplit}>
+									<DropdownMenu.Item class="gap-2" onclick={() => loadExerciseSplit('edit')}>
 										<EditIcon /> Edit
 									</DropdownMenu.Item>
-									<DropdownMenu.Item class="gap-2" href="/">
+									<DropdownMenu.Item class="gap-2" onclick={() => loadExerciseSplit('clone')}>
 										<CloneIcon /> Clone
 									</DropdownMenu.Item>
 									<DropdownMenu.Item
