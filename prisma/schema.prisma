@@ -131,14 +131,36 @@ model ExerciseTemplate {
   exerciseSplitDayId Int
 }
 
+enum ProgressionVariable {
+  Reps
+  Load
+}
+
 model Mesocycle {
-  id                         Int                         @id @default(autoincrement())
-  name                       String
-  user                       User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                     String
-  exerciseSplit              ExerciseSplit               @relation(fields: [exerciseSplitId], references: [id])
-  exerciseSplitId            Int
-  mesocycleExerciseSplitDays MesocycleExerciseSplitDay[]
+  id                           Int                         @id @default(autoincrement())
+  name                         String
+  user                         User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                       String
+  exerciseSplit                ExerciseSplit               @relation(fields: [exerciseSplitId], references: [id])
+  exerciseSplitId              Int
+  RIRProgression               Int[]
+  startDate                    DateTime?
+  endDate                      DateTime?
+  preferredProgressionVariable ProgressionVariable
+  startOverloadPercentage      Float
+  lastSetToFailure             Boolean
+  forceRIRMatching             Boolean
+  mesocycleExerciseSplitDays   MesocycleExerciseSplitDay[]
+  mesocycleCyclicSetChanges    MesocycleCyclicSetChanges[]
+}
+
+model MesocycleCyclicSetChanges {
+  id                   Int         @id @default(autoincrement())
+  mesocycle            Mesocycle   @relation(fields: [mesocycleId], references: [id])
+  mesocycleId          Int
+  muscleGroup          MuscleGroup
+  regardlessOfProgress Boolean
+  setIncreaseAmount    Int
 }
 
 model MesocycleExerciseSplitDay {
