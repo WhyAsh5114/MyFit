@@ -43,7 +43,8 @@
 		RIRProgression = rirDistribution;
 	}
 
-	function saveBasics() {
+	function saveBasics(e: SubmitEvent) {
+		e.preventDefault();
 		mesocycleRunes.mesocycle.RIRProgression = RIRProgression;
 		mesocycleRunes.saveStoresToLocalStorage();
 		goto('/mesocycles/manage/exercise-split');
@@ -52,7 +53,7 @@
 
 <H3>Basics</H3>
 
-<form class="flex grow flex-col gap-2" onsubmit={saveBasics}>
+<form class="flex grow flex-col gap-2" onsubmit={(e) => saveBasics(e)}>
 	<div class="flex w-full flex-col gap-1.5">
 		<Label for="mesocycle-name">Mesocycle name</Label>
 		<Input
