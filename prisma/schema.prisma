@@ -161,6 +161,7 @@ model MesocycleCyclicSetChanges {
   muscleGroup          MuscleGroup
   regardlessOfProgress Boolean
   setIncreaseAmount    Int
+  maxVolume            Int
 }
 
 model MesocycleExerciseSplitDay {
