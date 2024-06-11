@@ -86,7 +86,6 @@
 						<Select.Item value={0}>0 RIR</Select.Item>
 					</Select.Group>
 				</Select.Content>
-				<Select.Input name="mesocycle-start-RIR" />
 			</Select.Root>
 		</div>
 		<div class="flex basis-1/2 flex-col gap-1.5">

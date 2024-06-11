@@ -108,7 +108,7 @@
 					? 'col-span-1'
 					: 'col-span-2'}"
 			>
-				<!-- TODO: required doesn't work, can be submitted without a target muscle group! -->
+				<!-- TODO: required doesn't work, can be submitted without a target muscle group! Will be fixed by: https://github.com/huntabyte/bits-ui/pull/469 -->
 				<Select.Root
 					name="exercise-target-muscle-group"
 					selected={{
