@@ -1,15 +1,10 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs';
 	import MesocycleStartVolumesExerciseTemplateCard from './MesocycleStartVolumesExerciseTemplateCard.svelte';
-	import type { MesocycleExerciseTemplateWithoutIDs } from '../../mesocycleRunes.svelte';
+	import { mesocycleRunes } from '../../mesocycleRunes.svelte';
 	import type { FullExerciseSplit } from '../../../../exercise-splits/manage/exerciseSplitRunes.svelte';
 
-	type PropsType = {
-		mesocycleExerciseTemplates: MesocycleExerciseTemplateWithoutIDs[][];
-		exerciseSplit: FullExerciseSplit;
-	};
-
-	let { mesocycleExerciseTemplates = $bindable(), exerciseSplit }: PropsType = $props();
+	const exerciseSplit = mesocycleRunes.selectedExerciseSplit as FullExerciseSplit;
 	let selectedSplitDayIndex = $state(
 		exerciseSplit.exerciseSplitDays.findIndex((splitDay) => !splitDay.isRestDay)
 	);
@@ -33,10 +28,14 @@
 		{/each}
 	</Tabs.List>
 	<Tabs.Content value={selectedSplitDayName} class="flex h-px grow flex-col gap-1 overflow-y-auto">
-		{#each mesocycleExerciseTemplates[selectedSplitDayIndex] as _, idx}
-			<MesocycleStartVolumesExerciseTemplateCard
-				bind:exerciseTemplate={mesocycleExerciseTemplates[selectedSplitDayIndex][idx]}
-			/>
-		{/each}
+		{#if mesocycleRunes.mesocycleExerciseTemplates}
+			{#each mesocycleRunes.mesocycleExerciseTemplates[selectedSplitDayIndex] as _, idx}
+				<MesocycleStartVolumesExerciseTemplateCard
+					bind:exerciseTemplate={mesocycleRunes.mesocycleExerciseTemplates[selectedSplitDayIndex][
+						idx
+					]}
+				/>
+			{/each}
+		{/if}
 	</Tabs.Content>
 </Tabs.Root>

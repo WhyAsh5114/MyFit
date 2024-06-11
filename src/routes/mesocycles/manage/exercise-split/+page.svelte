@@ -66,7 +66,7 @@
 		mesocycleRunes.mesocycle.startOverloadPercentage = startOverloadPercentage;
 		mesocycleRunes.mesocycle.lastSetToFailure = lastSetToFailure;
 		mesocycleRunes.saveStoresToLocalStorage();
-		goto(`./start-volumes?exerciseSplitId=${selectedExerciseSplit.id}`);
+		goto(`./volume?exerciseSplitId=${selectedExerciseSplit.id}`);
 	}
 
 	async function loadMore() {
