@@ -159,6 +159,7 @@ model MesocycleCyclicSetChanges {
   mesocycle            Mesocycle   @relation(fields: [mesocycleId], references: [id])
   mesocycleId          Int
   muscleGroup          MuscleGroup
+  customMuscleGroup    String?
   regardlessOfProgress Boolean
   setIncreaseAmount    Int
   maxVolume            Int
