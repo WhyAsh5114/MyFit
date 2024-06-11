@@ -17,6 +17,15 @@ export function createMesocycleRunes() {
 	let mesocycle: MesocycleRuneType = $state(structuredClone(defaultMesocycle));
 	let editingMesocycleId: number | null = $state(null);
 
+	if (globalThis.localStorage) {
+		const savedState = localStorage.getItem('mesocycleRunes');
+		if (savedState) ({ mesocycle, editingMesocycleId } = JSON.parse(savedState));
+	}
+
+	function saveStoresToLocalStorage() {
+		localStorage.setItem('mesocycleRunes', JSON.stringify({ mesocycle, editingMesocycleId }));
+	}
+
 	return {
 		get editingMesocycleId() {
 			return editingMesocycleId;
@@ -24,7 +33,8 @@ export function createMesocycleRunes() {
 		set editingMesocycleId(id: number | null) {
 			editingMesocycleId = id;
 		},
-		mesocycle
+		mesocycle,
+		saveStoresToLocalStorage
 	};
 }
 
