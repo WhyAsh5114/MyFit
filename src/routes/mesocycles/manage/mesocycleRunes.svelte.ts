@@ -1,6 +1,11 @@
-import type { Mesocycle } from '@prisma/client';
+import type { Mesocycle, MesocycleExerciseTemplate } from '@prisma/client';
+import type { FullExerciseSplit } from '../../exercise-splits/manage/exerciseSplitRunes.svelte';
 
 export type MesocycleRuneType = Omit<Mesocycle, 'id' | 'userId' | 'exerciseSplitId'>;
+export type MesocycleExerciseTemplateWithoutIDs = Omit<
+	MesocycleExerciseTemplate,
+	'mesocycleExerciseSplitDayId' | 'id'
+>;
 
 const defaultMesocycle: MesocycleRuneType = {
 	name: '',
@@ -15,6 +20,7 @@ const defaultMesocycle: MesocycleRuneType = {
 
 export function createMesocycleRunes() {
 	let mesocycle: MesocycleRuneType = $state(structuredClone(defaultMesocycle));
+	let selectedExerciseSplit: FullExerciseSplit | null = $state(null);
 	let editingMesocycleId: number | null = $state(null);
 
 	if (globalThis.localStorage) {
@@ -32,6 +38,12 @@ export function createMesocycleRunes() {
 		},
 		set editingMesocycleId(id: number | null) {
 			editingMesocycleId = id;
+		},
+		get selectedExerciseSplit() {
+			return selectedExerciseSplit;
+		},
+		set selectedExerciseSplit(exerciseSplit: FullExerciseSplit | null) {
+			selectedExerciseSplit = exerciseSplit;
 		},
 		mesocycle,
 		saveStoresToLocalStorage
