@@ -25,11 +25,15 @@ export function createMesocycleRunes() {
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('mesocycleRunes');
-		if (savedState) ({ mesocycle, editingMesocycleId } = JSON.parse(savedState));
+		if (savedState)
+			({ mesocycle, editingMesocycleId, selectedExerciseSplit } = JSON.parse(savedState));
 	}
 
 	function saveStoresToLocalStorage() {
-		localStorage.setItem('mesocycleRunes', JSON.stringify({ mesocycle, editingMesocycleId }));
+		localStorage.setItem(
+			'mesocycleRunes',
+			JSON.stringify({ mesocycle, editingMesocycleId, selectedExerciseSplit })
+		);
 	}
 
 	return {

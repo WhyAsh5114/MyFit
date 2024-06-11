@@ -29,7 +29,6 @@
 	type ExerciseSplitWithSplitDays = ExerciseSplit & { exerciseSplitDays: ExerciseSplitDay[] };
 	let exerciseSplits: ExerciseSplitWithSplitDays[] | 'loading' = $state('loading');
 	let searchString = $state('');
-	let scrollContainer: Element | undefined = $state();
 
 	let preferredProgressionVariable = $state({
 		value: mesocycleRunes.mesocycle.preferredProgressionVariable,
@@ -37,7 +36,9 @@
 	});
 	let startOverloadPercentage = $state(mesocycleRunes.mesocycle.startOverloadPercentage);
 	let lastSetToFailure = $state(mesocycleRunes.mesocycle.lastSetToFailure);
-	let selectedExerciseSplit: ExerciseSplitWithSplitDays | null = $state(null);
+	let selectedExerciseSplit: ExerciseSplitWithSplitDays | null = $state(
+		mesocycleRunes.selectedExerciseSplit ?? null
+	);
 
 	afterNavigate(async () => {
 		loaderState.reset();
@@ -64,6 +65,7 @@
 		mesocycleRunes.mesocycle.preferredProgressionVariable = preferredProgressionVariable.value;
 		mesocycleRunes.mesocycle.startOverloadPercentage = startOverloadPercentage;
 		mesocycleRunes.mesocycle.lastSetToFailure = lastSetToFailure;
+		mesocycleRunes.saveStoresToLocalStorage();
 		goto(`./start-volumes?exerciseSplitId=${selectedExerciseSplit.id}`);
 	}
 
