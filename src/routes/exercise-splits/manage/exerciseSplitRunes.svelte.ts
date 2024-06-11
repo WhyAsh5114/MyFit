@@ -160,7 +160,7 @@ export function createExerciseSplitRunes() {
 		get splitName() {
 			return splitName;
 		},
-		set splitName(name: string) {
+		set splitName(name) {
 			splitName = name;
 		},
 		get splitDays() {
@@ -169,16 +169,16 @@ export function createExerciseSplitRunes() {
 		get splitExercises() {
 			return splitExercises;
 		},
-		get editingExercise(): ExerciseTemplateRuneType | undefined {
+		get editingExercise() {
 			return editingExercise;
 		},
-		set editingExercise(exerciseTemplate: ExerciseTemplateRuneType | undefined) {
+		set editingExercise(exerciseTemplate) {
 			editingExercise = exerciseTemplate;
 		},
 		get selectedSplitDayIndex() {
 			return selectedSplitDayIndex;
 		},
-		set selectedSplitDayIndex(idx: number) {
+		set selectedSplitDayIndex(idx) {
 			selectedSplitDayIndex = idx;
 		},
 		get copiedExercises() {
@@ -187,7 +187,7 @@ export function createExerciseSplitRunes() {
 		get editingExerciseSplitId() {
 			return editingExerciseSplitId;
 		},
-		set editingExerciseSplitId(id: number | null) {
+		set editingExerciseSplitId(id) {
 			editingExerciseSplitId = id;
 		},
 		addSplitDay,
