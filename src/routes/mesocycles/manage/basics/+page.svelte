@@ -53,7 +53,7 @@
 
 <H3>Basics</H3>
 
-<form class="flex grow flex-col gap-2" onsubmit={(e) => saveBasics(e)}>
+<form class="flex grow flex-col gap-2" onsubmit={saveBasics}>
 	<div class="flex w-full flex-col gap-1.5">
 		<Label for="mesocycle-name">Mesocycle name</Label>
 		<Input

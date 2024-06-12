@@ -68,7 +68,7 @@
 
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
-		<form class="contents" onsubmit={(e) => updateSearchParam(e)}>
+		<form class="contents" onsubmit={updateSearchParam}>
 			<Input
 				bind:value={searchString}
 				id="search-exercise-splits"
