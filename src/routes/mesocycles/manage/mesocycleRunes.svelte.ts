@@ -31,14 +31,20 @@ export function createMesocycleRunes() {
 	let mesocycle: MesocycleRuneType = $state(structuredClone(defaultMesocycle));
 	let selectedExerciseSplit: FullExerciseSplit | null = $state(null);
 	let mesocycleExerciseTemplates: MesocycleExerciseTemplateWithoutIDs[][] = $state([]);
-	let mesocycleCyclicSetChanges: MesocycleCyclicSetChangesWithoutIDs[] = $state([]);
+	let mesocycleCyclicSetChanges: (MesocycleCyclicSetChangesWithoutIDs & { startVolume: number })[] =
+		$state([]);
 	let editingMesocycleId: number | null = $state(null);
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('mesocycleRunes');
 		if (savedState) {
-			({ mesocycle, editingMesocycleId, selectedExerciseSplit, mesocycleExerciseTemplates } =
-				JSON.parse(savedState));
+			({
+				mesocycle,
+				editingMesocycleId,
+				selectedExerciseSplit,
+				mesocycleExerciseTemplates,
+				mesocycleCyclicSetChanges
+			} = JSON.parse(savedState));
 		}
 	}
 
@@ -81,7 +87,8 @@ export function createMesocycleRunes() {
 				customMuscleGroup: enumMuscleGroup ? null : muscleGroup,
 				regardlessOfProgress: false,
 				maxVolume: 30,
-				setIncreaseAmount: 1
+				setIncreaseAmount: 1,
+				startVolume: 5
 			});
 		});
 	}
@@ -93,7 +100,8 @@ export function createMesocycleRunes() {
 				mesocycle,
 				editingMesocycleId,
 				selectedExerciseSplit,
-				mesocycleExerciseTemplates
+				mesocycleExerciseTemplates,
+				mesocycleCyclicSetChanges
 			})
 		);
 	}
@@ -111,6 +119,7 @@ export function createMesocycleRunes() {
 		set selectedExerciseSplit(exerciseSplit) {
 			selectedExerciseSplit = exerciseSplit;
 			generateMesocycleExerciseTemplates();
+			saveStoresToLocalStorage();
 		},
 		mesocycle,
 		get mesocycleExerciseTemplates() {
