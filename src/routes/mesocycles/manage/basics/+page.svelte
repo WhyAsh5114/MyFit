@@ -109,8 +109,8 @@
 
 	<span class="text-sm font-medium leading-none">RIR progression</span>
 	<Resizable.PaneGroup direction="vertical" class="rounded-lg border">
-		{#key (selectedRIR.value, totalDuration)}
-			{#each RIRProgression.toReversed() as cyclesPerRIR, idx}
+		{#each RIRProgression.toReversed() as cyclesPerRIR, idx}
+			{#key selectedRIR.value + totalDuration}
 				<Resizable.Pane
 					defaultSize={(100 / totalDuration) * cyclesPerRIR}
 					minSize={100 / totalDuration}
@@ -125,17 +125,17 @@
 						<span class="text-center text-sm text-muted-foreground">{cyclesPerRIR} cycles</span>
 					</div>
 				</Resizable.Pane>
-				{#if idx !== RIRProgression.length - 1}
-					<Resizable.Handle
-						withHandle
-						onDraggingChange={(dragging) => {
-							manualDragging = dragging;
-							if (!dragging) panes[idx].resize((100 / totalDuration) * cyclesPerRIR);
-						}}
-					/>
-				{/if}
-			{/each}
-		{/key}
+			{/key}
+			{#if idx !== RIRProgression.length - 1}
+				<Resizable.Handle
+					withHandle
+					onDraggingChange={(dragging) => {
+						manualDragging = dragging;
+						if (!dragging) panes[idx].resize((100 / totalDuration) * cyclesPerRIR);
+					}}
+				/>
+			{/if}
+		{/each}
 	</Resizable.PaneGroup>
 
 	<Button type="submit">Next</Button>
