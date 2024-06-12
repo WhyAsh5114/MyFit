@@ -93,6 +93,15 @@ export function createMesocycleRunes() {
 		});
 	}
 
+	function isExerciseAndSetChangeMuscleSame(
+		exercise: MesocycleExerciseTemplateWithoutIDs,
+		setChange: MesocycleCyclicSetChangesWithoutIDs
+	) {
+		return exercise.customMuscleGroup
+			? exercise.customMuscleGroup === setChange.customMuscleGroup
+			: exercise.targetMuscleGroup === setChange.muscleGroup;
+	}
+
 	function saveStoresToLocalStorage() {
 		localStorage.setItem(
 			'mesocycleRunes',
@@ -125,12 +134,18 @@ export function createMesocycleRunes() {
 		get mesocycleExerciseTemplates() {
 			return mesocycleExerciseTemplates;
 		},
+		set mesocycleExerciseTemplates(value) {
+			mesocycleExerciseTemplates = value;
+			saveStoresToLocalStorage();
+		},
 		get mesocycleCyclicSetChanges() {
 			return mesocycleCyclicSetChanges;
 		},
 		set mesocycleCyclicSetChanges(value) {
 			mesocycleCyclicSetChanges = value;
+			saveStoresToLocalStorage();
 		},
+		isExerciseAndSetChangeMuscleSame,
 		saveStoresToLocalStorage
 	};
 }
