@@ -162,9 +162,10 @@
 			}}
 		>
 			<Button variant="destructive" type="submit" disabled={callingDeleteEndpoint}>
-				Yes, delete
 				{#if callingDeleteEndpoint}
-					<LoaderCircle class="ml-2 h-4 w-4 animate-spin" />
+					<LoaderCircle class="animate-spin" />
+				{:else}
+					Yes, delete
 				{/if}
 			</Button>
 		</form>

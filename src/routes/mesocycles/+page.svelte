@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Input } from '$lib/components/ui/input';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 
@@ -12,7 +11,6 @@
 	import { InfiniteLoader, loaderState } from 'svelte-infinite';
 	import { page } from '$app/stores';
 	import type { Mesocycle } from '@prisma/client';
-	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { toast } from 'svelte-sonner';
 	import type { ActionResult } from '@sveltejs/kit';

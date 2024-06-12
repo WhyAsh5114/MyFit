@@ -9,7 +9,6 @@
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-
 	import { mesocycleRunes } from '../mesocycleRunes.svelte';
 	import Check from 'virtual:icons/lucide/check';
 	import CaretSort from 'virtual:icons/lucide/chevrons-up-down';
@@ -58,7 +57,7 @@
 
 	function savePreferencesAndExerciseSplit() {
 		if (selectedExerciseSplit === null) {
-			toast.error('Error', { description: 'Select an exercise split' });
+			toast.error('Select an exercise split');
 			return;
 		}
 
@@ -111,7 +110,7 @@
 			<Command.Input placeholder="Search" class="h-9" bind:value={searchString} />
 			{#if exerciseSplits === 'loading'}
 				<Command.Empty class="flex items-center justify-center gap-2">
-					Loading <LoaderCircle class="h-5 w-5 animate-spin" />
+					<LoaderCircle class="h-5 w-5 animate-spin" />
 				</Command.Empty>
 			{/if}
 			<Command.Group>
@@ -164,12 +163,14 @@
 	</Popover.Content>
 </Popover.Root>
 
-{#if selectedExerciseSplit !== null}
+{#if selectedExerciseSplit}
 	<Card.Root class="mt-2">
 		<Card.Header>
 			<Card.Title class="flex items-center justify-between">
 				<span>{selectedExerciseSplit.name}</span>
-				<Badge>{selectedExerciseSplit.exerciseSplitDays.length}-day cycle</Badge>
+				<Badge class="text-nowrap">
+					{selectedExerciseSplit.exerciseSplitDays.length}-day cycle
+				</Badge>
 			</Card.Title>
 		</Card.Header>
 		<Card.Content class="flex flex-col gap-5">
@@ -212,6 +213,10 @@
 			</div>
 		</Card.Content>
 	</Card.Root>
+{:else if selectedExerciseSplit === null}
+	<div class="muted-text-box mt-2 flex h-72 items-center justify-center">
+		Select an exercise split
+	</div>
 {/if}
 
 <div class="mt-auto grid grid-cols-2 gap-1">

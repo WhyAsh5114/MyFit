@@ -63,10 +63,11 @@
 			};
 		}}
 	>
-		<Button class="gap-2" type="submit" disabled={savingExerciseSplit}>
-			Save
+		<Button type="submit" disabled={savingExerciseSplit}>
 			{#if savingExerciseSplit}
 				<LoaderCircle class="animate-spin" />
+			{:else}
+				Save
 			{/if}
 		</Button>
 	</form>
