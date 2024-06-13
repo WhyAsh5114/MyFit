@@ -22,7 +22,8 @@
 	import type { ActionResult } from '@sveltejs/kit';
 	import { toast } from 'svelte-sonner';
 	import { page } from '$app/stores';
-
+	import HelpIcon from 'virtual:icons/lucide/circle-help';
+	import { Input } from '$lib/components/ui/input';
 	let { data } = $props();
 
 	type ExerciseSplitWithSplitDays = ExerciseSplit & { exerciseSplitDays: ExerciseSplitDay[] };
@@ -38,6 +39,11 @@
 	let selectedExerciseSplit: ExerciseSplitWithSplitDays | null = $state(
 		mesocycleRunes.selectedExerciseSplit ?? null
 	);
+
+	const maxMinSetsValue = Math.min(
+		...mesocycleRunes.mesocycleCyclicSetChanges.map((setChange) => setChange.startVolume)
+	);
+	let minSets = $state(3);
 
 	afterNavigate(async () => {
 		loaderState.reset();
@@ -173,10 +179,20 @@
 				</Badge>
 			</Card.Title>
 		</Card.Header>
-		<Card.Content class="flex flex-col gap-5">
+		<Card.Content class="grid grid-cols-1 gap-5 md:grid-cols-2">
 			<Select.Root bind:selected={preferredProgressionVariable}>
-				<div class="flex flex-col gap-1.5">
-					<Select.Label class="mb-0.5 p-0 font-medium">Preferred progression scheme</Select.Label>
+				<div class="flex flex-col gap-1">
+					<Select.Label class="flex items-center justify-between p-0 font-medium">
+						Preferred progression variable
+						<Popover.Root>
+							<Popover.Trigger aria-label="preferred-progression-variable-help">
+								<HelpIcon class="text-muted-foreground" />
+							</Popover.Trigger>
+							<Popover.Content class="w-56 text-sm text-muted-foreground" align="end">
+								Prefer adjusting this variable first when reaching the limits of the rep range
+							</Popover.Content>
+						</Popover.Root>
+					</Select.Label>
 					<Select.Trigger id="mesocycle-progression-option">
 						<Select.Value placeholder="Select" class="capitalize" />
 					</Select.Trigger>
@@ -189,6 +205,29 @@
 					</Select.Content>
 				</div>
 			</Select.Root>
+			<form class="flex w-full max-w-sm flex-col gap-1.5">
+				<Label for="distribution-min-sets-per-exercise" class="flex items-center justify-between">
+					Minimum sets per exercise
+					<Popover.Root>
+						<Popover.Trigger aria-label="preferred-progression-variable-help">
+							<HelpIcon class="text-muted-foreground" />
+						</Popover.Trigger>
+						<Popover.Content class="prose w-56 text-sm text-muted-foreground" align="end">
+							To avoid excessive exercise variation at the start of the mesocycle
+						</Popover.Content>
+					</Popover.Root>
+				</Label>
+				<Input
+					type="number"
+					step={1}
+					min={0}
+					max={maxMinSetsValue}
+					id="distribution-min-sets-per-exercise"
+					placeholder="Type here"
+					required
+					bind:value={minSets}
+				/>
+			</form>
 			<div class="flex flex-col gap-2">
 				<div class="flex items-center justify-between text-sm font-medium">
 					<span>Start overload percentage</span>
@@ -202,19 +241,22 @@
 					step={0.25}
 				/>
 			</div>
-			<div class="mt-2 flex items-center justify-between">
-				<Label
-					for="mesocycle-last-set-to-failure"
-					class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-				>
-					Take last set to failure
-				</Label>
+			<div class="items-top flex justify-between">
+				<div class="grid gap-1.5 leading-none">
+					<Label
+						for="mesocycle-last-set-to-failure"
+						class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+					>
+						Take last set to failure
+					</Label>
+					<p class="hidden text-sm text-muted-foreground md:block">of each exercise</p>
+				</div>
 				<Checkbox id="mesocycle-last-set-to-failure" bind:checked={lastSetToFailure} />
 			</div>
 		</Card.Content>
 	</Card.Root>
 {:else if selectedExerciseSplit === null}
-	<div class="muted-text-box mt-2 flex h-72 items-center justify-center">
+	<div class="muted-text-box mt-2">
 		Select an exercise split
 	</div>
 {/if}
