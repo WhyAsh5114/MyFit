@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { mesocycleRunes } from '../../mesocycleRunes.svelte';
-	import { convertCamelCaseToNormal } from '$lib/utils';
+	import { cn, convertCamelCaseToNormal } from '$lib/utils';
 	import * as Table from '$lib/components/ui/table';
 	import * as Select from '$lib/components/ui/select';
 	import * as Popover from '$lib/components/ui/popover';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Button } from '$lib/components/ui/button';
-	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import ChevronDown from 'virtual:icons/lucide/chevron-down';
+	import Plus from 'virtual:icons/lucide/plus';
+	import { MuscleGroup } from '@prisma/client';
+	import type { Selected } from 'bits-ui';
 
 	type NumericReplaceAllType = {
 		setChangeProperty: 'startVolume' | 'maxVolume' | 'setIncreaseAmount';
@@ -57,6 +59,14 @@
 		}
 	]);
 
+	let muscleGroupPopoverOpen = $state(false);
+	let selectedMuscleGroup: Selected<string> = $state({ value: 'Chest', label: 'Chest' });
+	let customMuscleGroup = $state('');
+
+	function addMuscleGroup(e: SubmitEvent) {
+		e.preventDefault();
+	}
+
 	function applyChangesToAll(e: Event, state: ReplaceAllType) {
 		e.preventDefault();
 		mesocycleRunes.mesocycleCyclicSetChanges.forEach((setChange) => {
@@ -68,101 +78,163 @@
 	}
 </script>
 
-<ScrollArea orientation="both" class="h-px grow">
-	<Table.Root>
-		<Table.Header>
-			<Table.Row>
-				<Table.Head>Muscle Group</Table.Head>
-				{#each replaceAllStates as state}
-					{@const title = convertCamelCaseToNormal(state.setChangeProperty)}
-					<Table.Head>
-						<Popover.Root bind:open={state.open}>
-							<Popover.Trigger class="flex items-center text-left">
-								{title}
-								<ChevronDown class="shrink-0 basis-4" />
-							</Popover.Trigger>
-							<Popover.Content class="flex items-end gap-2">
-								<form class="contents" onsubmit={(e) => applyChangesToAll(e, state)}>
-									{#if typeof state.value === 'boolean'}
-										<div class="flex items-center space-x-2 place-self-center">
-											<Checkbox
-												id="replace-all-{state.setChangeProperty}"
-												bind:checked={state.value}
+<Table.Root>
+	<Table.Header>
+		<Table.Row>
+			<Table.Head>
+				<Popover.Root bind:open={muscleGroupPopoverOpen}>
+					<Popover.Trigger aria-label="add-muscle-group" class="flex items-center text-left">
+						Muscle Group
+						<Plus class="shrink-0 basis-4" />
+					</Popover.Trigger>
+					<Popover.Content class="flex flex-col gap-2">
+						<form class="contents" onsubmit={addMuscleGroup}>
+							<div class="flex grow flex-col gap-2">
+								<Select.Root
+									name="exercise-target-muscle-group"
+									selected={{
+										value: selectedMuscleGroup.value,
+										label: convertCamelCaseToNormal(selectedMuscleGroup?.value)
+									}}
+									onSelectedChange={(v) => {
+										if (!v) return;
+										selectedMuscleGroup.value = v.value;
+									}}
+									required
+								>
+									<Select.Label class="p-0 text-sm font-medium leading-none">
+										Add muscle group
+									</Select.Label>
+									<Select.Trigger>
+										<Select.Value placeholder="Pick one" />
+									</Select.Trigger>
+									<Select.Content class="h-48 overflow-y-auto">
+										{#each Object.keys(MuscleGroup) as muscleGroup}
+											<Select.Item
+												value={muscleGroup}
+												label={convertCamelCaseToNormal(muscleGroup)}
 											/>
-											<Label
-												for="replace-all-{state.setChangeProperty}"
-												class="text-sm font-medium leading-none"
-											>
-												{title}
-											</Label>
-										</div>
-									{:else}
-										<div class="flex grow flex-col">
-											<Label for="replace-all-{state.setChangeProperty}" class="mb-1.5">
-												{title}
-											</Label>
-											<Input
-												type="number"
-												id="replace-all-{state.setChangeProperty}"
-												placeholder="Type here"
-												min={state.min}
-												max={state.max}
-												required
-												bind:value={state.value}
-											/>
-										</div>
-									{/if}
-									<Button type="submit">Replace all</Button>
-								</form>
-							</Popover.Content>
-						</Popover.Root>
-					</Table.Head>
-				{/each}
-			</Table.Row>
-		</Table.Header>
-		<Table.Body>
-			{#each mesocycleRunes.mesocycleCyclicSetChanges as setChange}
-				{@const muscleGroup = setChange.muscleGroup === 'Custom' ? (setChange.customMuscleGroup as string) : setChange.muscleGroup}
-				<Table.Row>
-					<Table.Cell class="font-semibold">
-						{convertCamelCaseToNormal(muscleGroup)}
-					</Table.Cell>
-					<Table.Cell>
-						<Input
-							type="number"
-							id="{muscleGroup}-start-volume"
-							bind:value={setChange.startVolume}
-						/>
-					</Table.Cell>
-					<Table.Cell>
-						<Input type="number" id="{muscleGroup}-max-volume" bind:value={setChange.maxVolume} />
-					</Table.Cell>
-					<Table.Cell>
-						<Select.Root
-							selected={{
-								value: setChange.setIncreaseAmount,
-								label: setChange.setIncreaseAmount.toString()
-							}}
-							onSelectedChange={(s) => {
-								if (!s) return;
-								setChange.setIncreaseAmount = s.value;
-							}}
-						>
-							<Select.Trigger class="w-16">
-								<Select.Value />
-							</Select.Trigger>
-							<Select.Content>
-								{#each [0, 1, 2, 3] as option}
-									<Select.Item value={option}>{option}</Select.Item>
-								{/each}
-							</Select.Content>
-						</Select.Root>
-					</Table.Cell>
-					<Table.Cell class="p-0 text-center">
-						<Checkbox bind:checked={setChange.regardlessOfProgress} />
-					</Table.Cell>
-				</Table.Row>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							</div>
+							{#if selectedMuscleGroup.value === 'Custom'}
+								<div class="flex w-full flex-col gap-1.5">
+									<Label for="exercise-custom-muscle-group">Muscle group</Label>
+									<Input
+										id="exercise-custom-muscle-group"
+										placeholder="Type here"
+										required
+										bind:value={customMuscleGroup}
+									/>
+								</div>
+							{/if}
+							<Button type="submit">Add</Button>
+							<p class="text-sm leading-tight text-muted-foreground">
+								Add muscle groups not currently in the exercise split if you plan to use them later
+							</p>
+						</form>
+					</Popover.Content>
+				</Popover.Root>
+			</Table.Head>
+			{#each replaceAllStates as state}
+				{@const title = convertCamelCaseToNormal(state.setChangeProperty)}
+				<Table.Head>
+					<Popover.Root bind:open={state.open}>
+						<Popover.Trigger class="flex items-center text-left">
+							{title}
+							<ChevronDown class="shrink-0 basis-4" />
+						</Popover.Trigger>
+						<Popover.Content class="flex items-end gap-2">
+							<form class="contents" onsubmit={(e) => applyChangesToAll(e, state)}>
+								{#if typeof state.value === 'boolean'}
+									<div class="flex items-center space-x-2 place-self-center">
+										<Checkbox
+											id="replace-all-{state.setChangeProperty}"
+											bind:checked={state.value}
+										/>
+										<Label
+											for="replace-all-{state.setChangeProperty}"
+											class="text-sm font-medium leading-none"
+										>
+											{title}
+										</Label>
+									</div>
+								{:else}
+									<div class="flex grow flex-col">
+										<Label for="replace-all-{state.setChangeProperty}" class="mb-1.5">
+											{title}
+										</Label>
+										<Input
+											type="number"
+											id="replace-all-{state.setChangeProperty}"
+											placeholder="Type here"
+											min={state.min}
+											max={state.max}
+											required
+											bind:value={state.value}
+										/>
+									</div>
+								{/if}
+								<Button type="submit">Replace all</Button>
+							</form>
+						</Popover.Content>
+					</Popover.Root>
+				</Table.Head>
 			{/each}
-		</Table.Body>
-	</Table.Root>
-</ScrollArea>
+		</Table.Row>
+	</Table.Header>
+	<Table.Body>
+		{#each mesocycleRunes.mesocycleCyclicSetChanges as setChange}
+			{@const muscleGroup = setChange.muscleGroup === 'Custom' ? (setChange.customMuscleGroup as string) : setChange.muscleGroup}
+			<Table.Row>
+				<Table.Cell class="font-semibold">
+					{convertCamelCaseToNormal(muscleGroup)}
+				</Table.Cell>
+				<Table.Cell>
+					<Input
+						type="number"
+						aria-label="{muscleGroup}-start-volume"
+						id="{muscleGroup}-start-volume"
+						bind:value={setChange.startVolume}
+					/>
+				</Table.Cell>
+				<Table.Cell>
+					<Input
+						type="number"
+						aria-label="{muscleGroup}-max-volume"
+						id="{muscleGroup}-max-volume"
+						bind:value={setChange.maxVolume}
+					/>
+				</Table.Cell>
+				<Table.Cell>
+					<Select.Root
+						selected={{
+							value: setChange.setIncreaseAmount,
+							label: setChange.setIncreaseAmount.toString()
+						}}
+						onSelectedChange={(s) => {
+							if (!s) return;
+							setChange.setIncreaseAmount = s.value;
+						}}
+					>
+						<Select.Trigger class="w-16" aria-label="{muscleGroup}-set-increase-amount">
+							<Select.Value />
+						</Select.Trigger>
+						<Select.Content>
+							{#each [0, 1, 2, 3] as option}
+								<Select.Item value={option}>{option}</Select.Item>
+							{/each}
+						</Select.Content>
+					</Select.Root>
+				</Table.Cell>
+				<Table.Cell class="p-0 text-center">
+					<Checkbox
+						aria-label="{muscleGroup}-increase-volume-regardless-of-progress"
+						bind:checked={setChange.regardlessOfProgress}
+					/>
+				</Table.Cell>
+			</Table.Row>
+		{/each}
+	</Table.Body>
+</Table.Root>

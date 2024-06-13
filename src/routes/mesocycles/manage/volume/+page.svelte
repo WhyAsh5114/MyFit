@@ -1,13 +1,13 @@
 <script lang="ts">
-	import * as Tabs from '$lib/components/ui/tabs';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import { Button } from '$lib/components/ui/button';
 	import type { FullExerciseSplit } from '../../../exercise-splits/manage/exerciseSplitRunes.svelte';
 	import { mesocycleRunes } from '../mesocycleRunes.svelte';
-	import MesocycleStartVolumesExercisesTabs from './(components)/MesocycleStartVolumesExercisesTabs.svelte';
 	import MesocycleStartVolumesSetupTable from './(components)/MesocycleStartVolumesSetupTable.svelte';
-	import MesocycleStartVolumesDistributeCard from './(components)/MesocycleStartVolumesDistributeCard.svelte';
+	import { ScrollArea } from '$lib/components/ui/scroll-area';
 
 	let { data } = $props();
 	let exerciseSplit: FullExerciseSplit | 'loading' = $state('loading');
@@ -26,24 +26,17 @@
 
 <H3>Volume</H3>
 {#if exerciseSplit !== 'loading'}
-	<Tabs.Root value="distribute" class="flex w-full grow flex-col">
-		<Tabs.List class="grid grid-cols-3">
-			<Tabs.Trigger value="setup">Setup</Tabs.Trigger>
-			<Tabs.Trigger value="distribute">Distribute</Tabs.Trigger>
-			<Tabs.Trigger value="exercises">Exercises</Tabs.Trigger>
-		</Tabs.List>
-		<Tabs.Content value="setup" class="grow">
-			<div class="flex h-full flex-col">
-				<MesocycleStartVolumesSetupTable />
-			</div>
-		</Tabs.Content>
-		<Tabs.Content value="distribute" class="grow">
-			<MesocycleStartVolumesDistributeCard />
-		</Tabs.Content>
-		<Tabs.Content value="exercises" class="grow">
-			<MesocycleStartVolumesExercisesTabs />
-		</Tabs.Content>
-	</Tabs.Root>
+	<ScrollArea orientation="both" class="h-px grow">
+		<MesocycleStartVolumesSetupTable />
+	</ScrollArea>
+
+	<div class="grid grid-cols-2 gap-1">
+		<Button variant="secondary" href="./exercise-split">Previous</Button>
+		<Button>Next</Button>
+	</div>
 {:else}
-	<!-- TODO: loaders-->
+	<div class="flex h-full w-full items-center justify-center text-muted-foreground">
+		Fetching exercises
+		<LoaderCircle class="ml-2 animate-spin" />
+	</div>
 {/if}
