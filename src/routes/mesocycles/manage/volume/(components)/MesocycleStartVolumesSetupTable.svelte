@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { mesocycleRunes } from '../../mesocycleRunes.svelte';
-	import { cn, convertCamelCaseToNormal } from '$lib/utils';
+	import { convertCamelCaseToNormal } from '$lib/utils';
 	import * as Table from '$lib/components/ui/table';
 	import * as Select from '$lib/components/ui/select';
 	import * as Popover from '$lib/components/ui/popover';
@@ -12,6 +12,7 @@
 	import Plus from 'virtual:icons/lucide/plus';
 	import { MuscleGroup } from '@prisma/client';
 	import type { Selected } from 'bits-ui';
+	import { toast } from 'svelte-sonner';
 
 	type NumericReplaceAllType = {
 		setChangeProperty: 'startVolume' | 'maxVolume' | 'setIncreaseAmount';
@@ -65,6 +66,16 @@
 
 	function addMuscleGroup(e: SubmitEvent) {
 		e.preventDefault();
+		const muscleGroup =
+			selectedMuscleGroup.value === 'Custom' ? customMuscleGroup : selectedMuscleGroup.value;
+		const successfulAdd = mesocycleRunes.addMuscleGroupToCyclicSetChanges(muscleGroup, false);
+
+		if (successfulAdd) {
+			muscleGroupPopoverOpen = false;
+			selectedMuscleGroup = { value: 'Chest', label: 'Chest' };
+		} else {
+			toast.error('Muscle group already present in the table');
+		}
 	}
 
 	function applyChangesToAll(e: Event, state: ReplaceAllType) {
@@ -192,23 +203,28 @@
 					{convertCamelCaseToNormal(muscleGroup)}
 				</Table.Cell>
 				<Table.Cell>
-					<Input
-						type="number"
-						aria-label="{muscleGroup}-start-volume"
-						id="{muscleGroup}-start-volume"
-						bind:value={setChange.startVolume}
-					/>
+					{#if setChange.inSplit}
+						<Input
+							type="number"
+							aria-label="{muscleGroup}-start-volume"
+							id="{muscleGroup}-start-volume"
+							required
+							bind:value={setChange.startVolume}
+						/>
+					{/if}
 				</Table.Cell>
 				<Table.Cell>
 					<Input
 						type="number"
 						aria-label="{muscleGroup}-max-volume"
 						id="{muscleGroup}-max-volume"
+						required
 						bind:value={setChange.maxVolume}
 					/>
 				</Table.Cell>
 				<Table.Cell>
 					<Select.Root
+						required
 						selected={{
 							value: setChange.setIncreaseAmount,
 							label: setChange.setIncreaseAmount.toString()

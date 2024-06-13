@@ -15,6 +15,10 @@ export type MesocycleCyclicSetChangesWithoutIDs = Omit<
 	MesocycleCyclicSetChanges,
 	'id' | 'mesocycleId'
 >;
+export type MesocycleCyclicSetChangesWithStartVolume = MesocycleCyclicSetChangesWithoutIDs & {
+	startVolume: number;
+	inSplit: boolean;
+};
 
 const defaultMesocycle: MesocycleRuneType = {
 	name: '',
@@ -29,15 +33,15 @@ const defaultMesocycle: MesocycleRuneType = {
 
 export function createMesocycleRunes() {
 	let mesocycle: MesocycleRuneType = $state(structuredClone(defaultMesocycle));
-	let selectedExerciseSplit: FullExerciseSplit | null = $state(null);
 	let mesocycleExerciseTemplates: MesocycleExerciseTemplateWithoutIDs[][] = $state([]);
-	let mesocycleCyclicSetChanges: (MesocycleCyclicSetChangesWithoutIDs & { startVolume: number })[] =
-		$state([]);
+	let mesocycleCyclicSetChanges: MesocycleCyclicSetChangesWithStartVolume[] = $state([]);
+
+	let selectedExerciseSplit: FullExerciseSplit | null = $state(null);
 	let editingMesocycleId: number | null = $state(null);
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('mesocycleRunes');
-		if (savedState) {
+		if (savedState)
 			({
 				mesocycle,
 				editingMesocycleId,
@@ -45,21 +49,20 @@ export function createMesocycleRunes() {
 				mesocycleExerciseTemplates,
 				mesocycleCyclicSetChanges
 			} = JSON.parse(savedState));
-		}
 	}
 
 	function generateMesocycleExerciseTemplates() {
 		if (!selectedExerciseSplit) return;
-		mesocycleExerciseTemplates = selectedExerciseSplit.exerciseSplitDays.map((splitDay) => {
-			return splitDay.exercises.map((exercise) => {
-				const mesocycleExerciseTemplate: MesocycleExerciseTemplateWithoutIDs & { id?: number } = {
-					...exercise,
+		mesocycleExerciseTemplates = selectedExerciseSplit.exerciseSplitDays.map((splitDay) =>
+			splitDay.exercises.map((exercise) => {
+				const { id, ...rest } = exercise;
+				const mesocycleExerciseTemplate: MesocycleExerciseTemplateWithoutIDs = {
+					...rest,
 					sets: 0
 				};
-				delete mesocycleExerciseTemplate.id;
 				return mesocycleExerciseTemplate;
-			});
-		});
+			})
+		);
 		generateMesocycleCyclicSetChanges();
 	}
 
@@ -73,24 +76,38 @@ export function createMesocycleRunes() {
 				)
 			)
 		);
-		allMuscleGroupsFromExercises.forEach((muscleGroup) => {
-			const enumMuscleGroup = Object.keys(MuscleGroup).includes(muscleGroup);
+		allMuscleGroupsFromExercises.forEach((muscleGroup) =>
+			addMuscleGroupToCyclicSetChanges(muscleGroup, true)
+		);
+	}
 
-			const preExistingCyclicSetChange = mesocycleCyclicSetChanges.find((setChange) => {
-				if (enumMuscleGroup) return setChange.muscleGroup === muscleGroup;
-				return setChange.customMuscleGroup === muscleGroup;
-			});
-			if (preExistingCyclicSetChange) return;
+	function isEnumMuscleGroup(muscleGroup: string): muscleGroup is MuscleGroup {
+		return Object.values(MuscleGroup).includes(muscleGroup as MuscleGroup);
+	}
 
-			mesocycleCyclicSetChanges.push({
-				muscleGroup: enumMuscleGroup ? (muscleGroup as MuscleGroup) : 'Custom',
-				customMuscleGroup: enumMuscleGroup ? null : muscleGroup,
-				regardlessOfProgress: false,
-				maxVolume: 30,
-				setIncreaseAmount: 1,
-				startVolume: 5
-			});
+	function muscleGroupExistsInSetChanges(muscleGroup: string) {
+		return mesocycleCyclicSetChanges.some((setChange) =>
+			isEnumMuscleGroup(muscleGroup)
+				? setChange.muscleGroup === muscleGroup
+				: setChange.customMuscleGroup === muscleGroup
+		);
+	}
+
+	function addMuscleGroupToCyclicSetChanges(muscleGroup: string, inSplit: boolean) {
+		if (muscleGroupExistsInSetChanges(muscleGroup)) return false;
+
+		mesocycleCyclicSetChanges.push({
+			muscleGroup: isEnumMuscleGroup(muscleGroup) ? muscleGroup : 'Custom',
+			customMuscleGroup: isEnumMuscleGroup(muscleGroup) ? null : muscleGroup,
+			regardlessOfProgress: false,
+			maxVolume: 30,
+			setIncreaseAmount: 1,
+			startVolume: 5,
+			inSplit
 		});
+
+		saveStoresToLocalStorage();
+		return true;
 	}
 
 	function isExerciseAndSetChangeMuscleSame(
@@ -146,6 +163,7 @@ export function createMesocycleRunes() {
 			saveStoresToLocalStorage();
 		},
 		isExerciseAndSetChangeMuscleSame,
+		addMuscleGroupToCyclicSetChanges,
 		saveStoresToLocalStorage
 	};
 }

@@ -22,18 +22,23 @@
 		}
 		exerciseSplit = serverExerciseSplit;
 	});
+
+	function submitCyclicSetChanges(e: SubmitEvent) {
+		e.preventDefault();
+	}
 </script>
 
 <H3>Volume</H3>
 {#if exerciseSplit !== 'loading'}
-	<ScrollArea orientation="both" class="h-px grow">
-		<MesocycleStartVolumesSetupTable />
-	</ScrollArea>
-
-	<div class="grid grid-cols-2 gap-1">
-		<Button variant="secondary" href="./exercise-split">Previous</Button>
-		<Button>Next</Button>
-	</div>
+	<form class="contents" onsubmit={submitCyclicSetChanges}>
+		<ScrollArea orientation="both" class="h-px grow">
+			<MesocycleStartVolumesSetupTable />
+		</ScrollArea>
+		<div class="grid grid-cols-2 gap-1">
+			<Button variant="secondary" href="./exercise-split">Previous</Button>
+			<Button>Next</Button>
+		</div>
+	</form>
 {:else}
 	<div class="flex h-full w-full items-center justify-center text-muted-foreground">
 		Fetching exercises
