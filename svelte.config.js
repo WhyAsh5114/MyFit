@@ -13,7 +13,10 @@ const config = {
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: adapter(),
 		serviceWorker: { register: false },
-		files: { serviceWorker: 'src/service-worker.ts' }
+		files: { serviceWorker: 'src/service-worker.ts' },
+		alias: {
+			'.prisma/client/index-browser': './node_modules/.prisma/client/index-browser.js'
+		}
 	}
 };
 
