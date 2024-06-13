@@ -27,7 +27,7 @@
 		<Input
 			id="{exerciseTemplate.name}-sets"
 			type="number"
-			class="w-12 py-0 h-8 text-sm"
+			class="h-8 w-12 py-0 text-sm"
 			bind:value={exerciseTemplate.sets}
 		/>
 		<span class="mr-auto text-sm lowercase text-muted-foreground">
