@@ -40,6 +40,7 @@
 		"@auth/sveltekit": "^1.0.1",
 		"@internationalized/date": "^3.5.2",
 		"@prisma/client": "^5.13.0",
+		"@sveltejs/adapter-vercel": "^5.3.1",
 		"bits-ui": "^0.21.4",
 		"chart.js": "^4.4.2",
 		"clsx": "^2.1.1",
