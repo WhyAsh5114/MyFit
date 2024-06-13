@@ -38,24 +38,16 @@
 		else toast.error('Exercise split not found');
 	});
 
-	function getExerciseSplitWithoutIds(exerciseSplit: FullExerciseSplit) {
+	function getExerciseSplitWithoutIds(exerciseSplit: FullExerciseSplit): FullExerciseSplitRuneType {
 		const noIdsSplit: FullExerciseSplitRuneType = {
 			name: exerciseSplit.name,
-			exerciseSplitDays: exerciseSplit.exerciseSplitDays.map((splitDay) => {
-				return {
-					name: splitDay.name,
-					isRestDay: splitDay.isRestDay,
-					exercises: splitDay.exercises.map((exerciseTemplate) => {
-						const exerciseTemplateRuneType: ExerciseTemplateRuneType & {
-							id?: number;
-							exerciseSplitDayId?: number;
-						} = exerciseTemplate;
-						delete exerciseTemplateRuneType.id;
-						delete exerciseTemplateRuneType.exerciseSplitDayId;
-						return exerciseTemplateRuneType;
-					})
-				};
-			})
+			exerciseSplitDays: exerciseSplit.exerciseSplitDays.map(({ name, isRestDay, exercises }) => ({
+				name,
+				isRestDay,
+				exercises: exercises.map(
+					({ id, exerciseSplitDayId, ...exerciseTemplate }) => exerciseTemplate
+				)
+			}))
 		};
 		return noIdsSplit;
 	}
