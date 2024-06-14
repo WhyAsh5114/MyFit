@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
-	import { convertCamelCaseToNormal } from '$lib/utils';
+	import { cn, convertCamelCaseToNormal } from '$lib/utils';
 	import { SetType } from '@prisma/client';
 	import type { Selected } from 'bits-ui';
 	import type { ExerciseTemplateRuneType } from '../manage/exerciseSplitRunes.svelte';
@@ -83,7 +83,7 @@
 							data,
 							fill: {
 								target: 'origin',
-								above: `hsl(${secondaryColor})`
+								above: `hsl(${primaryColor})`
 							},
 							borderWidth: 0,
 							pointBorderWidth: 0
@@ -136,4 +136,7 @@
 	</Select.Content>
 </Select.Root>
 
-<canvas bind:this={chartCanvas} class="my-4 max-h-96"></canvas>
+<canvas
+	bind:this={chartCanvas}
+	class={cn('my-4 max-h-96', { 'max-h-56': selectedChartType.value === 'Bodyweight & weighted' })}
+></canvas>
