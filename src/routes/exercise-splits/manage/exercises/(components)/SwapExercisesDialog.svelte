@@ -4,6 +4,7 @@
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 	import { exerciseSplitRunes } from '../../exerciseSplitRunes.svelte';
 	import type { Selected } from 'bits-ui';
+	import { cn } from '$lib/utils';
 
 	let { open = $bindable(false) }: { open: boolean } = $props();
 	let swapExercisesFrom: Selected<number> | undefined = $state();
@@ -31,8 +32,13 @@
 			</Select.Trigger>
 			<Select.Content>
 				{#each exerciseSplitRunes.splitDays as splitDay, idx}
+					{@const isSelectedDay = idx === exerciseSplitRunes.selectedSplitDayIndex}
 					{#if !splitDay.isRestDay}
-						<Select.Item value={idx} disabled={idx === exerciseSplitRunes.selectedSplitDayIndex}>
+						<Select.Item
+							value={idx}
+							disabled={isSelectedDay}
+							class={cn({ 'text-primary': isSelectedDay })}
+						>
 							{splitDay.name} (Day {idx + 1})
 						</Select.Item>
 					{:else if splitDay}
