@@ -2,7 +2,6 @@
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Slider } from '$lib/components/ui/slider/index.js';
-	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import * as Command from '$lib/components/ui/command/index.js';
@@ -13,45 +12,31 @@
 	import Check from 'virtual:icons/lucide/check';
 	import CaretSort from 'virtual:icons/lucide/chevrons-up-down';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-	import { cn, debounce } from '$lib/utils.js';
-	import { afterNavigate, goto } from '$app/navigation';
-	import { ProgressionVariable, type ExerciseSplit, type ExerciseSplitDay } from '@prisma/client';
-	import { InfiniteLoader, loaderState } from 'svelte-infinite';
-	import { Separator } from '$lib/components/ui/separator';
-	import { deserialize } from '$app/forms';
-	import type { ActionResult } from '@sveltejs/kit';
+	import { cn } from '$lib/utils.js';
+	import { goto } from '$app/navigation';
+	import { ProgressionVariable, type ExerciseSplit } from '@prisma/client';
 	import { toast } from 'svelte-sonner';
-	import { page } from '$app/stores';
 	import HelpIcon from 'virtual:icons/lucide/circle-help';
 	import { Input } from '$lib/components/ui/input';
+	import { onMount } from 'svelte';
 	let { data } = $props();
 
-	type ExerciseSplitWithSplitDays = ExerciseSplit & { exerciseSplitDays: ExerciseSplitDay[] };
-	let exerciseSplits: ExerciseSplitWithSplitDays[] | 'loading' = $state('loading');
 	let searchString = $state('');
+	let exerciseSplits: ExerciseSplit[] | 'loading' = $state('loading');
 
 	const maxMinSetsValue = Math.min(
 		...mesocycleRunes.mesocycleCyclicSetChanges.map((setChange) => setChange.startVolume)
 	);
-	let selectedExerciseSplit: ExerciseSplitWithSplitDays | null = $state(
+	let selectedExerciseSplit: ExerciseSplit | null = $state(
 		mesocycleRunes.selectedExerciseSplit ?? null
 	);
 
-	afterNavigate(async () => {
-		loaderState.reset();
-		exerciseSplits = await data.exerciseSplits;
-		if (exerciseSplits.length !== data.exerciseSplitsTake) loaderState.complete();
-	});
+	onMount(async () => (exerciseSplits = await data.exerciseSplits));
 
-	function updateSearchParams(searchString: string): void {
-		const url = new URL($page.url);
-		if (searchString) url.searchParams.set('search', searchString);
-		else url.searchParams.delete('search');
-		exerciseSplits = 'loading';
-		goto(url);
+	function filterExerciseSplits(exerciseSplits: ExerciseSplit[]) {
+		const regex = new RegExp(searchString, 'i');
+		return exerciseSplits.filter((exerciseSplit) => regex.test(exerciseSplit.name));
 	}
-	const debouncedSearch = debounce(updateSearchParams, 500);
-	$effect(() => debouncedSearch(searchString));
 
 	function savePreferencesAndExerciseSplit() {
 		if (selectedExerciseSplit === null) {
@@ -60,28 +45,6 @@
 		}
 		mesocycleRunes.saveStoresToLocalStorage();
 		goto(`./volume?exerciseSplitId=${selectedExerciseSplit.id}`);
-	}
-
-	async function loadMore() {
-		const lastExerciseSplit = exerciseSplits.at(-1);
-		if (typeof lastExerciseSplit === 'string' || lastExerciseSplit === undefined) return;
-
-		const response = await fetch('/exercise-splits?/load_more_exercise_splits', {
-			method: 'POST',
-			body: JSON.stringify({ cursorId: lastExerciseSplit.id })
-		});
-		const result: ActionResult = deserialize(await response.text());
-
-		if (result.type === 'failure') {
-			toast.error(result.data?.message);
-			loaderState.error();
-			return;
-		} else if (result.type === 'success') {
-			const newExerciseSplits = result.data as ExerciseSplitWithSplitDays[];
-			if (exerciseSplits === 'loading') exerciseSplits = newExerciseSplits;
-			else exerciseSplits.push(...newExerciseSplits);
-			if (newExerciseSplits.length !== data.exerciseSplitsTake) loaderState.complete();
-		}
 	}
 </script>
 
@@ -109,47 +72,28 @@
 			{/if}
 			<Command.Group>
 				{#if exerciseSplits !== 'loading'}
-					<div class="flex h-32 flex-col overflow-y-auto">
-						<InfiniteLoader triggerLoad={loadMore}>
-							{#each exerciseSplits as exerciseSplit}
-								<Command.Item
-									value={exerciseSplit.id.toString()}
-									onSelect={(currentValue) => {
-										if (exerciseSplits === 'loading') return;
-										selectedExerciseSplit =
-											exerciseSplits.find((split) => split.id === parseInt(currentValue)) ?? null;
-									}}
-								>
-									<Check
-										class={cn('mr-2 h-4 w-4', {
-											'text-transparent':
-												selectedExerciseSplit === null ||
-												selectedExerciseSplit.id !== exerciseSplit.id
-										})}
-									/>
-									{exerciseSplit.name}
-								</Command.Item>
-							{:else}
-								<div class="text-sm p-2">No exercise splits found</div>
-							{/each}
-							{#snippet loading()}
-								<LoaderCircle class="animate-spin" />
-							{/snippet}
-							{#snippet error(load)}
-								<Button variant="outline" onclick={load}>An error occurred. Retry?</Button>
-							{/snippet}
-							{#snippet noData()}
-								{#if exerciseSplits.length > 0}
-									<div
-										class="flex items-center justify-start gap-2 font-semibold text-muted-foreground"
-									>
-										<Separator class="h-0.5 w-20" />
-										<span class="whitespace-nowrap text-sm">That's all!</span>
-										<Separator class="h-0.5 w-20" />
-									</div>
-								{/if}
-							{/snippet}
-						</InfiniteLoader>
+					<div class="flex max-h-32 flex-col overflow-y-auto">
+						{#each filterExerciseSplits(exerciseSplits) as exerciseSplit}
+							<Command.Item
+								value={exerciseSplit.id.toString()}
+								onSelect={(currentValue) => {
+									if (exerciseSplits === 'loading') return;
+									selectedExerciseSplit =
+										exerciseSplits.find((split) => split.id === parseInt(currentValue)) ?? null;
+								}}
+							>
+								<Check
+									class={cn('mr-2 h-4 w-4', {
+										'text-transparent':
+											selectedExerciseSplit === null ||
+											selectedExerciseSplit.id !== exerciseSplit.id
+									})}
+								/>
+								{exerciseSplit.name}
+							</Command.Item>
+						{:else}
+							<div class="text-sm p-2">No exercise splits found</div>
+						{/each}
 					</div>
 				{/if}
 			</Command.Group>
@@ -158,13 +102,10 @@
 </Popover.Root>
 
 {#if selectedExerciseSplit}
-	<Card.Root class="mt-2 h-px grow overflow-y-auto">
+	<Card.Root class="my-2 h-px grow overflow-y-auto">
 		<Card.Header>
 			<Card.Title class="flex items-center justify-between">
 				<span>{selectedExerciseSplit.name}</span>
-				<Badge class="text-nowrap">
-					{selectedExerciseSplit.exerciseSplitDays.length}-day cycle
-				</Badge>
 			</Card.Title>
 		</Card.Header>
 		<Card.Content class="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -252,10 +193,10 @@
 				/>
 				<Popover.Root>
 					<Popover.Trigger
-						aria-label="preferred-progression-variable-help"
-						class="absolute -top-3 -right-0.5 focus:outline-none"
+						aria-label="mesocycle-force-RIR-matching-help"
+						class="absolute -right-0.5 -top-3 focus:outline-none"
 					>
-						<HelpIcon class="text-muted-foreground h-4 w-4" />
+						<HelpIcon class="h-4 w-4 bg-card text-muted-foreground" />
 					</Popover.Trigger>
 					<Popover.Content class="prose w-56 text-sm text-muted-foreground" align="end">
 						To avoid excessive exercise variation at the start of the mesocycle
