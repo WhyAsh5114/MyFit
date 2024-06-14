@@ -1,7 +1,7 @@
 import {
 	MuscleGroup,
 	type Mesocycle,
-	type MesocycleCyclicSetChanges,
+	type MesocycleCyclicSetChange,
 	type MesocycleExerciseTemplate
 } from '@prisma/client';
 import type { FullExerciseSplit } from '../../exercise-splits/manage/exerciseSplitRunes.svelte';
@@ -11,11 +11,11 @@ export type MesocycleExerciseTemplateWithoutIDs = Omit<
 	MesocycleExerciseTemplate,
 	'mesocycleExerciseSplitDayId' | 'id'
 >;
-export type MesocycleCyclicSetChangesWithoutIDs = Omit<
-	MesocycleCyclicSetChanges,
+export type MesocycleCyclicSetChangeWithoutIDs = Omit<
+	MesocycleCyclicSetChange,
 	'id' | 'mesocycleId'
 >;
-export type MesocycleCyclicSetChangesWithStartVolume = MesocycleCyclicSetChangesWithoutIDs & {
+export type MesocycleCyclicSetChangeWithStartVolume = MesocycleCyclicSetChangeWithoutIDs & {
 	startVolume: number;
 	inSplit: boolean;
 };
@@ -34,7 +34,7 @@ const defaultMesocycle: MesocycleRuneType = {
 export function createMesocycleRunes() {
 	let mesocycle: MesocycleRuneType = $state(structuredClone(defaultMesocycle));
 	let mesocycleExerciseTemplates: MesocycleExerciseTemplateWithoutIDs[][] = $state([]);
-	let mesocycleCyclicSetChanges: MesocycleCyclicSetChangesWithStartVolume[] = $state([]);
+	let mesocycleCyclicSetChanges: MesocycleCyclicSetChangeWithStartVolume[] = $state([]);
 
 	let selectedExerciseSplit: FullExerciseSplit | null = $state(null);
 	let minSets = $state(3);
@@ -124,7 +124,7 @@ export function createMesocycleRunes() {
 
 	function isExerciseAndSetChangeMuscleSame(
 		exercise: MesocycleExerciseTemplateWithoutIDs,
-		setChange: MesocycleCyclicSetChangesWithoutIDs
+		setChange: MesocycleCyclicSetChangeWithoutIDs
 	) {
 		return exercise.customMuscleGroup
 			? exercise.customMuscleGroup === setChange.customMuscleGroup
@@ -166,7 +166,7 @@ export function createMesocycleRunes() {
 		}
 
 		function getMuscleGroupTargetedOnDaysArray(
-			setChange: MesocycleCyclicSetChangesWithoutIDs
+			setChange: MesocycleCyclicSetChangeWithoutIDs
 		): number[] {
 			return getTrueIndexes(
 				mesocycleRunes.mesocycleExerciseTemplates.map((exerciseTemplates) =>

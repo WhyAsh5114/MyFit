@@ -151,10 +151,10 @@ model Mesocycle {
   lastSetToFailure             Boolean
   forceRIRMatching             Boolean
   mesocycleExerciseSplitDays   MesocycleExerciseSplitDay[]
-  mesocycleCyclicSetChanges    MesocycleCyclicSetChanges[]
+  mesocycleCyclicSetChanges    MesocycleCyclicSetChange[]
 }
 
-model MesocycleCyclicSetChanges {
+model MesocycleCyclicSetChange {
   id                   Int         @id @default(autoincrement())
   mesocycle            Mesocycle   @relation(fields: [mesocycleId], references: [id])
   mesocycleId          Int
