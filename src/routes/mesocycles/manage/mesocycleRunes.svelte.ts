@@ -37,6 +37,7 @@ export function createMesocycleRunes() {
 	let mesocycleCyclicSetChanges: MesocycleCyclicSetChangesWithStartVolume[] = $state([]);
 
 	let selectedExerciseSplit: FullExerciseSplit | null = $state(null);
+	let minSets = $state(3);
 	let editingMesocycleId: number | null = $state(null);
 
 	if (globalThis.localStorage) {
@@ -47,15 +48,26 @@ export function createMesocycleRunes() {
 				editingMesocycleId,
 				selectedExerciseSplit,
 				mesocycleExerciseTemplates,
-				mesocycleCyclicSetChanges
+				mesocycleCyclicSetChanges,
+				minSets
 			} = JSON.parse(savedState));
+	}
+
+	function resetStores() {
+		mesocycle = structuredClone(defaultMesocycle);
+		mesocycleExerciseTemplates = [];
+		mesocycleCyclicSetChanges = [];
+		selectedExerciseSplit = null;
+		minSets = 3;
+		editingMesocycleId = null;
+		saveStoresToLocalStorage();
 	}
 
 	function generateMesocycleExerciseTemplates() {
 		if (!selectedExerciseSplit) return;
 		mesocycleExerciseTemplates = selectedExerciseSplit.exerciseSplitDays.map((splitDay) =>
 			splitDay.exercises.map((exercise) => {
-				const { id, ...rest } = exercise;
+				const { id, exerciseSplitDayId, ...rest } = exercise;
 				const mesocycleExerciseTemplate: MesocycleExerciseTemplateWithoutIDs = {
 					...rest,
 					sets: 0
@@ -119,6 +131,76 @@ export function createMesocycleRunes() {
 			: exercise.targetMuscleGroup === setChange.muscleGroup;
 	}
 
+	function distributeStartVolumes() {
+		mesocycleRunes.mesocycleCyclicSetChanges.forEach((setChange) => {
+			const muscleGroupTargetedOnDays = getMuscleGroupTargetedOnDaysArray(setChange);
+			const startVolumeDistributionAcrossDays = distributeEvenly(
+				setChange.startVolume,
+				muscleGroupTargetedOnDays.length,
+				minSets
+			);
+
+			muscleGroupTargetedOnDays.forEach((dayIndex, i) => {
+				const dayVolume = startVolumeDistributionAcrossDays[i];
+				const targetingExercises = mesocycleRunes.mesocycleExerciseTemplates[dayIndex].filter(
+					(exercise) => mesocycleRunes.isExerciseAndSetChangeMuscleSame(exercise, setChange)
+				);
+
+				const exerciseVolumeDistribution = distributeEvenly(
+					dayVolume,
+					targetingExercises.length,
+					minSets
+				);
+				targetingExercises.forEach((exercise, idx) => {
+					exercise.sets = exerciseVolumeDistribution[idx];
+				});
+			});
+		});
+		mesocycleRunes.saveStoresToLocalStorage();
+
+		function getTrueIndexes(boolArray: boolean[]): number[] {
+			return boolArray.reduce((indexes, value, index) => {
+				if (value) indexes.push(index);
+				return indexes;
+			}, [] as number[]);
+		}
+
+		function getMuscleGroupTargetedOnDaysArray(
+			setChange: MesocycleCyclicSetChangesWithoutIDs
+		): number[] {
+			return getTrueIndexes(
+				mesocycleRunes.mesocycleExerciseTemplates.map((exerciseTemplates) =>
+					exerciseTemplates.some((exercise) =>
+						mesocycleRunes.isExerciseAndSetChangeMuscleSame(exercise, setChange)
+					)
+				)
+			);
+		}
+
+		function distributeEvenly(volume: number, n: number, minValue: number = 0): number[] {
+			let distribution = Array(n).fill(0);
+			let remainingVolume = volume;
+
+			if (minValue > 0) {
+				for (let i = 0; i < n; i++) {
+					if (remainingVolume >= minValue) {
+						distribution[i] = minValue;
+						remainingVolume -= minValue;
+					} else {
+						break;
+					}
+				}
+			}
+
+			const base = Math.floor(remainingVolume / n);
+			const remainder = remainingVolume % n;
+			for (let i = 0; i < n; i++) distribution[i] += base;
+			for (let i = 0; i < remainder; i++) distribution[i] += 1;
+
+			return distribution;
+		}
+	}
+
 	function saveStoresToLocalStorage() {
 		localStorage.setItem(
 			'mesocycleRunes',
@@ -127,7 +209,8 @@ export function createMesocycleRunes() {
 				editingMesocycleId,
 				selectedExerciseSplit,
 				mesocycleExerciseTemplates,
-				mesocycleCyclicSetChanges
+				mesocycleCyclicSetChanges,
+				minSets
 			})
 		);
 	}
@@ -138,6 +221,12 @@ export function createMesocycleRunes() {
 		},
 		set editingMesocycleId(id) {
 			editingMesocycleId = id;
+		},
+		get minSets() {
+			return minSets;
+		},
+		set minSets(value) {
+			minSets = value;
 		},
 		get selectedExerciseSplit() {
 			return selectedExerciseSplit;
@@ -164,6 +253,8 @@ export function createMesocycleRunes() {
 		},
 		isExerciseAndSetChangeMuscleSame,
 		addMuscleGroupToCyclicSetChanges,
+		distributeStartVolumes,
+		resetStores,
 		saveStoresToLocalStorage
 	};
 }
