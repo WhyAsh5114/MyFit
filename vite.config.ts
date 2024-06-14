@@ -29,6 +29,10 @@ export default defineConfig({
 				description: "A fitness app with all the logging and tracking options you'll ever need",
 				icons: [
 					{
+						src: 'maskable_icon_x192.png',
+						sizes: '192x192'
+					},
+					{
 						src: 'windows11/SmallTile.scale-100.png',
 						sizes: '71x71'
 					},
