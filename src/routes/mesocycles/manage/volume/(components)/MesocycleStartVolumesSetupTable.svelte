@@ -20,12 +20,14 @@
 		value: number;
 		min: number;
 		max: number;
+		description: string;
 	};
 
 	type BooleanReplaceAllType = {
 		setChangeProperty: 'regardlessOfProgress';
 		open: boolean;
 		value: boolean;
+		description: string;
 	};
 
 	type ReplaceAllType = NumericReplaceAllType | BooleanReplaceAllType;
@@ -37,26 +39,30 @@
 			open: false,
 			value: firstSetChange.startVolume,
 			min: 0,
-			max: 100
+			max: 100,
+			description: 'The starting volume of a muscle group for the first microcycle'
 		},
 		{
 			setChangeProperty: 'maxVolume',
 			open: false,
 			value: firstSetChange.maxVolume,
 			min: 0,
-			max: 100
+			max: 100,
+			description: 'The maximum volume of a muscle group to be performed in the mesocycle'
 		},
 		{
 			setChangeProperty: 'setIncreaseAmount',
 			open: false,
 			value: firstSetChange.setIncreaseAmount,
 			min: 0,
-			max: 3
+			max: 3,
+			description: 'Number of sets to increase every microcycle for a muscle group'
 		},
 		{
 			setChangeProperty: 'regardlessOfProgress',
 			open: false,
-			value: firstSetChange.regardlessOfProgress
+			value: firstSetChange.regardlessOfProgress,
+			description: "Apply set increases even if performance doesn't improve"
 		}
 	]);
 
@@ -156,8 +162,8 @@
 							{title}
 							<ChevronDown class="shrink-0 basis-4" />
 						</Popover.Trigger>
-						<Popover.Content class="flex items-end gap-2">
-							<form class="contents" onsubmit={(e) => applyChangesToAll(e, state)}>
+						<Popover.Content class="flex flex-col gap-2">
+							<form class="flex items-end gap-2" onsubmit={(e) => applyChangesToAll(e, state)}>
 								{#if typeof state.value === 'boolean'}
 									<div class="flex items-center space-x-2 place-self-center">
 										<Checkbox
@@ -189,6 +195,9 @@
 								{/if}
 								<Button type="submit">Replace all</Button>
 							</form>
+							<span class="text-sm leading-tight text-muted-foreground">
+								{state.description}
+							</span>
 						</Popover.Content>
 					</Popover.Root>
 				</Table.Head>
