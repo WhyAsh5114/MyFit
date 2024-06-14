@@ -16,9 +16,9 @@
 	import { goto } from '$app/navigation';
 	import { ProgressionVariable, type ExerciseSplit } from '@prisma/client';
 	import { toast } from 'svelte-sonner';
-	import HelpIcon from 'virtual:icons/lucide/circle-help';
 	import { Input } from '$lib/components/ui/input';
 	import { onMount } from 'svelte';
+	import HelpPopover from '$lib/components/HelpPopover.svelte';
 	let { data } = $props();
 
 	let searchString = $state('');
@@ -122,14 +122,10 @@
 				<div class="flex flex-col gap-1">
 					<Select.Label class="flex items-center justify-between p-0 font-medium">
 						Preferred progression variable
-						<Popover.Root>
-							<Popover.Trigger aria-label="preferred-progression-variable-help">
-								<HelpIcon class="text-muted-foreground" />
-							</Popover.Trigger>
-							<Popover.Content class="w-56 text-sm text-muted-foreground" align="end">
-								Prefer adjusting this variable first when reaching the limits of the rep range
-							</Popover.Content>
-						</Popover.Root>
+						<HelpPopover
+							ariaLabel="preferred-progression-variable-help"
+							text="Prefer adjusting this variable first when reaching the limits of the rep range"
+						/>
 					</Select.Label>
 					<Select.Trigger id="mesocycle-progression-option">
 						<Select.Value placeholder="Select" class="capitalize" />
@@ -146,14 +142,10 @@
 			<div class="flex w-full max-w-sm flex-col gap-1.5">
 				<Label for="distribution-min-sets-per-exercise" class="flex items-center justify-between">
 					Minimum sets per exercise
-					<Popover.Root>
-						<Popover.Trigger aria-label="preferred-progression-variable-help">
-							<HelpIcon class="text-muted-foreground" />
-						</Popover.Trigger>
-						<Popover.Content class="prose w-56 text-sm text-muted-foreground" align="end">
-							To avoid excessive exercise variation at the start of the mesocycle
-						</Popover.Content>
-					</Popover.Root>
+					<HelpPopover
+						ariaLabel="distribution-min-sets-per-exercise-help"
+						text="To avoid excessive exercise variation at the start of the mesocycle"
+					/>
 				</Label>
 				<Input
 					type="number"
@@ -166,7 +158,7 @@
 					bind:value={mesocycleRunes.minSets}
 				/>
 			</div>
-			<div class="flex items-center justify-between rounded-md border p-2">
+			<div class="relative flex items-center justify-between rounded-md border p-2">
 				<Label
 					for="mesocycle-last-set-to-failure"
 					class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -177,6 +169,11 @@
 					id="mesocycle-last-set-to-failure"
 					name="mesocycle-last-set-to-failure"
 					bind:checked={mesocycleRunes.mesocycle.lastSetToFailure}
+				/>
+				<HelpPopover
+					ariaLabel="mesocycle-last-set-to-failure-help"
+					text="Take the last set of each exercise to 0 RIR"
+					triggerClasses="absolute -right-0.5 -top-2.5 focus:outline-none"
 				/>
 			</div>
 			<div class="relative flex items-center justify-between rounded-md border p-2">
@@ -191,17 +188,11 @@
 					name="mesocycle-force-RIR-matching"
 					bind:checked={mesocycleRunes.mesocycle.forceRIRMatching}
 				/>
-				<Popover.Root>
-					<Popover.Trigger
-						aria-label="mesocycle-force-RIR-matching-help"
-						class="absolute -right-0.5 -top-3 focus:outline-none"
-					>
-						<HelpIcon class="h-4 w-4 bg-card text-muted-foreground" />
-					</Popover.Trigger>
-					<Popover.Content class="prose w-56 text-sm text-muted-foreground" align="end">
-						To avoid excessive exercise variation at the start of the mesocycle
-					</Popover.Content>
-				</Popover.Root>
+				<HelpPopover
+					ariaLabel="mesocycle-force-RIR-matching-help"
+					text="Whether or not to reduce reps/load to match planned RIR"
+					triggerClasses="absolute -right-0.5 -top-2.5 focus:outline-none"
+				/>
 			</div>
 			<div class="flex flex-col gap-2 md:col-span-2">
 				<div class="flex items-center justify-between text-sm font-medium">
