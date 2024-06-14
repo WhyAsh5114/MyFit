@@ -60,6 +60,7 @@
 				} else if (result.type === 'failure') {
 					toast.error(result.data?.message as string);
 				}
+				savingExerciseSplit = false;
 			};
 		}}
 	>
