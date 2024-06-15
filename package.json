@@ -41,6 +41,8 @@
 		"@internationalized/date": "^3.5.2",
 		"@prisma/client": "^5.13.0",
 		"@sveltejs/adapter-vercel": "^5.3.1",
+		"@trpc/client": "^10.45.2",
+		"@trpc/server": "^10.45.2",
 		"bits-ui": "^0.21.4",
 		"chart.js": "^4.4.2",
 		"clsx": "^2.1.1",
@@ -52,6 +54,8 @@
 		"svelte-sonner": "^0.3.19",
 		"tailwind-merge": "^2.3.0",
 		"tailwind-variants": "^0.2.1",
-		"vaul-svelte": "^0.3.0"
+		"trpc-sveltekit": "^3.6.2",
+		"vaul-svelte": "^0.3.0",
+		"zod": "^3.23.8"
 	}
 }
