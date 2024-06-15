@@ -1,21 +1,14 @@
 import prisma from '$lib/prisma.js';
-import { error, fail } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
+import { createContext } from '$lib/trpc/context';
+import { createCaller } from '$lib/trpc/router';
 import type { ExerciseSplitRuneDataType } from '../+page.server';
 
-export const load = async ({ params, parent }) => {
-	const { session } = await parent();
-	if (!session?.user?.id) error(401, 'Not logged in');
-
-	const exerciseSplitId = parseInt(params.exerciseSplitId);
-	if (isNaN(exerciseSplitId) || exerciseSplitId < 0) error(400, 'Invalid exercise split ID');
-
-	const exerciseSplit = prisma.exerciseSplit.findUnique({
-		where: { userId: session.user.id, id: parseInt(params.exerciseSplitId) },
-		include: { exerciseSplitDays: { include: { exercises: true } } }
-	});
-
-	return { exerciseSplit };
-};
+export const load = async (event) => ({
+	exerciseSplit: createCaller(await createContext(event)).exerciseSplits.findById(
+		parseInt(event.params.exerciseSplitId)
+	)
+});
 
 export const actions = {
 	delete_exercise_split: async ({ locals, params }) => {
