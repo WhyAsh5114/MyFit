@@ -18,8 +18,8 @@
 		savingExerciseSplit = true;
 		if (id) await editExerciseSplit(id);
 		else await createExerciseSplit();
-		savingExerciseSplit = false;
 		goto('/exercise-splits');
+		savingExerciseSplit = false;
 	}
 
 	async function createExerciseSplit() {

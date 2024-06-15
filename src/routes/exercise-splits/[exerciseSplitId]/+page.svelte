@@ -10,7 +10,6 @@
 	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import ExerciseSplitSkeleton from './(components)/ExerciseSplitSkeleton.svelte';
@@ -18,10 +17,11 @@
 	import ExerciseSplitMuscleGroupsCharts from '../(components)/ExerciseSplitMuscleGroupsCharts.svelte';
 	import ExerciseSplitExercisesCharts from '../(components)/ExerciseSplitExercisesCharts.svelte';
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
-	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { exerciseSplitRunes } from '../manage/exerciseSplitRunes.svelte';
 	import type { FullExerciseSplit, FullExerciseSplitWithoutIDs } from '$lib/types';
+	import { trpc } from '$lib/trpc/client';
+	import { page } from '$app/stores';
 
 	let { data } = $props();
 	let exerciseSplit: FullExerciseSplit | 'loading' = $state('loading');
@@ -33,6 +33,16 @@
 		if (serverExerciseSplit) exerciseSplit = serverExerciseSplit;
 		else toast.error('Exercise split not found');
 	});
+
+	async function deleteExerciseSplit() {
+		callingDeleteEndpoint = true;
+		const response = await trpc().exerciseSplits.deleteById.mutate(
+			parseInt($page.params.exerciseSplitId)
+		);
+		toast.success(response.message);
+		goto('/exercise-splits');
+		callingDeleteEndpoint = false;
+	}
 
 	function getExerciseSplitWithoutIds(exerciseSplit: FullExerciseSplit) {
 		const noIdsSplit: FullExerciseSplitWithoutIDs = {
@@ -132,30 +142,12 @@
 			Delete split <span class="font-semibold">{exerciseSplit.name}</span>? This action cannot be
 			undone.
 		</p>
-		<form
-			action="?/delete_exercise_split"
-			method="post"
-			class="contents"
-			use:enhance={() => {
-				callingDeleteEndpoint = true;
-				return async ({ result }) => {
-					if (result.type === 'success') {
-						toast.success(result.data?.message as string);
-						await goto('/exercise-splits');
-					} else if (result.type === 'failure') {
-						toast.error(result.data?.message as string);
-					}
-					callingDeleteEndpoint = false;
-				};
-			}}
-		>
-			<Button variant="destructive" type="submit" disabled={callingDeleteEndpoint}>
-				{#if callingDeleteEndpoint}
-					<LoaderCircle class="animate-spin" />
-				{:else}
-					Yes, delete
-				{/if}
-			</Button>
-		</form>
+		<Button variant="destructive" onclick={deleteExerciseSplit} disabled={callingDeleteEndpoint}>
+			{#if callingDeleteEndpoint}
+				<LoaderCircle class="animate-spin" />
+			{:else}
+				Yes, delete
+			{/if}
+		</Button>
 	</ResponsiveDialog>
 {/if}

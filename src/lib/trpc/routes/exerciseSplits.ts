@@ -97,6 +97,6 @@ export const exerciseSplits = t.router({
 
 	deleteById: t.procedure.input(z.number().int()).mutation(async ({ input, ctx }) => {
 		await prisma.exerciseSplit.delete({ where: { userId: ctx.userId, id: input } });
-		return { message: 'Exercise split edited successfully' };
+		return { message: 'Exercise split deleted successfully' };
 	})
 });
