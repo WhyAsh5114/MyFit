@@ -6,13 +6,11 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import { exerciseSplitTemplates } from '$lib/exerciseSplitTemplates';
-	import {
-		exerciseSplitRunes,
-		type FullExerciseSplitRuneType
-	} from '../manage/exerciseSplitRunes.svelte';
+	import { exerciseSplitRunes } from '../manage/exerciseSplitRunes.svelte';
 	import { goto } from '$app/navigation';
+	import type { FullExerciseSplitWithoutIDs } from '$lib/types';
 
-	function templateExerciseSplit(exerciseSplit: FullExerciseSplitRuneType) {
+	function templateExerciseSplit(exerciseSplit: FullExerciseSplitWithoutIDs) {
 		exerciseSplitRunes.loadExerciseSplit(exerciseSplit);
 		goto('/exercise-splits/manage/structure');
 	}

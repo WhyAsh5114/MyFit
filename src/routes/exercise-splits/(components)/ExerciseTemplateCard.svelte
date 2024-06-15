@@ -5,17 +5,15 @@
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import GripVertical from 'virtual:icons/lucide/grip-vertical';
-	import {
-		exerciseSplitRunes,
-		type ExerciseTemplateRuneType
-	} from '../manage/exerciseSplitRunes.svelte';
+	import { exerciseSplitRunes } from '../manage/exerciseSplitRunes.svelte';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { dragHandle } from 'svelte-dnd-action';
+	import type { ExerciseTemplateWithoutIDs } from '$lib/types';
 
 	type ExerciseTemplateCardProps = {
 		readOnly?: boolean;
 		idx: number;
-		exerciseTemplate: ExerciseTemplateRuneType;
+		exerciseTemplate: ExerciseTemplateWithoutIDs;
 		reordering?: boolean;
 	};
 

@@ -1,27 +1,20 @@
-import type { ExerciseSplit, ExerciseSplitDay, ExerciseTemplate } from '@prisma/client';
-
-export type ExerciseSplitRuneType = Omit<ExerciseSplit, 'id' | 'userId'>;
-export type ExerciseSplitDayRuneType = Omit<ExerciseSplitDay, 'id' | 'exerciseSplitId'>;
-export type ExerciseTemplateRuneType = Omit<ExerciseTemplate, 'id' | 'exerciseSplitDayId'>;
-
-export type FullExerciseSplit = ExerciseSplit & {
-	exerciseSplitDays: (ExerciseSplitDay & { exercises: ExerciseTemplate[] })[];
-};
-export type FullExerciseSplitRuneType = ExerciseSplitRuneType & {
-	exerciseSplitDays: (ExerciseSplitDayRuneType & { exercises: ExerciseTemplateRuneType[] })[];
-};
+import type {
+	ExerciseSplitDayWithoutIDs,
+	ExerciseTemplateWithoutIDs,
+	FullExerciseSplitWithoutIDs
+} from '$lib/types';
 
 export function createExerciseSplitRunes() {
 	let splitName = $state('');
-	let splitDays: ExerciseSplitDayRuneType[] = $state(
+	let splitDays: ExerciseSplitDayWithoutIDs[] = $state(
 		Array.from({ length: 7 }).map(() => ({ name: '', isRestDay: false }))
 	);
-	let splitExercises: ExerciseTemplateRuneType[][] = $state([]);
+	let splitExercises: ExerciseTemplateWithoutIDs[][] = $state([]);
 	let editingExerciseSplitId: number | null = $state(null);
 
 	let selectedSplitDayIndex: number = $state(0);
-	let editingExercise: ExerciseTemplateRuneType | undefined = $state(undefined);
-	let copiedExercises: ExerciseTemplateRuneType[] | undefined = $state(undefined);
+	let editingExercise: ExerciseTemplateWithoutIDs | undefined = $state(undefined);
+	let copiedExercises: ExerciseTemplateWithoutIDs[] | undefined = $state(undefined);
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('exerciseSplitRunes');
@@ -79,7 +72,7 @@ export function createExerciseSplitRunes() {
 		return exercise !== undefined;
 	}
 
-	function addExercise(exerciseTemplate: ExerciseTemplateRuneType) {
+	function addExercise(exerciseTemplate: ExerciseTemplateWithoutIDs) {
 		if (exerciseNameExists(exerciseTemplate.name)) return false;
 		splitExercises[selectedSplitDayIndex].push(exerciseTemplate);
 		saveStoresToLocalStorage();
@@ -91,7 +84,7 @@ export function createExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
-	function editExercise(exerciseTemplate: ExerciseTemplateRuneType) {
+	function editExercise(exerciseTemplate: ExerciseTemplateWithoutIDs) {
 		if (!editingExercise) return false;
 		const editingExerciseIndex = splitExercises[selectedSplitDayIndex].indexOf(editingExercise);
 		if (exerciseNameExists(exerciseTemplate.name, editingExerciseIndex)) return false;
@@ -142,7 +135,7 @@ export function createExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
-	function loadExerciseSplit(exerciseSplit: FullExerciseSplitRuneType, editingId?: number) {
+	function loadExerciseSplit(exerciseSplit: FullExerciseSplitWithoutIDs, editingId?: number) {
 		editingExerciseSplitId = editingId ?? null;
 		splitName = exerciseSplit.name;
 		splitDays = exerciseSplit.exerciseSplitDays.map((splitDay) => ({

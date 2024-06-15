@@ -1,9 +1,9 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
+	import type { ExerciseTemplateWithoutIDs } from '$lib/types';
 	import { cn, convertCamelCaseToNormal } from '$lib/utils';
 	import { SetType } from '@prisma/client';
 	import type { Selected } from 'bits-ui';
-	import type { ExerciseTemplateRuneType } from '../manage/exerciseSplitRunes.svelte';
 	import {
 		ArcElement,
 		CategoryScale,
@@ -34,7 +34,7 @@
 		Filler
 	);
 
-	let { exercises }: { exercises: ExerciseTemplateRuneType[] } = $props();
+	let { exercises }: { exercises: ExerciseTemplateWithoutIDs[] } = $props();
 	const chartTypes = ['Bodyweight & weighted', 'Rep ranges', 'Set types'];
 
 	let chart:

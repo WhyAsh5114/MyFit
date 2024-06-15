@@ -20,12 +20,8 @@
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import {
-		exerciseSplitRunes,
-		type ExerciseTemplateRuneType,
-		type FullExerciseSplit,
-		type FullExerciseSplitRuneType
-	} from '../manage/exerciseSplitRunes.svelte';
+	import { exerciseSplitRunes } from '../manage/exerciseSplitRunes.svelte';
+	import type { FullExerciseSplit, FullExerciseSplitWithoutIDs } from '$lib/types';
 
 	let { data } = $props();
 	let exerciseSplit: FullExerciseSplit | 'loading' = $state('loading');
@@ -38,8 +34,8 @@
 		else toast.error('Exercise split not found');
 	});
 
-	function getExerciseSplitWithoutIds(exerciseSplit: FullExerciseSplit): FullExerciseSplitRuneType {
-		const noIdsSplit: FullExerciseSplitRuneType = {
+	function getExerciseSplitWithoutIds(exerciseSplit: FullExerciseSplit) {
+		const noIdsSplit: FullExerciseSplitWithoutIDs = {
 			name: exerciseSplit.name,
 			exerciseSplitDays: exerciseSplit.exerciseSplitDays.map(({ name, isRestDay, exercises }) => ({
 				name,

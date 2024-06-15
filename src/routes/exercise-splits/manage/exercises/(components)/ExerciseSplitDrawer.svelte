@@ -8,16 +8,14 @@
 	import { Switch } from '$lib/components/ui/switch';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import {
-		exerciseSplitRunes,
-		type ExerciseTemplateRuneType
-	} from '../../exerciseSplitRunes.svelte';
+	import { exerciseSplitRunes } from '../../exerciseSplitRunes.svelte';
 	import { toast } from 'svelte-sonner';
 	import { ChangeType, MuscleGroup, SetType } from '@prisma/client';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { commonExercisePerMuscleGroup } from '$lib/commonExercises';
+	import type { ExerciseTemplateWithoutIDs } from '$lib/types';
 
-	const defaultExercise: Partial<ExerciseTemplateRuneType> = {
+	const defaultExercise: Partial<ExerciseTemplateWithoutIDs> = {
 		name: '',
 		setType: 'Straight',
 		involvesBodyweight: false
@@ -26,7 +24,9 @@
 	let open = $state(false);
 	let mode = $derived(exerciseSplitRunes.editingExercise === undefined ? 'Add' : 'Edit');
 	let searching = $state(false);
-	let currentExercise: Partial<ExerciseTemplateRuneType> = $state(structuredClone(defaultExercise));
+	let currentExercise: Partial<ExerciseTemplateWithoutIDs> = $state(
+		structuredClone(defaultExercise)
+	);
 
 	$effect(() => {
 		if (exerciseSplitRunes.editingExercise) {
@@ -35,7 +35,7 @@
 		}
 	});
 
-	function selectExercise(exercise: ExerciseTemplateRuneType) {
+	function selectExercise(exercise: ExerciseTemplateWithoutIDs) {
 		currentExercise = structuredClone(exercise);
 		searching = false;
 	}
@@ -47,7 +47,7 @@
 
 	function submitForm() {
 		let result: boolean;
-		const finishedExercise = currentExercise as ExerciseTemplateRuneType;
+		const finishedExercise = currentExercise as ExerciseTemplateWithoutIDs;
 		if (mode === 'Add') result = exerciseSplitRunes.addExercise(finishedExercise);
 		else result = exerciseSplitRunes.editExercise(finishedExercise);
 

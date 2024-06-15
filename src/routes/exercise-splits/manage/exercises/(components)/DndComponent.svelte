@@ -7,15 +7,15 @@
 		SHADOW_ITEM_MARKER_PROPERTY_NAME
 	} from 'svelte-dnd-action';
 	import ExerciseTemplateCard from '../../../(components)/ExerciseTemplateCard.svelte';
-	import type { ExerciseTemplateRuneType } from '../../exerciseSplitRunes.svelte';
+	import type { ExerciseTemplateWithoutIDs } from '$lib/types';
 
 	type PropsType = {
-		itemList: (ExerciseTemplateRuneType & { isDndShadowItem?: boolean })[];
+		itemList: (ExerciseTemplateWithoutIDs & { isDndShadowItem?: boolean })[];
 		reordering: boolean;
 	};
 
 	let { itemList = $bindable(), reordering }: PropsType = $props();
-	function handleSort(e: CustomEvent<DndEvent<ExerciseTemplateRuneType>>) {
+	function handleSort(e: CustomEvent<DndEvent<ExerciseTemplateWithoutIDs>>) {
 		itemList = e.detail.items;
 	}
 </script>

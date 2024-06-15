@@ -1,10 +1,10 @@
 import type { MuscleGroup } from '@prisma/client';
-import type { ExerciseTemplateRuneType } from '../routes/exercise-splits/manage/exerciseSplitRunes.svelte';
+import type { ExerciseTemplateWithoutIDs } from './types';
 
 // TODO: extend this list
 export const commonExercisePerMuscleGroup: {
 	muscleGroup: MuscleGroup;
-	exercises: ExerciseTemplateRuneType[];
+	exercises: ExerciseTemplateWithoutIDs[];
 }[] = [
 	{
 		muscleGroup: 'Chest',

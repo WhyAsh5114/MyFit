@@ -4,13 +4,13 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { Button } from '$lib/components/ui/button';
-	import type { FullExerciseSplit } from '../../../exercise-splits/manage/exerciseSplitRunes.svelte';
 	import { mesocycleRunes } from '../mesocycleRunes.svelte';
 	import MesocycleStartVolumesSetupTable from './(components)/MesocycleStartVolumesSetupTable.svelte';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import { enhance } from '$app/forms';
 	import type { CreateMesocycleActionDataType } from '../../+page.server';
 	import { goto } from '$app/navigation';
+	import type { FullExerciseSplit } from '$lib/types';
 
 	let { data } = $props();
 	let exerciseSplit: FullExerciseSplit | 'loading' = $state('loading');

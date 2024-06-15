@@ -1,15 +1,12 @@
 import prisma from '$lib/prisma.js';
 import { error, fail } from '@sveltejs/kit';
-import type {
-	ExerciseSplitDayRuneType,
-	ExerciseTemplateRuneType
-} from './manage/exerciseSplitRunes.svelte';
 import { Prisma } from '@prisma/client';
+import type { ExerciseSplitDayWithoutIDs, ExerciseTemplateWithoutIDs } from '$lib/types';
 
 export type ExerciseSplitRuneDataType = {
 	splitName: string;
-	splitDays: ExerciseSplitDayRuneType[];
-	splitExercises: ExerciseTemplateRuneType[][];
+	splitDays: ExerciseSplitDayWithoutIDs[];
+	splitExercises: ExerciseTemplateWithoutIDs[][];
 };
 
 const take = 10;

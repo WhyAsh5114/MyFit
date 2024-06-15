@@ -1,6 +1,5 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
-	import type { ExerciseTemplateRuneType } from '../manage/exerciseSplitRunes.svelte';
 	import {
 		Chart,
 		Tooltip,
@@ -13,9 +12,10 @@
 	import { MuscleGroup } from '@prisma/client';
 	import type { Selected } from 'bits-ui';
 	import { convertCamelCaseToNormal } from '$lib/utils';
+	import type { ExerciseTemplateWithoutIDs } from '$lib/types';
 	Chart.register(Tooltip, Legend, BarController, BarElement, CategoryScale, LinearScale);
 
-	let { splitExercises }: { splitExercises: ExerciseTemplateRuneType[][] } = $props();
+	let { splitExercises }: { splitExercises: ExerciseTemplateWithoutIDs[][] } = $props();
 	let chartCanvasElement: HTMLCanvasElement;
 	let chart: Chart;
 
