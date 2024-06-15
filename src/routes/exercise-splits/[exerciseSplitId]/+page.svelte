@@ -40,7 +40,7 @@
 			parseInt($page.params.exerciseSplitId)
 		);
 		toast.success(response.message);
-		goto('/exercise-splits');
+		await goto('/exercise-splits');
 		callingDeleteEndpoint = false;
 	}
 

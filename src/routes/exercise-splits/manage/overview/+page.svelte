@@ -18,7 +18,7 @@
 		savingExerciseSplit = true;
 		if (id) await editExerciseSplit(id);
 		else await createExerciseSplit();
-		goto('/exercise-splits');
+		await goto('/exercise-splits');
 		savingExerciseSplit = false;
 	}
 
