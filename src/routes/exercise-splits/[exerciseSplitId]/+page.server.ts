@@ -1,14 +1,14 @@
 import prisma from '$lib/prisma.js';
 import { fail } from '@sveltejs/kit';
-import { createContext } from '$lib/trpc/context';
-import { createCaller } from '$lib/trpc/router';
 import type { ExerciseSplitRuneDataType } from '../+page.server';
+import { createCaller } from '$lib/trpc/router';
+import { createContext } from '$lib/trpc/context';
 
-export const load = async (event) => ({
-	exerciseSplit: createCaller(await createContext(event)).exerciseSplits.findById(
-		parseInt(event.params.exerciseSplitId)
-	)
-});
+export const load = async (event) => {
+	const tRPC = createCaller(await createContext(event));
+	const exerciseSplit = tRPC.exerciseSplits.findById(parseInt(event.params.exerciseSplitId));
+	return { exerciseSplit };
+};
 
 export const actions = {
 	delete_exercise_split: async ({ locals, params }) => {

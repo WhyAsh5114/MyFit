@@ -102,7 +102,7 @@
 </Popover.Root>
 
 {#if selectedExerciseSplit}
-	<Card.Root class="my-2 max-h-96 h-fit overflow-y-auto">
+	<Card.Root class="my-2 h-fit max-h-96 overflow-y-auto">
 		<Card.Header>
 			<Card.Title class="flex items-center justify-between">
 				<span>{selectedExerciseSplit.name}</span>

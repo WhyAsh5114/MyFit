@@ -3,20 +3,16 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Input } from '$lib/components/ui/input';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
-
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import SearchIcon from 'virtual:icons/lucide/search';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-
 	import { afterNavigate, goto } from '$app/navigation';
+	import { trpc } from '$lib/trpc/client';
 	import { InfiniteLoader, loaderState } from 'svelte-infinite';
 	import { page } from '$app/stores';
 	import type { ExerciseSplit, ExerciseSplitDay } from '@prisma/client';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import { toast } from 'svelte-sonner';
-	import type { ActionResult } from '@sveltejs/kit';
-	import { deserialize } from '$app/forms';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 
 	type ExerciseSplitsWithSplitDays = (ExerciseSplit & { exerciseSplitDays: ExerciseSplitDay[] })[];
@@ -45,22 +41,11 @@
 		const lastExerciseSplit = exerciseSplits.at(-1);
 		if (typeof lastExerciseSplit === 'string' || lastExerciseSplit === undefined) return;
 
-		const response = await fetch('?/load_more_exercise_splits', {
-			method: 'POST',
-			body: JSON.stringify({ cursorId: lastExerciseSplit.id })
-		});
-		const result: ActionResult = deserialize(await response.text());
-
-		if (result.type === 'failure') {
-			toast.error(result.data?.message);
-			loaderState.error();
-			return;
-		} else if (result.type === 'success') {
-			const newExerciseSplits = result.data as ExerciseSplitsWithSplitDays;
-			if (exerciseSplits === 'loading') exerciseSplits = newExerciseSplits;
-			else exerciseSplits.push(...newExerciseSplits);
-			if (newExerciseSplits.length !== data.exerciseSplitsTake) loaderState.complete();
-		}
+		const newExerciseSplits = await trpc($page).exerciseSplits.load_more.query(
+			lastExerciseSplit.id
+		);
+		if (exerciseSplits !== 'loading') exerciseSplits.push(...newExerciseSplits);
+		if (newExerciseSplits.length !== data.exerciseSplitsTake) loaderState.complete();
 	}
 </script>
 

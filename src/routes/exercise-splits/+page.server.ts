@@ -1,7 +1,8 @@
 import prisma from '$lib/prisma.js';
-import { error, fail } from '@sveltejs/kit';
-import { Prisma } from '@prisma/client';
+import { fail } from '@sveltejs/kit';
 import type { ExerciseSplitDayWithoutIDs, ExerciseTemplateWithoutIDs } from '$lib/types';
+import { createCaller } from '$lib/trpc/router';
+import { createContext } from '$lib/trpc/context';
 
 export type ExerciseSplitRuneDataType = {
 	splitName: string;
@@ -11,41 +12,12 @@ export type ExerciseSplitRuneDataType = {
 
 const take = 10;
 
-export const load = async ({ parent, url }) => {
-	const { session } = await parent();
-	if (!session?.user?.id) error(401, 'Not logged in');
-
-	const whereClause: Prisma.ExerciseSplitWhereInput = { userId: session.user.id };
-	const searchString = url.searchParams.get('search');
-	if (searchString) whereClause.name = { contains: searchString };
-
-	const exerciseSplits = prisma.exerciseSplit.findMany({
-		take,
-		where: whereClause,
-		orderBy: { id: 'desc' },
-		include: { exerciseSplitDays: true }
-	});
-
-	return { exerciseSplits, exerciseSplitsTake: take };
+export const load = async (event) => {
+	const tRPC = createCaller(await createContext(event));
+	return tRPC.exerciseSplits.load();
 };
 
 export const actions = {
-	load_more_exercise_splits: async ({ request, locals }) => {
-		const session = await locals.auth();
-		if (!session?.user?.id) return fail(403, { message: 'Not logged in' });
-
-		const data = await request.json();
-		if (!data.cursorId) return fail(400, { message: "CursorId wasn't received" });
-
-		return await prisma.exerciseSplit.findMany({
-			take,
-			skip: 1,
-			where: { userId: session.user.id },
-			orderBy: { id: 'desc' },
-			include: { exerciseSplitDays: true },
-			cursor: { id: parseInt(data.cursorId) }
-		});
-	},
 	create_exercise_split: async ({ request, locals }) => {
 		const session = await locals.auth();
 		if (!session?.user?.id) return fail(403, { message: 'Not logged in' });
