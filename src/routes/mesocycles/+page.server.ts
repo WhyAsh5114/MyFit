@@ -2,17 +2,17 @@ import prisma from '$lib/prisma.js';
 import { error, fail } from '@sveltejs/kit';
 import { Prisma, type ExerciseSplit, type ExerciseSplitDay } from '@prisma/client';
 import type {
+	MesocycleWithoutIDs,
 	MesocycleCyclicSetChangeWithoutIDs,
-	MesocycleExerciseTemplateWithoutIDs,
-	MesocycleRuneType
-} from './manage/mesocycleRunes.svelte.js';
+	MesocycleExerciseTemplateWithoutIDs
+} from '$lib/types';
 
 type ExerciseSplitWithSplitDays = ExerciseSplit & {
 	exerciseSplitDays: Omit<ExerciseSplitDay, 'id' | 'exerciseSplitId' | 'exercises'>[];
 };
 
 export type CreateMesocycleActionDataType = {
-	mesocycle: MesocycleRuneType;
+	mesocycle: MesocycleWithoutIDs;
 	mesocycleCyclicSetChanges: MesocycleCyclicSetChangeWithoutIDs[];
 	mesocycleExerciseTemplates: MesocycleExerciseTemplateWithoutIDs[][];
 	exerciseSplit: ExerciseSplitWithSplitDays;

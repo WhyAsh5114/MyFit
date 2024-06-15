@@ -1,26 +1,12 @@
-import type { FullExerciseSplit } from '$lib/types';
-import {
-	MuscleGroup,
-	type Mesocycle,
-	type MesocycleCyclicSetChange,
-	type MesocycleExerciseTemplate
-} from '@prisma/client';
+import type {
+	FullExerciseSplit,
+	MesocycleCyclicSetChangeWithoutIDs,
+	MesocycleExerciseTemplateWithoutIDs,
+	MesocycleWithoutIDs
+} from '$lib/types';
+import { MuscleGroup } from '@prisma/client';
 
-export type MesocycleRuneType = Omit<Mesocycle, 'id' | 'userId' | 'exerciseSplitId'>;
-export type MesocycleExerciseTemplateWithoutIDs = Omit<
-	MesocycleExerciseTemplate,
-	'mesocycleExerciseSplitDayId' | 'id'
->;
-export type MesocycleCyclicSetChangeWithoutIDs = Omit<
-	MesocycleCyclicSetChange,
-	'id' | 'mesocycleId'
->;
-export type MesocycleCyclicSetChangeWithStartVolume = MesocycleCyclicSetChangeWithoutIDs & {
-	startVolume: number;
-	inSplit: boolean;
-};
-
-const defaultMesocycle: MesocycleRuneType = {
+const defaultMesocycle: MesocycleWithoutIDs = {
 	name: '',
 	RIRProgression: [1, 3, 3, 3],
 	startDate: null,
@@ -31,10 +17,15 @@ const defaultMesocycle: MesocycleRuneType = {
 	forceRIRMatching: true
 };
 
+export type MesocycleCyclicSetChangeWithExtraProps = MesocycleCyclicSetChangeWithoutIDs & {
+	startVolume: number;
+	inSplit: boolean;
+};
+
 export function createMesocycleRunes() {
-	let mesocycle: MesocycleRuneType = $state(structuredClone(defaultMesocycle));
+	let mesocycle: MesocycleWithoutIDs = $state(structuredClone(defaultMesocycle));
 	let mesocycleExerciseTemplates: MesocycleExerciseTemplateWithoutIDs[][] = $state([]);
-	let mesocycleCyclicSetChanges: MesocycleCyclicSetChangeWithStartVolume[] = $state([]);
+	let mesocycleCyclicSetChanges: MesocycleCyclicSetChangeWithExtraProps[] = $state([]);
 
 	let selectedExerciseSplit: FullExerciseSplit | null = $state(null);
 	let minSets = $state(3);
