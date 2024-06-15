@@ -94,7 +94,7 @@
 						class="mb-1 flex h-12 items-center justify-between rounded-md border bg-card p-2"
 						href="/exercise-splits/{exerciseSplit.id}"
 					>
-						<span class="text-lg font-semibold">{exerciseSplit.name}</span>
+						<span class="truncate text-lg font-semibold">{exerciseSplit.name}</span>
 						<Badge>{exerciseSplit.exerciseSplitDays.length} days / cycle</Badge>
 					</Button>
 				{:else}
