@@ -12,7 +12,7 @@
 	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import MenuIcon from 'virtual:icons/lucide/menu';
 	import EditIcon from 'virtual:icons/lucide/pencil';
-	
+
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { arraySum } from '$lib/utils';
 	import type { MesocycleWithExerciseSplit } from '../+page.server';
@@ -23,10 +23,25 @@
 	let { mesocycle }: { mesocycle: MesocycleWithExerciseSplit } = $props();
 	let deleteConfirmDrawerOpen = $state(false);
 	let callingDeleteEndpoint = $state(false);
+	let callingPatchEndpoint = $state(false);
 
 	function editMesocycle() {}
 
 	function cloneMesocycle() {}
+
+	async function progressMesocycle() {
+		const response = await trpc().mesocycles.progressToNextStage.mutate({
+			id: mesocycle.id,
+			startDate: mesocycle.startDate,
+			endDate: mesocycle.endDate
+		});
+		if (response.error !== undefined) toast.error(response.error);
+		else {
+			mesocycle.startDate = response.startDate;
+			mesocycle.endDate = response.endDate;
+			toast.success(response.message);
+		}
+	}
 
 	async function deleteMesocycle() {
 		callingDeleteEndpoint = true;
@@ -152,16 +167,16 @@
 			/>
 		</div>
 	</Card.Content>
-	<!-- {#if !mesocycle.endDate}
+	{#if !mesocycle.endDate}
 		<Card.Footer class="justify-end">
-			<Button onclick={callPatchEndpoint} disabled={callingPatchEndpoint}>
+			<Button onclick={progressMesocycle} disabled={callingPatchEndpoint}>
 				{#if callingPatchEndpoint}
 					<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
 				{/if}
-				{!mesocycle.startTimestamp ? 'Start mesocycle' : 'Stop mesocycle'}
+				{!mesocycle.startDate ? 'Start mesocycle' : 'Stop mesocycle'}
 			</Button>
 		</Card.Footer>
-	{/if} -->
+	{/if}
 </Card.Root>
 
 <ResponsiveDialog title="Are you sure?" needTrigger={false} bind:open={deleteConfirmDrawerOpen}>

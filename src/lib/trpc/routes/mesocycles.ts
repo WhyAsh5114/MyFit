@@ -8,6 +8,7 @@ import {
 	MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInputSchema,
 	MesocycleUncheckedCreateWithoutUserInputSchema
 } from '$lib/zodSchemas';
+import type { Prisma } from '@prisma/client';
 
 const zodMesocycleInput = z.strictObject({
 	mesocycle: MesocycleUncheckedCreateWithoutUserInputSchema,
@@ -86,5 +87,32 @@ export const mesocycles = t.router({
 	deleteById: t.procedure.input(z.number().int()).mutation(async ({ input, ctx }) => {
 		await prisma.mesocycle.delete({ where: { userId: ctx.userId, id: input } });
 		return { message: 'Mesocycle deleted successfully' };
-	})
+	}),
+
+	progressToNextStage: t.procedure
+		.input(
+			z.strictObject({
+				id: z.number().int(),
+				startDate: z.date().nullable(),
+				endDate: z.date().nullable()
+			})
+		)
+		.mutation(async ({ input, ctx }) => {
+			const now = new Date();
+
+			let updateClause: Prisma.MesocycleUpdateInput;
+			if (!input.startDate) updateClause = { startDate: now };
+			else if (!input.endDate) updateClause = { endDate: now };
+			else return { error: 'Mesocycle already completed' };
+
+			const updatedMesocycle = await prisma.mesocycle.update({
+				where: { id: input.id, userId: ctx.userId },
+				data: updateClause
+			});
+			return {
+				message: 'Mesocycle progressed successfully',
+				startDate: updatedMesocycle.startDate,
+				endDate: updatedMesocycle.endDate
+			};
+		})
 });
