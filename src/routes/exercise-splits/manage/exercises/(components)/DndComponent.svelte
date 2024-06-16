@@ -7,7 +7,7 @@
 		SHADOW_ITEM_MARKER_PROPERTY_NAME
 	} from 'svelte-dnd-action';
 	import ExerciseTemplateCard from '../../../(components)/ExerciseTemplateCard.svelte';
-	import { Prisma } from '@prisma/client';
+	import { type Prisma } from '@prisma/client';
 
 	type ExerciseTemplateWithoutIDs = Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
 	type PropsType = {

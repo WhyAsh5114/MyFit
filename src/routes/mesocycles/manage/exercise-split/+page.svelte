@@ -131,7 +131,7 @@
 						<Select.Value placeholder="Select" class="capitalize" />
 					</Select.Trigger>
 					<Select.Content>
-						{#each Object.keys(ProgressionVariable) as progressionOption}
+						{#each Object.values(ProgressionVariable) as progressionOption}
 							<Select.Item value={progressionOption} class="capitalize">
 								{progressionOption}
 							</Select.Item>

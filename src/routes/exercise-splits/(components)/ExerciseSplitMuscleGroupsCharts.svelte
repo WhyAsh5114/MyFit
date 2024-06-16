@@ -9,7 +9,7 @@
 		CategoryScale,
 		LinearScale
 	} from 'chart.js';
-	import { MuscleGroup, Prisma } from '@prisma/client';
+	import { MuscleGroup, type Prisma } from '@prisma/client';
 	import type { Selected } from 'bits-ui';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	Chart.register(Tooltip, Legend, BarController, BarElement, CategoryScale, LinearScale);
@@ -22,7 +22,7 @@
 	let chartCanvasElement: HTMLCanvasElement;
 	let chart: Chart;
 
-	const muscleGroups = Object.keys(MuscleGroup) as MuscleGroup[];
+	const muscleGroups = Object.values(MuscleGroup);
 	const sortedMuscleGroups = muscleGroups.toSorted(
 		(a, b) => getTotalExercises(b) - getTotalExercises(a)
 	);
@@ -106,7 +106,7 @@
 			<Select.Value placeholder="Select muscle groups" />
 		</Select.Trigger>
 		<Select.Content class="max-h-48 overflow-y-auto">
-			{#each Object.keys(MuscleGroup) as muscleGroup}
+			{#each Object.values(MuscleGroup) as muscleGroup}
 				<Select.Item value={muscleGroup}>{convertCamelCaseToNormal(muscleGroup)}</Select.Item>
 			{/each}
 		</Select.Content>

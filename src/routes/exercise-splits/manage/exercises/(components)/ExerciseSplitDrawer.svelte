@@ -126,7 +126,7 @@
 						<Select.Value placeholder="Pick one" />
 					</Select.Trigger>
 					<Select.Content class="h-48 overflow-y-auto">
-						{#each Object.keys(MuscleGroup) as muscleGroup}
+						{#each Object.values(MuscleGroup) as muscleGroup}
 							<Select.Item value={muscleGroup} label={convertCamelCaseToNormal(muscleGroup)} />
 						{/each}
 					</Select.Content>
@@ -169,7 +169,7 @@
 						<Select.Value placeholder="Pick one" />
 					</Select.Trigger>
 					<Select.Content>
-						{#each Object.keys(SetType) as setTemplate}
+						{#each Object.values(SetType) as setTemplate}
 							<Select.Item value={setTemplate} label={convertCamelCaseToNormal(setTemplate)} />
 						{/each}
 					</Select.Content>
@@ -224,7 +224,7 @@
 							<Select.Value placeholder="Pick one" />
 						</Select.Trigger>
 						<Select.Content>
-							{#each Object.keys(ChangeType) as changeType}
+							{#each Object.values(ChangeType) as changeType}
 								<Select.Item value={changeType} label={convertCamelCaseToNormal(changeType)} />
 							{/each}
 						</Select.Content>

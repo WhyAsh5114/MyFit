@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
 	import { cn, convertCamelCaseToNormal } from '$lib/utils';
-	import { Prisma, SetType } from '@prisma/client';
+	import { type Prisma, SetType } from '@prisma/client';
 	import type { Selected } from 'bits-ui';
 	import {
 		ArcElement,
@@ -94,7 +94,7 @@
 				options: { plugins: { legend: { display: false } }, elements: { point: { radius: 0 } } }
 			});
 		} else {
-			const setTypes = Object.keys(SetType);
+			const setTypes = Object.values(SetType);
 			const data = setTypes.map(
 				(setType) => exercises.filter((exercise) => exercise.setType === setType).length
 			);

@@ -126,7 +126,7 @@
 										<Select.Value placeholder="Pick one" />
 									</Select.Trigger>
 									<Select.Content class="h-48 overflow-y-auto">
-										{#each Object.keys(MuscleGroup) as muscleGroup}
+										{#each Object.values(MuscleGroup) as muscleGroup}
 											<Select.Item
 												value={muscleGroup}
 												label={convertCamelCaseToNormal(muscleGroup)}
