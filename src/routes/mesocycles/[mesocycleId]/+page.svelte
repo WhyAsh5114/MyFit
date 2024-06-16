@@ -22,11 +22,19 @@
 	<MesocycleSkeleton />
 {:else}
 	<Tabs.Root value="basics" class="flex w-full grow flex-col">
-		<Tabs.List class="grid">
+		<Tabs.List class="grid grid-cols-3">
 			<Tabs.Trigger value="basics">Basics</Tabs.Trigger>
+			<Tabs.Trigger value="split">Split</Tabs.Trigger>
+			<Tabs.Trigger value="stats">Stats</Tabs.Trigger>
 		</Tabs.List>
 		<Tabs.Content value="basics">
 			<MesocycleBasicsTab {mesocycle} />
+		</Tabs.Content>
+		<Tabs.Content value="split">
+			TODO
+		</Tabs.Content>
+		<Tabs.Content value="stats">
+			TODO
 		</Tabs.Content>
 	</Tabs.Root>
 {/if}
