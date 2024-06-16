@@ -15,12 +15,13 @@
 	import { Badge } from '$lib/components/ui/badge/index.js';
 
 	let { data } = $props();
+	let activeMesocycle: { name: string; id: number } | null | 'loading' = $state('loading');
 	let mesocycles: Mesocycle[] | 'loading' = $state('loading');
 	let searchString = $state($page.url.searchParams.get('search') ?? '');
 
 	afterNavigate(async () => {
 		loaderState.reset();
-		mesocycles = await data.mesocycles;
+		[activeMesocycle, mesocycles] = await Promise.all([data.activeMesocycle, data.mesocycles]);
 		if (mesocycles.length !== 10) loaderState.complete();
 	});
 
@@ -60,10 +61,24 @@
 		<span class="text-sm font-medium text-muted-foreground">Active</span>
 		<Separator class="w-px grow" />
 	</div>
-	<div class="flex h-12 items-center justify-between rounded-md border bg-card p-2">
-		<Skeleton class="text-lg-skeleton" />
-		<Skeleton class="badge-skeleton" />
-	</div>
+	{#if activeMesocycle === 'loading'}
+		<div class="flex h-12 items-center justify-between rounded-md border bg-card p-2">
+			<Skeleton class="text-lg-skeleton" />
+			<Skeleton class="badge-skeleton" />
+		</div>
+	{:else if activeMesocycle === null}
+		<div class="muted-text-box">No active mesocycle</div>
+	{:else}
+		<Button
+			variant="outline"
+			class="mb-1 flex h-12 items-center justify-between rounded-md border bg-card p-2"
+			href="/mesocycles/{activeMesocycle.id}"
+		>
+			<span class="text-lg font-semibold">{activeMesocycle.name}</span>
+			<Badge>Active</Badge>
+		</Button>
+	{/if}
+
 	<div class="flex items-center gap-2">
 		<span class="text-sm font-medium text-muted-foreground">All</span>
 		<Separator class="w-px grow" />

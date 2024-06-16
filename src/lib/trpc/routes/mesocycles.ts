@@ -24,7 +24,7 @@ const zodMesocycleInput = z.strictObject({
 const getActiveMesocycleName = async (userId: string) => {
 	return await prisma.mesocycle.findFirst({
 		where: { userId, startDate: { not: null }, endDate: null },
-		select: { name: true }
+		select: { name: true, id: true }
 	});
 };
 
