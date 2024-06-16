@@ -18,7 +18,11 @@
 	import ExerciseSplitExercisesCharts from '../(components)/ExerciseSplitExercisesCharts.svelte';
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 	import { goto } from '$app/navigation';
-	import { exerciseSplitRunes, type FullExerciseSplit, type FullExerciseSplitWithoutIDs } from '../manage/exerciseSplitRunes.svelte';
+	import {
+		exerciseSplitRunes,
+		type FullExerciseSplit,
+		type FullExerciseSplitWithoutIDs
+	} from '../manage/exerciseSplitRunes.svelte';
 	import { trpc } from '$lib/trpc/client';
 	import { page } from '$app/stores';
 

@@ -6,7 +6,10 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import { exerciseSplitTemplates } from '$lib/exerciseSplitTemplates';
-	import { exerciseSplitRunes, type FullExerciseSplitWithoutIDs } from '../manage/exerciseSplitRunes.svelte';
+	import {
+		exerciseSplitRunes,
+		type FullExerciseSplitWithoutIDs
+	} from '../manage/exerciseSplitRunes.svelte';
 	import { goto } from '$app/navigation';
 
 	function templateExerciseSplit(exerciseSplit: FullExerciseSplitWithoutIDs) {
