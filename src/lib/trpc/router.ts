@@ -1,8 +1,10 @@
-import { exerciseSplits } from './routes/exerciseSplits';
 import { t } from '$lib/trpc/t';
+import { exerciseSplits } from './routes/exerciseSplits';
+import { mesocycles } from './routes/mesocycles';
 
 export const router = t.router({
-	exerciseSplits
+	exerciseSplits,
+	mesocycles
 });
 
 export const createCaller = t.createCallerFactory(router);

@@ -2,20 +2,16 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
-
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import SearchIcon from 'virtual:icons/lucide/search';
-	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-
 	import { afterNavigate, goto } from '$app/navigation';
-	import { InfiniteLoader, loaderState } from 'svelte-infinite';
 	import { page } from '$app/stores';
-	import type { Mesocycle } from '@prisma/client';
-	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import { toast } from 'svelte-sonner';
-	import type { ActionResult } from '@sveltejs/kit';
-	import { deserialize } from '$app/forms';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import { trpc } from '$lib/trpc/client.js';
+	import type { Mesocycle } from '@prisma/client';
+	import { InfiniteLoader, loaderState } from 'svelte-infinite';
 
 	let { data } = $props();
 	let mesocycles: Mesocycle[] | 'loading' = $state('loading');
@@ -41,22 +37,9 @@
 		const lastMesocycle = mesocycles.at(-1);
 		if (typeof lastMesocycle === 'string' || lastMesocycle === undefined) return;
 
-		const response = await fetch('?/load_more_mesocycles', {
-			method: 'POST',
-			body: JSON.stringify({ cursorId: lastMesocycle.id })
-		});
-		const result: ActionResult = deserialize(await response.text());
-
-		if (result.type === 'failure') {
-			toast.error(result.data?.message);
-			loaderState.error();
-			return;
-		} else if (result.type === 'success') {
-			const newMesocycles = result.data as Mesocycle[];
-			if (mesocycles === 'loading') mesocycles = newMesocycles;
-			else mesocycles.push(...newMesocycles);
-			if (newMesocycles.length !== data.mesocyclesTake) loaderState.complete();
-		}
+		const newMesocycles = (await trpc($page).mesocycles.load.query(lastMesocycle.id)).mesocycles;
+		if (mesocycles !== 'loading') mesocycles.push(...newMesocycles);
+		if (newMesocycles.length !== data.mesocyclesTake) loaderState.complete();
 	}
 </script>
 
