@@ -10,7 +10,7 @@
 	let { isMobile }: { isMobile: boolean } = $props();
 
 	let deferredPrompt: Event | null;
-	let needRefresh: Writable<boolean>;
+	let needRefresh: Writable<boolean> | undefined = $state();
 
 	let reloading = $state(false);
 	let showInstallButton = $state(false);
@@ -41,7 +41,7 @@
 							}
 						});
 						if (resp.status === 200) await r.update();
-					}, 60000);
+					}, 20000);	// TODO: increase a lot in production
 				console.log(`SW Registered: ${r}`);
 			},
 			onRegisterError(error) {
