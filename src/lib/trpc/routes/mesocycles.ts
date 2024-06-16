@@ -99,18 +99,30 @@ export const mesocycles = t.router({
 		)
 		.mutation(async ({ input, ctx }) => {
 			const now = new Date();
-
 			let updateClause: Prisma.MesocycleUpdateInput;
 			if (!input.startDate) updateClause = { startDate: now };
 			else if (!input.endDate) updateClause = { endDate: now };
 			else return { error: 'Mesocycle already completed' };
+
+			if (!input.startDate) {
+				const activeMesocycle = await prisma.mesocycle.findFirst({
+					where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
+					select: { name: true }
+				});
+				if (activeMesocycle) {
+					return {
+						error: 'A mesocycle is already active',
+						description: activeMesocycle.name
+					};
+				}
+			}
 
 			const updatedMesocycle = await prisma.mesocycle.update({
 				where: { id: input.id, userId: ctx.userId },
 				data: updateClause
 			});
 			return {
-				message: 'Mesocycle progressed successfully',
+				message: `Mesocycle ${!input.startDate ? 'started' : 'stopped'} successfully`,
 				startDate: updatedMesocycle.startDate,
 				endDate: updatedMesocycle.endDate
 			};

@@ -30,17 +30,20 @@
 	function cloneMesocycle() {}
 
 	async function progressMesocycle() {
+		callingPatchEndpoint = true;
 		const response = await trpc().mesocycles.progressToNextStage.mutate({
 			id: mesocycle.id,
 			startDate: mesocycle.startDate,
 			endDate: mesocycle.endDate
 		});
-		if (response.error !== undefined) toast.error(response.error);
-		else {
+		if (response.error !== undefined) {
+			toast.error(response.error, { description: response.description });
+		} else {
 			mesocycle.startDate = response.startDate;
 			mesocycle.endDate = response.endDate;
 			toast.success(response.message);
 		}
+		callingPatchEndpoint = false;
 	}
 
 	async function deleteMesocycle() {
@@ -169,11 +172,12 @@
 	</Card.Content>
 	{#if !mesocycle.endDate}
 		<Card.Footer class="justify-end">
-			<Button onclick={progressMesocycle} disabled={callingPatchEndpoint}>
+			<Button onclick={progressMesocycle} disabled={callingPatchEndpoint} class="w-36">
 				{#if callingPatchEndpoint}
-					<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
+					<LoaderCircle class="animate-spin" />
+				{:else}
+					{!mesocycle.startDate ? 'Start mesocycle' : 'Stop mesocycle'}
 				{/if}
-				{!mesocycle.startDate ? 'Start mesocycle' : 'Stop mesocycle'}
 			</Button>
 		</Card.Footer>
 	{/if}
@@ -184,10 +188,16 @@
 		Delete mesocycle <span class="font-semibold">{mesocycle.name}</span>? This action cannot be
 		undone.
 	</p>
-	<Button variant="destructive" onclick={deleteMesocycle} disabled={callingDeleteEndpoint}>
+	<Button
+		variant="destructive"
+		onclick={deleteMesocycle}
+		disabled={callingDeleteEndpoint}
+		class="gap-2"
+	>
 		{#if callingDeleteEndpoint}
-			<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
+			<LoaderCircle class="animate-spin" />
+		{:else}
+			Yes, delete
 		{/if}
-		Yes, delete
 	</Button>
 </ResponsiveDialog>
