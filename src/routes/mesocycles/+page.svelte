@@ -21,7 +21,7 @@
 	afterNavigate(async () => {
 		loaderState.reset();
 		mesocycles = await data.mesocycles;
-		if (mesocycles.length !== data.mesocyclesTake) loaderState.complete();
+		if (mesocycles.length !== 10) loaderState.complete();
 	});
 
 	function updateSearchParam(e: Event) {
@@ -38,9 +38,9 @@
 		const lastMesocycle = mesocycles.at(-1);
 		if (typeof lastMesocycle === 'string' || lastMesocycle === undefined) return;
 
-		const newMesocycles = (await trpc($page).mesocycles.load.query(lastMesocycle.id)).mesocycles;
+		const newMesocycles = await trpc($page).mesocycles.load.query({ cursorId: lastMesocycle.id });
 		if (mesocycles !== 'loading') mesocycles.push(...newMesocycles);
-		if (newMesocycles.length !== data.mesocyclesTake) loaderState.complete();
+		if (newMesocycles.length !== 10) loaderState.complete();
 	}
 </script>
 
@@ -56,9 +56,21 @@
 		</form>
 		<Button aria-label="create-new-mesocycle" href="/mesocycles/manage/basics"><AddIcon /></Button>
 	</div>
+	<div class="flex items-center gap-2">
+		<span class="text-sm font-medium text-muted-foreground">Active</span>
+		<Separator class="w-px grow" />
+	</div>
+	<div class="flex h-12 items-center justify-between rounded-md border bg-card p-2">
+		<Skeleton class="text-lg-skeleton" />
+		<Skeleton class="badge-skeleton" />
+	</div>
+	<div class="flex items-center gap-2">
+		<span class="text-sm font-medium text-muted-foreground">All</span>
+		<Separator class="w-px grow" />
+	</div>
 	<div class="flex h-px grow flex-col gap-1 overflow-y-auto">
 		{#if mesocycles === 'loading'}
-			{#each Array(data.mesocyclesTake) as _}
+			{#each Array(10) as _}
 				<div class="flex h-12 items-center justify-between rounded-md border bg-card p-2">
 					<Skeleton class="text-lg-skeleton" />
 					<Skeleton class="badge-skeleton" />

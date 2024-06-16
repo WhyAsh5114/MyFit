@@ -41,17 +41,17 @@ export const mesocycles = t.router({
 		return await getActiveMesocycleName(ctx.userId);
 	}),
 
-	load: t.procedure.input(z.number().optional()).query(async ({ input, ctx }) => {
-		const searchString = ctx.event.url.searchParams.get('search') ?? undefined;
-		const mesocycles = await prisma.mesocycle.findMany({
-			where: { userId: ctx.userId, name: { contains: searchString } },
-			orderBy: { id: 'desc' },
-			cursor: input !== undefined ? { id: input } : undefined,
-			skip: input !== undefined ? 1 : 0,
-			take: 10
-		});
-		return { mesocycles };
-	}),
+	load: t.procedure
+		.input(z.object({ cursorId: z.number().optional(), searchString: z.string().optional() }))
+		.query(async ({ input, ctx }) => {
+			return prisma.mesocycle.findMany({
+				where: { userId: ctx.userId, name: { contains: input.searchString } },
+				orderBy: { id: 'desc' },
+				cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,
+				skip: input.cursorId !== undefined ? 1 : 0,
+				take: 10
+			});
+		}),
 
 	create: t.procedure.input(zodMesocycleInput).mutation(async ({ input, ctx }) => {
 		await prisma.mesocycle.create({

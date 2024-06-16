@@ -22,18 +22,22 @@ export const exerciseSplits = t.router({
 	),
 
 	load: t.procedure
-		.input(z.strictObject({ cursorId: z.number().optional(), include: ExerciseSplitIncludeSchema }))
+		.input(
+			z.strictObject({
+				cursorId: z.number().optional(),
+				include: ExerciseSplitIncludeSchema,
+				searchString: z.string().optional()
+			})
+		)
 		.query(async ({ input, ctx }) => {
-			const searchString = ctx.event.url.searchParams.get('search') ?? undefined;
-			const exerciseSplits = await prisma.exerciseSplit.findMany({
-				where: { userId: ctx.userId, name: { contains: searchString } },
+			return prisma.exerciseSplit.findMany({
+				where: { userId: ctx.userId, name: { contains: input.searchString } },
 				orderBy: { id: 'desc' },
 				include: input.include,
 				cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,
 				skip: input.cursorId !== undefined ? 1 : 0,
 				take: 10
 			});
-			return { exerciseSplits };
 		}),
 
 	create: t.procedure.input(zodExerciseSplitInput).mutation(async ({ input, ctx }) => {

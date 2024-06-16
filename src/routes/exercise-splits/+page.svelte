@@ -24,7 +24,7 @@
 	afterNavigate(async () => {
 		loaderState.reset();
 		exerciseSplits = await data.exerciseSplits;
-		if (exerciseSplits.length !== data.exerciseSplitsTake) loaderState.complete();
+		if (exerciseSplits.length !== 10) loaderState.complete();
 	});
 
 	function updateSearchParam(e: Event) {
@@ -41,14 +41,12 @@
 		const lastExerciseSplit = exerciseSplits.at(-1);
 		if (typeof lastExerciseSplit === 'string' || lastExerciseSplit === undefined) return;
 
-		const newExerciseSplits = (
-			await trpc($page).exerciseSplits.load.query({
-				cursorId: lastExerciseSplit.id,
-				include: { exerciseSplitDays: true }
-			})
-		).exerciseSplits;
+		const newExerciseSplits = await trpc($page).exerciseSplits.load.query({
+			cursorId: lastExerciseSplit.id,
+			include: { exerciseSplitDays: true }
+		});
 		if (exerciseSplits !== 'loading') exerciseSplits.push(...newExerciseSplits);
-		if (newExerciseSplits.length !== data.exerciseSplitsTake) loaderState.complete();
+		if (newExerciseSplits.length !== 10) loaderState.complete();
 	}
 </script>
 
@@ -83,7 +81,7 @@
 	</div>
 	<div class="flex h-px grow flex-col gap-1 overflow-y-auto">
 		{#if exerciseSplits === 'loading'}
-			{#each Array(data.exerciseSplitsTake) as _}
+			{#each Array(10) as _}
 				<div class="flex h-12 items-center justify-between rounded-md border bg-card p-2">
 					<Skeleton class="text-lg-skeleton" />
 					<Skeleton class="badge-skeleton" />
