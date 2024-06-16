@@ -57,8 +57,8 @@
 			variant="ghost"
 			size="icon"
 			onclick={() => {
-				updateServiceWorker(true);
 				reloading = true;
+				updateServiceWorker(true);
 			}}
 		>
 			{#if !reloading}
@@ -90,8 +90,8 @@
 				size="lg"
 				disabled={reloading}
 				onclick={() => {
-					updateServiceWorker(true);
 					reloading = true;
+					updateServiceWorker(true);
 				}}
 			>
 				{#if !reloading}
