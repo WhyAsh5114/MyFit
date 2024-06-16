@@ -6,11 +6,10 @@
 </script>
 
 <Tabs.Root value="basics" class="flex w-full grow flex-col">
-	<Tabs.List class="flex justify-start overflow-x-auto">
-		<Tabs.Trigger value="basics" class="shrink-0 basis-1/3">Basics</Tabs.Trigger>
-		<Tabs.Trigger value="setChanges" class="shrink-0 basis-1/3">Set changes</Tabs.Trigger>
-		<Tabs.Trigger value="overview" class="shrink-0 basis-1/3">Overview</Tabs.Trigger>
-		<Tabs.Trigger value="workouts" class="shrink-0 basis-1/3">Workouts</Tabs.Trigger>
+	<Tabs.List class="grid grid-cols-3">
+		<Tabs.Trigger value="basics">Basics</Tabs.Trigger>
+		<Tabs.Trigger value="split">Split</Tabs.Trigger>
+		<Tabs.Trigger value="stats">Stats</Tabs.Trigger>
 	</Tabs.List>
 	<Tabs.Content value="basics">
 		<Card.Root>
