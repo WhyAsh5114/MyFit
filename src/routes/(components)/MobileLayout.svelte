@@ -14,6 +14,7 @@
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { navigating, page } from '$app/stores';
 	import type { Snippet } from 'svelte';
+	import { goto } from '$app/navigation';
 
 	let { children }: { children: Snippet } = $props();
 	let sheetOpen = $state(false);
@@ -30,8 +31,10 @@
 					<Button
 						variant="link"
 						class="justify-start gap-2 text-foreground"
-						href="/"
-						onclick={() => (sheetOpen = false)}
+						onclick={async () => {
+							await goto('/');
+							sheetOpen = false;
+						}}
 					>
 						<img src="/favicon.webp" alt="MyFit logo" width={52} height={52} />
 						<h1 class="text-2xl font-bold">MyFit</h1>
