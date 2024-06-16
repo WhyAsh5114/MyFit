@@ -18,7 +18,7 @@
 </script>
 
 <H2>View mesocycle</H2>
-{#if mesocycle === 'loading' || false}
+{#if mesocycle === 'loading'}
 	<MesocycleSkeleton />
 {:else}
 	<Tabs.Root value="basics" class="flex w-full grow flex-col">

@@ -50,11 +50,14 @@
 					<span class="text-sm text-muted-foreground">Last set to failure</span>
 					<Skeleton class="h-6 w-12 rounded-full" />
 				</div>
-        <div class="flex flex-col gap-1">
+				<div class="flex flex-col gap-1">
 					<span class="text-sm text-muted-foreground">Force RIR matching</span>
 					<Skeleton class="h-6 w-12 rounded-full" />
 				</div>
 			</Card.Content>
+			<Card.Footer class="justify-end">
+				<Skeleton class="button-skeleton" />
+			</Card.Footer>
 		</Card.Root>
 	</Tabs.Content>
 </Tabs.Root>
