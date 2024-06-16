@@ -9,7 +9,7 @@ generator client {
 
 generator zod {
   provider = "zod-prisma-types"
-  output = "../src/lib/zodSchemas"
+  output   = "../src/lib/zodSchemas"
 }
 
 model User {
@@ -161,7 +161,7 @@ model Mesocycle {
 
 model MesocycleCyclicSetChange {
   id                   Int         @id @default(autoincrement())
-  mesocycle            Mesocycle   @relation(fields: [mesocycleId], references: [id])
+  mesocycle            Mesocycle   @relation(fields: [mesocycleId], references: [id], onDelete: Cascade)
   mesocycleId          Int
   muscleGroup          MuscleGroup
   customMuscleGroup    String?
