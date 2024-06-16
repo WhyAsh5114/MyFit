@@ -12,7 +12,6 @@ const zodExerciseSplitInput = z.strictObject({
 	splitDays: z.array(ExerciseSplitDayCreateWithoutExerciseSplitInputSchema),
 	splitExercises: z.array(z.array(ExerciseTemplateCreateWithoutExerciseSplitDayInputSchema))
 });
-const take = 10;
 
 export const exerciseSplits = t.router({
 	findById: t.procedure.input(z.number()).query(({ input, ctx }) =>
@@ -32,9 +31,9 @@ export const exerciseSplits = t.router({
 				include: input.include,
 				cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,
 				skip: input.cursorId !== undefined ? 1 : 0,
-				take
+				take: 10
 			});
-			return { exerciseSplits, exerciseSplitsTake: take };
+			return { exerciseSplits };
 		}),
 
 	create: t.procedure.input(zodExerciseSplitInput).mutation(async ({ input, ctx }) => {

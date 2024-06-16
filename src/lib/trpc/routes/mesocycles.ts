@@ -20,15 +20,26 @@ const zodMesocycleInput = z.strictObject({
 		exerciseSplitDays: z.array(ExerciseSplitDayCreateWithoutExerciseSplitInputSchema)
 	})
 });
-const take = 10;
+
+const getActiveMesocycleName = async (userId: string) => {
+	return await prisma.mesocycle.findFirst({
+		where: { userId, startDate: { not: null }, endDate: null },
+		select: { name: true }
+	});
+};
 
 export const mesocycles = t.router({
-	findById: t.procedure.input(z.number()).query(({ input, ctx }) =>
-		prisma.mesocycle.findUnique({
-			where: { id: input, userId: ctx.userId },
-			include: { exerciseSplit: true }
-		})
+	findById: t.procedure.input(z.number()).query(
+		async ({ input, ctx }) =>
+			await prisma.mesocycle.findUnique({
+				where: { id: input, userId: ctx.userId },
+				include: { exerciseSplit: true }
+			})
 	),
+
+	findActiveMesocycle: t.procedure.query(async ({ ctx }) => {
+		return await getActiveMesocycleName(ctx.userId);
+	}),
 
 	load: t.procedure.input(z.number().optional()).query(async ({ input, ctx }) => {
 		const searchString = ctx.event.url.searchParams.get('search') ?? undefined;
@@ -37,9 +48,9 @@ export const mesocycles = t.router({
 			orderBy: { id: 'desc' },
 			cursor: input !== undefined ? { id: input } : undefined,
 			skip: input !== undefined ? 1 : 0,
-			take
+			take: 10
 		});
-		return { mesocycles, mesocyclesTake: take };
+		return { mesocycles };
 	}),
 
 	create: t.procedure.input(zodMesocycleInput).mutation(async ({ input, ctx }) => {
@@ -105,10 +116,7 @@ export const mesocycles = t.router({
 			else return { error: 'Mesocycle already completed' };
 
 			if (!input.startDate) {
-				const activeMesocycle = await prisma.mesocycle.findFirst({
-					where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
-					select: { name: true }
-				});
+				const activeMesocycle = await getActiveMesocycleName(ctx.userId);
 				if (activeMesocycle) {
 					return {
 						error: 'A mesocycle is already active',
