@@ -114,7 +114,7 @@ model ExerciseSplit {
 model ExerciseSplitDay {
   id              Int                @id @default(autoincrement())
   name            String
-  isRestDay       Boolean            @default(false)
+  isRestDay       Boolean
   exercises       ExerciseTemplate[]
   exerciseSplit   ExerciseSplit      @relation(fields: [exerciseSplitId], references: [id], onDelete: Cascade)
   exerciseSplitId Int

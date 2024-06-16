@@ -1742,7 +1742,7 @@ export const ExerciseSplitUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Exerc
 
 export const ExerciseSplitDayCreateInputSchema: z.ZodType<Prisma.ExerciseSplitDayCreateInput> = z.object({
   name: z.string(),
-  isRestDay: z.boolean().optional(),
+  isRestDay: z.boolean(),
   exercises: z.lazy(() => ExerciseTemplateCreateNestedManyWithoutExerciseSplitDayInputSchema).optional(),
   exerciseSplit: z.lazy(() => ExerciseSplitCreateNestedOneWithoutExerciseSplitDaysInputSchema)
 }).strict();
@@ -1750,7 +1750,7 @@ export const ExerciseSplitDayCreateInputSchema: z.ZodType<Prisma.ExerciseSplitDa
 export const ExerciseSplitDayUncheckedCreateInputSchema: z.ZodType<Prisma.ExerciseSplitDayUncheckedCreateInput> = z.object({
   id: z.number().int().optional(),
   name: z.string(),
-  isRestDay: z.boolean().optional(),
+  isRestDay: z.boolean(),
   exerciseSplitId: z.number().int(),
   exercises: z.lazy(() => ExerciseTemplateUncheckedCreateNestedManyWithoutExerciseSplitDayInputSchema).optional()
 }).strict();
@@ -1773,7 +1773,7 @@ export const ExerciseSplitDayUncheckedUpdateInputSchema: z.ZodType<Prisma.Exerci
 export const ExerciseSplitDayCreateManyInputSchema: z.ZodType<Prisma.ExerciseSplitDayCreateManyInput> = z.object({
   id: z.number().int().optional(),
   name: z.string(),
-  isRestDay: z.boolean().optional(),
+  isRestDay: z.boolean(),
   exerciseSplitId: z.number().int()
 }).strict();
 
@@ -4451,14 +4451,14 @@ export const UserCreateOrConnectWithoutExerciseSplitsInputSchema: z.ZodType<Pris
 
 export const ExerciseSplitDayCreateWithoutExerciseSplitInputSchema: z.ZodType<Prisma.ExerciseSplitDayCreateWithoutExerciseSplitInput> = z.object({
   name: z.string(),
-  isRestDay: z.boolean().optional(),
+  isRestDay: z.boolean(),
   exercises: z.lazy(() => ExerciseTemplateCreateNestedManyWithoutExerciseSplitDayInputSchema).optional()
 }).strict();
 
 export const ExerciseSplitDayUncheckedCreateWithoutExerciseSplitInputSchema: z.ZodType<Prisma.ExerciseSplitDayUncheckedCreateWithoutExerciseSplitInput> = z.object({
   id: z.number().int().optional(),
   name: z.string(),
-  isRestDay: z.boolean().optional(),
+  isRestDay: z.boolean(),
   exercises: z.lazy(() => ExerciseTemplateUncheckedCreateNestedManyWithoutExerciseSplitDayInputSchema).optional()
 }).strict();
 
@@ -4705,14 +4705,14 @@ export const ExerciseSplitUncheckedUpdateWithoutExerciseSplitDaysInputSchema: z.
 
 export const ExerciseSplitDayCreateWithoutExercisesInputSchema: z.ZodType<Prisma.ExerciseSplitDayCreateWithoutExercisesInput> = z.object({
   name: z.string(),
-  isRestDay: z.boolean().optional(),
+  isRestDay: z.boolean(),
   exerciseSplit: z.lazy(() => ExerciseSplitCreateNestedOneWithoutExerciseSplitDaysInputSchema)
 }).strict();
 
 export const ExerciseSplitDayUncheckedCreateWithoutExercisesInputSchema: z.ZodType<Prisma.ExerciseSplitDayUncheckedCreateWithoutExercisesInput> = z.object({
   id: z.number().int().optional(),
   name: z.string(),
-  isRestDay: z.boolean().optional(),
+  isRestDay: z.boolean(),
   exerciseSplitId: z.number().int()
 }).strict();
 
@@ -5393,7 +5393,7 @@ export const MesocycleUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prism
 export const ExerciseSplitDayCreateManyExerciseSplitInputSchema: z.ZodType<Prisma.ExerciseSplitDayCreateManyExerciseSplitInput> = z.object({
   id: z.number().int().optional(),
   name: z.string(),
-  isRestDay: z.boolean().optional()
+  isRestDay: z.boolean()
 }).strict();
 
 export const MesocycleCreateManyExerciseSplitInputSchema: z.ZodType<Prisma.MesocycleCreateManyExerciseSplitInput> = z.object({
