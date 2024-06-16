@@ -1,85 +1,57 @@
-/// <reference types="@sveltejs/kit" />
-/// <reference no-default-lib="true"/>
-/// <reference lib="esnext" />
 /// <reference lib="WebWorker" />
-
+import {
+	PrecacheFallbackPlugin,
+	precacheAndRoute,
+	cleanupOutdatedCaches
+} from 'workbox-precaching';
+import { registerRoute } from 'workbox-routing';
+import { NetworkFirst, CacheFirst, NetworkOnly } from 'workbox-strategies';
+import { BackgroundSyncPlugin } from 'workbox-background-sync';
 declare let self: ServiceWorkerGlobalScope;
-import { build, files, version } from '$service-worker';
-import { precacheAndRoute } from 'workbox-precaching';
 
-// Create a unique cache name for this deployment
-const CACHE = `cache-${version}`;
+const cacheFirstDestinations: RequestDestination[] = ['style', 'manifest', 'image'];
+const fallbackPlugin = new PrecacheFallbackPlugin({ fallbackURL: '/offline' });
+const backgroundSyncPlugin = new BackgroundSyncPlugin('pendingRequests');
 
-const ASSETS = [
-	...build, // the app itself
-	...files // everything in `static`
-];
+function routingStrategyFunction(mode: 'networkFirst' | 'cacheFirst', request: Request, url: URL) {
+	// Ignore POST API endpoints (should be network only)
+	if (url.pathname.startsWith('/api') && request.method === 'POST') return false;
+	// Ignore /auth requests
+	if (url.pathname.startsWith('/auth')) return false;
+	// Decide whether or not asset should be cached (cacheFirstDestinations, and unplugin-icons)
+	let toCache = false;
+	if (cacheFirstDestinations.includes(request.destination) || url.pathname.includes('~icons')) {
+		toCache = true;
+	}
+	// If function used in cacheFirst strategy, return toCache value
+	// otherwise being used in networkFirst, which is naturally the assets which shouldn't be cached
+	return mode === 'cacheFirst' ? toCache : !toCache;
+}
 
-// self.__WB_MANIFEST is default injection point
-precacheAndRoute(self.__WB_MANIFEST);
+cleanupOutdatedCaches();
+precacheAndRoute(self.__WB_MANIFEST, { ignoreURLParametersMatching: [/callbackURL/] });
 
 self.addEventListener('message', (event) => {
 	if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
-self.addEventListener('install', (event) => {
-	// Create a new cache and add all files to it
-	async function addFilesToCache() {
-		const cache = await caches.open(CACHE);
-		await cache.addAll(ASSETS);
-	}
+registerRoute(
+	({ url }) => url.pathname.startsWith('/api'),
+	new NetworkOnly({
+		plugins: [backgroundSyncPlugin],
+		networkTimeoutSeconds: 5
+	}),
+	'POST'
+);
 
-	event.waitUntil(addFilesToCache());
-});
+// Network first for everything except static assets, /auth, and /api
+registerRoute(
+	({ request, url }) => routingStrategyFunction('networkFirst', request, url),
+	new NetworkFirst({ plugins: [fallbackPlugin], networkTimeoutSeconds: 5 })
+);
 
-self.addEventListener('activate', (event) => {
-	// Remove previous cached data from disk
-	async function deleteOldCaches() {
-		for (const key of await caches.keys()) {
-			if (key !== CACHE) await caches.delete(key);
-		}
-	}
-
-	event.waitUntil(deleteOldCaches());
-});
-
-self.addEventListener('fetch', (event) => {
-	// ignore POST requests etc
-	if (event.request.method !== 'GET') return;
-	// ignore chrome-extensions requests (all non http requests)
-	if (!event.request.url.startsWith('http')) return;
-	// ignore auth requests (doesn't make sense to cache them)
-	if (event.request.url.includes('/auth/')) return;
-
-	async function respond(): Promise<Response> {
-		const url = new URL(event.request.url);
-		const cache = await caches.open(CACHE);
-
-		// `build`/`files` can always be served from the cache
-		if (ASSETS.includes(url.pathname)) {
-			// Should always be able to find these assets
-			const match = (await cache.match(url.pathname)) as Response;
-			return match;
-		}
-
-		// for everything else, try the network first, but
-		// fall back to the cache if we're offline
-		try {
-			const response = await fetch(event.request);
-
-			if (response.status === 200) {
-				cache.put(event.request, response.clone());
-			}
-
-			return response;
-		} catch {
-			const match = await cache.match(url.pathname);
-			if (!match) {
-				return new Response('Not found', { status: 404 });
-			}
-			return match;
-		}
-	}
-
-	event.respondWith(respond());
-});
+// Cache first for images, css
+registerRoute(
+	({ request, url }) => routingStrategyFunction('cacheFirst', request, url),
+	new CacheFirst({ plugins: [fallbackPlugin] })
+);
