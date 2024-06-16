@@ -45,7 +45,7 @@ export const mesocycles = t.router({
 		.input(z.object({ cursorId: z.number().optional(), searchString: z.string().optional() }))
 		.query(async ({ input, ctx }) => {
 			return prisma.mesocycle.findMany({
-				where: { userId: ctx.userId, name: { contains: input.searchString } },
+				where: { userId: ctx.userId, name: { contains: input.searchString, mode: 'insensitive' } },
 				orderBy: { id: 'desc' },
 				cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,
 				skip: input.cursorId !== undefined ? 1 : 0,

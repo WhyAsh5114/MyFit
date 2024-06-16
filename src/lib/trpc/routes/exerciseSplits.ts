@@ -31,7 +31,7 @@ export const exerciseSplits = t.router({
 		)
 		.query(async ({ input, ctx }) => {
 			return prisma.exerciseSplit.findMany({
-				where: { userId: ctx.userId, name: { contains: input.searchString } },
+				where: { userId: ctx.userId, name: { contains: input.searchString, mode: 'insensitive' } },
 				orderBy: { id: 'desc' },
 				include: input.include,
 				cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,
