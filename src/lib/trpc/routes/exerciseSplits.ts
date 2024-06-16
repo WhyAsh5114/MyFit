@@ -40,6 +40,13 @@ export const exerciseSplits = t.router({
 			});
 		}),
 
+	loadAllNames: t.procedure.query(async ({ ctx }) => {
+		return prisma.exerciseSplit.findMany({
+			where: { userId: ctx.userId },
+			orderBy: { id: 'desc' }
+		});
+	}),
+
 	create: t.procedure.input(zodExerciseSplitInput).mutation(async ({ input, ctx }) => {
 		await prisma.exerciseSplit.create({
 			data: {

@@ -1,14 +1,8 @@
-import prisma from '$lib/prisma';
-import { error } from '@sveltejs/kit';
+import { createContext } from '$lib/trpc/context';
+import { createCaller } from '$lib/trpc/router';
 
-export const load = async ({ parent }) => {
-	const { session } = await parent();
-	if (!session?.user?.id) error(401, 'Not logged in');
-
-	const exerciseSplits = prisma.exerciseSplit.findMany({
-		where: { userId: session.user.id },
-		orderBy: { id: 'desc' }
-	});
-
+export const load = async (event) => {
+	const tRPC = createCaller(await createContext(event));
+	const exerciseSplits = tRPC.exerciseSplits.loadAllNames();
 	return { exerciseSplits };
 };
