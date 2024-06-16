@@ -41,9 +41,8 @@
 		const lastExerciseSplit = exerciseSplits.at(-1);
 		if (typeof lastExerciseSplit === 'string' || lastExerciseSplit === undefined) return;
 
-		const newExerciseSplits = await trpc($page).exerciseSplits.load_more.query(
-			lastExerciseSplit.id
-		);
+		const newExerciseSplits = (await trpc($page).exerciseSplits.load.query(lastExerciseSplit.id))
+			.exerciseSplits;
 		if (exerciseSplits !== 'loading') exerciseSplits.push(...newExerciseSplits);
 		if (newExerciseSplits.length !== data.exerciseSplitsTake) loaderState.complete();
 	}

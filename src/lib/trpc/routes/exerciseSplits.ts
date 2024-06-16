@@ -33,28 +33,17 @@ export const exerciseSplits = t.router({
 		})
 	),
 
-	load: t.procedure.query(({ ctx }) => {
-		const searchString = ctx.event.url.searchParams.get('search') ?? undefined;
-		const exerciseSplits = prisma.exerciseSplit.findMany({
-			where: { userId: ctx.userId, name: { contains: searchString } },
-			orderBy: { id: 'desc' },
-			include: { exerciseSplitDays: true },
-			take
-		});
-		return { exerciseSplits, exerciseSplitsTake: 10 };
-	}),
-
-	load_more: t.procedure.input(z.number()).query(async ({ input, ctx }) => {
+	load: t.procedure.input(z.number().optional()).query(async ({ input, ctx }) => {
 		const searchString = ctx.event.url.searchParams.get('search') ?? undefined;
 		const exerciseSplits = await prisma.exerciseSplit.findMany({
 			where: { userId: ctx.userId, name: { contains: searchString } },
 			orderBy: { id: 'desc' },
 			include: { exerciseSplitDays: true },
-			cursor: { id: input },
-			skip: 1,
+			cursor: input !== undefined ? { id: input } : undefined,
+			skip: input !== undefined ? 1 : 0,
 			take
 		});
-		return exerciseSplits;
+		return { exerciseSplits, exerciseSplitsTake: take };
 	}),
 
 	create: t.procedure.input(zodExerciseSplitInput).mutation(async ({ input, ctx }) => {
