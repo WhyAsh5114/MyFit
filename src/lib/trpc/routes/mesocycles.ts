@@ -22,14 +22,12 @@ const zodMesocycleInput = z.strictObject({
 const take = 10;
 
 export const mesocycles = t.router({
-	findById: t.procedure
-		.input(z.number())
-		.query(({ input, ctx }) =>
-			prisma.mesocycle.findUnique({
-				where: { id: input, userId: ctx.userId },
-				include: { exerciseSplit: true }
-			})
-		),
+	findById: t.procedure.input(z.number()).query(({ input, ctx }) =>
+		prisma.mesocycle.findUnique({
+			where: { id: input, userId: ctx.userId },
+			include: { exerciseSplit: true }
+		})
+	),
 
 	load: t.procedure.input(z.number().optional()).query(async ({ input, ctx }) => {
 		const searchString = ctx.event.url.searchParams.get('search') ?? undefined;
@@ -61,7 +59,7 @@ export const mesocycles = t.router({
 			}
 		});
 		return { message: 'Mesocycle created successfully' };
-	})
+	}),
 
 	// editById: t.procedure
 	// 	.input(z.strictObject({ id: z.number().int(), splitData: zodExerciseSplitInput }))
@@ -85,8 +83,8 @@ export const mesocycles = t.router({
 	// 		return { message: 'Exercise split edited successfully' };
 	// 	}),
 
-	// deleteById: t.procedure.input(z.number().int()).mutation(async ({ input, ctx }) => {
-	// 	await prisma.exerciseSplit.delete({ where: { userId: ctx.userId, id: input } });
-	// 	return { message: 'Exercise split deleted successfully' };
-	// })
+	deleteById: t.procedure.input(z.number().int()).mutation(async ({ input, ctx }) => {
+		await prisma.mesocycle.delete({ where: { userId: ctx.userId, id: input } });
+		return { message: 'Mesocycle deleted successfully' };
+	})
 });
