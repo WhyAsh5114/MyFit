@@ -57,6 +57,7 @@
 		"trpc-sveltekit": "^3.6.2",
 		"trpc-transformer": "^3.2.2",
 		"vaul-svelte": "^0.3.0",
-		"zod": "^3.23.8"
+		"zod": "^3.23.8",
+		"zod-prisma-types": "^3.1.8"
 	}
 }
