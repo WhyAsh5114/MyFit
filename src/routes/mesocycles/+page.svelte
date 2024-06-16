@@ -12,6 +12,7 @@
 	import { trpc } from '$lib/trpc/client.js';
 	import type { Mesocycle } from '@prisma/client';
 	import { InfiniteLoader, loaderState } from 'svelte-infinite';
+	import { Badge } from '$lib/components/ui/badge/index.js';
 
 	let { data } = $props();
 	let mesocycles: Mesocycle[] | 'loading' = $state('loading');
@@ -72,6 +73,13 @@
 						href="/mesocycles/{mesocycle.id}"
 					>
 						<span class="text-lg font-semibold">{mesocycle.name}</span>
+						{#if !mesocycle.startDate}
+							<Badge variant="secondary">Unused</Badge>
+						{:else if !mesocycle.endDate}
+							<Badge>Active</Badge>
+						{:else}
+							<Badge variant="outline">Completed</Badge>
+						{/if}
 					</Button>
 				{:else}
 					<div class="muted-text-box">No mesocycles found</div>
