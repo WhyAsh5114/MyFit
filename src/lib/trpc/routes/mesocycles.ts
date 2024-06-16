@@ -25,7 +25,10 @@ export const mesocycles = t.router({
 	findById: t.procedure
 		.input(z.number())
 		.query(({ input, ctx }) =>
-			prisma.mesocycle.findUnique({ where: { id: input, userId: ctx.userId } })
+			prisma.mesocycle.findUnique({
+				where: { id: input, userId: ctx.userId },
+				include: { exerciseSplit: true }
+			})
 		),
 
 	load: t.procedure.input(z.number().optional()).query(async ({ input, ctx }) => {
