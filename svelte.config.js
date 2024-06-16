@@ -14,9 +14,7 @@ const config = {
 		adapter: adapter(),
 		serviceWorker: { register: false },
 		files: { serviceWorker: 'src/service-worker.ts' },
-		alias: {
-			'.prisma/client/index-browser': './node_modules/.prisma/client/index-browser.js'
-		}
+		alias: { '.prisma/client/index-browser': './node_modules/.prisma/client/index-browser.js' }
 	}
 };
 
