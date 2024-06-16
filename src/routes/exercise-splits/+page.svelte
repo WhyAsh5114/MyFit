@@ -41,8 +41,12 @@
 		const lastExerciseSplit = exerciseSplits.at(-1);
 		if (typeof lastExerciseSplit === 'string' || lastExerciseSplit === undefined) return;
 
-		const newExerciseSplits = (await trpc($page).exerciseSplits.load.query(lastExerciseSplit.id))
-			.exerciseSplits;
+		const newExerciseSplits = (
+			await trpc($page).exerciseSplits.load.query({
+				cursorId: lastExerciseSplit.id,
+				include: { exerciseSplitDays: true }
+			})
+		).exerciseSplits;
 		if (exerciseSplits !== 'loading') exerciseSplits.push(...newExerciseSplits);
 		if (newExerciseSplits.length !== data.exerciseSplitsTake) loaderState.complete();
 	}

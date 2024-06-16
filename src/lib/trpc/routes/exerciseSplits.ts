@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { t } from '$lib/trpc/t';
 import {
 	ExerciseSplitDayCreateWithoutExerciseSplitInputSchema,
+	ExerciseSplitIncludeSchema,
 	ExerciseTemplateCreateWithoutExerciseSplitDayInputSchema
 } from '$lib/zodSchemas';
 
@@ -21,18 +22,20 @@ export const exerciseSplits = t.router({
 		})
 	),
 
-	load: t.procedure.input(z.number().optional()).query(async ({ input, ctx }) => {
-		const searchString = ctx.event.url.searchParams.get('search') ?? undefined;
-		const exerciseSplits = await prisma.exerciseSplit.findMany({
-			where: { userId: ctx.userId, name: { contains: searchString } },
-			orderBy: { id: 'desc' },
-			include: { exerciseSplitDays: true },
-			cursor: input !== undefined ? { id: input } : undefined,
-			skip: input !== undefined ? 1 : 0,
-			take
-		});
-		return { exerciseSplits, exerciseSplitsTake: take };
-	}),
+	load: t.procedure
+		.input(z.strictObject({ cursorId: z.number().optional(), include: ExerciseSplitIncludeSchema }))
+		.query(async ({ input, ctx }) => {
+			const searchString = ctx.event.url.searchParams.get('search') ?? undefined;
+			const exerciseSplits = await prisma.exerciseSplit.findMany({
+				where: { userId: ctx.userId, name: { contains: searchString } },
+				orderBy: { id: 'desc' },
+				include: input.include,
+				cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,
+				skip: input.cursorId !== undefined ? 1 : 0,
+				take
+			});
+			return { exerciseSplits, exerciseSplitsTake: take };
+		}),
 
 	create: t.procedure.input(zodExerciseSplitInput).mutation(async ({ input, ctx }) => {
 		await prisma.exerciseSplit.create({
