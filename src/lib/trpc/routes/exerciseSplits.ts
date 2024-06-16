@@ -1,27 +1,15 @@
 import prisma from '$lib/prisma';
 import { z } from 'zod';
 import { t } from '$lib/trpc/t';
-import { ChangeType, MuscleGroup, SetType } from '@prisma/client';
+import {
+	ExerciseSplitDayCreateWithoutExerciseSplitInputSchema,
+	ExerciseTemplateCreateWithoutExerciseSplitDayInputSchema
+} from '$lib/zodSchemas';
 
 const zodExerciseSplitInput = z.strictObject({
 	splitName: z.string(),
-	splitDays: z.array(z.strictObject({ name: z.string(), isRestDay: z.boolean() })),
-	splitExercises: z.array(
-		z.array(
-			z.strictObject({
-				name: z.string(),
-				targetMuscleGroup: z.nativeEnum(MuscleGroup),
-				customMuscleGroup: z.string().nullable(),
-				involvesBodyweight: z.boolean(),
-				setType: z.nativeEnum(SetType),
-				repRangeStart: z.number().int(),
-				repRangeEnd: z.number().int(),
-				changeType: z.nativeEnum(ChangeType).nullable(),
-				changeAmount: z.number().nullable(),
-				note: z.string().nullable()
-			})
-		)
-	)
+	splitDays: z.array(ExerciseSplitDayCreateWithoutExerciseSplitInputSchema),
+	splitExercises: z.array(z.array(ExerciseTemplateCreateWithoutExerciseSplitDayInputSchema))
 });
 const take = 10;
 

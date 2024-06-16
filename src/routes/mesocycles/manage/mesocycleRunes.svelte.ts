@@ -1,12 +1,8 @@
-import type {
-	FullExerciseSplit,
-	MesocycleCyclicSetChangeWithoutIDs,
-	MesocycleExerciseTemplateWithoutIDs,
-	MesocycleWithoutIDs
-} from '$lib/types';
-import { MuscleGroup } from '@prisma/client';
+import { MuscleGroup, Prisma, type Mesocycle } from '@prisma/client';
+import type { FullExerciseSplit } from '../../exercise-splits/manage/exerciseSplitRunes.svelte';
 
-const defaultMesocycle: MesocycleWithoutIDs = {
+type MesocycleRuneType = Omit<Mesocycle, 'id' | 'exerciseSplitId' | 'userId'>;
+const defaultMesocycle: MesocycleRuneType = {
 	name: '',
 	RIRProgression: [1, 3, 3, 3],
 	startDate: null,
@@ -17,14 +13,16 @@ const defaultMesocycle: MesocycleWithoutIDs = {
 	forceRIRMatching: true
 };
 
-export type MesocycleCyclicSetChangeWithExtraProps = MesocycleCyclicSetChangeWithoutIDs & {
-	startVolume: number;
-	inSplit: boolean;
-};
+export type MesocycleCyclicSetChangeWithExtraProps =
+	Prisma.MesocycleCyclicSetChangeCreateWithoutMesocycleInput & {
+		startVolume: number;
+		inSplit: boolean;
+	};
 
 export function createMesocycleRunes() {
-	let mesocycle: MesocycleWithoutIDs = $state(structuredClone(defaultMesocycle));
-	let mesocycleExerciseTemplates: MesocycleExerciseTemplateWithoutIDs[][] = $state([]);
+	let mesocycle: MesocycleRuneType = $state(structuredClone(defaultMesocycle));
+	let mesocycleExerciseTemplates: Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput[][] =
+		$state([]);
 	let mesocycleCyclicSetChanges: MesocycleCyclicSetChangeWithExtraProps[] = $state([]);
 
 	let selectedExerciseSplit: FullExerciseSplit | null = $state(null);
@@ -59,10 +57,11 @@ export function createMesocycleRunes() {
 		mesocycleExerciseTemplates = selectedExerciseSplit.exerciseSplitDays.map((splitDay) =>
 			splitDay.exercises.map((exercise) => {
 				const { id, exerciseSplitDayId, ...rest } = exercise;
-				const mesocycleExerciseTemplate: MesocycleExerciseTemplateWithoutIDs = {
-					...rest,
-					sets: 0
-				};
+				const mesocycleExerciseTemplate: Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput =
+					{
+						...rest,
+						sets: 0
+					};
 				return mesocycleExerciseTemplate;
 			})
 		);
@@ -114,8 +113,8 @@ export function createMesocycleRunes() {
 	}
 
 	function isExerciseAndSetChangeMuscleSame(
-		exercise: MesocycleExerciseTemplateWithoutIDs,
-		setChange: MesocycleCyclicSetChangeWithoutIDs
+		exercise: Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput,
+		setChange: MesocycleCyclicSetChangeWithExtraProps
 	) {
 		return exercise.customMuscleGroup
 			? exercise.customMuscleGroup === setChange.customMuscleGroup
@@ -157,7 +156,7 @@ export function createMesocycleRunes() {
 		}
 
 		function getMuscleGroupTargetedOnDaysArray(
-			setChange: MesocycleCyclicSetChangeWithoutIDs
+			setChange: MesocycleCyclicSetChangeWithExtraProps
 		): number[] {
 			return getTrueIndexes(
 				mesocycleRunes.mesocycleExerciseTemplates.map((exerciseTemplates) =>

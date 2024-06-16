@@ -1,8 +1,7 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
-	import type { ExerciseTemplateWithoutIDs } from '$lib/types';
 	import { cn, convertCamelCaseToNormal } from '$lib/utils';
-	import { SetType } from '@prisma/client';
+	import { Prisma, SetType } from '@prisma/client';
 	import type { Selected } from 'bits-ui';
 	import {
 		ArcElement,
@@ -34,7 +33,9 @@
 		Filler
 	);
 
-	let { exercises }: { exercises: ExerciseTemplateWithoutIDs[] } = $props();
+	type PropsType = { exercises: Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput[] };
+
+	let { exercises }: PropsType = $props();
 	const chartTypes = ['Bodyweight & weighted', 'Rep ranges', 'Set types'];
 
 	let chart:

@@ -10,10 +10,11 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { exerciseSplitRunes } from '../../exerciseSplitRunes.svelte';
 	import { toast } from 'svelte-sonner';
-	import { ChangeType, MuscleGroup, SetType } from '@prisma/client';
+	import { ChangeType, MuscleGroup, type Prisma, SetType } from '@prisma/client';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { commonExercisePerMuscleGroup } from '$lib/commonExercises';
-	import type { ExerciseTemplateWithoutIDs } from '$lib/types';
+
+	type ExerciseTemplateWithoutIDs = Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
 
 	const defaultExercise: Partial<ExerciseTemplateWithoutIDs> = {
 		name: '',

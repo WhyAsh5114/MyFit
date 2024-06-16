@@ -1,10 +1,9 @@
-import type { MuscleGroup } from '@prisma/client';
-import type { ExerciseTemplateWithoutIDs } from './types';
+import type { MuscleGroup, Prisma } from '@prisma/client';
 
 // TODO: extend this list
 export const commonExercisePerMuscleGroup: {
 	muscleGroup: MuscleGroup;
-	exercises: ExerciseTemplateWithoutIDs[];
+	exercises: Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput[];
 }[] = [
 	{
 		muscleGroup: 'Chest',

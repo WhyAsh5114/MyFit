@@ -7,8 +7,9 @@
 		SHADOW_ITEM_MARKER_PROPERTY_NAME
 	} from 'svelte-dnd-action';
 	import ExerciseTemplateCard from '../../../(components)/ExerciseTemplateCard.svelte';
-	import type { ExerciseTemplateWithoutIDs } from '$lib/types';
+	import { Prisma } from '@prisma/client';
 
+	type ExerciseTemplateWithoutIDs = Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
 	type PropsType = {
 		itemList: (ExerciseTemplateWithoutIDs & { isDndShadowItem?: boolean })[];
 		reordering: boolean;

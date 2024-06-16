@@ -8,12 +8,12 @@
 	import { exerciseSplitRunes } from '../manage/exerciseSplitRunes.svelte';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { dragHandle } from 'svelte-dnd-action';
-	import type { ExerciseTemplateWithoutIDs } from '$lib/types';
+	import type { Prisma } from '@prisma/client';
 
 	type ExerciseTemplateCardProps = {
 		readOnly?: boolean;
 		idx: number;
-		exerciseTemplate: ExerciseTemplateWithoutIDs;
+		exerciseTemplate: Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
 		reordering?: boolean;
 	};
 
