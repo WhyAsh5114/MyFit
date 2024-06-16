@@ -12,7 +12,7 @@
 	import { toast } from 'svelte-sonner';
 	import { ChangeType, MuscleGroup, type Prisma, SetType } from '@prisma/client';
 	import { convertCamelCaseToNormal } from '$lib/utils';
-	import { commonExercisePerMuscleGroup } from '$lib/commonExercises';
+	import { commonExercisePerMuscleGroup } from '$lib/common/commonExercises';
 
 	type ExerciseTemplateWithoutIDs = Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
 

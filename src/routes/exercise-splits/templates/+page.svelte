@@ -5,7 +5,7 @@
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
-	import { exerciseSplitTemplates } from '$lib/exerciseSplitTemplates';
+	import { exerciseSplitTemplates } from '$lib/common/exerciseSplitTemplates';
 	import {
 		exerciseSplitRunes,
 		type FullExerciseSplitWithoutIDs
