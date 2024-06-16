@@ -1,8 +1,20 @@
-import type {
-	ExerciseSplitDayWithoutIDs,
-	ExerciseTemplateWithoutIDs,
-	FullExerciseSplitWithoutIDs
-} from '$lib/types';
+import type { Prisma } from '@prisma/client';
+
+export type FullExerciseSplit = Prisma.ExerciseSplitGetPayload<{
+	include: { exerciseSplitDays: { include: { exercises: true } } };
+}>;
+
+export type FullExerciseSplitWithoutIDs = Omit<
+	Prisma.ExerciseSplitCreateWithoutUserInput,
+	'exerciseSplitDays'
+> & {
+	exerciseSplitDays: (Omit<Prisma.ExerciseSplitDayCreateWithoutExerciseSplitInput, 'exercises'> & {
+		exercises: Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput[];
+	})[];
+};
+
+type ExerciseSplitDayWithoutIDs = Prisma.ExerciseSplitDayCreateWithoutExerciseSplitInput;
+type ExerciseTemplateWithoutIDs = Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
 
 export function createExerciseSplitRunes() {
 	let splitName = $state('');
