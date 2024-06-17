@@ -1,7 +1,7 @@
 name: Playwright Tests
 env:
   AUTH_SECRET: '${{ secrets.AUTH_SECRET }}'
-  DATABASE_URI: '${{ secrets.DATABASE_URL }}'
+  DATABASE_URL: '${{ secrets.DATABASE_URL }}'
 on:
   push:
     branches: [main, master, v3-svelte5]
