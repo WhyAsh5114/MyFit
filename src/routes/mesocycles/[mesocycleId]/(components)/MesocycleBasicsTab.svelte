@@ -15,12 +15,12 @@
 
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { arraySum } from '$lib/utils';
-	import type { MesocycleWithExerciseSplit } from '../+page.server';
+	import type { FullMesocycle } from '../+page.server';
 	import { trpc } from '$lib/trpc/client';
 	import { toast } from 'svelte-sonner';
 	import { goto, invalidate } from '$app/navigation';
 
-	let { mesocycle }: { mesocycle: MesocycleWithExerciseSplit } = $props();
+	let { mesocycle }: { mesocycle: FullMesocycle } = $props();
 	let deleteConfirmDrawerOpen = $state(false);
 	let callingDeleteEndpoint = $state(false);
 	let callingPatchEndpoint = $state(false);
@@ -132,7 +132,7 @@
 			</Resizable.PaneGroup>
 		</div>
 		<div class="flex flex-col">
-			<span class="text-sm text-muted-foreground">Exercise split</span>
+			<span class="text-sm text-muted-foreground">Start exercise template</span>
 			<a href="/exercise-splits/{mesocycle.exerciseSplit.id}" class="font-semibold underline">
 				{mesocycle.exerciseSplit.name}
 			</a>

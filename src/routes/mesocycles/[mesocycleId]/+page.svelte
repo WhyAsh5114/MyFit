@@ -4,16 +4,17 @@
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import type { MesocycleWithExerciseSplit } from './+page.server';
+	import type { FullMesocycle } from './+page.server';
 	import MesocycleSkeleton from './(components)/MesocycleSkeleton.svelte';
+	import MesocycleSplitTab from './(components)/MesocycleSplitTab.svelte';
 
 	let { data } = $props();
-	let mesocycle: MesocycleWithExerciseSplit | 'loading' = $state('loading');
+	let mesocycle: FullMesocycle | 'loading' = $state('loading');
 
 	onMount(async () => {
 		const serverMesocycle = await data.mesocycle;
 		if (serverMesocycle) mesocycle = serverMesocycle;
-		else toast.error('Exercise split not found');
+		else toast.error('Mesocycle not found');
 	});
 </script>
 
@@ -31,10 +32,8 @@
 			<MesocycleBasicsTab {mesocycle} />
 		</Tabs.Content>
 		<Tabs.Content value="split">
-			TODO
+			<MesocycleSplitTab {mesocycle} />
 		</Tabs.Content>
-		<Tabs.Content value="stats">
-			TODO
-		</Tabs.Content>
+		<Tabs.Content value="stats">TODO</Tabs.Content>
 	</Tabs.Root>
 {/if}

@@ -1,6 +1,12 @@
 import { createCaller } from '$lib/trpc/router';
 import { createContext } from '$lib/trpc/context';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+
+const mesocycleIncludeClause = Prisma.validator<Prisma.MesocycleInclude>()({
+	exerciseSplit: true,
+	mesocycleExerciseSplitDays: { include: { mesocycleSplitDayExercises: true } },
+	mesocycleCyclicSetChanges: true
+});
 
 export const load = async (event) => {
 	const tRPC = createCaller(await createContext(event));
@@ -8,6 +14,4 @@ export const load = async (event) => {
 	return { mesocycle };
 };
 
-export type MesocycleWithExerciseSplit = Prisma.MesocycleGetPayload<{
-	include: { exerciseSplit: true };
-}>;
+export type FullMesocycle = Prisma.MesocycleGetPayload<{ include: typeof mesocycleIncludeClause }>;
