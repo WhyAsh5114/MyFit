@@ -1,9 +1,21 @@
-import { test, expect } from './fixtures';
+import { test, expect, type Page } from './fixtures';
 
 test.beforeEach(async ({ page }) => {
 	await page.goto('/');
 	await page.getByRole('link', { name: 'Exercise splits' }).click();
 });
+
+async function createTemplateExerciseSplit(page: Page) {
+	await page.getByLabel('exercise-split-new-options').click();
+	await page.getByRole('menuitem', { name: 'Use template' }).click();
+	await page.getByRole('button', { name: 'Pull Push Legs 7 days / cycle' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('button', { name: 'Save' }).click();
+	await expect(page.getByRole('status')).toContainText('Exercise split created successfully', {
+		timeout: 15000
+	});
+}
 
 test('create an exercise split', async ({ page }) => {
 	await page.getByLabel('exercise-split-new-options').click();
@@ -40,15 +52,7 @@ test('create an exercise split', async ({ page }) => {
 });
 
 test('create exercise split from PPL template', async ({ page }) => {
-	await page.getByLabel('exercise-split-new-options').click();
-	await page.getByRole('menuitem', { name: 'Use template' }).click();
-	await page.getByRole('button', { name: 'Pull Push Legs 7 days / cycle' }).click();
-	await page.getByRole('button', { name: 'Next' }).click();
-	await page.getByRole('button', { name: 'Next' }).click();
-	await page.getByRole('button', { name: 'Save' }).click();
-	await expect(page.getByRole('status')).toContainText('Exercise split created successfully', {
-		timeout: 15000
-	});
+	await createTemplateExerciseSplit(page);
 	await page.getByRole('link', { name: 'Pull Push Legs 7 days / cycle' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
 		'Pull Push Legs Pull APush ALegs APull BPush BLegs BRest'
@@ -56,5 +60,55 @@ test('create exercise split from PPL template', async ({ page }) => {
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
 		'Pull APush ALegs APull BPush BLegs BRest Pull A Day 1 Pull-ups Straight sets of 5 to 15 reps BW Lats Barbell rows Straight sets of 10 to 15 reps Traps Dumbbell bicep curls Straight sets of 10 to 20 reps Biceps Face pulls Straight sets of 15 to 30 reps Rear Delts'
+	);
+});
+
+test('create a clone of a split', async ({ page }) => {
+	await createTemplateExerciseSplit(page);
+	await page.getByRole('link', { name: 'Pull Push Legs 7 days / cycle' }).click();
+	await page.getByLabel('exercise-split-options').click();
+	await page.getByRole('menuitem', { name: 'Clone' }).click();
+	await page.getByPlaceholder('Type here').click();
+	await page.getByPlaceholder('Type here').fill('Pull Push Legs (clone)');
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('button', { name: 'Save' }).click();
+	await expect(page.getByRole('status')).toContainText('Exercise split created successfully');
+	await expect(
+		page.locator('div').filter({ hasText: 'Pull Push Legs (clone) 7 days' }).nth(1)
+	).toBeVisible();
+});
+
+test('delete an exercise split', async ({ page }) => {
+	await createTemplateExerciseSplit(page);
+	await page.getByRole('link', { name: 'Pull Push Legs 7 days / cycle' }).click();
+	await page.getByLabel('exercise-split-options').click();
+	await page.getByRole('menuitem', { name: 'Delete' }).click();
+	await page.getByRole('button', { name: 'Yes, delete' }).click();
+	await expect(
+		page.getByRole('status').filter({ hasText: 'Exercise split deleted successfully' })
+	).toBeVisible();
+	await expect(page.getByRole('main')).toContainText('No exercise splits found');
+});
+
+test('edit an exercise split', async ({ page }) => {
+	await createTemplateExerciseSplit(page);
+	await page.getByRole('link', { name: 'Pull Push Legs 7 days / cycle' }).click();
+	await page.getByLabel('exercise-split-options').click();
+	await page.getByRole('menuitem', { name: 'Edit' }).click();
+	await page.getByPlaceholder('Type here').click();
+	await page.getByPlaceholder('Type here').fill('Pull Push Legs (edited)');
+	await page.getByRole('row', { name: 'Legs B' }).getByRole('checkbox').click();
+	await page.getByRole('button', { name: 'Remove' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('button', { name: 'Continue' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('button', { name: 'Save' }).click();
+	await expect(page.getByRole('status')).toContainText('Exercise split edited successfully', {
+		timeout: 15000
+	});
+	await page.getByRole('link', { name: 'Pull Push Legs (edited) 6' }).click();
+	await expect(page.getByRole('tabpanel')).toContainText(
+		'Pull Push Legs (edited) Pull APush ALegs APull BPush BRest'
 	);
 });
