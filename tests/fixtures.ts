@@ -14,18 +14,21 @@ const adapter = PrismaAdapter(prisma);
 async function createTestUserAndSession() {
 	const randomUserName = cuid();
 	const randomSessionToken = randomUUID();
-	// @ts-expect-error idk why, always works though
-	const newTestUser = await adapter.createUser({
-		id: randomUserName,
-		email: `test-user-${randomUserName}@myfit.com`,
-		emailVerified: null
+	const newTestSession = await prisma.session.create({
+		data: {
+			sessionToken: randomSessionToken,
+			expires: new Date(Number(new Date()) + 1000 * 60 * 60),
+			user: {
+				create: {
+					id: randomUserName,
+					email: `test-user-${randomUserName}@myfit.com`,
+					emailVerified: null
+				}
+			}
+		}
 	});
-	// @ts-expect-error idk why, always works though
-	const newTestSession = await adapter.createSession({
-		sessionToken: randomSessionToken,
-		userId: randomUserName,
-		expires: new Date(Number(new Date()) + 1000 * 60 * 60)
-	});
+	const newTestUser = await prisma.user.findFirst({ where: { id: newTestSession.userId } });
+	if (newTestUser === null) throw new Error("User couldn't be found after session creation");
 	return { user: newTestUser, session: newTestSession };
 }
 
