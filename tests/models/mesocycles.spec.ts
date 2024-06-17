@@ -39,7 +39,7 @@ test('create a mesocycle', async ({ page }) => {
 	await page.getByRole('link', { name: 'My Mesocycle Unused' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText('My Mesocycle No dates available Unused');
 	await expect(page.getByRole('tabpanel')).toContainText(
-		'RIR progression 12 cycles 2 1 0 Start exercise split Pull Push Legs Preferred progression variable Load Start overload percentage 1.25% Last set to failure Force RIR matching'
+		'RIR progression 12 cycles 2 1 0 Start exercise template Pull Push Legs Preferred progression variable Load Start overload percentage 1.25% Last set to failure Force RIR matching'
 	);
 
 	// TODO: confirm the chest cyclic set changes being applied
