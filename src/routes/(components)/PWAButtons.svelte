@@ -6,6 +6,7 @@
 	import UpdateIcon from 'virtual:icons/lucide/refresh-cw';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
+	import { cn } from '$lib/utils';
 
 	let { isMobile }: { isMobile: boolean } = $props();
 
@@ -41,7 +42,7 @@
 							}
 						});
 						if (resp.status === 200) await r.update();
-					}, 20000);	// TODO: increase a lot in production
+					}, 20000); // TODO: increase a lot in production
 				console.log(`SW Registered: ${r}`);
 			},
 			onRegisterError(error) {
@@ -61,11 +62,7 @@
 				updateServiceWorker(true);
 			}}
 		>
-			{#if !reloading}
-				<UpdateIcon />
-			{:else}
-				<LoaderCircle class="animate-spin" />
-			{/if}
+			<UpdateIcon class={cn({ 'animate-spin': reloading })} />
 		</Button>
 	{:else if showInstallButton}
 		<Button
@@ -94,11 +91,7 @@
 					updateServiceWorker(true);
 				}}
 			>
-				{#if !reloading}
-					<UpdateIcon />
-				{:else}
-					<LoaderCircle class="animate-spin" />
-				{/if}
+				<UpdateIcon class={cn({ 'animate-spin': reloading })} />
 				Reload
 			</Button>
 		{:else if showInstallButton}
