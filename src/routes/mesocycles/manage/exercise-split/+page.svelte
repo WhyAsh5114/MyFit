@@ -18,7 +18,7 @@
 	import { toast } from 'svelte-sonner';
 	import { Input } from '$lib/components/ui/input';
 	import { onMount } from 'svelte';
-	import HelpPopover from '$lib/components/HelpPopover.svelte';
+	import InfoPopover from '$lib/components/InfoPopover.svelte';
 	let { data } = $props();
 
 	let searchString = $state('');
@@ -124,8 +124,8 @@
 						<div class="flex flex-col gap-1">
 							<Select.Label class="flex items-center justify-between p-0 font-medium">
 								Preferred progression variable
-								<HelpPopover
-									ariaLabel="preferred-progression-variable-help"
+								<InfoPopover
+									ariaLabel="preferred-progression-variable-info"
 									text="Prefer adjusting this variable first when reaching the limits of the rep range"
 								/>
 							</Select.Label>
@@ -147,8 +147,8 @@
 							class="flex items-center justify-between"
 						>
 							Minimum sets per exercise
-							<HelpPopover
-								ariaLabel="distribution-min-sets-per-exercise-help"
+							<InfoPopover
+								ariaLabel="distribution-min-sets-per-exercise-info"
 								text="To avoid excessive exercise variation at the start of the mesocycle"
 							/>
 						</Label>
@@ -175,8 +175,8 @@
 							name="mesocycle-last-set-to-failure"
 							bind:checked={mesocycleRunes.mesocycle.lastSetToFailure}
 						/>
-						<HelpPopover
-							ariaLabel="mesocycle-last-set-to-failure-help"
+						<InfoPopover
+							ariaLabel="mesocycle-last-set-to-failure-info"
 							text="Take the last set of each exercise to 0 RIR"
 							triggerClasses="absolute -right-0.5 -top-2.5 focus:outline-none"
 						/>
@@ -193,8 +193,8 @@
 							name="mesocycle-force-RIR-matching"
 							bind:checked={mesocycleRunes.mesocycle.forceRIRMatching}
 						/>
-						<HelpPopover
-							ariaLabel="mesocycle-force-RIR-matching-help"
+						<InfoPopover
+							ariaLabel="mesocycle-force-RIR-matching-info"
 							text="Whether or not to reduce reps/load to match planned RIR"
 							triggerClasses="absolute -right-0.5 -top-2.5 focus:outline-none"
 						/>
