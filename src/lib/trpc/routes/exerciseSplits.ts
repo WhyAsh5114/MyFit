@@ -13,6 +13,28 @@ const zodExerciseSplitInput = z.strictObject({
 	splitExercises: z.array(z.array(ExerciseTemplateCreateWithoutExerciseSplitDayInputSchema))
 });
 
+const createExerciseSplit = async (
+	input: z.infer<typeof zodExerciseSplitInput>,
+	userId: string
+) => {
+	const exerciseSplit = await prisma.exerciseSplit.create({
+		data: {
+			name: input.splitName,
+			userId,
+			exerciseSplitDays: { createMany: { data: input.splitDays } }
+		},
+		select: { exerciseSplitDays: { select: { id: true } } }
+	});
+
+	await prisma.exerciseTemplate.createMany({
+		data: input.splitExercises.flatMap((dayExercises, idx) => {
+			return dayExercises.map((exercise) => {
+				return { ...exercise, exerciseSplitDayId: exerciseSplit.exerciseSplitDays[idx].id };
+			});
+		})
+	});
+};
+
 export const exerciseSplits = t.router({
 	findById: t.procedure.input(z.number()).query(({ input, ctx }) =>
 		prisma.exerciseSplit.findUnique({
@@ -48,46 +70,17 @@ export const exerciseSplits = t.router({
 	}),
 
 	create: t.procedure.input(zodExerciseSplitInput).mutation(async ({ input, ctx }) => {
-		await prisma.$transaction(async (tx) => {
-			const exerciseSplit = await prisma.exerciseSplit.create({
-				data: {
-					name: input.splitName,
-					userId: ctx.userId,
-					exerciseSplitDays: { createMany: { data: input.splitDays } }
-				},
-				select: { exerciseSplitDays: { select: { id: true } } }
-			});
-
-			await prisma.exerciseTemplate.createMany({
-				data: input.splitExercises.flatMap((dayExercises, idx) => {
-					return dayExercises.map((exercise) => {
-						return { ...exercise, exerciseSplitDayId: exerciseSplit.exerciseSplitDays[idx].id };
-					});
-				})
-			});
-		});
+		await prisma.$transaction(async (tx) => await createExerciseSplit(input, ctx.userId));
 		return { message: 'Exercise split created successfully' };
 	}),
 
 	editById: t.procedure
 		.input(z.strictObject({ id: z.number().int(), splitData: zodExerciseSplitInput }))
 		.mutation(async ({ input, ctx }) => {
-			await prisma.$transaction([
-				prisma.exerciseSplit.delete({ where: { id: input.id, userId: ctx.userId } }),
-				prisma.exerciseSplit.create({
-					data: {
-						id: input.id,
-						name: input.splitData.splitName,
-						userId: ctx.userId,
-						exerciseSplitDays: {
-							create: input.splitData.splitDays.map((splitDay, idx) => ({
-								...splitDay,
-								exercises: { createMany: { data: input.splitData.splitExercises[idx] } }
-							}))
-						}
-					}
-				})
-			]);
+			await prisma.$transaction(async (tx) => {
+				await prisma.exerciseSplit.delete({ where: { id: input.id, userId: ctx.userId } });
+				await createExerciseSplit(input.splitData, ctx.userId);
+			});
 			return { message: 'Exercise split edited successfully' };
 		}),
 
