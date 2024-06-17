@@ -33,7 +33,11 @@ export const mesocycles = t.router({
 		async ({ input, ctx }) =>
 			await prisma.mesocycle.findUnique({
 				where: { id: input, userId: ctx.userId },
-				include: { exerciseSplit: true }
+				include: {
+					exerciseSplit: true,
+					mesocycleExerciseSplitDays: { include: { mesocycleSplitDayExercises: true } },
+					mesocycleCyclicSetChanges: true
+				}
 			})
 	),
 
