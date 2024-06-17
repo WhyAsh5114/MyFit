@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
 	await page.getByRole('link', { name: 'Exercise splits' }).click();
 });
 
-test('test', async ({ page }) => {
+test('create an exercise split', async ({ page }) => {
 	await page.getByLabel('exercise-split-new-options').click();
 	await page.getByRole('menuitem', { name: 'Start from scratch' }).click();
 	await page.getByPlaceholder('Type here').fill('Pull Push Legs');
@@ -37,4 +37,24 @@ test('test', async ({ page }) => {
 		timeout: 15000
 	});
 	await expect(page.getByRole('main')).toContainText('Pull Push Legs 2 days / cycle');
+});
+
+test('create exercise split from PPL template', async ({ page }) => {
+	await page.getByLabel('exercise-split-new-options').click();
+	await page.getByRole('menuitem', { name: 'Use template' }).click();
+	await page.getByRole('button', { name: 'Pull Push Legs 7 days / cycle' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('button', { name: 'Save' }).click();
+	await expect(page.getByRole('status')).toContainText('Exercise split created successfully', {
+		timeout: 15000
+	});
+	await page.getByRole('link', { name: 'Pull Push Legs 7 days / cycle' }).click();
+	await expect(page.getByRole('tabpanel')).toContainText(
+		'Pull Push Legs Pull APush ALegs APull BPush BLegs BRest'
+	);
+	await page.getByRole('tab', { name: 'Exercises' }).click();
+	await expect(page.getByRole('tabpanel')).toContainText(
+		'Pull APush ALegs APull BPush BLegs BRest Pull A Day 1 Pull-ups Straight sets of 5 to 15 reps BW Lats Barbell rows Straight sets of 10 to 15 reps Traps Dumbbell bicep curls Straight sets of 10 to 20 reps Biceps Face pulls Straight sets of 15 to 30 reps Rear Delts'
+	);
 });
