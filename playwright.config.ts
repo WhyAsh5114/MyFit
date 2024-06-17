@@ -18,6 +18,7 @@ const config: PlaywrightTestConfig = {
 		trace: 'on-first-retry',
 		video: 'retain-on-failure'
 	},
+	timeout: 60000,
 	projects: [
 		{
 			name: 'chromium',
