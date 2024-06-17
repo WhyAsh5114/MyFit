@@ -18,7 +18,7 @@
 	import type { MesocycleWithExerciseSplit } from '../+page.server';
 	import { trpc } from '$lib/trpc/client';
 	import { toast } from 'svelte-sonner';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 
 	let { mesocycle }: { mesocycle: MesocycleWithExerciseSplit } = $props();
 	let deleteConfirmDrawerOpen = $state(false);
@@ -41,6 +41,7 @@
 		} else {
 			mesocycle.startDate = response.startDate;
 			mesocycle.endDate = response.endDate;
+			await invalidate('mesocycles:active');
 			toast.success(response.message);
 		}
 		callingPatchEndpoint = false;
@@ -50,6 +51,7 @@
 		callingDeleteEndpoint = true;
 		const { message } = await trpc().mesocycles.deleteById.mutate(mesocycle.id);
 		toast.success(message);
+		await invalidate('mesocycles:all');
 		await goto('/mesocycles');
 		callingDeleteEndpoint = false;
 	}

@@ -17,7 +17,7 @@
 	import ExerciseSplitMuscleGroupsCharts from '../(components)/ExerciseSplitMuscleGroupsCharts.svelte';
 	import ExerciseSplitExercisesCharts from '../(components)/ExerciseSplitExercisesCharts.svelte';
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import {
 		exerciseSplitRunes,
 		type FullExerciseSplit,
@@ -43,6 +43,7 @@
 			parseInt($page.params.exerciseSplitId)
 		);
 		toast.success(response.message);
+		invalidate('exerciseSplits:all');
 		await goto('/exercise-splits');
 		callingDeleteEndpoint = false;
 	}
