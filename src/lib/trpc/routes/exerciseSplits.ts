@@ -48,17 +48,23 @@ export const exerciseSplits = t.router({
 	}),
 
 	create: t.procedure.input(zodExerciseSplitInput).mutation(async ({ input, ctx }) => {
-		await prisma.exerciseSplit.create({
-			data: {
-				name: input.splitName,
-				userId: ctx.userId,
-				exerciseSplitDays: {
-					create: input.splitDays.map((splitDay, idx) => ({
-						...splitDay,
-						exercises: { createMany: { data: input.splitExercises[idx] } }
-					}))
-				}
-			}
+		await prisma.$transaction(async (tx) => {
+			const exerciseSplit = await prisma.exerciseSplit.create({
+				data: {
+					name: input.splitName,
+					userId: ctx.userId,
+					exerciseSplitDays: { createMany: { data: input.splitDays } }
+				},
+				select: { exerciseSplitDays: { select: { id: true } } }
+			});
+
+			await prisma.exerciseTemplate.createMany({
+				data: input.splitExercises.flatMap((dayExercises, idx) => {
+					return dayExercises.map((exercise) => {
+						return { ...exercise, exerciseSplitDayId: exerciseSplit.exerciseSplitDays[idx].id };
+					});
+				})
+			});
 		});
 		return { message: 'Exercise split created successfully' };
 	}),

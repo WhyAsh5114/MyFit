@@ -54,21 +54,29 @@ export const mesocycles = t.router({
 		}),
 
 	create: t.procedure.input(zodMesocycleInput).mutation(async ({ input, ctx }) => {
-		await prisma.mesocycle.create({
-			data: {
-				...input.mesocycle,
-				userId: ctx.userId,
-				exerciseSplitId: input.exerciseSplit.id,
-				mesocycleCyclicSetChanges: { createMany: { data: input.mesocycleCyclicSetChanges } },
-				mesocycleExerciseSplitDays: {
-					create: input.exerciseSplit.exerciseSplitDays.map((splitDay, idx) => ({
-						...splitDay,
-						mesocycleSplitDayExercises: {
-							createMany: { data: input.mesocycleExerciseTemplates[idx] }
-						}
-					}))
-				}
-			}
+		await prisma.$transaction(async (tx) => {
+			const mesocycle = await prisma.mesocycle.create({
+				data: {
+					...input.mesocycle,
+					userId: ctx.userId,
+					mesocycleCyclicSetChanges: { createMany: { data: input.mesocycleCyclicSetChanges } },
+					mesocycleExerciseSplitDays: {
+						createMany: { data: input.exerciseSplit.exerciseSplitDays }
+					}
+				},
+				select: { mesocycleExerciseSplitDays: { select: { id: true } } }
+			});
+
+			await prisma.mesocycleExerciseTemplate.createMany({
+				data: input.mesocycleExerciseTemplates.flatMap((dayExercises, idx) => {
+					return dayExercises.map((exercise) => {
+						return {
+							...exercise,
+							mesocycleExerciseSplitDayId: mesocycle.mesocycleExerciseSplitDays[idx].id
+						};
+					});
+				})
+			});
 		});
 		return { message: 'Mesocycle created successfully' };
 	}),
