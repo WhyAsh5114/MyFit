@@ -7,6 +7,7 @@
 	import type { FullMesocycle } from './+page.server';
 	import MesocycleSkeleton from './(components)/MesocycleSkeleton.svelte';
 	import MesocycleSplitTab from './(components)/MesocycleSplitTab.svelte';
+	import InfoPopover from '$lib/components/InfoPopover.svelte';
 
 	let { data } = $props();
 	let mesocycle: FullMesocycle | 'loading' = $state('loading');
@@ -25,7 +26,15 @@
 	<Tabs.Root value="basics" class="flex w-full grow flex-col">
 		<Tabs.List class="grid grid-cols-3">
 			<Tabs.Trigger value="basics">Basics</Tabs.Trigger>
-			<Tabs.Trigger value="split">Split</Tabs.Trigger>
+			<Tabs.Trigger value="split" class="grid grid-cols-3">
+				<span></span>
+				<span>Split</span>
+				<InfoPopover
+					ariaLabel="mesocycle-split-info"
+					text="The current exercise split for this mesocycle"
+					triggerClasses="justify-self-end"
+				/>
+			</Tabs.Trigger>
 			<Tabs.Trigger value="stats">Stats</Tabs.Trigger>
 		</Tabs.List>
 		<Tabs.Content value="basics">

@@ -1,35 +1,17 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
 	import * as Tabs from '$lib/components/ui/tabs';
-	import CloseIcon from 'virtual:icons/lucide/x';
 	import type { FullMesocycle } from '../+page.server';
-	import type { MesocycleExerciseSplitDay } from '@prisma/client';
 	import MesocycleExerciseTemplateCard from './MesocycleExerciseTemplateCard.svelte';
 
 	type MesocycleSplitDay = FullMesocycle['mesocycleExerciseSplitDays'][number];
 	let { mesocycle }: { mesocycle: FullMesocycle } = $props();
 
-	let textboxOpen = $state(true);
 	let selectedSplitDay = $state(
 		mesocycle.mesocycleExerciseSplitDays.find(
 			(splitDay) => !splitDay.isRestDay
 		) as MesocycleSplitDay
 	);
 </script>
-
-{#if textboxOpen}
-	<div class="muted-text-box mb-2 flex items-center justify-between text-sm">
-		The current exercise split for this mesocycle
-		<Button
-			onclick={() => (textboxOpen = false)}
-			variant="ghost"
-			size="icon"
-			class="h-fit w-fit p-0"
-		>
-			<CloseIcon />
-		</Button>
-	</div>
-{/if}
 
 <Tabs.Root
 	value={selectedSplitDay.name}
