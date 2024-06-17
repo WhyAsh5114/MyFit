@@ -11,3 +11,4 @@ vite.config.ts.timestamp-*
 .vercel
 playwright-report
 test-results
+auth.json
