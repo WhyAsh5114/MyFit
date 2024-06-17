@@ -2,18 +2,12 @@ import prisma from '$lib/prisma';
 
 export default async function globalTeardown() {
 	const users = await prisma.user.findMany({
-		where: {
-			AND: [
-				{ email: { startsWith: 'test-user-' } },
-				{ email: { endsWith: '@myfit.com' } },
-				{ email: { contains: '-@myfit.com', not: '' } } // Ensure the 24-character part exists
-			]
-		}
+		where: { AND: [{ email: { startsWith: 'test-user-' } }, { email: { endsWith: '@myfit.com' } }] }
 	});
 
-	// Filter the users to ensure the 24-character alphanumeric part
+	// Filter the users to ensure the 25-character alphanumeric part
 	const testUsers = users.filter((user) => {
-		const regex = /^test-user-\w{24}@myfit\.com$/;
+		const regex = /^test-user-\w{25}@myfit\.com$/;
 		return regex.test(user.email);
 	});
 
