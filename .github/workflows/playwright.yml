@@ -1,12 +1,20 @@
 name: Playwright Tests
 env:
-  AUTH_SECRET: '${{ secrets.AUTH_SECRET }}'
-  DATABASE_URL: '${{ secrets.DATABASE_URL }}'
+  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
+
 on:
   push:
-    branches: [main, master, v3-svelte5]
+    branches:
+      - main
+      - master
+      - v3-svelte5
   pull_request:
-    branches: [main, master, v3-svelte5]
+    branches:
+      - main
+      - master
+      - v3-svelte5
+
 jobs:
   test:
     timeout-minutes: 60
@@ -22,7 +30,8 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run Playwright tests
         run: npx playwright test
-      - uses: actions/upload-artifact@v4
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
