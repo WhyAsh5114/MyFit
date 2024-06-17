@@ -1,21 +1,10 @@
-import { test, expect, type Page } from './fixtures';
+import { test, expect } from '../fixtures';
+import { createTemplateExerciseSplit } from './commonFunctions';
 
 test.beforeEach(async ({ page }) => {
 	await page.goto('/');
 	await page.getByRole('link', { name: 'Exercise splits' }).click();
 });
-
-async function createTemplateExerciseSplit(page: Page) {
-	await page.getByLabel('exercise-split-new-options').click();
-	await page.getByRole('menuitem', { name: 'Use template' }).click();
-	await page.getByRole('button', { name: 'Pull Push Legs 7 days / cycle' }).click();
-	await page.getByRole('button', { name: 'Next' }).click();
-	await page.getByRole('button', { name: 'Next' }).click();
-	await page.getByRole('button', { name: 'Save' }).click();
-	await expect(page.getByRole('status')).toContainText('Exercise split created successfully', {
-		timeout: 15000
-	});
-}
 
 test('create an exercise split', async ({ page }) => {
 	await page.getByLabel('exercise-split-new-options').click();
@@ -112,3 +101,4 @@ test('edit an exercise split', async ({ page }) => {
 		'Pull Push Legs (edited) Pull APush ALegs APull BPush BRest'
 	);
 });
+
