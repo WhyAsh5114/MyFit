@@ -2,8 +2,7 @@ import { test, expect } from '../fixtures';
 import { createTemplateExerciseSplit } from './commonFunctions';
 
 test.beforeEach(async ({ page }) => {
-	await page.goto('/');
-	await page.getByRole('link', { name: 'Exercise splits' }).click();
+	await page.goto('/exercise-splits');
 });
 
 test('create an exercise split', async ({ page }) => {

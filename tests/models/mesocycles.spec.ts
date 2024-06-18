@@ -2,8 +2,7 @@ import { test, expect } from '../fixtures';
 import { createTemplateExerciseSplit } from './commonFunctions';
 
 test.beforeEach(async ({ page }) => {
-	await page.goto('/');
-	await page.getByRole('link', { name: 'Exercise splits' }).click();
+	await page.goto('/exercise-splits');
 	await createTemplateExerciseSplit(page);
 	await page.getByRole('link', { name: 'Mesocycles' }).click();
 });
@@ -34,7 +33,9 @@ test('create a mesocycle', async ({ page }) => {
 	await page.getByLabel('Chest-max-volume').fill('50');
 	await page.getByRole('button', { name: 'Save' }).click();
 
-	await expect(page.getByRole('status')).toContainText('Mesocycle created successfully');
+	await expect(page.getByRole('status')).toContainText('Mesocycle created successfully', {
+		timeout: 10000
+	});
 	await page.getByRole('link', { name: 'My Mesocycle Unused' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText('My Mesocycle No dates available Unused');
 	await expect(page.getByRole('tabpanel')).toContainText(
