@@ -6,6 +6,8 @@ import {
 	ExerciseSplitIncludeSchema,
 	ExerciseTemplateCreateWithoutExerciseSplitDayInputSchema
 } from '$lib/zodSchemas';
+import type { ExerciseSplit, ExerciseSplitDay, Prisma } from '@prisma/client';
+import cuid from 'cuid';
 
 const zodExerciseSplitInput = z.strictObject({
 	splitName: z.string(),
@@ -13,26 +15,40 @@ const zodExerciseSplitInput = z.strictObject({
 	splitExercises: z.array(z.array(ExerciseTemplateCreateWithoutExerciseSplitDayInputSchema))
 });
 
-const createExerciseSplit = async (
+const createOrEditExerciseSplit = async (
 	input: z.infer<typeof zodExerciseSplitInput>,
-	userId: string
+	userId: string,
+	editingId?: string
 ) => {
-	const exerciseSplit = await prisma.exerciseSplit.create({
-		data: {
-			name: input.splitName,
-			userId,
-			exerciseSplitDays: { createMany: { data: input.splitDays } }
-		},
-		select: { exerciseSplitDays: { select: { id: true } } }
-	});
+	const exerciseSplitId = editingId ?? cuid();
+	const exerciseSplit: ExerciseSplit = { id: exerciseSplitId, name: input.splitName, userId };
 
-	await prisma.exerciseTemplate.createMany({
-		data: input.splitExercises.flatMap((dayExercises, idx) => {
-			return dayExercises.map((exercise) => {
-				return { ...exercise, exerciseSplitDayId: exerciseSplit.exerciseSplitDays[idx].id };
-			});
-		})
-	});
+	const exerciseSplitDays: ExerciseSplitDay[] = input.splitDays.map((splitDay) => ({
+		...splitDay,
+		id: cuid(),
+		exerciseSplitId: exerciseSplit.id
+	}));
+
+	const exerciseTemplates: Prisma.ExerciseTemplateUncheckedCreateInput[] =
+		input.splitExercises.flatMap((dayExercises, dayNumber) =>
+			dayExercises.map((exercise) => ({
+				...exercise,
+				id: cuid(),
+				exerciseSplitDayId: exerciseSplitDays[dayNumber].id
+			}))
+		);
+
+	const transactionQueries = [
+		prisma.exerciseSplit.create({ data: exerciseSplit }),
+		prisma.exerciseSplitDay.createMany({ data: exerciseSplitDays }),
+		prisma.exerciseTemplate.createMany({ data: exerciseTemplates })
+	];
+
+	if (editingId) {
+		transactionQueries.unshift(prisma.exerciseSplit.delete({ where: { id: editingId, userId } }));
+	}
+
+	await prisma.$transaction(transactionQueries);
 };
 
 export const exerciseSplits = t.router({
@@ -70,17 +86,14 @@ export const exerciseSplits = t.router({
 	}),
 
 	create: t.procedure.input(zodExerciseSplitInput).mutation(async ({ input, ctx }) => {
-		await prisma.$transaction(async (tx) => await createExerciseSplit(input, ctx.userId));
+		await createOrEditExerciseSplit(input, ctx.userId);
 		return { message: 'Exercise split created successfully' };
 	}),
 
 	editById: t.procedure
 		.input(z.strictObject({ id: z.string().cuid(), splitData: zodExerciseSplitInput }))
 		.mutation(async ({ input, ctx }) => {
-			await prisma.$transaction(async (tx) => {
-				await prisma.exerciseSplit.delete({ where: { id: input.id, userId: ctx.userId } });
-				await createExerciseSplit(input.splitData, ctx.userId);
-			});
+			await createOrEditExerciseSplit(input.splitData, ctx.userId, input.id);
 			return { message: 'Exercise split edited successfully' };
 		}),
 
