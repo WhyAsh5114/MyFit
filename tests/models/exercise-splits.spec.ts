@@ -93,12 +93,11 @@ test('edit an exercise split', async ({ page }) => {
 	await page.getByRole('button', { name: 'Continue' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
-	await expect(page.getByRole('status')).toContainText('Exercise split edited successfully', {
-		timeout: 15000
-	});
+	await expect(
+		page.getByRole('status').filter({ hasText: 'Exercise split edited successfully' })
+	).toBeVisible({ timeout: 15000 });
 	await page.getByRole('link', { name: 'Pull Push Legs (edited) 6' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
 		'Pull Push Legs (edited) Pull APush ALegs APull BPush BRest'
 	);
 });
-

@@ -9,6 +9,7 @@ import {
 	MesocycleUncheckedCreateWithoutUserInputSchema
 } from '$lib/zodSchemas';
 import type { Prisma } from '@prisma/client';
+import cuid from 'cuid';
 
 const zodMesocycleInput = z.strictObject({
 	mesocycle: MesocycleUncheckedCreateWithoutUserInputSchema,
@@ -26,6 +27,50 @@ const getActiveMesocycleName = async (userId: string) => {
 		where: { userId, startDate: { not: null }, endDate: null },
 		select: { name: true, id: true }
 	});
+};
+
+const createOrEditMesocycle = async (
+	input: z.infer<typeof zodMesocycleInput>,
+	userId: string,
+	editingId?: string
+) => {
+	const mesocycleId = editingId ?? cuid();
+	const mesocycle: Prisma.MesocycleUncheckedCreateInput = {
+		id: mesocycleId,
+		userId,
+		...input.mesocycle
+	};
+
+	const mesocycleCyclicSetChanges: Prisma.MesocycleCyclicSetChangeUncheckedCreateInput[] =
+		input.mesocycleCyclicSetChanges.map((setChange) => ({ ...setChange, mesocycleId }));
+
+	const mesocycleExerciseSplitDays: Prisma.MesocycleExerciseSplitDayUncheckedCreateInput[] =
+		input.exerciseSplit.exerciseSplitDays.map((splitDay) => ({
+			...splitDay,
+			mesocycleId,
+			id: cuid()
+		}));
+
+	const mesocycleExerciseTemplates: Prisma.MesocycleExerciseTemplateUncheckedCreateInput[] =
+		input.mesocycleExerciseTemplates.flatMap((dayExercises, dayNumber) =>
+			dayExercises.map((exercise) => ({
+				...exercise,
+				mesocycleExerciseSplitDayId: mesocycleExerciseSplitDays[dayNumber].id as string
+			}))
+		);
+
+	const transactionQueries = [
+		prisma.mesocycle.create({ data: mesocycle }),
+		prisma.mesocycleCyclicSetChange.createMany({ data: mesocycleCyclicSetChanges }),
+		prisma.mesocycleExerciseSplitDay.createMany({ data: mesocycleExerciseSplitDays }),
+		prisma.mesocycleExerciseTemplate.createMany({ data: mesocycleExerciseTemplates })
+	];
+
+	if (editingId) {
+		transactionQueries.unshift(prisma.mesocycle.delete({ where: { id: editingId, userId } }));
+	}
+
+	await prisma.$transaction(transactionQueries);
 };
 
 export const mesocycles = t.router({
@@ -60,30 +105,7 @@ export const mesocycles = t.router({
 		}),
 
 	create: t.procedure.input(zodMesocycleInput).mutation(async ({ input, ctx }) => {
-		await prisma.$transaction(async (tx) => {
-			const mesocycle = await prisma.mesocycle.create({
-				data: {
-					...input.mesocycle,
-					userId: ctx.userId,
-					mesocycleCyclicSetChanges: { createMany: { data: input.mesocycleCyclicSetChanges } },
-					mesocycleExerciseSplitDays: {
-						createMany: { data: input.exerciseSplit.exerciseSplitDays }
-					}
-				},
-				select: { mesocycleExerciseSplitDays: { select: { id: true } } }
-			});
-
-			await prisma.mesocycleExerciseTemplate.createMany({
-				data: input.mesocycleExerciseTemplates.flatMap((dayExercises, idx) => {
-					return dayExercises.map((exercise) => {
-						return {
-							...exercise,
-							mesocycleExerciseSplitDayId: mesocycle.mesocycleExerciseSplitDays[idx].id
-						};
-					});
-				})
-			});
-		});
+		await createOrEditMesocycle(input, ctx.userId);
 		return { message: 'Mesocycle created successfully' };
 	}),
 
