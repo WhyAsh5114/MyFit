@@ -18,8 +18,11 @@
 		savingExerciseSplit = true;
 		if (id) await editExerciseSplit(id);
 		else await createExerciseSplit();
+
+		await invalidate('exerciseSplits:all');
 		await goto('/exercise-splits');
 		savingExerciseSplit = false;
+		exerciseSplitRunes.resetStores();
 	}
 
 	async function createExerciseSplit() {
@@ -28,9 +31,7 @@
 			splitDays: exerciseSplitRunes.splitDays,
 			splitExercises: exerciseSplitRunes.splitExercises
 		});
-		await invalidate('exerciseSplits:all');
 		toast.success(message);
-		exerciseSplitRunes.resetStores();
 	}
 
 	async function editExerciseSplit(id: string) {
@@ -42,9 +43,7 @@
 				splitExercises: exerciseSplitRunes.splitExercises
 			}
 		});
-		await invalidate('exerciseSplits:all');
 		toast.success(message);
-		exerciseSplitRunes.resetStores();
 	}
 </script>
 

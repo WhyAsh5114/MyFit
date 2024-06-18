@@ -55,12 +55,12 @@
 				mesocycleExerciseTemplates: mesocycleRunes.mesocycleExerciseTemplates,
 				exerciseSplit: exerciseSplitWithoutExercises
 			});
-			await invalidate('mesocycles:all');
 			toast.success(message);
-			mesocycleRunes.resetStores();
+			await invalidate('mesocycles:all');
 		}
 		await goto('/mesocycles');
 		savingMesocycle = false;
+		mesocycleRunes.resetStores();
 	}
 </script>
 
