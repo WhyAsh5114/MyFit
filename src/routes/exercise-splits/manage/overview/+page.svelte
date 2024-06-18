@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Tabs from '$lib/components/ui/tabs';
@@ -28,7 +28,9 @@
 			splitDays: exerciseSplitRunes.splitDays,
 			splitExercises: exerciseSplitRunes.splitExercises
 		});
+		await invalidate('exerciseSplits:all');
 		toast.success(message);
+		exerciseSplitRunes.resetStores();
 	}
 
 	async function editExerciseSplit(id: string) {
@@ -40,7 +42,9 @@
 				splitExercises: exerciseSplitRunes.splitExercises
 			}
 		});
+		await invalidate('exerciseSplits:all');
 		toast.success(message);
+		exerciseSplitRunes.resetStores();
 	}
 </script>
 

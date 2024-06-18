@@ -7,7 +7,7 @@
 	import { mesocycleRunes } from '../mesocycleRunes.svelte';
 	import MesocycleStartVolumesSetupTable from './(components)/MesocycleStartVolumesSetupTable.svelte';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import type { FullExerciseSplit } from '../../../exercise-splits/manage/exerciseSplitRunes.svelte';
 	import { trpc } from '$lib/trpc/client';
 
@@ -55,7 +55,9 @@
 				mesocycleExerciseTemplates: mesocycleRunes.mesocycleExerciseTemplates,
 				exerciseSplit: exerciseSplitWithoutExercises
 			});
+			await invalidate('mesocycles:all');
 			toast.success(message);
+			mesocycleRunes.resetStores();
 		}
 		await goto('/mesocycles');
 		savingMesocycle = false;

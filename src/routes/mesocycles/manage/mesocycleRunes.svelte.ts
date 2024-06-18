@@ -226,7 +226,12 @@ export function createMesocycleRunes() {
 			generateMesocycleExerciseTemplates();
 			saveStoresToLocalStorage();
 		},
-		mesocycle,
+		get mesocycle() {
+			return mesocycle;
+		},
+		set mesocycle(value) {
+			mesocycle = value;
+		},
 		get mesocycleExerciseTemplates() {
 			return mesocycleExerciseTemplates;
 		},
