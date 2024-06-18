@@ -103,7 +103,7 @@ enum ChangeType {
 }
 
 model ExerciseSplit {
-  id                Int                @id @default(autoincrement())
+  id                String             @id @default(cuid())
   name              String
   user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            String
@@ -112,16 +112,16 @@ model ExerciseSplit {
 }
 
 model ExerciseSplitDay {
-  id              Int                @id @default(autoincrement())
+  id              String             @id @default(cuid())
   name            String
   isRestDay       Boolean
   exercises       ExerciseTemplate[]
   exerciseSplit   ExerciseSplit      @relation(fields: [exerciseSplitId], references: [id], onDelete: Cascade)
-  exerciseSplitId Int
+  exerciseSplitId String
 }
 
 model ExerciseTemplate {
-  id                 Int              @id @default(autoincrement())
+  id                 String           @id @default(cuid())
   name               String
   targetMuscleGroup  MuscleGroup
   customMuscleGroup  String?
@@ -133,7 +133,7 @@ model ExerciseTemplate {
   changeAmount       Float?
   note               String?
   exerciseSplitDay   ExerciseSplitDay @relation(fields: [exerciseSplitDayId], references: [id], onDelete: Cascade)
-  exerciseSplitDayId Int
+  exerciseSplitDayId String
 }
 
 enum ProgressionVariable {
@@ -142,12 +142,12 @@ enum ProgressionVariable {
 }
 
 model Mesocycle {
-  id                           Int                         @id @default(autoincrement())
+  id                           String                      @id @default(cuid())
   name                         String
   user                         User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                       String
   exerciseSplit                ExerciseSplit               @relation(fields: [exerciseSplitId], references: [id])
-  exerciseSplitId              Int
+  exerciseSplitId              String
   RIRProgression               Int[]
   startDate                    DateTime?
   endDate                      DateTime?
@@ -160,9 +160,9 @@ model Mesocycle {
 }
 
 model MesocycleCyclicSetChange {
-  id                   Int         @id @default(autoincrement())
+  id                   String      @id @default(cuid())
   mesocycle            Mesocycle   @relation(fields: [mesocycleId], references: [id], onDelete: Cascade)
-  mesocycleId          Int
+  mesocycleId          String
   muscleGroup          MuscleGroup
   customMuscleGroup    String?
   regardlessOfProgress Boolean
@@ -171,16 +171,16 @@ model MesocycleCyclicSetChange {
 }
 
 model MesocycleExerciseSplitDay {
-  id                         Int                         @id @default(autoincrement())
+  id                         String                      @id @default(cuid())
   name                       String
   isRestDay                  Boolean
   mesocycle                  Mesocycle                   @relation(fields: [mesocycleId], references: [id], onDelete: Cascade)
-  mesocycleId                Int
+  mesocycleId                String
   mesocycleSplitDayExercises MesocycleExerciseTemplate[]
 }
 
 model MesocycleExerciseTemplate {
-  id                          Int                       @id @default(autoincrement())
+  id                          String                    @id @default(cuid())
   name                        String
   targetMuscleGroup           MuscleGroup
   customMuscleGroup           String?
@@ -193,5 +193,5 @@ model MesocycleExerciseTemplate {
   changeAmount                Float?
   note                        String?
   mesocycleExerciseSplitDay   MesocycleExerciseSplitDay @relation(fields: [mesocycleExerciseSplitDayId], references: [id], onDelete: Cascade)
-  mesocycleExerciseSplitDayId Int
+  mesocycleExerciseSplitDayId String
 }
