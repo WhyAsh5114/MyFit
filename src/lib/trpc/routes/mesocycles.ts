@@ -29,7 +29,7 @@ const getActiveMesocycleName = async (userId: string) => {
 };
 
 export const mesocycles = t.router({
-	findById: t.procedure.input(z.number()).query(
+	findById: t.procedure.input(z.string().cuid()).query(
 		async ({ input, ctx }) =>
 			await prisma.mesocycle.findUnique({
 				where: { id: input, userId: ctx.userId },
@@ -46,7 +46,9 @@ export const mesocycles = t.router({
 	}),
 
 	load: t.procedure
-		.input(z.object({ cursorId: z.number().optional(), searchString: z.string().optional() }))
+		.input(
+			z.object({ cursorId: z.string().cuid().optional(), searchString: z.string().optional() })
+		)
 		.query(async ({ input, ctx }) => {
 			return prisma.mesocycle.findMany({
 				where: { userId: ctx.userId, name: { contains: input.searchString, mode: 'insensitive' } },
@@ -86,7 +88,7 @@ export const mesocycles = t.router({
 	}),
 
 	// editById: t.procedure
-	// 	.input(z.strictObject({ id: z.number().int(), splitData: zodExerciseSplitInput }))
+	// 	.input(z.strictObject({ id: z.string().cuid(), splitData: zodExerciseSplitInput }))
 	// 	.mutation(async ({ input, ctx }) => {
 	// 		await prisma.$transaction([
 	// 			prisma.exerciseSplit.delete({ where: { id: input.id, userId: ctx.userId } }),
@@ -107,7 +109,7 @@ export const mesocycles = t.router({
 	// 		return { message: 'Exercise split edited successfully' };
 	// 	}),
 
-	deleteById: t.procedure.input(z.number().int()).mutation(async ({ input, ctx }) => {
+	deleteById: t.procedure.input(z.string().cuid()).mutation(async ({ input, ctx }) => {
 		await prisma.mesocycle.delete({ where: { userId: ctx.userId, id: input } });
 		return { message: 'Mesocycle deleted successfully' };
 	}),
@@ -115,7 +117,7 @@ export const mesocycles = t.router({
 	progressToNextStage: t.procedure
 		.input(
 			z.strictObject({
-				id: z.number().int(),
+				id: z.string().cuid(),
 				startDate: z.date().nullable(),
 				endDate: z.date().nullable()
 			})

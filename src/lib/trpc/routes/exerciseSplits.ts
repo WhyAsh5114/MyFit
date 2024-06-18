@@ -36,7 +36,7 @@ const createExerciseSplit = async (
 };
 
 export const exerciseSplits = t.router({
-	findById: t.procedure.input(z.number()).query(({ input, ctx }) =>
+	findById: t.procedure.input(z.string().cuid()).query(({ input, ctx }) =>
 		prisma.exerciseSplit.findUnique({
 			where: { id: input, userId: ctx.userId },
 			include: { exerciseSplitDays: { include: { exercises: true } } }
@@ -46,7 +46,7 @@ export const exerciseSplits = t.router({
 	load: t.procedure
 		.input(
 			z.strictObject({
-				cursorId: z.number().optional(),
+				cursorId: z.string().cuid().optional(),
 				include: ExerciseSplitIncludeSchema,
 				searchString: z.string().optional()
 			})
@@ -75,7 +75,7 @@ export const exerciseSplits = t.router({
 	}),
 
 	editById: t.procedure
-		.input(z.strictObject({ id: z.number().int(), splitData: zodExerciseSplitInput }))
+		.input(z.strictObject({ id: z.string().cuid(), splitData: zodExerciseSplitInput }))
 		.mutation(async ({ input, ctx }) => {
 			await prisma.$transaction(async (tx) => {
 				await prisma.exerciseSplit.delete({ where: { id: input.id, userId: ctx.userId } });
@@ -84,7 +84,7 @@ export const exerciseSplits = t.router({
 			return { message: 'Exercise split edited successfully' };
 		}),
 
-	deleteById: t.procedure.input(z.number().int()).mutation(async ({ input, ctx }) => {
+	deleteById: t.procedure.input(z.string().cuid()).mutation(async ({ input, ctx }) => {
 		await prisma.exerciseSplit.delete({ where: { userId: ctx.userId, id: input } });
 		return { message: 'Exercise split deleted successfully' };
 	})
