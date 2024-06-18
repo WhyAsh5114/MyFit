@@ -53,7 +53,7 @@
 		"clsx": "^2.1.1",
 		"cmdk-sv": "^0.0.17",
 		"mode-watcher": "^0.3.0",
-		"paneforge": "^0.0.4",
+		"paneforge": "^0.0.5",
 		"svelte-infinite": "^0.3.2",
 		"svelte-sonner": "^0.3.19",
 		"tailwind-merge": "^2.3.0",
