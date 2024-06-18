@@ -22,7 +22,7 @@ export function createExerciseSplitRunes() {
 		Array.from({ length: 7 }).map(() => ({ name: '', isRestDay: false }))
 	);
 	let splitExercises: ExerciseTemplateWithoutIDs[][] = $state([]);
-	let editingExerciseSplitId: number | null = $state(null);
+	let editingExerciseSplitId: string | null = $state(null);
 
 	let selectedSplitDayIndex: number = $state(0);
 	let editingExercise: ExerciseTemplateWithoutIDs | undefined = $state(undefined);
@@ -147,7 +147,7 @@ export function createExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
-	function loadExerciseSplit(exerciseSplit: FullExerciseSplitWithoutIDs, editingId?: number) {
+	function loadExerciseSplit(exerciseSplit: FullExerciseSplitWithoutIDs, editingId?: string) {
 		editingExerciseSplitId = editingId ?? null;
 		splitName = exerciseSplit.name;
 		splitDays = exerciseSplit.exerciseSplitDays.map((splitDay) => ({

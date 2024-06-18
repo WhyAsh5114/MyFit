@@ -10,7 +10,7 @@ const mesocycleIncludeClause = Prisma.validator<Prisma.MesocycleInclude>()({
 
 export const load = async (event) => {
 	const tRPC = createCaller(await createContext(event));
-	const mesocycle = tRPC.mesocycles.findById(parseInt(event.params.mesocycleId));
+	const mesocycle = tRPC.mesocycles.findById(event.params.mesocycleId);
 	return { mesocycle };
 };
 

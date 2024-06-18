@@ -15,7 +15,7 @@
 	import { Badge } from '$lib/components/ui/badge/index.js';
 
 	let { data } = $props();
-	let activeMesocycle: { name: string; id: number } | null | 'loading' = $state('loading');
+	let activeMesocycle: Pick<Mesocycle, 'id' | 'name'> | null | 'loading' = $state('loading');
 	let mesocycles: Mesocycle[] | 'loading' = $state('loading');
 	let searchString = $state($page.url.searchParams.get('search') ?? '');
 

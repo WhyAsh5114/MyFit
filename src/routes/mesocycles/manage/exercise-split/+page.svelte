@@ -79,7 +79,7 @@
 								onSelect={(currentValue) => {
 									if (exerciseSplits === 'loading') return;
 									selectedExerciseSplit =
-										exerciseSplits.find((split) => split.id === parseInt(currentValue)) ?? null;
+										exerciseSplits.find((split) => split.id === currentValue) ?? null;
 								}}
 							>
 								<Check

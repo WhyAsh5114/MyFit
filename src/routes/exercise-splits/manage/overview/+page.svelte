@@ -31,7 +31,7 @@
 		toast.success(message);
 	}
 
-	async function editExerciseSplit(id: number) {
+	async function editExerciseSplit(id: string) {
 		const { message } = await trpc().exerciseSplits.editById.mutate({
 			id,
 			splitData: {
