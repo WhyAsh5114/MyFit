@@ -42,8 +42,7 @@
 		if (typeof lastExerciseSplit === 'string' || lastExerciseSplit === undefined) return;
 
 		const newExerciseSplits = await trpc($page).exerciseSplits.load.query({
-			cursorId: lastExerciseSplit.id,
-			include: { exerciseSplitDays: true }
+			cursorId: lastExerciseSplit.id
 		});
 		if (exerciseSplits !== 'loading') exerciseSplits.push(...newExerciseSplits);
 		if (newExerciseSplits.length !== 10) loaderState.complete();

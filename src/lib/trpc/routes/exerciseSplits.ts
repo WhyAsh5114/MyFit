@@ -63,7 +63,6 @@ export const exerciseSplits = t.router({
 		.input(
 			z.strictObject({
 				cursorId: z.string().cuid().optional(),
-				include: ExerciseSplitIncludeSchema,
 				searchString: z.string().optional()
 			})
 		)
@@ -71,7 +70,7 @@ export const exerciseSplits = t.router({
 			return prisma.exerciseSplit.findMany({
 				where: { userId: ctx.userId, name: { contains: input.searchString, mode: 'insensitive' } },
 				orderBy: { id: 'desc' },
-				include: input.include,
+				include: { exerciseSplitDays: true },
 				cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,
 				skip: input.cursorId !== undefined ? 1 : 0,
 				take: 10
