@@ -7,7 +7,5 @@ export async function createTemplateExerciseSplit(page: Page) {
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
-	await expect(page.getByRole('status')).toContainText('Exercise split created successfully', {
-		timeout: 15000
-	});
+	await expect(page.getByRole('status')).toContainText('Exercise split created successfully');
 }

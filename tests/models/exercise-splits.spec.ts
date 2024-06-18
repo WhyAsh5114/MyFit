@@ -34,9 +34,7 @@ test('create an exercise split', async ({ page }) => {
 
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
-	await expect(page.getByRole('status')).toContainText('Exercise split created successfully', {
-		timeout: 15000
-	});
+	await expect(page.getByRole('status')).toContainText('Exercise split created successfully');
 	await expect(page.getByRole('main')).toContainText('Pull Push Legs 2 days / cycle');
 });
 
@@ -95,7 +93,7 @@ test('edit an exercise split', async ({ page }) => {
 	await page.getByRole('button', { name: 'Save' }).click();
 	await expect(
 		page.getByRole('status').filter({ hasText: 'Exercise split edited successfully' })
-	).toBeVisible({ timeout: 15000 });
+	).toBeVisible();
 	await page.getByRole('link', { name: 'Pull Push Legs (edited) 6' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
 		'Pull Push Legs (edited) Pull APush ALegs APull BPush BRest'
