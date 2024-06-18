@@ -5,7 +5,6 @@ test.beforeEach(async ({ page }) => {
 	await page.goto('/');
 	await page.getByRole('link', { name: 'Exercise splits' }).click();
 	await createTemplateExerciseSplit(page);
-	await page.goto('/');
 	await page.getByRole('link', { name: 'Mesocycles' }).click();
 });
 
