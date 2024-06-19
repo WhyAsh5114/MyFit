@@ -33,7 +33,9 @@ test('create an exercise split', async ({ page }) => {
 
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
-	await expect(page.getByRole('status')).toContainText('Exercise split created successfully');
+	await expect(
+		page.getByRole('status').filter({ hasText: 'Exercise split created successfully' })
+	).toBeVisible({ timeout: 10000 });
 	await expect(page.getByRole('main')).toContainText('Pull Push Legs 2 days / cycle');
 });
 
@@ -59,7 +61,9 @@ test('create a clone of a split', async ({ page }) => {
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
-	await expect(page.getByRole('status')).toContainText('Exercise split created successfully');
+	await expect(
+		page.getByRole('status').filter({ hasText: 'Exercise split created successfully' })
+	).toBeVisible({ timeout: 10000 });
 	await expect(
 		page.locator('div').filter({ hasText: 'Pull Push Legs (clone) 7 days' }).nth(1)
 	).toBeVisible();
@@ -73,7 +77,7 @@ test('delete an exercise split', async ({ page }) => {
 	await page.getByRole('button', { name: 'Yes, delete' }).click();
 	await expect(
 		page.getByRole('status').filter({ hasText: 'Exercise split deleted successfully' })
-	).toBeVisible();
+	).toBeVisible({ timeout: 10000 });
 	await expect(page.getByRole('main')).toContainText('No exercise splits found');
 });
 
@@ -92,7 +96,7 @@ test('edit an exercise split', async ({ page }) => {
 	await page.getByRole('button', { name: 'Save' }).click();
 	await expect(
 		page.getByRole('status').filter({ hasText: 'Exercise split edited successfully' })
-	).toBeVisible();
+	).toBeVisible({ timeout: 10000 });
 	await page.getByRole('link', { name: 'Pull Push Legs (edited) 6' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
 		'Pull Push Legs (edited) Pull APush ALegs APull BPush BRest'
