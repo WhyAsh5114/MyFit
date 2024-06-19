@@ -1,6 +1,6 @@
 <article class="prose">
   <h2>16th June, 2024</h2>
-  <h3>Update on the status of v3</h3>
+  <h3>Update on the progress of v3</h3>
   <p>The app now gets 4000+ views every week 🥳. Thanks, all!</p>
   <p>
     Now that my exams are over and I have almost an entire month of holidays, I'm dedicating nearly
