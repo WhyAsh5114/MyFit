@@ -1,3 +1,3 @@
 {
-	"buildCommand": "npm install --force"
+	"installCommand": "npm install --force"
 }
