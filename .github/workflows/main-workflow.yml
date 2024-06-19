@@ -9,12 +9,12 @@ on:
     branches:
       - main
       - master
-      - v3-svelte5
+      - v3
   pull_request:
     branches:
       - main
       - master
-      - v3-svelte5
+      - v3
 
 jobs:
   test:
