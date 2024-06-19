@@ -10,6 +10,7 @@ const config: PlaywrightTestConfig = {
 	testMatch: /(.+\.)?(test|spec)\.[jt]s/,
 	fullyParallel: true,
 	retries: 2,
+	globalSetup: './tests/global-setup',
 	globalTeardown: './tests/global-teardown',
 	workers: process.env.CI ? 1 : undefined,
 	reporter: 'html',

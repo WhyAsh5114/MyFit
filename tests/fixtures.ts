@@ -1,43 +1,11 @@
 import { test as baseTest, expect } from '@playwright/test';
 import path from 'path';
 import dotenv from 'dotenv';
-import cuid from 'cuid';
-import type { AdapterSession, AdapterUser } from '@auth/core/adapters';
-import { PrismaAdapter } from '@auth/prisma-adapter';
 import { PrismaClient } from '@prisma/client';
-import { randomUUID } from 'crypto';
+import type { UserData } from './global-setup';
 
 dotenv.config();
 const prisma = new PrismaClient();
-const adapter = PrismaAdapter(prisma);
-
-async function createTestUserAndSession() {
-	const randomUserName = cuid();
-	const randomSessionToken = randomUUID();
-	const newTestSession = await prisma.session.create({
-		data: {
-			sessionToken: randomSessionToken,
-			expires: new Date(Number(new Date()) + 1000 * 60 * 60),
-			user: {
-				create: {
-					id: randomUserName,
-					email: `test-user-${randomUserName}@myfit.com`,
-					emailVerified: null
-				}
-			}
-		}
-	});
-	const newTestUser = await prisma.user.findFirst({ where: { id: newTestSession.userId } });
-	if (newTestUser === null) throw new Error("User couldn't be found after session creation");
-	return { user: newTestUser, session: newTestSession };
-}
-
-async function deleteTestUserAndSession(user: AdapterUser, session: AdapterSession) {
-	// @ts-expect-error idk why, always works though
-	await adapter.deleteSession(session.sessionToken);
-	// @ts-expect-error idk why, always works though
-	await adapter.deleteUser(user.id);
-}
 
 export async function deleteUserData(userId: string) {
 	await prisma.exerciseSplit.deleteMany({ where: { userId } });
@@ -47,17 +15,23 @@ export async function deleteUserData(userId: string) {
 export * from '@playwright/test';
 export const test = baseTest.extend<
 	{ autoTestFixture: string },
-	{ workerStorageState: string; userAndSession: { user: AdapterUser; session: AdapterSession } }
+	{ workerStorageState: string; userData: UserData }
 >({
 	// Use the same storage state for all tests in this worker.
 	storageState: ({ workerStorageState }, use) => use(workerStorageState),
-	userAndSession: [await createTestUserAndSession(), { scope: 'worker' }],
+	userData: [
+		async ({}, use) => {
+			// Use parallelIndex as a unique identifier for each worker.
+			const userData = JSON.parse(process.env.TEST_USERS_DATA as string)[test.info().parallelIndex];
+			await use(userData);
+		},
+		{ scope: 'worker' }
+	],
 
 	// Authenticate once per worker with a worker-scoped fixture.
 	workerStorageState: [
-		async ({ browser, userAndSession }, use) => {
-			// Get from userAndSession (different account for each worker)
-			const { user, session } = userAndSession;
+		async ({ browser, userData }, use) => {
+			const { userId, sessionToken } = userData;
 
 			// Use parallelIndex as a unique identifier for each worker.
 			const id = test.info().parallelIndex;
@@ -70,7 +44,7 @@ export const test = baseTest.extend<
 			await page.context().addCookies([
 				{
 					name: 'authjs.session-token',
-					value: session.sessionToken,
+					value: sessionToken,
 					path: '/',
 					domain: 'localhost'
 				}
@@ -79,23 +53,20 @@ export const test = baseTest.extend<
 			// Reload to get user info
 			await page.reload();
 			await page.goto('localhost:4173/profile');
-			await expect(page.getByRole('main')).toContainText(user.email);
+			await expect(page.getByRole('main')).toContainText(userId);
 			// End of authentication steps.
 
 			await page.context().storageState({ path: fileName });
 			await page.close();
 			await use(fileName);
-
-			// Delete the account and session
-			await deleteTestUserAndSession(user, session);
 		},
 		{ scope: 'worker' }
 	],
 
 	autoTestFixture: [
-		async ({ userAndSession }, use) => {
+		async ({ userData }, use) => {
 			// Clear user data for each test, once before each test should be enough
-			await deleteUserData(userAndSession.user.id);
+			await deleteUserData(userData.userId);
 			await use('autoTestFixture');
 		},
 		{ scope: 'test', auto: true }
