@@ -16,6 +16,7 @@
 	let savingMesocycle = $state(false);
 
 	onMount(async () => {
+		if (data.editing) return;
 		const serverExerciseSplit = await data.exerciseSplit;
 		if (!serverExerciseSplit) {
 			toast.error('Exercise split not found');
@@ -65,7 +66,7 @@
 </script>
 
 <H3>Volume</H3>
-{#if exerciseSplit !== 'loading'}
+{#if exerciseSplit !== 'loading' || data.editing}
 	<ScrollArea orientation="both" class="h-px grow">
 		<MesocycleStartVolumesSetupTable />
 	</ScrollArea>

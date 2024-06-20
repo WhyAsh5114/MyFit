@@ -66,6 +66,10 @@
 		}
 	]);
 
+	if (mesocycleRunes.editingMesocycleId !== null) {
+		replaceAllStates.shift();
+	}
+
 	let muscleGroupPopoverOpen = $state(false);
 	let selectedMuscleGroup: Selected<string> = $state({ value: 'Chest', label: 'Chest' });
 	let customMuscleGroup = $state('');
@@ -211,17 +215,19 @@
 				<Table.Cell class="font-semibold">
 					{convertCamelCaseToNormal(muscleGroup)}
 				</Table.Cell>
-				<Table.Cell>
-					{#if setChange.inSplit}
-						<Input
-							type="number"
-							aria-label="{muscleGroup}-start-volume"
-							id="{muscleGroup}-start-volume"
-							required
-							bind:value={setChange.startVolume}
-						/>
-					{/if}
-				</Table.Cell>
+				{#if mesocycleRunes.editingMesocycleId === null}
+					<Table.Cell>
+						{#if setChange.inSplit}
+							<Input
+								type="number"
+								aria-label="{muscleGroup}-start-volume"
+								id="{muscleGroup}-start-volume"
+								required
+								bind:value={setChange.startVolume}
+							/>
+						{/if}
+					</Table.Cell>
+				{/if}
 				<Table.Cell>
 					<Input
 						type="number"
