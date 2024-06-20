@@ -21,7 +21,7 @@
 	import {
 		exerciseSplitRunes,
 		type FullExerciseSplit,
-		type FullExerciseSplitWithoutIDs
+		type FullExerciseSplitWithoutIds
 	} from '../manage/exerciseSplitRunes.svelte';
 	import { trpc } from '$lib/trpc/client';
 	import { page } from '$app/stores';
@@ -47,7 +47,7 @@
 	}
 
 	function getExerciseSplitWithoutIds(exerciseSplit: FullExerciseSplit) {
-		const noIdsSplit: FullExerciseSplitWithoutIDs = {
+		const noIdsSplit: FullExerciseSplitWithoutIds = {
 			name: exerciseSplit.name,
 			exerciseSplitDays: exerciseSplit.exerciseSplitDays.map(({ name, isRestDay, exercises }) => ({
 				name,

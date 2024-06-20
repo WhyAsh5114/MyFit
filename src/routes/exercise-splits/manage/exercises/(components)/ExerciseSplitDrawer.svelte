@@ -14,9 +14,9 @@
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { commonExercisePerMuscleGroup } from '$lib/common/commonExercises';
 
-	type ExerciseTemplateWithoutIDs = Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
+	type ExerciseTemplateWithoutIds = Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
 
-	const defaultExercise: Partial<ExerciseTemplateWithoutIDs> = {
+	const defaultExercise: Partial<ExerciseTemplateWithoutIds> = {
 		name: '',
 		setType: 'Straight',
 		involvesBodyweight: false
@@ -25,7 +25,7 @@
 	let open = $state(false);
 	let mode = $derived(exerciseSplitRunes.editingExercise === undefined ? 'Add' : 'Edit');
 	let searching = $state(false);
-	let currentExercise: Partial<ExerciseTemplateWithoutIDs> = $state(
+	let currentExercise: Partial<ExerciseTemplateWithoutIds> = $state(
 		structuredClone(defaultExercise)
 	);
 
@@ -36,7 +36,7 @@
 		}
 	});
 
-	function selectExercise(exercise: ExerciseTemplateWithoutIDs) {
+	function selectExercise(exercise: ExerciseTemplateWithoutIds) {
 		currentExercise = structuredClone(exercise);
 		searching = false;
 	}
@@ -48,7 +48,7 @@
 
 	function submitForm() {
 		let result: boolean;
-		const finishedExercise = currentExercise as ExerciseTemplateWithoutIDs;
+		const finishedExercise = currentExercise as ExerciseTemplateWithoutIds;
 		if (mode === 'Add') result = exerciseSplitRunes.addExercise(finishedExercise);
 		else result = exerciseSplitRunes.editExercise(finishedExercise);
 

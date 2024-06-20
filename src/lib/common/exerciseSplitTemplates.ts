@@ -1,9 +1,9 @@
-import type { FullExerciseSplitWithoutIDs } from '../../routes/exercise-splits/manage/exerciseSplitRunes.svelte';
+import type { FullExerciseSplitWithoutIds } from '../../routes/exercise-splits/manage/exerciseSplitRunes.svelte';
 
 // TODO: add more templates
 export const exerciseSplitTemplates: {
 	description: string;
-	exerciseSplit: FullExerciseSplitWithoutIDs;
+	exerciseSplit: FullExerciseSplitWithoutIds;
 }[] = [
 	{
 		description:

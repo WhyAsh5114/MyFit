@@ -9,14 +9,14 @@
 	import ExerciseTemplateCard from '../../../(components)/ExerciseTemplateCard.svelte';
 	import { type Prisma } from '@prisma/client';
 
-	type ExerciseTemplateWithoutIDs = Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
+	type ExerciseTemplateWithoutIds = Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
 	type PropsType = {
-		itemList: (ExerciseTemplateWithoutIDs & { isDndShadowItem?: boolean })[];
+		itemList: (ExerciseTemplateWithoutIds & { isDndShadowItem?: boolean })[];
 		reordering: boolean;
 	};
 
 	let { itemList = $bindable(), reordering }: PropsType = $props();
-	function handleSort(e: CustomEvent<DndEvent<ExerciseTemplateWithoutIDs>>) {
+	function handleSort(e: CustomEvent<DndEvent<ExerciseTemplateWithoutIds>>) {
 		itemList = e.detail.items;
 	}
 </script>
