@@ -146,8 +146,8 @@ model Mesocycle {
   name                         String
   user                         User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                       String
-  exerciseSplit                ExerciseSplit               @relation(fields: [exerciseSplitId], references: [id])
-  exerciseSplitId              String
+  exerciseSplit                ExerciseSplit?              @relation(fields: [exerciseSplitId], references: [id])
+  exerciseSplitId              String?
   RIRProgression               Int[]
   startDate                    DateTime?
   endDate                      DateTime?
