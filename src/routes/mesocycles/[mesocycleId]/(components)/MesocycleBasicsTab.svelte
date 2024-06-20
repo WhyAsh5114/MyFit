@@ -133,9 +133,13 @@
 		</div>
 		<div class="flex flex-col">
 			<span class="text-sm text-muted-foreground">Start exercise template</span>
-			<a href="/exercise-splits/{mesocycle.exerciseSplit.id}" class="font-semibold underline">
-				{mesocycle.exerciseSplit.name}
-			</a>
+			{#if mesocycle.exerciseSplit}
+				<a href="/exercise-splits/{mesocycle.exerciseSplit.id}" class="font-semibold underline">
+					{mesocycle.exerciseSplit.name}
+				</a>
+			{:else}
+				<span class="font-semibold text-red-500">Deleted</span>
+			{/if}
 		</div>
 		<div class="flex flex-col">
 			<span class="text-sm text-muted-foreground">Preferred progression variable</span>
