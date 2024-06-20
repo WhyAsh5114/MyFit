@@ -47,7 +47,7 @@
 		e.preventDefault();
 		mesocycleRunes.mesocycle.RIRProgression = RIRProgression;
 		mesocycleRunes.saveStoresToLocalStorage();
-		goto('/mesocycles/manage/exercise-split');
+		goto('/mesocycles/manage/progression');
 	}
 </script>
 
