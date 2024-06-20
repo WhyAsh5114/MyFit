@@ -1,4 +1,4 @@
-import prisma from '$lib/prisma';
+import { prisma } from '$lib/prisma';
 import { z } from 'zod';
 import { t } from '$lib/trpc/t';
 import {

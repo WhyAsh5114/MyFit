@@ -1,4 +1,4 @@
-import prisma from '$lib/prisma';
+import { prisma } from '$lib/prisma';
 import type { FullConfig } from '@playwright/test';
 import { randomUUID } from 'crypto';
 import cuid from 'cuid';
