@@ -1,9 +1,10 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import * as Popover from './ui/popover';
 	import InfoIcon from 'virtual:icons/lucide/info';
 
-	type PropsType = { ariaLabel: string; text: string; triggerClasses?: string };
-	let { ariaLabel, text, triggerClasses = '' }: PropsType = $props();
+	type PropsType = { ariaLabel: string; children: Snippet; triggerClasses?: string };
+	let { ariaLabel, children, triggerClasses = '' }: PropsType = $props();
 </script>
 
 <Popover.Root>
@@ -11,6 +12,6 @@
 		<InfoIcon class="h-4 w-4 text-muted-foreground" />
 	</Popover.Trigger>
 	<Popover.Content class="w-56 text-sm text-muted-foreground" align="end">
-		{text}
+		{@render children()}
 	</Popover.Content>
 </Popover.Root>

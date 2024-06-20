@@ -29,11 +29,9 @@
 			<Tabs.Trigger value="split" class="grid grid-cols-3">
 				<span></span>
 				<span>Split</span>
-				<InfoPopover
-					ariaLabel="mesocycle-split-info"
-					text="The current exercise split for this mesocycle"
-					triggerClasses="justify-self-end"
-				/>
+				<InfoPopover ariaLabel="mesocycle-split-info" triggerClasses="justify-self-end">
+					The current exercise split for this mesocycle
+				</InfoPopover>
 			</Tabs.Trigger>
 			<Tabs.Trigger value="stats">Stats</Tabs.Trigger>
 		</Tabs.List>
