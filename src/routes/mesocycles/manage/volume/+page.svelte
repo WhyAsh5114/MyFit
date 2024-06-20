@@ -31,22 +31,30 @@
 		const id = mesocycleRunes.editingMesocycleId;
 		savingMesocycle = true;
 
-		mesocycleRunes.distributeStartVolumes();
-		const exerciseSplit = mesocycleRunes.selectedExerciseSplit as FullExerciseSplit;
-		const exerciseSplitWithoutExercises = {
-			...exerciseSplit,
-			exerciseSplitDays: exerciseSplit.exerciseSplitDays.map((splitDay) => {
-				const { exercises, id, exerciseSplitId, ...rest } = splitDay;
-				return rest;
-			})
-		};
 		const mesocycleCyclicSetChanges = mesocycleRunes.mesocycleCyclicSetChanges.map((setChange) => {
 			const { startVolume, inSplit, ...rest } = setChange;
 			return rest;
 		});
 
 		if (id) {
+			const { message } = await trpc().mesocycles.editById.mutate({
+				id,
+				mesocycleData: {
+					mesocycle: mesocycleRunes.mesocycle,
+					mesocycleCyclicSetChanges
+				}
+			});
+			toast.success(message);
 		} else {
+			mesocycleRunes.distributeStartVolumes();
+			const exerciseSplit = mesocycleRunes.selectedExerciseSplit as FullExerciseSplit;
+			const exerciseSplitWithoutExercises = {
+				...exerciseSplit,
+				exerciseSplitDays: exerciseSplit.exerciseSplitDays.map((splitDay) => {
+					const { exercises, id, exerciseSplitId, ...rest } = splitDay;
+					return rest;
+				})
+			};
 			const { message } = await trpc().mesocycles.create.mutate({
 				mesocycle: {
 					...mesocycleRunes.mesocycle,
@@ -57,8 +65,8 @@
 				exerciseSplit: exerciseSplitWithoutExercises
 			});
 			toast.success(message);
-			await invalidate('mesocycles:all');
 		}
+		await invalidate('mesocycles:all');
 		await goto('/mesocycles');
 		savingMesocycle = false;
 		mesocycleRunes.resetStores();
@@ -71,7 +79,7 @@
 		<MesocycleStartVolumesSetupTable />
 	</ScrollArea>
 	<div class="grid grid-cols-2 gap-1">
-		<Button variant="secondary" href="./exercise-split">Previous</Button>
+		<Button variant="secondary" href="./progression">Previous</Button>
 		<Button disabled={savingMesocycle} onclick={createOrEditMesocycle}>
 			{#if savingMesocycle}
 				<LoaderCircle class="animate-spin" />
