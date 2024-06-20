@@ -152,24 +152,29 @@
 						</Select.Content>
 					</div>
 				</Select.Root>
-				<div class="flex w-full max-w-sm flex-col gap-1.5">
-					<Label for="distribution-min-sets-per-exercise" class="flex items-center justify-between">
-						Minimum sets per exercise
-						<InfoPopover ariaLabel="distribution-min-sets-per-exercise-info">
-							To avoid excessive exercise variation at the start of the mesocycle
-						</InfoPopover>
-					</Label>
-					<Input
-						type="number"
-						step={1}
-						min={0}
-						max={maxMinSetsValue}
-						id="distribution-min-sets-per-exercise"
-						placeholder="Type here"
-						required
-						bind:value={mesocycleRunes.minSets}
-					/>
-				</div>
+				{#if mesocycleRunes.editingMesocycleId === null}
+					<div class="flex w-full max-w-sm flex-col gap-1.5">
+						<Label
+							for="distribution-min-sets-per-exercise"
+							class="flex items-center justify-between"
+						>
+							Minimum sets per exercise
+							<InfoPopover ariaLabel="distribution-min-sets-per-exercise-info">
+								To avoid excessive exercise variation at the start of the mesocycle
+							</InfoPopover>
+						</Label>
+						<Input
+							type="number"
+							step={1}
+							min={0}
+							max={maxMinSetsValue}
+							id="distribution-min-sets-per-exercise"
+							placeholder="Type here"
+							required
+							bind:value={mesocycleRunes.minSets}
+						/>
+					</div>
+				{/if}
 				<div class="relative flex items-center justify-between rounded-md border p-2">
 					<Label
 						for="mesocycle-last-set-to-failure"
