@@ -43,11 +43,11 @@
 			...mesocycleData
 		} = mesocycle;
 
-		const { id, ...mesocycleDataWithoutIds } = mesocycleData;
+		const { id, userId, exerciseSplitId, ...mesocycleDataWithoutIds } = mesocycleData;
 		const mesocycleWithoutIds: FullMesocycleWithoutIds = {
 			...mesocycleDataWithoutIds,
 			mesocycleCyclicSetChanges: mesocycleCyclicSetChanges.map((setChange) => {
-				const { id, ...rest } = setChange;
+				const { id, mesocycleId, ...rest } = setChange;
 				return rest;
 			}),
 			mesocycleExerciseSplitDays: mesocycleExerciseSplitDays.map((splitDay) => {
