@@ -1,6 +1,5 @@
 import { MuscleGroup, type Prisma, type Mesocycle } from '@prisma/client';
 import type { FullExerciseSplit } from '../../exercise-splits/manage/exerciseSplitRunes.svelte';
-import { trpc } from '$lib/trpc/client';
 
 type MesocycleWithoutIds = Omit<Mesocycle, 'id' | 'exerciseSplitId' | 'userId'>;
 const defaultMesocycle: MesocycleWithoutIds = {
@@ -15,7 +14,6 @@ const defaultMesocycle: MesocycleWithoutIds = {
 };
 
 export type FullMesocycleWithoutIds = MesocycleWithoutIds & {
-	exerciseSplitId: string | null;
 	mesocycleCyclicSetChanges: Prisma.MesocycleCyclicSetChangeCreateWithoutMesocycleInput[];
 	mesocycleExerciseSplitDays: (Prisma.MesocycleExerciseSplitDayCreateWithoutMesocycleInput & {
 		mesocycleSplitDayExercises: Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput[];
@@ -208,11 +206,6 @@ export function createMesocycleRunes() {
 			...onlyMesocycleData
 		} = mesocycleData;
 		mesocycle = onlyMesocycleData;
-
-		if (mesocycleData.exerciseSplitId)
-			selectedExerciseSplit = await trpc().exerciseSplits.findById.query(
-				mesocycleData.exerciseSplitId
-			);
 
 		mesocycleExerciseTemplates = mesocycleExerciseSplitDays.map(
 			(splitDay) => splitDay.mesocycleSplitDayExercises
