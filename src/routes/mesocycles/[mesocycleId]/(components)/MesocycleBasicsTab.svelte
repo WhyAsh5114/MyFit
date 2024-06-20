@@ -19,15 +19,48 @@
 	import { trpc } from '$lib/trpc/client';
 	import { toast } from 'svelte-sonner';
 	import { goto, invalidate } from '$app/navigation';
+	import { mesocycleRunes, type FullMesocycleWithoutIds } from '../../manage/mesocycleRunes.svelte';
 
 	let { mesocycle }: { mesocycle: FullMesocycle } = $props();
 	let deleteConfirmDrawerOpen = $state(false);
 	let callingDeleteEndpoint = $state(false);
 	let callingPatchEndpoint = $state(false);
 
-	function editMesocycle() {}
+	function loadMesocycle(mode: 'edit' | 'clone') {
+		if (mode === 'edit') {
+			mesocycleRunes.loadMesocycle(getMesocycleWithoutIds(), mesocycle.id);
+		} else if (mode === 'clone') {
+			mesocycleRunes.loadMesocycle(getMesocycleWithoutIds());
+		}
+		goto(`/mesocycles/manage/basics`);
+	}
 
-	function cloneMesocycle() {}
+	function getMesocycleWithoutIds() {
+		const {
+			exerciseSplit,
+			mesocycleCyclicSetChanges,
+			mesocycleExerciseSplitDays,
+			...mesocycleData
+		} = mesocycle;
+
+		const { id, ...mesocycleDataWithoutIds } = mesocycleData;
+		const mesocycleWithoutIds: FullMesocycleWithoutIds = {
+			...mesocycleDataWithoutIds,
+			mesocycleCyclicSetChanges: mesocycleCyclicSetChanges.map((setChange) => {
+				const { id, ...rest } = setChange;
+				return rest;
+			}),
+			mesocycleExerciseSplitDays: mesocycleExerciseSplitDays.map((splitDay) => {
+				const { id, mesocycleSplitDayExercises: exercisesWithId, ...rest } = splitDay;
+				const mesocycleSplitDayExercises = exercisesWithId.map((exercise) => {
+					const { id, ...rest } = exercise;
+					return rest;
+				});
+				return { mesocycleSplitDayExercises, ...rest };
+			})
+		};
+		return mesocycleWithoutIds;
+	}
 
 	async function progressMesocycle() {
 		callingPatchEndpoint = true;
@@ -67,10 +100,10 @@
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content align="end">
 					<DropdownMenu.Group>
-						<DropdownMenu.Item class="gap-2" onclick={editMesocycle}>
+						<DropdownMenu.Item class="gap-2" onclick={() => loadMesocycle('edit')}>
 							<EditIcon /> Edit
 						</DropdownMenu.Item>
-						<DropdownMenu.Item class="gap-2" onclick={cloneMesocycle}>
+						<DropdownMenu.Item class="gap-2" onclick={() => loadMesocycle('clone')}>
 							<CloneIcon /> Clone
 						</DropdownMenu.Item>
 						<DropdownMenu.Item

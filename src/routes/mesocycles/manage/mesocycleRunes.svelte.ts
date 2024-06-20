@@ -1,8 +1,9 @@
 import { MuscleGroup, type Prisma, type Mesocycle } from '@prisma/client';
 import type { FullExerciseSplit } from '../../exercise-splits/manage/exerciseSplitRunes.svelte';
+import { trpc } from '$lib/trpc/client';
 
-type MesocycleRuneType = Omit<Mesocycle, 'id' | 'exerciseSplitId' | 'userId'>;
-const defaultMesocycle: MesocycleRuneType = {
+type MesocycleWithoutIds = Omit<Mesocycle, 'id' | 'exerciseSplitId' | 'userId'>;
+const defaultMesocycle: MesocycleWithoutIds = {
 	name: '',
 	RIRProgression: [1, 3, 3, 3],
 	startDate: null,
@@ -13,6 +14,14 @@ const defaultMesocycle: MesocycleRuneType = {
 	forceRIRMatching: true
 };
 
+export type FullMesocycleWithoutIds = MesocycleWithoutIds & {
+	exerciseSplitId: string | null;
+	mesocycleCyclicSetChanges: Prisma.MesocycleCyclicSetChangeCreateWithoutMesocycleInput[];
+	mesocycleExerciseSplitDays: (Prisma.MesocycleExerciseSplitDayCreateWithoutMesocycleInput & {
+		mesocycleSplitDayExercises: Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput[];
+	})[];
+};
+
 export type MesocycleCyclicSetChangeWithExtraProps =
 	Prisma.MesocycleCyclicSetChangeCreateWithoutMesocycleInput & {
 		startVolume: number;
@@ -20,14 +29,14 @@ export type MesocycleCyclicSetChangeWithExtraProps =
 	};
 
 export function createMesocycleRunes() {
-	let mesocycle: MesocycleRuneType = $state(structuredClone(defaultMesocycle));
+	let mesocycle: MesocycleWithoutIds = $state(structuredClone(defaultMesocycle));
 	let mesocycleExerciseTemplates: Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput[][] =
 		$state([]);
 	let mesocycleCyclicSetChanges: MesocycleCyclicSetChangeWithExtraProps[] = $state([]);
 
 	let selectedExerciseSplit: FullExerciseSplit | null = $state(null);
 	let minSets = $state(3);
-	let editingMesocycleId: number | null = $state(null);
+	let editingMesocycleId: string | null = $state(null);
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('mesocycleRunes');
@@ -191,6 +200,31 @@ export function createMesocycleRunes() {
 		}
 	}
 
+	async function loadMesocycle(mesocycleData: FullMesocycleWithoutIds, editingId?: string) {
+		editingMesocycleId = editingId ?? null;
+		const {
+			mesocycleCyclicSetChanges: mesocycleCyclicSetChangesData,
+			mesocycleExerciseSplitDays,
+			...onlyMesocycleData
+		} = mesocycleData;
+		mesocycle = onlyMesocycleData;
+
+		if (mesocycleData.exerciseSplitId)
+			selectedExerciseSplit = await trpc().exerciseSplits.findById.query(
+				mesocycleData.exerciseSplitId
+			);
+
+		mesocycleExerciseTemplates = mesocycleExerciseSplitDays.map(
+			(splitDay) => splitDay.mesocycleSplitDayExercises
+		);
+		mesocycleCyclicSetChanges = mesocycleCyclicSetChangesData.map((setChange) => ({
+			...setChange,
+			inSplit: true,
+			startVolume: 5
+		}));
+		saveStoresToLocalStorage();
+	}
+
 	function saveStoresToLocalStorage() {
 		localStorage.setItem(
 			'mesocycleRunes',
@@ -249,6 +283,7 @@ export function createMesocycleRunes() {
 		isExerciseAndSetChangeMuscleSame,
 		addMuscleGroupToCyclicSetChanges,
 		distributeStartVolumes,
+		loadMesocycle,
 		resetStores,
 		saveStoresToLocalStorage
 	};
