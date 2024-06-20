@@ -3,7 +3,6 @@ import { z } from 'zod';
 import { t } from '$lib/trpc/t';
 import {
 	ExerciseSplitDayCreateWithoutExerciseSplitInputSchema,
-	ExerciseSplitIncludeSchema,
 	ExerciseTemplateCreateWithoutExerciseSplitDayInputSchema
 } from '$lib/zodSchemas';
 import type { ExerciseSplit, ExerciseSplitDay, Prisma } from '@prisma/client';
@@ -44,9 +43,8 @@ const createOrEditExerciseSplit = async (
 		prisma.exerciseTemplate.createMany({ data: exerciseTemplates })
 	];
 
-	if (editingId) {
+	if (editingId)
 		transactionQueries.unshift(prisma.exerciseSplit.delete({ where: { id: editingId, userId } }));
-	}
 
 	await prisma.$transaction(transactionQueries);
 };
