@@ -47,11 +47,11 @@
 				</div>
 				<div class="flex flex-col gap-1">
 					<span class="text-sm text-muted-foreground">Last set to failure</span>
-					<Skeleton class="h-6 w-12 rounded-full" />
+					<Skeleton class="switch-skeleton" />
 				</div>
 				<div class="flex flex-col gap-1">
 					<span class="text-sm text-muted-foreground">Force RIR matching</span>
-					<Skeleton class="h-6 w-12 rounded-full" />
+					<Skeleton class="switch-skeleton" />
 				</div>
 			</Card.Content>
 			<Card.Footer class="justify-end">
