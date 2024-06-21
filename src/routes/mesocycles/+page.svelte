@@ -46,7 +46,7 @@
 	}
 
 	function createNewMesocycle() {
-		mesocycleRunes.resetStores();
+		if (mesocycleRunes.editingMesocycleId !== null) mesocycleRunes.resetStores();
 		goto('/mesocycles/manage/basics');
 	}
 </script>

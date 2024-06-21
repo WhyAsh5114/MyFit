@@ -14,6 +14,7 @@
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import { exerciseSplitRunes } from './manage/exerciseSplitRunes.svelte.js';
 
 	type ExerciseSplitsWithSplitDays = (ExerciseSplit & { exerciseSplitDays: ExerciseSplitDay[] })[];
 
@@ -47,6 +48,11 @@
 		if (exerciseSplits !== 'loading') exerciseSplits.push(...newExerciseSplits);
 		if (newExerciseSplits.length !== 10) loaderState.complete();
 	}
+
+	function createNewExerciseSplit() {
+		if (exerciseSplitRunes.editingExerciseSplitId !== null) exerciseSplitRunes.resetStores();
+		goto('/exercise-splits/manage/structure');
+	}
 </script>
 
 <H2>Exercise splits</H2>
@@ -70,9 +76,7 @@
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content align="end">
 				<DropdownMenu.Group>
-					<DropdownMenu.Item href="/exercise-splits/manage/structure">
-						Start from scratch
-					</DropdownMenu.Item>
+					<DropdownMenu.Item onclick={createNewExerciseSplit}>Start from scratch</DropdownMenu.Item>
 					<DropdownMenu.Item href="/exercise-splits/templates">Use template</DropdownMenu.Item>
 				</DropdownMenu.Group>
 			</DropdownMenu.Content>
