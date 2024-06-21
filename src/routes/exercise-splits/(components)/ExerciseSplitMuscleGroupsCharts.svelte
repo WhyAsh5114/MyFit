@@ -90,9 +90,9 @@
 
 <div class="flex flex-col gap-1">
 	<Select.Root bind:selected={currentFilter}>
-		<Select.Label class="p-0">Filter</Select.Label>
+		<Select.Label class="p-0">Chart type</Select.Label>
 		<Select.Trigger class="mb-2 w-full">
-			<Select.Value placeholder="Select filter" />
+			<Select.Value placeholder="Select chart type" />
 		</Select.Trigger>
 		<Select.Content class="max-h-48 overflow-y-auto">
 			{#each ['Frequency', 'Exercises'] as filter}
