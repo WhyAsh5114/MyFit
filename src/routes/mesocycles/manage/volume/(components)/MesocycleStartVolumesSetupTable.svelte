@@ -210,7 +210,10 @@
 	</Table.Header>
 	<Table.Body>
 		{#each mesocycleRunes.mesocycleCyclicSetChanges as setChange}
-			{@const muscleGroup = setChange.muscleGroup === 'Custom' ? (setChange.customMuscleGroup as string) : setChange.muscleGroup}
+			{@const muscleGroup =
+				setChange.muscleGroup === 'Custom'
+					? (setChange.customMuscleGroup as string)
+					: setChange.muscleGroup}
 			<Table.Row>
 				<Table.Cell class="font-semibold">
 					{convertCamelCaseToNormal(muscleGroup)}
@@ -246,6 +249,7 @@
 						}}
 						onSelectedChange={(s) => {
 							if (!s) return;
+							if (s.value === 0) setChange.regardlessOfProgress = false;
 							setChange.setIncreaseAmount = s.value;
 						}}
 					>
@@ -262,6 +266,7 @@
 				<Table.Cell class="p-0 text-center">
 					<Checkbox
 						aria-label="{muscleGroup}-increase-volume-regardless-of-progress"
+						disabled={setChange.setIncreaseAmount === 0}
 						bind:checked={setChange.regardlessOfProgress}
 					/>
 				</Table.Cell>
