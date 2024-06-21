@@ -13,6 +13,7 @@
 	import type { Mesocycle } from '@prisma/client';
 	import { InfiniteLoader, loaderState } from 'svelte-infinite';
 	import { Badge } from '$lib/components/ui/badge/index.js';
+	import { mesocycleRunes } from './manage/mesocycleRunes.svelte.js';
 
 	let { data } = $props();
 	let activeMesocycle: Pick<Mesocycle, 'id' | 'name'> | null | 'loading' = $state('loading');
@@ -43,6 +44,11 @@
 		if (mesocycles !== 'loading') mesocycles.push(...newMesocycles);
 		if (newMesocycles.length !== 10) loaderState.complete();
 	}
+
+	function createNewMesocycle() {
+		mesocycleRunes.resetStores();
+		goto('/mesocycles/manage/basics');
+	}
 </script>
 
 <H2>Mesocycles</H2>
@@ -55,7 +61,11 @@
 				<SearchIcon />
 			</Button>
 		</form>
-		<Button aria-label="create-new-mesocycle" href="/mesocycles/manage/basics"><AddIcon /></Button>
+		<Button
+			aria-label="create-new-mesocycle"
+			onclick={createNewMesocycle}
+			href="/mesocycles/manage/basics"><AddIcon /></Button
+		>
 	</div>
 	<div class="flex items-center gap-2">
 		<span class="text-sm font-medium text-muted-foreground">Active</span>
