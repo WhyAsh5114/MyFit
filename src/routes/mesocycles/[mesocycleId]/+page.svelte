@@ -9,6 +9,8 @@
 	import MesocycleSplitTab from './(components)/MesocycleSplitTab.svelte';
 	import InfoPopover from '$lib/components/InfoPopover.svelte';
 	import MesocycleVolumeTab from './(components)/MesocycleVolumeTab.svelte';
+	import MesocycleCharts from '../(components)/MesocycleCharts.svelte';
+	import * as Card from '$lib/components/ui/card';
 
 	let { data } = $props();
 	let mesocycle: FullMesocycle | 'loading' = $state('loading');
@@ -43,10 +45,14 @@
 			<MesocycleSplitTab {mesocycle} />
 		</Tabs.Content>
 		<Tabs.Content value="volume" class="grow">
-			<div class="flex flex-col h-full">
+			<div class="flex h-full flex-col">
 				<MesocycleVolumeTab cyclicSetChanges={mesocycle.mesocycleCyclicSetChanges} />
 			</div>
 		</Tabs.Content>
-		<Tabs.Content value="stats">TODO</Tabs.Content>
+		<Tabs.Content value="stats">
+			<Card.Root class="p-4">
+				<MesocycleCharts cyclicSetChanges={mesocycle.mesocycleCyclicSetChanges} />
+			</Card.Root>
+		</Tabs.Content>
 	</Tabs.Root>
 {/if}
