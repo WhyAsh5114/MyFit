@@ -1,5 +1,8 @@
 <script lang="ts">
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Card from '$lib/components/ui/card';
 	import * as Tabs from '$lib/components/ui/tabs';
+	import EditIcon from 'virtual:icons/lucide/pencil';
 	import type { FullMesocycle } from '../+page.server';
 	import MesocycleExerciseTemplateCard from './MesocycleExerciseTemplateCard.svelte';
 
@@ -13,10 +16,18 @@
 	);
 </script>
 
+<Card.Root class="mb-2 flex items-center justify-between gap-2 p-2">
+	<span class="text-sm font-medium text-muted-foreground">The current split of the mesocycle</span>
+	<Button size="sm" class="gap-2" href="/mesocycles/{mesocycle.id}/edit-split">
+		Edit <EditIcon />
+	</Button>
+</Card.Root>
 <Tabs.Root
 	value={selectedSplitDay.name}
 	onValueChange={(v) => {
-		selectedSplitDay = mesocycle.mesocycleExerciseSplitDays.find((splitDay) => splitDay.name === v) as MesocycleSplitDay;
+		selectedSplitDay = mesocycle.mesocycleExerciseSplitDays.find(
+			(splitDay) => splitDay.name === v
+		) as MesocycleSplitDay;
 	}}
 	class="w-full"
 >

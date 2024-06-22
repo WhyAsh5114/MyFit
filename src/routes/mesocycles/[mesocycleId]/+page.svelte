@@ -29,12 +29,7 @@
 	<Tabs.Root value="basics" class="flex w-full grow flex-col">
 		<Tabs.List class="grid grid-cols-4">
 			<Tabs.Trigger value="basics">Basics</Tabs.Trigger>
-			<Tabs.Trigger value="split" class="flex justify-end gap-1">
-				<span class="mx-auto">Split</span>
-				<InfoPopover ariaLabel="mesocycle-split-info" triggerClasses="justify-self-end">
-					The current exercise split for this mesocycle
-				</InfoPopover>
-			</Tabs.Trigger>
+			<Tabs.Trigger value="split">Split</Tabs.Trigger>
 			<Tabs.Trigger value="volume">Volume</Tabs.Trigger>
 			<Tabs.Trigger value="stats">Stats</Tabs.Trigger>
 		</Tabs.List>
