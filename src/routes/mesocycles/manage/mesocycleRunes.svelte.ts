@@ -33,7 +33,7 @@ export function createMesocycleRunes() {
 	let mesocycleCyclicSetChanges: MesocycleCyclicSetChangeWithExtraProps[] = $state([]);
 
 	let selectedExerciseSplit: FullExerciseSplit | null = $state(null);
-	let minSets = $state(3);
+	let minSets = $state(2);
 	let editingMesocycleId: string | null = $state(null);
 
 	if (globalThis.localStorage) {
@@ -54,7 +54,7 @@ export function createMesocycleRunes() {
 		mesocycleExerciseTemplates = [];
 		mesocycleCyclicSetChanges = [];
 		selectedExerciseSplit = null;
-		minSets = 3;
+		minSets = 2;
 		editingMesocycleId = null;
 		saveStoresToLocalStorage();
 	}
@@ -111,7 +111,7 @@ export function createMesocycleRunes() {
 			regardlessOfProgress: false,
 			maxVolume: 30,
 			setIncreaseAmount: 1,
-			startVolume: 5,
+			startVolume: 6,
 			inSplit
 		});
 
@@ -133,8 +133,7 @@ export function createMesocycleRunes() {
 			const muscleGroupTargetedOnDays = getMuscleGroupTargetedOnDaysArray(setChange);
 			const startVolumeDistributionAcrossDays = distributeEvenly(
 				setChange.startVolume,
-				muscleGroupTargetedOnDays.length,
-				minSets
+				muscleGroupTargetedOnDays.length
 			);
 
 			muscleGroupTargetedOnDays.forEach((dayIndex, i) => {
@@ -143,7 +142,7 @@ export function createMesocycleRunes() {
 					(exercise) => mesocycleRunes.isExerciseAndSetChangeMuscleSame(exercise, setChange)
 				);
 
-				const exerciseVolumeDistribution = distributeEvenly(
+				const exerciseVolumeDistribution = distributeEvenlyWithMinimum(
 					dayVolume,
 					targetingExercises.length,
 					minSets
@@ -174,27 +173,24 @@ export function createMesocycleRunes() {
 			);
 		}
 
-		function distributeEvenly(volume: number, n: number, minValue: number = 0): number[] {
+		function distributeEvenly(volume: number, n: number) {
 			let distribution = Array(n).fill(0);
-			let remainingVolume = volume;
+			const base = Math.floor(volume / n);
+			const remainder = volume % n;
 
-			if (minValue > 0) {
-				for (let i = 0; i < n; i++) {
-					if (remainingVolume >= minValue) {
-						distribution[i] = minValue;
-						remainingVolume -= minValue;
-					} else {
-						break;
-					}
-				}
-			}
-
-			const base = Math.floor(remainingVolume / n);
-			const remainder = remainingVolume % n;
-			for (let i = 0; i < n; i++) distribution[i] += base;
+			for (let i = 0; i < n; i++) distribution[i] = base;
 			for (let i = 0; i < remainder; i++) distribution[i] += 1;
-
 			return distribution;
+		}
+
+		function distributeEvenlyWithMinimum(v: number, n: number, m: number) {
+			const f = Math.floor(v / m);
+			if (f > n) return distributeEvenly(v, n);
+			const a = Array(f).fill(m);
+			const r = distributeEvenly(v - m * f, f);
+			for (let i = 0; i < f; i++) a[i] += r[i];
+			for (let i = 0; i < n - f; i++) a.push(0);
+			return a;
 		}
 	}
 
