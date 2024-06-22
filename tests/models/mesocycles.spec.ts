@@ -31,7 +31,8 @@ test('create a mesocycle', async ({ page }) => {
 	await page.getByRole('option', { name: '2' }).click();
 	await page.getByLabel('Chest-increase-volume-').click();
 	await page.getByLabel('Chest-max-volume').fill('50');
-	await page.getByRole('button', { name: 'Save' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('button', { name: 'Save' }).click();
 
 	await expect(
 		page.getByRole('status').filter({ hasText: 'Mesocycle created successfully' })
