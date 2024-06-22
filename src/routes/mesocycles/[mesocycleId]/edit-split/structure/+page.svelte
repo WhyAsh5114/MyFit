@@ -1,7 +1,7 @@
 <script lang="ts">
-	import H2 from '$lib/components/ui/typography/H2.svelte';
+	import H3 from '$lib/components/ui/typography/H3.svelte';
 
 	let { data } = $props();
 </script>
 
-<H2>Edit mesocycle split</H2>
+<H3>Structure</H3>
