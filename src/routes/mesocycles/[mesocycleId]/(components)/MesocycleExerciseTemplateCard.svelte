@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge';
 	import { convertCamelCaseToNormal } from '$lib/utils';
-	import type { MesocycleExerciseTemplate } from '@prisma/client';
+	import type { Prisma } from '@prisma/client';
 
 	type ExerciseTemplateCardProps = {
-		exerciseTemplate: MesocycleExerciseTemplate;
+		exerciseTemplate: Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput;
 	};
 
 	let { exerciseTemplate }: ExerciseTemplateCardProps = $props();

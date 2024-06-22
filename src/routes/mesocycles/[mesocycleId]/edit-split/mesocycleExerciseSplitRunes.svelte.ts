@@ -22,11 +22,6 @@ export function createMesocycleExerciseSplitRunes() {
 	let editingExercise: MesocycleExerciseTemplateWithoutIds | undefined = $state(undefined);
 	let copiedExercises: MesocycleExerciseTemplateWithoutIds[] | undefined = $state(undefined);
 
-	if (globalThis.localStorage) {
-		const savedState = localStorage.getItem('mesocycleExerciseSplitRunes');
-		if (savedState) ({ splitDays, splitExercises, mesocycleId } = JSON.parse(savedState));
-	}
-
 	function addSplitDay() {
 		splitDays.push({ name: '', isRestDay: false });
 	}
@@ -87,6 +82,10 @@ export function createMesocycleExerciseSplitRunes() {
 	function deleteExercise(exerciseIdx: number) {
 		splitExercises[selectedSplitDayIndex].splice(exerciseIdx, 1);
 		saveStoresToLocalStorage();
+	}
+
+	function setEditingExercise(exerciseTemplate: MesocycleExerciseTemplateWithoutIds) {
+		editingExercise = exerciseTemplate;
 	}
 
 	function editExercise(exerciseTemplate: MesocycleExerciseTemplateWithoutIds) {
@@ -195,6 +194,7 @@ export function createMesocycleExerciseSplitRunes() {
 		addExercise,
 		editExercise,
 		deleteExercise,
+		setEditingExercise,
 		copyExercises,
 		pasteExercises,
 		cutExercises,
