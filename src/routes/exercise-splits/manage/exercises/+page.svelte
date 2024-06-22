@@ -12,8 +12,8 @@
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
 	import ExerciseSplitDrawer from './(components)/ExerciseSplitDrawer.svelte';
-	import DndComponent from './(components)/DndComponent.svelte';
-	import SwapExercisesDialog from './(components)/SwapExercisesDialog.svelte';
+	import DndComponent from '$lib/components/mesocycleAndExerciseSplit/DndComponent.svelte';
+	import SwapExercisesDialog from '$lib/components/mesocycleAndExerciseSplit/SwapExercisesDialog.svelte';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 
@@ -118,6 +118,9 @@
 			</div>
 			<div class="flex h-px grow flex-col overflow-y-auto">
 				<DndComponent
+					context="exerciseSplit"
+					deleteExercise={exerciseSplitRunes.deleteExercise}
+					setEditingExercise={exerciseSplitRunes.setEditingExercise}
 					bind:itemList={exerciseSplitRunes.splitExercises[
 						exerciseSplitRunes.selectedSplitDayIndex
 					]}
@@ -133,4 +136,9 @@
 	<Button onclick={submitExercises}>Next</Button>
 </div>
 
-<SwapExercisesDialog bind:open={swapDialogOpen} />
+<SwapExercisesDialog
+	splitDays={exerciseSplitRunes.splitDays}
+	selectedSplitDayIndex={exerciseSplitRunes.selectedSplitDayIndex}
+	swapExercises={exerciseSplitRunes.swapExercises}
+	bind:open={swapDialogOpen}
+/>
