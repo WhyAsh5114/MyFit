@@ -92,3 +92,31 @@ export function convertCamelCaseToNormal(text?: string): string {
 		.toLowerCase()
 		.replace(/(^\w|\s\w)/g, (match) => match.toUpperCase());
 }
+
+interface Item {
+	[key: string]: any;
+}
+
+interface GroupedItem<T> {
+	property: string;
+	items: T[];
+}
+
+export const groupBy = <T extends Item>(array: T[], property: keyof T): GroupedItem<T>[] => {
+	const grouped = array.reduce(
+		(acc, obj) => {
+			const key = obj[property] as string;
+			if (!acc[key]) {
+				acc[key] = [];
+			}
+			acc[key].push(obj);
+			return acc;
+		},
+		{} as Record<string, T[]>
+	);
+
+	return Object.keys(grouped).map((key) => ({
+		property: key,
+		items: grouped[key]
+	}));
+};
