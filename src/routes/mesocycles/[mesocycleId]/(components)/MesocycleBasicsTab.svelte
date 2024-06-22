@@ -15,7 +15,7 @@
 
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { arraySum } from '$lib/utils';
-	import type { FullMesocycle } from '../+page.server';
+	import type { FullMesocycle } from '../+layout.server';
 	import { trpc } from '$lib/trpc/client';
 	import { toast } from 'svelte-sonner';
 	import { goto, invalidate } from '$app/navigation';

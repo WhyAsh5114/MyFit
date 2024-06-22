@@ -4,10 +4,9 @@
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import type { FullMesocycle } from './+page.server';
+	import type { FullMesocycle } from './+layout.server';
 	import MesocycleSkeleton from './(components)/MesocycleSkeleton.svelte';
 	import MesocycleSplitTab from './(components)/MesocycleSplitTab.svelte';
-	import InfoPopover from '$lib/components/InfoPopover.svelte';
 	import MesocycleVolumeTab from './(components)/MesocycleVolumeTab.svelte';
 	import MesocycleCharts from '../(components)/MesocycleCharts.svelte';
 	import * as Card from '$lib/components/ui/card';

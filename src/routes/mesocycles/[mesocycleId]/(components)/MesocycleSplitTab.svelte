@@ -3,7 +3,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import EditIcon from 'virtual:icons/lucide/pencil';
-	import type { FullMesocycle } from '../+page.server';
+	import type { FullMesocycle } from '../+layout.server';
 	import MesocycleExerciseTemplateCard from './MesocycleExerciseTemplateCard.svelte';
 
 	type MesocycleSplitDay = FullMesocycle['mesocycleExerciseSplitDays'][number];
@@ -18,7 +18,7 @@
 
 <Card.Root class="mb-2 flex items-center justify-between gap-2 p-2">
 	<span class="text-sm font-medium text-muted-foreground">The current split of the mesocycle</span>
-	<Button size="sm" class="gap-2" href="/mesocycles/{mesocycle.id}/edit-split">
+	<Button size="sm" class="gap-2" href="/mesocycles/{mesocycle.id}/edit-split/structure">
 		Edit <EditIcon />
 	</Button>
 </Card.Root>
