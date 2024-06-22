@@ -90,7 +90,7 @@ export function convertCamelCaseToNormal(text?: string): string {
 	return text
 		.replace(/([a-z])([A-Z])/g, '$1 $2')
 		.toLowerCase()
-		.replace(/(^\w|\s\w)/g, (match) => match.toUpperCase());
+		.replace(/^\w/, (match) => match.toUpperCase());
 }
 
 interface Item {
