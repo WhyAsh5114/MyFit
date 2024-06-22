@@ -2,6 +2,7 @@
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import * as Table from '$lib/components/ui/table';
+	import { convertCamelCaseToNormal } from '$lib/utils';
 	import type { MesocycleCyclicSetChange } from '@prisma/client';
 
 	type PropsType = { cyclicSetChanges: MesocycleCyclicSetChange[] };
@@ -22,7 +23,7 @@
 			{#each cyclicSetChanges as setChange}
 				<Table.Row>
 					<Table.Cell class="font-medium">
-						{setChange.customMuscleGroup ?? setChange.muscleGroup}
+						{convertCamelCaseToNormal(setChange.customMuscleGroup ?? setChange.muscleGroup)}
 					</Table.Cell>
 					<Table.Cell>{setChange.maxVolume}</Table.Cell>
 					<Table.Cell>{setChange.setIncreaseAmount}</Table.Cell>
