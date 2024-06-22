@@ -9,7 +9,7 @@
 		CategoryScale,
 		LinearScale
 	} from 'chart.js';
-	import { MuscleGroup, type Prisma } from '@prisma/client';
+	import { type Prisma } from '@prisma/client';
 	import type { Selected } from 'bits-ui';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	Chart.register(Tooltip, Legend, BarController, BarElement, CategoryScale, LinearScale);
@@ -22,12 +22,22 @@
 	let chartCanvasElement: HTMLCanvasElement;
 	let chart: Chart;
 
-	const muscleGroups = Object.values(MuscleGroup);
+	const muscleGroups = Array.from(
+		new Set(
+			splitExercises.flatMap((dayExercises) =>
+				dayExercises.map((exercise) =>
+					exercise.targetMuscleGroup === 'Custom'
+						? (exercise.customMuscleGroup as string)
+						: exercise.targetMuscleGroup
+				)
+			)
+		)
+	);
 	const sortedMuscleGroups = muscleGroups.toSorted(
 		(a, b) => getTotalExercises(b) - getTotalExercises(a)
 	);
 
-	let selectedMuscleGroups: Selected<MuscleGroup>[] = $state(
+	let selectedMuscleGroups: Selected<string>[] = $state(
 		sortedMuscleGroups
 			.slice(0, 3)
 			.map((muscleGroup) => ({ value: muscleGroup, label: convertCamelCaseToNormal(muscleGroup) }))
@@ -38,7 +48,7 @@
 		label: 'Frequency'
 	});
 
-	function getTotalFrequency(muscleGroup: MuscleGroup) {
+	function getTotalFrequency(muscleGroup: string) {
 		return splitExercises.reduce((totalFrequency, splitDayExercises) => {
 			const hasTargetedExercise = splitDayExercises.some(
 				(exercise) => exercise.targetMuscleGroup === muscleGroup
@@ -47,7 +57,7 @@
 		}, 0);
 	}
 
-	function getTotalExercises(muscleGroup: MuscleGroup) {
+	function getTotalExercises(muscleGroup: string) {
 		return splitExercises.reduce((totalExercises, splitDayExercises) => {
 			return (
 				totalExercises +
@@ -106,7 +116,7 @@
 			<Select.Value placeholder="Select muscle groups" />
 		</Select.Trigger>
 		<Select.Content class="max-h-48 overflow-y-auto">
-			{#each Object.values(MuscleGroup) as muscleGroup}
+			{#each sortedMuscleGroups as muscleGroup}
 				<Select.Item value={muscleGroup}>{convertCamelCaseToNormal(muscleGroup)}</Select.Item>
 			{/each}
 		</Select.Content>
