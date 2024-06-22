@@ -5,6 +5,8 @@
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import type { FullMesocycle } from '../+layout.server';
 	import MesocycleExerciseTemplateCard from './MesocycleExerciseTemplateCard.svelte';
+	import { mesocycleExerciseSplitRunes } from '../edit-split/mesocycleExerciseSplitRunes.svelte';
+	import { goto } from '$app/navigation';
 
 	type MesocycleSplitDay = FullMesocycle['mesocycleExerciseSplitDays'][number];
 	let { mesocycle }: { mesocycle: FullMesocycle } = $props();
@@ -14,11 +16,16 @@
 			(splitDay) => !splitDay.isRestDay
 		) as MesocycleSplitDay
 	);
+
+	function editMesocycleExerciseSplit() {
+		mesocycleExerciseSplitRunes.loadExerciseSplit(mesocycle);
+		goto(`/mesocycles/${mesocycle.id}/edit-split/structure`);
+	}
 </script>
 
 <Card.Root class="mb-2 flex items-center justify-between gap-2 p-2">
 	<span class="text-sm font-medium text-muted-foreground">The current split of the mesocycle</span>
-	<Button size="sm" class="gap-2" href="/mesocycles/{mesocycle.id}/edit-split/structure">
+	<Button size="sm" class="gap-2" onclick={editMesocycleExerciseSplit}>
 		Edit <EditIcon />
 	</Button>
 </Card.Root>
