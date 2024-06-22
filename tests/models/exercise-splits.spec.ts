@@ -86,6 +86,7 @@ test('edit an exercise split', async ({ page }) => {
 	await page.getByRole('link', { name: 'Pull Push Legs 7 days / cycle' }).click();
 	await page.getByLabel('exercise-split-options').click();
 	await page.getByRole('menuitem', { name: 'Edit' }).click();
+	await page.getByRole('button', { name: 'Continue' }).click();
 	await page.getByPlaceholder('Type here').click();
 	await page.getByPlaceholder('Type here').fill('Pull Push Legs (edited)');
 	await page.getByRole('row', { name: 'Legs B' }).getByRole('checkbox').click();

@@ -28,6 +28,7 @@
 
 	let { data } = $props();
 	let exerciseSplit: FullExerciseSplit | 'loading' = $state('loading');
+	let editExerciseSplitNoteDrawerOpen = $state(false);
 	let deleteConfirmDrawerOpen = $state(false);
 	let callingDeleteEndpoint = $state(false);
 
@@ -63,13 +64,19 @@
 	function loadExerciseSplit(mode: 'edit' | 'clone') {
 		if (exerciseSplit === 'loading') return;
 		if (mode === 'edit') {
-			exerciseSplitRunes.loadExerciseSplit(
-				getExerciseSplitWithoutIds(exerciseSplit),
-				exerciseSplit.id
-			);
+			editExerciseSplitNoteDrawerOpen = true;
 		} else if (mode === 'clone') {
 			exerciseSplitRunes.loadExerciseSplit(getExerciseSplitWithoutIds(exerciseSplit));
+			goto(`/exercise-splits/manage/structure`);
 		}
+	}
+
+	function editExerciseSplit() {
+		if (exerciseSplit === 'loading') return;
+		exerciseSplitRunes.loadExerciseSplit(
+			getExerciseSplitWithoutIds(exerciseSplit),
+			exerciseSplit.id
+		);
 		goto(`/exercise-splits/manage/structure`);
 	}
 </script>
@@ -153,3 +160,11 @@
 		</Button>
 	</ResponsiveDialog>
 {/if}
+
+<ResponsiveDialog title="Note" needTrigger={false} bind:open={editExerciseSplitNoteDrawerOpen}>
+	<p class="text-sm">
+		Editing an exercise split won't change the mesocycle split it is used in. To modify that, use
+		the <b>Split</b> tab in <b>View mesocycle</b>
+	</p>
+	<Button onclick={editExerciseSplit}>Continue</Button>
+</ResponsiveDialog>
