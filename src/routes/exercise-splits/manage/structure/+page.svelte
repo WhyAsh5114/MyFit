@@ -73,7 +73,7 @@
 							bind:value={splitDay.name}
 						/>
 					</Table.Cell>
-					<Table.Cell class="p-0 text-center">
+					<Table.Cell class="p-0">
 						<Checkbox
 							checked={splitDay.isRestDay}
 							onCheckedChange={(checked) => {
