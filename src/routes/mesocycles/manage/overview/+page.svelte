@@ -13,6 +13,7 @@
 	import type { Prisma } from '@prisma/client';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import MesocycleCharts from '../../(components)/MesocycleCharts.svelte';
+	import { TRPCClientError } from '@trpc/client';
 
 	let { data } = $props();
 
@@ -39,18 +40,21 @@
 			return rest;
 		});
 
-		let response;
-		if (mesocycleRunes.editingMesocycleId)
-			response = await editMesocycle(mesocycleRunes.editingMesocycleId, mesocycleCyclicSetChanges);
-		else response = await createMesocycle(mesocycleCyclicSetChanges);
+		try {
+			let response;
+			if (mesocycleRunes.editingMesocycleId)
+				response = await editMesocycle(
+					mesocycleRunes.editingMesocycleId,
+					mesocycleCyclicSetChanges
+				);
+			else response = await createMesocycle(mesocycleCyclicSetChanges);
 
-		if (response.message) {
 			toast.success(response.message);
 			await invalidate('mesocycles:all');
 			await goto('/mesocycles');
 			mesocycleRunes.resetStores();
-		} else if ('error' in response) {
-			toast.error(response.error);
+		} catch (error) {
+			if (error instanceof TRPCClientError) toast.error(error.message);
 		}
 
 		savingMesocycle = false;

@@ -23,4 +23,11 @@ const { handle: authHandle } = SvelteKitAuth({
 	}
 });
 
-export const handle = sequence(authHandle, createTRPCHandle({ router, createContext }));
+const trpcHandle = createTRPCHandle({
+	router,
+	createContext,
+	onError: ({ type, path, error }) =>
+		console.error(`Encountered error while trying to process ${type} @ ${path}:`, error)
+});
+
+export const handle = sequence(authHandle, trpcHandle);

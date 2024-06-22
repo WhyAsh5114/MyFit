@@ -10,6 +10,7 @@
 	import ExerciseSplitMuscleGroupsCharts from '../../(components)/ExerciseSplitMuscleGroupsCharts.svelte';
 	import ExerciseSplitExercisesCharts from '../../(components)/ExerciseSplitExercisesCharts.svelte';
 	import { trpc } from '$lib/trpc/client';
+	import { TRPCClientError } from '@trpc/client';
 
 	let savingExerciseSplit = $state(false);
 
@@ -26,24 +27,32 @@
 	}
 
 	async function createExerciseSplit() {
-		const { message } = await trpc().exerciseSplits.create.mutate({
-			splitName: exerciseSplitRunes.splitName,
-			splitDays: exerciseSplitRunes.splitDays,
-			splitExercises: exerciseSplitRunes.splitExercises
-		});
-		toast.success(message);
-	}
-
-	async function editExerciseSplit(id: string) {
-		const { message } = await trpc().exerciseSplits.editById.mutate({
-			id,
-			splitData: {
+		try {
+			const { message } = await trpc().exerciseSplits.create.mutate({
 				splitName: exerciseSplitRunes.splitName,
 				splitDays: exerciseSplitRunes.splitDays,
 				splitExercises: exerciseSplitRunes.splitExercises
-			}
-		});
-		toast.success(message);
+			});
+			toast.success(message);
+		} catch (error) {
+			if (error instanceof TRPCClientError) toast.error(error.message);
+		}
+	}
+
+	async function editExerciseSplit(id: string) {
+		try {
+			const { message } = await trpc().exerciseSplits.editById.mutate({
+				id,
+				splitData: {
+					splitName: exerciseSplitRunes.splitName,
+					splitDays: exerciseSplitRunes.splitDays,
+					splitExercises: exerciseSplitRunes.splitExercises
+				}
+			});
+			toast.success(message);
+		} catch (error) {
+			if (error instanceof TRPCClientError) toast.error(error.message);
+		}
 	}
 </script>
 

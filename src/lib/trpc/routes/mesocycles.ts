@@ -11,6 +11,7 @@ import {
 } from '$lib/zodSchemas';
 import type { Prisma } from '@prisma/client';
 import cuid from 'cuid';
+import { TRPCError } from '@trpc/server';
 
 const zodMesocycleCreateInput = z.strictObject({
 	mesocycle: MesocycleUncheckedCreateWithoutUserInputSchema,
@@ -77,7 +78,8 @@ export const mesocycles = t.router({
 
 		if (input.startImmediately) {
 			const activeMesocycle = await getActiveMesocycle(ctx.userId);
-			if (activeMesocycle) return { error: 'A mesocycle is already active' };
+			if (activeMesocycle)
+				throw new TRPCError({ code: 'BAD_REQUEST', message: 'A mesocycle is already active' });
 			mesocycle.startDate = new Date();
 		}
 
@@ -148,15 +150,12 @@ export const mesocycles = t.router({
 			let updateClause: Prisma.MesocycleUpdateInput;
 			if (!input.startDate) updateClause = { startDate: now };
 			else if (!input.endDate) updateClause = { endDate: now };
-			else return { error: 'Mesocycle already completed' };
+			else throw new TRPCError({ code: 'BAD_REQUEST', message: 'Mesocycle already completed' });
 
 			if (!input.startDate) {
 				const activeMesocycle = await getActiveMesocycle(ctx.userId);
 				if (activeMesocycle) {
-					return {
-						error: 'A mesocycle is already active',
-						description: activeMesocycle.name
-					};
+					throw new TRPCError({ code: 'BAD_REQUEST', message: 'A mesocycle is already active' });
 				}
 			}
 

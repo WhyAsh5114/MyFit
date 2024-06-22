@@ -25,6 +25,7 @@
 	} from '../manage/exerciseSplitRunes.svelte';
 	import { trpc } from '$lib/trpc/client';
 	import { page } from '$app/stores';
+	import { TRPCClientError } from '@trpc/client';
 
 	let { data } = $props();
 	let exerciseSplit: FullExerciseSplit | 'loading' = $state('loading');
@@ -40,10 +41,14 @@
 
 	async function deleteExerciseSplit() {
 		callingDeleteEndpoint = true;
-		const response = await trpc().exerciseSplits.deleteById.mutate($page.params.exerciseSplitId);
-		toast.success(response.message);
-		await invalidate('exerciseSplits:all');
-		await goto('/exercise-splits');
+		try {
+			const response = await trpc().exerciseSplits.deleteById.mutate($page.params.exerciseSplitId);
+			toast.success(response.message);
+			await invalidate('exerciseSplits:all');
+			await goto('/exercise-splits');
+		} catch (error) {
+			if (error instanceof TRPCClientError) toast.error(error.message);
+		}
 		callingDeleteEndpoint = false;
 	}
 

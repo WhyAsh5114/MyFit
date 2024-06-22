@@ -20,6 +20,7 @@
 	import { toast } from 'svelte-sonner';
 	import { goto, invalidate } from '$app/navigation';
 	import { mesocycleRunes, type FullMesocycleWithoutIds } from '../../manage/mesocycleRunes.svelte';
+	import { TRPCClientError } from '@trpc/client';
 
 	let { mesocycle }: { mesocycle: FullMesocycle } = $props();
 	let deleteConfirmDrawerOpen = $state(false);
@@ -64,28 +65,32 @@
 
 	async function progressMesocycle() {
 		callingPatchEndpoint = true;
-		const response = await trpc().mesocycles.progressToNextStage.mutate({
-			id: mesocycle.id,
-			startDate: mesocycle.startDate,
-			endDate: mesocycle.endDate
-		});
-		if (response.error !== undefined) {
-			toast.error(response.error, { description: response.description });
-		} else {
+		try {
+			const response = await trpc().mesocycles.progressToNextStage.mutate({
+				id: mesocycle.id,
+				startDate: mesocycle.startDate,
+				endDate: mesocycle.endDate
+			});
 			mesocycle.startDate = response.startDate;
 			mesocycle.endDate = response.endDate;
 			await invalidate('mesocycles:active');
 			toast.success(response.message);
+		} catch (error) {
+			if (error instanceof TRPCClientError) toast.error(error.message);
 		}
 		callingPatchEndpoint = false;
 	}
 
 	async function deleteMesocycle() {
 		callingDeleteEndpoint = true;
-		const { message } = await trpc().mesocycles.deleteById.mutate(mesocycle.id);
-		toast.success(message);
-		await invalidate('mesocycles:all');
-		await goto('/mesocycles');
+		try {
+			const { message } = await trpc().mesocycles.deleteById.mutate(mesocycle.id);
+			toast.success(message);
+			await invalidate('mesocycles:all');
+			await goto('/mesocycles');
+		} catch (error) {
+			if (error instanceof TRPCClientError) toast.error(error.message);
+		}
 		callingDeleteEndpoint = false;
 	}
 </script>
