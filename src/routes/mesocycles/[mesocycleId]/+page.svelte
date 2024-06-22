@@ -8,6 +8,7 @@
 	import MesocycleSkeleton from './(components)/MesocycleSkeleton.svelte';
 	import MesocycleSplitTab from './(components)/MesocycleSplitTab.svelte';
 	import InfoPopover from '$lib/components/InfoPopover.svelte';
+	import MesocycleVolumeTab from './(components)/MesocycleVolumeTab.svelte';
 
 	let { data } = $props();
 	let mesocycle: FullMesocycle | 'loading' = $state('loading');
@@ -41,8 +42,10 @@
 		<Tabs.Content value="split">
 			<MesocycleSplitTab {mesocycle} />
 		</Tabs.Content>
-		<Tabs.Content value="volume">
-			
+		<Tabs.Content value="volume" class="grow">
+			<div class="flex flex-col h-full">
+				<MesocycleVolumeTab cyclicSetChanges={mesocycle.mesocycleCyclicSetChanges} />
+			</div>
 		</Tabs.Content>
 		<Tabs.Content value="stats">TODO</Tabs.Content>
 	</Tabs.Root>
