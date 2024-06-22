@@ -45,5 +45,7 @@ test('create a mesocycle', async ({ page }) => {
 		'RIR progression 12 cycles 2 1 0 Start exercise template Pull Push Legs Preferred progression variable Load Start overload percentage 1.25% Last set to failure Force RIR matching'
 	);
 
-	// TODO: confirm the chest cyclic set changes being applied
+	await page.getByRole('tab', { name: 'Volume' }).click();
+  await expect(page.locator('tbody')).toContainText('50');
+  await expect(page.locator('tbody')).toContainText('2');
 });
