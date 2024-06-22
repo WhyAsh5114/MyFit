@@ -96,6 +96,10 @@ export function createExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
+	function setEditingExercise(exerciseTemplate: ExerciseTemplateWithoutIds) {
+		editingExercise = exerciseTemplate;
+	}
+
 	function editExercise(exerciseTemplate: ExerciseTemplateWithoutIds) {
 		if (!editingExercise) return false;
 		const editingExerciseIndex = splitExercises[selectedSplitDayIndex].indexOf(editingExercise);
@@ -202,6 +206,7 @@ export function createExerciseSplitRunes() {
 		getDataLossDays,
 		updateSplitExercisesStructure,
 		addExercise,
+		setEditingExercise,
 		editExercise,
 		deleteExercise,
 		copyExercises,
