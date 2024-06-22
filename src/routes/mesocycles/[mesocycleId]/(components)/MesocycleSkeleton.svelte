@@ -9,6 +9,7 @@
 	<Tabs.List class="grid grid-cols-3">
 		<Tabs.Trigger value="basics">Basics</Tabs.Trigger>
 		<Tabs.Trigger value="split">Split</Tabs.Trigger>
+		<Tabs.Trigger value="volume">Volume</Tabs.Trigger>
 		<Tabs.Trigger value="stats">Stats</Tabs.Trigger>
 	</Tabs.List>
 	<Tabs.Content value="basics">
