@@ -7,13 +7,11 @@
 	import { mesocycleRunes } from '../mesocycleRunes.svelte';
 	import MesocycleStartVolumesSetupTable from './(components)/MesocycleStartVolumesSetupTable.svelte';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
-	import { goto, invalidate } from '$app/navigation';
 	import type { FullExerciseSplit } from '../../../exercise-splits/manage/exerciseSplitRunes.svelte';
-	import { trpc } from '$lib/trpc/client';
+	import { goto } from '$app/navigation';
 
 	let { data } = $props();
 	let exerciseSplit: FullExerciseSplit | 'loading' = $state('loading');
-	let savingMesocycle = $state(false);
 
 	onMount(async () => {
 		if (data.editing) return;
@@ -27,49 +25,9 @@
 		exerciseSplit = serverExerciseSplit;
 	});
 
-	async function createOrEditMesocycle() {
-		const id = mesocycleRunes.editingMesocycleId;
-		savingMesocycle = true;
-
-		const mesocycleCyclicSetChanges = mesocycleRunes.mesocycleCyclicSetChanges.map((setChange) => {
-			const { startVolume, inSplit, ...rest } = setChange;
-			return rest;
-		});
-
-		if (id) {
-			const { message } = await trpc().mesocycles.editById.mutate({
-				id,
-				mesocycleData: {
-					mesocycle: mesocycleRunes.mesocycle,
-					mesocycleCyclicSetChanges
-				}
-			});
-			toast.success(message);
-		} else {
-			mesocycleRunes.distributeStartVolumes();
-			const exerciseSplit = mesocycleRunes.selectedExerciseSplit as FullExerciseSplit;
-			const exerciseSplitWithoutExercises = {
-				...exerciseSplit,
-				exerciseSplitDays: exerciseSplit.exerciseSplitDays.map((splitDay) => {
-					const { exercises, id, exerciseSplitId, ...rest } = splitDay;
-					return rest;
-				})
-			};
-			const { message } = await trpc().mesocycles.create.mutate({
-				mesocycle: {
-					...mesocycleRunes.mesocycle,
-					exerciseSplitId: exerciseSplitWithoutExercises.id
-				},
-				mesocycleCyclicSetChanges,
-				mesocycleExerciseTemplates: mesocycleRunes.mesocycleExerciseTemplates,
-				exerciseSplit: exerciseSplitWithoutExercises
-			});
-			toast.success(message);
-		}
-		await invalidate('mesocycles:all');
-		await goto('/mesocycles');
-		savingMesocycle = false;
-		mesocycleRunes.resetStores();
+	function submitVolume() {
+		mesocycleRunes.distributeStartVolumes();
+		goto('./overview');
 	}
 </script>
 
@@ -80,13 +38,7 @@
 	</ScrollArea>
 	<div class="grid grid-cols-2 gap-1">
 		<Button variant="secondary" href="./progression">Previous</Button>
-		<Button disabled={savingMesocycle} onclick={createOrEditMesocycle}>
-			{#if savingMesocycle}
-				<LoaderCircle class="animate-spin" />
-			{:else}
-				Save
-			{/if}
-		</Button>
+		<Button onclick={submitVolume}>Next</Button>
 	</div>
 {:else}
 	<div class="flex h-full w-full items-center justify-center text-muted-foreground">
