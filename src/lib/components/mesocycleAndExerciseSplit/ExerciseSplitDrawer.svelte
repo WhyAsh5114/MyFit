@@ -111,7 +111,11 @@
 	}
 </script>
 
-<Sheet.Root closeOnOutsideClick={false} bind:open>
+<Sheet.Root
+	closeOnOutsideClick={false}
+	onOpenChange={(o) => !o && props.setEditingExercise(undefined)}
+	bind:open
+>
 	<Sheet.Trigger asChild let:builder>
 		<Button
 			size="icon"
