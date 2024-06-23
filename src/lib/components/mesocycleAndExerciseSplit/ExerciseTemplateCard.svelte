@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { convertCamelCaseToNormal } from '$lib/utils';
+	import { dragHandle } from 'svelte-dnd-action';
+	import GripVertical from 'virtual:icons/lucide/grip-vertical';
 	import MenuIcon from 'virtual:icons/lucide/menu';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import DeleteIcon from 'virtual:icons/lucide/trash';
-	import GripVertical from 'virtual:icons/lucide/grip-vertical';
-	import { convertCamelCaseToNormal } from '$lib/utils';
-	import { dragHandle } from 'svelte-dnd-action';
-	import type { MesocycleExerciseTemplateWithoutIds, NormalExerciseTemplateWithoutIds } from './commonTypes';
+	import type {
+		MesocycleExerciseTemplateWithoutIds,
+		NormalExerciseTemplateWithoutIds
+	} from './commonTypes';
 
 	type ExerciseTemplateCardProps = {
 		readOnly?: boolean;
@@ -74,7 +77,13 @@
 		{/if}
 	</div>
 	<div class="flex items-center gap-0.5">
-		<span class="mr-auto text-sm text-muted-foreground">
+		<span
+			class="mr-auto text-sm text-muted-foreground"
+			class:lowercase={props.context === 'mesocycle'}
+		>
+			{#if props.context === 'mesocycle'}
+				{props.exerciseTemplate.sets}
+			{/if}
 			{props.exerciseTemplate.setType} sets of
 			{props.exerciseTemplate.repRangeStart} to {props.exerciseTemplate.repRangeEnd} reps
 		</span>
