@@ -2,14 +2,23 @@
 	import * as Sheet from '$lib/components/ui/sheet';
 	import { Button } from '$lib/components/ui/button';
 	import AddIcon from 'virtual:icons/lucide/plus';
+	import ChevronRight from 'virtual:icons/lucide/chevron-right';
+	import ChevronLeft from 'virtual:icons/lucide/chevron-left';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
 	import * as Command from '$lib/components/ui/command';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import Input from '$lib/components/ui/input/input.svelte';
+	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
-	import { ChangeType, MuscleGroup, SetType } from '@prisma/client';
+	import {
+		ChangeType,
+		MuscleGroup,
+		ProgressionVariable,
+		SetType,
+		type Mesocycle
+	} from '@prisma/client';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { commonExercisePerMuscleGroup } from '$lib/common/commonExercises';
 	import type {
@@ -27,25 +36,36 @@
 
 	type PropsType =
 		| ({ context: 'exerciseSplit' } & CommonProps<NormalExerciseTemplateWithoutIds>)
-		| ({ context: 'mesocycle' } & CommonProps<MesocycleExerciseTemplateWithoutIds>);
+		| ({
+				context: 'mesocycle';
+				mesocycle: Mesocycle;
+		  } & CommonProps<MesocycleExerciseTemplateWithoutIds>);
 
 	type NonUndefined<T> = T extends undefined ? never : T;
 	type FullExerciseTemplate = NonUndefined<typeof props.editingExercise>;
 
 	let { ...props }: PropsType = $props();
 
+	const extraMesocycleProps: Partial<MesocycleExerciseTemplateWithoutIds> = {
+		sets: undefined,
+		overloadPercentage: null,
+		forceRIRMatching: null,
+		lastSetToFailure: null,
+		preferredProgressionVariable: null
+	};
+
 	const defaultExercise: Partial<FullExerciseTemplate> = {
 		name: '',
 		setType: 'Straight',
-		involvesBodyweight: false
+		involvesBodyweight: false,
+		...(props.context !== 'exerciseSplit' && structuredClone(extraMesocycleProps))
 	};
 
 	let open = $state(false);
+	let overridesSheetOpen = $state(false);
 	let mode = $derived(props.editingExercise === undefined ? 'Add' : 'Edit');
 	let searching = $state(false);
-	let currentExercise: Partial<ExerciseTemplateWithoutIds> = $state(
-		structuredClone(defaultExercise)
-	);
+	let currentExercise: Partial<FullExerciseTemplate> = $state(structuredClone(defaultExercise));
 
 	$effect(() => {
 		if (props.editingExercise) {
@@ -55,7 +75,10 @@
 	});
 
 	function selectExercise(exercise: ExerciseTemplateWithoutIds) {
-		currentExercise = structuredClone(exercise);
+		currentExercise = structuredClone({
+			...exercise,
+			...(props.context === 'mesocycle' && structuredClone(extraMesocycleProps))
+		});
 		searching = false;
 	}
 
@@ -81,6 +104,10 @@
 		}
 		resetDrawerState();
 		open = false;
+	}
+
+	function submitOverrides() {
+		overridesSheetOpen = false;
 	}
 </script>
 
@@ -165,6 +192,26 @@
 					/>
 				</div>
 			{/if}
+			{#if props.context === 'mesocycle' && 'sets' in currentExercise}
+				<div class="flex w-full flex-col gap-1.5">
+					<Label for="exercise-sets">Sets</Label>
+					<Input
+						id="exercise-sets"
+						min={0}
+						type="number"
+						placeholder="Type here"
+						bind:value={currentExercise.sets}
+						required
+					/>
+				</div>
+				<div class="flex flex-col gap-1.5">
+					<span class="text-sm font-medium leading-none">Progression</span>
+					<Button variant="secondary" class="gap-2" onclick={() => (overridesSheetOpen = true)}>
+						<span class="pointer-events-none">Overrides</span>
+						<ChevronRight class="pointer-events-none" />
+					</Button>
+				</div>
+			{/if}
 			<div class="flex w-full flex-col gap-1.5">
 				<Label for="exercise-involves-bodyweight">Involves bodyweight</Label>
 				<div class="flex items-center rounded-md border px-2 py-1.5">
@@ -196,28 +243,6 @@
 						{/each}
 					</Select.Content>
 				</Select.Root>
-			</div>
-			<div class="flex w-full flex-col gap-1.5">
-				<Label for="exercise-rep-range-start">Rep range start</Label>
-				<Input
-					id="exercise-rep-range-start"
-					min={1}
-					type="number"
-					placeholder="Type here"
-					bind:value={currentExercise.repRangeStart}
-					required
-				/>
-			</div>
-			<div class="flex w-full flex-col gap-1.5">
-				<Label for="exercise-rep-range-end">Rep range end</Label>
-				<Input
-					id="exercise-rep-range-end"
-					min={(currentExercise.repRangeStart ?? 0) + 1}
-					type="number"
-					placeholder="Type here"
-					bind:value={currentExercise.repRangeEnd}
-					required
-				/>
 			</div>
 			{#if currentExercise.setType === 'Drop' || currentExercise.setType === 'Down' || currentExercise.setType === 'Top'}
 				<div class="flex w-full flex-col gap-1.5">
@@ -263,6 +288,28 @@
 					/>
 				</div>
 			{/if}
+			<div class="flex w-full flex-col gap-1.5">
+				<Label for="exercise-rep-range-start">Rep range start</Label>
+				<Input
+					id="exercise-rep-range-start"
+					min={1}
+					type="number"
+					placeholder="Type here"
+					bind:value={currentExercise.repRangeStart}
+					required
+				/>
+			</div>
+			<div class="flex w-full flex-col gap-1.5">
+				<Label for="exercise-rep-range-end">Rep range end</Label>
+				<Input
+					id="exercise-rep-range-end"
+					min={(currentExercise.repRangeStart ?? 0) + 1}
+					type="number"
+					placeholder="Type here"
+					bind:value={currentExercise.repRangeEnd}
+					required
+				/>
+			</div>
 			<div class="col-span-2 flex w-full flex-col gap-1.5">
 				<Label for="exercise-note">Note</Label>
 				<Textarea
@@ -276,3 +323,130 @@
 		</form>
 	</Sheet.Content>
 </Sheet.Root>
+
+{#if props.context === 'mesocycle' && 'sets' in currentExercise}
+	<Sheet.Root closeOnOutsideClick={false} bind:open={overridesSheetOpen}>
+		<Sheet.Content class="w-10/12 overflow-y-auto px-4">
+			<Sheet.Header>
+				<Sheet.Title>Overrides</Sheet.Title>
+				<Sheet.Description>
+					Exercise progressions are based on the mesocycle by default, you can override (customize)
+					them here for each exercise
+				</Sheet.Description>
+			</Sheet.Header>
+			<form onsubmit={submitOverrides} class="mt-8 grid h-fit gap-x-2 gap-y-4">
+				<div class="flex flex-col gap-1">
+					<div class="flex items-center justify-between">
+						<Label for="exercise-override-overload-percentage-value">Overload percentage</Label>
+						<Checkbox
+							id="exercise-override-overload-percentage"
+							checked={currentExercise.overloadPercentage !== null}
+							onCheckedChange={(c) => {
+								if (c !== 'indeterminate' && 'sets' in currentExercise)
+									currentExercise.overloadPercentage = c ? undefined : null;
+							}}
+						/>
+					</div>
+					<Input
+						id="exercise-override-overload-percentage-value"
+						type="number"
+						placeholder={props.mesocycle.startOverloadPercentage.toString()}
+						disabled={currentExercise.overloadPercentage === null}
+						required
+						bind:value={currentExercise.overloadPercentage}
+					/>
+				</div>
+				<div class="flex flex-col gap-1">
+					<div class="flex items-center justify-between">
+						<span class="text-sm font-medium leading-none">Preferred progression variable</span>
+						<Checkbox
+							id="exercise-override-preferred-progression-variable"
+							checked={currentExercise.preferredProgressionVariable !== null}
+							onCheckedChange={(c) => {
+								if (c !== 'indeterminate' && 'sets' in currentExercise)
+									currentExercise.preferredProgressionVariable = c ? undefined : null;
+							}}
+						/>
+					</div>
+					<Select.Root
+						disabled={currentExercise.preferredProgressionVariable === null}
+						required
+						selected={{
+							value: props.mesocycle.preferredProgressionVariable,
+							label: props.mesocycle.preferredProgressionVariable
+						}}
+						onSelectedChange={(s) => {
+							if (s !== undefined && 'sets' in currentExercise)
+								currentExercise.preferredProgressionVariable = s.value;
+						}}
+					>
+						<Select.Trigger class="w-full">
+							<Select.Value />
+						</Select.Trigger>
+						<Select.Content>
+							{#each Object.values(ProgressionVariable) as progressionVariable}
+								<Select.Item value={progressionVariable}>{progressionVariable}</Select.Item>
+							{/each}
+						</Select.Content>
+					</Select.Root>
+				</div>
+				<div class="flex flex-col gap-1">
+					<div class="flex items-center justify-between">
+						<Label for="exercise-override-force-RIR-matching-value">Force RIR matching</Label>
+						<Checkbox
+							id="exercise-override-force-RIR-matching"
+							checked={currentExercise.forceRIRMatching !== null}
+							onCheckedChange={(c) => {
+								if (c !== 'indeterminate' && 'sets' in currentExercise)
+									currentExercise.forceRIRMatching = c ? props.mesocycle.forceRIRMatching : null;
+							}}
+						/>
+					</div>
+					{#key currentExercise.forceRIRMatching === null}
+						<div class="flex items-center rounded-md border px-2 py-1.5">
+							<Switch
+								id="exercise-override-force-RIR-matching-value"
+								name="exercise-override-force-RIR-matching-value"
+								checked={currentExercise.forceRIRMatching ?? props.mesocycle.forceRIRMatching}
+								disabled={currentExercise.forceRIRMatching === null}
+								onCheckedChange={(c) => {
+									if ('sets' in currentExercise) currentExercise.forceRIRMatching = c;
+								}}
+							/>
+						</div>
+					{/key}
+				</div>
+				<div class="flex flex-col gap-1">
+					<div class="flex items-center justify-between">
+						<Label for="exercise-override-last-set-to-failure-value">Last set to failure</Label>
+						<Checkbox
+							id="exercise-override-last-set-to-failure"
+							checked={currentExercise.lastSetToFailure !== null}
+							onCheckedChange={(c) => {
+								if (c !== 'indeterminate' && 'sets' in currentExercise)
+									currentExercise.lastSetToFailure = c ? props.mesocycle.lastSetToFailure : null;
+							}}
+						/>
+					</div>
+					{#key currentExercise.lastSetToFailure === null}
+						<div class="flex items-center rounded-md border px-2 py-1.5">
+							<Switch
+								id="exercise-override-last-set-to-failure-value"
+								name="exercise-override-last-set-to-failure-value"
+								checked={currentExercise.lastSetToFailure ?? props.mesocycle.lastSetToFailure}
+								disabled={currentExercise.lastSetToFailure === null}
+								onCheckedChange={(c) => {
+									if ('sets' in currentExercise) currentExercise.lastSetToFailure = c;
+								}}
+							/>
+						</div>
+					{/key}
+				</div>
+				<Button variant="secondary" class="gap-2" type="submit">
+					<ChevronLeft />
+					Basics
+				</Button>
+			</form>
+		</Sheet.Content>
+	</Sheet.Root>
+{/if}
