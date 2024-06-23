@@ -126,7 +126,7 @@
 </script>
 
 <Select.Root bind:selected={selectedChartType}>
-	<Select.Label class="mb-0.5 p-0">View chart</Select.Label>
+	<Select.Label class="mb-0.5 p-0">Chart type</Select.Label>
 	<Select.Trigger class="w-full">
 		<Select.Value />
 	</Select.Trigger>
