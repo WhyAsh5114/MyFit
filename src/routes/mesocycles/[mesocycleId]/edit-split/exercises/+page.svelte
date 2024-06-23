@@ -11,11 +11,11 @@
 	import ReorderIcon from 'virtual:icons/lucide/git-compare-arrows';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import { mesocycleExerciseSplitRunes } from '../mesocycleExerciseSplitRunes.svelte';
-	import ExerciseSplitDrawer from './(components)/ExerciseSplitDrawer.svelte';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import DndComponent from '$lib/components/mesocycleAndExerciseSplit/DndComponent.svelte';
 	import SwapExercisesDialog from '$lib/components/mesocycleAndExerciseSplit/SwapExercisesDialog.svelte';
+	import ExerciseSplitDrawer from '$lib/components/mesocycleAndExerciseSplit/ExerciseSplitDrawer.svelte';
 
 	let swapDialogOpen = $state(false);
 	let reordering = $state(false);
@@ -66,7 +66,13 @@
 						Day {mesocycleExerciseSplitRunes.selectedSplitDayIndex + 1}
 					</span>
 				</div>
-				<ExerciseSplitDrawer />
+				<ExerciseSplitDrawer
+					context="mesocycle"
+					addExercise={mesocycleExerciseSplitRunes.addExercise}
+					editExercise={mesocycleExerciseSplitRunes.editExercise}
+					setEditingExercise={mesocycleExerciseSplitRunes.setEditingExercise}
+					editingExercise={mesocycleExerciseSplitRunes.editingExercise}
+				/>
 				<Button size="icon" variant="outline" onclick={() => (reordering = !reordering)}>
 					{#if !reordering}
 						<ReorderIcon />

@@ -8,30 +8,48 @@
 	import { Switch } from '$lib/components/ui/switch';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { exerciseSplitRunes } from '../../exerciseSplitRunes.svelte';
 	import { toast } from 'svelte-sonner';
-	import { ChangeType, MuscleGroup, type Prisma, SetType } from '@prisma/client';
+	import { ChangeType, MuscleGroup, SetType } from '@prisma/client';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { commonExercisePerMuscleGroup } from '$lib/common/commonExercises';
+	import type {
+		ExerciseTemplateWithoutIds,
+		MesocycleExerciseTemplateWithoutIds,
+		NormalExerciseTemplateWithoutIds
+	} from './commonTypes';
 
-	type ExerciseTemplateWithoutIds = Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
+	type CommonProps<T> = {
+		editingExercise: T | undefined;
+		addExercise: (exercise: T) => boolean;
+		setEditingExercise: (exercise: T | undefined) => void;
+		editExercise: (exercise: T) => boolean;
+	};
 
-	const defaultExercise: Partial<ExerciseTemplateWithoutIds> = {
+	type PropsType =
+		| ({ context: 'exerciseSplit' } & CommonProps<NormalExerciseTemplateWithoutIds>)
+		| ({ context: 'mesocycle' } & CommonProps<MesocycleExerciseTemplateWithoutIds>);
+
+	type NonUndefined<T> = T extends undefined ? never : T;
+	type FullExerciseTemplate = NonUndefined<typeof props.editingExercise>;
+
+	let { ...props }: PropsType = $props();
+
+	const defaultExercise: Partial<FullExerciseTemplate> = {
 		name: '',
 		setType: 'Straight',
 		involvesBodyweight: false
 	};
 
 	let open = $state(false);
-	let mode = $derived(exerciseSplitRunes.editingExercise === undefined ? 'Add' : 'Edit');
+	let mode = $derived(props.editingExercise === undefined ? 'Add' : 'Edit');
 	let searching = $state(false);
 	let currentExercise: Partial<ExerciseTemplateWithoutIds> = $state(
 		structuredClone(defaultExercise)
 	);
 
 	$effect(() => {
-		if (exerciseSplitRunes.editingExercise) {
-			currentExercise = structuredClone($state.snapshot(exerciseSplitRunes.editingExercise));
+		if (props.editingExercise) {
+			currentExercise = structuredClone($state.snapshot(props.editingExercise));
 			open = true;
 		}
 	});
@@ -42,15 +60,20 @@
 	}
 
 	function resetDrawerState() {
-		exerciseSplitRunes.editingExercise = undefined;
+		props.setEditingExercise(undefined);
 		currentExercise = structuredClone(defaultExercise);
 	}
 
 	function submitForm() {
-		let result: boolean;
-		const finishedExercise = currentExercise as ExerciseTemplateWithoutIds;
-		if (mode === 'Add') result = exerciseSplitRunes.addExercise(finishedExercise);
-		else result = exerciseSplitRunes.editExercise(finishedExercise);
+		let result = false;
+		const finishedExercise = currentExercise as NonUndefined<typeof props.editingExercise>;
+		if ('sets' in finishedExercise) {
+			if (mode === 'Add') result = props.addExercise(finishedExercise);
+			else result = props.editExercise(finishedExercise);
+		} else if (props.context === 'exerciseSplit') {
+			if (mode === 'Add') result = props.addExercise(finishedExercise);
+			else result = props.editExercise(finishedExercise);
+		}
 
 		if (!result) {
 			toast.error('Exercise names should be unique');
@@ -109,7 +132,6 @@
 					? 'col-span-1'
 					: 'col-span-2'}"
 			>
-				<!-- TODO: required doesn't work, can be submitted without a target muscle group! Will be fixed by: https://github.com/huntabyte/bits-ui/pull/469 -->
 				<Select.Root
 					name="exercise-target-muscle-group"
 					selected={{
