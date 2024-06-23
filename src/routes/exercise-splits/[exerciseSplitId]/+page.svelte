@@ -10,8 +10,6 @@
 	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-	import ChartIcon from 'virtual:icons/lucide/bar-chart-big';
-	import TextIcon from 'virtual:icons/lucide/text';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import ExerciseSplitSkeleton from './(components)/ExerciseSplitSkeleton.svelte';
@@ -91,18 +89,7 @@
 	}
 </script>
 
-<H2>
-	View exercise split
-	{#if selectedTabValue === 'exercises'}
-		<Button size="icon" variant="outline" onclick={() => (chartMode = !chartMode)}>
-			{#if !chartMode}
-				<ChartIcon />
-			{:else}
-				<TextIcon />
-			{/if}
-		</Button>
-	{/if}
-</H2>
+<H2 showChartIcon={selectedTabValue === 'exercises'} bind:chartMode>View exercise split</H2>
 
 {#if exerciseSplit === 'loading'}
 	<ExerciseSplitSkeleton />
