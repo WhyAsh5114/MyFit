@@ -13,7 +13,7 @@
 
 	let dataLossDays: number[] = $state([]);
 	let warningDialogOpen = $state(false);
-	
+
 	async function submitStructure(warningAcknowledged = false) {
 		if (!mesocycleExerciseSplitRunes.validateSplitStructure()) {
 			toast.error('Workout names should be unique', {

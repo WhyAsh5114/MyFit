@@ -32,7 +32,7 @@ test('create a mesocycle', async ({ page }) => {
 	await page.getByLabel('Chest-increase-volume-').click();
 	await page.getByLabel('Chest-max-volume').fill('50');
 	await page.getByRole('button', { name: 'Next' }).click();
-  await page.getByRole('button', { name: 'Save' }).click();
+	await page.getByRole('button', { name: 'Save' }).click();
 
 	await expect(
 		page.getByRole('status').filter({ hasText: 'Mesocycle created successfully' })
@@ -46,6 +46,6 @@ test('create a mesocycle', async ({ page }) => {
 	);
 
 	await page.getByRole('tab', { name: 'Volume' }).click();
-  await expect(page.locator('tbody')).toContainText('50');
-  await expect(page.locator('tbody')).toContainText('2');
+	await expect(page.locator('tbody')).toContainText('50');
+	await expect(page.locator('tbody')).toContainText('2');
 });

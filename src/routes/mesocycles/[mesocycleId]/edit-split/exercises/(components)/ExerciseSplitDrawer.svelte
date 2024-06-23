@@ -33,7 +33,9 @@
 
 	$effect(() => {
 		if (mesocycleExerciseSplitRunes.editingExercise) {
-			currentExercise = structuredClone($state.snapshot(mesocycleExerciseSplitRunes.editingExercise));
+			currentExercise = structuredClone(
+				$state.snapshot(mesocycleExerciseSplitRunes.editingExercise)
+			);
 			open = true;
 		}
 	});
