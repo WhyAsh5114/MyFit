@@ -13,6 +13,8 @@
 
 	let { data } = $props();
 	let mesocycle: FullMesocycle | 'loading' = $state('loading');
+	let selectedTabValue = $state('basics');
+	let chartMode = $state(false);
 
 	onMount(async () => {
 		const serverMesocycle = await data.mesocycle;
@@ -21,16 +23,18 @@
 	});
 </script>
 
-<H2>View mesocycle</H2>
+<H2 showChartIcon={['split', 'volume'].includes(selectedTabValue)} bind:chartMode>
+	View mesocycle
+</H2>
+
 {#if mesocycle === 'loading'}
 	<MesocycleSkeleton />
 {:else}
-	<Tabs.Root value="basics" class="flex w-full grow flex-col">
-		<Tabs.List class="grid grid-cols-4">
+	<Tabs.Root bind:value={selectedTabValue} class="flex w-full grow flex-col">
+		<Tabs.List class="grid grid-cols-3">
 			<Tabs.Trigger value="basics">Basics</Tabs.Trigger>
 			<Tabs.Trigger value="split">Split</Tabs.Trigger>
 			<Tabs.Trigger value="volume">Volume</Tabs.Trigger>
-			<Tabs.Trigger value="stats">Stats</Tabs.Trigger>
 		</Tabs.List>
 		<Tabs.Content value="basics">
 			<MesocycleBasicsTab {mesocycle} />
@@ -39,14 +43,15 @@
 			<MesocycleSplitTab {mesocycle} />
 		</Tabs.Content>
 		<Tabs.Content value="volume" class="grow">
-			<div class="flex h-full flex-col">
-				<MesocycleVolumeTab cyclicSetChanges={mesocycle.mesocycleCyclicSetChanges} />
-			</div>
-		</Tabs.Content>
-		<Tabs.Content value="stats">
-			<Card.Root class="p-4">
-				<MesocycleCharts cyclicSetChanges={mesocycle.mesocycleCyclicSetChanges} />
-			</Card.Root>
+			{#if !chartMode}
+				<div class="flex h-full flex-col">
+					<MesocycleVolumeTab cyclicSetChanges={mesocycle.mesocycleCyclicSetChanges} />
+				</div>
+			{:else}
+				<Card.Root class="p-4">
+					<MesocycleCharts cyclicSetChanges={mesocycle.mesocycleCyclicSetChanges} />
+				</Card.Root>
+			{/if}
 		</Tabs.Content>
 	</Tabs.Root>
 {/if}
