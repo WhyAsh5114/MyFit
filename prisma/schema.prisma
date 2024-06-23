@@ -180,18 +180,22 @@ model MesocycleExerciseSplitDay {
 }
 
 model MesocycleExerciseTemplate {
-  id                          String                    @id @default(cuid())
-  name                        String
-  targetMuscleGroup           MuscleGroup
-  customMuscleGroup           String?
-  involvesBodyweight          Boolean
-  sets                        Int
-  setType                     SetType
-  repRangeStart               Int
-  repRangeEnd                 Int
-  changeType                  ChangeType?
-  changeAmount                Float?
-  note                        String?
-  mesocycleExerciseSplitDay   MesocycleExerciseSplitDay @relation(fields: [mesocycleExerciseSplitDayId], references: [id], onDelete: Cascade)
-  mesocycleExerciseSplitDayId String
+  id                           String                    @id @default(cuid())
+  name                         String
+  targetMuscleGroup            MuscleGroup
+  customMuscleGroup            String?
+  involvesBodyweight           Boolean
+  sets                         Int
+  setType                      SetType
+  repRangeStart                Int
+  repRangeEnd                  Int
+  changeType                   ChangeType?
+  changeAmount                 Float?
+  note                         String?
+  mesocycleExerciseSplitDay    MesocycleExerciseSplitDay @relation(fields: [mesocycleExerciseSplitDayId], references: [id], onDelete: Cascade)
+  mesocycleExerciseSplitDayId  String
+  preferredProgressionVariable ProgressionVariable?
+  overloadPercentage           Float?
+  lastSetToFailure             Boolean?
+  forceRIRMatching             Boolean?
 }
