@@ -96,7 +96,7 @@ export function createExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
-	function setEditingExercise(exerciseTemplate: ExerciseTemplateWithoutIds) {
+	function setEditingExercise(exerciseTemplate: ExerciseTemplateWithoutIds | undefined) {
 		editingExercise = exerciseTemplate;
 	}
 

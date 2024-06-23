@@ -84,7 +84,7 @@ export function createMesocycleExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
-	function setEditingExercise(exerciseTemplate: MesocycleExerciseTemplateWithoutIds) {
+	function setEditingExercise(exerciseTemplate: MesocycleExerciseTemplateWithoutIds | undefined) {
 		editingExercise = exerciseTemplate;
 	}
 

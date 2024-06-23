@@ -16,8 +16,8 @@
 	type CommonProps<T> = {
 		readOnly?: boolean;
 		reordering: boolean;
-		deleteExercise: (idx: number) => void;
 		itemList: (T & { isDndShadowItem?: boolean })[];
+		deleteExercise: (idx: number) => void;
 		setEditingExercise: (exercise: T) => void;
 	};
 
