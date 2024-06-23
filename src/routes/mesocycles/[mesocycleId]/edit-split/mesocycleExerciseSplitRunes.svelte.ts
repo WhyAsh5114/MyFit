@@ -22,6 +22,11 @@ export function createMesocycleExerciseSplitRunes() {
 	let editingExercise: MesocycleExerciseTemplateWithoutIds | undefined = $state(undefined);
 	let copiedExercises: MesocycleExerciseTemplateWithoutIds[] | undefined = $state(undefined);
 
+	if (globalThis.localStorage) {
+		const savedState = localStorage.getItem('mesocycleExerciseSplitRunes');
+		if (savedState) ({ splitDays, splitExercises, mesocycleId } = JSON.parse(savedState));
+	}
+
 	function addSplitDay() {
 		splitDays.push({ name: '', isRestDay: false });
 	}
