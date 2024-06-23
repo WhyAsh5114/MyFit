@@ -81,14 +81,20 @@
 				}
 			});
 		} else if (selectedChartType.value === 'Set increase amount') {
+			const possibleSetIncreaseAmounts = [0, 1, 2, 3];
 			chart = new Chart(chartCanvas, {
 				type: 'bar',
 				data: {
-					labels: ['0', '1', '2', '3'],
+					labels: possibleSetIncreaseAmounts.map((n) => n.toString()),
 					datasets: [
 						{
 							label: 'Total muscle groups',
-							data: groupBy(cyclicSetChanges, 'setIncreaseAmount').map((g) => g.items.length)
+							data: possibleSetIncreaseAmounts.map(
+								(setIncreaseAmount) =>
+									cyclicSetChanges.filter(
+										(setChange) => setChange.setIncreaseAmount === setIncreaseAmount
+									).length
+							)
 						}
 					]
 				}
