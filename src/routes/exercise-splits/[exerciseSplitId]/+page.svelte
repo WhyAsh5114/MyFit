@@ -10,6 +10,8 @@
 	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
+	import ChartIcon from 'virtual:icons/lucide/bar-chart-big';
+	import TextIcon from 'virtual:icons/lucide/text';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import ExerciseSplitSkeleton from './(components)/ExerciseSplitSkeleton.svelte';
@@ -32,6 +34,9 @@
 	let editExerciseSplitNoteDrawerOpen = $state(false);
 	let deleteConfirmDrawerOpen = $state(false);
 	let callingDeleteEndpoint = $state(false);
+
+	let selectedTabValue = $state('info');
+	let chartMode = $state(false);
 
 	onMount(async () => {
 		const serverExerciseSplit = await data.exerciseSplit;
@@ -86,15 +91,26 @@
 	}
 </script>
 
-<H2>View exercise split</H2>
+<H2>
+	View exercise split
+	{#if selectedTabValue === 'exercises'}
+		<Button size="icon" variant="outline" onclick={() => (chartMode = !chartMode)}>
+			{#if !chartMode}
+				<ChartIcon />
+			{:else}
+				<TextIcon />
+			{/if}
+		</Button>
+	{/if}
+</H2>
+
 {#if exerciseSplit === 'loading'}
 	<ExerciseSplitSkeleton />
 {:else}
-	<Tabs.Root value="info" class="flex w-full grow flex-col">
-		<Tabs.List class="grid w-full grid-cols-3">
+	<Tabs.Root bind:value={selectedTabValue} class="flex w-full grow flex-col">
+		<Tabs.List class="grid w-full grid-cols-2">
 			<Tabs.Trigger value="info">Info</Tabs.Trigger>
 			<Tabs.Trigger value="exercises">Exercises</Tabs.Trigger>
-			<Tabs.Trigger value="stats">Stats</Tabs.Trigger>
 		</Tabs.List>
 		<Tabs.Content value="info">
 			<Card.Root>
@@ -141,14 +157,15 @@
 			</Card.Root>
 		</Tabs.Content>
 		<Tabs.Content value="exercises" class="grow">
-			<ExercisesTableComponent exerciseSplitDays={exerciseSplit.exerciseSplitDays} />
-		</Tabs.Content>
-		<Tabs.Content value="stats">
-			<Card.Root class="p-4">
-				<ExerciseSplitMuscleGroupsCharts
-					splitExercises={exerciseSplit.exerciseSplitDays.map((splitDay) => splitDay.exercises)}
-				/>
-			</Card.Root>
+			{#if chartMode}
+				<Card.Root class="p-4">
+					<ExerciseSplitMuscleGroupsCharts
+						splitExercises={exerciseSplit.exerciseSplitDays.map((splitDay) => splitDay.exercises)}
+					/>
+				</Card.Root>
+			{:else}
+				<ExercisesTableComponent exerciseSplitDays={exerciseSplit.exerciseSplitDays} />
+			{/if}
 		</Tabs.Content>
 	</Tabs.Root>
 	<ResponsiveDialog title="Are you sure?" needTrigger={false} bind:open={deleteConfirmDrawerOpen}>
