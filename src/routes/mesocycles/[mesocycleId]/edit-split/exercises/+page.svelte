@@ -16,6 +16,7 @@
 	import DndComponent from '$lib/components/mesocycleAndExerciseSplit/DndComponent.svelte';
 	import SwapExercisesDialog from '$lib/components/mesocycleAndExerciseSplit/SwapExercisesDialog.svelte';
 	import ExerciseSplitDrawer from '$lib/components/mesocycleAndExerciseSplit/ExerciseSplitDrawer.svelte';
+	import type { Mesocycle } from '@prisma/client';
 
 	let swapDialogOpen = $state(false);
 	let reordering = $state(false);
@@ -68,6 +69,7 @@
 				</div>
 				<ExerciseSplitDrawer
 					context="mesocycle"
+					mesocycle={mesocycleExerciseSplitRunes.mesocycle as Mesocycle}
 					addExercise={mesocycleExerciseSplitRunes.addExercise}
 					editExercise={mesocycleExerciseSplitRunes.editExercise}
 					setEditingExercise={mesocycleExerciseSplitRunes.setEditingExercise}
