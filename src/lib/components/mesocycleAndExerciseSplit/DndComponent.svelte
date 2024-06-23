@@ -6,34 +6,28 @@
 		type DndEvent,
 		SHADOW_ITEM_MARKER_PROPERTY_NAME
 	} from 'svelte-dnd-action';
-	import { type Prisma } from '@prisma/client';
 	import ExerciseTemplateCard from './ExerciseTemplateCard.svelte';
+	import type {
+		ExerciseTemplateWithoutIds,
+		MesocycleExerciseTemplateWithoutIds,
+		NormalExerciseTemplateWithoutIds
+	} from './commonTypes';
 
-	type NormalExerciseTemplate = Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
-	type MesocycleExerciseTemplate =
-		Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput;
-	type ExerciseTemplate = NormalExerciseTemplate | MesocycleExerciseTemplate;
-
-	type PropsType = {
+	type CommonProps<T> = {
 		readOnly?: boolean;
 		reordering: boolean;
 		deleteExercise: (idx: number) => void;
-	} & (
-		| {
-				context: 'exerciseSplit';
-				itemList: (NormalExerciseTemplate & { isDndShadowItem?: boolean })[];
-				setEditingExercise: (exercise: NormalExerciseTemplate) => void;
-		  }
-		| {
-				context: 'mesocycle';
-				itemList: (MesocycleExerciseTemplate & { isDndShadowItem?: boolean })[];
-				setEditingExercise: (exercise: MesocycleExerciseTemplate) => void;
-		  }
-	);
+		itemList: (T & { isDndShadowItem?: boolean })[];
+		setEditingExercise: (exercise: T) => void;
+	};
+
+	type PropsType =
+		| ({ context: 'exerciseSplit' } & CommonProps<NormalExerciseTemplateWithoutIds>)
+		| ({ context: 'mesocycle' } & CommonProps<MesocycleExerciseTemplateWithoutIds>);
 
 	let { itemList = $bindable(), reordering, ...contextProps }: PropsType = $props();
 
-	function handleSort(e: CustomEvent<DndEvent<ExerciseTemplate>>) {
+	function handleSort(e: CustomEvent<DndEvent<ExerciseTemplateWithoutIds>>) {
 		itemList = e.detail.items;
 	}
 </script>

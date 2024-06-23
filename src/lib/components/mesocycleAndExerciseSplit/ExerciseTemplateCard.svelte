@@ -7,11 +7,7 @@
 	import GripVertical from 'virtual:icons/lucide/grip-vertical';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { dragHandle } from 'svelte-dnd-action';
-	import type { Prisma } from '@prisma/client';
-
-	type NormalExerciseTemplate = Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
-	type MesocycleExerciseTemplate =
-		Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput;
+	import type { MesocycleExerciseTemplateWithoutIds, NormalExerciseTemplateWithoutIds } from './commonTypes';
 
 	type ExerciseTemplateCardProps = {
 		readOnly?: boolean;
@@ -21,26 +17,18 @@
 	} & (
 		| {
 				context: 'exerciseSplit';
-				exerciseTemplate: NormalExerciseTemplate;
-				setEditingExercise: (exercise: NormalExerciseTemplate) => void;
+				exerciseTemplate: NormalExerciseTemplateWithoutIds;
+				setEditingExercise: (exercise: NormalExerciseTemplateWithoutIds) => void;
 		  }
 		| {
 				context: 'mesocycle';
-				exerciseTemplate: MesocycleExerciseTemplate;
-				setEditingExercise: (exercise: MesocycleExerciseTemplate) => void;
+				exerciseTemplate: MesocycleExerciseTemplateWithoutIds;
+				setEditingExercise: (exercise: MesocycleExerciseTemplateWithoutIds) => void;
 		  }
 	);
 
 	let { ...props }: ExerciseTemplateCardProps = $props();
 	let isContextMenuOpen = $state(false);
-
-	function a() {
-		if (props.context === 'exerciseSplit') {
-			props.setEditingExercise(props.exerciseTemplate);
-		} else {
-			props.setEditingExercise(props.exerciseTemplate);
-		}
-	}
 </script>
 
 <div class="flex flex-col gap-0.5 rounded-md border bg-card/50 p-2 backdrop-blur-sm">
