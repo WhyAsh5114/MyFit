@@ -50,18 +50,17 @@
 			}
 		}));
 	});
+
+	function updateApplication() {
+		reloading = true;
+		updateServiceWorker(true);
+		localStorage.clear();
+	}
 </script>
 
 {#if isMobile}
 	{#if $needRefresh}
-		<Button
-			variant="ghost"
-			size="icon"
-			onclick={() => {
-				reloading = true;
-				updateServiceWorker(true);
-			}}
-		>
+		<Button variant="ghost" size="icon" onclick={updateApplication}>
 			<UpdateIcon class={cn({ 'animate-spin': reloading })} />
 		</Button>
 	{:else if showInstallButton}
@@ -86,10 +85,7 @@
 				class="w-full gap-2 text-base"
 				size="lg"
 				disabled={reloading}
-				onclick={() => {
-					reloading = true;
-					updateServiceWorker(true);
-				}}
+				onclick={updateApplication}
 			>
 				<UpdateIcon class={cn({ 'animate-spin': reloading })} />
 				Reload
