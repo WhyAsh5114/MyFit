@@ -23,24 +23,28 @@
 	});
 </script>
 
-<H2 showChartIcon={['split', 'volume'].includes(selectedTabValue)} bind:chartMode>
-	View mesocycle
-</H2>
+<H2 showChartIcon={selectedTabValue !== 'basics'} bind:chartMode>View mesocycle</H2>
 
 {#if mesocycle === 'loading'}
 	<MesocycleSkeleton />
 {:else}
 	<Tabs.Root bind:value={selectedTabValue} class="flex w-full grow flex-col">
-		<Tabs.List class="grid grid-cols-3">
+		<Tabs.List class="grid grid-cols-4">
 			<Tabs.Trigger value="basics">Basics</Tabs.Trigger>
 			<Tabs.Trigger value="split">Split</Tabs.Trigger>
 			<Tabs.Trigger value="volume">Volume</Tabs.Trigger>
+			<Tabs.Trigger value="workouts">Workouts</Tabs.Trigger>
 		</Tabs.List>
 		<Tabs.Content value="basics">
 			<MesocycleBasicsTab {mesocycle} />
 		</Tabs.Content>
 		<Tabs.Content value="split">
-			<MesocycleSplitTab {mesocycle} />
+			{#if !chartMode}
+				<MesocycleSplitTab {mesocycle} />
+			{:else}
+				TODO: show basic split stats like volume distribution across the microcycle, across muscle
+				groups
+			{/if}
 		</Tabs.Content>
 		<Tabs.Content value="volume" class="grow">
 			{#if !chartMode}
@@ -51,6 +55,14 @@
 				<Card.Root class="p-4">
 					<MesocycleCharts cyclicSetChanges={mesocycle.mesocycleCyclicSetChanges} />
 				</Card.Root>
+			{/if}
+		</Tabs.Content>
+		<Tabs.Content value="workouts" class="grow">
+			{#if !chartMode}
+				TODO: workouts list and some stats like: most progressed muscle group, exercise, least
+				progressed, highest volumes, etc
+			{:else}
+				TODO: charts that show progression
 			{/if}
 		</Tabs.Content>
 	</Tabs.Root>
