@@ -184,7 +184,12 @@ export function createMesocycleExerciseSplitRunes() {
 		get copiedExercises() {
 			return copiedExercises;
 		},
-		mesocycle,
+		get mesocycle() {
+			return mesocycle;
+		},
+		set mesocycle(value) {
+			mesocycle = value;
+		},
 		addSplitDay,
 		removeSplitDay,
 		toggleSplitDay,
