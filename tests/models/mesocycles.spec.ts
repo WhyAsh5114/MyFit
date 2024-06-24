@@ -57,6 +57,7 @@ test('delete a mesocycle', async ({ page }) => {
 	await page.getByText('Pick one').click();
 	await page.getByRole('option', { name: 'Pull Push Legs' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
+	await expect(page.getByRole('main')).not.toContainText('Fetching exercises');
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 	await page.getByRole('link', { name: 'MesoToDelete Unused' }).click();
@@ -76,6 +77,7 @@ test('edit a mesocycle', async ({ page }) => {
 	await page.getByText('Pick one').click();
 	await page.getByRole('option', { name: 'Pull Push Legs' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
+	await expect(page.getByRole('main')).not.toContainText('Fetching exercises');
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 	await page.getByRole('link', { name: 'MesoName Unused' }).click();
