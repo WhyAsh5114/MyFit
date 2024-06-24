@@ -64,9 +64,7 @@
 	</Tabs.List>
 	<Tabs.Content value="exercises">
 		<Card.Root class="p-4">
-			<ExerciseSplitExercisesCharts
-				exercises={exerciseSplitRunes.splitExercises.flatMap((e) => e)}
-			/>
+			<ExerciseSplitExercisesCharts exercises={exerciseSplitRunes.splitExercises.flat()} />
 		</Card.Root>
 	</Tabs.Content>
 	<Tabs.Content value="muscleGroups">
