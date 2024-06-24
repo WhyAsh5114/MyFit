@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import { trpc } from '$lib/trpc/client';
@@ -19,6 +19,7 @@
 				mesocycleExerciseTemplates: mesocycleExerciseSplitRunes.splitExercises,
 				mesocycleId: mesocycleExerciseSplitRunes.mesocycle?.id as string
 			});
+			await invalidate(`mesocycles:${mesocycleExerciseSplitRunes.mesocycle?.id}`);
 			toast.success(message);
 			await goto(`/mesocycles/${mesocycleExerciseSplitRunes.mesocycle?.id}`);
 			mesocycleExerciseSplitRunes.resetStores();
