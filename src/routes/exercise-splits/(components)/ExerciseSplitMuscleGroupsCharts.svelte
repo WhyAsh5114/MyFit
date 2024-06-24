@@ -72,7 +72,7 @@
 		chart = new Chart(chartCanvasElement, {
 			type: 'bar',
 			data: {
-				labels: selectedMuscleGroups.map((item) => convertCamelCaseToNormal(item.label as string)),
+				labels: selectedMuscleGroups.map((item) => item.label),
 				datasets: [
 					{
 						label: currentFilter.value,
