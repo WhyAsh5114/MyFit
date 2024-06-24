@@ -10,6 +10,7 @@
 	import MesocycleVolumeTab from './(components)/MesocycleVolumeTab.svelte';
 	import MesocycleCyclicSetChangesCharts from '../(components)/MesocycleCyclicSetChangesCharts.svelte';
 	import * as Card from '$lib/components/ui/card';
+	import MesocycleExerciseSplitStats from './(components)/MesocycleExerciseSplitStats.svelte';
 
 	let { data } = $props();
 	let mesocycle: FullMesocycle | 'loading' = $state('loading');
@@ -42,8 +43,11 @@
 			{#if !chartMode}
 				<MesocycleSplitTab {mesocycle} />
 			{:else}
-				TODO: show basic split stats like volume distribution across the microcycle, across muscle
-				groups
+				<MesocycleExerciseSplitStats
+					splitExercises={mesocycle.mesocycleExerciseSplitDays.map(
+						(splitDay) => splitDay.mesocycleSplitDayExercises
+					)}
+				/>
 			{/if}
 		</Tabs.Content>
 		<Tabs.Content value="volume" class="grow">
