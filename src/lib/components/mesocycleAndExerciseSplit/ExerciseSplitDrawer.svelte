@@ -169,7 +169,10 @@
 						value: currentExercise.targetMuscleGroup,
 						label: convertCamelCaseToNormal(currentExercise.targetMuscleGroup)
 					}}
-					onSelectedChange={(v) => (currentExercise.targetMuscleGroup = v?.value)}
+					onSelectedChange={(v) => {
+						currentExercise.targetMuscleGroup = v?.value;
+						if (v?.value !== 'Custom') currentExercise.customMuscleGroup = null;
+					}}
 					required
 				>
 					<Select.Label class="p-0 text-sm font-medium leading-none">
