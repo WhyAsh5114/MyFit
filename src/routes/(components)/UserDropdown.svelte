@@ -1,14 +1,24 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { signOut } from '@auth/sveltekit/client';
-
-	// TODO: profile and settings page, then links here
+	import UserIcon from 'virtual:icons/lucide/user';
+	import SettingsIcon from 'virtual:icons/lucide/settings';
+	import LogoutIcon from 'virtual:icons/lucide/log-out';
 </script>
 
 <DropdownMenu.Content align="start">
 	<DropdownMenu.Group>
-		<DropdownMenu.Item href="/profile">Profile</DropdownMenu.Item>
-		<DropdownMenu.Item href="/settings">Settings</DropdownMenu.Item>
-		<DropdownMenu.Item class="text-red-500" onclick={() => signOut()}>Logout</DropdownMenu.Item>
+		<DropdownMenu.Item href="/profile" class="gap-2">
+			<UserIcon />
+			Profile
+		</DropdownMenu.Item>
+		<DropdownMenu.Item href="/settings" class="gap-2">
+			<SettingsIcon />
+			Settings
+		</DropdownMenu.Item>
+		<DropdownMenu.Item class="gap-2 text-red-500" onclick={() => signOut()}>
+			<LogoutIcon />
+			Logout
+		</DropdownMenu.Item>
 	</DropdownMenu.Group>
 </DropdownMenu.Content>
