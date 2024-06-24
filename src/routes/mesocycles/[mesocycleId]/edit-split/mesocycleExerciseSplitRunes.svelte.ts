@@ -1,4 +1,4 @@
-import type { Mesocycle, Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 
 export type FullMesocycleWithExerciseSplit = Prisma.MesocycleGetPayload<{
 	include: { mesocycleExerciseSplitDays: { include: { mesocycleSplitDayExercises: true } } };
@@ -12,7 +12,7 @@ type MesocycleExerciseTemplateWithoutIds =
 	Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput;
 
 export function createMesocycleExerciseSplitRunes() {
-	let mesocycle: Mesocycle | null = $state(null);
+	let mesocycle: FullMesocycleWithExerciseSplit | null = $state(null);
 	let splitDays: MesocycleExerciseSplitDayWithoutIds[] = $state(
 		Array.from({ length: 7 }).map(() => ({ name: '', isRestDay: false }))
 	);
@@ -148,8 +148,7 @@ export function createMesocycleExerciseSplitRunes() {
 		if (mesocycleWithExerciseSplit.id === mesocycle?.id) return;
 
 		resetStores();
-		const { mesocycleExerciseSplitDays, ...mesocycleData } = mesocycleWithExerciseSplit;
-		mesocycle = mesocycleData;
+		mesocycle = structuredClone($state.snapshot(mesocycleWithExerciseSplit));
 		splitDays = mesocycleWithExerciseSplit.mesocycleExerciseSplitDays.map((splitDay) => {
 			const { id, mesocycleId, mesocycleSplitDayExercises, ...rest } = splitDay;
 			return rest;

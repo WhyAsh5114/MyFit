@@ -2,17 +2,40 @@
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 	import * as Table from '$lib/components/ui/table';
+	import * as Popover from '$lib/components/ui/popover';
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import RemoveIcon from 'virtual:icons/lucide/minus';
+	import WarningIcon from 'virtual:icons/lucide/triangle-alert';
 	import { mesocycleExerciseSplitRunes } from '../mesocycleExerciseSplitRunes.svelte';
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
+	import { cn } from '$lib/utils';
 
+	const difference = <T,>(setA: Set<T>, setB: Set<T>): Set<T> => {
+		return new Set([...setA].filter((x) => !setB.has(x)));
+	};
+
+	let consistencyLossDays: string[] = $state([]);
 	let dataLossDays: number[] = $state([]);
 	let warningDialogOpen = $state(false);
+
+	let showWarningIcon = $derived.by(() => {
+		if (mesocycleExerciseSplitRunes.mesocycle === null) return false;
+		const mesocycleSplitDayNames = new Set(
+			mesocycleExerciseSplitRunes.mesocycle?.mesocycleExerciseSplitDays.map(
+				(splitDay) => splitDay.name
+			)
+		);
+		const currentSplitDayNames = new Set(
+			mesocycleExerciseSplitRunes.splitDays.map((splitDay) => splitDay.name)
+		);
+		const inconsistentDays = difference(mesocycleSplitDayNames, currentSplitDayNames);
+		consistencyLossDays = Array.from(inconsistentDays);
+		return inconsistentDays.size > 0;
+	});
 
 	async function submitStructure(warningAcknowledged = false) {
 		if (!mesocycleExerciseSplitRunes.validateSplitStructure()) {
@@ -45,7 +68,26 @@
 	<Table.Root>
 		<Table.Header class="border-t">
 			<Table.Row>
-				<Table.Head></Table.Head>
+				<Table.Head>
+					<Popover.Root>
+						<Popover.Trigger
+							aria-label="mesocycle-exercise-split-edit-warning"
+							class={cn({ 'text-background': !showWarningIcon })}
+						>
+							<WarningIcon class="h-4 w-4" />
+						</Popover.Trigger>
+						<Popover.Content class="w-60 text-sm" align="end">
+							Unmatched day names: <span class="font-semibold">
+								{consistencyLossDays.join(', ')}
+							</span>
+							<br />
+							<p class="text-muted-foreground">
+								Avoid unnecessarily changing split day names, as this can exclude workouts with
+								unmatched split names from progression calculations and analytics.
+							</p>
+						</Popover.Content>
+					</Popover.Root>
+				</Table.Head>
 				<Table.Head>Name</Table.Head>
 				<Table.Head class="text-center">Rest</Table.Head>
 			</Table.Row>
@@ -53,7 +95,7 @@
 		<Table.Body>
 			{#each mesocycleExerciseSplitRunes.splitDays as splitDay, dayNumber}
 				<Table.Row>
-					<Table.Cell>{dayNumber + 1}</Table.Cell>
+					<Table.Cell class="text-center">{dayNumber + 1}</Table.Cell>
 					<Table.Cell>
 						<Input
 							id="exercise-split-day-{dayNumber + 1}-name"
