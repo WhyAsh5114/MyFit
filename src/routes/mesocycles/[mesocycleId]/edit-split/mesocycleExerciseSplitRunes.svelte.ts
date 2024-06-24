@@ -151,7 +151,7 @@ export function createMesocycleExerciseSplitRunes() {
 		const { mesocycleExerciseSplitDays, ...mesocycleData } = mesocycleWithExerciseSplit;
 		mesocycle = mesocycleData;
 		splitDays = mesocycleWithExerciseSplit.mesocycleExerciseSplitDays.map((splitDay) => {
-			const { id, mesocycleId, ...rest } = splitDay;
+			const { id, mesocycleId, mesocycleSplitDayExercises, ...rest } = splitDay;
 			return rest;
 		});
 		splitExercises = mesocycleWithExerciseSplit.mesocycleExerciseSplitDays.map((splitDay) =>

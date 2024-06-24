@@ -5,6 +5,7 @@ import {
 	ExerciseSplitDayCreateWithoutExerciseSplitInputSchema,
 	ExerciseSplitSchema,
 	MesocycleCyclicSetChangeCreateWithoutMesocycleInputSchema,
+	MesocycleExerciseSplitDayCreateWithoutMesocycleInputSchema,
 	MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInputSchema,
 	MesocycleUncheckedCreateWithoutUserInputSchema,
 	MesocycleUpdateInputSchema
@@ -28,6 +29,14 @@ const zodMesocycleCreateInput = z.strictObject({
 const zodMesocycleEditInput = z.strictObject({
 	mesocycle: MesocycleUpdateInputSchema,
 	mesocycleCyclicSetChanges: z.array(MesocycleCyclicSetChangeCreateWithoutMesocycleInputSchema)
+});
+
+const zodUpdateExerciseSplitInput = z.strictObject({
+	mesocycleExerciseSplitDays: z.array(MesocycleExerciseSplitDayCreateWithoutMesocycleInputSchema),
+	mesocycleExerciseTemplates: z.array(
+		z.array(MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInputSchema)
+	),
+	mesocycleId: z.string().cuid()
 });
 
 const getActiveMesocycle = async (userId: string) => {
@@ -168,5 +177,38 @@ export const mesocycles = t.router({
 				startDate: updatedMesocycle.startDate,
 				endDate: updatedMesocycle.endDate
 			};
+		}),
+
+	updateExerciseSplit: t.procedure
+		.input(zodUpdateExerciseSplitInput)
+		.mutation(async ({ input, ctx }) => {
+			const mesocycle = await prisma.mesocycle.findUniqueOrThrow({
+				where: { id: input.mesocycleId, userId: ctx.userId },
+				select: { id: true }
+			});
+			const deleteQuery = prisma.mesocycleExerciseSplitDay.deleteMany({
+				where: { mesocycleId: mesocycle.id }
+			});
+
+			const newSplitDaysIds = Array.from({ length: input.mesocycleExerciseSplitDays.length }).map(
+				() => cuid()
+			);
+			const createSplitDaysQuery = prisma.mesocycleExerciseSplitDay.createMany({
+				data: input.mesocycleExerciseSplitDays.map((splitDay, idx) => ({
+					...splitDay,
+					id: newSplitDaysIds[idx],
+					mesocycleId: mesocycle.id
+				}))
+			});
+			const createSplitExercisesQuery = prisma.mesocycleExerciseTemplate.createMany({
+				data: input.mesocycleExerciseTemplates.flatMap((dayExercises, idx) => {
+					return dayExercises.map((exercise) => ({
+						...exercise,
+						mesocycleExerciseSplitDayId: newSplitDaysIds[idx]
+					}));
+				})
+			});
+			await prisma.$transaction([deleteQuery, createSplitDaysQuery, createSplitExercisesQuery]);
+			return { message: 'Mesocycle exercise split updated successfully' };
 		})
 });
