@@ -12,7 +12,7 @@
 	import type { FullExerciseSplit } from '../../../exercise-splits/manage/exerciseSplitRunes.svelte';
 	import type { Prisma } from '@prisma/client';
 	import { Skeleton } from '$lib/components/ui/skeleton';
-	import MesocycleCharts from '../../(components)/MesocycleCharts.svelte';
+	import MesocycleCyclicSetChangesCharts from '../../(components)/MesocycleCyclicSetChangesCharts.svelte';
 	import { TRPCClientError } from '@trpc/client';
 
 	let { data } = $props();
@@ -113,7 +113,7 @@
 {/if}
 
 <Card.Root class="my-2 p-4">
-	<MesocycleCharts cyclicSetChanges={mesocycleRunes.mesocycleCyclicSetChanges} />
+	<MesocycleCyclicSetChangesCharts cyclicSetChanges={mesocycleRunes.mesocycleCyclicSetChanges} />
 </Card.Root>
 
 <div class="mt-auto grid grid-cols-2 gap-1">

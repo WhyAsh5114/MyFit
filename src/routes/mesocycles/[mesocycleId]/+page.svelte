@@ -8,7 +8,7 @@
 	import MesocycleSkeleton from './(components)/MesocycleSkeleton.svelte';
 	import MesocycleSplitTab from './(components)/MesocycleSplitTab.svelte';
 	import MesocycleVolumeTab from './(components)/MesocycleVolumeTab.svelte';
-	import MesocycleCharts from '../(components)/MesocycleCharts.svelte';
+	import MesocycleCyclicSetChangesCharts from '../(components)/MesocycleCyclicSetChangesCharts.svelte';
 	import * as Card from '$lib/components/ui/card';
 
 	let { data } = $props();
@@ -53,7 +53,7 @@
 				</div>
 			{:else}
 				<Card.Root class="p-4">
-					<MesocycleCharts cyclicSetChanges={mesocycle.mesocycleCyclicSetChanges} />
+					<MesocycleCyclicSetChangesCharts cyclicSetChanges={mesocycle.mesocycleCyclicSetChanges} />
 				</Card.Root>
 			{/if}
 		</Tabs.Content>
