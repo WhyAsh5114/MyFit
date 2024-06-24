@@ -209,6 +209,6 @@ export const mesocycles = t.router({
 				})
 			});
 			await prisma.$transaction([deleteQuery, createSplitDaysQuery, createSplitExercisesQuery]);
-			return { message: 'Mesocycle exercise split updated successfully' };
+			return { message: 'Mesocycle exercise split edited successfully' };
 		})
 });
