@@ -5,6 +5,7 @@ export async function createTemplateExerciseSplit(page: Page) {
 	await page.getByRole('menuitem', { name: 'Use template' }).click();
 	await page.getByRole('button', { name: 'Pull Push Legs 7 days / cycle' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
+	await page.waitForURL('/exercise-splits/manage/exercises');
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 	await expect(

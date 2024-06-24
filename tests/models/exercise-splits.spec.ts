@@ -59,10 +59,11 @@ test('create a clone of a split', async ({ page }) => {
 	await page.getByPlaceholder('Type here').click();
 	await page.getByPlaceholder('Type here').fill('Pull Push Legs (clone)');
 	await page.getByRole('button', { name: 'Next' }).click();
+	await page.waitForURL('/exercise-splits/manage/exercises');
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 	await expect(
-		page.getByRole('status').filter({ hasText: 'Exercise split created successfully' })
+		page.getByRole('status').first().filter({ hasText: 'Exercise split created successfully' })
 	).toBeVisible({ timeout: 10000 });
 	await expect(
 		page.locator('div').filter({ hasText: 'Pull Push Legs (clone) 7 days' }).nth(1)

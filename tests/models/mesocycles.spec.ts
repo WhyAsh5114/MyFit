@@ -55,9 +55,10 @@ test('delete a mesocycle', async ({ page }) => {
 	await page.getByLabel('Mesocycle name').fill('MesoToDelete');
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByText('Pick one').click();
+	await page.waitForURL('/mesocycles/manage/progression');
 	await page.getByRole('option', { name: 'Pull Push Legs' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
-	await expect(page.getByRole('main')).not.toContainText('Fetching exercises');
+	await page.waitForURL(/\/mesocycles\/manage\/volume/);
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 	await page.getByRole('link', { name: 'MesoToDelete Unused' }).click();
@@ -75,9 +76,10 @@ test('edit a mesocycle', async ({ page }) => {
 	await page.getByLabel('Mesocycle name').fill('MesoName');
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByText('Pick one').click();
+	await page.waitForURL('/mesocycles/manage/progression');
 	await page.getByRole('option', { name: 'Pull Push Legs' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
-	await expect(page.getByRole('main')).not.toContainText('Fetching exercises');
+	await page.waitForURL(/\/mesocycles\/manage\/volume/);
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 	await page.getByRole('link', { name: 'MesoName Unused' }).click();
@@ -116,12 +118,11 @@ test('start and stop a mesocycle', async ({ page }) => {
 	await page.getByLabel('create-new-mesocycle').click();
 	await page.getByLabel('Mesocycle name').fill('MesoName');
 	await page.getByRole('button', { name: 'Next' }).click();
+	await page.waitForURL('/mesocycles/manage/progression');
 	await page.getByText('Pick one').click();
 	await page.getByRole('option', { name: 'Pull Push Legs' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
-	await expect(
-		page.getByRole('status').filter({ hasText: 'Exercise split created successfully' })
-	).not.toBeVisible();
+	await page.waitForURL(/\/mesocycles\/manage\/volume/);
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 	await page.getByRole('link', { name: 'MesoName Unused' }).click();
@@ -155,11 +156,10 @@ test("edit mesocycle's exercise split", async ({ page }) => {
 	await page.getByLabel('Mesocycle name').fill('MesoName');
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByText('Pick one').click();
+	await page.waitForURL('/mesocycles/manage/progression');
 	await page.getByRole('option', { name: 'Pull Push Legs' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
-	await expect(
-		page.getByRole('status').filter({ hasText: 'Exercise split created successfully' })
-	).not.toBeVisible();
+	await page.waitForURL(/\/mesocycles\/manage\/volume/);
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 	await page.getByRole('link', { name: 'MesoName Unused' }).click();

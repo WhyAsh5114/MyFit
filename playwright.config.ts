@@ -13,7 +13,7 @@ const config: PlaywrightTestConfig = {
 	globalSetup: './tests/global-setup',
 	globalTeardown: './tests/global-teardown',
 	workers: process.env.CI ? 1 : undefined,
-	reporter: 'html',
+	reporter: 'list',
 	use: {
 		baseURL: 'http://localhost:4173',
 		trace: 'on-first-retry',
@@ -21,15 +21,9 @@ const config: PlaywrightTestConfig = {
 	},
 	timeout: 60000,
 	projects: [
-		{
-			name: 'chromium',
-			use: { ...devices['Desktop Chrome'] }
-		},
-
-		{
-			name: 'webkit',
-			use: { ...devices['Desktop Safari'] }
-		}
+		{ name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+		{ name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+		{ name: 'webkit', use: { ...devices['Desktop Safari'] } }
 
 		/* Test against mobile viewports. */
 		// {
