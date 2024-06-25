@@ -4,7 +4,7 @@ export type FullExerciseSplit = Prisma.ExerciseSplitGetPayload<{
 	include: { exerciseSplitDays: { include: { exercises: true } } };
 }>;
 
-export type FullExerciseSplitWithoutIdsAndOrders = Omit<
+export type FullExerciseSplitWithoutIdsOrIndex = Omit<
 	Prisma.ExerciseSplitCreateWithoutUserInput,
 	'exerciseSplitDays'
 > & {
@@ -170,7 +170,7 @@ export function createExerciseSplitRunes() {
 	}
 
 	function loadExerciseSplit(
-		exerciseSplit: FullExerciseSplitWithoutIdsAndOrders,
+		exerciseSplit: FullExerciseSplitWithoutIdsOrIndex,
 		editingId?: string
 	) {
 		editingExerciseSplitId = editingId ?? null;

@@ -1,10 +1,10 @@
 import type { Prisma } from '@prisma/client';
 
-export type NormalExerciseTemplateWithoutIds =
+export type SplitExerciseTemplateWithoutIdsOrIndex =
 	Omit<Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput, 'exerciseIndex'>;
-export type MesocycleExerciseTemplateWithoutIds =
+export type MesocycleExerciseTemplateWithoutIdsOrIndex =
 	Omit<Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput, 'exerciseIndex'>;
 
-export type ExerciseTemplateWithoutIds =
-	| NormalExerciseTemplateWithoutIds
-	| MesocycleExerciseTemplateWithoutIds;
+export type ExerciseTemplateWithoutIdsOrIndex =
+	| SplitExerciseTemplateWithoutIdsOrIndex
+	| MesocycleExerciseTemplateWithoutIdsOrIndex;

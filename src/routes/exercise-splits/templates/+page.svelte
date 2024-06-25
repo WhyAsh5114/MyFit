@@ -8,11 +8,11 @@
 	import { exerciseSplitTemplates } from '$lib/common/exerciseSplitTemplates';
 	import {
 		exerciseSplitRunes,
-		type FullExerciseSplitWithoutIdsAndOrders
+		type FullExerciseSplitWithoutIdsOrIndex
 	} from '../manage/exerciseSplitRunes.svelte';
 	import { goto } from '$app/navigation';
 
-	function templateExerciseSplit(exerciseSplit: FullExerciseSplitWithoutIdsAndOrders) {
+	function templateExerciseSplit(exerciseSplit: FullExerciseSplitWithoutIdsOrIndex) {
 		exerciseSplitRunes.loadExerciseSplit(exerciseSplit);
 		goto('/exercise-splits/manage/structure');
 	}

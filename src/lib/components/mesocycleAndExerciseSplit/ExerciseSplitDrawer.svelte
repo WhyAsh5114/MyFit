@@ -22,9 +22,9 @@
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { commonExercisePerMuscleGroup } from '$lib/common/commonExercises';
 	import type {
-		ExerciseTemplateWithoutIds,
-		MesocycleExerciseTemplateWithoutIds,
-		NormalExerciseTemplateWithoutIds
+		ExerciseTemplateWithoutIdsOrIndex,
+		MesocycleExerciseTemplateWithoutIdsOrIndex,
+		SplitExerciseTemplateWithoutIdsOrIndex
 	} from './commonTypes';
 
 	type CommonProps<T> = {
@@ -35,18 +35,18 @@
 	};
 
 	type PropsType =
-		| ({ context: 'exerciseSplit' } & CommonProps<NormalExerciseTemplateWithoutIds>)
+		| ({ context: 'exerciseSplit' } & CommonProps<SplitExerciseTemplateWithoutIdsOrIndex>)
 		| ({
 				context: 'mesocycle';
 				mesocycle: Mesocycle;
-		  } & CommonProps<MesocycleExerciseTemplateWithoutIds>);
+		  } & CommonProps<MesocycleExerciseTemplateWithoutIdsOrIndex>);
 
 	type NonUndefined<T> = T extends undefined ? never : T;
 	type FullExerciseTemplate = NonUndefined<typeof props.editingExercise>;
 
 	let { ...props }: PropsType = $props();
 
-	const extraMesocycleProps: Partial<MesocycleExerciseTemplateWithoutIds> = {
+	const extraMesocycleProps: Partial<MesocycleExerciseTemplateWithoutIdsOrIndex> = {
 		sets: undefined,
 		overloadPercentage: null,
 		forceRIRMatching: null,
@@ -74,7 +74,7 @@
 		}
 	});
 
-	function selectExercise(exercise: ExerciseTemplateWithoutIds) {
+	function selectExercise(exercise: ExerciseTemplateWithoutIdsOrIndex) {
 		currentExercise = structuredClone({
 			...exercise,
 			...(props.context === 'mesocycle' && structuredClone(extraMesocycleProps))

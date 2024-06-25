@@ -8,8 +8,8 @@
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import type {
-		MesocycleExerciseTemplateWithoutIds,
-		NormalExerciseTemplateWithoutIds
+		MesocycleExerciseTemplateWithoutIdsOrIndex,
+		SplitExerciseTemplateWithoutIdsOrIndex
 	} from './commonTypes';
 
 	type ExerciseTemplateCardProps = {
@@ -20,13 +20,13 @@
 	} & (
 		| {
 				context: 'exerciseSplit';
-				exerciseTemplate: NormalExerciseTemplateWithoutIds;
-				setEditingExercise: (exercise: NormalExerciseTemplateWithoutIds) => void;
+				exerciseTemplate: SplitExerciseTemplateWithoutIdsOrIndex;
+				setEditingExercise: (exercise: SplitExerciseTemplateWithoutIdsOrIndex) => void;
 		  }
 		| {
 				context: 'mesocycle';
-				exerciseTemplate: MesocycleExerciseTemplateWithoutIds;
-				setEditingExercise: (exercise: MesocycleExerciseTemplateWithoutIds) => void;
+				exerciseTemplate: MesocycleExerciseTemplateWithoutIdsOrIndex;
+				setEditingExercise: (exercise: MesocycleExerciseTemplateWithoutIdsOrIndex) => void;
 		  }
 	);
 

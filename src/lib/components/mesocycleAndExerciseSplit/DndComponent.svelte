@@ -8,9 +8,9 @@
 	} from 'svelte-dnd-action';
 	import ExerciseTemplateCard from './ExerciseTemplateCard.svelte';
 	import type {
-		ExerciseTemplateWithoutIds,
-		MesocycleExerciseTemplateWithoutIds,
-		NormalExerciseTemplateWithoutIds
+		ExerciseTemplateWithoutIdsOrIndex,
+		MesocycleExerciseTemplateWithoutIdsOrIndex,
+		SplitExerciseTemplateWithoutIdsOrIndex
 	} from './commonTypes';
 
 	type CommonProps<T> = {
@@ -22,12 +22,12 @@
 	};
 
 	type PropsType =
-		| ({ context: 'exerciseSplit' } & CommonProps<NormalExerciseTemplateWithoutIds>)
-		| ({ context: 'mesocycle' } & CommonProps<MesocycleExerciseTemplateWithoutIds>);
+		| ({ context: 'exerciseSplit' } & CommonProps<SplitExerciseTemplateWithoutIdsOrIndex>)
+		| ({ context: 'mesocycle' } & CommonProps<MesocycleExerciseTemplateWithoutIdsOrIndex>);
 
 	let { itemList = $bindable(), reordering, ...contextProps }: PropsType = $props();
 
-	function handleSort(e: CustomEvent<DndEvent<ExerciseTemplateWithoutIds>>) {
+	function handleSort(e: CustomEvent<DndEvent<ExerciseTemplateWithoutIdsOrIndex>>) {
 		itemList = e.detail.items;
 	}
 </script>
