@@ -1,7 +1,7 @@
 <script lang="ts">
+	import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
 	import * as Select from '$lib/components/ui/select';
-	import { arraySum, convertCamelCaseToNormal, groupBy } from '$lib/utils';
-	import { type Prisma } from '@prisma/client';
+	import { arraySum, convertCamelCaseToNormal } from '$lib/utils';
 	import type { Selected } from 'bits-ui';
 	import {
 		ArcElement,
@@ -25,12 +25,7 @@
 		ArcElement
 	);
 
-	type PropsType = {
-		mesocycleSplitExercises: Omit<
-			Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput,
-			'exerciseIndex'
-		>[][];
-	};
+	type PropsType = { mesocycleSplitExercises: MesocycleExerciseTemplateWithoutIdsOrIndex[][] };
 
 	let { mesocycleSplitExercises }: PropsType = $props();
 	let chartCanvas: HTMLCanvasElement;

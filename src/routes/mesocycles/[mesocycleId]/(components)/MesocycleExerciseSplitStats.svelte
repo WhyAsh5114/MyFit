@@ -1,17 +1,12 @@
 <script lang="ts">
-	import * as Tabs from '$lib/components/ui/tabs';
+	import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
 	import { Root as Card } from '$lib/components/ui/card';
+	import * as Tabs from '$lib/components/ui/tabs';
+	import MesocycleExerciseSplitVolumeCharts from '../../(components)/MesocycleExerciseSplitVolumeCharts.svelte';
 	import ExerciseSplitExercisesCharts from '../../../exercise-splits/(components)/ExerciseSplitExercisesCharts.svelte';
 	import ExerciseSplitMuscleGroupsCharts from '../../../exercise-splits/(components)/ExerciseSplitMuscleGroupsCharts.svelte';
-	import MesocycleExerciseSplitVolumeCharts from '../../(components)/MesocycleExerciseSplitVolumeCharts.svelte';
-	import type { Prisma } from '@prisma/client';
-
-	type PropsType = {
-		splitExercises: Omit<
-			Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput,
-			'exerciseIndex'
-		>[][];
-	};
+	
+	type PropsType = { splitExercises: MesocycleExerciseTemplateWithoutIdsOrIndex[][] };
 	let { splitExercises }: PropsType = $props();
 </script>
 

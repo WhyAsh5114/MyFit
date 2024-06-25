@@ -9,17 +9,12 @@
 		CategoryScale,
 		LinearScale
 	} from 'chart.js';
-	import { type Prisma } from '@prisma/client';
 	import type { Selected } from 'bits-ui';
 	import { convertCamelCaseToNormal } from '$lib/utils';
+	import type { SplitExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
 	Chart.register(Tooltip, Legend, BarController, BarElement, CategoryScale, LinearScale);
 
-	type PropsType = {
-		splitExercises: Omit<
-			Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput,
-			'exerciseIndex'
-		>[][];
-	};
+	type PropsType = { splitExercises: SplitExerciseTemplateWithoutIdsOrIndex[][] };
 
 	let { splitExercises }: PropsType = $props();
 	let chartCanvasElement: HTMLCanvasElement;

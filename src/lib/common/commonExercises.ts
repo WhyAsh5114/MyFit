@@ -1,9 +1,10 @@
-import type { MuscleGroup, Prisma } from '@prisma/client';
+import type { SplitExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
+import type { MuscleGroup } from '@prisma/client';
 
 // TODO: extend this list
 export const commonExercisePerMuscleGroup: {
 	muscleGroup: MuscleGroup;
-	exercises: Omit<Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput, 'exerciseIndex'>[];
+	exercises: SplitExerciseTemplateWithoutIdsOrIndex[];
 }[] = [
 	{
 		muscleGroup: 'Chest',

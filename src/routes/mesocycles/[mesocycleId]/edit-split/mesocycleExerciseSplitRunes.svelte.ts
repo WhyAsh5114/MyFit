@@ -1,3 +1,4 @@
+import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
 import type { Prisma } from '@prisma/client';
 
 export type FullMesocycleWithExerciseSplit = Prisma.MesocycleGetPayload<{
@@ -8,21 +9,17 @@ type MesocycleExerciseSplitDayWithoutIds = Omit<
 	Prisma.MesocycleExerciseSplitDayCreateWithoutMesocycleInput,
 	'mesocycleSplitDayExercises' | 'dayIndex'
 >;
-type MesocycleExerciseTemplateWithoutIds = Omit<
-	Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput,
-	'exerciseIndex'
->;
 
 export function createMesocycleExerciseSplitRunes() {
 	let mesocycle: FullMesocycleWithExerciseSplit | null = $state(null);
 	let splitDays: MesocycleExerciseSplitDayWithoutIds[] = $state(
 		Array.from({ length: 7 }).map(() => ({ name: '', isRestDay: false }))
 	);
-	let splitExercises: MesocycleExerciseTemplateWithoutIds[][] = $state([]);
+	let splitExercises: MesocycleExerciseTemplateWithoutIdsOrIndex[][] = $state([]);
 
 	let selectedSplitDayIndex: number = $state(0);
-	let editingExercise: MesocycleExerciseTemplateWithoutIds | undefined = $state(undefined);
-	let copiedExercises: MesocycleExerciseTemplateWithoutIds[] | undefined = $state(undefined);
+	let editingExercise: MesocycleExerciseTemplateWithoutIdsOrIndex | undefined = $state(undefined);
+	let copiedExercises: MesocycleExerciseTemplateWithoutIdsOrIndex[] | undefined = $state(undefined);
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('mesocycleExerciseSplitRunes');
@@ -79,7 +76,7 @@ export function createMesocycleExerciseSplitRunes() {
 		return exercise !== undefined;
 	}
 
-	function addExercise(exerciseTemplate: MesocycleExerciseTemplateWithoutIds) {
+	function addExercise(exerciseTemplate: MesocycleExerciseTemplateWithoutIdsOrIndex) {
 		if (exerciseNameExists(exerciseTemplate.name)) return false;
 		splitExercises[selectedSplitDayIndex].push(exerciseTemplate);
 		saveStoresToLocalStorage();
@@ -91,11 +88,13 @@ export function createMesocycleExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
-	function setEditingExercise(exerciseTemplate: MesocycleExerciseTemplateWithoutIds | undefined) {
+	function setEditingExercise(
+		exerciseTemplate: MesocycleExerciseTemplateWithoutIdsOrIndex | undefined
+	) {
 		editingExercise = exerciseTemplate;
 	}
 
-	function editExercise(exerciseTemplate: MesocycleExerciseTemplateWithoutIds) {
+	function editExercise(exerciseTemplate: MesocycleExerciseTemplateWithoutIdsOrIndex) {
 		if (!editingExercise) return false;
 		const editingExerciseIndex = splitExercises[selectedSplitDayIndex].indexOf(editingExercise);
 		if (exerciseNameExists(exerciseTemplate.name, editingExerciseIndex)) return false;

@@ -1,7 +1,8 @@
 <script lang="ts">
+	import type { SplitExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
 	import * as Select from '$lib/components/ui/select';
 	import { cn, convertCamelCaseToNormal } from '$lib/utils';
-	import { type Prisma, SetType } from '@prisma/client';
+	import { SetType } from '@prisma/client';
 	import type { Selected } from 'bits-ui';
 	import {
 		ArcElement,
@@ -33,9 +34,7 @@
 		Filler
 	);
 
-	type PropsType = {
-		exercises: Omit<Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput, 'exerciseIndex'>[];
-	};
+	type PropsType = { exercises: SplitExerciseTemplateWithoutIdsOrIndex[] };
 
 	let { exercises }: PropsType = $props();
 	const chartTypes = ['Bodyweight & weighted', 'Rep ranges', 'Set types'];
