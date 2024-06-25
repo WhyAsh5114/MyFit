@@ -114,6 +114,7 @@ model ExerciseSplit {
 model ExerciseSplitDay {
   id              String             @id @default(cuid())
   name            String
+  dayIndex        Int
   isRestDay       Boolean
   exercises       ExerciseTemplate[]
   exerciseSplit   ExerciseSplit      @relation(fields: [exerciseSplitId], references: [id], onDelete: Cascade)
@@ -123,6 +124,7 @@ model ExerciseSplitDay {
 model ExerciseTemplate {
   id                 String           @id @default(cuid())
   name               String
+  exerciseIndex      Int
   targetMuscleGroup  MuscleGroup
   customMuscleGroup  String?
   involvesBodyweight Boolean
@@ -173,6 +175,7 @@ model MesocycleCyclicSetChange {
 model MesocycleExerciseSplitDay {
   id                         String                      @id @default(cuid())
   name                       String
+  dayIndex                   Int
   isRestDay                  Boolean
   mesocycle                  Mesocycle                   @relation(fields: [mesocycleId], references: [id], onDelete: Cascade)
   mesocycleId                String
@@ -182,6 +185,7 @@ model MesocycleExerciseSplitDay {
 model MesocycleExerciseTemplate {
   id                           String                    @id @default(cuid())
   name                         String
+  exerciseIndex                Int
   targetMuscleGroup            MuscleGroup
   customMuscleGroup            String?
   involvesBodyweight           Boolean
