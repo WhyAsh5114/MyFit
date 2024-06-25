@@ -30,8 +30,13 @@
 		try {
 			const { message } = await trpc().exerciseSplits.create.mutate({
 				splitName: exerciseSplitRunes.splitName,
-				splitDays: exerciseSplitRunes.splitDays,
-				splitExercises: exerciseSplitRunes.splitExercises
+				splitDays: exerciseSplitRunes.splitDays.map((splitDay, idx) => ({
+					...splitDay,
+					dayIndex: idx
+				})),
+				splitExercises: exerciseSplitRunes.splitExercises.map((dayExercises) =>
+					dayExercises.map((exercise, idx) => ({ ...exercise, exerciseIndex: idx }))
+				)
 			});
 			toast.success(message);
 		} catch (error) {
@@ -45,8 +50,13 @@
 				id,
 				splitData: {
 					splitName: exerciseSplitRunes.splitName,
-					splitDays: exerciseSplitRunes.splitDays,
-					splitExercises: exerciseSplitRunes.splitExercises
+					splitDays: exerciseSplitRunes.splitDays.map((splitDay, idx) => ({
+						...splitDay,
+						dayIndex: idx
+					})),
+					splitExercises: exerciseSplitRunes.splitExercises.map((dayExercises) =>
+						dayExercises.map((exercise, idx) => ({ ...exercise, exerciseIndex: idx }))
+					)
 				}
 			});
 			toast.success(message);

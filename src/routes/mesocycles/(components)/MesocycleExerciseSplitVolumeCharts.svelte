@@ -26,7 +26,10 @@
 	);
 
 	type PropsType = {
-		mesocycleSplitExercises: Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput[][];
+		mesocycleSplitExercises: Omit<
+			Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput,
+			'exerciseIndex'
+		>[][];
 	};
 
 	let { mesocycleSplitExercises }: PropsType = $props();

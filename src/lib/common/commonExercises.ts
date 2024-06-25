@@ -3,7 +3,7 @@ import type { MuscleGroup, Prisma } from '@prisma/client';
 // TODO: extend this list
 export const commonExercisePerMuscleGroup: {
 	muscleGroup: MuscleGroup;
-	exercises: Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput[];
+	exercises: Omit<Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput, 'exerciseIndex'>[];
 }[] = [
 	{
 		muscleGroup: 'Chest',

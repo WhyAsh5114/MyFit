@@ -15,7 +15,10 @@
 	Chart.register(Tooltip, Legend, BarController, BarElement, CategoryScale, LinearScale);
 
 	type PropsType = {
-		splitExercises: Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput[][];
+		splitExercises: Omit<
+			Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput,
+			'exerciseIndex'
+		>[][];
 	};
 
 	let { splitExercises }: PropsType = $props();

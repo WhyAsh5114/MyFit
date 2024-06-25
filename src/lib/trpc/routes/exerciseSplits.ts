@@ -53,7 +53,12 @@ export const exerciseSplits = t.router({
 	findById: t.procedure.input(z.string().cuid()).query(({ input, ctx }) =>
 		prisma.exerciseSplit.findUnique({
 			where: { id: input, userId: ctx.userId },
-			include: { exerciseSplitDays: { include: { exercises: true } } }
+			include: {
+				exerciseSplitDays: {
+					include: { exercises: { orderBy: { exerciseIndex: 'asc' } } },
+					orderBy: { dayIndex: 'asc' }
+				}
+			}
 		})
 	),
 
@@ -68,7 +73,7 @@ export const exerciseSplits = t.router({
 			return prisma.exerciseSplit.findMany({
 				where: { userId: ctx.userId, name: { contains: input.searchString, mode: 'insensitive' } },
 				orderBy: { id: 'desc' },
-				include: { exerciseSplitDays: true },
+				include: { exerciseSplitDays: { orderBy: { dayIndex: 'asc' } } },
 				cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,
 				skip: input.cursorId !== undefined ? 1 : 0,
 				take: 10

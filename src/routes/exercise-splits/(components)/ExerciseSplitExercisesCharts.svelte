@@ -33,7 +33,9 @@
 		Filler
 	);
 
-	type PropsType = { exercises: Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput[] };
+	type PropsType = {
+		exercises: Omit<Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput, 'exerciseIndex'>[];
+	};
 
 	let { exercises }: PropsType = $props();
 	const chartTypes = ['Bodyweight & weighted', 'Rep ranges', 'Set types'];

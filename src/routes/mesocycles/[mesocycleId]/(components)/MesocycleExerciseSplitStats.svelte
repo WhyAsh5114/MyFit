@@ -7,7 +7,10 @@
 	import type { Prisma } from '@prisma/client';
 
 	type PropsType = {
-		splitExercises: Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput[][];
+		splitExercises: Omit<
+			Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput,
+			'exerciseIndex'
+		>[][];
 	};
 	let { splitExercises }: PropsType = $props();
 </script>

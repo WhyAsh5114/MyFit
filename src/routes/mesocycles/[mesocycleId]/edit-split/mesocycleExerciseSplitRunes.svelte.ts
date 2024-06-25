@@ -6,10 +6,12 @@ export type FullMesocycleWithExerciseSplit = Prisma.MesocycleGetPayload<{
 
 type MesocycleExerciseSplitDayWithoutIds = Omit<
 	Prisma.MesocycleExerciseSplitDayCreateWithoutMesocycleInput,
-	'mesocycleSplitDayExercises'
+	'mesocycleSplitDayExercises' | 'dayIndex'
 >;
-type MesocycleExerciseTemplateWithoutIds =
-	Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput;
+type MesocycleExerciseTemplateWithoutIds = Omit<
+	Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput,
+	'exerciseIndex'
+>;
 
 export function createMesocycleExerciseSplitRunes() {
 	let mesocycle: FullMesocycleWithExerciseSplit | null = $state(null);

@@ -4,6 +4,18 @@ export type FullExerciseSplit = Prisma.ExerciseSplitGetPayload<{
 	include: { exerciseSplitDays: { include: { exercises: true } } };
 }>;
 
+export type FullExerciseSplitWithoutIdsAndOrders = Omit<
+	Prisma.ExerciseSplitCreateWithoutUserInput,
+	'exerciseSplitDays'
+> & {
+	exerciseSplitDays: (Omit<
+		Prisma.ExerciseSplitDayCreateWithoutExerciseSplitInput,
+		'exercises' | 'dayIndex'
+	> & {
+		exercises: Omit<Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput, 'exerciseIndex'>[];
+	})[];
+};
+
 export type FullExerciseSplitWithoutIds = Omit<
 	Prisma.ExerciseSplitCreateWithoutUserInput,
 	'exerciseSplitDays'
@@ -13,8 +25,14 @@ export type FullExerciseSplitWithoutIds = Omit<
 	})[];
 };
 
-type ExerciseSplitDayWithoutIds = Prisma.ExerciseSplitDayCreateWithoutExerciseSplitInput;
-type ExerciseTemplateWithoutIds = Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput;
+type ExerciseSplitDayWithoutIds = Omit<
+	Prisma.ExerciseSplitDayCreateWithoutExerciseSplitInput,
+	'dayIndex'
+>;
+type ExerciseTemplateWithoutIds = Omit<
+	Prisma.ExerciseTemplateCreateWithoutExerciseSplitDayInput,
+	'exerciseIndex'
+>;
 
 export function createExerciseSplitRunes() {
 	let splitName = $state('');
@@ -151,7 +169,10 @@ export function createExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
-	function loadExerciseSplit(exerciseSplit: FullExerciseSplitWithoutIds, editingId?: string) {
+	function loadExerciseSplit(
+		exerciseSplit: FullExerciseSplitWithoutIdsAndOrders,
+		editingId?: string
+	) {
 		editingExerciseSplitId = editingId ?? null;
 		splitName = exerciseSplit.name;
 		splitDays = exerciseSplit.exerciseSplitDays.map((splitDay) => ({

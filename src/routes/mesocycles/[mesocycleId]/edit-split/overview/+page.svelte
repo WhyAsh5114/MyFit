@@ -15,8 +15,13 @@
 		savingMesocycleExerciseSplit = true;
 		try {
 			const { message } = await trpc().mesocycles.updateExerciseSplit.mutate({
-				mesocycleExerciseSplitDays: mesocycleExerciseSplitRunes.splitDays,
-				mesocycleExerciseTemplates: mesocycleExerciseSplitRunes.splitExercises,
+				mesocycleExerciseSplitDays: mesocycleExerciseSplitRunes.splitDays.map((splitDay, idx) => ({
+					...splitDay,
+					dayIndex: idx
+				})),
+				mesocycleExerciseTemplates: mesocycleExerciseSplitRunes.splitExercises.map((dayExercises) =>
+					dayExercises.map((exercise, idx) => ({ ...exercise, exerciseIndex: idx }))
+				),
 				mesocycleId: mesocycleExerciseSplitRunes.mesocycle?.id as string
 			});
 			await invalidate(`mesocycles:${mesocycleExerciseSplitRunes.mesocycle?.id}`);

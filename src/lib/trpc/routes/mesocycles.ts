@@ -53,7 +53,10 @@ export const mesocycles = t.router({
 				where: { id: input, userId: ctx.userId },
 				include: {
 					exerciseSplit: true,
-					mesocycleExerciseSplitDays: { include: { mesocycleSplitDayExercises: true } },
+					mesocycleExerciseSplitDays: {
+						include: { mesocycleSplitDayExercises: { orderBy: { exerciseIndex: 'asc' } } },
+						orderBy: { dayIndex: 'asc' }
+					},
 					mesocycleCyclicSetChanges: true
 				}
 			})
