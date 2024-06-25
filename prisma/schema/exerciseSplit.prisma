@@ -1,0 +1,35 @@
+model ExerciseSplit {
+  id                String             @id @default(cuid())
+  name              String
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
+  exerciseSplitDays ExerciseSplitDay[]
+  usedByMesocycles  Mesocycle[]
+}
+
+model ExerciseSplitDay {
+  id              String             @id @default(cuid())
+  name            String
+  dayIndex        Int
+  isRestDay       Boolean
+  exercises       ExerciseTemplate[]
+  exerciseSplit   ExerciseSplit      @relation(fields: [exerciseSplitId], references: [id], onDelete: Cascade)
+  exerciseSplitId String
+}
+
+model ExerciseTemplate {
+  id                 String           @id @default(cuid())
+  name               String
+  exerciseIndex      Int
+  targetMuscleGroup  MuscleGroup
+  customMuscleGroup  String?
+  involvesBodyweight Boolean
+  setType            SetType
+  repRangeStart      Int
+  repRangeEnd        Int
+  changeType         ChangeType?
+  changeAmount       Float?
+  note               String?
+  exerciseSplitDay   ExerciseSplitDay @relation(fields: [exerciseSplitDayId], references: [id], onDelete: Cascade)
+  exerciseSplitDayId String
+}

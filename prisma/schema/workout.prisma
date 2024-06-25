@@ -1,0 +1,25 @@
+model WorkoutOfMesocycle {
+  id           String    @id @default(cuid())
+  workoutId    String    @unique
+  mesocycleId  String
+  splitDayName String
+  workout      Workout   @relation(fields: [workoutId], references: [id])
+  mesocycle    Mesocycle @relation(fields: [mesocycleId], references: [id])
+}
+
+model Workout {
+  id                 String              @id @default(cuid())
+  name               String
+  user               User                @relation(fields: [userId], references: [id])
+  workoutOfMesocycle WorkoutOfMesocycle?
+  createdAt          DateTime            @default(now())
+  workoutExercises   WorkoutExercise[]
+  userId             String
+}
+
+model WorkoutExercise {
+  id             String  @id @default(cuid())
+  exerciseNumber Int
+  workout        Workout @relation(fields: [workoutId], references: [id])
+  workoutId      String
+}

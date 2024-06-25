@@ -1,0 +1,41 @@
+enum MuscleGroup {
+  Chest
+  FrontDelts
+  SideDelts
+  RearDelts
+  Lats
+  Traps
+  Triceps
+  Biceps
+  Forearms
+  Quads
+  Hamstrings
+  Glutes
+  Calves
+  Abs
+  Neck
+  Adductors
+  Abductors
+  Custom
+}
+
+enum SetType {
+  Straight
+  Drop
+  Down
+  Top
+  Myorep
+  MyorepMatch
+  Giant
+  V2
+}
+
+enum ChangeType {
+  Percentage
+  AbsoluteLoad
+}
+
+enum ProgressionVariable {
+  Reps
+  Load
+}
