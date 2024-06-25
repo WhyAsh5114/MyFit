@@ -14,7 +14,7 @@ model Mesocycle {
   forceRIRMatching             Boolean
   mesocycleExerciseSplitDays   MesocycleExerciseSplitDay[]
   mesocycleCyclicSetChanges    MesocycleCyclicSetChange[]
-  WorkoutOfMesocycle           WorkoutOfMesocycle[]
+  workoutsOfMesocycle          WorkoutOfMesocycle[]
 }
 
 model MesocycleCyclicSetChange {

@@ -401,7 +401,7 @@ export const MesocycleIncludeSchema: z.ZodType<Prisma.MesocycleInclude> = z.obje
   exerciseSplit: z.union([z.boolean(),z.lazy(() => ExerciseSplitArgsSchema)]).optional(),
   mesocycleExerciseSplitDays: z.union([z.boolean(),z.lazy(() => MesocycleExerciseSplitDayFindManyArgsSchema)]).optional(),
   mesocycleCyclicSetChanges: z.union([z.boolean(),z.lazy(() => MesocycleCyclicSetChangeFindManyArgsSchema)]).optional(),
-  WorkoutOfMesocycle: z.union([z.boolean(),z.lazy(() => WorkoutOfMesocycleFindManyArgsSchema)]).optional(),
+  workoutsOfMesocycle: z.union([z.boolean(),z.lazy(() => WorkoutOfMesocycleFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => MesocycleCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -417,7 +417,7 @@ export const MesocycleCountOutputTypeArgsSchema: z.ZodType<Prisma.MesocycleCount
 export const MesocycleCountOutputTypeSelectSchema: z.ZodType<Prisma.MesocycleCountOutputTypeSelect> = z.object({
   mesocycleExerciseSplitDays: z.boolean().optional(),
   mesocycleCyclicSetChanges: z.boolean().optional(),
-  WorkoutOfMesocycle: z.boolean().optional(),
+  workoutsOfMesocycle: z.boolean().optional(),
 }).strict();
 
 export const MesocycleSelectSchema: z.ZodType<Prisma.MesocycleSelect> = z.object({
@@ -436,7 +436,7 @@ export const MesocycleSelectSchema: z.ZodType<Prisma.MesocycleSelect> = z.object
   exerciseSplit: z.union([z.boolean(),z.lazy(() => ExerciseSplitArgsSchema)]).optional(),
   mesocycleExerciseSplitDays: z.union([z.boolean(),z.lazy(() => MesocycleExerciseSplitDayFindManyArgsSchema)]).optional(),
   mesocycleCyclicSetChanges: z.union([z.boolean(),z.lazy(() => MesocycleCyclicSetChangeFindManyArgsSchema)]).optional(),
-  WorkoutOfMesocycle: z.union([z.boolean(),z.lazy(() => WorkoutOfMesocycleFindManyArgsSchema)]).optional(),
+  workoutsOfMesocycle: z.union([z.boolean(),z.lazy(() => WorkoutOfMesocycleFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => MesocycleCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -950,7 +950,7 @@ export const MesocycleWhereInputSchema: z.ZodType<Prisma.MesocycleWhereInput> = 
   exerciseSplit: z.union([ z.lazy(() => ExerciseSplitNullableRelationFilterSchema),z.lazy(() => ExerciseSplitWhereInputSchema) ]).optional().nullable(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayListRelationFilterSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeListRelationFilterSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleListRelationFilterSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleListRelationFilterSchema).optional()
 }).strict();
 
 export const MesocycleOrderByWithRelationInputSchema: z.ZodType<Prisma.MesocycleOrderByWithRelationInput> = z.object({
@@ -969,7 +969,7 @@ export const MesocycleOrderByWithRelationInputSchema: z.ZodType<Prisma.Mesocycle
   exerciseSplit: z.lazy(() => ExerciseSplitOrderByWithRelationInputSchema).optional(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayOrderByRelationAggregateInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeOrderByRelationAggregateInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleOrderByRelationAggregateInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const MesocycleWhereUniqueInputSchema: z.ZodType<Prisma.MesocycleWhereUniqueInput> = z.object({
@@ -994,7 +994,7 @@ export const MesocycleWhereUniqueInputSchema: z.ZodType<Prisma.MesocycleWhereUni
   exerciseSplit: z.union([ z.lazy(() => ExerciseSplitNullableRelationFilterSchema),z.lazy(() => ExerciseSplitWhereInputSchema) ]).optional().nullable(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayListRelationFilterSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeListRelationFilterSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleListRelationFilterSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleListRelationFilterSchema).optional()
 }).strict());
 
 export const MesocycleOrderByWithAggregationInputSchema: z.ZodType<Prisma.MesocycleOrderByWithAggregationInput> = z.object({
@@ -1992,7 +1992,7 @@ export const MesocycleCreateInputSchema: z.ZodType<Prisma.MesocycleCreateInput> 
   exerciseSplit: z.lazy(() => ExerciseSplitCreateNestedOneWithoutUsedByMesocyclesInputSchema).optional(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayCreateNestedManyWithoutMesocycleInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeCreateNestedManyWithoutMesocycleInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleCreateNestedManyWithoutMesocycleInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleCreateNestedManyWithoutMesocycleInputSchema).optional()
 }).strict();
 
 export const MesocycleUncheckedCreateInputSchema: z.ZodType<Prisma.MesocycleUncheckedCreateInput> = z.object({
@@ -2009,7 +2009,7 @@ export const MesocycleUncheckedCreateInputSchema: z.ZodType<Prisma.MesocycleUnch
   forceRIRMatching: z.boolean(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional()
 }).strict();
 
 export const MesocycleUpdateInputSchema: z.ZodType<Prisma.MesocycleUpdateInput> = z.object({
@@ -2026,7 +2026,7 @@ export const MesocycleUpdateInputSchema: z.ZodType<Prisma.MesocycleUpdateInput> 
   exerciseSplit: z.lazy(() => ExerciseSplitUpdateOneWithoutUsedByMesocyclesNestedInputSchema).optional(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayUpdateManyWithoutMesocycleNestedInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUpdateManyWithoutMesocycleNestedInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUpdateManyWithoutMesocycleNestedInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUpdateManyWithoutMesocycleNestedInputSchema).optional()
 }).strict();
 
 export const MesocycleUncheckedUpdateInputSchema: z.ZodType<Prisma.MesocycleUncheckedUpdateInput> = z.object({
@@ -2043,7 +2043,7 @@ export const MesocycleUncheckedUpdateInputSchema: z.ZodType<Prisma.MesocycleUnch
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional()
 }).strict();
 
 export const MesocycleCreateManyInputSchema: z.ZodType<Prisma.MesocycleCreateManyInput> = z.object({
@@ -2662,7 +2662,7 @@ export const WorkoutOfMesocycleCreateInputSchema: z.ZodType<Prisma.WorkoutOfMeso
   id: z.string().cuid().optional(),
   splitDayName: z.string(),
   workout: z.lazy(() => WorkoutCreateNestedOneWithoutWorkoutOfMesocycleInputSchema),
-  mesocycle: z.lazy(() => MesocycleCreateNestedOneWithoutWorkoutOfMesocycleInputSchema)
+  mesocycle: z.lazy(() => MesocycleCreateNestedOneWithoutWorkoutsOfMesocycleInputSchema)
 }).strict();
 
 export const WorkoutOfMesocycleUncheckedCreateInputSchema: z.ZodType<Prisma.WorkoutOfMesocycleUncheckedCreateInput> = z.object({
@@ -2676,7 +2676,7 @@ export const WorkoutOfMesocycleUpdateInputSchema: z.ZodType<Prisma.WorkoutOfMeso
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   splitDayName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   workout: z.lazy(() => WorkoutUpdateOneRequiredWithoutWorkoutOfMesocycleNestedInputSchema).optional(),
-  mesocycle: z.lazy(() => MesocycleUpdateOneRequiredWithoutWorkoutOfMesocycleNestedInputSchema).optional()
+  mesocycle: z.lazy(() => MesocycleUpdateOneRequiredWithoutWorkoutsOfMesocycleNestedInputSchema).optional()
 }).strict();
 
 export const WorkoutOfMesocycleUncheckedUpdateInputSchema: z.ZodType<Prisma.WorkoutOfMesocycleUncheckedUpdateInput> = z.object({
@@ -4568,9 +4568,9 @@ export const WorkoutCreateNestedOneWithoutWorkoutOfMesocycleInputSchema: z.ZodTy
   connect: z.lazy(() => WorkoutWhereUniqueInputSchema).optional()
 }).strict();
 
-export const MesocycleCreateNestedOneWithoutWorkoutOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleCreateNestedOneWithoutWorkoutOfMesocycleInput> = z.object({
-  create: z.union([ z.lazy(() => MesocycleCreateWithoutWorkoutOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedCreateWithoutWorkoutOfMesocycleInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => MesocycleCreateOrConnectWithoutWorkoutOfMesocycleInputSchema).optional(),
+export const MesocycleCreateNestedOneWithoutWorkoutsOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleCreateNestedOneWithoutWorkoutsOfMesocycleInput> = z.object({
+  create: z.union([ z.lazy(() => MesocycleCreateWithoutWorkoutsOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedCreateWithoutWorkoutsOfMesocycleInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => MesocycleCreateOrConnectWithoutWorkoutsOfMesocycleInputSchema).optional(),
   connect: z.lazy(() => MesocycleWhereUniqueInputSchema).optional()
 }).strict();
 
@@ -4582,12 +4582,12 @@ export const WorkoutUpdateOneRequiredWithoutWorkoutOfMesocycleNestedInputSchema:
   update: z.union([ z.lazy(() => WorkoutUpdateToOneWithWhereWithoutWorkoutOfMesocycleInputSchema),z.lazy(() => WorkoutUpdateWithoutWorkoutOfMesocycleInputSchema),z.lazy(() => WorkoutUncheckedUpdateWithoutWorkoutOfMesocycleInputSchema) ]).optional(),
 }).strict();
 
-export const MesocycleUpdateOneRequiredWithoutWorkoutOfMesocycleNestedInputSchema: z.ZodType<Prisma.MesocycleUpdateOneRequiredWithoutWorkoutOfMesocycleNestedInput> = z.object({
-  create: z.union([ z.lazy(() => MesocycleCreateWithoutWorkoutOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedCreateWithoutWorkoutOfMesocycleInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => MesocycleCreateOrConnectWithoutWorkoutOfMesocycleInputSchema).optional(),
-  upsert: z.lazy(() => MesocycleUpsertWithoutWorkoutOfMesocycleInputSchema).optional(),
+export const MesocycleUpdateOneRequiredWithoutWorkoutsOfMesocycleNestedInputSchema: z.ZodType<Prisma.MesocycleUpdateOneRequiredWithoutWorkoutsOfMesocycleNestedInput> = z.object({
+  create: z.union([ z.lazy(() => MesocycleCreateWithoutWorkoutsOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedCreateWithoutWorkoutsOfMesocycleInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => MesocycleCreateOrConnectWithoutWorkoutsOfMesocycleInputSchema).optional(),
+  upsert: z.lazy(() => MesocycleUpsertWithoutWorkoutsOfMesocycleInputSchema).optional(),
   connect: z.lazy(() => MesocycleWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => MesocycleUpdateToOneWithWhereWithoutWorkoutOfMesocycleInputSchema),z.lazy(() => MesocycleUpdateWithoutWorkoutOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedUpdateWithoutWorkoutOfMesocycleInputSchema) ]).optional(),
+  update: z.union([ z.lazy(() => MesocycleUpdateToOneWithWhereWithoutWorkoutsOfMesocycleInputSchema),z.lazy(() => MesocycleUpdateWithoutWorkoutsOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedUpdateWithoutWorkoutsOfMesocycleInputSchema) ]).optional(),
 }).strict();
 
 export const UserCreateNestedOneWithoutWorkoutInputSchema: z.ZodType<Prisma.UserCreateNestedOneWithoutWorkoutInput> = z.object({
@@ -5095,7 +5095,7 @@ export const MesocycleCreateWithoutExerciseSplitInputSchema: z.ZodType<Prisma.Me
   user: z.lazy(() => UserCreateNestedOneWithoutMesocycleInputSchema),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayCreateNestedManyWithoutMesocycleInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeCreateNestedManyWithoutMesocycleInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleCreateNestedManyWithoutMesocycleInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleCreateNestedManyWithoutMesocycleInputSchema).optional()
 }).strict();
 
 export const MesocycleUncheckedCreateWithoutExerciseSplitInputSchema: z.ZodType<Prisma.MesocycleUncheckedCreateWithoutExerciseSplitInput> = z.object({
@@ -5111,7 +5111,7 @@ export const MesocycleUncheckedCreateWithoutExerciseSplitInputSchema: z.ZodType<
   forceRIRMatching: z.boolean(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional()
 }).strict();
 
 export const MesocycleCreateOrConnectWithoutExerciseSplitInputSchema: z.ZodType<Prisma.MesocycleCreateOrConnectWithoutExerciseSplitInput> = z.object({
@@ -5677,7 +5677,7 @@ export const MesocycleCreateWithoutMesocycleCyclicSetChangesInputSchema: z.ZodTy
   user: z.lazy(() => UserCreateNestedOneWithoutMesocycleInputSchema),
   exerciseSplit: z.lazy(() => ExerciseSplitCreateNestedOneWithoutUsedByMesocyclesInputSchema).optional(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayCreateNestedManyWithoutMesocycleInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleCreateNestedManyWithoutMesocycleInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleCreateNestedManyWithoutMesocycleInputSchema).optional()
 }).strict();
 
 export const MesocycleUncheckedCreateWithoutMesocycleCyclicSetChangesInputSchema: z.ZodType<Prisma.MesocycleUncheckedCreateWithoutMesocycleCyclicSetChangesInput> = z.object({
@@ -5693,7 +5693,7 @@ export const MesocycleUncheckedCreateWithoutMesocycleCyclicSetChangesInputSchema
   lastSetToFailure: z.boolean(),
   forceRIRMatching: z.boolean(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional()
 }).strict();
 
 export const MesocycleCreateOrConnectWithoutMesocycleCyclicSetChangesInputSchema: z.ZodType<Prisma.MesocycleCreateOrConnectWithoutMesocycleCyclicSetChangesInput> = z.object({
@@ -5725,7 +5725,7 @@ export const MesocycleUpdateWithoutMesocycleCyclicSetChangesInputSchema: z.ZodTy
   user: z.lazy(() => UserUpdateOneRequiredWithoutMesocycleNestedInputSchema).optional(),
   exerciseSplit: z.lazy(() => ExerciseSplitUpdateOneWithoutUsedByMesocyclesNestedInputSchema).optional(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayUpdateManyWithoutMesocycleNestedInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUpdateManyWithoutMesocycleNestedInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUpdateManyWithoutMesocycleNestedInputSchema).optional()
 }).strict();
 
 export const MesocycleUncheckedUpdateWithoutMesocycleCyclicSetChangesInputSchema: z.ZodType<Prisma.MesocycleUncheckedUpdateWithoutMesocycleCyclicSetChangesInput> = z.object({
@@ -5741,7 +5741,7 @@ export const MesocycleUncheckedUpdateWithoutMesocycleCyclicSetChangesInputSchema
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional()
 }).strict();
 
 export const MesocycleCreateWithoutMesocycleExerciseSplitDaysInputSchema: z.ZodType<Prisma.MesocycleCreateWithoutMesocycleExerciseSplitDaysInput> = z.object({
@@ -5757,7 +5757,7 @@ export const MesocycleCreateWithoutMesocycleExerciseSplitDaysInputSchema: z.ZodT
   user: z.lazy(() => UserCreateNestedOneWithoutMesocycleInputSchema),
   exerciseSplit: z.lazy(() => ExerciseSplitCreateNestedOneWithoutUsedByMesocyclesInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeCreateNestedManyWithoutMesocycleInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleCreateNestedManyWithoutMesocycleInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleCreateNestedManyWithoutMesocycleInputSchema).optional()
 }).strict();
 
 export const MesocycleUncheckedCreateWithoutMesocycleExerciseSplitDaysInputSchema: z.ZodType<Prisma.MesocycleUncheckedCreateWithoutMesocycleExerciseSplitDaysInput> = z.object({
@@ -5773,7 +5773,7 @@ export const MesocycleUncheckedCreateWithoutMesocycleExerciseSplitDaysInputSchem
   lastSetToFailure: z.boolean(),
   forceRIRMatching: z.boolean(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional()
 }).strict();
 
 export const MesocycleCreateOrConnectWithoutMesocycleExerciseSplitDaysInputSchema: z.ZodType<Prisma.MesocycleCreateOrConnectWithoutMesocycleExerciseSplitDaysInput> = z.object({
@@ -5855,7 +5855,7 @@ export const MesocycleUpdateWithoutMesocycleExerciseSplitDaysInputSchema: z.ZodT
   user: z.lazy(() => UserUpdateOneRequiredWithoutMesocycleNestedInputSchema).optional(),
   exerciseSplit: z.lazy(() => ExerciseSplitUpdateOneWithoutUsedByMesocyclesNestedInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUpdateManyWithoutMesocycleNestedInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUpdateManyWithoutMesocycleNestedInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUpdateManyWithoutMesocycleNestedInputSchema).optional()
 }).strict();
 
 export const MesocycleUncheckedUpdateWithoutMesocycleExerciseSplitDaysInputSchema: z.ZodType<Prisma.MesocycleUncheckedUpdateWithoutMesocycleExerciseSplitDaysInput> = z.object({
@@ -5871,7 +5871,7 @@ export const MesocycleUncheckedUpdateWithoutMesocycleExerciseSplitDaysInputSchem
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional()
 }).strict();
 
 export const MesocycleExerciseTemplateUpsertWithWhereUniqueWithoutMesocycleExerciseSplitDayInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateUpsertWithWhereUniqueWithoutMesocycleExerciseSplitDayInput> = z.object({
@@ -6063,7 +6063,7 @@ export const MesocycleCreateWithoutUserInputSchema: z.ZodType<Prisma.MesocycleCr
   exerciseSplit: z.lazy(() => ExerciseSplitCreateNestedOneWithoutUsedByMesocyclesInputSchema).optional(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayCreateNestedManyWithoutMesocycleInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeCreateNestedManyWithoutMesocycleInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleCreateNestedManyWithoutMesocycleInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleCreateNestedManyWithoutMesocycleInputSchema).optional()
 }).strict();
 
 export const MesocycleUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.MesocycleUncheckedCreateWithoutUserInput> = z.object({
@@ -6079,7 +6079,7 @@ export const MesocycleUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.Me
   forceRIRMatching: z.boolean(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional()
 }).strict();
 
 export const MesocycleCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.MesocycleCreateOrConnectWithoutUserInput> = z.object({
@@ -6412,7 +6412,7 @@ export const WorkoutCreateOrConnectWithoutWorkoutOfMesocycleInputSchema: z.ZodTy
   create: z.union([ z.lazy(() => WorkoutCreateWithoutWorkoutOfMesocycleInputSchema),z.lazy(() => WorkoutUncheckedCreateWithoutWorkoutOfMesocycleInputSchema) ]),
 }).strict();
 
-export const MesocycleCreateWithoutWorkoutOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleCreateWithoutWorkoutOfMesocycleInput> = z.object({
+export const MesocycleCreateWithoutWorkoutsOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleCreateWithoutWorkoutsOfMesocycleInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
   RIRProgression: z.union([ z.lazy(() => MesocycleCreateRIRProgressionInputSchema),z.number().int().array() ]).optional(),
@@ -6428,7 +6428,7 @@ export const MesocycleCreateWithoutWorkoutOfMesocycleInputSchema: z.ZodType<Pris
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeCreateNestedManyWithoutMesocycleInputSchema).optional()
 }).strict();
 
-export const MesocycleUncheckedCreateWithoutWorkoutOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleUncheckedCreateWithoutWorkoutOfMesocycleInput> = z.object({
+export const MesocycleUncheckedCreateWithoutWorkoutsOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleUncheckedCreateWithoutWorkoutsOfMesocycleInput> = z.object({
   id: z.string().cuid().optional(),
   name: z.string(),
   userId: z.string(),
@@ -6444,9 +6444,9 @@ export const MesocycleUncheckedCreateWithoutWorkoutOfMesocycleInputSchema: z.Zod
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUncheckedCreateNestedManyWithoutMesocycleInputSchema).optional()
 }).strict();
 
-export const MesocycleCreateOrConnectWithoutWorkoutOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleCreateOrConnectWithoutWorkoutOfMesocycleInput> = z.object({
+export const MesocycleCreateOrConnectWithoutWorkoutsOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleCreateOrConnectWithoutWorkoutsOfMesocycleInput> = z.object({
   where: z.lazy(() => MesocycleWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => MesocycleCreateWithoutWorkoutOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedCreateWithoutWorkoutOfMesocycleInputSchema) ]),
+  create: z.union([ z.lazy(() => MesocycleCreateWithoutWorkoutsOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedCreateWithoutWorkoutsOfMesocycleInputSchema) ]),
 }).strict();
 
 export const WorkoutUpsertWithoutWorkoutOfMesocycleInputSchema: z.ZodType<Prisma.WorkoutUpsertWithoutWorkoutOfMesocycleInput> = z.object({
@@ -6476,18 +6476,18 @@ export const WorkoutUncheckedUpdateWithoutWorkoutOfMesocycleInputSchema: z.ZodTy
   workoutExercises: z.lazy(() => WorkoutExerciseUncheckedUpdateManyWithoutWorkoutNestedInputSchema).optional()
 }).strict();
 
-export const MesocycleUpsertWithoutWorkoutOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleUpsertWithoutWorkoutOfMesocycleInput> = z.object({
-  update: z.union([ z.lazy(() => MesocycleUpdateWithoutWorkoutOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedUpdateWithoutWorkoutOfMesocycleInputSchema) ]),
-  create: z.union([ z.lazy(() => MesocycleCreateWithoutWorkoutOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedCreateWithoutWorkoutOfMesocycleInputSchema) ]),
+export const MesocycleUpsertWithoutWorkoutsOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleUpsertWithoutWorkoutsOfMesocycleInput> = z.object({
+  update: z.union([ z.lazy(() => MesocycleUpdateWithoutWorkoutsOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedUpdateWithoutWorkoutsOfMesocycleInputSchema) ]),
+  create: z.union([ z.lazy(() => MesocycleCreateWithoutWorkoutsOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedCreateWithoutWorkoutsOfMesocycleInputSchema) ]),
   where: z.lazy(() => MesocycleWhereInputSchema).optional()
 }).strict();
 
-export const MesocycleUpdateToOneWithWhereWithoutWorkoutOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleUpdateToOneWithWhereWithoutWorkoutOfMesocycleInput> = z.object({
+export const MesocycleUpdateToOneWithWhereWithoutWorkoutsOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleUpdateToOneWithWhereWithoutWorkoutsOfMesocycleInput> = z.object({
   where: z.lazy(() => MesocycleWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => MesocycleUpdateWithoutWorkoutOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedUpdateWithoutWorkoutOfMesocycleInputSchema) ]),
+  data: z.union([ z.lazy(() => MesocycleUpdateWithoutWorkoutsOfMesocycleInputSchema),z.lazy(() => MesocycleUncheckedUpdateWithoutWorkoutsOfMesocycleInputSchema) ]),
 }).strict();
 
-export const MesocycleUpdateWithoutWorkoutOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleUpdateWithoutWorkoutOfMesocycleInput> = z.object({
+export const MesocycleUpdateWithoutWorkoutsOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleUpdateWithoutWorkoutsOfMesocycleInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   RIRProgression: z.union([ z.lazy(() => MesocycleUpdateRIRProgressionInputSchema),z.number().int().array() ]).optional(),
@@ -6503,7 +6503,7 @@ export const MesocycleUpdateWithoutWorkoutOfMesocycleInputSchema: z.ZodType<Pris
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUpdateManyWithoutMesocycleNestedInputSchema).optional()
 }).strict();
 
-export const MesocycleUncheckedUpdateWithoutWorkoutOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleUncheckedUpdateWithoutWorkoutOfMesocycleInput> = z.object({
+export const MesocycleUncheckedUpdateWithoutWorkoutsOfMesocycleInputSchema: z.ZodType<Prisma.MesocycleUncheckedUpdateWithoutWorkoutsOfMesocycleInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6555,7 +6555,7 @@ export const UserCreateOrConnectWithoutWorkoutInputSchema: z.ZodType<Prisma.User
 export const WorkoutOfMesocycleCreateWithoutWorkoutInputSchema: z.ZodType<Prisma.WorkoutOfMesocycleCreateWithoutWorkoutInput> = z.object({
   id: z.string().cuid().optional(),
   splitDayName: z.string(),
-  mesocycle: z.lazy(() => MesocycleCreateNestedOneWithoutWorkoutOfMesocycleInputSchema)
+  mesocycle: z.lazy(() => MesocycleCreateNestedOneWithoutWorkoutsOfMesocycleInputSchema)
 }).strict();
 
 export const WorkoutOfMesocycleUncheckedCreateWithoutWorkoutInputSchema: z.ZodType<Prisma.WorkoutOfMesocycleUncheckedCreateWithoutWorkoutInput> = z.object({
@@ -6642,7 +6642,7 @@ export const WorkoutOfMesocycleUpdateToOneWithWhereWithoutWorkoutInputSchema: z.
 export const WorkoutOfMesocycleUpdateWithoutWorkoutInputSchema: z.ZodType<Prisma.WorkoutOfMesocycleUpdateWithoutWorkoutInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   splitDayName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  mesocycle: z.lazy(() => MesocycleUpdateOneRequiredWithoutWorkoutOfMesocycleNestedInputSchema).optional()
+  mesocycle: z.lazy(() => MesocycleUpdateOneRequiredWithoutWorkoutsOfMesocycleNestedInputSchema).optional()
 }).strict();
 
 export const WorkoutOfMesocycleUncheckedUpdateWithoutWorkoutInputSchema: z.ZodType<Prisma.WorkoutOfMesocycleUncheckedUpdateWithoutWorkoutInput> = z.object({
@@ -6780,7 +6780,7 @@ export const MesocycleUpdateWithoutExerciseSplitInputSchema: z.ZodType<Prisma.Me
   user: z.lazy(() => UserUpdateOneRequiredWithoutMesocycleNestedInputSchema).optional(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayUpdateManyWithoutMesocycleNestedInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUpdateManyWithoutMesocycleNestedInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUpdateManyWithoutMesocycleNestedInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUpdateManyWithoutMesocycleNestedInputSchema).optional()
 }).strict();
 
 export const MesocycleUncheckedUpdateWithoutExerciseSplitInputSchema: z.ZodType<Prisma.MesocycleUncheckedUpdateWithoutExerciseSplitInput> = z.object({
@@ -6796,7 +6796,7 @@ export const MesocycleUncheckedUpdateWithoutExerciseSplitInputSchema: z.ZodType<
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional()
 }).strict();
 
 export const MesocycleUncheckedUpdateManyWithoutExerciseSplitInputSchema: z.ZodType<Prisma.MesocycleUncheckedUpdateManyWithoutExerciseSplitInput> = z.object({
@@ -7186,7 +7186,7 @@ export const MesocycleUpdateWithoutUserInputSchema: z.ZodType<Prisma.MesocycleUp
   exerciseSplit: z.lazy(() => ExerciseSplitUpdateOneWithoutUsedByMesocyclesNestedInputSchema).optional(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayUpdateManyWithoutMesocycleNestedInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUpdateManyWithoutMesocycleNestedInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUpdateManyWithoutMesocycleNestedInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUpdateManyWithoutMesocycleNestedInputSchema).optional()
 }).strict();
 
 export const MesocycleUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.MesocycleUncheckedUpdateWithoutUserInput> = z.object({
@@ -7202,7 +7202,7 @@ export const MesocycleUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.Me
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   mesocycleExerciseSplitDays: z.lazy(() => MesocycleExerciseSplitDayUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional(),
   mesocycleCyclicSetChanges: z.lazy(() => MesocycleCyclicSetChangeUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional(),
-  WorkoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional()
+  workoutsOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedUpdateManyWithoutMesocycleNestedInputSchema).optional()
 }).strict();
 
 export const MesocycleUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.MesocycleUncheckedUpdateManyWithoutUserInput> = z.object({
