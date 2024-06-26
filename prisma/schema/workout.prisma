@@ -26,9 +26,7 @@ model WorkoutExercise {
   targetMuscleGroup            MuscleGroup
   customMuscleGroup            String?
   involvesBodyweight           Boolean
-  sets                         SetsOfWorkoutExercise @relation(fields: [setsOfWorkoutExerciseId], references: [id])
-  changeType                   ChangeType?
-  changeAmount                 Float?
+  setData                      SetsOfWorkoutExercise @relation(fields: [setsOfWorkoutExerciseId], references: [id])
   note                         String?
   preferredProgressionVariable ProgressionVariable?
   overloadPercentage           Float?
