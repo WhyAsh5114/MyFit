@@ -1,8 +1,5 @@
 import { prisma } from '$lib/prisma';
-import {
-	createWorkoutExerciseInProgressFromMesocycleExerciseTemplate,
-	type WorkoutExerciseInProgress
-} from '$lib/mesoToWorkouts';
+import { createWorkoutExerciseInProgressFromMesocycleExerciseTemplate } from '$lib/mesoToWorkouts';
 import { t } from '$lib/trpc/t';
 import type { Prisma } from '@prisma/client';
 
@@ -17,7 +14,7 @@ type ActiveMesocycleWithProgressionData = Prisma.MesocycleGetPayload<{
 }>;
 
 export const workouts = t.router({
-	getTodaysWorkout: t.procedure.query(async ({ ctx }) => {
+	getTodaysWorkoutExercises: t.procedure.query(async ({ ctx }) => {
 		const data = await prisma.mesocycle.findFirst({
 			where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
 			include: includeMesocycleClause

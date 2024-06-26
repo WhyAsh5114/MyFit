@@ -103,7 +103,8 @@ function isVariableChangeSetData(
 export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
 	exerciseTemplate: MesocycleExerciseTemplate
 ): WorkoutExerciseInProgress {
-	const { sets, setType, changeAmount, changeType, ...exercise } = exerciseTemplate;
+	const { sets, setType, changeAmount, changeType, mesocycleExerciseSplitDayId, ...exercise } =
+		exerciseTemplate;
 	const templateSetData = { sets, setType, changeAmount, changeType };
 	const workoutSetData = createWorkoutSetDataFromMesocycleExerciseTemplateSetData(templateSetData);
 	return { ...exercise, setData: workoutSetData };
