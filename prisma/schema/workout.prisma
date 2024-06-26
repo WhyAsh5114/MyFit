@@ -1,10 +1,11 @@
 model WorkoutOfMesocycle {
-  id           String    @id @default(cuid())
-  workoutId    String    @unique
-  mesocycleId  String
-  splitDayName String
-  workout      Workout   @relation(fields: [workoutId], references: [id])
-  mesocycle    Mesocycle @relation(fields: [mesocycleId], references: [id])
+  id            String         @id @default(cuid())
+  workoutId     String         @unique
+  mesocycleId   String
+  splitDayName  String
+  workoutStatus WorkoutStatus?
+  workout       Workout        @relation(fields: [workoutId], references: [id])
+  mesocycle     Mesocycle      @relation(fields: [mesocycleId], references: [id])
 }
 
 model Workout {
