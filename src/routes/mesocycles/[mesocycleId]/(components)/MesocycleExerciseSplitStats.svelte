@@ -5,7 +5,7 @@
 	import MesocycleExerciseSplitVolumeCharts from '../../(components)/MesocycleExerciseSplitVolumeCharts.svelte';
 	import ExerciseSplitExercisesCharts from '../../../exercise-splits/(components)/ExerciseSplitExercisesCharts.svelte';
 	import ExerciseSplitMuscleGroupsCharts from '../../../exercise-splits/(components)/ExerciseSplitMuscleGroupsCharts.svelte';
-	
+
 	type PropsType = { splitExercises: MesocycleExerciseTemplateWithoutIdsOrIndex[][] };
 	let { splitExercises }: PropsType = $props();
 </script>
