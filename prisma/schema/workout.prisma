@@ -37,15 +37,15 @@ model WorkoutExercise {
 }
 
 model SetsOfWorkoutExercise {
-  id                String              @id @default(cuid())
-  workoutExercise   WorkoutExercise?
-  setType           SetType
-  repRangeStart     Int
-  repRangeEnd       Int
-  straightSets      StraightSets?
-  fixedChangeSet    FixedChangeSets?
-  variableChangeSet VariableChangeSets?
-  myorepMatchSet    MyorepMatchSets?
+  id                 String              @id @default(cuid())
+  workoutExercise    WorkoutExercise?
+  setType            SetType
+  repRangeStart      Int
+  repRangeEnd        Int
+  straightSets       StraightSets?
+  fixedChangeSets    FixedChangeSets?
+  variableChangeSets VariableChangeSets?
+  myorepMatchSets    MyorepMatchSets?
 }
 
 // Straight, Myorep
