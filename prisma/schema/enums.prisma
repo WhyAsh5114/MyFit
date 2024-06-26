@@ -21,13 +21,12 @@ enum MuscleGroup {
 
 enum SetType {
   Straight
+  V2
   Drop
   Down
   Top
   Myorep
   MyorepMatch
-  Giant
-  V2
 }
 
 enum ChangeType {
