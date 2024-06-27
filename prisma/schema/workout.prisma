@@ -19,81 +19,40 @@ model Workout {
 }
 
 model WorkoutExercise {
-  id                           String                @id @default(cuid())
+  id                           String               @id @default(cuid())
   exerciseIndex                Int
-  workout                      Workout               @relation(fields: [workoutId], references: [id])
+  workout                      Workout              @relation(fields: [workoutId], references: [id])
   workoutId                    String
   targetMuscleGroup            MuscleGroup
   customMuscleGroup            String?
   involvesBodyweight           Boolean
-  setData                      SetsOfWorkoutExercise @relation(fields: [setsOfWorkoutExerciseId], references: [id])
+  workoutExerciseSets          WorkoutExerciseSet[]
+  setType                      SetType
+  repRangeStart                Int
+  repRangeEnd                  Int
   note                         String?
   preferredProgressionVariable ProgressionVariable?
   overloadPercentage           Float?
   lastSetToFailure             Boolean?
   forceRIRMatching             Boolean?
   minimumWeightChange          Float?
-  setsOfWorkoutExerciseId      String                @unique
 }
 
-model SetsOfWorkoutExercise {
-  id                 String              @id @default(cuid())
-  workoutExercise    WorkoutExercise?
-  setType            SetType
-  repRangeStart      Int
-  repRangeEnd        Int
-  straightSets       StraightSets?
-  fixedChangeSets    FixedChangeSets?
-  variableChangeSets VariableChangeSets?
-  myorepMatchSets    MyorepMatchSets?
+model WorkoutExerciseSet {
+  id                String                    @id @default(cuid())
+  workoutExercise   WorkoutExercise           @relation(fields: [workoutExerciseId], references: [id])
+  workoutExerciseId String
+  rep               Int
+  load              Int
+  RIR               Int
+  miniSets          WorkoutExerciseMiniSets[]
 }
 
-// Straight, Myorep
-model StraightSets {
-  id                      String                @id @default(cuid())
-  load                    Int
-  repNumbers              Int[]
-  RIRNumbers              Int[]
-  setsOfWorkoutExercise   SetsOfWorkoutExercise @relation(fields: [setsOfWorkoutExerciseId], references: [id])
-  setsOfWorkoutExerciseId String                @unique
-}
-
-// Drop, Down, Top
-model FixedChangeSets {
-  id                      String                @id @default(cuid())
-  loadNumbers             Int[]
-  repNumbers              Int[]
-  RIRNumbers              Int[]
-  changeType              ChangeType
-  changeAmount            Float
-  setsOfWorkoutExercise   SetsOfWorkoutExercise @relation(fields: [setsOfWorkoutExerciseId], references: [id])
-  setsOfWorkoutExerciseId String                @unique
-}
-
-// V2
-model VariableChangeSets {
-  id                      String                @id @default(cuid())
-  loadNumbers             Int[]
-  repNumbers              Int[]
-  RIRNumbers              Int[]
-  setsOfWorkoutExercise   SetsOfWorkoutExercise @relation(fields: [setsOfWorkoutExerciseId], references: [id])
-  setsOfWorkoutExerciseId String                @unique
-}
-
-// MyorepMatch
-model MyorepMatchSets {
-  id                      String                @id @default(cuid())
-  myorepMatchSets         MyorepMatchSet[]
-  setsOfWorkoutExercise   SetsOfWorkoutExercise @relation(fields: [setsOfWorkoutExerciseId], references: [id])
-  setsOfWorkoutExerciseId String                @unique
-}
-
-// No 2D arrays, need a seperate model to hold set info
-model MyorepMatchSet {
-  id                String           @id @default(cuid())
-  repNumber         Int
-  loadNumber        Int
-  myoreps           Int[]
-  myorepMatchSets   MyorepMatchSets? @relation(fields: [myorepMatchSetsId], references: [id])
-  myorepMatchSetsId String?
+model WorkoutExerciseMiniSets {
+  id                   String             @id @default(cuid())
+  rep                  Int
+  load                 Int
+  RIR                  Int
+  parentSet            WorkoutExerciseSet @relation(fields: [workoutExerciseSetId], references: [id])
+  workoutExerciseSetId String
 }

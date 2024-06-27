@@ -38,19 +38,11 @@ export const WorkoutOfMesocycleScalarFieldEnumSchema = z.enum(['id','workoutId',
 
 export const WorkoutScalarFieldEnumSchema = z.enum(['id','name','createdAt','userId']);
 
-export const WorkoutExerciseScalarFieldEnumSchema = z.enum(['id','exerciseIndex','workoutId','targetMuscleGroup','customMuscleGroup','involvesBodyweight','note','preferredProgressionVariable','overloadPercentage','lastSetToFailure','forceRIRMatching','minimumWeightChange','setsOfWorkoutExerciseId']);
+export const WorkoutExerciseScalarFieldEnumSchema = z.enum(['id','exerciseIndex','workoutId','targetMuscleGroup','customMuscleGroup','involvesBodyweight','setType','repRangeStart','repRangeEnd','note','preferredProgressionVariable','overloadPercentage','lastSetToFailure','forceRIRMatching','minimumWeightChange']);
 
-export const SetsOfWorkoutExerciseScalarFieldEnumSchema = z.enum(['id','setType','repRangeStart','repRangeEnd']);
+export const WorkoutExerciseSetScalarFieldEnumSchema = z.enum(['id','workoutExerciseId','rep','load','RIR']);
 
-export const StraightSetsScalarFieldEnumSchema = z.enum(['id','load','repNumbers','RIRNumbers','setsOfWorkoutExerciseId']);
-
-export const FixedChangeSetsScalarFieldEnumSchema = z.enum(['id','loadNumbers','repNumbers','RIRNumbers','changeType','changeAmount','setsOfWorkoutExerciseId']);
-
-export const VariableChangeSetsScalarFieldEnumSchema = z.enum(['id','loadNumbers','repNumbers','RIRNumbers','setsOfWorkoutExerciseId']);
-
-export const MyorepMatchSetsScalarFieldEnumSchema = z.enum(['id','setsOfWorkoutExerciseId']);
-
-export const MyorepMatchSetScalarFieldEnumSchema = z.enum(['id','repNumber','loadNumber','myoreps','myorepMatchSetsId']);
+export const WorkoutExerciseMiniSetsScalarFieldEnumSchema = z.enum(['id','rep','load','RIR','workoutExerciseSetId']);
 
 export const SortOrderSchema = z.enum(['asc','desc']);
 
@@ -304,103 +296,51 @@ export type Workout = z.infer<typeof WorkoutSchema>
 
 export const WorkoutExerciseSchema = z.object({
   targetMuscleGroup: MuscleGroupSchema,
+  setType: SetTypeSchema,
   preferredProgressionVariable: ProgressionVariableSchema.nullable(),
   id: z.string().cuid(),
   exerciseIndex: z.number().int(),
   workoutId: z.string(),
   customMuscleGroup: z.string().nullable(),
   involvesBodyweight: z.boolean(),
+  repRangeStart: z.number().int(),
+  repRangeEnd: z.number().int(),
   note: z.string().nullable(),
   overloadPercentage: z.number().nullable(),
   lastSetToFailure: z.boolean().nullable(),
   forceRIRMatching: z.boolean().nullable(),
   minimumWeightChange: z.number().nullable(),
-  setsOfWorkoutExerciseId: z.string(),
 })
 
 export type WorkoutExercise = z.infer<typeof WorkoutExerciseSchema>
 
 /////////////////////////////////////////
-// SETS OF WORKOUT EXERCISE SCHEMA
+// WORKOUT EXERCISE SET SCHEMA
 /////////////////////////////////////////
 
-export const SetsOfWorkoutExerciseSchema = z.object({
-  setType: SetTypeSchema,
+export const WorkoutExerciseSetSchema = z.object({
   id: z.string().cuid(),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int(),
-})
-
-export type SetsOfWorkoutExercise = z.infer<typeof SetsOfWorkoutExerciseSchema>
-
-/////////////////////////////////////////
-// STRAIGHT SETS SCHEMA
-/////////////////////////////////////////
-
-export const StraightSetsSchema = z.object({
-  id: z.string().cuid(),
+  workoutExerciseId: z.string(),
+  rep: z.number().int(),
   load: z.number().int(),
-  repNumbers: z.number().int().array(),
-  RIRNumbers: z.number().int().array(),
-  setsOfWorkoutExerciseId: z.string(),
+  RIR: z.number().int(),
 })
 
-export type StraightSets = z.infer<typeof StraightSetsSchema>
+export type WorkoutExerciseSet = z.infer<typeof WorkoutExerciseSetSchema>
 
 /////////////////////////////////////////
-// FIXED CHANGE SETS SCHEMA
+// WORKOUT EXERCISE MINI SETS SCHEMA
 /////////////////////////////////////////
 
-export const FixedChangeSetsSchema = z.object({
-  changeType: ChangeTypeSchema,
+export const WorkoutExerciseMiniSetsSchema = z.object({
   id: z.string().cuid(),
-  loadNumbers: z.number().int().array(),
-  repNumbers: z.number().int().array(),
-  RIRNumbers: z.number().int().array(),
-  changeAmount: z.number(),
-  setsOfWorkoutExerciseId: z.string(),
+  rep: z.number().int(),
+  load: z.number().int(),
+  RIR: z.number().int(),
+  workoutExerciseSetId: z.string(),
 })
 
-export type FixedChangeSets = z.infer<typeof FixedChangeSetsSchema>
-
-/////////////////////////////////////////
-// VARIABLE CHANGE SETS SCHEMA
-/////////////////////////////////////////
-
-export const VariableChangeSetsSchema = z.object({
-  id: z.string().cuid(),
-  loadNumbers: z.number().int().array(),
-  repNumbers: z.number().int().array(),
-  RIRNumbers: z.number().int().array(),
-  setsOfWorkoutExerciseId: z.string(),
-})
-
-export type VariableChangeSets = z.infer<typeof VariableChangeSetsSchema>
-
-/////////////////////////////////////////
-// MYOREP MATCH SETS SCHEMA
-/////////////////////////////////////////
-
-export const MyorepMatchSetsSchema = z.object({
-  id: z.string().cuid(),
-  setsOfWorkoutExerciseId: z.string(),
-})
-
-export type MyorepMatchSets = z.infer<typeof MyorepMatchSetsSchema>
-
-/////////////////////////////////////////
-// MYOREP MATCH SET SCHEMA
-/////////////////////////////////////////
-
-export const MyorepMatchSetSchema = z.object({
-  id: z.string().cuid(),
-  repNumber: z.number().int(),
-  loadNumber: z.number().int(),
-  myoreps: z.number().int().array(),
-  myorepMatchSetsId: z.string().nullable(),
-})
-
-export type MyorepMatchSet = z.infer<typeof MyorepMatchSetSchema>
+export type WorkoutExerciseMiniSets = z.infer<typeof WorkoutExerciseMiniSetsSchema>
 
 /////////////////////////////////////////
 // SELECT & INCLUDE
@@ -805,12 +745,21 @@ export const WorkoutSelectSchema: z.ZodType<Prisma.WorkoutSelect> = z.object({
 
 export const WorkoutExerciseIncludeSchema: z.ZodType<Prisma.WorkoutExerciseInclude> = z.object({
   workout: z.union([z.boolean(),z.lazy(() => WorkoutArgsSchema)]).optional(),
-  setData: z.union([z.boolean(),z.lazy(() => SetsOfWorkoutExerciseArgsSchema)]).optional(),
+  workoutExerciseSets: z.union([z.boolean(),z.lazy(() => WorkoutExerciseSetFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => WorkoutExerciseCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
 export const WorkoutExerciseArgsSchema: z.ZodType<Prisma.WorkoutExerciseDefaultArgs> = z.object({
   select: z.lazy(() => WorkoutExerciseSelectSchema).optional(),
   include: z.lazy(() => WorkoutExerciseIncludeSchema).optional(),
+}).strict();
+
+export const WorkoutExerciseCountOutputTypeArgsSchema: z.ZodType<Prisma.WorkoutExerciseCountOutputTypeDefaultArgs> = z.object({
+  select: z.lazy(() => WorkoutExerciseCountOutputTypeSelectSchema).nullish(),
+}).strict();
+
+export const WorkoutExerciseCountOutputTypeSelectSchema: z.ZodType<Prisma.WorkoutExerciseCountOutputTypeSelect> = z.object({
+  workoutExerciseSets: z.boolean().optional(),
 }).strict();
 
 export const WorkoutExerciseSelectSchema: z.ZodType<Prisma.WorkoutExerciseSelect> = z.object({
@@ -820,159 +769,72 @@ export const WorkoutExerciseSelectSchema: z.ZodType<Prisma.WorkoutExerciseSelect
   targetMuscleGroup: z.boolean().optional(),
   customMuscleGroup: z.boolean().optional(),
   involvesBodyweight: z.boolean().optional(),
+  setType: z.boolean().optional(),
+  repRangeStart: z.boolean().optional(),
+  repRangeEnd: z.boolean().optional(),
   note: z.boolean().optional(),
   preferredProgressionVariable: z.boolean().optional(),
   overloadPercentage: z.boolean().optional(),
   lastSetToFailure: z.boolean().optional(),
   forceRIRMatching: z.boolean().optional(),
   minimumWeightChange: z.boolean().optional(),
-  setsOfWorkoutExerciseId: z.boolean().optional(),
   workout: z.union([z.boolean(),z.lazy(() => WorkoutArgsSchema)]).optional(),
-  setData: z.union([z.boolean(),z.lazy(() => SetsOfWorkoutExerciseArgsSchema)]).optional(),
+  workoutExerciseSets: z.union([z.boolean(),z.lazy(() => WorkoutExerciseSetFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => WorkoutExerciseCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-// SETS OF WORKOUT EXERCISE
+// WORKOUT EXERCISE SET
 //------------------------------------------------------
 
-export const SetsOfWorkoutExerciseIncludeSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseInclude> = z.object({
+export const WorkoutExerciseSetIncludeSchema: z.ZodType<Prisma.WorkoutExerciseSetInclude> = z.object({
   workoutExercise: z.union([z.boolean(),z.lazy(() => WorkoutExerciseArgsSchema)]).optional(),
-  straightSets: z.union([z.boolean(),z.lazy(() => StraightSetsArgsSchema)]).optional(),
-  fixedChangeSets: z.union([z.boolean(),z.lazy(() => FixedChangeSetsArgsSchema)]).optional(),
-  variableChangeSets: z.union([z.boolean(),z.lazy(() => VariableChangeSetsArgsSchema)]).optional(),
-  myorepMatchSets: z.union([z.boolean(),z.lazy(() => MyorepMatchSetsArgsSchema)]).optional(),
+  miniSets: z.union([z.boolean(),z.lazy(() => WorkoutExerciseMiniSetsFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => WorkoutExerciseSetCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-export const SetsOfWorkoutExerciseArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseDefaultArgs> = z.object({
-  select: z.lazy(() => SetsOfWorkoutExerciseSelectSchema).optional(),
-  include: z.lazy(() => SetsOfWorkoutExerciseIncludeSchema).optional(),
+export const WorkoutExerciseSetArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetDefaultArgs> = z.object({
+  select: z.lazy(() => WorkoutExerciseSetSelectSchema).optional(),
+  include: z.lazy(() => WorkoutExerciseSetIncludeSchema).optional(),
 }).strict();
 
-export const SetsOfWorkoutExerciseSelectSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseSelect> = z.object({
-  id: z.boolean().optional(),
-  setType: z.boolean().optional(),
-  repRangeStart: z.boolean().optional(),
-  repRangeEnd: z.boolean().optional(),
-  workoutExercise: z.union([z.boolean(),z.lazy(() => WorkoutExerciseArgsSchema)]).optional(),
-  straightSets: z.union([z.boolean(),z.lazy(() => StraightSetsArgsSchema)]).optional(),
-  fixedChangeSets: z.union([z.boolean(),z.lazy(() => FixedChangeSetsArgsSchema)]).optional(),
-  variableChangeSets: z.union([z.boolean(),z.lazy(() => VariableChangeSetsArgsSchema)]).optional(),
-  myorepMatchSets: z.union([z.boolean(),z.lazy(() => MyorepMatchSetsArgsSchema)]).optional(),
-}).strict()
-
-// STRAIGHT SETS
-//------------------------------------------------------
-
-export const StraightSetsIncludeSchema: z.ZodType<Prisma.StraightSetsInclude> = z.object({
-  setsOfWorkoutExercise: z.union([z.boolean(),z.lazy(() => SetsOfWorkoutExerciseArgsSchema)]).optional(),
-}).strict()
-
-export const StraightSetsArgsSchema: z.ZodType<Prisma.StraightSetsDefaultArgs> = z.object({
-  select: z.lazy(() => StraightSetsSelectSchema).optional(),
-  include: z.lazy(() => StraightSetsIncludeSchema).optional(),
+export const WorkoutExerciseSetCountOutputTypeArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetCountOutputTypeDefaultArgs> = z.object({
+  select: z.lazy(() => WorkoutExerciseSetCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
-export const StraightSetsSelectSchema: z.ZodType<Prisma.StraightSetsSelect> = z.object({
+export const WorkoutExerciseSetCountOutputTypeSelectSchema: z.ZodType<Prisma.WorkoutExerciseSetCountOutputTypeSelect> = z.object({
+  miniSets: z.boolean().optional(),
+}).strict();
+
+export const WorkoutExerciseSetSelectSchema: z.ZodType<Prisma.WorkoutExerciseSetSelect> = z.object({
   id: z.boolean().optional(),
+  workoutExerciseId: z.boolean().optional(),
+  rep: z.boolean().optional(),
   load: z.boolean().optional(),
-  repNumbers: z.boolean().optional(),
-  RIRNumbers: z.boolean().optional(),
-  setsOfWorkoutExerciseId: z.boolean().optional(),
-  setsOfWorkoutExercise: z.union([z.boolean(),z.lazy(() => SetsOfWorkoutExerciseArgsSchema)]).optional(),
+  RIR: z.boolean().optional(),
+  workoutExercise: z.union([z.boolean(),z.lazy(() => WorkoutExerciseArgsSchema)]).optional(),
+  miniSets: z.union([z.boolean(),z.lazy(() => WorkoutExerciseMiniSetsFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => WorkoutExerciseSetCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-// FIXED CHANGE SETS
+// WORKOUT EXERCISE MINI SETS
 //------------------------------------------------------
 
-export const FixedChangeSetsIncludeSchema: z.ZodType<Prisma.FixedChangeSetsInclude> = z.object({
-  setsOfWorkoutExercise: z.union([z.boolean(),z.lazy(() => SetsOfWorkoutExerciseArgsSchema)]).optional(),
+export const WorkoutExerciseMiniSetsIncludeSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsInclude> = z.object({
+  parentSet: z.union([z.boolean(),z.lazy(() => WorkoutExerciseSetArgsSchema)]).optional(),
 }).strict()
 
-export const FixedChangeSetsArgsSchema: z.ZodType<Prisma.FixedChangeSetsDefaultArgs> = z.object({
-  select: z.lazy(() => FixedChangeSetsSelectSchema).optional(),
-  include: z.lazy(() => FixedChangeSetsIncludeSchema).optional(),
+export const WorkoutExerciseMiniSetsArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsDefaultArgs> = z.object({
+  select: z.lazy(() => WorkoutExerciseMiniSetsSelectSchema).optional(),
+  include: z.lazy(() => WorkoutExerciseMiniSetsIncludeSchema).optional(),
 }).strict();
 
-export const FixedChangeSetsSelectSchema: z.ZodType<Prisma.FixedChangeSetsSelect> = z.object({
+export const WorkoutExerciseMiniSetsSelectSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsSelect> = z.object({
   id: z.boolean().optional(),
-  loadNumbers: z.boolean().optional(),
-  repNumbers: z.boolean().optional(),
-  RIRNumbers: z.boolean().optional(),
-  changeType: z.boolean().optional(),
-  changeAmount: z.boolean().optional(),
-  setsOfWorkoutExerciseId: z.boolean().optional(),
-  setsOfWorkoutExercise: z.union([z.boolean(),z.lazy(() => SetsOfWorkoutExerciseArgsSchema)]).optional(),
-}).strict()
-
-// VARIABLE CHANGE SETS
-//------------------------------------------------------
-
-export const VariableChangeSetsIncludeSchema: z.ZodType<Prisma.VariableChangeSetsInclude> = z.object({
-  setsOfWorkoutExercise: z.union([z.boolean(),z.lazy(() => SetsOfWorkoutExerciseArgsSchema)]).optional(),
-}).strict()
-
-export const VariableChangeSetsArgsSchema: z.ZodType<Prisma.VariableChangeSetsDefaultArgs> = z.object({
-  select: z.lazy(() => VariableChangeSetsSelectSchema).optional(),
-  include: z.lazy(() => VariableChangeSetsIncludeSchema).optional(),
-}).strict();
-
-export const VariableChangeSetsSelectSchema: z.ZodType<Prisma.VariableChangeSetsSelect> = z.object({
-  id: z.boolean().optional(),
-  loadNumbers: z.boolean().optional(),
-  repNumbers: z.boolean().optional(),
-  RIRNumbers: z.boolean().optional(),
-  setsOfWorkoutExerciseId: z.boolean().optional(),
-  setsOfWorkoutExercise: z.union([z.boolean(),z.lazy(() => SetsOfWorkoutExerciseArgsSchema)]).optional(),
-}).strict()
-
-// MYOREP MATCH SETS
-//------------------------------------------------------
-
-export const MyorepMatchSetsIncludeSchema: z.ZodType<Prisma.MyorepMatchSetsInclude> = z.object({
-  myorepMatchSets: z.union([z.boolean(),z.lazy(() => MyorepMatchSetFindManyArgsSchema)]).optional(),
-  setsOfWorkoutExercise: z.union([z.boolean(),z.lazy(() => SetsOfWorkoutExerciseArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => MyorepMatchSetsCountOutputTypeArgsSchema)]).optional(),
-}).strict()
-
-export const MyorepMatchSetsArgsSchema: z.ZodType<Prisma.MyorepMatchSetsDefaultArgs> = z.object({
-  select: z.lazy(() => MyorepMatchSetsSelectSchema).optional(),
-  include: z.lazy(() => MyorepMatchSetsIncludeSchema).optional(),
-}).strict();
-
-export const MyorepMatchSetsCountOutputTypeArgsSchema: z.ZodType<Prisma.MyorepMatchSetsCountOutputTypeDefaultArgs> = z.object({
-  select: z.lazy(() => MyorepMatchSetsCountOutputTypeSelectSchema).nullish(),
-}).strict();
-
-export const MyorepMatchSetsCountOutputTypeSelectSchema: z.ZodType<Prisma.MyorepMatchSetsCountOutputTypeSelect> = z.object({
-  myorepMatchSets: z.boolean().optional(),
-}).strict();
-
-export const MyorepMatchSetsSelectSchema: z.ZodType<Prisma.MyorepMatchSetsSelect> = z.object({
-  id: z.boolean().optional(),
-  setsOfWorkoutExerciseId: z.boolean().optional(),
-  myorepMatchSets: z.union([z.boolean(),z.lazy(() => MyorepMatchSetFindManyArgsSchema)]).optional(),
-  setsOfWorkoutExercise: z.union([z.boolean(),z.lazy(() => SetsOfWorkoutExerciseArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => MyorepMatchSetsCountOutputTypeArgsSchema)]).optional(),
-}).strict()
-
-// MYOREP MATCH SET
-//------------------------------------------------------
-
-export const MyorepMatchSetIncludeSchema: z.ZodType<Prisma.MyorepMatchSetInclude> = z.object({
-  myorepMatchSets: z.union([z.boolean(),z.lazy(() => MyorepMatchSetsArgsSchema)]).optional(),
-}).strict()
-
-export const MyorepMatchSetArgsSchema: z.ZodType<Prisma.MyorepMatchSetDefaultArgs> = z.object({
-  select: z.lazy(() => MyorepMatchSetSelectSchema).optional(),
-  include: z.lazy(() => MyorepMatchSetIncludeSchema).optional(),
-}).strict();
-
-export const MyorepMatchSetSelectSchema: z.ZodType<Prisma.MyorepMatchSetSelect> = z.object({
-  id: z.boolean().optional(),
-  repNumber: z.boolean().optional(),
-  loadNumber: z.boolean().optional(),
-  myoreps: z.boolean().optional(),
-  myorepMatchSetsId: z.boolean().optional(),
-  myorepMatchSets: z.union([z.boolean(),z.lazy(() => MyorepMatchSetsArgsSchema)]).optional(),
+  rep: z.boolean().optional(),
+  load: z.boolean().optional(),
+  RIR: z.boolean().optional(),
+  workoutExerciseSetId: z.boolean().optional(),
+  parentSet: z.union([z.boolean(),z.lazy(() => WorkoutExerciseSetArgsSchema)]).optional(),
 }).strict()
 
 
@@ -1990,15 +1852,17 @@ export const WorkoutExerciseWhereInputSchema: z.ZodType<Prisma.WorkoutExerciseWh
   targetMuscleGroup: z.union([ z.lazy(() => EnumMuscleGroupFilterSchema),z.lazy(() => MuscleGroupSchema) ]).optional(),
   customMuscleGroup: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   involvesBodyweight: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  setType: z.union([ z.lazy(() => EnumSetTypeFilterSchema),z.lazy(() => SetTypeSchema) ]).optional(),
+  repRangeStart: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  repRangeEnd: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   note: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   preferredProgressionVariable: z.union([ z.lazy(() => EnumProgressionVariableNullableFilterSchema),z.lazy(() => ProgressionVariableSchema) ]).optional().nullable(),
   overloadPercentage: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
   lastSetToFailure: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   forceRIRMatching: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   minimumWeightChange: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
-  setsOfWorkoutExerciseId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   workout: z.union([ z.lazy(() => WorkoutRelationFilterSchema),z.lazy(() => WorkoutWhereInputSchema) ]).optional(),
-  setData: z.union([ z.lazy(() => SetsOfWorkoutExerciseRelationFilterSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema) ]).optional(),
+  workoutExerciseSets: z.lazy(() => WorkoutExerciseSetListRelationFilterSchema).optional()
 }).strict();
 
 export const WorkoutExerciseOrderByWithRelationInputSchema: z.ZodType<Prisma.WorkoutExerciseOrderByWithRelationInput> = z.object({
@@ -2008,32 +1872,24 @@ export const WorkoutExerciseOrderByWithRelationInputSchema: z.ZodType<Prisma.Wor
   targetMuscleGroup: z.lazy(() => SortOrderSchema).optional(),
   customMuscleGroup: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   involvesBodyweight: z.lazy(() => SortOrderSchema).optional(),
+  setType: z.lazy(() => SortOrderSchema).optional(),
+  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
+  repRangeEnd: z.lazy(() => SortOrderSchema).optional(),
   note: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   preferredProgressionVariable: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   overloadPercentage: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   lastSetToFailure: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   forceRIRMatching: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   minimumWeightChange: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
   workout: z.lazy(() => WorkoutOrderByWithRelationInputSchema).optional(),
-  setData: z.lazy(() => SetsOfWorkoutExerciseOrderByWithRelationInputSchema).optional()
+  workoutExerciseSets: z.lazy(() => WorkoutExerciseSetOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
-export const WorkoutExerciseWhereUniqueInputSchema: z.ZodType<Prisma.WorkoutExerciseWhereUniqueInput> = z.union([
-  z.object({
-    id: z.string().cuid(),
-    setsOfWorkoutExerciseId: z.string()
-  }),
-  z.object({
-    id: z.string().cuid(),
-  }),
-  z.object({
-    setsOfWorkoutExerciseId: z.string(),
-  }),
-])
+export const WorkoutExerciseWhereUniqueInputSchema: z.ZodType<Prisma.WorkoutExerciseWhereUniqueInput> = z.object({
+  id: z.string().cuid()
+})
 .and(z.object({
   id: z.string().cuid().optional(),
-  setsOfWorkoutExerciseId: z.string().optional(),
   AND: z.union([ z.lazy(() => WorkoutExerciseWhereInputSchema),z.lazy(() => WorkoutExerciseWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => WorkoutExerciseWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => WorkoutExerciseWhereInputSchema),z.lazy(() => WorkoutExerciseWhereInputSchema).array() ]).optional(),
@@ -2042,6 +1898,9 @@ export const WorkoutExerciseWhereUniqueInputSchema: z.ZodType<Prisma.WorkoutExer
   targetMuscleGroup: z.union([ z.lazy(() => EnumMuscleGroupFilterSchema),z.lazy(() => MuscleGroupSchema) ]).optional(),
   customMuscleGroup: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   involvesBodyweight: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  setType: z.union([ z.lazy(() => EnumSetTypeFilterSchema),z.lazy(() => SetTypeSchema) ]).optional(),
+  repRangeStart: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  repRangeEnd: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   note: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   preferredProgressionVariable: z.union([ z.lazy(() => EnumProgressionVariableNullableFilterSchema),z.lazy(() => ProgressionVariableSchema) ]).optional().nullable(),
   overloadPercentage: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
@@ -2049,7 +1908,7 @@ export const WorkoutExerciseWhereUniqueInputSchema: z.ZodType<Prisma.WorkoutExer
   forceRIRMatching: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   minimumWeightChange: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
   workout: z.union([ z.lazy(() => WorkoutRelationFilterSchema),z.lazy(() => WorkoutWhereInputSchema) ]).optional(),
-  setData: z.union([ z.lazy(() => SetsOfWorkoutExerciseRelationFilterSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema) ]).optional(),
+  workoutExerciseSets: z.lazy(() => WorkoutExerciseSetListRelationFilterSchema).optional()
 }).strict());
 
 export const WorkoutExerciseOrderByWithAggregationInputSchema: z.ZodType<Prisma.WorkoutExerciseOrderByWithAggregationInput> = z.object({
@@ -2059,13 +1918,15 @@ export const WorkoutExerciseOrderByWithAggregationInputSchema: z.ZodType<Prisma.
   targetMuscleGroup: z.lazy(() => SortOrderSchema).optional(),
   customMuscleGroup: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   involvesBodyweight: z.lazy(() => SortOrderSchema).optional(),
+  setType: z.lazy(() => SortOrderSchema).optional(),
+  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
+  repRangeEnd: z.lazy(() => SortOrderSchema).optional(),
   note: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   preferredProgressionVariable: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   overloadPercentage: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   lastSetToFailure: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   forceRIRMatching: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   minimumWeightChange: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => WorkoutExerciseCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => WorkoutExerciseAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => WorkoutExerciseMaxOrderByAggregateInputSchema).optional(),
@@ -2083,412 +1944,138 @@ export const WorkoutExerciseScalarWhereWithAggregatesInputSchema: z.ZodType<Pris
   targetMuscleGroup: z.union([ z.lazy(() => EnumMuscleGroupWithAggregatesFilterSchema),z.lazy(() => MuscleGroupSchema) ]).optional(),
   customMuscleGroup: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   involvesBodyweight: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
+  setType: z.union([ z.lazy(() => EnumSetTypeWithAggregatesFilterSchema),z.lazy(() => SetTypeSchema) ]).optional(),
+  repRangeStart: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  repRangeEnd: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   note: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   preferredProgressionVariable: z.union([ z.lazy(() => EnumProgressionVariableNullableWithAggregatesFilterSchema),z.lazy(() => ProgressionVariableSchema) ]).optional().nullable(),
   overloadPercentage: z.union([ z.lazy(() => FloatNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
   lastSetToFailure: z.union([ z.lazy(() => BoolNullableWithAggregatesFilterSchema),z.boolean() ]).optional().nullable(),
   forceRIRMatching: z.union([ z.lazy(() => BoolNullableWithAggregatesFilterSchema),z.boolean() ]).optional().nullable(),
   minimumWeightChange: z.union([ z.lazy(() => FloatNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
-  setsOfWorkoutExerciseId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
-export const SetsOfWorkoutExerciseWhereInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).array() ]).optional(),
+export const WorkoutExerciseSetWhereInputSchema: z.ZodType<Prisma.WorkoutExerciseSetWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => WorkoutExerciseSetWhereInputSchema),z.lazy(() => WorkoutExerciseSetWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WorkoutExerciseSetWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WorkoutExerciseSetWhereInputSchema),z.lazy(() => WorkoutExerciseSetWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  setType: z.union([ z.lazy(() => EnumSetTypeFilterSchema),z.lazy(() => SetTypeSchema) ]).optional(),
-  repRangeStart: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  repRangeEnd: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  workoutExercise: z.union([ z.lazy(() => WorkoutExerciseNullableRelationFilterSchema),z.lazy(() => WorkoutExerciseWhereInputSchema) ]).optional().nullable(),
-  straightSets: z.union([ z.lazy(() => StraightSetsNullableRelationFilterSchema),z.lazy(() => StraightSetsWhereInputSchema) ]).optional().nullable(),
-  fixedChangeSets: z.union([ z.lazy(() => FixedChangeSetsNullableRelationFilterSchema),z.lazy(() => FixedChangeSetsWhereInputSchema) ]).optional().nullable(),
-  variableChangeSets: z.union([ z.lazy(() => VariableChangeSetsNullableRelationFilterSchema),z.lazy(() => VariableChangeSetsWhereInputSchema) ]).optional().nullable(),
-  myorepMatchSets: z.union([ z.lazy(() => MyorepMatchSetsNullableRelationFilterSchema),z.lazy(() => MyorepMatchSetsWhereInputSchema) ]).optional().nullable(),
-}).strict();
-
-export const SetsOfWorkoutExerciseOrderByWithRelationInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseOrderByWithRelationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  setType: z.lazy(() => SortOrderSchema).optional(),
-  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
-  repRangeEnd: z.lazy(() => SortOrderSchema).optional(),
-  workoutExercise: z.lazy(() => WorkoutExerciseOrderByWithRelationInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsOrderByWithRelationInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsOrderByWithRelationInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsOrderByWithRelationInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsOrderByWithRelationInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseWhereUniqueInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseWhereUniqueInput> = z.object({
-  id: z.string().cuid()
-})
-.and(z.object({
-  id: z.string().cuid().optional(),
-  AND: z.union([ z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).array() ]).optional(),
-  setType: z.union([ z.lazy(() => EnumSetTypeFilterSchema),z.lazy(() => SetTypeSchema) ]).optional(),
-  repRangeStart: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  repRangeEnd: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  workoutExercise: z.union([ z.lazy(() => WorkoutExerciseNullableRelationFilterSchema),z.lazy(() => WorkoutExerciseWhereInputSchema) ]).optional().nullable(),
-  straightSets: z.union([ z.lazy(() => StraightSetsNullableRelationFilterSchema),z.lazy(() => StraightSetsWhereInputSchema) ]).optional().nullable(),
-  fixedChangeSets: z.union([ z.lazy(() => FixedChangeSetsNullableRelationFilterSchema),z.lazy(() => FixedChangeSetsWhereInputSchema) ]).optional().nullable(),
-  variableChangeSets: z.union([ z.lazy(() => VariableChangeSetsNullableRelationFilterSchema),z.lazy(() => VariableChangeSetsWhereInputSchema) ]).optional().nullable(),
-  myorepMatchSets: z.union([ z.lazy(() => MyorepMatchSetsNullableRelationFilterSchema),z.lazy(() => MyorepMatchSetsWhereInputSchema) ]).optional().nullable(),
-}).strict());
-
-export const SetsOfWorkoutExerciseOrderByWithAggregationInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseOrderByWithAggregationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  setType: z.lazy(() => SortOrderSchema).optional(),
-  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
-  repRangeEnd: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => SetsOfWorkoutExerciseCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => SetsOfWorkoutExerciseAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => SetsOfWorkoutExerciseMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => SetsOfWorkoutExerciseMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => SetsOfWorkoutExerciseSumOrderByAggregateInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => SetsOfWorkoutExerciseScalarWhereWithAggregatesInputSchema),z.lazy(() => SetsOfWorkoutExerciseScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => SetsOfWorkoutExerciseScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => SetsOfWorkoutExerciseScalarWhereWithAggregatesInputSchema),z.lazy(() => SetsOfWorkoutExerciseScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  setType: z.union([ z.lazy(() => EnumSetTypeWithAggregatesFilterSchema),z.lazy(() => SetTypeSchema) ]).optional(),
-  repRangeStart: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  repRangeEnd: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-}).strict();
-
-export const StraightSetsWhereInputSchema: z.ZodType<Prisma.StraightSetsWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => StraightSetsWhereInputSchema),z.lazy(() => StraightSetsWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => StraightSetsWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => StraightSetsWhereInputSchema),z.lazy(() => StraightSetsWhereInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  workoutExerciseId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  rep: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   load: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  repNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  RIRNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  setsOfWorkoutExercise: z.union([ z.lazy(() => SetsOfWorkoutExerciseRelationFilterSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema) ]).optional(),
+  RIR: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  workoutExercise: z.union([ z.lazy(() => WorkoutExerciseRelationFilterSchema),z.lazy(() => WorkoutExerciseWhereInputSchema) ]).optional(),
+  miniSets: z.lazy(() => WorkoutExerciseMiniSetsListRelationFilterSchema).optional()
 }).strict();
 
-export const StraightSetsOrderByWithRelationInputSchema: z.ZodType<Prisma.StraightSetsOrderByWithRelationInput> = z.object({
+export const WorkoutExerciseSetOrderByWithRelationInputSchema: z.ZodType<Prisma.WorkoutExerciseSetOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
+  workoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
+  rep: z.lazy(() => SortOrderSchema).optional(),
   load: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseOrderByWithRelationInputSchema).optional()
+  RIR: z.lazy(() => SortOrderSchema).optional(),
+  workoutExercise: z.lazy(() => WorkoutExerciseOrderByWithRelationInputSchema).optional(),
+  miniSets: z.lazy(() => WorkoutExerciseMiniSetsOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
-export const StraightSetsWhereUniqueInputSchema: z.ZodType<Prisma.StraightSetsWhereUniqueInput> = z.union([
-  z.object({
-    id: z.string().cuid(),
-    setsOfWorkoutExerciseId: z.string()
-  }),
-  z.object({
-    id: z.string().cuid(),
-  }),
-  z.object({
-    setsOfWorkoutExerciseId: z.string(),
-  }),
-])
-.and(z.object({
-  id: z.string().cuid().optional(),
-  setsOfWorkoutExerciseId: z.string().optional(),
-  AND: z.union([ z.lazy(() => StraightSetsWhereInputSchema),z.lazy(() => StraightSetsWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => StraightSetsWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => StraightSetsWhereInputSchema),z.lazy(() => StraightSetsWhereInputSchema).array() ]).optional(),
-  load: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  repNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  RIRNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  setsOfWorkoutExercise: z.union([ z.lazy(() => SetsOfWorkoutExerciseRelationFilterSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema) ]).optional(),
-}).strict());
-
-export const StraightSetsOrderByWithAggregationInputSchema: z.ZodType<Prisma.StraightSetsOrderByWithAggregationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  load: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => StraightSetsCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => StraightSetsAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => StraightSetsMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => StraightSetsMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => StraightSetsSumOrderByAggregateInputSchema).optional()
-}).strict();
-
-export const StraightSetsScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.StraightSetsScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => StraightSetsScalarWhereWithAggregatesInputSchema),z.lazy(() => StraightSetsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => StraightSetsScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => StraightSetsScalarWhereWithAggregatesInputSchema),z.lazy(() => StraightSetsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  load: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  repNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  RIRNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-}).strict();
-
-export const FixedChangeSetsWhereInputSchema: z.ZodType<Prisma.FixedChangeSetsWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => FixedChangeSetsWhereInputSchema),z.lazy(() => FixedChangeSetsWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => FixedChangeSetsWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => FixedChangeSetsWhereInputSchema),z.lazy(() => FixedChangeSetsWhereInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  loadNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  repNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  RIRNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  changeType: z.union([ z.lazy(() => EnumChangeTypeFilterSchema),z.lazy(() => ChangeTypeSchema) ]).optional(),
-  changeAmount: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  setsOfWorkoutExercise: z.union([ z.lazy(() => SetsOfWorkoutExerciseRelationFilterSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema) ]).optional(),
-}).strict();
-
-export const FixedChangeSetsOrderByWithRelationInputSchema: z.ZodType<Prisma.FixedChangeSetsOrderByWithRelationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  loadNumbers: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional(),
-  changeType: z.lazy(() => SortOrderSchema).optional(),
-  changeAmount: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseOrderByWithRelationInputSchema).optional()
-}).strict();
-
-export const FixedChangeSetsWhereUniqueInputSchema: z.ZodType<Prisma.FixedChangeSetsWhereUniqueInput> = z.union([
-  z.object({
-    id: z.string().cuid(),
-    setsOfWorkoutExerciseId: z.string()
-  }),
-  z.object({
-    id: z.string().cuid(),
-  }),
-  z.object({
-    setsOfWorkoutExerciseId: z.string(),
-  }),
-])
-.and(z.object({
-  id: z.string().cuid().optional(),
-  setsOfWorkoutExerciseId: z.string().optional(),
-  AND: z.union([ z.lazy(() => FixedChangeSetsWhereInputSchema),z.lazy(() => FixedChangeSetsWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => FixedChangeSetsWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => FixedChangeSetsWhereInputSchema),z.lazy(() => FixedChangeSetsWhereInputSchema).array() ]).optional(),
-  loadNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  repNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  RIRNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  changeType: z.union([ z.lazy(() => EnumChangeTypeFilterSchema),z.lazy(() => ChangeTypeSchema) ]).optional(),
-  changeAmount: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
-  setsOfWorkoutExercise: z.union([ z.lazy(() => SetsOfWorkoutExerciseRelationFilterSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema) ]).optional(),
-}).strict());
-
-export const FixedChangeSetsOrderByWithAggregationInputSchema: z.ZodType<Prisma.FixedChangeSetsOrderByWithAggregationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  loadNumbers: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional(),
-  changeType: z.lazy(() => SortOrderSchema).optional(),
-  changeAmount: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => FixedChangeSetsCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => FixedChangeSetsAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => FixedChangeSetsMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => FixedChangeSetsMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => FixedChangeSetsSumOrderByAggregateInputSchema).optional()
-}).strict();
-
-export const FixedChangeSetsScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.FixedChangeSetsScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => FixedChangeSetsScalarWhereWithAggregatesInputSchema),z.lazy(() => FixedChangeSetsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => FixedChangeSetsScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => FixedChangeSetsScalarWhereWithAggregatesInputSchema),z.lazy(() => FixedChangeSetsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  loadNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  repNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  RIRNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  changeType: z.union([ z.lazy(() => EnumChangeTypeWithAggregatesFilterSchema),z.lazy(() => ChangeTypeSchema) ]).optional(),
-  changeAmount: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-}).strict();
-
-export const VariableChangeSetsWhereInputSchema: z.ZodType<Prisma.VariableChangeSetsWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => VariableChangeSetsWhereInputSchema),z.lazy(() => VariableChangeSetsWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => VariableChangeSetsWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => VariableChangeSetsWhereInputSchema),z.lazy(() => VariableChangeSetsWhereInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  loadNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  repNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  RIRNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  setsOfWorkoutExercise: z.union([ z.lazy(() => SetsOfWorkoutExerciseRelationFilterSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema) ]).optional(),
-}).strict();
-
-export const VariableChangeSetsOrderByWithRelationInputSchema: z.ZodType<Prisma.VariableChangeSetsOrderByWithRelationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  loadNumbers: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseOrderByWithRelationInputSchema).optional()
-}).strict();
-
-export const VariableChangeSetsWhereUniqueInputSchema: z.ZodType<Prisma.VariableChangeSetsWhereUniqueInput> = z.union([
-  z.object({
-    id: z.string().cuid(),
-    setsOfWorkoutExerciseId: z.string()
-  }),
-  z.object({
-    id: z.string().cuid(),
-  }),
-  z.object({
-    setsOfWorkoutExerciseId: z.string(),
-  }),
-])
-.and(z.object({
-  id: z.string().cuid().optional(),
-  setsOfWorkoutExerciseId: z.string().optional(),
-  AND: z.union([ z.lazy(() => VariableChangeSetsWhereInputSchema),z.lazy(() => VariableChangeSetsWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => VariableChangeSetsWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => VariableChangeSetsWhereInputSchema),z.lazy(() => VariableChangeSetsWhereInputSchema).array() ]).optional(),
-  loadNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  repNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  RIRNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  setsOfWorkoutExercise: z.union([ z.lazy(() => SetsOfWorkoutExerciseRelationFilterSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema) ]).optional(),
-}).strict());
-
-export const VariableChangeSetsOrderByWithAggregationInputSchema: z.ZodType<Prisma.VariableChangeSetsOrderByWithAggregationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  loadNumbers: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => VariableChangeSetsCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => VariableChangeSetsAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => VariableChangeSetsMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => VariableChangeSetsMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => VariableChangeSetsSumOrderByAggregateInputSchema).optional()
-}).strict();
-
-export const VariableChangeSetsScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.VariableChangeSetsScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => VariableChangeSetsScalarWhereWithAggregatesInputSchema),z.lazy(() => VariableChangeSetsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => VariableChangeSetsScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => VariableChangeSetsScalarWhereWithAggregatesInputSchema),z.lazy(() => VariableChangeSetsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  loadNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  repNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  RIRNumbers: z.lazy(() => IntNullableListFilterSchema).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-}).strict();
-
-export const MyorepMatchSetsWhereInputSchema: z.ZodType<Prisma.MyorepMatchSetsWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => MyorepMatchSetsWhereInputSchema),z.lazy(() => MyorepMatchSetsWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => MyorepMatchSetsWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => MyorepMatchSetsWhereInputSchema),z.lazy(() => MyorepMatchSetsWhereInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetListRelationFilterSchema).optional(),
-  setsOfWorkoutExercise: z.union([ z.lazy(() => SetsOfWorkoutExerciseRelationFilterSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema) ]).optional(),
-}).strict();
-
-export const MyorepMatchSetsOrderByWithRelationInputSchema: z.ZodType<Prisma.MyorepMatchSetsOrderByWithRelationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetOrderByRelationAggregateInputSchema).optional(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseOrderByWithRelationInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetsWhereUniqueInputSchema: z.ZodType<Prisma.MyorepMatchSetsWhereUniqueInput> = z.union([
-  z.object({
-    id: z.string().cuid(),
-    setsOfWorkoutExerciseId: z.string()
-  }),
-  z.object({
-    id: z.string().cuid(),
-  }),
-  z.object({
-    setsOfWorkoutExerciseId: z.string(),
-  }),
-])
-.and(z.object({
-  id: z.string().cuid().optional(),
-  setsOfWorkoutExerciseId: z.string().optional(),
-  AND: z.union([ z.lazy(() => MyorepMatchSetsWhereInputSchema),z.lazy(() => MyorepMatchSetsWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => MyorepMatchSetsWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => MyorepMatchSetsWhereInputSchema),z.lazy(() => MyorepMatchSetsWhereInputSchema).array() ]).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetListRelationFilterSchema).optional(),
-  setsOfWorkoutExercise: z.union([ z.lazy(() => SetsOfWorkoutExerciseRelationFilterSchema),z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema) ]).optional(),
-}).strict());
-
-export const MyorepMatchSetsOrderByWithAggregationInputSchema: z.ZodType<Prisma.MyorepMatchSetsOrderByWithAggregationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => MyorepMatchSetsCountOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => MyorepMatchSetsMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => MyorepMatchSetsMinOrderByAggregateInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetsScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.MyorepMatchSetsScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => MyorepMatchSetsScalarWhereWithAggregatesInputSchema),z.lazy(() => MyorepMatchSetsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => MyorepMatchSetsScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => MyorepMatchSetsScalarWhereWithAggregatesInputSchema),z.lazy(() => MyorepMatchSetsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-}).strict();
-
-export const MyorepMatchSetWhereInputSchema: z.ZodType<Prisma.MyorepMatchSetWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => MyorepMatchSetWhereInputSchema),z.lazy(() => MyorepMatchSetWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => MyorepMatchSetWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => MyorepMatchSetWhereInputSchema),z.lazy(() => MyorepMatchSetWhereInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  repNumber: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  loadNumber: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  myoreps: z.lazy(() => IntNullableListFilterSchema).optional(),
-  myorepMatchSetsId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  myorepMatchSets: z.union([ z.lazy(() => MyorepMatchSetsNullableRelationFilterSchema),z.lazy(() => MyorepMatchSetsWhereInputSchema) ]).optional().nullable(),
-}).strict();
-
-export const MyorepMatchSetOrderByWithRelationInputSchema: z.ZodType<Prisma.MyorepMatchSetOrderByWithRelationInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  repNumber: z.lazy(() => SortOrderSchema).optional(),
-  loadNumber: z.lazy(() => SortOrderSchema).optional(),
-  myoreps: z.lazy(() => SortOrderSchema).optional(),
-  myorepMatchSetsId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsOrderByWithRelationInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetWhereUniqueInputSchema: z.ZodType<Prisma.MyorepMatchSetWhereUniqueInput> = z.object({
+export const WorkoutExerciseSetWhereUniqueInputSchema: z.ZodType<Prisma.WorkoutExerciseSetWhereUniqueInput> = z.object({
   id: z.string().cuid()
 })
 .and(z.object({
   id: z.string().cuid().optional(),
-  AND: z.union([ z.lazy(() => MyorepMatchSetWhereInputSchema),z.lazy(() => MyorepMatchSetWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => MyorepMatchSetWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => MyorepMatchSetWhereInputSchema),z.lazy(() => MyorepMatchSetWhereInputSchema).array() ]).optional(),
-  repNumber: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  loadNumber: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  myoreps: z.lazy(() => IntNullableListFilterSchema).optional(),
-  myorepMatchSetsId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  myorepMatchSets: z.union([ z.lazy(() => MyorepMatchSetsNullableRelationFilterSchema),z.lazy(() => MyorepMatchSetsWhereInputSchema) ]).optional().nullable(),
+  AND: z.union([ z.lazy(() => WorkoutExerciseSetWhereInputSchema),z.lazy(() => WorkoutExerciseSetWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WorkoutExerciseSetWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WorkoutExerciseSetWhereInputSchema),z.lazy(() => WorkoutExerciseSetWhereInputSchema).array() ]).optional(),
+  workoutExerciseId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  rep: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  load: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  RIR: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  workoutExercise: z.union([ z.lazy(() => WorkoutExerciseRelationFilterSchema),z.lazy(() => WorkoutExerciseWhereInputSchema) ]).optional(),
+  miniSets: z.lazy(() => WorkoutExerciseMiniSetsListRelationFilterSchema).optional()
 }).strict());
 
-export const MyorepMatchSetOrderByWithAggregationInputSchema: z.ZodType<Prisma.MyorepMatchSetOrderByWithAggregationInput> = z.object({
+export const WorkoutExerciseSetOrderByWithAggregationInputSchema: z.ZodType<Prisma.WorkoutExerciseSetOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  repNumber: z.lazy(() => SortOrderSchema).optional(),
-  loadNumber: z.lazy(() => SortOrderSchema).optional(),
-  myoreps: z.lazy(() => SortOrderSchema).optional(),
-  myorepMatchSetsId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  _count: z.lazy(() => MyorepMatchSetCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => MyorepMatchSetAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => MyorepMatchSetMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => MyorepMatchSetMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => MyorepMatchSetSumOrderByAggregateInputSchema).optional()
+  workoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
+  rep: z.lazy(() => SortOrderSchema).optional(),
+  load: z.lazy(() => SortOrderSchema).optional(),
+  RIR: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => WorkoutExerciseSetCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => WorkoutExerciseSetAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => WorkoutExerciseSetMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => WorkoutExerciseSetMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => WorkoutExerciseSetSumOrderByAggregateInputSchema).optional()
 }).strict();
 
-export const MyorepMatchSetScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.MyorepMatchSetScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => MyorepMatchSetScalarWhereWithAggregatesInputSchema),z.lazy(() => MyorepMatchSetScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => MyorepMatchSetScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => MyorepMatchSetScalarWhereWithAggregatesInputSchema),z.lazy(() => MyorepMatchSetScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+export const WorkoutExerciseSetScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.WorkoutExerciseSetScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => WorkoutExerciseSetScalarWhereWithAggregatesInputSchema),z.lazy(() => WorkoutExerciseSetScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WorkoutExerciseSetScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WorkoutExerciseSetScalarWhereWithAggregatesInputSchema),z.lazy(() => WorkoutExerciseSetScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  repNumber: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  loadNumber: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  myoreps: z.lazy(() => IntNullableListFilterSchema).optional(),
-  myorepMatchSetsId: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  workoutExerciseId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  rep: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  load: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  RIR: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+}).strict();
+
+export const WorkoutExerciseMiniSetsWhereInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WorkoutExerciseMiniSetsWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  rep: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  load: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  RIR: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  workoutExerciseSetId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  parentSet: z.union([ z.lazy(() => WorkoutExerciseSetRelationFilterSchema),z.lazy(() => WorkoutExerciseSetWhereInputSchema) ]).optional(),
+}).strict();
+
+export const WorkoutExerciseMiniSetsOrderByWithRelationInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  rep: z.lazy(() => SortOrderSchema).optional(),
+  load: z.lazy(() => SortOrderSchema).optional(),
+  RIR: z.lazy(() => SortOrderSchema).optional(),
+  workoutExerciseSetId: z.lazy(() => SortOrderSchema).optional(),
+  parentSet: z.lazy(() => WorkoutExerciseSetOrderByWithRelationInputSchema).optional()
+}).strict();
+
+export const WorkoutExerciseMiniSetsWhereUniqueInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsWhereUniqueInput> = z.object({
+  id: z.string().cuid()
+})
+.and(z.object({
+  id: z.string().cuid().optional(),
+  AND: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WorkoutExerciseMiniSetsWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereInputSchema).array() ]).optional(),
+  rep: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  load: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  RIR: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  workoutExerciseSetId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  parentSet: z.union([ z.lazy(() => WorkoutExerciseSetRelationFilterSchema),z.lazy(() => WorkoutExerciseSetWhereInputSchema) ]).optional(),
+}).strict());
+
+export const WorkoutExerciseMiniSetsOrderByWithAggregationInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  rep: z.lazy(() => SortOrderSchema).optional(),
+  load: z.lazy(() => SortOrderSchema).optional(),
+  RIR: z.lazy(() => SortOrderSchema).optional(),
+  workoutExerciseSetId: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => WorkoutExerciseMiniSetsCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => WorkoutExerciseMiniSetsAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => WorkoutExerciseMiniSetsMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => WorkoutExerciseMiniSetsMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => WorkoutExerciseMiniSetsSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const WorkoutExerciseMiniSetsScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => WorkoutExerciseMiniSetsScalarWhereWithAggregatesInputSchema),z.lazy(() => WorkoutExerciseMiniSetsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WorkoutExerciseMiniSetsScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WorkoutExerciseMiniSetsScalarWhereWithAggregatesInputSchema),z.lazy(() => WorkoutExerciseMiniSetsScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  rep: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  load: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  RIR: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  workoutExerciseSetId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
 export const ExerciseSplitCreateInputSchema: z.ZodType<Prisma.ExerciseSplitCreateInput> = z.object({
@@ -3506,6 +3093,9 @@ export const WorkoutExerciseCreateInputSchema: z.ZodType<Prisma.WorkoutExerciseC
   targetMuscleGroup: z.lazy(() => MuscleGroupSchema),
   customMuscleGroup: z.string().optional().nullable(),
   involvesBodyweight: z.boolean(),
+  setType: z.lazy(() => SetTypeSchema),
+  repRangeStart: z.number().int(),
+  repRangeEnd: z.number().int(),
   note: z.string().optional().nullable(),
   preferredProgressionVariable: z.lazy(() => ProgressionVariableSchema).optional().nullable(),
   overloadPercentage: z.number().optional().nullable(),
@@ -3513,7 +3103,7 @@ export const WorkoutExerciseCreateInputSchema: z.ZodType<Prisma.WorkoutExerciseC
   forceRIRMatching: z.boolean().optional().nullable(),
   minimumWeightChange: z.number().optional().nullable(),
   workout: z.lazy(() => WorkoutCreateNestedOneWithoutWorkoutExercisesInputSchema),
-  setData: z.lazy(() => SetsOfWorkoutExerciseCreateNestedOneWithoutWorkoutExerciseInputSchema)
+  workoutExerciseSets: z.lazy(() => WorkoutExerciseSetCreateNestedManyWithoutWorkoutExerciseInputSchema).optional()
 }).strict();
 
 export const WorkoutExerciseUncheckedCreateInputSchema: z.ZodType<Prisma.WorkoutExerciseUncheckedCreateInput> = z.object({
@@ -3523,13 +3113,16 @@ export const WorkoutExerciseUncheckedCreateInputSchema: z.ZodType<Prisma.Workout
   targetMuscleGroup: z.lazy(() => MuscleGroupSchema),
   customMuscleGroup: z.string().optional().nullable(),
   involvesBodyweight: z.boolean(),
+  setType: z.lazy(() => SetTypeSchema),
+  repRangeStart: z.number().int(),
+  repRangeEnd: z.number().int(),
   note: z.string().optional().nullable(),
   preferredProgressionVariable: z.lazy(() => ProgressionVariableSchema).optional().nullable(),
   overloadPercentage: z.number().optional().nullable(),
   lastSetToFailure: z.boolean().optional().nullable(),
   forceRIRMatching: z.boolean().optional().nullable(),
   minimumWeightChange: z.number().optional().nullable(),
-  setsOfWorkoutExerciseId: z.string()
+  workoutExerciseSets: z.lazy(() => WorkoutExerciseSetUncheckedCreateNestedManyWithoutWorkoutExerciseInputSchema).optional()
 }).strict();
 
 export const WorkoutExerciseUpdateInputSchema: z.ZodType<Prisma.WorkoutExerciseUpdateInput> = z.object({
@@ -3538,6 +3131,9 @@ export const WorkoutExerciseUpdateInputSchema: z.ZodType<Prisma.WorkoutExerciseU
   targetMuscleGroup: z.union([ z.lazy(() => MuscleGroupSchema),z.lazy(() => EnumMuscleGroupFieldUpdateOperationsInputSchema) ]).optional(),
   customMuscleGroup: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   involvesBodyweight: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   note: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredProgressionVariable: z.union([ z.lazy(() => ProgressionVariableSchema),z.lazy(() => NullableEnumProgressionVariableFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -3545,7 +3141,7 @@ export const WorkoutExerciseUpdateInputSchema: z.ZodType<Prisma.WorkoutExerciseU
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   workout: z.lazy(() => WorkoutUpdateOneRequiredWithoutWorkoutExercisesNestedInputSchema).optional(),
-  setData: z.lazy(() => SetsOfWorkoutExerciseUpdateOneRequiredWithoutWorkoutExerciseNestedInputSchema).optional()
+  workoutExerciseSets: z.lazy(() => WorkoutExerciseSetUpdateManyWithoutWorkoutExerciseNestedInputSchema).optional()
 }).strict();
 
 export const WorkoutExerciseUncheckedUpdateInputSchema: z.ZodType<Prisma.WorkoutExerciseUncheckedUpdateInput> = z.object({
@@ -3555,13 +3151,16 @@ export const WorkoutExerciseUncheckedUpdateInputSchema: z.ZodType<Prisma.Workout
   targetMuscleGroup: z.union([ z.lazy(() => MuscleGroupSchema),z.lazy(() => EnumMuscleGroupFieldUpdateOperationsInputSchema) ]).optional(),
   customMuscleGroup: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   involvesBodyweight: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   note: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredProgressionVariable: z.union([ z.lazy(() => ProgressionVariableSchema),z.lazy(() => NullableEnumProgressionVariableFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  setsOfWorkoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  workoutExerciseSets: z.lazy(() => WorkoutExerciseSetUncheckedUpdateManyWithoutWorkoutExerciseNestedInputSchema).optional()
 }).strict();
 
 export const WorkoutExerciseCreateManyInputSchema: z.ZodType<Prisma.WorkoutExerciseCreateManyInput> = z.object({
@@ -3571,13 +3170,15 @@ export const WorkoutExerciseCreateManyInputSchema: z.ZodType<Prisma.WorkoutExerc
   targetMuscleGroup: z.lazy(() => MuscleGroupSchema),
   customMuscleGroup: z.string().optional().nullable(),
   involvesBodyweight: z.boolean(),
+  setType: z.lazy(() => SetTypeSchema),
+  repRangeStart: z.number().int(),
+  repRangeEnd: z.number().int(),
   note: z.string().optional().nullable(),
   preferredProgressionVariable: z.lazy(() => ProgressionVariableSchema).optional().nullable(),
   overloadPercentage: z.number().optional().nullable(),
   lastSetToFailure: z.boolean().optional().nullable(),
   forceRIRMatching: z.boolean().optional().nullable(),
-  minimumWeightChange: z.number().optional().nullable(),
-  setsOfWorkoutExerciseId: z.string()
+  minimumWeightChange: z.number().optional().nullable()
 }).strict();
 
 export const WorkoutExerciseUpdateManyMutationInputSchema: z.ZodType<Prisma.WorkoutExerciseUpdateManyMutationInput> = z.object({
@@ -3586,6 +3187,9 @@ export const WorkoutExerciseUpdateManyMutationInputSchema: z.ZodType<Prisma.Work
   targetMuscleGroup: z.union([ z.lazy(() => MuscleGroupSchema),z.lazy(() => EnumMuscleGroupFieldUpdateOperationsInputSchema) ]).optional(),
   customMuscleGroup: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   involvesBodyweight: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   note: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredProgressionVariable: z.union([ z.lazy(() => ProgressionVariableSchema),z.lazy(() => NullableEnumProgressionVariableFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -3601,354 +3205,129 @@ export const WorkoutExerciseUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Wor
   targetMuscleGroup: z.union([ z.lazy(() => MuscleGroupSchema),z.lazy(() => EnumMuscleGroupFieldUpdateOperationsInputSchema) ]).optional(),
   customMuscleGroup: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   involvesBodyweight: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   note: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredProgressionVariable: z.union([ z.lazy(() => ProgressionVariableSchema),z.lazy(() => NullableEnumProgressionVariableFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  setsOfWorkoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const SetsOfWorkoutExerciseCreateInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateInput> = z.object({
+export const WorkoutExerciseSetCreateInputSchema: z.ZodType<Prisma.WorkoutExerciseSetCreateInput> = z.object({
   id: z.string().cuid().optional(),
-  setType: z.lazy(() => SetTypeSchema),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int(),
-  workoutExercise: z.lazy(() => WorkoutExerciseCreateNestedOneWithoutSetDataInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUncheckedCreateInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
-  setType: z.lazy(() => SetTypeSchema),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUncheckedCreateNestedOneWithoutSetDataInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUpdateOneWithoutSetDataNestedInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUncheckedUpdateInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUncheckedUpdateOneWithoutSetDataNestedInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseCreateManyInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
-  setType: z.lazy(() => SetTypeSchema),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int()
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateManyMutationInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const SetsOfWorkoutExerciseUncheckedUpdateManyInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const StraightSetsCreateInputSchema: z.ZodType<Prisma.StraightSetsCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  rep: z.number().int(),
   load: z.number().int(),
-  repNumbers: z.union([ z.lazy(() => StraightSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => StraightSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseCreateNestedOneWithoutStraightSetsInputSchema)
+  RIR: z.number().int(),
+  workoutExercise: z.lazy(() => WorkoutExerciseCreateNestedOneWithoutWorkoutExerciseSetsInputSchema),
+  miniSets: z.lazy(() => WorkoutExerciseMiniSetsCreateNestedManyWithoutParentSetInputSchema).optional()
 }).strict();
 
-export const StraightSetsUncheckedCreateInputSchema: z.ZodType<Prisma.StraightSetsUncheckedCreateInput> = z.object({
+export const WorkoutExerciseSetUncheckedCreateInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUncheckedCreateInput> = z.object({
   id: z.string().cuid().optional(),
+  workoutExerciseId: z.string(),
+  rep: z.number().int(),
   load: z.number().int(),
-  repNumbers: z.union([ z.lazy(() => StraightSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => StraightSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  setsOfWorkoutExerciseId: z.string()
+  RIR: z.number().int(),
+  miniSets: z.lazy(() => WorkoutExerciseMiniSetsUncheckedCreateNestedManyWithoutParentSetInputSchema).optional()
 }).strict();
 
-export const StraightSetsUpdateInputSchema: z.ZodType<Prisma.StraightSetsUpdateInput> = z.object({
+export const WorkoutExerciseSetUpdateInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUpdateInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repNumbers: z.union([ z.lazy(() => StraightSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => StraightSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseUpdateOneRequiredWithoutStraightSetsNestedInputSchema).optional()
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  workoutExercise: z.lazy(() => WorkoutExerciseUpdateOneRequiredWithoutWorkoutExerciseSetsNestedInputSchema).optional(),
+  miniSets: z.lazy(() => WorkoutExerciseMiniSetsUpdateManyWithoutParentSetNestedInputSchema).optional()
 }).strict();
 
-export const StraightSetsUncheckedUpdateInputSchema: z.ZodType<Prisma.StraightSetsUncheckedUpdateInput> = z.object({
+export const WorkoutExerciseSetUncheckedUpdateInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUncheckedUpdateInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  workoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repNumbers: z.union([ z.lazy(() => StraightSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => StraightSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  miniSets: z.lazy(() => WorkoutExerciseMiniSetsUncheckedUpdateManyWithoutParentSetNestedInputSchema).optional()
 }).strict();
 
-export const StraightSetsCreateManyInputSchema: z.ZodType<Prisma.StraightSetsCreateManyInput> = z.object({
+export const WorkoutExerciseSetCreateManyInputSchema: z.ZodType<Prisma.WorkoutExerciseSetCreateManyInput> = z.object({
   id: z.string().cuid().optional(),
+  workoutExerciseId: z.string(),
+  rep: z.number().int(),
   load: z.number().int(),
-  repNumbers: z.union([ z.lazy(() => StraightSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => StraightSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  setsOfWorkoutExerciseId: z.string()
+  RIR: z.number().int()
 }).strict();
 
-export const StraightSetsUpdateManyMutationInputSchema: z.ZodType<Prisma.StraightSetsUpdateManyMutationInput> = z.object({
+export const WorkoutExerciseSetUpdateManyMutationInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUpdateManyMutationInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repNumbers: z.union([ z.lazy(() => StraightSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => StraightSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const StraightSetsUncheckedUpdateManyInputSchema: z.ZodType<Prisma.StraightSetsUncheckedUpdateManyInput> = z.object({
+export const WorkoutExerciseSetUncheckedUpdateManyInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUncheckedUpdateManyInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  workoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repNumbers: z.union([ z.lazy(() => StraightSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => StraightSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const FixedChangeSetsCreateInputSchema: z.ZodType<Prisma.FixedChangeSetsCreateInput> = z.object({
+export const WorkoutExerciseMiniSetsCreateInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsCreateInput> = z.object({
   id: z.string().cuid().optional(),
-  loadNumbers: z.union([ z.lazy(() => FixedChangeSetsCreateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => FixedChangeSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => FixedChangeSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  changeType: z.lazy(() => ChangeTypeSchema),
-  changeAmount: z.number(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseCreateNestedOneWithoutFixedChangeSetsInputSchema)
+  rep: z.number().int(),
+  load: z.number().int(),
+  RIR: z.number().int(),
+  parentSet: z.lazy(() => WorkoutExerciseSetCreateNestedOneWithoutMiniSetsInputSchema)
 }).strict();
 
-export const FixedChangeSetsUncheckedCreateInputSchema: z.ZodType<Prisma.FixedChangeSetsUncheckedCreateInput> = z.object({
+export const WorkoutExerciseMiniSetsUncheckedCreateInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUncheckedCreateInput> = z.object({
   id: z.string().cuid().optional(),
-  loadNumbers: z.union([ z.lazy(() => FixedChangeSetsCreateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => FixedChangeSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => FixedChangeSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  changeType: z.lazy(() => ChangeTypeSchema),
-  changeAmount: z.number(),
-  setsOfWorkoutExerciseId: z.string()
+  rep: z.number().int(),
+  load: z.number().int(),
+  RIR: z.number().int(),
+  workoutExerciseSetId: z.string()
 }).strict();
 
-export const FixedChangeSetsUpdateInputSchema: z.ZodType<Prisma.FixedChangeSetsUpdateInput> = z.object({
+export const WorkoutExerciseMiniSetsUpdateInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUpdateInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  changeType: z.union([ z.lazy(() => ChangeTypeSchema),z.lazy(() => EnumChangeTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  changeAmount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseUpdateOneRequiredWithoutFixedChangeSetsNestedInputSchema).optional()
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  parentSet: z.lazy(() => WorkoutExerciseSetUpdateOneRequiredWithoutMiniSetsNestedInputSchema).optional()
 }).strict();
 
-export const FixedChangeSetsUncheckedUpdateInputSchema: z.ZodType<Prisma.FixedChangeSetsUncheckedUpdateInput> = z.object({
+export const WorkoutExerciseMiniSetsUncheckedUpdateInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUncheckedUpdateInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  changeType: z.union([ z.lazy(() => ChangeTypeSchema),z.lazy(() => EnumChangeTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  changeAmount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  workoutExerciseSetId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const FixedChangeSetsCreateManyInputSchema: z.ZodType<Prisma.FixedChangeSetsCreateManyInput> = z.object({
+export const WorkoutExerciseMiniSetsCreateManyInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsCreateManyInput> = z.object({
   id: z.string().cuid().optional(),
-  loadNumbers: z.union([ z.lazy(() => FixedChangeSetsCreateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => FixedChangeSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => FixedChangeSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  changeType: z.lazy(() => ChangeTypeSchema),
-  changeAmount: z.number(),
-  setsOfWorkoutExerciseId: z.string()
+  rep: z.number().int(),
+  load: z.number().int(),
+  RIR: z.number().int(),
+  workoutExerciseSetId: z.string()
 }).strict();
 
-export const FixedChangeSetsUpdateManyMutationInputSchema: z.ZodType<Prisma.FixedChangeSetsUpdateManyMutationInput> = z.object({
+export const WorkoutExerciseMiniSetsUpdateManyMutationInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUpdateManyMutationInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  changeType: z.union([ z.lazy(() => ChangeTypeSchema),z.lazy(() => EnumChangeTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  changeAmount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const FixedChangeSetsUncheckedUpdateManyInputSchema: z.ZodType<Prisma.FixedChangeSetsUncheckedUpdateManyInput> = z.object({
+export const WorkoutExerciseMiniSetsUncheckedUpdateManyInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUncheckedUpdateManyInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  changeType: z.union([ z.lazy(() => ChangeTypeSchema),z.lazy(() => EnumChangeTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  changeAmount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const VariableChangeSetsCreateInputSchema: z.ZodType<Prisma.VariableChangeSetsCreateInput> = z.object({
-  id: z.string().cuid().optional(),
-  loadNumbers: z.union([ z.lazy(() => VariableChangeSetsCreateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => VariableChangeSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => VariableChangeSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseCreateNestedOneWithoutVariableChangeSetsInputSchema)
-}).strict();
-
-export const VariableChangeSetsUncheckedCreateInputSchema: z.ZodType<Prisma.VariableChangeSetsUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
-  loadNumbers: z.union([ z.lazy(() => VariableChangeSetsCreateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => VariableChangeSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => VariableChangeSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  setsOfWorkoutExerciseId: z.string()
-}).strict();
-
-export const VariableChangeSetsUpdateInputSchema: z.ZodType<Prisma.VariableChangeSetsUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseUpdateOneRequiredWithoutVariableChangeSetsNestedInputSchema).optional()
-}).strict();
-
-export const VariableChangeSetsUncheckedUpdateInputSchema: z.ZodType<Prisma.VariableChangeSetsUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const VariableChangeSetsCreateManyInputSchema: z.ZodType<Prisma.VariableChangeSetsCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
-  loadNumbers: z.union([ z.lazy(() => VariableChangeSetsCreateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => VariableChangeSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => VariableChangeSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  setsOfWorkoutExerciseId: z.string()
-}).strict();
-
-export const VariableChangeSetsUpdateManyMutationInputSchema: z.ZodType<Prisma.VariableChangeSetsUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-}).strict();
-
-export const VariableChangeSetsUncheckedUpdateManyInputSchema: z.ZodType<Prisma.VariableChangeSetsUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const MyorepMatchSetsCreateInputSchema: z.ZodType<Prisma.MyorepMatchSetsCreateInput> = z.object({
-  id: z.string().cuid().optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetCreateNestedManyWithoutMyorepMatchSetsInputSchema).optional(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseCreateNestedOneWithoutMyorepMatchSetsInputSchema)
-}).strict();
-
-export const MyorepMatchSetsUncheckedCreateInputSchema: z.ZodType<Prisma.MyorepMatchSetsUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
-  setsOfWorkoutExerciseId: z.string(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetUncheckedCreateNestedManyWithoutMyorepMatchSetsInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetsUpdateInputSchema: z.ZodType<Prisma.MyorepMatchSetsUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetUpdateManyWithoutMyorepMatchSetsNestedInputSchema).optional(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseUpdateOneRequiredWithoutMyorepMatchSetsNestedInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetsUncheckedUpdateInputSchema: z.ZodType<Prisma.MyorepMatchSetsUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetUncheckedUpdateManyWithoutMyorepMatchSetsNestedInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetsCreateManyInputSchema: z.ZodType<Prisma.MyorepMatchSetsCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
-  setsOfWorkoutExerciseId: z.string()
-}).strict();
-
-export const MyorepMatchSetsUpdateManyMutationInputSchema: z.ZodType<Prisma.MyorepMatchSetsUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const MyorepMatchSetsUncheckedUpdateManyInputSchema: z.ZodType<Prisma.MyorepMatchSetsUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const MyorepMatchSetCreateInputSchema: z.ZodType<Prisma.MyorepMatchSetCreateInput> = z.object({
-  id: z.string().cuid().optional(),
-  repNumber: z.number().int(),
-  loadNumber: z.number().int(),
-  myoreps: z.union([ z.lazy(() => MyorepMatchSetCreatemyorepsInputSchema),z.number().int().array() ]).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsCreateNestedOneWithoutMyorepMatchSetsInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetUncheckedCreateInputSchema: z.ZodType<Prisma.MyorepMatchSetUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
-  repNumber: z.number().int(),
-  loadNumber: z.number().int(),
-  myoreps: z.union([ z.lazy(() => MyorepMatchSetCreatemyorepsInputSchema),z.number().int().array() ]).optional(),
-  myorepMatchSetsId: z.string().optional().nullable()
-}).strict();
-
-export const MyorepMatchSetUpdateInputSchema: z.ZodType<Prisma.MyorepMatchSetUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  repNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  myoreps: z.union([ z.lazy(() => MyorepMatchSetUpdatemyorepsInputSchema),z.number().int().array() ]).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUpdateOneWithoutMyorepMatchSetsNestedInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetUncheckedUpdateInputSchema: z.ZodType<Prisma.MyorepMatchSetUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  repNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  myoreps: z.union([ z.lazy(() => MyorepMatchSetUpdatemyorepsInputSchema),z.number().int().array() ]).optional(),
-  myorepMatchSetsId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-}).strict();
-
-export const MyorepMatchSetCreateManyInputSchema: z.ZodType<Prisma.MyorepMatchSetCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
-  repNumber: z.number().int(),
-  loadNumber: z.number().int(),
-  myoreps: z.union([ z.lazy(() => MyorepMatchSetCreatemyorepsInputSchema),z.number().int().array() ]).optional(),
-  myorepMatchSetsId: z.string().optional().nullable()
-}).strict();
-
-export const MyorepMatchSetUpdateManyMutationInputSchema: z.ZodType<Prisma.MyorepMatchSetUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  repNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  myoreps: z.union([ z.lazy(() => MyorepMatchSetUpdatemyorepsInputSchema),z.number().int().array() ]).optional(),
-}).strict();
-
-export const MyorepMatchSetUncheckedUpdateManyInputSchema: z.ZodType<Prisma.MyorepMatchSetUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  repNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  myoreps: z.union([ z.lazy(() => MyorepMatchSetUpdatemyorepsInputSchema),z.number().int().array() ]).optional(),
-  myorepMatchSetsId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  workoutExerciseSetId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
@@ -4974,9 +4353,14 @@ export const WorkoutMinOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutMinO
   userId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const SetsOfWorkoutExerciseRelationFilterSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseRelationFilter> = z.object({
-  is: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).optional(),
-  isNot: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).optional()
+export const WorkoutExerciseSetListRelationFilterSchema: z.ZodType<Prisma.WorkoutExerciseSetListRelationFilter> = z.object({
+  every: z.lazy(() => WorkoutExerciseSetWhereInputSchema).optional(),
+  some: z.lazy(() => WorkoutExerciseSetWhereInputSchema).optional(),
+  none: z.lazy(() => WorkoutExerciseSetWhereInputSchema).optional()
+}).strict();
+
+export const WorkoutExerciseSetOrderByRelationAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseSetOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const WorkoutExerciseCountOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseCountOrderByAggregateInput> = z.object({
@@ -4986,17 +4370,21 @@ export const WorkoutExerciseCountOrderByAggregateInputSchema: z.ZodType<Prisma.W
   targetMuscleGroup: z.lazy(() => SortOrderSchema).optional(),
   customMuscleGroup: z.lazy(() => SortOrderSchema).optional(),
   involvesBodyweight: z.lazy(() => SortOrderSchema).optional(),
+  setType: z.lazy(() => SortOrderSchema).optional(),
+  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
+  repRangeEnd: z.lazy(() => SortOrderSchema).optional(),
   note: z.lazy(() => SortOrderSchema).optional(),
   preferredProgressionVariable: z.lazy(() => SortOrderSchema).optional(),
   overloadPercentage: z.lazy(() => SortOrderSchema).optional(),
   lastSetToFailure: z.lazy(() => SortOrderSchema).optional(),
   forceRIRMatching: z.lazy(() => SortOrderSchema).optional(),
-  minimumWeightChange: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
+  minimumWeightChange: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const WorkoutExerciseAvgOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseAvgOrderByAggregateInput> = z.object({
   exerciseIndex: z.lazy(() => SortOrderSchema).optional(),
+  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
+  repRangeEnd: z.lazy(() => SortOrderSchema).optional(),
   overloadPercentage: z.lazy(() => SortOrderSchema).optional(),
   minimumWeightChange: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -5008,13 +4396,15 @@ export const WorkoutExerciseMaxOrderByAggregateInputSchema: z.ZodType<Prisma.Wor
   targetMuscleGroup: z.lazy(() => SortOrderSchema).optional(),
   customMuscleGroup: z.lazy(() => SortOrderSchema).optional(),
   involvesBodyweight: z.lazy(() => SortOrderSchema).optional(),
+  setType: z.lazy(() => SortOrderSchema).optional(),
+  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
+  repRangeEnd: z.lazy(() => SortOrderSchema).optional(),
   note: z.lazy(() => SortOrderSchema).optional(),
   preferredProgressionVariable: z.lazy(() => SortOrderSchema).optional(),
   overloadPercentage: z.lazy(() => SortOrderSchema).optional(),
   lastSetToFailure: z.lazy(() => SortOrderSchema).optional(),
   forceRIRMatching: z.lazy(() => SortOrderSchema).optional(),
-  minimumWeightChange: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
+  minimumWeightChange: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const WorkoutExerciseMinOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseMinOrderByAggregateInput> = z.object({
@@ -5024,251 +4414,115 @@ export const WorkoutExerciseMinOrderByAggregateInputSchema: z.ZodType<Prisma.Wor
   targetMuscleGroup: z.lazy(() => SortOrderSchema).optional(),
   customMuscleGroup: z.lazy(() => SortOrderSchema).optional(),
   involvesBodyweight: z.lazy(() => SortOrderSchema).optional(),
+  setType: z.lazy(() => SortOrderSchema).optional(),
+  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
+  repRangeEnd: z.lazy(() => SortOrderSchema).optional(),
   note: z.lazy(() => SortOrderSchema).optional(),
   preferredProgressionVariable: z.lazy(() => SortOrderSchema).optional(),
   overloadPercentage: z.lazy(() => SortOrderSchema).optional(),
   lastSetToFailure: z.lazy(() => SortOrderSchema).optional(),
   forceRIRMatching: z.lazy(() => SortOrderSchema).optional(),
-  minimumWeightChange: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
+  minimumWeightChange: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const WorkoutExerciseSumOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseSumOrderByAggregateInput> = z.object({
   exerciseIndex: z.lazy(() => SortOrderSchema).optional(),
+  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
+  repRangeEnd: z.lazy(() => SortOrderSchema).optional(),
   overloadPercentage: z.lazy(() => SortOrderSchema).optional(),
   minimumWeightChange: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const WorkoutExerciseNullableRelationFilterSchema: z.ZodType<Prisma.WorkoutExerciseNullableRelationFilter> = z.object({
-  is: z.lazy(() => WorkoutExerciseWhereInputSchema).optional().nullable(),
-  isNot: z.lazy(() => WorkoutExerciseWhereInputSchema).optional().nullable()
+export const WorkoutExerciseRelationFilterSchema: z.ZodType<Prisma.WorkoutExerciseRelationFilter> = z.object({
+  is: z.lazy(() => WorkoutExerciseWhereInputSchema).optional(),
+  isNot: z.lazy(() => WorkoutExerciseWhereInputSchema).optional()
 }).strict();
 
-export const StraightSetsNullableRelationFilterSchema: z.ZodType<Prisma.StraightSetsNullableRelationFilter> = z.object({
-  is: z.lazy(() => StraightSetsWhereInputSchema).optional().nullable(),
-  isNot: z.lazy(() => StraightSetsWhereInputSchema).optional().nullable()
+export const WorkoutExerciseMiniSetsListRelationFilterSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsListRelationFilter> = z.object({
+  every: z.lazy(() => WorkoutExerciseMiniSetsWhereInputSchema).optional(),
+  some: z.lazy(() => WorkoutExerciseMiniSetsWhereInputSchema).optional(),
+  none: z.lazy(() => WorkoutExerciseMiniSetsWhereInputSchema).optional()
 }).strict();
 
-export const FixedChangeSetsNullableRelationFilterSchema: z.ZodType<Prisma.FixedChangeSetsNullableRelationFilter> = z.object({
-  is: z.lazy(() => FixedChangeSetsWhereInputSchema).optional().nullable(),
-  isNot: z.lazy(() => FixedChangeSetsWhereInputSchema).optional().nullable()
-}).strict();
-
-export const VariableChangeSetsNullableRelationFilterSchema: z.ZodType<Prisma.VariableChangeSetsNullableRelationFilter> = z.object({
-  is: z.lazy(() => VariableChangeSetsWhereInputSchema).optional().nullable(),
-  isNot: z.lazy(() => VariableChangeSetsWhereInputSchema).optional().nullable()
-}).strict();
-
-export const MyorepMatchSetsNullableRelationFilterSchema: z.ZodType<Prisma.MyorepMatchSetsNullableRelationFilter> = z.object({
-  is: z.lazy(() => MyorepMatchSetsWhereInputSchema).optional().nullable(),
-  isNot: z.lazy(() => MyorepMatchSetsWhereInputSchema).optional().nullable()
-}).strict();
-
-export const SetsOfWorkoutExerciseCountOrderByAggregateInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCountOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  setType: z.lazy(() => SortOrderSchema).optional(),
-  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
-  repRangeEnd: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseAvgOrderByAggregateInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseAvgOrderByAggregateInput> = z.object({
-  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
-  repRangeEnd: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseMaxOrderByAggregateInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseMaxOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  setType: z.lazy(() => SortOrderSchema).optional(),
-  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
-  repRangeEnd: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseMinOrderByAggregateInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseMinOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  setType: z.lazy(() => SortOrderSchema).optional(),
-  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
-  repRangeEnd: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseSumOrderByAggregateInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseSumOrderByAggregateInput> = z.object({
-  repRangeStart: z.lazy(() => SortOrderSchema).optional(),
-  repRangeEnd: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const StraightSetsCountOrderByAggregateInputSchema: z.ZodType<Prisma.StraightSetsCountOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  load: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const StraightSetsAvgOrderByAggregateInputSchema: z.ZodType<Prisma.StraightSetsAvgOrderByAggregateInput> = z.object({
-  load: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const StraightSetsMaxOrderByAggregateInputSchema: z.ZodType<Prisma.StraightSetsMaxOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  load: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const StraightSetsMinOrderByAggregateInputSchema: z.ZodType<Prisma.StraightSetsMinOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  load: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const StraightSetsSumOrderByAggregateInputSchema: z.ZodType<Prisma.StraightSetsSumOrderByAggregateInput> = z.object({
-  load: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const EnumChangeTypeFilterSchema: z.ZodType<Prisma.EnumChangeTypeFilter> = z.object({
-  equals: z.lazy(() => ChangeTypeSchema).optional(),
-  in: z.lazy(() => ChangeTypeSchema).array().optional(),
-  notIn: z.lazy(() => ChangeTypeSchema).array().optional(),
-  not: z.union([ z.lazy(() => ChangeTypeSchema),z.lazy(() => NestedEnumChangeTypeFilterSchema) ]).optional(),
-}).strict();
-
-export const FixedChangeSetsCountOrderByAggregateInputSchema: z.ZodType<Prisma.FixedChangeSetsCountOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  loadNumbers: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional(),
-  changeType: z.lazy(() => SortOrderSchema).optional(),
-  changeAmount: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const FixedChangeSetsAvgOrderByAggregateInputSchema: z.ZodType<Prisma.FixedChangeSetsAvgOrderByAggregateInput> = z.object({
-  loadNumbers: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional(),
-  changeAmount: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const FixedChangeSetsMaxOrderByAggregateInputSchema: z.ZodType<Prisma.FixedChangeSetsMaxOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  changeType: z.lazy(() => SortOrderSchema).optional(),
-  changeAmount: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const FixedChangeSetsMinOrderByAggregateInputSchema: z.ZodType<Prisma.FixedChangeSetsMinOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  changeType: z.lazy(() => SortOrderSchema).optional(),
-  changeAmount: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const FixedChangeSetsSumOrderByAggregateInputSchema: z.ZodType<Prisma.FixedChangeSetsSumOrderByAggregateInput> = z.object({
-  loadNumbers: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional(),
-  changeAmount: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const EnumChangeTypeWithAggregatesFilterSchema: z.ZodType<Prisma.EnumChangeTypeWithAggregatesFilter> = z.object({
-  equals: z.lazy(() => ChangeTypeSchema).optional(),
-  in: z.lazy(() => ChangeTypeSchema).array().optional(),
-  notIn: z.lazy(() => ChangeTypeSchema).array().optional(),
-  not: z.union([ z.lazy(() => ChangeTypeSchema),z.lazy(() => NestedEnumChangeTypeWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedEnumChangeTypeFilterSchema).optional(),
-  _max: z.lazy(() => NestedEnumChangeTypeFilterSchema).optional()
-}).strict();
-
-export const VariableChangeSetsCountOrderByAggregateInputSchema: z.ZodType<Prisma.VariableChangeSetsCountOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  loadNumbers: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const VariableChangeSetsAvgOrderByAggregateInputSchema: z.ZodType<Prisma.VariableChangeSetsAvgOrderByAggregateInput> = z.object({
-  loadNumbers: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const VariableChangeSetsMaxOrderByAggregateInputSchema: z.ZodType<Prisma.VariableChangeSetsMaxOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const VariableChangeSetsMinOrderByAggregateInputSchema: z.ZodType<Prisma.VariableChangeSetsMinOrderByAggregateInput> = z.object({
-  id: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const VariableChangeSetsSumOrderByAggregateInputSchema: z.ZodType<Prisma.VariableChangeSetsSumOrderByAggregateInput> = z.object({
-  loadNumbers: z.lazy(() => SortOrderSchema).optional(),
-  repNumbers: z.lazy(() => SortOrderSchema).optional(),
-  RIRNumbers: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const MyorepMatchSetListRelationFilterSchema: z.ZodType<Prisma.MyorepMatchSetListRelationFilter> = z.object({
-  every: z.lazy(() => MyorepMatchSetWhereInputSchema).optional(),
-  some: z.lazy(() => MyorepMatchSetWhereInputSchema).optional(),
-  none: z.lazy(() => MyorepMatchSetWhereInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetOrderByRelationAggregateInputSchema: z.ZodType<Prisma.MyorepMatchSetOrderByRelationAggregateInput> = z.object({
+export const WorkoutExerciseMiniSetsOrderByRelationAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsOrderByRelationAggregateInput> = z.object({
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const MyorepMatchSetsCountOrderByAggregateInputSchema: z.ZodType<Prisma.MyorepMatchSetsCountOrderByAggregateInput> = z.object({
+export const WorkoutExerciseSetCountOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseSetCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
+  workoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
+  rep: z.lazy(() => SortOrderSchema).optional(),
+  load: z.lazy(() => SortOrderSchema).optional(),
+  RIR: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const MyorepMatchSetsMaxOrderByAggregateInputSchema: z.ZodType<Prisma.MyorepMatchSetsMaxOrderByAggregateInput> = z.object({
+export const WorkoutExerciseSetAvgOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseSetAvgOrderByAggregateInput> = z.object({
+  rep: z.lazy(() => SortOrderSchema).optional(),
+  load: z.lazy(() => SortOrderSchema).optional(),
+  RIR: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const WorkoutExerciseSetMaxOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseSetMaxOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
+  workoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
+  rep: z.lazy(() => SortOrderSchema).optional(),
+  load: z.lazy(() => SortOrderSchema).optional(),
+  RIR: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const MyorepMatchSetsMinOrderByAggregateInputSchema: z.ZodType<Prisma.MyorepMatchSetsMinOrderByAggregateInput> = z.object({
+export const WorkoutExerciseSetMinOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseSetMinOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  setsOfWorkoutExerciseId: z.lazy(() => SortOrderSchema).optional()
+  workoutExerciseId: z.lazy(() => SortOrderSchema).optional(),
+  rep: z.lazy(() => SortOrderSchema).optional(),
+  load: z.lazy(() => SortOrderSchema).optional(),
+  RIR: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const MyorepMatchSetCountOrderByAggregateInputSchema: z.ZodType<Prisma.MyorepMatchSetCountOrderByAggregateInput> = z.object({
+export const WorkoutExerciseSetSumOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseSetSumOrderByAggregateInput> = z.object({
+  rep: z.lazy(() => SortOrderSchema).optional(),
+  load: z.lazy(() => SortOrderSchema).optional(),
+  RIR: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const WorkoutExerciseSetRelationFilterSchema: z.ZodType<Prisma.WorkoutExerciseSetRelationFilter> = z.object({
+  is: z.lazy(() => WorkoutExerciseSetWhereInputSchema).optional(),
+  isNot: z.lazy(() => WorkoutExerciseSetWhereInputSchema).optional()
+}).strict();
+
+export const WorkoutExerciseMiniSetsCountOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  repNumber: z.lazy(() => SortOrderSchema).optional(),
-  loadNumber: z.lazy(() => SortOrderSchema).optional(),
-  myoreps: z.lazy(() => SortOrderSchema).optional(),
-  myorepMatchSetsId: z.lazy(() => SortOrderSchema).optional()
+  rep: z.lazy(() => SortOrderSchema).optional(),
+  load: z.lazy(() => SortOrderSchema).optional(),
+  RIR: z.lazy(() => SortOrderSchema).optional(),
+  workoutExerciseSetId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const MyorepMatchSetAvgOrderByAggregateInputSchema: z.ZodType<Prisma.MyorepMatchSetAvgOrderByAggregateInput> = z.object({
-  repNumber: z.lazy(() => SortOrderSchema).optional(),
-  loadNumber: z.lazy(() => SortOrderSchema).optional(),
-  myoreps: z.lazy(() => SortOrderSchema).optional()
+export const WorkoutExerciseMiniSetsAvgOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsAvgOrderByAggregateInput> = z.object({
+  rep: z.lazy(() => SortOrderSchema).optional(),
+  load: z.lazy(() => SortOrderSchema).optional(),
+  RIR: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const MyorepMatchSetMaxOrderByAggregateInputSchema: z.ZodType<Prisma.MyorepMatchSetMaxOrderByAggregateInput> = z.object({
+export const WorkoutExerciseMiniSetsMaxOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsMaxOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  repNumber: z.lazy(() => SortOrderSchema).optional(),
-  loadNumber: z.lazy(() => SortOrderSchema).optional(),
-  myorepMatchSetsId: z.lazy(() => SortOrderSchema).optional()
+  rep: z.lazy(() => SortOrderSchema).optional(),
+  load: z.lazy(() => SortOrderSchema).optional(),
+  RIR: z.lazy(() => SortOrderSchema).optional(),
+  workoutExerciseSetId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const MyorepMatchSetMinOrderByAggregateInputSchema: z.ZodType<Prisma.MyorepMatchSetMinOrderByAggregateInput> = z.object({
+export const WorkoutExerciseMiniSetsMinOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsMinOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  repNumber: z.lazy(() => SortOrderSchema).optional(),
-  loadNumber: z.lazy(() => SortOrderSchema).optional(),
-  myorepMatchSetsId: z.lazy(() => SortOrderSchema).optional()
+  rep: z.lazy(() => SortOrderSchema).optional(),
+  load: z.lazy(() => SortOrderSchema).optional(),
+  RIR: z.lazy(() => SortOrderSchema).optional(),
+  workoutExerciseSetId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const MyorepMatchSetSumOrderByAggregateInputSchema: z.ZodType<Prisma.MyorepMatchSetSumOrderByAggregateInput> = z.object({
-  repNumber: z.lazy(() => SortOrderSchema).optional(),
-  loadNumber: z.lazy(() => SortOrderSchema).optional(),
-  myoreps: z.lazy(() => SortOrderSchema).optional()
+export const WorkoutExerciseMiniSetsSumOrderByAggregateInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsSumOrderByAggregateInput> = z.object({
+  rep: z.lazy(() => SortOrderSchema).optional(),
+  load: z.lazy(() => SortOrderSchema).optional(),
+  RIR: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const UserCreateNestedOneWithoutExerciseSplitsInputSchema: z.ZodType<Prisma.UserCreateNestedOneWithoutExerciseSplitsInput> = z.object({
@@ -6128,10 +5382,18 @@ export const WorkoutCreateNestedOneWithoutWorkoutExercisesInputSchema: z.ZodType
   connect: z.lazy(() => WorkoutWhereUniqueInputSchema).optional()
 }).strict();
 
-export const SetsOfWorkoutExerciseCreateNestedOneWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateNestedOneWithoutWorkoutExerciseInput> = z.object({
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => SetsOfWorkoutExerciseCreateOrConnectWithoutWorkoutExerciseInputSchema).optional(),
-  connect: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema).optional()
+export const WorkoutExerciseSetCreateNestedManyWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.WorkoutExerciseSetCreateNestedManyWithoutWorkoutExerciseInput> = z.object({
+  create: z.union([ z.lazy(() => WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema).array(),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => WorkoutExerciseSetCreateOrConnectWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetCreateOrConnectWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => WorkoutExerciseSetCreateManyWorkoutExerciseInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const WorkoutExerciseSetUncheckedCreateNestedManyWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUncheckedCreateNestedManyWithoutWorkoutExerciseInput> = z.object({
+  create: z.union([ z.lazy(() => WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema).array(),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => WorkoutExerciseSetCreateOrConnectWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetCreateOrConnectWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => WorkoutExerciseSetCreateManyWorkoutExerciseInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const WorkoutUpdateOneRequiredWithoutWorkoutExercisesNestedInputSchema: z.ZodType<Prisma.WorkoutUpdateOneRequiredWithoutWorkoutExercisesNestedInput> = z.object({
@@ -6142,371 +5404,102 @@ export const WorkoutUpdateOneRequiredWithoutWorkoutExercisesNestedInputSchema: z
   update: z.union([ z.lazy(() => WorkoutUpdateToOneWithWhereWithoutWorkoutExercisesInputSchema),z.lazy(() => WorkoutUpdateWithoutWorkoutExercisesInputSchema),z.lazy(() => WorkoutUncheckedUpdateWithoutWorkoutExercisesInputSchema) ]).optional(),
 }).strict();
 
-export const SetsOfWorkoutExerciseUpdateOneRequiredWithoutWorkoutExerciseNestedInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateOneRequiredWithoutWorkoutExerciseNestedInput> = z.object({
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => SetsOfWorkoutExerciseCreateOrConnectWithoutWorkoutExerciseInputSchema).optional(),
-  upsert: z.lazy(() => SetsOfWorkoutExerciseUpsertWithoutWorkoutExerciseInputSchema).optional(),
-  connect: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutWorkoutExerciseInputSchema),z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutWorkoutExerciseInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutWorkoutExerciseInputSchema) ]).optional(),
+export const WorkoutExerciseSetUpdateManyWithoutWorkoutExerciseNestedInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUpdateManyWithoutWorkoutExerciseNestedInput> = z.object({
+  create: z.union([ z.lazy(() => WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema).array(),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => WorkoutExerciseSetCreateOrConnectWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetCreateOrConnectWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => WorkoutExerciseSetUpsertWithWhereUniqueWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUpsertWithWhereUniqueWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => WorkoutExerciseSetCreateManyWorkoutExerciseInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => WorkoutExerciseSetUpdateWithWhereUniqueWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUpdateWithWhereUniqueWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => WorkoutExerciseSetUpdateManyWithWhereWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUpdateManyWithWhereWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => WorkoutExerciseSetScalarWhereInputSchema),z.lazy(() => WorkoutExerciseSetScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const WorkoutExerciseCreateNestedOneWithoutSetDataInputSchema: z.ZodType<Prisma.WorkoutExerciseCreateNestedOneWithoutSetDataInput> = z.object({
-  create: z.union([ z.lazy(() => WorkoutExerciseCreateWithoutSetDataInputSchema),z.lazy(() => WorkoutExerciseUncheckedCreateWithoutSetDataInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => WorkoutExerciseCreateOrConnectWithoutSetDataInputSchema).optional(),
+export const WorkoutExerciseSetUncheckedUpdateManyWithoutWorkoutExerciseNestedInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUncheckedUpdateManyWithoutWorkoutExerciseNestedInput> = z.object({
+  create: z.union([ z.lazy(() => WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema).array(),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => WorkoutExerciseSetCreateOrConnectWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetCreateOrConnectWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => WorkoutExerciseSetUpsertWithWhereUniqueWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUpsertWithWhereUniqueWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => WorkoutExerciseSetCreateManyWorkoutExerciseInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => WorkoutExerciseSetUpdateWithWhereUniqueWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUpdateWithWhereUniqueWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => WorkoutExerciseSetUpdateManyWithWhereWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUpdateManyWithWhereWithoutWorkoutExerciseInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => WorkoutExerciseSetScalarWhereInputSchema),z.lazy(() => WorkoutExerciseSetScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const WorkoutExerciseCreateNestedOneWithoutWorkoutExerciseSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseCreateNestedOneWithoutWorkoutExerciseSetsInput> = z.object({
+  create: z.union([ z.lazy(() => WorkoutExerciseCreateWithoutWorkoutExerciseSetsInputSchema),z.lazy(() => WorkoutExerciseUncheckedCreateWithoutWorkoutExerciseSetsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => WorkoutExerciseCreateOrConnectWithoutWorkoutExerciseSetsInputSchema).optional(),
   connect: z.lazy(() => WorkoutExerciseWhereUniqueInputSchema).optional()
 }).strict();
 
-export const StraightSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.StraightSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInput> = z.object({
-  create: z.union([ z.lazy(() => StraightSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => StraightSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => StraightSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  connect: z.lazy(() => StraightSetsWhereUniqueInputSchema).optional()
+export const WorkoutExerciseMiniSetsCreateNestedManyWithoutParentSetInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsCreateNestedManyWithoutParentSetInput> = z.object({
+  create: z.union([ z.lazy(() => WorkoutExerciseMiniSetsCreateWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsCreateWithoutParentSetInputSchema).array(),z.lazy(() => WorkoutExerciseMiniSetsUncheckedCreateWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUncheckedCreateWithoutParentSetInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => WorkoutExerciseMiniSetsCreateOrConnectWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsCreateOrConnectWithoutParentSetInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => WorkoutExerciseMiniSetsCreateManyParentSetInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const FixedChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.FixedChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInput> = z.object({
-  create: z.union([ z.lazy(() => FixedChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => FixedChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => FixedChangeSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  connect: z.lazy(() => FixedChangeSetsWhereUniqueInputSchema).optional()
+export const WorkoutExerciseMiniSetsUncheckedCreateNestedManyWithoutParentSetInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUncheckedCreateNestedManyWithoutParentSetInput> = z.object({
+  create: z.union([ z.lazy(() => WorkoutExerciseMiniSetsCreateWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsCreateWithoutParentSetInputSchema).array(),z.lazy(() => WorkoutExerciseMiniSetsUncheckedCreateWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUncheckedCreateWithoutParentSetInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => WorkoutExerciseMiniSetsCreateOrConnectWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsCreateOrConnectWithoutParentSetInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => WorkoutExerciseMiniSetsCreateManyParentSetInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const VariableChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.VariableChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInput> = z.object({
-  create: z.union([ z.lazy(() => VariableChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => VariableChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => VariableChangeSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  connect: z.lazy(() => VariableChangeSetsWhereUniqueInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.MyorepMatchSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInput> = z.object({
-  create: z.union([ z.lazy(() => MyorepMatchSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => MyorepMatchSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => MyorepMatchSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  connect: z.lazy(() => MyorepMatchSetsWhereUniqueInputSchema).optional()
-}).strict();
-
-export const WorkoutExerciseUncheckedCreateNestedOneWithoutSetDataInputSchema: z.ZodType<Prisma.WorkoutExerciseUncheckedCreateNestedOneWithoutSetDataInput> = z.object({
-  create: z.union([ z.lazy(() => WorkoutExerciseCreateWithoutSetDataInputSchema),z.lazy(() => WorkoutExerciseUncheckedCreateWithoutSetDataInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => WorkoutExerciseCreateOrConnectWithoutSetDataInputSchema).optional(),
-  connect: z.lazy(() => WorkoutExerciseWhereUniqueInputSchema).optional()
-}).strict();
-
-export const StraightSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.StraightSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInput> = z.object({
-  create: z.union([ z.lazy(() => StraightSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => StraightSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => StraightSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  connect: z.lazy(() => StraightSetsWhereUniqueInputSchema).optional()
-}).strict();
-
-export const FixedChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.FixedChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInput> = z.object({
-  create: z.union([ z.lazy(() => FixedChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => FixedChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => FixedChangeSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  connect: z.lazy(() => FixedChangeSetsWhereUniqueInputSchema).optional()
-}).strict();
-
-export const VariableChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.VariableChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInput> = z.object({
-  create: z.union([ z.lazy(() => VariableChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => VariableChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => VariableChangeSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  connect: z.lazy(() => VariableChangeSetsWhereUniqueInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.MyorepMatchSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInput> = z.object({
-  create: z.union([ z.lazy(() => MyorepMatchSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => MyorepMatchSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => MyorepMatchSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  connect: z.lazy(() => MyorepMatchSetsWhereUniqueInputSchema).optional()
-}).strict();
-
-export const WorkoutExerciseUpdateOneWithoutSetDataNestedInputSchema: z.ZodType<Prisma.WorkoutExerciseUpdateOneWithoutSetDataNestedInput> = z.object({
-  create: z.union([ z.lazy(() => WorkoutExerciseCreateWithoutSetDataInputSchema),z.lazy(() => WorkoutExerciseUncheckedCreateWithoutSetDataInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => WorkoutExerciseCreateOrConnectWithoutSetDataInputSchema).optional(),
-  upsert: z.lazy(() => WorkoutExerciseUpsertWithoutSetDataInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => WorkoutExerciseWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => WorkoutExerciseWhereInputSchema) ]).optional(),
+export const WorkoutExerciseUpdateOneRequiredWithoutWorkoutExerciseSetsNestedInputSchema: z.ZodType<Prisma.WorkoutExerciseUpdateOneRequiredWithoutWorkoutExerciseSetsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => WorkoutExerciseCreateWithoutWorkoutExerciseSetsInputSchema),z.lazy(() => WorkoutExerciseUncheckedCreateWithoutWorkoutExerciseSetsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => WorkoutExerciseCreateOrConnectWithoutWorkoutExerciseSetsInputSchema).optional(),
+  upsert: z.lazy(() => WorkoutExerciseUpsertWithoutWorkoutExerciseSetsInputSchema).optional(),
   connect: z.lazy(() => WorkoutExerciseWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => WorkoutExerciseUpdateToOneWithWhereWithoutSetDataInputSchema),z.lazy(() => WorkoutExerciseUpdateWithoutSetDataInputSchema),z.lazy(() => WorkoutExerciseUncheckedUpdateWithoutSetDataInputSchema) ]).optional(),
+  update: z.union([ z.lazy(() => WorkoutExerciseUpdateToOneWithWhereWithoutWorkoutExerciseSetsInputSchema),z.lazy(() => WorkoutExerciseUpdateWithoutWorkoutExerciseSetsInputSchema),z.lazy(() => WorkoutExerciseUncheckedUpdateWithoutWorkoutExerciseSetsInputSchema) ]).optional(),
 }).strict();
 
-export const StraightSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema: z.ZodType<Prisma.StraightSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInput> = z.object({
-  create: z.union([ z.lazy(() => StraightSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => StraightSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => StraightSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  upsert: z.lazy(() => StraightSetsUpsertWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => StraightSetsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => StraightSetsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => StraightSetsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => StraightSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => StraightSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => StraightSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
+export const WorkoutExerciseMiniSetsUpdateManyWithoutParentSetNestedInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUpdateManyWithoutParentSetNestedInput> = z.object({
+  create: z.union([ z.lazy(() => WorkoutExerciseMiniSetsCreateWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsCreateWithoutParentSetInputSchema).array(),z.lazy(() => WorkoutExerciseMiniSetsUncheckedCreateWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUncheckedCreateWithoutParentSetInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => WorkoutExerciseMiniSetsCreateOrConnectWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsCreateOrConnectWithoutParentSetInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => WorkoutExerciseMiniSetsUpsertWithWhereUniqueWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUpsertWithWhereUniqueWithoutParentSetInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => WorkoutExerciseMiniSetsCreateManyParentSetInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => WorkoutExerciseMiniSetsUpdateWithWhereUniqueWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUpdateWithWhereUniqueWithoutParentSetInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => WorkoutExerciseMiniSetsUpdateManyWithWhereWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUpdateManyWithWhereWithoutParentSetInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => WorkoutExerciseMiniSetsScalarWhereInputSchema),z.lazy(() => WorkoutExerciseMiniSetsScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const FixedChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema: z.ZodType<Prisma.FixedChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInput> = z.object({
-  create: z.union([ z.lazy(() => FixedChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => FixedChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => FixedChangeSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  upsert: z.lazy(() => FixedChangeSetsUpsertWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => FixedChangeSetsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => FixedChangeSetsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => FixedChangeSetsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => FixedChangeSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => FixedChangeSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => FixedChangeSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
+export const WorkoutExerciseMiniSetsUncheckedUpdateManyWithoutParentSetNestedInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUncheckedUpdateManyWithoutParentSetNestedInput> = z.object({
+  create: z.union([ z.lazy(() => WorkoutExerciseMiniSetsCreateWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsCreateWithoutParentSetInputSchema).array(),z.lazy(() => WorkoutExerciseMiniSetsUncheckedCreateWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUncheckedCreateWithoutParentSetInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => WorkoutExerciseMiniSetsCreateOrConnectWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsCreateOrConnectWithoutParentSetInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => WorkoutExerciseMiniSetsUpsertWithWhereUniqueWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUpsertWithWhereUniqueWithoutParentSetInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => WorkoutExerciseMiniSetsCreateManyParentSetInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema),z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => WorkoutExerciseMiniSetsUpdateWithWhereUniqueWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUpdateWithWhereUniqueWithoutParentSetInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => WorkoutExerciseMiniSetsUpdateManyWithWhereWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUpdateManyWithWhereWithoutParentSetInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => WorkoutExerciseMiniSetsScalarWhereInputSchema),z.lazy(() => WorkoutExerciseMiniSetsScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const VariableChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema: z.ZodType<Prisma.VariableChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInput> = z.object({
-  create: z.union([ z.lazy(() => VariableChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => VariableChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => VariableChangeSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  upsert: z.lazy(() => VariableChangeSetsUpsertWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => VariableChangeSetsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => VariableChangeSetsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => VariableChangeSetsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => VariableChangeSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => VariableChangeSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => VariableChangeSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
+export const WorkoutExerciseSetCreateNestedOneWithoutMiniSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseSetCreateNestedOneWithoutMiniSetsInput> = z.object({
+  create: z.union([ z.lazy(() => WorkoutExerciseSetCreateWithoutMiniSetsInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutMiniSetsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => WorkoutExerciseSetCreateOrConnectWithoutMiniSetsInputSchema).optional(),
+  connect: z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema).optional()
 }).strict();
 
-export const MyorepMatchSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema: z.ZodType<Prisma.MyorepMatchSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInput> = z.object({
-  create: z.union([ z.lazy(() => MyorepMatchSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => MyorepMatchSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => MyorepMatchSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  upsert: z.lazy(() => MyorepMatchSetsUpsertWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => MyorepMatchSetsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => MyorepMatchSetsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => MyorepMatchSetsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => MyorepMatchSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => MyorepMatchSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => MyorepMatchSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-}).strict();
-
-export const WorkoutExerciseUncheckedUpdateOneWithoutSetDataNestedInputSchema: z.ZodType<Prisma.WorkoutExerciseUncheckedUpdateOneWithoutSetDataNestedInput> = z.object({
-  create: z.union([ z.lazy(() => WorkoutExerciseCreateWithoutSetDataInputSchema),z.lazy(() => WorkoutExerciseUncheckedCreateWithoutSetDataInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => WorkoutExerciseCreateOrConnectWithoutSetDataInputSchema).optional(),
-  upsert: z.lazy(() => WorkoutExerciseUpsertWithoutSetDataInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => WorkoutExerciseWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => WorkoutExerciseWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => WorkoutExerciseWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => WorkoutExerciseUpdateToOneWithWhereWithoutSetDataInputSchema),z.lazy(() => WorkoutExerciseUpdateWithoutSetDataInputSchema),z.lazy(() => WorkoutExerciseUncheckedUpdateWithoutSetDataInputSchema) ]).optional(),
-}).strict();
-
-export const StraightSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema: z.ZodType<Prisma.StraightSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInput> = z.object({
-  create: z.union([ z.lazy(() => StraightSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => StraightSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => StraightSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  upsert: z.lazy(() => StraightSetsUpsertWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => StraightSetsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => StraightSetsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => StraightSetsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => StraightSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => StraightSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => StraightSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-}).strict();
-
-export const FixedChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema: z.ZodType<Prisma.FixedChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInput> = z.object({
-  create: z.union([ z.lazy(() => FixedChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => FixedChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => FixedChangeSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  upsert: z.lazy(() => FixedChangeSetsUpsertWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => FixedChangeSetsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => FixedChangeSetsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => FixedChangeSetsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => FixedChangeSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => FixedChangeSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => FixedChangeSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-}).strict();
-
-export const VariableChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema: z.ZodType<Prisma.VariableChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInput> = z.object({
-  create: z.union([ z.lazy(() => VariableChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => VariableChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => VariableChangeSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  upsert: z.lazy(() => VariableChangeSetsUpsertWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => VariableChangeSetsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => VariableChangeSetsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => VariableChangeSetsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => VariableChangeSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => VariableChangeSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => VariableChangeSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-}).strict();
-
-export const MyorepMatchSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema: z.ZodType<Prisma.MyorepMatchSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInput> = z.object({
-  create: z.union([ z.lazy(() => MyorepMatchSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => MyorepMatchSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => MyorepMatchSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  upsert: z.lazy(() => MyorepMatchSetsUpsertWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => MyorepMatchSetsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => MyorepMatchSetsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => MyorepMatchSetsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => MyorepMatchSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => MyorepMatchSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => MyorepMatchSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]).optional(),
-}).strict();
-
-export const StraightSetsCreaterepNumbersInputSchema: z.ZodType<Prisma.StraightSetsCreaterepNumbersInput> = z.object({
-  set: z.number().array()
-}).strict();
-
-export const StraightSetsCreateRIRNumbersInputSchema: z.ZodType<Prisma.StraightSetsCreateRIRNumbersInput> = z.object({
-  set: z.number().array()
-}).strict();
-
-export const SetsOfWorkoutExerciseCreateNestedOneWithoutStraightSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateNestedOneWithoutStraightSetsInput> = z.object({
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutStraightSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutStraightSetsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => SetsOfWorkoutExerciseCreateOrConnectWithoutStraightSetsInputSchema).optional(),
-  connect: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema).optional()
-}).strict();
-
-export const StraightSetsUpdaterepNumbersInputSchema: z.ZodType<Prisma.StraightSetsUpdaterepNumbersInput> = z.object({
-  set: z.number().array().optional(),
-  push: z.union([ z.number(),z.number().array() ]).optional(),
-}).strict();
-
-export const StraightSetsUpdateRIRNumbersInputSchema: z.ZodType<Prisma.StraightSetsUpdateRIRNumbersInput> = z.object({
-  set: z.number().array().optional(),
-  push: z.union([ z.number(),z.number().array() ]).optional(),
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateOneRequiredWithoutStraightSetsNestedInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateOneRequiredWithoutStraightSetsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutStraightSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutStraightSetsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => SetsOfWorkoutExerciseCreateOrConnectWithoutStraightSetsInputSchema).optional(),
-  upsert: z.lazy(() => SetsOfWorkoutExerciseUpsertWithoutStraightSetsInputSchema).optional(),
-  connect: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutStraightSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutStraightSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutStraightSetsInputSchema) ]).optional(),
-}).strict();
-
-export const FixedChangeSetsCreateloadNumbersInputSchema: z.ZodType<Prisma.FixedChangeSetsCreateloadNumbersInput> = z.object({
-  set: z.number().array()
-}).strict();
-
-export const FixedChangeSetsCreaterepNumbersInputSchema: z.ZodType<Prisma.FixedChangeSetsCreaterepNumbersInput> = z.object({
-  set: z.number().array()
-}).strict();
-
-export const FixedChangeSetsCreateRIRNumbersInputSchema: z.ZodType<Prisma.FixedChangeSetsCreateRIRNumbersInput> = z.object({
-  set: z.number().array()
-}).strict();
-
-export const SetsOfWorkoutExerciseCreateNestedOneWithoutFixedChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateNestedOneWithoutFixedChangeSetsInput> = z.object({
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutFixedChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutFixedChangeSetsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => SetsOfWorkoutExerciseCreateOrConnectWithoutFixedChangeSetsInputSchema).optional(),
-  connect: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema).optional()
-}).strict();
-
-export const FixedChangeSetsUpdateloadNumbersInputSchema: z.ZodType<Prisma.FixedChangeSetsUpdateloadNumbersInput> = z.object({
-  set: z.number().array().optional(),
-  push: z.union([ z.number(),z.number().array() ]).optional(),
-}).strict();
-
-export const FixedChangeSetsUpdaterepNumbersInputSchema: z.ZodType<Prisma.FixedChangeSetsUpdaterepNumbersInput> = z.object({
-  set: z.number().array().optional(),
-  push: z.union([ z.number(),z.number().array() ]).optional(),
-}).strict();
-
-export const FixedChangeSetsUpdateRIRNumbersInputSchema: z.ZodType<Prisma.FixedChangeSetsUpdateRIRNumbersInput> = z.object({
-  set: z.number().array().optional(),
-  push: z.union([ z.number(),z.number().array() ]).optional(),
-}).strict();
-
-export const EnumChangeTypeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumChangeTypeFieldUpdateOperationsInput> = z.object({
-  set: z.lazy(() => ChangeTypeSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateOneRequiredWithoutFixedChangeSetsNestedInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateOneRequiredWithoutFixedChangeSetsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutFixedChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutFixedChangeSetsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => SetsOfWorkoutExerciseCreateOrConnectWithoutFixedChangeSetsInputSchema).optional(),
-  upsert: z.lazy(() => SetsOfWorkoutExerciseUpsertWithoutFixedChangeSetsInputSchema).optional(),
-  connect: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutFixedChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutFixedChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutFixedChangeSetsInputSchema) ]).optional(),
-}).strict();
-
-export const VariableChangeSetsCreateloadNumbersInputSchema: z.ZodType<Prisma.VariableChangeSetsCreateloadNumbersInput> = z.object({
-  set: z.number().array()
-}).strict();
-
-export const VariableChangeSetsCreaterepNumbersInputSchema: z.ZodType<Prisma.VariableChangeSetsCreaterepNumbersInput> = z.object({
-  set: z.number().array()
-}).strict();
-
-export const VariableChangeSetsCreateRIRNumbersInputSchema: z.ZodType<Prisma.VariableChangeSetsCreateRIRNumbersInput> = z.object({
-  set: z.number().array()
-}).strict();
-
-export const SetsOfWorkoutExerciseCreateNestedOneWithoutVariableChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateNestedOneWithoutVariableChangeSetsInput> = z.object({
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutVariableChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutVariableChangeSetsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => SetsOfWorkoutExerciseCreateOrConnectWithoutVariableChangeSetsInputSchema).optional(),
-  connect: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema).optional()
-}).strict();
-
-export const VariableChangeSetsUpdateloadNumbersInputSchema: z.ZodType<Prisma.VariableChangeSetsUpdateloadNumbersInput> = z.object({
-  set: z.number().array().optional(),
-  push: z.union([ z.number(),z.number().array() ]).optional(),
-}).strict();
-
-export const VariableChangeSetsUpdaterepNumbersInputSchema: z.ZodType<Prisma.VariableChangeSetsUpdaterepNumbersInput> = z.object({
-  set: z.number().array().optional(),
-  push: z.union([ z.number(),z.number().array() ]).optional(),
-}).strict();
-
-export const VariableChangeSetsUpdateRIRNumbersInputSchema: z.ZodType<Prisma.VariableChangeSetsUpdateRIRNumbersInput> = z.object({
-  set: z.number().array().optional(),
-  push: z.union([ z.number(),z.number().array() ]).optional(),
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateOneRequiredWithoutVariableChangeSetsNestedInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateOneRequiredWithoutVariableChangeSetsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutVariableChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutVariableChangeSetsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => SetsOfWorkoutExerciseCreateOrConnectWithoutVariableChangeSetsInputSchema).optional(),
-  upsert: z.lazy(() => SetsOfWorkoutExerciseUpsertWithoutVariableChangeSetsInputSchema).optional(),
-  connect: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutVariableChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutVariableChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutVariableChangeSetsInputSchema) ]).optional(),
-}).strict();
-
-export const MyorepMatchSetCreateNestedManyWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetCreateNestedManyWithoutMyorepMatchSetsInput> = z.object({
-  create: z.union([ z.lazy(() => MyorepMatchSetCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetCreateWithoutMyorepMatchSetsInputSchema).array(),z.lazy(() => MyorepMatchSetUncheckedCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUncheckedCreateWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => MyorepMatchSetCreateOrConnectWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetCreateOrConnectWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => MyorepMatchSetCreateManyMyorepMatchSetsInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => MyorepMatchSetWhereUniqueInputSchema),z.lazy(() => MyorepMatchSetWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const SetsOfWorkoutExerciseCreateNestedOneWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateNestedOneWithoutMyorepMatchSetsInput> = z.object({
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutMyorepMatchSetsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => SetsOfWorkoutExerciseCreateOrConnectWithoutMyorepMatchSetsInputSchema).optional(),
-  connect: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetUncheckedCreateNestedManyWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetUncheckedCreateNestedManyWithoutMyorepMatchSetsInput> = z.object({
-  create: z.union([ z.lazy(() => MyorepMatchSetCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetCreateWithoutMyorepMatchSetsInputSchema).array(),z.lazy(() => MyorepMatchSetUncheckedCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUncheckedCreateWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => MyorepMatchSetCreateOrConnectWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetCreateOrConnectWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => MyorepMatchSetCreateManyMyorepMatchSetsInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => MyorepMatchSetWhereUniqueInputSchema),z.lazy(() => MyorepMatchSetWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
-
-export const MyorepMatchSetUpdateManyWithoutMyorepMatchSetsNestedInputSchema: z.ZodType<Prisma.MyorepMatchSetUpdateManyWithoutMyorepMatchSetsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => MyorepMatchSetCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetCreateWithoutMyorepMatchSetsInputSchema).array(),z.lazy(() => MyorepMatchSetUncheckedCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUncheckedCreateWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => MyorepMatchSetCreateOrConnectWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetCreateOrConnectWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => MyorepMatchSetUpsertWithWhereUniqueWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUpsertWithWhereUniqueWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => MyorepMatchSetCreateManyMyorepMatchSetsInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => MyorepMatchSetWhereUniqueInputSchema),z.lazy(() => MyorepMatchSetWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => MyorepMatchSetWhereUniqueInputSchema),z.lazy(() => MyorepMatchSetWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => MyorepMatchSetWhereUniqueInputSchema),z.lazy(() => MyorepMatchSetWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => MyorepMatchSetWhereUniqueInputSchema),z.lazy(() => MyorepMatchSetWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => MyorepMatchSetUpdateWithWhereUniqueWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUpdateWithWhereUniqueWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => MyorepMatchSetUpdateManyWithWhereWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUpdateManyWithWhereWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => MyorepMatchSetScalarWhereInputSchema),z.lazy(() => MyorepMatchSetScalarWhereInputSchema).array() ]).optional(),
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateOneRequiredWithoutMyorepMatchSetsNestedInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateOneRequiredWithoutMyorepMatchSetsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutMyorepMatchSetsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => SetsOfWorkoutExerciseCreateOrConnectWithoutMyorepMatchSetsInputSchema).optional(),
-  upsert: z.lazy(() => SetsOfWorkoutExerciseUpsertWithoutMyorepMatchSetsInputSchema).optional(),
-  connect: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutMyorepMatchSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutMyorepMatchSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutMyorepMatchSetsInputSchema) ]).optional(),
-}).strict();
-
-export const MyorepMatchSetUncheckedUpdateManyWithoutMyorepMatchSetsNestedInputSchema: z.ZodType<Prisma.MyorepMatchSetUncheckedUpdateManyWithoutMyorepMatchSetsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => MyorepMatchSetCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetCreateWithoutMyorepMatchSetsInputSchema).array(),z.lazy(() => MyorepMatchSetUncheckedCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUncheckedCreateWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => MyorepMatchSetCreateOrConnectWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetCreateOrConnectWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => MyorepMatchSetUpsertWithWhereUniqueWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUpsertWithWhereUniqueWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => MyorepMatchSetCreateManyMyorepMatchSetsInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => MyorepMatchSetWhereUniqueInputSchema),z.lazy(() => MyorepMatchSetWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => MyorepMatchSetWhereUniqueInputSchema),z.lazy(() => MyorepMatchSetWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => MyorepMatchSetWhereUniqueInputSchema),z.lazy(() => MyorepMatchSetWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => MyorepMatchSetWhereUniqueInputSchema),z.lazy(() => MyorepMatchSetWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => MyorepMatchSetUpdateWithWhereUniqueWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUpdateWithWhereUniqueWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => MyorepMatchSetUpdateManyWithWhereWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUpdateManyWithWhereWithoutMyorepMatchSetsInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => MyorepMatchSetScalarWhereInputSchema),z.lazy(() => MyorepMatchSetScalarWhereInputSchema).array() ]).optional(),
-}).strict();
-
-export const MyorepMatchSetCreatemyorepsInputSchema: z.ZodType<Prisma.MyorepMatchSetCreatemyorepsInput> = z.object({
-  set: z.number().array()
-}).strict();
-
-export const MyorepMatchSetsCreateNestedOneWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetsCreateNestedOneWithoutMyorepMatchSetsInput> = z.object({
-  create: z.union([ z.lazy(() => MyorepMatchSetsCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetsUncheckedCreateWithoutMyorepMatchSetsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => MyorepMatchSetsCreateOrConnectWithoutMyorepMatchSetsInputSchema).optional(),
-  connect: z.lazy(() => MyorepMatchSetsWhereUniqueInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetUpdatemyorepsInputSchema: z.ZodType<Prisma.MyorepMatchSetUpdatemyorepsInput> = z.object({
-  set: z.number().array().optional(),
-  push: z.union([ z.number(),z.number().array() ]).optional(),
-}).strict();
-
-export const MyorepMatchSetsUpdateOneWithoutMyorepMatchSetsNestedInputSchema: z.ZodType<Prisma.MyorepMatchSetsUpdateOneWithoutMyorepMatchSetsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => MyorepMatchSetsCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetsUncheckedCreateWithoutMyorepMatchSetsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => MyorepMatchSetsCreateOrConnectWithoutMyorepMatchSetsInputSchema).optional(),
-  upsert: z.lazy(() => MyorepMatchSetsUpsertWithoutMyorepMatchSetsInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => MyorepMatchSetsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => MyorepMatchSetsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => MyorepMatchSetsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => MyorepMatchSetsUpdateToOneWithWhereWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetsUpdateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetsUncheckedUpdateWithoutMyorepMatchSetsInputSchema) ]).optional(),
+export const WorkoutExerciseSetUpdateOneRequiredWithoutMiniSetsNestedInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUpdateOneRequiredWithoutMiniSetsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => WorkoutExerciseSetCreateWithoutMiniSetsInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutMiniSetsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => WorkoutExerciseSetCreateOrConnectWithoutMiniSetsInputSchema).optional(),
+  upsert: z.lazy(() => WorkoutExerciseSetUpsertWithoutMiniSetsInputSchema).optional(),
+  connect: z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => WorkoutExerciseSetUpdateToOneWithWhereWithoutMiniSetsInputSchema),z.lazy(() => WorkoutExerciseSetUpdateWithoutMiniSetsInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedUpdateWithoutMiniSetsInputSchema) ]).optional(),
 }).strict();
 
 export const NestedStringFilterSchema: z.ZodType<Prisma.NestedStringFilter> = z.object({
@@ -6855,23 +5848,6 @@ export const NestedEnumWorkoutStatusNullableWithAggregatesFilterSchema: z.ZodTyp
   _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
   _min: z.lazy(() => NestedEnumWorkoutStatusNullableFilterSchema).optional(),
   _max: z.lazy(() => NestedEnumWorkoutStatusNullableFilterSchema).optional()
-}).strict();
-
-export const NestedEnumChangeTypeFilterSchema: z.ZodType<Prisma.NestedEnumChangeTypeFilter> = z.object({
-  equals: z.lazy(() => ChangeTypeSchema).optional(),
-  in: z.lazy(() => ChangeTypeSchema).array().optional(),
-  notIn: z.lazy(() => ChangeTypeSchema).array().optional(),
-  not: z.union([ z.lazy(() => ChangeTypeSchema),z.lazy(() => NestedEnumChangeTypeFilterSchema) ]).optional(),
-}).strict();
-
-export const NestedEnumChangeTypeWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumChangeTypeWithAggregatesFilter> = z.object({
-  equals: z.lazy(() => ChangeTypeSchema).optional(),
-  in: z.lazy(() => ChangeTypeSchema).array().optional(),
-  notIn: z.lazy(() => ChangeTypeSchema).array().optional(),
-  not: z.union([ z.lazy(() => ChangeTypeSchema),z.lazy(() => NestedEnumChangeTypeWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedEnumChangeTypeFilterSchema).optional(),
-  _max: z.lazy(() => NestedEnumChangeTypeFilterSchema).optional()
 }).strict();
 
 export const UserCreateWithoutExerciseSplitsInputSchema: z.ZodType<Prisma.UserCreateWithoutExerciseSplitsInput> = z.object({
@@ -8431,13 +7407,16 @@ export const WorkoutExerciseCreateWithoutWorkoutInputSchema: z.ZodType<Prisma.Wo
   targetMuscleGroup: z.lazy(() => MuscleGroupSchema),
   customMuscleGroup: z.string().optional().nullable(),
   involvesBodyweight: z.boolean(),
+  setType: z.lazy(() => SetTypeSchema),
+  repRangeStart: z.number().int(),
+  repRangeEnd: z.number().int(),
   note: z.string().optional().nullable(),
   preferredProgressionVariable: z.lazy(() => ProgressionVariableSchema).optional().nullable(),
   overloadPercentage: z.number().optional().nullable(),
   lastSetToFailure: z.boolean().optional().nullable(),
   forceRIRMatching: z.boolean().optional().nullable(),
   minimumWeightChange: z.number().optional().nullable(),
-  setData: z.lazy(() => SetsOfWorkoutExerciseCreateNestedOneWithoutWorkoutExerciseInputSchema)
+  workoutExerciseSets: z.lazy(() => WorkoutExerciseSetCreateNestedManyWithoutWorkoutExerciseInputSchema).optional()
 }).strict();
 
 export const WorkoutExerciseUncheckedCreateWithoutWorkoutInputSchema: z.ZodType<Prisma.WorkoutExerciseUncheckedCreateWithoutWorkoutInput> = z.object({
@@ -8446,13 +7425,16 @@ export const WorkoutExerciseUncheckedCreateWithoutWorkoutInputSchema: z.ZodType<
   targetMuscleGroup: z.lazy(() => MuscleGroupSchema),
   customMuscleGroup: z.string().optional().nullable(),
   involvesBodyweight: z.boolean(),
+  setType: z.lazy(() => SetTypeSchema),
+  repRangeStart: z.number().int(),
+  repRangeEnd: z.number().int(),
   note: z.string().optional().nullable(),
   preferredProgressionVariable: z.lazy(() => ProgressionVariableSchema).optional().nullable(),
   overloadPercentage: z.number().optional().nullable(),
   lastSetToFailure: z.boolean().optional().nullable(),
   forceRIRMatching: z.boolean().optional().nullable(),
   minimumWeightChange: z.number().optional().nullable(),
-  setsOfWorkoutExerciseId: z.string()
+  workoutExerciseSets: z.lazy(() => WorkoutExerciseSetUncheckedCreateNestedManyWithoutWorkoutExerciseInputSchema).optional()
 }).strict();
 
 export const WorkoutExerciseCreateOrConnectWithoutWorkoutInputSchema: z.ZodType<Prisma.WorkoutExerciseCreateOrConnectWithoutWorkoutInput> = z.object({
@@ -8555,13 +7537,15 @@ export const WorkoutExerciseScalarWhereInputSchema: z.ZodType<Prisma.WorkoutExer
   targetMuscleGroup: z.union([ z.lazy(() => EnumMuscleGroupFilterSchema),z.lazy(() => MuscleGroupSchema) ]).optional(),
   customMuscleGroup: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   involvesBodyweight: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  setType: z.union([ z.lazy(() => EnumSetTypeFilterSchema),z.lazy(() => SetTypeSchema) ]).optional(),
+  repRangeStart: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  repRangeEnd: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   note: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   preferredProgressionVariable: z.union([ z.lazy(() => EnumProgressionVariableNullableFilterSchema),z.lazy(() => ProgressionVariableSchema) ]).optional().nullable(),
   overloadPercentage: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
   lastSetToFailure: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   forceRIRMatching: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   minimumWeightChange: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
-  setsOfWorkoutExerciseId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict();
 
 export const WorkoutCreateWithoutWorkoutExercisesInputSchema: z.ZodType<Prisma.WorkoutCreateWithoutWorkoutExercisesInput> = z.object({
@@ -8585,31 +7569,30 @@ export const WorkoutCreateOrConnectWithoutWorkoutExercisesInputSchema: z.ZodType
   create: z.union([ z.lazy(() => WorkoutCreateWithoutWorkoutExercisesInputSchema),z.lazy(() => WorkoutUncheckedCreateWithoutWorkoutExercisesInputSchema) ]),
 }).strict();
 
-export const SetsOfWorkoutExerciseCreateWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateWithoutWorkoutExerciseInput> = z.object({
+export const WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.WorkoutExerciseSetCreateWithoutWorkoutExerciseInput> = z.object({
   id: z.string().cuid().optional(),
-  setType: z.lazy(() => SetTypeSchema),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int(),
-  straightSets: z.lazy(() => StraightSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional()
+  rep: z.number().int(),
+  load: z.number().int(),
+  RIR: z.number().int(),
+  miniSets: z.lazy(() => WorkoutExerciseMiniSetsCreateNestedManyWithoutParentSetInputSchema).optional()
 }).strict();
 
-export const SetsOfWorkoutExerciseUncheckedCreateWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUncheckedCreateWithoutWorkoutExerciseInput> = z.object({
+export const WorkoutExerciseSetUncheckedCreateWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUncheckedCreateWithoutWorkoutExerciseInput> = z.object({
   id: z.string().cuid().optional(),
-  setType: z.lazy(() => SetTypeSchema),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int(),
-  straightSets: z.lazy(() => StraightSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional()
+  rep: z.number().int(),
+  load: z.number().int(),
+  RIR: z.number().int(),
+  miniSets: z.lazy(() => WorkoutExerciseMiniSetsUncheckedCreateNestedManyWithoutParentSetInputSchema).optional()
 }).strict();
 
-export const SetsOfWorkoutExerciseCreateOrConnectWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateOrConnectWithoutWorkoutExerciseInput> = z.object({
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutWorkoutExerciseInputSchema) ]),
+export const WorkoutExerciseSetCreateOrConnectWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.WorkoutExerciseSetCreateOrConnectWithoutWorkoutExerciseInput> = z.object({
+  where: z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutWorkoutExerciseInputSchema) ]),
+}).strict();
+
+export const WorkoutExerciseSetCreateManyWorkoutExerciseInputEnvelopeSchema: z.ZodType<Prisma.WorkoutExerciseSetCreateManyWorkoutExerciseInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => WorkoutExerciseSetCreateManyWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetCreateManyWorkoutExerciseInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
 }).strict();
 
 export const WorkoutUpsertWithoutWorkoutExercisesInputSchema: z.ZodType<Prisma.WorkoutUpsertWithoutWorkoutExercisesInput> = z.object({
@@ -8639,45 +7622,42 @@ export const WorkoutUncheckedUpdateWithoutWorkoutExercisesInputSchema: z.ZodType
   workoutOfMesocycle: z.lazy(() => WorkoutOfMesocycleUncheckedUpdateOneWithoutWorkoutNestedInputSchema).optional()
 }).strict();
 
-export const SetsOfWorkoutExerciseUpsertWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpsertWithoutWorkoutExerciseInput> = z.object({
-  update: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutWorkoutExerciseInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutWorkoutExerciseInputSchema) ]),
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutWorkoutExerciseInputSchema) ]),
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).optional()
+export const WorkoutExerciseSetUpsertWithWhereUniqueWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUpsertWithWhereUniqueWithoutWorkoutExerciseInput> = z.object({
+  where: z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => WorkoutExerciseSetUpdateWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedUpdateWithoutWorkoutExerciseInputSchema) ]),
+  create: z.union([ z.lazy(() => WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutWorkoutExerciseInputSchema) ]),
 }).strict();
 
-export const SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutWorkoutExerciseInput> = z.object({
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutWorkoutExerciseInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutWorkoutExerciseInputSchema) ]),
+export const WorkoutExerciseSetUpdateWithWhereUniqueWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUpdateWithWhereUniqueWithoutWorkoutExerciseInput> = z.object({
+  where: z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => WorkoutExerciseSetUpdateWithoutWorkoutExerciseInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedUpdateWithoutWorkoutExerciseInputSchema) ]),
 }).strict();
 
-export const SetsOfWorkoutExerciseUpdateWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateWithoutWorkoutExerciseInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  straightSets: z.lazy(() => StraightSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional()
+export const WorkoutExerciseSetUpdateManyWithWhereWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUpdateManyWithWhereWithoutWorkoutExerciseInput> = z.object({
+  where: z.lazy(() => WorkoutExerciseSetScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => WorkoutExerciseSetUpdateManyMutationInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedUpdateManyWithoutWorkoutExerciseInputSchema) ]),
 }).strict();
 
-export const SetsOfWorkoutExerciseUncheckedUpdateWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUncheckedUpdateWithoutWorkoutExerciseInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  straightSets: z.lazy(() => StraightSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional()
+export const WorkoutExerciseSetScalarWhereInputSchema: z.ZodType<Prisma.WorkoutExerciseSetScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => WorkoutExerciseSetScalarWhereInputSchema),z.lazy(() => WorkoutExerciseSetScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WorkoutExerciseSetScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WorkoutExerciseSetScalarWhereInputSchema),z.lazy(() => WorkoutExerciseSetScalarWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  workoutExerciseId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  rep: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  load: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  RIR: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
 }).strict();
 
-export const WorkoutExerciseCreateWithoutSetDataInputSchema: z.ZodType<Prisma.WorkoutExerciseCreateWithoutSetDataInput> = z.object({
+export const WorkoutExerciseCreateWithoutWorkoutExerciseSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseCreateWithoutWorkoutExerciseSetsInput> = z.object({
   id: z.string().cuid().optional(),
   exerciseIndex: z.number().int(),
   targetMuscleGroup: z.lazy(() => MuscleGroupSchema),
   customMuscleGroup: z.string().optional().nullable(),
   involvesBodyweight: z.boolean(),
+  setType: z.lazy(() => SetTypeSchema),
+  repRangeStart: z.number().int(),
+  repRangeEnd: z.number().int(),
   note: z.string().optional().nullable(),
   preferredProgressionVariable: z.lazy(() => ProgressionVariableSchema).optional().nullable(),
   overloadPercentage: z.number().optional().nullable(),
@@ -8687,13 +7667,16 @@ export const WorkoutExerciseCreateWithoutSetDataInputSchema: z.ZodType<Prisma.Wo
   workout: z.lazy(() => WorkoutCreateNestedOneWithoutWorkoutExercisesInputSchema)
 }).strict();
 
-export const WorkoutExerciseUncheckedCreateWithoutSetDataInputSchema: z.ZodType<Prisma.WorkoutExerciseUncheckedCreateWithoutSetDataInput> = z.object({
+export const WorkoutExerciseUncheckedCreateWithoutWorkoutExerciseSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseUncheckedCreateWithoutWorkoutExerciseSetsInput> = z.object({
   id: z.string().cuid().optional(),
   exerciseIndex: z.number().int(),
   workoutId: z.string(),
   targetMuscleGroup: z.lazy(() => MuscleGroupSchema),
   customMuscleGroup: z.string().optional().nullable(),
   involvesBodyweight: z.boolean(),
+  setType: z.lazy(() => SetTypeSchema),
+  repRangeStart: z.number().int(),
+  repRangeEnd: z.number().int(),
   note: z.string().optional().nullable(),
   preferredProgressionVariable: z.lazy(() => ProgressionVariableSchema).optional().nullable(),
   overloadPercentage: z.number().optional().nullable(),
@@ -8702,104 +7685,55 @@ export const WorkoutExerciseUncheckedCreateWithoutSetDataInputSchema: z.ZodType<
   minimumWeightChange: z.number().optional().nullable()
 }).strict();
 
-export const WorkoutExerciseCreateOrConnectWithoutSetDataInputSchema: z.ZodType<Prisma.WorkoutExerciseCreateOrConnectWithoutSetDataInput> = z.object({
+export const WorkoutExerciseCreateOrConnectWithoutWorkoutExerciseSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseCreateOrConnectWithoutWorkoutExerciseSetsInput> = z.object({
   where: z.lazy(() => WorkoutExerciseWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => WorkoutExerciseCreateWithoutSetDataInputSchema),z.lazy(() => WorkoutExerciseUncheckedCreateWithoutSetDataInputSchema) ]),
+  create: z.union([ z.lazy(() => WorkoutExerciseCreateWithoutWorkoutExerciseSetsInputSchema),z.lazy(() => WorkoutExerciseUncheckedCreateWithoutWorkoutExerciseSetsInputSchema) ]),
 }).strict();
 
-export const StraightSetsCreateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.StraightSetsCreateWithoutSetsOfWorkoutExerciseInput> = z.object({
+export const WorkoutExerciseMiniSetsCreateWithoutParentSetInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsCreateWithoutParentSetInput> = z.object({
   id: z.string().cuid().optional(),
+  rep: z.number().int(),
   load: z.number().int(),
-  repNumbers: z.union([ z.lazy(() => StraightSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => StraightSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
+  RIR: z.number().int()
 }).strict();
 
-export const StraightSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.StraightSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInput> = z.object({
+export const WorkoutExerciseMiniSetsUncheckedCreateWithoutParentSetInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUncheckedCreateWithoutParentSetInput> = z.object({
   id: z.string().cuid().optional(),
+  rep: z.number().int(),
   load: z.number().int(),
-  repNumbers: z.union([ z.lazy(() => StraightSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => StraightSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
+  RIR: z.number().int()
 }).strict();
 
-export const StraightSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.StraightSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInput> = z.object({
-  where: z.lazy(() => StraightSetsWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => StraightSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => StraightSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]),
+export const WorkoutExerciseMiniSetsCreateOrConnectWithoutParentSetInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsCreateOrConnectWithoutParentSetInput> = z.object({
+  where: z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => WorkoutExerciseMiniSetsCreateWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUncheckedCreateWithoutParentSetInputSchema) ]),
 }).strict();
 
-export const FixedChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.FixedChangeSetsCreateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.string().cuid().optional(),
-  loadNumbers: z.union([ z.lazy(() => FixedChangeSetsCreateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => FixedChangeSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => FixedChangeSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  changeType: z.lazy(() => ChangeTypeSchema),
-  changeAmount: z.number()
+export const WorkoutExerciseMiniSetsCreateManyParentSetInputEnvelopeSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsCreateManyParentSetInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => WorkoutExerciseMiniSetsCreateManyParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsCreateManyParentSetInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
 }).strict();
 
-export const FixedChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.FixedChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.string().cuid().optional(),
-  loadNumbers: z.union([ z.lazy(() => FixedChangeSetsCreateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => FixedChangeSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => FixedChangeSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  changeType: z.lazy(() => ChangeTypeSchema),
-  changeAmount: z.number()
-}).strict();
-
-export const FixedChangeSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.FixedChangeSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInput> = z.object({
-  where: z.lazy(() => FixedChangeSetsWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => FixedChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => FixedChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-}).strict();
-
-export const VariableChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.VariableChangeSetsCreateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.string().cuid().optional(),
-  loadNumbers: z.union([ z.lazy(() => VariableChangeSetsCreateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => VariableChangeSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => VariableChangeSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-}).strict();
-
-export const VariableChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.VariableChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.string().cuid().optional(),
-  loadNumbers: z.union([ z.lazy(() => VariableChangeSetsCreateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => VariableChangeSetsCreaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => VariableChangeSetsCreateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-}).strict();
-
-export const VariableChangeSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.VariableChangeSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInput> = z.object({
-  where: z.lazy(() => VariableChangeSetsWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => VariableChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => VariableChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-}).strict();
-
-export const MyorepMatchSetsCreateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.MyorepMatchSetsCreateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.string().cuid().optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetCreateNestedManyWithoutMyorepMatchSetsInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.MyorepMatchSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.string().cuid().optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetUncheckedCreateNestedManyWithoutMyorepMatchSetsInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.MyorepMatchSetsCreateOrConnectWithoutSetsOfWorkoutExerciseInput> = z.object({
-  where: z.lazy(() => MyorepMatchSetsWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => MyorepMatchSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => MyorepMatchSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-}).strict();
-
-export const WorkoutExerciseUpsertWithoutSetDataInputSchema: z.ZodType<Prisma.WorkoutExerciseUpsertWithoutSetDataInput> = z.object({
-  update: z.union([ z.lazy(() => WorkoutExerciseUpdateWithoutSetDataInputSchema),z.lazy(() => WorkoutExerciseUncheckedUpdateWithoutSetDataInputSchema) ]),
-  create: z.union([ z.lazy(() => WorkoutExerciseCreateWithoutSetDataInputSchema),z.lazy(() => WorkoutExerciseUncheckedCreateWithoutSetDataInputSchema) ]),
+export const WorkoutExerciseUpsertWithoutWorkoutExerciseSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseUpsertWithoutWorkoutExerciseSetsInput> = z.object({
+  update: z.union([ z.lazy(() => WorkoutExerciseUpdateWithoutWorkoutExerciseSetsInputSchema),z.lazy(() => WorkoutExerciseUncheckedUpdateWithoutWorkoutExerciseSetsInputSchema) ]),
+  create: z.union([ z.lazy(() => WorkoutExerciseCreateWithoutWorkoutExerciseSetsInputSchema),z.lazy(() => WorkoutExerciseUncheckedCreateWithoutWorkoutExerciseSetsInputSchema) ]),
   where: z.lazy(() => WorkoutExerciseWhereInputSchema).optional()
 }).strict();
 
-export const WorkoutExerciseUpdateToOneWithWhereWithoutSetDataInputSchema: z.ZodType<Prisma.WorkoutExerciseUpdateToOneWithWhereWithoutSetDataInput> = z.object({
+export const WorkoutExerciseUpdateToOneWithWhereWithoutWorkoutExerciseSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseUpdateToOneWithWhereWithoutWorkoutExerciseSetsInput> = z.object({
   where: z.lazy(() => WorkoutExerciseWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => WorkoutExerciseUpdateWithoutSetDataInputSchema),z.lazy(() => WorkoutExerciseUncheckedUpdateWithoutSetDataInputSchema) ]),
+  data: z.union([ z.lazy(() => WorkoutExerciseUpdateWithoutWorkoutExerciseSetsInputSchema),z.lazy(() => WorkoutExerciseUncheckedUpdateWithoutWorkoutExerciseSetsInputSchema) ]),
 }).strict();
 
-export const WorkoutExerciseUpdateWithoutSetDataInputSchema: z.ZodType<Prisma.WorkoutExerciseUpdateWithoutSetDataInput> = z.object({
+export const WorkoutExerciseUpdateWithoutWorkoutExerciseSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseUpdateWithoutWorkoutExerciseSetsInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   exerciseIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   targetMuscleGroup: z.union([ z.lazy(() => MuscleGroupSchema),z.lazy(() => EnumMuscleGroupFieldUpdateOperationsInputSchema) ]).optional(),
   customMuscleGroup: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   involvesBodyweight: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   note: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredProgressionVariable: z.union([ z.lazy(() => ProgressionVariableSchema),z.lazy(() => NullableEnumProgressionVariableFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -8809,13 +7743,16 @@ export const WorkoutExerciseUpdateWithoutSetDataInputSchema: z.ZodType<Prisma.Wo
   workout: z.lazy(() => WorkoutUpdateOneRequiredWithoutWorkoutExercisesNestedInputSchema).optional()
 }).strict();
 
-export const WorkoutExerciseUncheckedUpdateWithoutSetDataInputSchema: z.ZodType<Prisma.WorkoutExerciseUncheckedUpdateWithoutSetDataInput> = z.object({
+export const WorkoutExerciseUncheckedUpdateWithoutWorkoutExerciseSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseUncheckedUpdateWithoutWorkoutExerciseSetsInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   exerciseIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   workoutId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   targetMuscleGroup: z.union([ z.lazy(() => MuscleGroupSchema),z.lazy(() => EnumMuscleGroupFieldUpdateOperationsInputSchema) ]).optional(),
   customMuscleGroup: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   involvesBodyweight: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   note: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredProgressionVariable: z.union([ z.lazy(() => ProgressionVariableSchema),z.lazy(() => NullableEnumProgressionVariableFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -8824,431 +7761,79 @@ export const WorkoutExerciseUncheckedUpdateWithoutSetDataInputSchema: z.ZodType<
   minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
-export const StraightSetsUpsertWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.StraightSetsUpsertWithoutSetsOfWorkoutExerciseInput> = z.object({
-  update: z.union([ z.lazy(() => StraightSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => StraightSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-  create: z.union([ z.lazy(() => StraightSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => StraightSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-  where: z.lazy(() => StraightSetsWhereInputSchema).optional()
+export const WorkoutExerciseMiniSetsUpsertWithWhereUniqueWithoutParentSetInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUpsertWithWhereUniqueWithoutParentSetInput> = z.object({
+  where: z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => WorkoutExerciseMiniSetsUpdateWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUncheckedUpdateWithoutParentSetInputSchema) ]),
+  create: z.union([ z.lazy(() => WorkoutExerciseMiniSetsCreateWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUncheckedCreateWithoutParentSetInputSchema) ]),
 }).strict();
 
-export const StraightSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.StraightSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInput> = z.object({
-  where: z.lazy(() => StraightSetsWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => StraightSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => StraightSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]),
+export const WorkoutExerciseMiniSetsUpdateWithWhereUniqueWithoutParentSetInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUpdateWithWhereUniqueWithoutParentSetInput> = z.object({
+  where: z.lazy(() => WorkoutExerciseMiniSetsWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => WorkoutExerciseMiniSetsUpdateWithoutParentSetInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUncheckedUpdateWithoutParentSetInputSchema) ]),
 }).strict();
 
-export const StraightSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.StraightSetsUpdateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repNumbers: z.union([ z.lazy(() => StraightSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => StraightSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
+export const WorkoutExerciseMiniSetsUpdateManyWithWhereWithoutParentSetInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUpdateManyWithWhereWithoutParentSetInput> = z.object({
+  where: z.lazy(() => WorkoutExerciseMiniSetsScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => WorkoutExerciseMiniSetsUpdateManyMutationInputSchema),z.lazy(() => WorkoutExerciseMiniSetsUncheckedUpdateManyWithoutParentSetInputSchema) ]),
 }).strict();
 
-export const StraightSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.StraightSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repNumbers: z.union([ z.lazy(() => StraightSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => StraightSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-}).strict();
-
-export const FixedChangeSetsUpsertWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.FixedChangeSetsUpsertWithoutSetsOfWorkoutExerciseInput> = z.object({
-  update: z.union([ z.lazy(() => FixedChangeSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => FixedChangeSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-  create: z.union([ z.lazy(() => FixedChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => FixedChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-  where: z.lazy(() => FixedChangeSetsWhereInputSchema).optional()
-}).strict();
-
-export const FixedChangeSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.FixedChangeSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInput> = z.object({
-  where: z.lazy(() => FixedChangeSetsWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => FixedChangeSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => FixedChangeSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-}).strict();
-
-export const FixedChangeSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.FixedChangeSetsUpdateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  changeType: z.union([ z.lazy(() => ChangeTypeSchema),z.lazy(() => EnumChangeTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  changeAmount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const FixedChangeSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.FixedChangeSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => FixedChangeSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-  changeType: z.union([ z.lazy(() => ChangeTypeSchema),z.lazy(() => EnumChangeTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  changeAmount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const VariableChangeSetsUpsertWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.VariableChangeSetsUpsertWithoutSetsOfWorkoutExerciseInput> = z.object({
-  update: z.union([ z.lazy(() => VariableChangeSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => VariableChangeSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-  create: z.union([ z.lazy(() => VariableChangeSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => VariableChangeSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-  where: z.lazy(() => VariableChangeSetsWhereInputSchema).optional()
-}).strict();
-
-export const VariableChangeSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.VariableChangeSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInput> = z.object({
-  where: z.lazy(() => VariableChangeSetsWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => VariableChangeSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => VariableChangeSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-}).strict();
-
-export const VariableChangeSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.VariableChangeSetsUpdateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-}).strict();
-
-export const VariableChangeSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.VariableChangeSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdateloadNumbersInputSchema),z.number().int().array() ]).optional(),
-  repNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdaterepNumbersInputSchema),z.number().int().array() ]).optional(),
-  RIRNumbers: z.union([ z.lazy(() => VariableChangeSetsUpdateRIRNumbersInputSchema),z.number().int().array() ]).optional(),
-}).strict();
-
-export const MyorepMatchSetsUpsertWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.MyorepMatchSetsUpsertWithoutSetsOfWorkoutExerciseInput> = z.object({
-  update: z.union([ z.lazy(() => MyorepMatchSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => MyorepMatchSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-  create: z.union([ z.lazy(() => MyorepMatchSetsCreateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => MyorepMatchSetsUncheckedCreateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-  where: z.lazy(() => MyorepMatchSetsWhereInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.MyorepMatchSetsUpdateToOneWithWhereWithoutSetsOfWorkoutExerciseInput> = z.object({
-  where: z.lazy(() => MyorepMatchSetsWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => MyorepMatchSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema),z.lazy(() => MyorepMatchSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema) ]),
-}).strict();
-
-export const MyorepMatchSetsUpdateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.MyorepMatchSetsUpdateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetUpdateManyWithoutMyorepMatchSetsNestedInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInputSchema: z.ZodType<Prisma.MyorepMatchSetsUncheckedUpdateWithoutSetsOfWorkoutExerciseInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetUncheckedUpdateManyWithoutMyorepMatchSetsNestedInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseCreateWithoutStraightSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateWithoutStraightSetsInput> = z.object({
-  id: z.string().cuid().optional(),
-  setType: z.lazy(() => SetTypeSchema),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int(),
-  workoutExercise: z.lazy(() => WorkoutExerciseCreateNestedOneWithoutSetDataInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUncheckedCreateWithoutStraightSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUncheckedCreateWithoutStraightSetsInput> = z.object({
-  id: z.string().cuid().optional(),
-  setType: z.lazy(() => SetTypeSchema),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUncheckedCreateNestedOneWithoutSetDataInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseCreateOrConnectWithoutStraightSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateOrConnectWithoutStraightSetsInput> = z.object({
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutStraightSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutStraightSetsInputSchema) ]),
-}).strict();
-
-export const SetsOfWorkoutExerciseUpsertWithoutStraightSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpsertWithoutStraightSetsInput> = z.object({
-  update: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutStraightSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutStraightSetsInputSchema) ]),
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutStraightSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutStraightSetsInputSchema) ]),
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutStraightSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutStraightSetsInput> = z.object({
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutStraightSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutStraightSetsInputSchema) ]),
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateWithoutStraightSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateWithoutStraightSetsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUpdateOneWithoutSetDataNestedInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUncheckedUpdateWithoutStraightSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUncheckedUpdateWithoutStraightSetsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUncheckedUpdateOneWithoutSetDataNestedInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseCreateWithoutFixedChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateWithoutFixedChangeSetsInput> = z.object({
-  id: z.string().cuid().optional(),
-  setType: z.lazy(() => SetTypeSchema),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int(),
-  workoutExercise: z.lazy(() => WorkoutExerciseCreateNestedOneWithoutSetDataInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUncheckedCreateWithoutFixedChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUncheckedCreateWithoutFixedChangeSetsInput> = z.object({
-  id: z.string().cuid().optional(),
-  setType: z.lazy(() => SetTypeSchema),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUncheckedCreateNestedOneWithoutSetDataInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseCreateOrConnectWithoutFixedChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateOrConnectWithoutFixedChangeSetsInput> = z.object({
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutFixedChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutFixedChangeSetsInputSchema) ]),
-}).strict();
-
-export const SetsOfWorkoutExerciseUpsertWithoutFixedChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpsertWithoutFixedChangeSetsInput> = z.object({
-  update: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutFixedChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutFixedChangeSetsInputSchema) ]),
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutFixedChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutFixedChangeSetsInputSchema) ]),
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutFixedChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutFixedChangeSetsInput> = z.object({
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutFixedChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutFixedChangeSetsInputSchema) ]),
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateWithoutFixedChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateWithoutFixedChangeSetsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUpdateOneWithoutSetDataNestedInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUncheckedUpdateWithoutFixedChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUncheckedUpdateWithoutFixedChangeSetsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUncheckedUpdateOneWithoutSetDataNestedInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseCreateWithoutVariableChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateWithoutVariableChangeSetsInput> = z.object({
-  id: z.string().cuid().optional(),
-  setType: z.lazy(() => SetTypeSchema),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int(),
-  workoutExercise: z.lazy(() => WorkoutExerciseCreateNestedOneWithoutSetDataInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUncheckedCreateWithoutVariableChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUncheckedCreateWithoutVariableChangeSetsInput> = z.object({
-  id: z.string().cuid().optional(),
-  setType: z.lazy(() => SetTypeSchema),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUncheckedCreateNestedOneWithoutSetDataInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseCreateOrConnectWithoutVariableChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateOrConnectWithoutVariableChangeSetsInput> = z.object({
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutVariableChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutVariableChangeSetsInputSchema) ]),
-}).strict();
-
-export const SetsOfWorkoutExerciseUpsertWithoutVariableChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpsertWithoutVariableChangeSetsInput> = z.object({
-  update: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutVariableChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutVariableChangeSetsInputSchema) ]),
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutVariableChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutVariableChangeSetsInputSchema) ]),
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutVariableChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutVariableChangeSetsInput> = z.object({
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutVariableChangeSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutVariableChangeSetsInputSchema) ]),
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateWithoutVariableChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateWithoutVariableChangeSetsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUpdateOneWithoutSetDataNestedInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUncheckedUpdateWithoutVariableChangeSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUncheckedUpdateWithoutVariableChangeSetsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUncheckedUpdateOneWithoutSetDataNestedInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  myorepMatchSets: z.lazy(() => MyorepMatchSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetCreateWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetCreateWithoutMyorepMatchSetsInput> = z.object({
-  id: z.string().cuid().optional(),
-  repNumber: z.number().int(),
-  loadNumber: z.number().int(),
-  myoreps: z.union([ z.lazy(() => MyorepMatchSetCreatemyorepsInputSchema),z.number().int().array() ]).optional(),
-}).strict();
-
-export const MyorepMatchSetUncheckedCreateWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetUncheckedCreateWithoutMyorepMatchSetsInput> = z.object({
-  id: z.string().cuid().optional(),
-  repNumber: z.number().int(),
-  loadNumber: z.number().int(),
-  myoreps: z.union([ z.lazy(() => MyorepMatchSetCreatemyorepsInputSchema),z.number().int().array() ]).optional(),
-}).strict();
-
-export const MyorepMatchSetCreateOrConnectWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetCreateOrConnectWithoutMyorepMatchSetsInput> = z.object({
-  where: z.lazy(() => MyorepMatchSetWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => MyorepMatchSetCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUncheckedCreateWithoutMyorepMatchSetsInputSchema) ]),
-}).strict();
-
-export const MyorepMatchSetCreateManyMyorepMatchSetsInputEnvelopeSchema: z.ZodType<Prisma.MyorepMatchSetCreateManyMyorepMatchSetsInputEnvelope> = z.object({
-  data: z.union([ z.lazy(() => MyorepMatchSetCreateManyMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetCreateManyMyorepMatchSetsInputSchema).array() ]),
-  skipDuplicates: z.boolean().optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseCreateWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateWithoutMyorepMatchSetsInput> = z.object({
-  id: z.string().cuid().optional(),
-  setType: z.lazy(() => SetTypeSchema),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int(),
-  workoutExercise: z.lazy(() => WorkoutExerciseCreateNestedOneWithoutSetDataInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUncheckedCreateWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUncheckedCreateWithoutMyorepMatchSetsInput> = z.object({
-  id: z.string().cuid().optional(),
-  setType: z.lazy(() => SetTypeSchema),
-  repRangeStart: z.number().int(),
-  repRangeEnd: z.number().int(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUncheckedCreateNestedOneWithoutSetDataInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUncheckedCreateNestedOneWithoutSetsOfWorkoutExerciseInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseCreateOrConnectWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateOrConnectWithoutMyorepMatchSetsInput> = z.object({
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutMyorepMatchSetsInputSchema) ]),
-}).strict();
-
-export const MyorepMatchSetUpsertWithWhereUniqueWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetUpsertWithWhereUniqueWithoutMyorepMatchSetsInput> = z.object({
-  where: z.lazy(() => MyorepMatchSetWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => MyorepMatchSetUpdateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUncheckedUpdateWithoutMyorepMatchSetsInputSchema) ]),
-  create: z.union([ z.lazy(() => MyorepMatchSetCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUncheckedCreateWithoutMyorepMatchSetsInputSchema) ]),
-}).strict();
-
-export const MyorepMatchSetUpdateWithWhereUniqueWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetUpdateWithWhereUniqueWithoutMyorepMatchSetsInput> = z.object({
-  where: z.lazy(() => MyorepMatchSetWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => MyorepMatchSetUpdateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetUncheckedUpdateWithoutMyorepMatchSetsInputSchema) ]),
-}).strict();
-
-export const MyorepMatchSetUpdateManyWithWhereWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetUpdateManyWithWhereWithoutMyorepMatchSetsInput> = z.object({
-  where: z.lazy(() => MyorepMatchSetScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => MyorepMatchSetUpdateManyMutationInputSchema),z.lazy(() => MyorepMatchSetUncheckedUpdateManyWithoutMyorepMatchSetsInputSchema) ]),
-}).strict();
-
-export const MyorepMatchSetScalarWhereInputSchema: z.ZodType<Prisma.MyorepMatchSetScalarWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => MyorepMatchSetScalarWhereInputSchema),z.lazy(() => MyorepMatchSetScalarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => MyorepMatchSetScalarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => MyorepMatchSetScalarWhereInputSchema),z.lazy(() => MyorepMatchSetScalarWhereInputSchema).array() ]).optional(),
+export const WorkoutExerciseMiniSetsScalarWhereInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => WorkoutExerciseMiniSetsScalarWhereInputSchema),z.lazy(() => WorkoutExerciseMiniSetsScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => WorkoutExerciseMiniSetsScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => WorkoutExerciseMiniSetsScalarWhereInputSchema),z.lazy(() => WorkoutExerciseMiniSetsScalarWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  repNumber: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  loadNumber: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  myoreps: z.lazy(() => IntNullableListFilterSchema).optional(),
-  myorepMatchSetsId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  rep: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  load: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  RIR: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  workoutExerciseSetId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict();
 
-export const SetsOfWorkoutExerciseUpsertWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpsertWithoutMyorepMatchSetsInput> = z.object({
-  update: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutMyorepMatchSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutMyorepMatchSetsInputSchema) ]),
-  create: z.union([ z.lazy(() => SetsOfWorkoutExerciseCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedCreateWithoutMyorepMatchSetsInputSchema) ]),
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateToOneWithWhereWithoutMyorepMatchSetsInput> = z.object({
-  where: z.lazy(() => SetsOfWorkoutExerciseWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => SetsOfWorkoutExerciseUpdateWithoutMyorepMatchSetsInputSchema),z.lazy(() => SetsOfWorkoutExerciseUncheckedUpdateWithoutMyorepMatchSetsInputSchema) ]),
-}).strict();
-
-export const SetsOfWorkoutExerciseUpdateWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateWithoutMyorepMatchSetsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUpdateOneWithoutSetDataNestedInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional()
-}).strict();
-
-export const SetsOfWorkoutExerciseUncheckedUpdateWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUncheckedUpdateWithoutMyorepMatchSetsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  workoutExercise: z.lazy(() => WorkoutExerciseUncheckedUpdateOneWithoutSetDataNestedInputSchema).optional(),
-  straightSets: z.lazy(() => StraightSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  fixedChangeSets: z.lazy(() => FixedChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional(),
-  variableChangeSets: z.lazy(() => VariableChangeSetsUncheckedUpdateOneWithoutSetsOfWorkoutExerciseNestedInputSchema).optional()
-}).strict();
-
-export const MyorepMatchSetsCreateWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetsCreateWithoutMyorepMatchSetsInput> = z.object({
+export const WorkoutExerciseSetCreateWithoutMiniSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseSetCreateWithoutMiniSetsInput> = z.object({
   id: z.string().cuid().optional(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseCreateNestedOneWithoutMyorepMatchSetsInputSchema)
+  rep: z.number().int(),
+  load: z.number().int(),
+  RIR: z.number().int(),
+  workoutExercise: z.lazy(() => WorkoutExerciseCreateNestedOneWithoutWorkoutExerciseSetsInputSchema)
 }).strict();
 
-export const MyorepMatchSetsUncheckedCreateWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetsUncheckedCreateWithoutMyorepMatchSetsInput> = z.object({
+export const WorkoutExerciseSetUncheckedCreateWithoutMiniSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUncheckedCreateWithoutMiniSetsInput> = z.object({
   id: z.string().cuid().optional(),
-  setsOfWorkoutExerciseId: z.string()
+  workoutExerciseId: z.string(),
+  rep: z.number().int(),
+  load: z.number().int(),
+  RIR: z.number().int()
 }).strict();
 
-export const MyorepMatchSetsCreateOrConnectWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetsCreateOrConnectWithoutMyorepMatchSetsInput> = z.object({
-  where: z.lazy(() => MyorepMatchSetsWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => MyorepMatchSetsCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetsUncheckedCreateWithoutMyorepMatchSetsInputSchema) ]),
+export const WorkoutExerciseSetCreateOrConnectWithoutMiniSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseSetCreateOrConnectWithoutMiniSetsInput> = z.object({
+  where: z.lazy(() => WorkoutExerciseSetWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => WorkoutExerciseSetCreateWithoutMiniSetsInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutMiniSetsInputSchema) ]),
 }).strict();
 
-export const MyorepMatchSetsUpsertWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetsUpsertWithoutMyorepMatchSetsInput> = z.object({
-  update: z.union([ z.lazy(() => MyorepMatchSetsUpdateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetsUncheckedUpdateWithoutMyorepMatchSetsInputSchema) ]),
-  create: z.union([ z.lazy(() => MyorepMatchSetsCreateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetsUncheckedCreateWithoutMyorepMatchSetsInputSchema) ]),
-  where: z.lazy(() => MyorepMatchSetsWhereInputSchema).optional()
+export const WorkoutExerciseSetUpsertWithoutMiniSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUpsertWithoutMiniSetsInput> = z.object({
+  update: z.union([ z.lazy(() => WorkoutExerciseSetUpdateWithoutMiniSetsInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedUpdateWithoutMiniSetsInputSchema) ]),
+  create: z.union([ z.lazy(() => WorkoutExerciseSetCreateWithoutMiniSetsInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedCreateWithoutMiniSetsInputSchema) ]),
+  where: z.lazy(() => WorkoutExerciseSetWhereInputSchema).optional()
 }).strict();
 
-export const MyorepMatchSetsUpdateToOneWithWhereWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetsUpdateToOneWithWhereWithoutMyorepMatchSetsInput> = z.object({
-  where: z.lazy(() => MyorepMatchSetsWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => MyorepMatchSetsUpdateWithoutMyorepMatchSetsInputSchema),z.lazy(() => MyorepMatchSetsUncheckedUpdateWithoutMyorepMatchSetsInputSchema) ]),
+export const WorkoutExerciseSetUpdateToOneWithWhereWithoutMiniSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUpdateToOneWithWhereWithoutMiniSetsInput> = z.object({
+  where: z.lazy(() => WorkoutExerciseSetWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => WorkoutExerciseSetUpdateWithoutMiniSetsInputSchema),z.lazy(() => WorkoutExerciseSetUncheckedUpdateWithoutMiniSetsInputSchema) ]),
 }).strict();
 
-export const MyorepMatchSetsUpdateWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetsUpdateWithoutMyorepMatchSetsInput> = z.object({
+export const WorkoutExerciseSetUpdateWithoutMiniSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUpdateWithoutMiniSetsInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setsOfWorkoutExercise: z.lazy(() => SetsOfWorkoutExerciseUpdateOneRequiredWithoutMyorepMatchSetsNestedInputSchema).optional()
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  workoutExercise: z.lazy(() => WorkoutExerciseUpdateOneRequiredWithoutWorkoutExerciseSetsNestedInputSchema).optional()
 }).strict();
 
-export const MyorepMatchSetsUncheckedUpdateWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetsUncheckedUpdateWithoutMyorepMatchSetsInput> = z.object({
+export const WorkoutExerciseSetUncheckedUpdateWithoutMiniSetsInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUncheckedUpdateWithoutMiniSetsInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  setsOfWorkoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  workoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const ExerciseSplitDayCreateManyExerciseSplitInputSchema: z.ZodType<Prisma.ExerciseSplitDayCreateManyExerciseSplitInput> = z.object({
@@ -9777,13 +8362,15 @@ export const WorkoutExerciseCreateManyWorkoutInputSchema: z.ZodType<Prisma.Worko
   targetMuscleGroup: z.lazy(() => MuscleGroupSchema),
   customMuscleGroup: z.string().optional().nullable(),
   involvesBodyweight: z.boolean(),
+  setType: z.lazy(() => SetTypeSchema),
+  repRangeStart: z.number().int(),
+  repRangeEnd: z.number().int(),
   note: z.string().optional().nullable(),
   preferredProgressionVariable: z.lazy(() => ProgressionVariableSchema).optional().nullable(),
   overloadPercentage: z.number().optional().nullable(),
   lastSetToFailure: z.boolean().optional().nullable(),
   forceRIRMatching: z.boolean().optional().nullable(),
-  minimumWeightChange: z.number().optional().nullable(),
-  setsOfWorkoutExerciseId: z.string()
+  minimumWeightChange: z.number().optional().nullable()
 }).strict();
 
 export const WorkoutExerciseUpdateWithoutWorkoutInputSchema: z.ZodType<Prisma.WorkoutExerciseUpdateWithoutWorkoutInput> = z.object({
@@ -9792,13 +8379,16 @@ export const WorkoutExerciseUpdateWithoutWorkoutInputSchema: z.ZodType<Prisma.Wo
   targetMuscleGroup: z.union([ z.lazy(() => MuscleGroupSchema),z.lazy(() => EnumMuscleGroupFieldUpdateOperationsInputSchema) ]).optional(),
   customMuscleGroup: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   involvesBodyweight: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   note: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredProgressionVariable: z.union([ z.lazy(() => ProgressionVariableSchema),z.lazy(() => NullableEnumProgressionVariableFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  setData: z.lazy(() => SetsOfWorkoutExerciseUpdateOneRequiredWithoutWorkoutExerciseNestedInputSchema).optional()
+  workoutExerciseSets: z.lazy(() => WorkoutExerciseSetUpdateManyWithoutWorkoutExerciseNestedInputSchema).optional()
 }).strict();
 
 export const WorkoutExerciseUncheckedUpdateWithoutWorkoutInputSchema: z.ZodType<Prisma.WorkoutExerciseUncheckedUpdateWithoutWorkoutInput> = z.object({
@@ -9807,13 +8397,16 @@ export const WorkoutExerciseUncheckedUpdateWithoutWorkoutInputSchema: z.ZodType<
   targetMuscleGroup: z.union([ z.lazy(() => MuscleGroupSchema),z.lazy(() => EnumMuscleGroupFieldUpdateOperationsInputSchema) ]).optional(),
   customMuscleGroup: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   involvesBodyweight: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   note: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredProgressionVariable: z.union([ z.lazy(() => ProgressionVariableSchema),z.lazy(() => NullableEnumProgressionVariableFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  setsOfWorkoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  workoutExerciseSets: z.lazy(() => WorkoutExerciseSetUncheckedUpdateManyWithoutWorkoutExerciseNestedInputSchema).optional()
 }).strict();
 
 export const WorkoutExerciseUncheckedUpdateManyWithoutWorkoutInputSchema: z.ZodType<Prisma.WorkoutExerciseUncheckedUpdateManyWithoutWorkoutInput> = z.object({
@@ -9822,41 +8415,73 @@ export const WorkoutExerciseUncheckedUpdateManyWithoutWorkoutInputSchema: z.ZodT
   targetMuscleGroup: z.union([ z.lazy(() => MuscleGroupSchema),z.lazy(() => EnumMuscleGroupFieldUpdateOperationsInputSchema) ]).optional(),
   customMuscleGroup: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   involvesBodyweight: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  setType: z.union([ z.lazy(() => SetTypeSchema),z.lazy(() => EnumSetTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeStart: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  repRangeEnd: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   note: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredProgressionVariable: z.union([ z.lazy(() => ProgressionVariableSchema),z.lazy(() => NullableEnumProgressionVariableFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  setsOfWorkoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const MyorepMatchSetCreateManyMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetCreateManyMyorepMatchSetsInput> = z.object({
+export const WorkoutExerciseSetCreateManyWorkoutExerciseInputSchema: z.ZodType<Prisma.WorkoutExerciseSetCreateManyWorkoutExerciseInput> = z.object({
   id: z.string().cuid().optional(),
-  repNumber: z.number().int(),
-  loadNumber: z.number().int(),
-  myoreps: z.union([ z.lazy(() => MyorepMatchSetCreatemyorepsInputSchema),z.number().int().array() ]).optional(),
+  rep: z.number().int(),
+  load: z.number().int(),
+  RIR: z.number().int()
 }).strict();
 
-export const MyorepMatchSetUpdateWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetUpdateWithoutMyorepMatchSetsInput> = z.object({
+export const WorkoutExerciseSetUpdateWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUpdateWithoutWorkoutExerciseInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  repNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  myoreps: z.union([ z.lazy(() => MyorepMatchSetUpdatemyorepsInputSchema),z.number().int().array() ]).optional(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  miniSets: z.lazy(() => WorkoutExerciseMiniSetsUpdateManyWithoutParentSetNestedInputSchema).optional()
 }).strict();
 
-export const MyorepMatchSetUncheckedUpdateWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetUncheckedUpdateWithoutMyorepMatchSetsInput> = z.object({
+export const WorkoutExerciseSetUncheckedUpdateWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUncheckedUpdateWithoutWorkoutExerciseInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  repNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  myoreps: z.union([ z.lazy(() => MyorepMatchSetUpdatemyorepsInputSchema),z.number().int().array() ]).optional(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  miniSets: z.lazy(() => WorkoutExerciseMiniSetsUncheckedUpdateManyWithoutParentSetNestedInputSchema).optional()
 }).strict();
 
-export const MyorepMatchSetUncheckedUpdateManyWithoutMyorepMatchSetsInputSchema: z.ZodType<Prisma.MyorepMatchSetUncheckedUpdateManyWithoutMyorepMatchSetsInput> = z.object({
+export const WorkoutExerciseSetUncheckedUpdateManyWithoutWorkoutExerciseInputSchema: z.ZodType<Prisma.WorkoutExerciseSetUncheckedUpdateManyWithoutWorkoutExerciseInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  repNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  loadNumber: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  myoreps: z.union([ z.lazy(() => MyorepMatchSetUpdatemyorepsInputSchema),z.number().int().array() ]).optional(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const WorkoutExerciseMiniSetsCreateManyParentSetInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsCreateManyParentSetInput> = z.object({
+  id: z.string().cuid().optional(),
+  rep: z.number().int(),
+  load: z.number().int(),
+  RIR: z.number().int()
+}).strict();
+
+export const WorkoutExerciseMiniSetsUpdateWithoutParentSetInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUpdateWithoutParentSetInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const WorkoutExerciseMiniSetsUncheckedUpdateWithoutParentSetInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUncheckedUpdateWithoutParentSetInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const WorkoutExerciseMiniSetsUncheckedUpdateManyWithoutParentSetInputSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUncheckedUpdateManyWithoutParentSetInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  rep: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 /////////////////////////////////////////
@@ -10726,376 +9351,128 @@ export const WorkoutExerciseFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.Workou
   where: WorkoutExerciseWhereUniqueInputSchema,
 }).strict() ;
 
-export const SetsOfWorkoutExerciseFindFirstArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseFindFirstArgs> = z.object({
-  select: SetsOfWorkoutExerciseSelectSchema.optional(),
-  include: SetsOfWorkoutExerciseIncludeSchema.optional(),
-  where: SetsOfWorkoutExerciseWhereInputSchema.optional(),
-  orderBy: z.union([ SetsOfWorkoutExerciseOrderByWithRelationInputSchema.array(),SetsOfWorkoutExerciseOrderByWithRelationInputSchema ]).optional(),
-  cursor: SetsOfWorkoutExerciseWhereUniqueInputSchema.optional(),
+export const WorkoutExerciseSetFindFirstArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetFindFirstArgs> = z.object({
+  select: WorkoutExerciseSetSelectSchema.optional(),
+  include: WorkoutExerciseSetIncludeSchema.optional(),
+  where: WorkoutExerciseSetWhereInputSchema.optional(),
+  orderBy: z.union([ WorkoutExerciseSetOrderByWithRelationInputSchema.array(),WorkoutExerciseSetOrderByWithRelationInputSchema ]).optional(),
+  cursor: WorkoutExerciseSetWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: z.union([ SetsOfWorkoutExerciseScalarFieldEnumSchema,SetsOfWorkoutExerciseScalarFieldEnumSchema.array() ]).optional(),
+  distinct: z.union([ WorkoutExerciseSetScalarFieldEnumSchema,WorkoutExerciseSetScalarFieldEnumSchema.array() ]).optional(),
 }).strict() ;
 
-export const SetsOfWorkoutExerciseFindFirstOrThrowArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseFindFirstOrThrowArgs> = z.object({
-  select: SetsOfWorkoutExerciseSelectSchema.optional(),
-  include: SetsOfWorkoutExerciseIncludeSchema.optional(),
-  where: SetsOfWorkoutExerciseWhereInputSchema.optional(),
-  orderBy: z.union([ SetsOfWorkoutExerciseOrderByWithRelationInputSchema.array(),SetsOfWorkoutExerciseOrderByWithRelationInputSchema ]).optional(),
-  cursor: SetsOfWorkoutExerciseWhereUniqueInputSchema.optional(),
+export const WorkoutExerciseSetFindFirstOrThrowArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetFindFirstOrThrowArgs> = z.object({
+  select: WorkoutExerciseSetSelectSchema.optional(),
+  include: WorkoutExerciseSetIncludeSchema.optional(),
+  where: WorkoutExerciseSetWhereInputSchema.optional(),
+  orderBy: z.union([ WorkoutExerciseSetOrderByWithRelationInputSchema.array(),WorkoutExerciseSetOrderByWithRelationInputSchema ]).optional(),
+  cursor: WorkoutExerciseSetWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: z.union([ SetsOfWorkoutExerciseScalarFieldEnumSchema,SetsOfWorkoutExerciseScalarFieldEnumSchema.array() ]).optional(),
+  distinct: z.union([ WorkoutExerciseSetScalarFieldEnumSchema,WorkoutExerciseSetScalarFieldEnumSchema.array() ]).optional(),
 }).strict() ;
 
-export const SetsOfWorkoutExerciseFindManyArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseFindManyArgs> = z.object({
-  select: SetsOfWorkoutExerciseSelectSchema.optional(),
-  include: SetsOfWorkoutExerciseIncludeSchema.optional(),
-  where: SetsOfWorkoutExerciseWhereInputSchema.optional(),
-  orderBy: z.union([ SetsOfWorkoutExerciseOrderByWithRelationInputSchema.array(),SetsOfWorkoutExerciseOrderByWithRelationInputSchema ]).optional(),
-  cursor: SetsOfWorkoutExerciseWhereUniqueInputSchema.optional(),
+export const WorkoutExerciseSetFindManyArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetFindManyArgs> = z.object({
+  select: WorkoutExerciseSetSelectSchema.optional(),
+  include: WorkoutExerciseSetIncludeSchema.optional(),
+  where: WorkoutExerciseSetWhereInputSchema.optional(),
+  orderBy: z.union([ WorkoutExerciseSetOrderByWithRelationInputSchema.array(),WorkoutExerciseSetOrderByWithRelationInputSchema ]).optional(),
+  cursor: WorkoutExerciseSetWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: z.union([ SetsOfWorkoutExerciseScalarFieldEnumSchema,SetsOfWorkoutExerciseScalarFieldEnumSchema.array() ]).optional(),
+  distinct: z.union([ WorkoutExerciseSetScalarFieldEnumSchema,WorkoutExerciseSetScalarFieldEnumSchema.array() ]).optional(),
 }).strict() ;
 
-export const SetsOfWorkoutExerciseAggregateArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseAggregateArgs> = z.object({
-  where: SetsOfWorkoutExerciseWhereInputSchema.optional(),
-  orderBy: z.union([ SetsOfWorkoutExerciseOrderByWithRelationInputSchema.array(),SetsOfWorkoutExerciseOrderByWithRelationInputSchema ]).optional(),
-  cursor: SetsOfWorkoutExerciseWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const SetsOfWorkoutExerciseGroupByArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseGroupByArgs> = z.object({
-  where: SetsOfWorkoutExerciseWhereInputSchema.optional(),
-  orderBy: z.union([ SetsOfWorkoutExerciseOrderByWithAggregationInputSchema.array(),SetsOfWorkoutExerciseOrderByWithAggregationInputSchema ]).optional(),
-  by: SetsOfWorkoutExerciseScalarFieldEnumSchema.array(),
-  having: SetsOfWorkoutExerciseScalarWhereWithAggregatesInputSchema.optional(),
+export const WorkoutExerciseSetAggregateArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetAggregateArgs> = z.object({
+  where: WorkoutExerciseSetWhereInputSchema.optional(),
+  orderBy: z.union([ WorkoutExerciseSetOrderByWithRelationInputSchema.array(),WorkoutExerciseSetOrderByWithRelationInputSchema ]).optional(),
+  cursor: WorkoutExerciseSetWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
 }).strict() ;
 
-export const SetsOfWorkoutExerciseFindUniqueArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseFindUniqueArgs> = z.object({
-  select: SetsOfWorkoutExerciseSelectSchema.optional(),
-  include: SetsOfWorkoutExerciseIncludeSchema.optional(),
-  where: SetsOfWorkoutExerciseWhereUniqueInputSchema,
-}).strict() ;
-
-export const SetsOfWorkoutExerciseFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseFindUniqueOrThrowArgs> = z.object({
-  select: SetsOfWorkoutExerciseSelectSchema.optional(),
-  include: SetsOfWorkoutExerciseIncludeSchema.optional(),
-  where: SetsOfWorkoutExerciseWhereUniqueInputSchema,
-}).strict() ;
-
-export const StraightSetsFindFirstArgsSchema: z.ZodType<Prisma.StraightSetsFindFirstArgs> = z.object({
-  select: StraightSetsSelectSchema.optional(),
-  include: StraightSetsIncludeSchema.optional(),
-  where: StraightSetsWhereInputSchema.optional(),
-  orderBy: z.union([ StraightSetsOrderByWithRelationInputSchema.array(),StraightSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: StraightSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ StraightSetsScalarFieldEnumSchema,StraightSetsScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const StraightSetsFindFirstOrThrowArgsSchema: z.ZodType<Prisma.StraightSetsFindFirstOrThrowArgs> = z.object({
-  select: StraightSetsSelectSchema.optional(),
-  include: StraightSetsIncludeSchema.optional(),
-  where: StraightSetsWhereInputSchema.optional(),
-  orderBy: z.union([ StraightSetsOrderByWithRelationInputSchema.array(),StraightSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: StraightSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ StraightSetsScalarFieldEnumSchema,StraightSetsScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const StraightSetsFindManyArgsSchema: z.ZodType<Prisma.StraightSetsFindManyArgs> = z.object({
-  select: StraightSetsSelectSchema.optional(),
-  include: StraightSetsIncludeSchema.optional(),
-  where: StraightSetsWhereInputSchema.optional(),
-  orderBy: z.union([ StraightSetsOrderByWithRelationInputSchema.array(),StraightSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: StraightSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ StraightSetsScalarFieldEnumSchema,StraightSetsScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const StraightSetsAggregateArgsSchema: z.ZodType<Prisma.StraightSetsAggregateArgs> = z.object({
-  where: StraightSetsWhereInputSchema.optional(),
-  orderBy: z.union([ StraightSetsOrderByWithRelationInputSchema.array(),StraightSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: StraightSetsWhereUniqueInputSchema.optional(),
+export const WorkoutExerciseSetGroupByArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetGroupByArgs> = z.object({
+  where: WorkoutExerciseSetWhereInputSchema.optional(),
+  orderBy: z.union([ WorkoutExerciseSetOrderByWithAggregationInputSchema.array(),WorkoutExerciseSetOrderByWithAggregationInputSchema ]).optional(),
+  by: WorkoutExerciseSetScalarFieldEnumSchema.array(),
+  having: WorkoutExerciseSetScalarWhereWithAggregatesInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
 }).strict() ;
 
-export const StraightSetsGroupByArgsSchema: z.ZodType<Prisma.StraightSetsGroupByArgs> = z.object({
-  where: StraightSetsWhereInputSchema.optional(),
-  orderBy: z.union([ StraightSetsOrderByWithAggregationInputSchema.array(),StraightSetsOrderByWithAggregationInputSchema ]).optional(),
-  by: StraightSetsScalarFieldEnumSchema.array(),
-  having: StraightSetsScalarWhereWithAggregatesInputSchema.optional(),
+export const WorkoutExerciseSetFindUniqueArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetFindUniqueArgs> = z.object({
+  select: WorkoutExerciseSetSelectSchema.optional(),
+  include: WorkoutExerciseSetIncludeSchema.optional(),
+  where: WorkoutExerciseSetWhereUniqueInputSchema,
+}).strict() ;
+
+export const WorkoutExerciseSetFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetFindUniqueOrThrowArgs> = z.object({
+  select: WorkoutExerciseSetSelectSchema.optional(),
+  include: WorkoutExerciseSetIncludeSchema.optional(),
+  where: WorkoutExerciseSetWhereUniqueInputSchema,
+}).strict() ;
+
+export const WorkoutExerciseMiniSetsFindFirstArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsFindFirstArgs> = z.object({
+  select: WorkoutExerciseMiniSetsSelectSchema.optional(),
+  include: WorkoutExerciseMiniSetsIncludeSchema.optional(),
+  where: WorkoutExerciseMiniSetsWhereInputSchema.optional(),
+  orderBy: z.union([ WorkoutExerciseMiniSetsOrderByWithRelationInputSchema.array(),WorkoutExerciseMiniSetsOrderByWithRelationInputSchema ]).optional(),
+  cursor: WorkoutExerciseMiniSetsWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ WorkoutExerciseMiniSetsScalarFieldEnumSchema,WorkoutExerciseMiniSetsScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const WorkoutExerciseMiniSetsFindFirstOrThrowArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsFindFirstOrThrowArgs> = z.object({
+  select: WorkoutExerciseMiniSetsSelectSchema.optional(),
+  include: WorkoutExerciseMiniSetsIncludeSchema.optional(),
+  where: WorkoutExerciseMiniSetsWhereInputSchema.optional(),
+  orderBy: z.union([ WorkoutExerciseMiniSetsOrderByWithRelationInputSchema.array(),WorkoutExerciseMiniSetsOrderByWithRelationInputSchema ]).optional(),
+  cursor: WorkoutExerciseMiniSetsWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ WorkoutExerciseMiniSetsScalarFieldEnumSchema,WorkoutExerciseMiniSetsScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const WorkoutExerciseMiniSetsFindManyArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsFindManyArgs> = z.object({
+  select: WorkoutExerciseMiniSetsSelectSchema.optional(),
+  include: WorkoutExerciseMiniSetsIncludeSchema.optional(),
+  where: WorkoutExerciseMiniSetsWhereInputSchema.optional(),
+  orderBy: z.union([ WorkoutExerciseMiniSetsOrderByWithRelationInputSchema.array(),WorkoutExerciseMiniSetsOrderByWithRelationInputSchema ]).optional(),
+  cursor: WorkoutExerciseMiniSetsWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ WorkoutExerciseMiniSetsScalarFieldEnumSchema,WorkoutExerciseMiniSetsScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const WorkoutExerciseMiniSetsAggregateArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsAggregateArgs> = z.object({
+  where: WorkoutExerciseMiniSetsWhereInputSchema.optional(),
+  orderBy: z.union([ WorkoutExerciseMiniSetsOrderByWithRelationInputSchema.array(),WorkoutExerciseMiniSetsOrderByWithRelationInputSchema ]).optional(),
+  cursor: WorkoutExerciseMiniSetsWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
 }).strict() ;
 
-export const StraightSetsFindUniqueArgsSchema: z.ZodType<Prisma.StraightSetsFindUniqueArgs> = z.object({
-  select: StraightSetsSelectSchema.optional(),
-  include: StraightSetsIncludeSchema.optional(),
-  where: StraightSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const StraightSetsFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.StraightSetsFindUniqueOrThrowArgs> = z.object({
-  select: StraightSetsSelectSchema.optional(),
-  include: StraightSetsIncludeSchema.optional(),
-  where: StraightSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const FixedChangeSetsFindFirstArgsSchema: z.ZodType<Prisma.FixedChangeSetsFindFirstArgs> = z.object({
-  select: FixedChangeSetsSelectSchema.optional(),
-  include: FixedChangeSetsIncludeSchema.optional(),
-  where: FixedChangeSetsWhereInputSchema.optional(),
-  orderBy: z.union([ FixedChangeSetsOrderByWithRelationInputSchema.array(),FixedChangeSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: FixedChangeSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ FixedChangeSetsScalarFieldEnumSchema,FixedChangeSetsScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const FixedChangeSetsFindFirstOrThrowArgsSchema: z.ZodType<Prisma.FixedChangeSetsFindFirstOrThrowArgs> = z.object({
-  select: FixedChangeSetsSelectSchema.optional(),
-  include: FixedChangeSetsIncludeSchema.optional(),
-  where: FixedChangeSetsWhereInputSchema.optional(),
-  orderBy: z.union([ FixedChangeSetsOrderByWithRelationInputSchema.array(),FixedChangeSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: FixedChangeSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ FixedChangeSetsScalarFieldEnumSchema,FixedChangeSetsScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const FixedChangeSetsFindManyArgsSchema: z.ZodType<Prisma.FixedChangeSetsFindManyArgs> = z.object({
-  select: FixedChangeSetsSelectSchema.optional(),
-  include: FixedChangeSetsIncludeSchema.optional(),
-  where: FixedChangeSetsWhereInputSchema.optional(),
-  orderBy: z.union([ FixedChangeSetsOrderByWithRelationInputSchema.array(),FixedChangeSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: FixedChangeSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ FixedChangeSetsScalarFieldEnumSchema,FixedChangeSetsScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const FixedChangeSetsAggregateArgsSchema: z.ZodType<Prisma.FixedChangeSetsAggregateArgs> = z.object({
-  where: FixedChangeSetsWhereInputSchema.optional(),
-  orderBy: z.union([ FixedChangeSetsOrderByWithRelationInputSchema.array(),FixedChangeSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: FixedChangeSetsWhereUniqueInputSchema.optional(),
+export const WorkoutExerciseMiniSetsGroupByArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsGroupByArgs> = z.object({
+  where: WorkoutExerciseMiniSetsWhereInputSchema.optional(),
+  orderBy: z.union([ WorkoutExerciseMiniSetsOrderByWithAggregationInputSchema.array(),WorkoutExerciseMiniSetsOrderByWithAggregationInputSchema ]).optional(),
+  by: WorkoutExerciseMiniSetsScalarFieldEnumSchema.array(),
+  having: WorkoutExerciseMiniSetsScalarWhereWithAggregatesInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
 }).strict() ;
 
-export const FixedChangeSetsGroupByArgsSchema: z.ZodType<Prisma.FixedChangeSetsGroupByArgs> = z.object({
-  where: FixedChangeSetsWhereInputSchema.optional(),
-  orderBy: z.union([ FixedChangeSetsOrderByWithAggregationInputSchema.array(),FixedChangeSetsOrderByWithAggregationInputSchema ]).optional(),
-  by: FixedChangeSetsScalarFieldEnumSchema.array(),
-  having: FixedChangeSetsScalarWhereWithAggregatesInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
+export const WorkoutExerciseMiniSetsFindUniqueArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsFindUniqueArgs> = z.object({
+  select: WorkoutExerciseMiniSetsSelectSchema.optional(),
+  include: WorkoutExerciseMiniSetsIncludeSchema.optional(),
+  where: WorkoutExerciseMiniSetsWhereUniqueInputSchema,
 }).strict() ;
 
-export const FixedChangeSetsFindUniqueArgsSchema: z.ZodType<Prisma.FixedChangeSetsFindUniqueArgs> = z.object({
-  select: FixedChangeSetsSelectSchema.optional(),
-  include: FixedChangeSetsIncludeSchema.optional(),
-  where: FixedChangeSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const FixedChangeSetsFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.FixedChangeSetsFindUniqueOrThrowArgs> = z.object({
-  select: FixedChangeSetsSelectSchema.optional(),
-  include: FixedChangeSetsIncludeSchema.optional(),
-  where: FixedChangeSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const VariableChangeSetsFindFirstArgsSchema: z.ZodType<Prisma.VariableChangeSetsFindFirstArgs> = z.object({
-  select: VariableChangeSetsSelectSchema.optional(),
-  include: VariableChangeSetsIncludeSchema.optional(),
-  where: VariableChangeSetsWhereInputSchema.optional(),
-  orderBy: z.union([ VariableChangeSetsOrderByWithRelationInputSchema.array(),VariableChangeSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: VariableChangeSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ VariableChangeSetsScalarFieldEnumSchema,VariableChangeSetsScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const VariableChangeSetsFindFirstOrThrowArgsSchema: z.ZodType<Prisma.VariableChangeSetsFindFirstOrThrowArgs> = z.object({
-  select: VariableChangeSetsSelectSchema.optional(),
-  include: VariableChangeSetsIncludeSchema.optional(),
-  where: VariableChangeSetsWhereInputSchema.optional(),
-  orderBy: z.union([ VariableChangeSetsOrderByWithRelationInputSchema.array(),VariableChangeSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: VariableChangeSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ VariableChangeSetsScalarFieldEnumSchema,VariableChangeSetsScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const VariableChangeSetsFindManyArgsSchema: z.ZodType<Prisma.VariableChangeSetsFindManyArgs> = z.object({
-  select: VariableChangeSetsSelectSchema.optional(),
-  include: VariableChangeSetsIncludeSchema.optional(),
-  where: VariableChangeSetsWhereInputSchema.optional(),
-  orderBy: z.union([ VariableChangeSetsOrderByWithRelationInputSchema.array(),VariableChangeSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: VariableChangeSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ VariableChangeSetsScalarFieldEnumSchema,VariableChangeSetsScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const VariableChangeSetsAggregateArgsSchema: z.ZodType<Prisma.VariableChangeSetsAggregateArgs> = z.object({
-  where: VariableChangeSetsWhereInputSchema.optional(),
-  orderBy: z.union([ VariableChangeSetsOrderByWithRelationInputSchema.array(),VariableChangeSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: VariableChangeSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const VariableChangeSetsGroupByArgsSchema: z.ZodType<Prisma.VariableChangeSetsGroupByArgs> = z.object({
-  where: VariableChangeSetsWhereInputSchema.optional(),
-  orderBy: z.union([ VariableChangeSetsOrderByWithAggregationInputSchema.array(),VariableChangeSetsOrderByWithAggregationInputSchema ]).optional(),
-  by: VariableChangeSetsScalarFieldEnumSchema.array(),
-  having: VariableChangeSetsScalarWhereWithAggregatesInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const VariableChangeSetsFindUniqueArgsSchema: z.ZodType<Prisma.VariableChangeSetsFindUniqueArgs> = z.object({
-  select: VariableChangeSetsSelectSchema.optional(),
-  include: VariableChangeSetsIncludeSchema.optional(),
-  where: VariableChangeSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const VariableChangeSetsFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.VariableChangeSetsFindUniqueOrThrowArgs> = z.object({
-  select: VariableChangeSetsSelectSchema.optional(),
-  include: VariableChangeSetsIncludeSchema.optional(),
-  where: VariableChangeSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const MyorepMatchSetsFindFirstArgsSchema: z.ZodType<Prisma.MyorepMatchSetsFindFirstArgs> = z.object({
-  select: MyorepMatchSetsSelectSchema.optional(),
-  include: MyorepMatchSetsIncludeSchema.optional(),
-  where: MyorepMatchSetsWhereInputSchema.optional(),
-  orderBy: z.union([ MyorepMatchSetsOrderByWithRelationInputSchema.array(),MyorepMatchSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: MyorepMatchSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ MyorepMatchSetsScalarFieldEnumSchema,MyorepMatchSetsScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const MyorepMatchSetsFindFirstOrThrowArgsSchema: z.ZodType<Prisma.MyorepMatchSetsFindFirstOrThrowArgs> = z.object({
-  select: MyorepMatchSetsSelectSchema.optional(),
-  include: MyorepMatchSetsIncludeSchema.optional(),
-  where: MyorepMatchSetsWhereInputSchema.optional(),
-  orderBy: z.union([ MyorepMatchSetsOrderByWithRelationInputSchema.array(),MyorepMatchSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: MyorepMatchSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ MyorepMatchSetsScalarFieldEnumSchema,MyorepMatchSetsScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const MyorepMatchSetsFindManyArgsSchema: z.ZodType<Prisma.MyorepMatchSetsFindManyArgs> = z.object({
-  select: MyorepMatchSetsSelectSchema.optional(),
-  include: MyorepMatchSetsIncludeSchema.optional(),
-  where: MyorepMatchSetsWhereInputSchema.optional(),
-  orderBy: z.union([ MyorepMatchSetsOrderByWithRelationInputSchema.array(),MyorepMatchSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: MyorepMatchSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ MyorepMatchSetsScalarFieldEnumSchema,MyorepMatchSetsScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const MyorepMatchSetsAggregateArgsSchema: z.ZodType<Prisma.MyorepMatchSetsAggregateArgs> = z.object({
-  where: MyorepMatchSetsWhereInputSchema.optional(),
-  orderBy: z.union([ MyorepMatchSetsOrderByWithRelationInputSchema.array(),MyorepMatchSetsOrderByWithRelationInputSchema ]).optional(),
-  cursor: MyorepMatchSetsWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const MyorepMatchSetsGroupByArgsSchema: z.ZodType<Prisma.MyorepMatchSetsGroupByArgs> = z.object({
-  where: MyorepMatchSetsWhereInputSchema.optional(),
-  orderBy: z.union([ MyorepMatchSetsOrderByWithAggregationInputSchema.array(),MyorepMatchSetsOrderByWithAggregationInputSchema ]).optional(),
-  by: MyorepMatchSetsScalarFieldEnumSchema.array(),
-  having: MyorepMatchSetsScalarWhereWithAggregatesInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const MyorepMatchSetsFindUniqueArgsSchema: z.ZodType<Prisma.MyorepMatchSetsFindUniqueArgs> = z.object({
-  select: MyorepMatchSetsSelectSchema.optional(),
-  include: MyorepMatchSetsIncludeSchema.optional(),
-  where: MyorepMatchSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const MyorepMatchSetsFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.MyorepMatchSetsFindUniqueOrThrowArgs> = z.object({
-  select: MyorepMatchSetsSelectSchema.optional(),
-  include: MyorepMatchSetsIncludeSchema.optional(),
-  where: MyorepMatchSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const MyorepMatchSetFindFirstArgsSchema: z.ZodType<Prisma.MyorepMatchSetFindFirstArgs> = z.object({
-  select: MyorepMatchSetSelectSchema.optional(),
-  include: MyorepMatchSetIncludeSchema.optional(),
-  where: MyorepMatchSetWhereInputSchema.optional(),
-  orderBy: z.union([ MyorepMatchSetOrderByWithRelationInputSchema.array(),MyorepMatchSetOrderByWithRelationInputSchema ]).optional(),
-  cursor: MyorepMatchSetWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ MyorepMatchSetScalarFieldEnumSchema,MyorepMatchSetScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const MyorepMatchSetFindFirstOrThrowArgsSchema: z.ZodType<Prisma.MyorepMatchSetFindFirstOrThrowArgs> = z.object({
-  select: MyorepMatchSetSelectSchema.optional(),
-  include: MyorepMatchSetIncludeSchema.optional(),
-  where: MyorepMatchSetWhereInputSchema.optional(),
-  orderBy: z.union([ MyorepMatchSetOrderByWithRelationInputSchema.array(),MyorepMatchSetOrderByWithRelationInputSchema ]).optional(),
-  cursor: MyorepMatchSetWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ MyorepMatchSetScalarFieldEnumSchema,MyorepMatchSetScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const MyorepMatchSetFindManyArgsSchema: z.ZodType<Prisma.MyorepMatchSetFindManyArgs> = z.object({
-  select: MyorepMatchSetSelectSchema.optional(),
-  include: MyorepMatchSetIncludeSchema.optional(),
-  where: MyorepMatchSetWhereInputSchema.optional(),
-  orderBy: z.union([ MyorepMatchSetOrderByWithRelationInputSchema.array(),MyorepMatchSetOrderByWithRelationInputSchema ]).optional(),
-  cursor: MyorepMatchSetWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ MyorepMatchSetScalarFieldEnumSchema,MyorepMatchSetScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const MyorepMatchSetAggregateArgsSchema: z.ZodType<Prisma.MyorepMatchSetAggregateArgs> = z.object({
-  where: MyorepMatchSetWhereInputSchema.optional(),
-  orderBy: z.union([ MyorepMatchSetOrderByWithRelationInputSchema.array(),MyorepMatchSetOrderByWithRelationInputSchema ]).optional(),
-  cursor: MyorepMatchSetWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const MyorepMatchSetGroupByArgsSchema: z.ZodType<Prisma.MyorepMatchSetGroupByArgs> = z.object({
-  where: MyorepMatchSetWhereInputSchema.optional(),
-  orderBy: z.union([ MyorepMatchSetOrderByWithAggregationInputSchema.array(),MyorepMatchSetOrderByWithAggregationInputSchema ]).optional(),
-  by: MyorepMatchSetScalarFieldEnumSchema.array(),
-  having: MyorepMatchSetScalarWhereWithAggregatesInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const MyorepMatchSetFindUniqueArgsSchema: z.ZodType<Prisma.MyorepMatchSetFindUniqueArgs> = z.object({
-  select: MyorepMatchSetSelectSchema.optional(),
-  include: MyorepMatchSetIncludeSchema.optional(),
-  where: MyorepMatchSetWhereUniqueInputSchema,
-}).strict() ;
-
-export const MyorepMatchSetFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.MyorepMatchSetFindUniqueOrThrowArgs> = z.object({
-  select: MyorepMatchSetSelectSchema.optional(),
-  include: MyorepMatchSetIncludeSchema.optional(),
-  where: MyorepMatchSetWhereUniqueInputSchema,
+export const WorkoutExerciseMiniSetsFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsFindUniqueOrThrowArgs> = z.object({
+  select: WorkoutExerciseMiniSetsSelectSchema.optional(),
+  include: WorkoutExerciseMiniSetsIncludeSchema.optional(),
+  where: WorkoutExerciseMiniSetsWhereUniqueInputSchema,
 }).strict() ;
 
 export const ExerciseSplitCreateArgsSchema: z.ZodType<Prisma.ExerciseSplitCreateArgs> = z.object({
@@ -11738,278 +10115,94 @@ export const WorkoutExerciseDeleteManyArgsSchema: z.ZodType<Prisma.WorkoutExerci
   where: WorkoutExerciseWhereInputSchema.optional(),
 }).strict() ;
 
-export const SetsOfWorkoutExerciseCreateArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateArgs> = z.object({
-  select: SetsOfWorkoutExerciseSelectSchema.optional(),
-  include: SetsOfWorkoutExerciseIncludeSchema.optional(),
-  data: z.union([ SetsOfWorkoutExerciseCreateInputSchema,SetsOfWorkoutExerciseUncheckedCreateInputSchema ]),
+export const WorkoutExerciseSetCreateArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetCreateArgs> = z.object({
+  select: WorkoutExerciseSetSelectSchema.optional(),
+  include: WorkoutExerciseSetIncludeSchema.optional(),
+  data: z.union([ WorkoutExerciseSetCreateInputSchema,WorkoutExerciseSetUncheckedCreateInputSchema ]),
 }).strict() ;
 
-export const SetsOfWorkoutExerciseUpsertArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpsertArgs> = z.object({
-  select: SetsOfWorkoutExerciseSelectSchema.optional(),
-  include: SetsOfWorkoutExerciseIncludeSchema.optional(),
-  where: SetsOfWorkoutExerciseWhereUniqueInputSchema,
-  create: z.union([ SetsOfWorkoutExerciseCreateInputSchema,SetsOfWorkoutExerciseUncheckedCreateInputSchema ]),
-  update: z.union([ SetsOfWorkoutExerciseUpdateInputSchema,SetsOfWorkoutExerciseUncheckedUpdateInputSchema ]),
+export const WorkoutExerciseSetUpsertArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetUpsertArgs> = z.object({
+  select: WorkoutExerciseSetSelectSchema.optional(),
+  include: WorkoutExerciseSetIncludeSchema.optional(),
+  where: WorkoutExerciseSetWhereUniqueInputSchema,
+  create: z.union([ WorkoutExerciseSetCreateInputSchema,WorkoutExerciseSetUncheckedCreateInputSchema ]),
+  update: z.union([ WorkoutExerciseSetUpdateInputSchema,WorkoutExerciseSetUncheckedUpdateInputSchema ]),
 }).strict() ;
 
-export const SetsOfWorkoutExerciseCreateManyArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateManyArgs> = z.object({
-  data: z.union([ SetsOfWorkoutExerciseCreateManyInputSchema,SetsOfWorkoutExerciseCreateManyInputSchema.array() ]),
+export const WorkoutExerciseSetCreateManyArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetCreateManyArgs> = z.object({
+  data: z.union([ WorkoutExerciseSetCreateManyInputSchema,WorkoutExerciseSetCreateManyInputSchema.array() ]),
   skipDuplicates: z.boolean().optional(),
 }).strict() ;
 
-export const SetsOfWorkoutExerciseCreateManyAndReturnArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseCreateManyAndReturnArgs> = z.object({
-  data: z.union([ SetsOfWorkoutExerciseCreateManyInputSchema,SetsOfWorkoutExerciseCreateManyInputSchema.array() ]),
+export const WorkoutExerciseSetCreateManyAndReturnArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetCreateManyAndReturnArgs> = z.object({
+  data: z.union([ WorkoutExerciseSetCreateManyInputSchema,WorkoutExerciseSetCreateManyInputSchema.array() ]),
   skipDuplicates: z.boolean().optional(),
 }).strict() ;
 
-export const SetsOfWorkoutExerciseDeleteArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseDeleteArgs> = z.object({
-  select: SetsOfWorkoutExerciseSelectSchema.optional(),
-  include: SetsOfWorkoutExerciseIncludeSchema.optional(),
-  where: SetsOfWorkoutExerciseWhereUniqueInputSchema,
+export const WorkoutExerciseSetDeleteArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetDeleteArgs> = z.object({
+  select: WorkoutExerciseSetSelectSchema.optional(),
+  include: WorkoutExerciseSetIncludeSchema.optional(),
+  where: WorkoutExerciseSetWhereUniqueInputSchema,
 }).strict() ;
 
-export const SetsOfWorkoutExerciseUpdateArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateArgs> = z.object({
-  select: SetsOfWorkoutExerciseSelectSchema.optional(),
-  include: SetsOfWorkoutExerciseIncludeSchema.optional(),
-  data: z.union([ SetsOfWorkoutExerciseUpdateInputSchema,SetsOfWorkoutExerciseUncheckedUpdateInputSchema ]),
-  where: SetsOfWorkoutExerciseWhereUniqueInputSchema,
+export const WorkoutExerciseSetUpdateArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetUpdateArgs> = z.object({
+  select: WorkoutExerciseSetSelectSchema.optional(),
+  include: WorkoutExerciseSetIncludeSchema.optional(),
+  data: z.union([ WorkoutExerciseSetUpdateInputSchema,WorkoutExerciseSetUncheckedUpdateInputSchema ]),
+  where: WorkoutExerciseSetWhereUniqueInputSchema,
 }).strict() ;
 
-export const SetsOfWorkoutExerciseUpdateManyArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseUpdateManyArgs> = z.object({
-  data: z.union([ SetsOfWorkoutExerciseUpdateManyMutationInputSchema,SetsOfWorkoutExerciseUncheckedUpdateManyInputSchema ]),
-  where: SetsOfWorkoutExerciseWhereInputSchema.optional(),
+export const WorkoutExerciseSetUpdateManyArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetUpdateManyArgs> = z.object({
+  data: z.union([ WorkoutExerciseSetUpdateManyMutationInputSchema,WorkoutExerciseSetUncheckedUpdateManyInputSchema ]),
+  where: WorkoutExerciseSetWhereInputSchema.optional(),
 }).strict() ;
 
-export const SetsOfWorkoutExerciseDeleteManyArgsSchema: z.ZodType<Prisma.SetsOfWorkoutExerciseDeleteManyArgs> = z.object({
-  where: SetsOfWorkoutExerciseWhereInputSchema.optional(),
+export const WorkoutExerciseSetDeleteManyArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetDeleteManyArgs> = z.object({
+  where: WorkoutExerciseSetWhereInputSchema.optional(),
 }).strict() ;
 
-export const StraightSetsCreateArgsSchema: z.ZodType<Prisma.StraightSetsCreateArgs> = z.object({
-  select: StraightSetsSelectSchema.optional(),
-  include: StraightSetsIncludeSchema.optional(),
-  data: z.union([ StraightSetsCreateInputSchema,StraightSetsUncheckedCreateInputSchema ]),
+export const WorkoutExerciseMiniSetsCreateArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsCreateArgs> = z.object({
+  select: WorkoutExerciseMiniSetsSelectSchema.optional(),
+  include: WorkoutExerciseMiniSetsIncludeSchema.optional(),
+  data: z.union([ WorkoutExerciseMiniSetsCreateInputSchema,WorkoutExerciseMiniSetsUncheckedCreateInputSchema ]),
 }).strict() ;
 
-export const StraightSetsUpsertArgsSchema: z.ZodType<Prisma.StraightSetsUpsertArgs> = z.object({
-  select: StraightSetsSelectSchema.optional(),
-  include: StraightSetsIncludeSchema.optional(),
-  where: StraightSetsWhereUniqueInputSchema,
-  create: z.union([ StraightSetsCreateInputSchema,StraightSetsUncheckedCreateInputSchema ]),
-  update: z.union([ StraightSetsUpdateInputSchema,StraightSetsUncheckedUpdateInputSchema ]),
+export const WorkoutExerciseMiniSetsUpsertArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUpsertArgs> = z.object({
+  select: WorkoutExerciseMiniSetsSelectSchema.optional(),
+  include: WorkoutExerciseMiniSetsIncludeSchema.optional(),
+  where: WorkoutExerciseMiniSetsWhereUniqueInputSchema,
+  create: z.union([ WorkoutExerciseMiniSetsCreateInputSchema,WorkoutExerciseMiniSetsUncheckedCreateInputSchema ]),
+  update: z.union([ WorkoutExerciseMiniSetsUpdateInputSchema,WorkoutExerciseMiniSetsUncheckedUpdateInputSchema ]),
 }).strict() ;
 
-export const StraightSetsCreateManyArgsSchema: z.ZodType<Prisma.StraightSetsCreateManyArgs> = z.object({
-  data: z.union([ StraightSetsCreateManyInputSchema,StraightSetsCreateManyInputSchema.array() ]),
+export const WorkoutExerciseMiniSetsCreateManyArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsCreateManyArgs> = z.object({
+  data: z.union([ WorkoutExerciseMiniSetsCreateManyInputSchema,WorkoutExerciseMiniSetsCreateManyInputSchema.array() ]),
   skipDuplicates: z.boolean().optional(),
 }).strict() ;
 
-export const StraightSetsCreateManyAndReturnArgsSchema: z.ZodType<Prisma.StraightSetsCreateManyAndReturnArgs> = z.object({
-  data: z.union([ StraightSetsCreateManyInputSchema,StraightSetsCreateManyInputSchema.array() ]),
+export const WorkoutExerciseMiniSetsCreateManyAndReturnArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsCreateManyAndReturnArgs> = z.object({
+  data: z.union([ WorkoutExerciseMiniSetsCreateManyInputSchema,WorkoutExerciseMiniSetsCreateManyInputSchema.array() ]),
   skipDuplicates: z.boolean().optional(),
 }).strict() ;
 
-export const StraightSetsDeleteArgsSchema: z.ZodType<Prisma.StraightSetsDeleteArgs> = z.object({
-  select: StraightSetsSelectSchema.optional(),
-  include: StraightSetsIncludeSchema.optional(),
-  where: StraightSetsWhereUniqueInputSchema,
+export const WorkoutExerciseMiniSetsDeleteArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsDeleteArgs> = z.object({
+  select: WorkoutExerciseMiniSetsSelectSchema.optional(),
+  include: WorkoutExerciseMiniSetsIncludeSchema.optional(),
+  where: WorkoutExerciseMiniSetsWhereUniqueInputSchema,
 }).strict() ;
 
-export const StraightSetsUpdateArgsSchema: z.ZodType<Prisma.StraightSetsUpdateArgs> = z.object({
-  select: StraightSetsSelectSchema.optional(),
-  include: StraightSetsIncludeSchema.optional(),
-  data: z.union([ StraightSetsUpdateInputSchema,StraightSetsUncheckedUpdateInputSchema ]),
-  where: StraightSetsWhereUniqueInputSchema,
+export const WorkoutExerciseMiniSetsUpdateArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUpdateArgs> = z.object({
+  select: WorkoutExerciseMiniSetsSelectSchema.optional(),
+  include: WorkoutExerciseMiniSetsIncludeSchema.optional(),
+  data: z.union([ WorkoutExerciseMiniSetsUpdateInputSchema,WorkoutExerciseMiniSetsUncheckedUpdateInputSchema ]),
+  where: WorkoutExerciseMiniSetsWhereUniqueInputSchema,
 }).strict() ;
 
-export const StraightSetsUpdateManyArgsSchema: z.ZodType<Prisma.StraightSetsUpdateManyArgs> = z.object({
-  data: z.union([ StraightSetsUpdateManyMutationInputSchema,StraightSetsUncheckedUpdateManyInputSchema ]),
-  where: StraightSetsWhereInputSchema.optional(),
+export const WorkoutExerciseMiniSetsUpdateManyArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsUpdateManyArgs> = z.object({
+  data: z.union([ WorkoutExerciseMiniSetsUpdateManyMutationInputSchema,WorkoutExerciseMiniSetsUncheckedUpdateManyInputSchema ]),
+  where: WorkoutExerciseMiniSetsWhereInputSchema.optional(),
 }).strict() ;
 
-export const StraightSetsDeleteManyArgsSchema: z.ZodType<Prisma.StraightSetsDeleteManyArgs> = z.object({
-  where: StraightSetsWhereInputSchema.optional(),
-}).strict() ;
-
-export const FixedChangeSetsCreateArgsSchema: z.ZodType<Prisma.FixedChangeSetsCreateArgs> = z.object({
-  select: FixedChangeSetsSelectSchema.optional(),
-  include: FixedChangeSetsIncludeSchema.optional(),
-  data: z.union([ FixedChangeSetsCreateInputSchema,FixedChangeSetsUncheckedCreateInputSchema ]),
-}).strict() ;
-
-export const FixedChangeSetsUpsertArgsSchema: z.ZodType<Prisma.FixedChangeSetsUpsertArgs> = z.object({
-  select: FixedChangeSetsSelectSchema.optional(),
-  include: FixedChangeSetsIncludeSchema.optional(),
-  where: FixedChangeSetsWhereUniqueInputSchema,
-  create: z.union([ FixedChangeSetsCreateInputSchema,FixedChangeSetsUncheckedCreateInputSchema ]),
-  update: z.union([ FixedChangeSetsUpdateInputSchema,FixedChangeSetsUncheckedUpdateInputSchema ]),
-}).strict() ;
-
-export const FixedChangeSetsCreateManyArgsSchema: z.ZodType<Prisma.FixedChangeSetsCreateManyArgs> = z.object({
-  data: z.union([ FixedChangeSetsCreateManyInputSchema,FixedChangeSetsCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const FixedChangeSetsCreateManyAndReturnArgsSchema: z.ZodType<Prisma.FixedChangeSetsCreateManyAndReturnArgs> = z.object({
-  data: z.union([ FixedChangeSetsCreateManyInputSchema,FixedChangeSetsCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const FixedChangeSetsDeleteArgsSchema: z.ZodType<Prisma.FixedChangeSetsDeleteArgs> = z.object({
-  select: FixedChangeSetsSelectSchema.optional(),
-  include: FixedChangeSetsIncludeSchema.optional(),
-  where: FixedChangeSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const FixedChangeSetsUpdateArgsSchema: z.ZodType<Prisma.FixedChangeSetsUpdateArgs> = z.object({
-  select: FixedChangeSetsSelectSchema.optional(),
-  include: FixedChangeSetsIncludeSchema.optional(),
-  data: z.union([ FixedChangeSetsUpdateInputSchema,FixedChangeSetsUncheckedUpdateInputSchema ]),
-  where: FixedChangeSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const FixedChangeSetsUpdateManyArgsSchema: z.ZodType<Prisma.FixedChangeSetsUpdateManyArgs> = z.object({
-  data: z.union([ FixedChangeSetsUpdateManyMutationInputSchema,FixedChangeSetsUncheckedUpdateManyInputSchema ]),
-  where: FixedChangeSetsWhereInputSchema.optional(),
-}).strict() ;
-
-export const FixedChangeSetsDeleteManyArgsSchema: z.ZodType<Prisma.FixedChangeSetsDeleteManyArgs> = z.object({
-  where: FixedChangeSetsWhereInputSchema.optional(),
-}).strict() ;
-
-export const VariableChangeSetsCreateArgsSchema: z.ZodType<Prisma.VariableChangeSetsCreateArgs> = z.object({
-  select: VariableChangeSetsSelectSchema.optional(),
-  include: VariableChangeSetsIncludeSchema.optional(),
-  data: z.union([ VariableChangeSetsCreateInputSchema,VariableChangeSetsUncheckedCreateInputSchema ]),
-}).strict() ;
-
-export const VariableChangeSetsUpsertArgsSchema: z.ZodType<Prisma.VariableChangeSetsUpsertArgs> = z.object({
-  select: VariableChangeSetsSelectSchema.optional(),
-  include: VariableChangeSetsIncludeSchema.optional(),
-  where: VariableChangeSetsWhereUniqueInputSchema,
-  create: z.union([ VariableChangeSetsCreateInputSchema,VariableChangeSetsUncheckedCreateInputSchema ]),
-  update: z.union([ VariableChangeSetsUpdateInputSchema,VariableChangeSetsUncheckedUpdateInputSchema ]),
-}).strict() ;
-
-export const VariableChangeSetsCreateManyArgsSchema: z.ZodType<Prisma.VariableChangeSetsCreateManyArgs> = z.object({
-  data: z.union([ VariableChangeSetsCreateManyInputSchema,VariableChangeSetsCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const VariableChangeSetsCreateManyAndReturnArgsSchema: z.ZodType<Prisma.VariableChangeSetsCreateManyAndReturnArgs> = z.object({
-  data: z.union([ VariableChangeSetsCreateManyInputSchema,VariableChangeSetsCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const VariableChangeSetsDeleteArgsSchema: z.ZodType<Prisma.VariableChangeSetsDeleteArgs> = z.object({
-  select: VariableChangeSetsSelectSchema.optional(),
-  include: VariableChangeSetsIncludeSchema.optional(),
-  where: VariableChangeSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const VariableChangeSetsUpdateArgsSchema: z.ZodType<Prisma.VariableChangeSetsUpdateArgs> = z.object({
-  select: VariableChangeSetsSelectSchema.optional(),
-  include: VariableChangeSetsIncludeSchema.optional(),
-  data: z.union([ VariableChangeSetsUpdateInputSchema,VariableChangeSetsUncheckedUpdateInputSchema ]),
-  where: VariableChangeSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const VariableChangeSetsUpdateManyArgsSchema: z.ZodType<Prisma.VariableChangeSetsUpdateManyArgs> = z.object({
-  data: z.union([ VariableChangeSetsUpdateManyMutationInputSchema,VariableChangeSetsUncheckedUpdateManyInputSchema ]),
-  where: VariableChangeSetsWhereInputSchema.optional(),
-}).strict() ;
-
-export const VariableChangeSetsDeleteManyArgsSchema: z.ZodType<Prisma.VariableChangeSetsDeleteManyArgs> = z.object({
-  where: VariableChangeSetsWhereInputSchema.optional(),
-}).strict() ;
-
-export const MyorepMatchSetsCreateArgsSchema: z.ZodType<Prisma.MyorepMatchSetsCreateArgs> = z.object({
-  select: MyorepMatchSetsSelectSchema.optional(),
-  include: MyorepMatchSetsIncludeSchema.optional(),
-  data: z.union([ MyorepMatchSetsCreateInputSchema,MyorepMatchSetsUncheckedCreateInputSchema ]),
-}).strict() ;
-
-export const MyorepMatchSetsUpsertArgsSchema: z.ZodType<Prisma.MyorepMatchSetsUpsertArgs> = z.object({
-  select: MyorepMatchSetsSelectSchema.optional(),
-  include: MyorepMatchSetsIncludeSchema.optional(),
-  where: MyorepMatchSetsWhereUniqueInputSchema,
-  create: z.union([ MyorepMatchSetsCreateInputSchema,MyorepMatchSetsUncheckedCreateInputSchema ]),
-  update: z.union([ MyorepMatchSetsUpdateInputSchema,MyorepMatchSetsUncheckedUpdateInputSchema ]),
-}).strict() ;
-
-export const MyorepMatchSetsCreateManyArgsSchema: z.ZodType<Prisma.MyorepMatchSetsCreateManyArgs> = z.object({
-  data: z.union([ MyorepMatchSetsCreateManyInputSchema,MyorepMatchSetsCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const MyorepMatchSetsCreateManyAndReturnArgsSchema: z.ZodType<Prisma.MyorepMatchSetsCreateManyAndReturnArgs> = z.object({
-  data: z.union([ MyorepMatchSetsCreateManyInputSchema,MyorepMatchSetsCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const MyorepMatchSetsDeleteArgsSchema: z.ZodType<Prisma.MyorepMatchSetsDeleteArgs> = z.object({
-  select: MyorepMatchSetsSelectSchema.optional(),
-  include: MyorepMatchSetsIncludeSchema.optional(),
-  where: MyorepMatchSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const MyorepMatchSetsUpdateArgsSchema: z.ZodType<Prisma.MyorepMatchSetsUpdateArgs> = z.object({
-  select: MyorepMatchSetsSelectSchema.optional(),
-  include: MyorepMatchSetsIncludeSchema.optional(),
-  data: z.union([ MyorepMatchSetsUpdateInputSchema,MyorepMatchSetsUncheckedUpdateInputSchema ]),
-  where: MyorepMatchSetsWhereUniqueInputSchema,
-}).strict() ;
-
-export const MyorepMatchSetsUpdateManyArgsSchema: z.ZodType<Prisma.MyorepMatchSetsUpdateManyArgs> = z.object({
-  data: z.union([ MyorepMatchSetsUpdateManyMutationInputSchema,MyorepMatchSetsUncheckedUpdateManyInputSchema ]),
-  where: MyorepMatchSetsWhereInputSchema.optional(),
-}).strict() ;
-
-export const MyorepMatchSetsDeleteManyArgsSchema: z.ZodType<Prisma.MyorepMatchSetsDeleteManyArgs> = z.object({
-  where: MyorepMatchSetsWhereInputSchema.optional(),
-}).strict() ;
-
-export const MyorepMatchSetCreateArgsSchema: z.ZodType<Prisma.MyorepMatchSetCreateArgs> = z.object({
-  select: MyorepMatchSetSelectSchema.optional(),
-  include: MyorepMatchSetIncludeSchema.optional(),
-  data: z.union([ MyorepMatchSetCreateInputSchema,MyorepMatchSetUncheckedCreateInputSchema ]),
-}).strict() ;
-
-export const MyorepMatchSetUpsertArgsSchema: z.ZodType<Prisma.MyorepMatchSetUpsertArgs> = z.object({
-  select: MyorepMatchSetSelectSchema.optional(),
-  include: MyorepMatchSetIncludeSchema.optional(),
-  where: MyorepMatchSetWhereUniqueInputSchema,
-  create: z.union([ MyorepMatchSetCreateInputSchema,MyorepMatchSetUncheckedCreateInputSchema ]),
-  update: z.union([ MyorepMatchSetUpdateInputSchema,MyorepMatchSetUncheckedUpdateInputSchema ]),
-}).strict() ;
-
-export const MyorepMatchSetCreateManyArgsSchema: z.ZodType<Prisma.MyorepMatchSetCreateManyArgs> = z.object({
-  data: z.union([ MyorepMatchSetCreateManyInputSchema,MyorepMatchSetCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const MyorepMatchSetCreateManyAndReturnArgsSchema: z.ZodType<Prisma.MyorepMatchSetCreateManyAndReturnArgs> = z.object({
-  data: z.union([ MyorepMatchSetCreateManyInputSchema,MyorepMatchSetCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const MyorepMatchSetDeleteArgsSchema: z.ZodType<Prisma.MyorepMatchSetDeleteArgs> = z.object({
-  select: MyorepMatchSetSelectSchema.optional(),
-  include: MyorepMatchSetIncludeSchema.optional(),
-  where: MyorepMatchSetWhereUniqueInputSchema,
-}).strict() ;
-
-export const MyorepMatchSetUpdateArgsSchema: z.ZodType<Prisma.MyorepMatchSetUpdateArgs> = z.object({
-  select: MyorepMatchSetSelectSchema.optional(),
-  include: MyorepMatchSetIncludeSchema.optional(),
-  data: z.union([ MyorepMatchSetUpdateInputSchema,MyorepMatchSetUncheckedUpdateInputSchema ]),
-  where: MyorepMatchSetWhereUniqueInputSchema,
-}).strict() ;
-
-export const MyorepMatchSetUpdateManyArgsSchema: z.ZodType<Prisma.MyorepMatchSetUpdateManyArgs> = z.object({
-  data: z.union([ MyorepMatchSetUpdateManyMutationInputSchema,MyorepMatchSetUncheckedUpdateManyInputSchema ]),
-  where: MyorepMatchSetWhereInputSchema.optional(),
-}).strict() ;
-
-export const MyorepMatchSetDeleteManyArgsSchema: z.ZodType<Prisma.MyorepMatchSetDeleteManyArgs> = z.object({
-  where: MyorepMatchSetWhereInputSchema.optional(),
+export const WorkoutExerciseMiniSetsDeleteManyArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetsDeleteManyArgs> = z.object({
+  where: WorkoutExerciseMiniSetsWhereInputSchema.optional(),
 }).strict() ;
