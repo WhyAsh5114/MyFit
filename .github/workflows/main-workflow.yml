@@ -43,3 +43,49 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+  
+  svelte-check:
+    name: Svelte Check
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+
+    - name: Install dependencies
+      run: npm ci --force # TODO: Remove force later
+
+    - name: Run Svelte Check
+      id: svelte-check
+      run: |
+        npx svelte-check --output machine > svelte-check-output.txt
+        tail -n 1 svelte-check-output.txt > svelte-check-summary.txt
+        cat svelte-check-summary.txt
+
+    - name: Parse Svelte Check Output
+      id: parse-output
+      run: |
+        SUMMARY=$(cat svelte-check-summary.txt)
+        ERRORS=$(echo $SUMMARY | awk '{print $5}')
+        WARNINGS=$(echo $SUMMARY | awk '{print $7}')
+        FILES_WITH_PROBLEMS=$(echo $SUMMARY | awk '{print $9}')
+
+        echo "errors=$ERRORS" >> $GITHUB_ENV
+        echo "warnings=$WARNINGS" >> $GITHUB_ENV
+        echo "files_with_problems=$FILES_WITH_PROBLEMS" >> $GITHUB_ENV
+
+    - name: Check for errors, warnings, or files with problems
+      if: env.errors != '0' || env.warnings != '0' || env.files_with_problems != '0'
+      run: |
+        echo "Svelte check failed with ${{ env.errors }} errors, ${{ env.warnings }} warnings, and ${{ env.files_with_problems }} files with problems."
+        exit 1
+
+    - name: Svelte check passed
+      if: env.errors == '0' && env.warnings == '0' && env.files_with_problems == '0'
+      run: echo "Svelte check passed with 0 errors, warnings, and files with problems."
+
