@@ -42,7 +42,7 @@ model WorkoutExerciseSet {
   id                String                    @id @default(cuid())
   workoutExercise   WorkoutExercise           @relation(fields: [workoutExerciseId], references: [id])
   workoutExerciseId String
-  rep               Int
+  reps              Int
   load              Int
   RIR               Int
   miniSets          WorkoutExerciseMiniSets[]
@@ -50,7 +50,7 @@ model WorkoutExerciseSet {
 
 model WorkoutExerciseMiniSets {
   id                   String             @id @default(cuid())
-  rep                  Int
+  reps                 Int
   load                 Int
   RIR                  Int
   parentSet            WorkoutExerciseSet @relation(fields: [workoutExerciseSetId], references: [id])
