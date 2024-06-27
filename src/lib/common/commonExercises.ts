@@ -109,7 +109,48 @@ export const commonExercisePerMuscleGroup: {
 				changeType: 'AbsoluteLoad',
 				changeAmount: 2.5,
 				note: null
-			}
+			},
+			{
+				name: 'Lying dumbbell curl',
+				targetMuscleGroup: 'Biceps',
+				customMuscleGroup: null,
+				involvesBodyweight: false,
+				setType: 'Straight',
+				repRangeStart: 10,
+				repRangeEnd: 15,
+				changeType: null,
+				changeAmount: null,
+				note: null
+			},
+		]
+	},
+	{
+		muscleGroup: 'Side delts',
+		exercises: [
+			{
+				name: 'Leaning dumbbell lateral raise',
+				targetMuscleGroup: 'Side delts',
+				customMuscleGroup: null,
+				involvesBodyweight: false,
+				setType: 'Straight',
+				repRangeStart: 10,
+				repRangeEnd: 15,
+				changeType: null,
+				changeAmount: null,
+				note: null
+			},
+			{
+				name: 'Single Arm Behind Back Cable Lateral',
+				targetMuscleGroup: 'Side delts',
+				customMuscleGroup: null,
+				involvesBodyweight: false,
+				setType: 'Straight',
+				repRangeStart: 10,
+				repRangeEnd: 15,
+				changeType: null,
+				changeAmount: null,
+				note: null
+			},			
 		]
 	},
 	{
