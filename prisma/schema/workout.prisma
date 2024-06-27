@@ -26,7 +26,7 @@ model WorkoutExercise {
   targetMuscleGroup            MuscleGroup
   customMuscleGroup            String?
   involvesBodyweight           Boolean
-  workoutExerciseSets          WorkoutExerciseSet[]
+  sets                         WorkoutExerciseSet[]
   setType                      SetType
   repRangeStart                Int
   repRangeEnd                  Int
