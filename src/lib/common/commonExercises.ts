@@ -154,6 +154,35 @@ export const commonExercisePerMuscleGroup: {
 		]
 	},
 	{
+		muscleGroup: 'RearDelts',
+		exercises: [
+			{
+				name: 'Leaning dumbbell lateral raises',
+				targetMuscleGroup: 'SideDelts',
+				customMuscleGroup: null,
+				involvesBodyweight: false,
+				setType: 'Straight',
+				repRangeStart: 10,
+				repRangeEnd: 20,
+				changeType: null,
+				changeAmount: null,
+				note: null
+			},
+			{
+				name: 'Behind the back cable lateral raises',
+				targetMuscleGroup: 'SideDelts',
+				customMuscleGroup: null,
+				involvesBodyweight: false,
+				setType: 'Straight',
+				repRangeStart: 10,
+				repRangeEnd: 20,
+				changeType: null,
+				changeAmount: null,
+				note: null
+			},			
+		]
+	},
+	{
 		muscleGroup: 'Quads',
 		exercises: [
 			{
