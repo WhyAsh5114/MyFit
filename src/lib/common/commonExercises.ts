@@ -157,7 +157,7 @@ export const commonExercisePerMuscleGroup: {
 		muscleGroup: 'RearDelts',
 		exercises: [
 			{
-				name: 'Face pulls',
+				name: 'Face pull',
 				targetMuscleGroup: 'RearDelts',
 				customMuscleGroup: null,
 				involvesBodyweight: false,
@@ -167,7 +167,19 @@ export const commonExercisePerMuscleGroup: {
 				changeType: null,
 				changeAmount: null,
 				note: null
-			},			
+			},
+			{
+				name: 'Machine rear delt fly',
+				targetMuscleGroup: 'RearDelts',
+				customMuscleGroup: null,
+				involvesBodyweight: false,
+				setType: 'Straight',
+				repRangeStart: 10,
+				repRangeEnd: 15,
+				changeType: null,
+				changeAmount: null,
+				note: null
+			},	
 		]
 	},
 	{
