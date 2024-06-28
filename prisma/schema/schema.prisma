@@ -10,7 +10,7 @@ generator client {
 
 generator zod {
   provider = "zod-prisma-types"
-  output   = "../src/lib/zodSchemas"
+  output   = "../../src/lib/zodSchemas"
 }
 
 model User {

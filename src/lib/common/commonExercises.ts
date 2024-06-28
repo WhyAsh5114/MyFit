@@ -121,7 +121,7 @@ export const commonExercisePerMuscleGroup: {
 				changeType: null,
 				changeAmount: null,
 				note: null
-			},
+			}
 		]
 	},
 	{
@@ -150,7 +150,7 @@ export const commonExercisePerMuscleGroup: {
 				changeType: null,
 				changeAmount: null,
 				note: null
-			},			
+			}
 		]
 	},
 	{
@@ -179,7 +179,7 @@ export const commonExercisePerMuscleGroup: {
 				changeType: null,
 				changeAmount: null,
 				note: null
-			},	
+			}
 		]
 	},
 	{
