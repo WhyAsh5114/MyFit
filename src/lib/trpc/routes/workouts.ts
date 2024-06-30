@@ -42,6 +42,7 @@ function progressiveOverloadMagic(
 	);
 
 	// Fill in reps, load, RIR from previous workouts (lastSetToFailure?)
+	// Add miniSets and stuff if drop / myorep match sets
 	// Match RIR according to forceRIRMatching and RIRProgression
 	// Perform progressive overload according to mesocycle progression values
 	// Increase sets based on cyclic set changes
