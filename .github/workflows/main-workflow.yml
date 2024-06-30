@@ -1,9 +1,5 @@
 name: CI Pipeline
 
-env:
-  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
 on:
   push:
     branches:
@@ -17,27 +13,39 @@ on:
       - v3
 
 jobs:
-  test:
-    name: Playwright Tests
+  pipeline:
+    name: CI Pipeline
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Setup Node
+      - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
       - name: Install dependencies
         run: npm ci --force # TODO: Remove force later
       - name: Run Svelte Check
-        id: svelte-check
         run: npm run check
+      - name: Generate AUTH_SECRET
+        run: echo "AUTH_SECRET=$(openssl rand -base64 33)" >> $GITHUB_ENV
+      - name: Download & extract database binary
+        run: |
+          wget https://binaries.cockroachdb.com/cockroach-v24.1.1.linux-amd64.tgz
+          tar -xvzf cockroach-v24.1.1.linux-amd64.tgz
+      - name: Start database server
+        run: ./cockroach-v24.1.1.linux-amd64/cockroach start-single-node --insecure --background
+      - name: Initialize database schema
+        run: npx prisma db push
+        env:
+          DATABASE_URL: 'postgresql://root@localhost:26257/defaultdb?sslmode=disable'
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: 'postgresql://root@localhost:26257/defaultdb?sslmode=disable'
+          AUTH_SECRET: ${{ env.AUTH_SECRET }}
         run: npx playwright test
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
