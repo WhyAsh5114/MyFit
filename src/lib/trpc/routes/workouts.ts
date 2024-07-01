@@ -1,7 +1,12 @@
 import { prisma } from '$lib/prisma';
-import { createWorkoutExerciseInProgressFromMesocycleExerciseTemplate } from '$lib/mesoToWorkouts';
+import {
+	createWorkoutExerciseInProgressFromMesocycleExerciseTemplate,
+	type WorkoutExerciseInProgress,
+	type WorkoutInProgress
+} from '$lib/mesoToWorkouts';
 import { t } from '$lib/trpc/t';
 import type { Prisma } from '@prisma/client';
+import { z } from 'zod';
 
 const includeMesocycleClause = {
 	mesocycleExerciseSplitDays: { include: { mesocycleSplitDayExercises: true } },
@@ -14,19 +19,62 @@ type ActiveMesocycleWithProgressionData = Prisma.MesocycleGetPayload<{
 }>;
 
 export const workouts = t.router({
-	getTodaysWorkoutExercises: t.procedure.query(async ({ ctx }) => {
-		const data = await prisma.mesocycle.findFirst({
-			where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
-			include: includeMesocycleClause
-		});
-		if (data === null) return null;
-		return progressiveOverloadMagic(data);
-	})
+	getTodaysWorkoutData: t.procedure
+		.input(z.strictObject({ userBodyweight: z.number().optional() }))
+		.query(async ({ ctx, input }) => {
+			const data = await prisma.mesocycle.findFirst({
+				where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
+				include: includeMesocycleClause
+			});
+			const userBodyweight =
+				input.userBodyweight ??
+				(
+					await prisma.workout.findFirst({
+						where: { userId: ctx.userId },
+						orderBy: { createdAt: 'desc' }
+					})
+				)?.userBodyweight ??
+				null;
+
+			if (data === null)
+				return { workoutExercises: [], userBodyweight } satisfies WorkoutInProgress;
+
+			const { mesocycleExerciseSplitDays, workoutsOfMesocycle } = data;
+			const totalWorkouts = workoutsOfMesocycle.length;
+			const splitLength = mesocycleExerciseSplitDays.length;
+			const todaysSplitDay = mesocycleExerciseSplitDays[totalWorkouts];
+			const isRestDay = mesocycleExerciseSplitDays[totalWorkouts].isRestDay;
+
+			if (isRestDay)
+				return {
+					workoutExercises: [],
+					workoutOfMesocycle: {
+						mesocycleName: data.name,
+						splitDayName: '',
+						workoutStatus: 'RestDay',
+						dayNumber: (totalWorkouts % splitLength) + 1,
+						cycleNumber: 1 + Math.floor(totalWorkouts / splitLength)
+					},
+					userBodyweight
+				} satisfies WorkoutInProgress;
+			else
+				return {
+					workoutExercises: progressiveOverloadMagic(data, userBodyweight),
+					workoutOfMesocycle: {
+						mesocycleName: data.name,
+						splitDayName: todaysSplitDay.name,
+						dayNumber: (totalWorkouts % splitLength) + 1,
+						cycleNumber: 1 + Math.floor(totalWorkouts / splitLength)
+					},
+					userBodyweight
+				} satisfies WorkoutInProgress;
+		})
 });
 
 function progressiveOverloadMagic(
-	mesocycleWithProgressionData: ActiveMesocycleWithProgressionData
-) {
+	mesocycleWithProgressionData: ActiveMesocycleWithProgressionData,
+	userBodyweight: number | null
+): WorkoutExerciseInProgress[] {
 	const {
 		mesocycleCyclicSetChanges,
 		mesocycleExerciseSplitDays,
@@ -35,8 +83,6 @@ function progressiveOverloadMagic(
 	} = mesocycleWithProgressionData;
 
 	const todaysSplitDay = mesocycleExerciseSplitDays[workoutsOfMesocycle.length];
-	if (todaysSplitDay.isRestDay) return 'RestDay';
-
 	const workoutExercises = todaysSplitDay.mesocycleSplitDayExercises.map((fullExercise) =>
 		createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(fullExercise)
 	);
