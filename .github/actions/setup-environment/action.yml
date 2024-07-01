@@ -1,0 +1,20 @@
+name: 'Setup Node.js and Install Dependencies'
+description: 'Checks out the code, sets up Node.js, and installs dependencies using npm ci --force'
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    required: false
+    default: 'lts/*'
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install dependencies
+      run: npm ci --force
