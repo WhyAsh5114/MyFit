@@ -5,9 +5,11 @@ runs:
   steps:
     - name: Setup Node.js
       uses: actions/setup-node@v4
+      shell: bash
       with:
         node-version: lts/*
         cache: 'npm'
 
     - name: Install dependencies
+      shell: bash
       run: npm ci --force
