@@ -3,6 +3,6 @@ import { createCaller } from '$lib/trpc/router.js';
 
 export const load = async (event) => {
 	const trpc = createCaller(await createContext(event));
-	const workoutExercises = trpc.workouts.getTodaysWorkoutExercises();
-	return { workoutExercises };
+	const workoutData = trpc.workouts.getTodaysWorkoutData({ userBodyweight: undefined });
+	return { workoutData };
 };
