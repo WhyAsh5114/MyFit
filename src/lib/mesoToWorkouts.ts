@@ -1,4 +1,4 @@
-import type { MesocycleExerciseTemplate, Prisma, WorkoutStatus } from '@prisma/client';
+import type { MesocycleExerciseTemplate, MuscleGroup, Prisma, WorkoutStatus } from '@prisma/client';
 
 type SetInProgress = {
 	reps: number | undefined;
@@ -24,11 +24,13 @@ export type WorkoutExerciseInProgress = Omit<
 		})[];
 };
 
-export type WorkoutInProgress = Omit<
-	Prisma.WorkoutCreateWithoutUserInput,
-	'id' | 'workoutExercises' | 'workoutOfMesocycle' | 'createdAt' | 'userBodyweight'
-> & {
-	workoutExercises: WorkoutExerciseInProgress[];
+export type TodaysWorkoutData = {
+	userBodyweight: number | null;
+	workoutExercises: {
+		name: string;
+		targetMuscleGroup: MuscleGroup;
+		customMuscleGroup: string | null;
+	}[];
 	workoutOfMesocycle?: {
 		mesocycleName: string;
 		splitDayName: string;
@@ -36,7 +38,6 @@ export type WorkoutInProgress = Omit<
 		dayNumber: number;
 		cycleNumber: number;
 	};
-	userBodyweight: number | null;
 };
 
 export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(

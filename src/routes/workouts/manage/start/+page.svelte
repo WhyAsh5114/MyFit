@@ -3,17 +3,27 @@
 	import { Label } from '$lib/components/ui/label';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Input } from '$lib/components/ui/input';
+	import { Badge } from '$lib/components/ui/badge';
 	import { onMount } from 'svelte';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import type { WorkoutInProgress } from '$lib/mesoToWorkouts.js';
+	import type { TodaysWorkoutData } from '$lib/mesoToWorkouts.js';
 	import * as Card from '$lib/components/ui/card';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { goto } from '$app/navigation';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
 
 	let useActiveMesocycle = $state(false);
-	let workoutData: WorkoutInProgress | 'loading' = $state('loading');
+	let workoutData: TodaysWorkoutData | 'loading' = $state('loading');
 	let userBodyweight: null | number = $state(workoutRunes.workoutData.userBodyweight);
+	let targetedMuscleGroups = $derived.by(() => {
+		let result: string[] = [];
+		if (workoutData !== 'loading') {
+			result = workoutData.workoutExercises.map((exercise) => {
+				return exercise.customMuscleGroup ?? exercise.targetMuscleGroup;
+			});
+		}
+		return Array.from(new Set(result));
+	});
 
 	let { data } = $props();
 	onMount(async () => {
@@ -61,15 +71,16 @@
 		<Card.Root>
 			<Card.Header>
 				<Card.Title>{workoutData.workoutOfMesocycle.splitDayName}</Card.Title>
-				<Card.Description>
+				<Card.Description class="pb-1">
 					Day {workoutData.workoutOfMesocycle.dayNumber}, Cycle {workoutData.workoutOfMesocycle
 						.cycleNumber}
 				</Card.Description>
+				<div class="flex flex-wrap gap-1">
+					{#each targetedMuscleGroups as muscleGroup}
+						<Badge variant="secondary">{muscleGroup}</Badge>
+					{/each}
+				</div>
 			</Card.Header>
-			<Card.Footer>
-				TODO <br />
-				sets and setChanges
-			</Card.Footer>
 		</Card.Root>
 	{/if}
 	<Button class="mt-auto" onclick={startWorkout} disabled={userBodyweight === null}>
