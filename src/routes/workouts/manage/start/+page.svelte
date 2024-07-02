@@ -11,6 +11,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { goto } from '$app/navigation';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
+	import { convertCamelCaseToNormal } from '$lib/utils.js';
 
 	let useActiveMesocycle = $state(false);
 	let workoutData: TodaysWorkoutData | 'loading' = $state('loading');
@@ -77,7 +78,7 @@
 				</Card.Description>
 				<div class="flex flex-wrap gap-1">
 					{#each targetedMuscleGroups as muscleGroup}
-						<Badge variant="secondary">{muscleGroup}</Badge>
+						<Badge variant="secondary">{convertCamelCaseToNormal(muscleGroup)}</Badge>
 					{/each}
 				</div>
 			</Card.Header>
