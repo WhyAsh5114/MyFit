@@ -1,7 +1,7 @@
-import type { WorkoutInProgress } from '$lib/mesoToWorkouts';
+import type { TodaysWorkoutData } from '$lib/mesoToWorkouts';
 
 function createWorkoutRunes() {
-	let workoutData: WorkoutInProgress = $state({ userBodyweight: null, workoutExercises: [] });
+	let workoutData: TodaysWorkoutData = $state({ userBodyweight: null, workoutExercises: [] });
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('workoutRunes');
