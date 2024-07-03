@@ -3,56 +3,76 @@
 	import { onMount } from 'svelte';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
 	import { goto } from '$app/navigation';
+	import DndComponent from './(components)/DndComponent.svelte';
+	import InfoPopover from '$lib/components/InfoPopover.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import AddIcon from 'virtual:icons/lucide/plus';
+	import ReorderIcon from 'virtual:icons/lucide/git-compare-arrows';
+	import EditIcon from 'virtual:icons/lucide/pencil';
 
 	let { data } = $props();
 	let workoutData = $derived(workoutRunes.workoutData);
+	let reordering = $state(false);
 
 	onMount(async () => {
 		if (workoutRunes.workoutData === null) goto('./start');
 		if (workoutRunes.workoutExercises === null)
 			workoutRunes.workoutExercises = await data.workoutExercises;
 	});
+
+	function getFormattedDate(date: string | Date) {
+		if (typeof date === 'string') date = new Date(date);
+		return date.toLocaleString(undefined, {
+			month: 'long',
+			day: 'numeric'
+		});
+	}
 </script>
 
 <H3>Exercises</H3>
 
 {#if workoutData !== null}
-	{#if workoutData.workoutOfMesocycle !== undefined}
-		<div class="flex items-center justify-between">
-			<span class="text-lg font-semibold">
-				{workoutData.workoutOfMesocycle.splitDayName}
-				<span class="text-base font-normal text-muted-foreground"> </span>
-			</span>
-			<span class="text-sm font-medium">
-				{workoutData.workoutOfMesocycle.mesocycleName}
-			</span>
+	<div class="flex gap-2 items-center">
+		<div class="mr-auto flex flex-col">
+			{#if workoutData.workoutOfMesocycle !== undefined}
+				<span class="text-lg font-semibold">
+					{workoutData.workoutOfMesocycle.splitDayName}
+				</span>
+				<span class="flex items-center gap-2 text-sm text-muted-foreground">
+					Day {workoutData.workoutOfMesocycle?.dayNumber}, Cycle {workoutData.workoutOfMesocycle
+						?.cycleNumber}
+					<InfoPopover ariaLabel="mesocycle-info" align="center">
+						<span class="text-sm text-foreground">
+							{workoutData.workoutOfMesocycle.mesocycleName}:
+							{getFormattedDate(workoutData.startedAt)}
+						</span>
+					</InfoPopover>
+				</span>
+			{:else}
+				<span class="text-lg font-semibold">
+					{getFormattedDate(workoutData.startedAt)}
+				</span>
+				<p class="text-sm text-muted-foreground">Without mesocycle</p>
+			{/if}
 		</div>
-		<div class="flex items-center justify-between text-sm text-muted-foreground">
-			<span>
-				Day {workoutData.workoutOfMesocycle?.dayNumber}, Cycle {workoutData.workoutOfMesocycle
-					?.cycleNumber}
-			</span>
-			<span class="font-medium">
-				{workoutData.startedAt.toLocaleString(undefined, {
-					month: 'long',
-					day: 'numeric'
-				})}
-			</span>
-		</div>
-	{:else}
-		<span class="text-lg font-semibold">
-			{new Date().toLocaleDateString(undefined, { month: 'long', day: '2-digit' })}
-		</span>
-		<p class="text-sm text-muted-foreground">Without mesocycle</p>
-	{/if}
+		<Button size="icon" variant="outline" onclick={() => (reordering = !reordering)}>
+			{#if !reordering}
+				<ReorderIcon />
+			{:else}
+				<EditIcon />
+			{/if}
+		</Button>
+		<Button size="icon" variant="outline" aria-label="add-exercise">
+			<AddIcon />
+			<!-- TODO: sheet -->
+		</Button>
+	</div>
 {/if}
 
 {#if workoutRunes.workoutExercises === null}
 	TODO: skeletons
 {:else}
-	<div class="mt-2 flex flex-col">
-		{#each workoutRunes.workoutExercises as exercise}
-			<span>{exercise.name}</span>
-		{/each}
+	<div class="mt-2 flex h-px grow flex-col overflow-y-auto">
+		<DndComponent itemList={workoutRunes.workoutExercises} {reordering} />
 	</div>
 {/if}
