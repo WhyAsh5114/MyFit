@@ -106,7 +106,7 @@
 		</Card.Root>
 	{/if}
 	<Button class="mt-auto" onclick={() => startWorkout()} disabled={userBodyweight === null}>
-		Start workout
+		Next
 	</Button>
 {/if}
 
