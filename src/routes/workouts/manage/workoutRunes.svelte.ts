@@ -1,11 +1,12 @@
-import type { TodaysWorkoutData } from '$lib/mesoToWorkouts';
+import type { TodaysWorkoutData, WorkoutExerciseInProgress } from '$lib/mesoToWorkouts';
 
 function createWorkoutRunes() {
 	let workoutData: TodaysWorkoutData = $state({ userBodyweight: null, workoutExercises: [] });
+	let workoutExercises: WorkoutExerciseInProgress[] | null = $state(null);
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('workoutRunes');
-		if (savedState) ({ workoutData } = JSON.parse(savedState));
+		if (savedState) ({ workoutData, workoutExercises } = JSON.parse(savedState));
 	}
 
 	function saveStoresToLocalStorage() {
@@ -14,6 +15,7 @@ function createWorkoutRunes() {
 
 	function resetStores() {
 		workoutData = { userBodyweight: null, workoutExercises: [] };
+		workoutExercises = null;
 		saveStoresToLocalStorage();
 	}
 
@@ -23,6 +25,12 @@ function createWorkoutRunes() {
 		},
 		set workoutData(value) {
 			workoutData = value;
+		},
+		get workoutExercises() {
+			return workoutExercises;
+		},
+		set workoutExercises(value) {
+			workoutExercises = value;
 		},
 		saveStoresToLocalStorage,
 		resetStores
