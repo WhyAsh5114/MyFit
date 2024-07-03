@@ -38,13 +38,18 @@ export const workouts = t.router({
 				mesocycleCyclicSetChanges: true,
 				workoutsOfMesocycle: {
 					include: { workout: { include: { workoutExercises: true } } },
-					orderBy: { workout: { createdAt: 'desc' } }
+					orderBy: { workout: { startedAt: 'desc' } }
 				}
 			}
 		});
 		const lastWorkout = data?.workoutsOfMesocycle.map((v) => v.workout).at(-1);
 		const userBodyweight = lastWorkout?.userBodyweight ?? null;
-		if (data === null) return { workoutExercises: [], userBodyweight } satisfies TodaysWorkoutData;
+		if (data === null)
+			return {
+				workoutExercises: [],
+				userBodyweight,
+				startedAt: new Date()
+			} satisfies TodaysWorkoutData;
 
 		const { isRestDay, dayNumber, cycleNumber, todaysSplitDay } = getBasicDayInfo(data);
 		if (isRestDay)
@@ -57,7 +62,8 @@ export const workouts = t.router({
 					dayNumber,
 					cycleNumber
 				},
-				userBodyweight
+				userBodyweight,
+				startedAt: new Date()
 			} satisfies TodaysWorkoutData;
 		else
 			return {
@@ -72,7 +78,8 @@ export const workouts = t.router({
 					dayNumber,
 					cycleNumber
 				},
-				userBodyweight
+				userBodyweight,
+				startedAt: new Date()
 			} satisfies TodaysWorkoutData;
 	}),
 

@@ -1,7 +1,13 @@
 import type { TodaysWorkoutData, WorkoutExerciseInProgress } from '$lib/mesoToWorkouts';
 
+const defaultWorkoutData: TodaysWorkoutData = {
+	userBodyweight: null,
+	workoutExercises: [],
+	startedAt: new Date()
+} as const;
+
 function createWorkoutRunes() {
-	let workoutData: TodaysWorkoutData = $state({ userBodyweight: null, workoutExercises: [] });
+	let workoutData: TodaysWorkoutData = $state(structuredClone(defaultWorkoutData));
 	let workoutExercises: WorkoutExerciseInProgress[] | null = $state(null);
 
 	if (globalThis.localStorage) {
@@ -14,7 +20,7 @@ function createWorkoutRunes() {
 	}
 
 	function resetStores() {
-		workoutData = { userBodyweight: null, workoutExercises: [] };
+		workoutData = structuredClone(defaultWorkoutData);
 		workoutExercises = null;
 		saveStoresToLocalStorage();
 	}
