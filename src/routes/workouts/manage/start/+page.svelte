@@ -12,6 +12,7 @@
 	import { goto } from '$app/navigation';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
 	import { convertCamelCaseToNormal } from '$lib/utils.js';
+	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 
 	let useActiveMesocycle = $state(false);
 	let workoutData: TodaysWorkoutData | 'loading' = $state('loading');
@@ -25,6 +26,7 @@
 		}
 		return Array.from(new Set(result));
 	});
+	let overwriteWorkoutDialogOpen = $state(false);
 
 	let { data } = $props();
 	onMount(async () => {
@@ -33,23 +35,31 @@
 		if (workoutData.workoutOfMesocycle !== undefined) useActiveMesocycle = true;
 	});
 
-	function startWorkout() {
+	function startWorkout(fromDialog = false, mode: 'keepCurrent' | 'overwrite' = 'overwrite') {
+		if (workoutRunes.workoutExercises !== null && !fromDialog) {
+			overwriteWorkoutDialogOpen = true;
+			return;
+		}
+
 		if (workoutData === 'loading') return;
 		workoutData.userBodyweight = userBodyweight;
 
-		if (useActiveMesocycle) workoutRunes.workoutData = workoutData;
-		else
-			workoutRunes.workoutData = {
-				...workoutData,
-				workoutOfMesocycle: undefined,
-				workoutExercises: []
-			};
-
-		workoutRunes.saveStoresToLocalStorage();
+		if (mode === 'overwrite') {
+			if (useActiveMesocycle) workoutRunes.workoutData = workoutData;
+			else
+				workoutRunes.workoutData = {
+					...workoutData,
+					workoutOfMesocycle: undefined,
+					workoutExercises: []
+				};
+			workoutRunes.workoutExercises = null;
+			workoutRunes.saveStoresToLocalStorage();
+		}
 
 		let exercisesLink = `./exercises?userBodyweight=${userBodyweight}`;
 		if (useActiveMesocycle) exercisesLink += '&useActiveMesocycle';
-		goto(`./exercises?userBodyweight=${userBodyweight}`);
+		if (mode === 'keepCurrent') exercisesLink += '&keepCurrent';
+		goto(exercisesLink);
 	}
 </script>
 
@@ -95,7 +105,19 @@
 			</Card.Header>
 		</Card.Root>
 	{/if}
-	<Button class="mt-auto" onclick={startWorkout} disabled={userBodyweight === null}>
+	<Button class="mt-auto" onclick={() => startWorkout()} disabled={userBodyweight === null}>
 		Start workout
 	</Button>
 {/if}
+
+<ResponsiveDialog title="Warning" needTrigger={false} bind:open={overwriteWorkoutDialogOpen}>
+	<p>
+		A workout is already in progress with <span class="font-semibold"
+			>{workoutRunes.workoutExercises?.length} exercises</span
+		>, do you want to overwrite it?
+	</p>
+	<div class="grid grid-cols-2 gap-1.5">
+		<Button onclick={() => startWorkout(true, 'keepCurrent')}>Keep current</Button>
+		<Button variant="destructive" onclick={() => startWorkout(true, 'overwrite')}>Overwrite</Button>
+	</div>
+</ResponsiveDialog>
