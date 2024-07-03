@@ -21,6 +21,7 @@ model Workout {
 model WorkoutExercise {
   id                           String               @id @default(cuid())
   exerciseIndex                Int
+  name                         String
   workout                      Workout              @relation(fields: [workoutId], references: [id])
   workoutId                    String
   targetMuscleGroup            MuscleGroup
