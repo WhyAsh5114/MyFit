@@ -15,7 +15,7 @@
 
 	let useActiveMesocycle = $state(false);
 	let workoutData: TodaysWorkoutData | 'loading' = $state('loading');
-	let userBodyweight: null | number = $state(workoutRunes.workoutData.userBodyweight);
+	let userBodyweight: null | number = $state(workoutRunes.workoutData?.userBodyweight ?? null);
 	let targetedMuscleGroups = $derived.by(() => {
 		let result: string[] = [];
 		if (workoutData !== 'loading') {
@@ -36,8 +36,19 @@
 	function startWorkout() {
 		if (workoutData === 'loading') return;
 		workoutData.userBodyweight = userBodyweight;
-		workoutRunes.workoutData = workoutData;
+
+		if (useActiveMesocycle) workoutRunes.workoutData = workoutData;
+		else
+			workoutRunes.workoutData = {
+				...workoutData,
+				workoutOfMesocycle: undefined,
+				workoutExercises: []
+			};
+
 		workoutRunes.saveStoresToLocalStorage();
+
+		let exercisesLink = `./exercises?userBodyweight=${userBodyweight}`;
+		if (useActiveMesocycle) exercisesLink += '&useActiveMesocycle';
 		goto(`./exercises?userBodyweight=${userBodyweight}`);
 	}
 </script>
