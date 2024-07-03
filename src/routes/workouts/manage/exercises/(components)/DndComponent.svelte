@@ -35,7 +35,7 @@
 >
 	{#each itemList as exercise, idx (exercise.name)}
 		<div class="relative" animate:flip={{ duration: 200 }}>
-			<WorkoutExerciseCard {idx} {reordering} {exercise} {readOnly} />
+			<WorkoutExerciseCard {idx} {reordering} {readOnly} bind:exercise={itemList[idx]} />
 			{#if exercise[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
 				<div in:fade={{ duration: 200 }} class="custom-shadow-item"></div>
 			{/if}
