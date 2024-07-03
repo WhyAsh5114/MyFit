@@ -10,13 +10,21 @@ function createWorkoutRunes() {
 	}
 
 	function saveStoresToLocalStorage() {
-		localStorage.setItem('workoutRunes', JSON.stringify({ workoutData }));
+		localStorage.setItem('workoutRunes', JSON.stringify({ workoutData, workoutExercises }));
 	}
 
 	function resetStores() {
 		workoutData = null;
 		workoutExercises = null;
 		saveStoresToLocalStorage();
+	}
+
+	function setEditingExercise(exercise: WorkoutExerciseInProgress) {
+		// TODO
+	}
+
+	function deleteExercise(idx: number) {
+		// TODO
 	}
 
 	return {
@@ -33,7 +41,9 @@ function createWorkoutRunes() {
 			workoutExercises = value;
 		},
 		saveStoresToLocalStorage,
-		resetStores
+		resetStores,
+		setEditingExercise,
+		deleteExercise
 	};
 }
 
