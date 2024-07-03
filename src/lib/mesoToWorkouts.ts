@@ -24,7 +24,10 @@ export type WorkoutExerciseInProgress = Omit<
 		})[];
 };
 
-export type TodaysWorkoutData = {
+export type TodaysWorkoutData = Omit<
+	Prisma.WorkoutCreateWithoutUserInput,
+	'userBodyweight' | 'workoutExercises' | 'workoutOfMesocycle' | 'endedAt'
+> & {
 	userBodyweight: number | null;
 	workoutExercises: {
 		name: string;
