@@ -7,6 +7,7 @@
 	import InfoPopover from '$lib/components/InfoPopover.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import AddIcon from 'virtual:icons/lucide/plus';
+	import CompareIcon from 'virtual:icons/lucide/scale';
 	import ReorderIcon from 'virtual:icons/lucide/git-compare-arrows';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 
@@ -32,7 +33,7 @@
 <H3>Exercises</H3>
 
 {#if workoutData !== null}
-	<div class="flex gap-2 items-center">
+	<div class="flex items-center gap-2">
 		<div class="mr-auto flex flex-col">
 			{#if workoutData.workoutOfMesocycle !== undefined}
 				<span class="text-lg font-semibold">
@@ -62,6 +63,10 @@
 				<EditIcon />
 			{/if}
 		</Button>
+		<Button size="icon" variant="outline" aria-label="compare-exercises">
+			<CompareIcon />
+			<!-- TODO: comparison stuff -->
+		</Button>
 		<Button size="icon" variant="outline" aria-label="add-exercise">
 			<AddIcon />
 			<!-- TODO: sheet -->
@@ -73,6 +78,6 @@
 	TODO: skeletons
 {:else}
 	<div class="mt-2 flex h-px grow flex-col overflow-y-auto">
-		<DndComponent itemList={workoutRunes.workoutExercises} {reordering} />
+		<DndComponent bind:itemList={workoutRunes.workoutExercises} {reordering} />
 	</div>
 {/if}
