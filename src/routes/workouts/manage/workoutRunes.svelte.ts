@@ -39,6 +39,7 @@ function createWorkoutRunes() {
 		},
 		set workoutExercises(value) {
 			workoutExercises = value;
+			saveStoresToLocalStorage();
 		},
 		saveStoresToLocalStorage,
 		resetStores,
