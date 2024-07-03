@@ -17,7 +17,7 @@ export type WorkoutExerciseInProgress = Omit<
 	> &
 		SetInProgress & {
 			miniSets: (Omit<
-				Prisma.WorkoutExerciseMiniSetsCreateWithoutParentSetInput,
+				Prisma.WorkoutExerciseMiniSetCreateWithoutParentSetInput,
 				'reps' | 'load' | 'RIR'
 			> &
 				SetInProgress)[];
@@ -49,12 +49,13 @@ export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
 	const { id, mesocycleExerciseSplitDayId, sets, ...exercise } = exerciseTemplate;
 	return {
 		...exercise,
-		sets: Array.from({ length: sets }).map(() => ({
+		sets: Array.from({ length: sets }).map((_, idx) => ({
 			reps: undefined,
 			load: undefined,
 			RIR: undefined,
 			completed: false,
-			miniSets: []
+			miniSets: [],
+			setIndex: idx
 		}))
 	};
 }
