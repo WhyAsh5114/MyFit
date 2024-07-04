@@ -2,25 +2,26 @@
   <h2>7th July, 2024</h2>
   <h3>Being fine with "sub-optimal" <i>and v3 updates</i></h3>
   <p>
-    To avoid keeping everyone in complete darkness I've created a <a
+    To avoid keeping everyone in complete darkness, I've created a <a
       href="https://github.com/WhyAsh5114/MyFit/discussions/45">GitHub discussion</a
-    > which I'll try to update regularly
+    > which I'll try to update regularly.
   </p>
   <p>
-    "Sub-optimal", you might've heard this word many times on social media: influencers telling you
+    "Sub-optimal" — you might've heard this word many times on social media: influencers telling you
     that this exercise is "sub-optimal" for this head of this muscle group and that you SHOULD NOT
-    do it AT ALL. Some times it is true and well-intended, but many times its just unnecessary and a
-    lot more nuanced. Fitness should be considered with context and so should be exercises, some
-    exercises might not be "optimal", but they might feel better on your joints or you might simply
-    enjoy them more. Keeping a black and white view on exercises of simply optimal vs not optimal,
-    is not good for long term goals.
+    do it AT ALL. Sometimes it is true and well-intended, but many times it's just unnecessary and a
+    lot more nuanced. Fitness should be considered with context, and so should exercises. Some
+    exercises might not be "optimal," but they might feel better on your joints, or you might simply
+    enjoy them more. Keeping a black-and-white view of exercises as simply optimal vs. not optimal
+    is not good for long-term goals.
   </p>
   <p>
-    I've learnt this same lesson when making this app on the technical side as well, sometimes you
-    can't get the optimal structure, pristine code with perfect readability, and you should be fine
-    with it. I've re-made this same workout app about 4 times now, each time learning new things and
-    getting better at it. Instead of aiming for perfect code, I've now started to aim for "good
-    enough" code. Otherwise I'll never be able to release v3 and be stuck in my OCD forever.
+    I've learned this same lesson when making this app on the technical side as well. Sometimes you
+    can't get the optimal structure or pristine code with perfect readability, and you should be
+    fine with it. I've re-made this same workout app about four times now, each time learning new
+    things and getting better at it. Instead of aiming for perfect code, I've now started to aim for
+    "good enough" code. Otherwise, I'll never be able to release v3 and will be stuck in my OCD
+    forever.
   </p>
   <p>Tech updates:</p>
   <ul>
@@ -28,8 +29,8 @@
     <li>A good CI/CD pipeline that will work for PRs as well</li>
   </ul>
   <p>
-    Again, I'm just a college student who's barely an adult, this blog is a place where I plan to
-    share my journey of building this application. None of this is scientific advice and just my
+    Again, I'm just a college student who's barely an adult. This blog is a place where I plan to
+    share my journey of building this application. None of this is scientific advice, just my
     opinion on things I've built by watching tons of Dr. Mike on YouTube 😅
   </p>
 </article>
