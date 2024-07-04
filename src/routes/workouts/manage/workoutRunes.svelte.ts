@@ -39,6 +39,7 @@ function createWorkoutRunes() {
 		if (workoutExercises === null) return false;
 		if (exerciseNameExists(exercise.name)) return false;
 		workoutExercises.push(createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(exercise));
+		saveStoresToLocalStorage();
 		return true;
 	}
 
@@ -51,6 +52,7 @@ function createWorkoutRunes() {
 				exercise,
 				workoutExercises[editingExerciseIndex].sets
 			);
+		saveStoresToLocalStorage();
 		return true;
 	}
 
@@ -67,6 +69,7 @@ function createWorkoutRunes() {
 	function deleteExercise(exerciseIdx: number) {
 		if (workoutExercises === null) return;
 		workoutExercises.splice(exerciseIdx, 1);
+		saveStoresToLocalStorage();
 	}
 
 	return {
