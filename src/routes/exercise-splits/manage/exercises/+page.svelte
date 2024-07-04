@@ -11,7 +11,7 @@
 	import ReorderIcon from 'virtual:icons/lucide/git-compare-arrows';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import { exerciseSplitRunes } from '../exerciseSplitRunes.svelte';
-	import ExerciseSplitDrawer from '$lib/components/mesocycleAndExerciseSplit/ExerciseSplitDrawer.svelte';
+	import AddEditExerciseDrawer from '$lib/components/mesocycleAndExerciseSplit/AddEditExerciseDrawer.svelte';
 	import DndComponent from '$lib/components/mesocycleAndExerciseSplit/DndComponent.svelte';
 	import SwapExercisesDialog from '$lib/components/mesocycleAndExerciseSplit/SwapExercisesDialog.svelte';
 	import { toast } from 'svelte-sonner';
@@ -67,7 +67,7 @@
 						Day {exerciseSplitRunes.selectedSplitDayIndex + 1}
 					</span>
 				</div>
-				<ExerciseSplitDrawer
+				<AddEditExerciseDrawer
 					context="exerciseSplit"
 					addExercise={exerciseSplitRunes.addExercise}
 					editExercise={exerciseSplitRunes.editExercise}

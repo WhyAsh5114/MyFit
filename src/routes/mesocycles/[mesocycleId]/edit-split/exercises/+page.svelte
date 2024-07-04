@@ -15,7 +15,7 @@
 	import { goto } from '$app/navigation';
 	import DndComponent from '$lib/components/mesocycleAndExerciseSplit/DndComponent.svelte';
 	import SwapExercisesDialog from '$lib/components/mesocycleAndExerciseSplit/SwapExercisesDialog.svelte';
-	import ExerciseSplitDrawer from '$lib/components/mesocycleAndExerciseSplit/ExerciseSplitDrawer.svelte';
+	import AddEditExerciseDrawer from '$lib/components/mesocycleAndExerciseSplit/AddEditExerciseDrawer.svelte';
 	import type { Mesocycle } from '@prisma/client';
 
 	let swapDialogOpen = $state(false);
@@ -67,7 +67,7 @@
 						Day {mesocycleExerciseSplitRunes.selectedSplitDayIndex + 1}
 					</span>
 				</div>
-				<ExerciseSplitDrawer
+				<AddEditExerciseDrawer
 					context="mesocycle"
 					mesocycle={mesocycleExerciseSplitRunes.mesocycle as Mesocycle}
 					addExercise={mesocycleExerciseSplitRunes.addExercise}
