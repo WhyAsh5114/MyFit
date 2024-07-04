@@ -1,4 +1,4 @@
-<article class="prose">
+<article class="prose" id="update_on_the_progress_of_v3">
   <h2>16th June, 2024</h2>
   <h3>Update on the progress of v3</h3>
   <p>The app now gets 4000+ views every week 🥳. Thanks, all!</p>
@@ -39,7 +39,7 @@
 </article>
 
 <br /><br />
-<article class="prose">
+<article class="prose" id="about_v3">
   <h2>3rd May 2024</h2>
   <h3>About v3</h3>
   <p>
@@ -95,7 +95,7 @@
 </article>
 
 <br /><br />
-<article class="prose">
+<article class="prose" id="v3_notice">
   <h2>27th December, 2023</h2>
   <h3>v3 Notice!</h3>
   <p>I have received quite the traffic in v2, <i>I am super happy about that</i></p>
