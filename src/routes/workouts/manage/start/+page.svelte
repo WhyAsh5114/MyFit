@@ -85,7 +85,7 @@
 			/>
 		{/if}
 	</div>
-	<div class="mb-1 flex w-full max-w-sm flex-col gap-1.5 rounded-lg border bg-card p-4">
+	<div class="mb-1 flex w-full flex-col gap-1.5 rounded-lg border bg-card p-4">
 		<Label for="user-bodyweight">Bodyweight</Label>
 		<Input type="number" id="user-bodyweight" placeholder="Type here" bind:value={userBodyweight} />
 	</div>
