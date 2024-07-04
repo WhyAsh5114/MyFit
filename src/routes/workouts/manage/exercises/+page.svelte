@@ -1,20 +1,20 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import H3 from '$lib/components/ui/typography/H3.svelte';
-	import { onMount } from 'svelte';
-	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-	import { workoutRunes } from '../workoutRunes.svelte.js';
-	import DndComponent from './(components)/DndComponent.svelte';
 	import InfoPopover from '$lib/components/InfoPopover.svelte';
 	import AddEditExerciseDrawer from '$lib/components/mesocycleAndExerciseSplit/AddEditExerciseDrawer.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Progress from '$lib/components/ui/progress/progress.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import { arraySum } from '$lib/utils.js';
+	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
 	import ReorderIcon from 'virtual:icons/lucide/git-compare-arrows';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import CompareIcon from 'virtual:icons/lucide/scale';
-	import { toast } from 'svelte-sonner';
+	import { workoutRunes } from '../workoutRunes.svelte.js';
+	import DndComponent from './(components)/DndComponent.svelte';
 
 	let { data } = $props();
 	let reordering = $state(false);
