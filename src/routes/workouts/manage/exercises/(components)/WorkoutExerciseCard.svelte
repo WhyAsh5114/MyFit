@@ -9,10 +9,7 @@
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import { workoutRunes } from '../../workoutRunes.svelte';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import { Input } from '$lib/components/ui/input';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import CheckIcon from 'virtual:icons/lucide/check';
+	import SetsComponent from './SetsComponent.svelte';
 
 	type PropsType = {
 		readOnly?: boolean;
@@ -21,7 +18,7 @@
 		exercise: WorkoutExerciseInProgress;
 	};
 
-	let { readOnly, idx, reordering, exercise = $bindable() }: PropsType = $props();
+	let { readOnly, idx, reordering = false, exercise = $bindable() }: PropsType = $props();
 	let isContextMenuOpen = $state(false);
 </script>
 
@@ -83,64 +80,5 @@
 			{exercise.note}
 		</div>
 	{/if}
-	<Separator class="my-1" />
-	{#if exercise.setType === 'Straight'}
-		<div class="grid grid-cols-4 gap-1">
-			<span class="text-center text-sm font-medium">Reps</span>
-			<span class="text-center text-sm font-medium">Load</span>
-			<span class="text-center text-sm font-medium">RIR</span>
-			<span></span>
-			{#each exercise.sets as set}
-				<form
-					class="contents"
-					onsubmit={(e) => {
-						e.preventDefault();
-						set.completed = !set.completed;
-						workoutRunes.workoutExercises = workoutRunes.workoutExercises;
-					}}
-				>
-					<Input
-						type="number"
-						min={0}
-						id="{exercise.name}-set-{set.setIndex}-reps"
-						disabled={set.completed}
-						required
-						bind:value={set.reps}
-					/>
-					{#if set.setIndex === 0}
-						<Input
-							type="number"
-							min={0}
-							id="{exercise.name}-set-{set.setIndex}-load"
-							disabled={set.completed}
-							required
-							bind:value={set.load}
-						/>
-					{:else}
-						<span></span>
-					{/if}
-					<Input
-						type="number"
-						min={0}
-						id="{exercise.name}-set-{set.setIndex}-RIR"
-						disabled={set.completed}
-						required
-						bind:value={set.RIR}
-					/>
-					<Button
-						size="icon"
-						class="place-self-end"
-						type="submit"
-						variant={set.completed ? 'outline' : 'default'}
-					>
-						{#if !set.completed}
-							<CheckIcon />
-						{:else}
-							<EditIcon />
-						{/if}
-					</Button>
-				</form>
-			{/each}
-		</div>
-	{/if}
+	<SetsComponent bind:exercise {reordering} />
 </div>
