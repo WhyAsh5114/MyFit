@@ -23,7 +23,9 @@
 	let workoutExercises = $derived(workoutRunes.workoutExercises);
 
 	let totalSets = $derived(
-		workoutExercises ? arraySum(workoutExercises.map((e) => e.sets.length)) : null
+		workoutExercises
+			? arraySum(workoutExercises.map((e) => e.sets.filter((s) => !s.skipped).length))
+			: null
 	);
 	let completedSets = $derived(
 		workoutExercises
@@ -126,7 +128,7 @@
 	</div>
 {/if}
 
-<div class="grid grid-cols-2 gap-1 mt-2">
+<div class="mt-2 grid grid-cols-2 gap-1">
 	<Button variant="secondary" href="./start">Previous</Button>
 	<Button onclick={submitWorkoutExercises}>Next</Button>
 </div>
