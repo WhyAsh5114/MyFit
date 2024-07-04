@@ -30,7 +30,7 @@
 	type CommonProps<T> = {
 		editingExercise: T | undefined;
 		addExercise: (exercise: T) => boolean;
-		setEditingExercise: (exercise: T | undefined) => void;
+		setEditingExercise: (exercise: undefined) => void;
 		editExercise: (exercise: T) => boolean;
 	};
 
@@ -39,6 +39,10 @@
 		| ({
 				context: 'mesocycle';
 				mesocycle: Mesocycle;
+		  } & CommonProps<MesocycleExerciseTemplateWithoutIdsOrIndex>)
+		| ({
+				context: 'workout';
+				mesocycle?: Mesocycle;
 		  } & CommonProps<MesocycleExerciseTemplateWithoutIdsOrIndex>);
 
 	type NonUndefined<T> = T extends undefined ? never : T;
@@ -77,7 +81,7 @@
 	function selectExercise(exercise: ExerciseTemplateWithoutIdsOrIndex) {
 		currentExercise = structuredClone({
 			...exercise,
-			...(props.context === 'mesocycle' && structuredClone(extraMesocycleProps))
+			...(props.context !== 'exerciseSplit' && structuredClone(extraMesocycleProps))
 		});
 		searching = false;
 	}
@@ -87,7 +91,8 @@
 		currentExercise = structuredClone(defaultExercise);
 	}
 
-	function submitForm() {
+	function submitForm(e: SubmitEvent) {
+		e.preventDefault();
 		let result = false;
 		const finishedExercise = currentExercise as NonUndefined<typeof props.editingExercise>;
 		if ('sets' in finishedExercise) {
@@ -106,7 +111,8 @@
 		open = false;
 	}
 
-	function submitOverrides() {
+	function submitOverrides(e: SubmitEvent) {
+		e.preventDefault();
 		overridesSheetOpen = false;
 	}
 </script>
@@ -199,7 +205,7 @@
 					/>
 				</div>
 			{/if}
-			{#if props.context === 'mesocycle' && 'sets' in currentExercise}
+			{#if props.context !== 'exerciseSplit' && 'sets' in currentExercise}
 				<div class="flex w-full flex-col gap-1.5">
 					<Label for="exercise-sets">Sets</Label>
 					<Input
@@ -331,7 +337,7 @@
 	</Sheet.Content>
 </Sheet.Root>
 
-{#if props.context === 'mesocycle' && 'sets' in currentExercise}
+{#if props.context !== 'exerciseSplit' && 'sets' in currentExercise}
 	<Sheet.Root closeOnOutsideClick={false} bind:open={overridesSheetOpen}>
 		<Sheet.Content class="w-10/12 overflow-y-auto px-4">
 			<Sheet.Header>
@@ -357,7 +363,7 @@
 					<Input
 						id="exercise-override-overload-percentage-value"
 						type="number"
-						placeholder={props.mesocycle.startOverloadPercentage.toString()}
+						placeholder={props.mesocycle?.startOverloadPercentage.toString()}
 						disabled={currentExercise.overloadPercentage === null}
 						required
 						bind:value={currentExercise.overloadPercentage}
@@ -379,8 +385,8 @@
 						disabled={currentExercise.preferredProgressionVariable === null}
 						required
 						selected={{
-							value: props.mesocycle.preferredProgressionVariable,
-							label: props.mesocycle.preferredProgressionVariable
+							value: props.mesocycle?.preferredProgressionVariable,
+							label: props.mesocycle?.preferredProgressionVariable
 						}}
 						onSelectedChange={(s) => {
 							if (s !== undefined && 'sets' in currentExercise)
@@ -405,7 +411,7 @@
 							checked={currentExercise.forceRIRMatching !== null}
 							onCheckedChange={(c) => {
 								if (c !== 'indeterminate' && 'sets' in currentExercise)
-									currentExercise.forceRIRMatching = c ? props.mesocycle.forceRIRMatching : null;
+									currentExercise.forceRIRMatching = c ? props.mesocycle?.forceRIRMatching : null;
 							}}
 						/>
 					</div>
@@ -414,7 +420,7 @@
 							<Switch
 								id="exercise-override-force-RIR-matching-value"
 								name="exercise-override-force-RIR-matching-value"
-								checked={currentExercise.forceRIRMatching ?? props.mesocycle.forceRIRMatching}
+								checked={currentExercise.forceRIRMatching ?? props.mesocycle?.forceRIRMatching}
 								disabled={currentExercise.forceRIRMatching === null}
 								onCheckedChange={(c) => {
 									if ('sets' in currentExercise) currentExercise.forceRIRMatching = c;
@@ -431,7 +437,7 @@
 							checked={currentExercise.lastSetToFailure !== null}
 							onCheckedChange={(c) => {
 								if (c !== 'indeterminate' && 'sets' in currentExercise)
-									currentExercise.lastSetToFailure = c ? props.mesocycle.lastSetToFailure : null;
+									currentExercise.lastSetToFailure = c ? props.mesocycle?.lastSetToFailure : null;
 							}}
 						/>
 					</div>
@@ -440,7 +446,7 @@
 							<Switch
 								id="exercise-override-last-set-to-failure-value"
 								name="exercise-override-last-set-to-failure-value"
-								checked={currentExercise.lastSetToFailure ?? props.mesocycle.lastSetToFailure}
+								checked={currentExercise.lastSetToFailure ?? props.mesocycle?.lastSetToFailure}
 								disabled={currentExercise.lastSetToFailure === null}
 								onCheckedChange={(c) => {
 									if ('sets' in currentExercise) currentExercise.lastSetToFailure = c;
