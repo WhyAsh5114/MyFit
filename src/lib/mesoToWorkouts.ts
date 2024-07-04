@@ -1,10 +1,5 @@
-import type {
-	Mesocycle,
-	MesocycleExerciseTemplate,
-	MuscleGroup,
-	Prisma,
-	WorkoutStatus
-} from '@prisma/client';
+import type { Mesocycle, MuscleGroup, Prisma, WorkoutStatus } from '@prisma/client';
+import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from './components/mesocycleAndExerciseSplit/commonTypes';
 
 type SetInProgress = {
 	reps: number | undefined;
@@ -15,7 +10,7 @@ type SetInProgress = {
 
 export type WorkoutExerciseInProgress = Omit<
 	Prisma.WorkoutExerciseCreateWithoutWorkoutInput,
-	'sets'
+	'sets' | 'exerciseIndex'
 > & {
 	sets: (Omit<
 		Prisma.WorkoutExerciseSetCreateWithoutWorkoutExerciseInput,
@@ -50,9 +45,9 @@ export type TodaysWorkoutData = Omit<
 };
 
 export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
-	exerciseTemplate: MesocycleExerciseTemplate
+	exerciseTemplate: MesocycleExerciseTemplateWithoutIdsOrIndex
 ): WorkoutExerciseInProgress {
-	const { id, mesocycleExerciseSplitDayId, sets, ...exercise } = exerciseTemplate;
+	const { id, sets, ...exercise } = exerciseTemplate;
 	return {
 		...exercise,
 		sets: Array.from({ length: sets }).map((_, idx) => ({

@@ -138,9 +138,10 @@ function progressiveOverloadMagic(
 	} = mesocycleWithProgressionData;
 
 	const todaysSplitDay = mesocycleExerciseSplitDays[workoutsOfMesocycle.length];
-	const workoutExercises = todaysSplitDay.mesocycleSplitDayExercises.map((fullExercise) =>
-		createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(fullExercise)
-	);
+	const workoutExercises = todaysSplitDay.mesocycleSplitDayExercises.map((fullExercise) => {
+		const { mesocycleExerciseSplitDayId, ...exercise } = fullExercise;
+		return createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(exercise);
+	});
 
 	// Fill in reps, load, RIR from previous workouts (lastSetToFailure?)
 	// Add miniSets and stuff if drop / myorep match sets
