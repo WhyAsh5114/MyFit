@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { WorkoutExerciseInProgress } from '$lib/mesoToWorkouts';
-	import StraightSetsComponent from './StraightSetsComponent.svelte';
+	import StraightSetsComponent from './(componentsForVariousSets)/StraightSetsComponent.svelte';
 
 	type PropsType = { reordering: boolean; exercise: WorkoutExerciseInProgress };
 	let { reordering, exercise = $bindable() }: PropsType = $props();
