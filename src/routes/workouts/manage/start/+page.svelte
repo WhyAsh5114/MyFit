@@ -1,18 +1,18 @@
 <script lang="ts">
-	import H3 from '$lib/components/ui/typography/H3.svelte';
-	import { Label } from '$lib/components/ui/label';
-	import { Switch } from '$lib/components/ui/switch';
-	import { Input } from '$lib/components/ui/input';
-	import { Badge } from '$lib/components/ui/badge';
-	import { onMount } from 'svelte';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import type { TodaysWorkoutData } from '$lib/mesoToWorkouts.js';
-	import * as Card from '$lib/components/ui/card';
-	import Button from '$lib/components/ui/button/button.svelte';
 	import { goto } from '$app/navigation';
-	import { workoutRunes } from '../workoutRunes.svelte.js';
-	import { convertCamelCaseToNormal } from '$lib/utils.js';
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
+	import { Badge } from '$lib/components/ui/badge';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Card from '$lib/components/ui/card';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
+	import { Switch } from '$lib/components/ui/switch';
+	import H3 from '$lib/components/ui/typography/H3.svelte';
+	import type { TodaysWorkoutData } from '$lib/mesoToWorkouts.js';
+	import { convertCamelCaseToNormal } from '$lib/utils.js';
+	import { onMount } from 'svelte';
+	import { workoutRunes } from '../workoutRunes.svelte.js';
 
 	let useActiveMesocycle = $state(false);
 	let workoutData: TodaysWorkoutData | 'loading' = $state('loading');
@@ -53,8 +53,8 @@
 					workoutExercises: []
 				};
 			workoutRunes.workoutExercises = null;
-			workoutRunes.saveStoresToLocalStorage();
-		}
+		} else if (workoutRunes.workoutData === null) workoutRunes.workoutData = workoutData;
+		workoutRunes.saveStoresToLocalStorage();
 
 		let exercisesLink = `./exercises?userBodyweight=${userBodyweight}`;
 		if (useActiveMesocycle) exercisesLink += '&useActiveMesocycle';
