@@ -1,23 +1,35 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import { onMount } from 'svelte';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
-	import { goto } from '$app/navigation';
 	import DndComponent from './(components)/DndComponent.svelte';
 	import InfoPopover from '$lib/components/InfoPopover.svelte';
+	import AddEditExerciseDrawer from '$lib/components/mesocycleAndExerciseSplit/AddEditExerciseDrawer.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import CompareIcon from 'virtual:icons/lucide/scale';
+	import Progress from '$lib/components/ui/progress/progress.svelte';
+	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import { arraySum } from '$lib/utils.js';
 	import ReorderIcon from 'virtual:icons/lucide/git-compare-arrows';
 	import EditIcon from 'virtual:icons/lucide/pencil';
-	import Progress from '$lib/components/ui/progress/progress.svelte';
-	import { arraySum } from '$lib/utils.js';
-	import AddEditExerciseDrawer from '$lib/components/mesocycleAndExerciseSplit/AddEditExerciseDrawer.svelte';
+	import CompareIcon from 'virtual:icons/lucide/scale';
+	import { toast } from 'svelte-sonner';
 
 	let { data } = $props();
 	let reordering = $state(false);
 
 	let workoutData = $derived(workoutRunes.workoutData);
 	let workoutExercises = $derived(workoutRunes.workoutExercises);
+
+	let totalSets = $derived(
+		workoutExercises ? arraySum(workoutExercises.map((e) => e.sets.length)) : null
+	);
+	let completedSets = $derived(
+		workoutExercises
+			? arraySum(workoutExercises.map((e) => e.sets.filter((set) => set.completed).length))
+			: null
+	);
 
 	onMount(async () => {
 		if (workoutRunes.workoutData === null) goto('./start');
@@ -32,11 +44,25 @@
 			day: 'numeric'
 		});
 	}
+
+	function submitWorkoutExercises() {
+		if (totalSets === null || completedSets === null) return;
+		if (workoutExercises === null) return;
+		if (workoutExercises.length === 0) {
+			toast.error('Add at least one exercise');
+			return;
+		}
+		if (completedSets < totalSets) {
+			toast.error('Complete all sets to proceed');
+			return;
+		}
+		goto('./overview');
+	}
 </script>
 
 <H3>Exercises</H3>
 
-{#if workoutData !== null && workoutExercises !== null}
+{#if workoutData !== null}
 	<div class="flex items-end">
 		<div class="mr-auto flex flex-col">
 			{#if workoutData.workoutOfMesocycle !== undefined}
@@ -80,19 +106,27 @@
 				setEditingExercise={workoutRunes.setEditingExercise}
 				editingExercise={workoutRunes.editingExercise}
 			/>
-			<Progress
-				class="col-span-3 h-1.5"
-				value={arraySum(workoutExercises.map((e) => e.sets.filter((set) => set.completed).length))}
-				max={arraySum(workoutExercises.map((e) => e.sets.length))}
-			/>
+			{#if totalSets !== null && completedSets !== null}
+				<Progress class="col-span-3 h-1.5" value={completedSets} max={totalSets} />
+			{:else}
+				<Skeleton class="col-span-3 h-1.5 w-full" />
+			{/if}
 		</div>
 	</div>
 {/if}
 
 {#if workoutRunes.workoutExercises === null}
-	TODO: skeletons
+	<div class="flex h-full w-full items-center justify-center text-muted-foreground">
+		Fetching exercises
+		<LoaderCircle class="ml-2 animate-spin" />
+	</div>
 {:else}
 	<div class="mt-2 flex h-px grow flex-col overflow-y-auto">
 		<DndComponent bind:itemList={workoutRunes.workoutExercises} {reordering} />
 	</div>
 {/if}
+
+<div class="grid grid-cols-2 gap-1 mt-2">
+	<Button variant="secondary" href="./start">Previous</Button>
+	<Button onclick={submitWorkoutExercises}>Next</Button>
+</div>
