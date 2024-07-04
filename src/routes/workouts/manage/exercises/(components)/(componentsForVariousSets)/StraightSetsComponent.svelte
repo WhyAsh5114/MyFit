@@ -7,13 +7,23 @@
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 
+	type WorkoutExerciseSet = WorkoutExerciseInProgress['sets'][number];
+
 	type PropsType = { reordering: boolean; exercise: WorkoutExerciseInProgress };
 	let { reordering, exercise = $bindable() }: PropsType = $props();
 
-	function shouldSetBeDisabled(set: WorkoutExerciseInProgress['sets'][number]): boolean {
+	function shouldSetBeDisabled(set: WorkoutExerciseSet): boolean {
 		if (set.completed) return false;
 		if (set.setIndex === 0) return false;
 		return !exercise.sets[set.setIndex - 1].completed;
+	}
+
+	function completeSet(e: SubmitEvent, set: WorkoutExerciseSet) {
+		e.preventDefault();
+		set.completed = !set.completed;
+		// If first set of straight set, set all loads of all sets to this set's load
+		if (set.setIndex === 0) exercise.sets.forEach((_set) => (_set.load = set.load));
+		workoutRunes.workoutExercises = workoutRunes.workoutExercises;
 	}
 </script>
 
@@ -26,14 +36,7 @@
 			<span class="text-center text-sm font-medium">RIR</span>
 			<span></span>
 			{#each exercise.sets as set}
-				<form
-					class="contents"
-					onsubmit={(e) => {
-						e.preventDefault();
-						set.completed = !set.completed;
-						workoutRunes.workoutExercises = workoutRunes.workoutExercises;
-					}}
-				>
+				<form class="contents" onsubmit={(e) => completeSet(e, set)}>
 					<Input
 						type="number"
 						min={0}
