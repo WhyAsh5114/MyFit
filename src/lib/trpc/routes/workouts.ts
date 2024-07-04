@@ -52,11 +52,18 @@ export const workouts = t.router({
 			} satisfies TodaysWorkoutData;
 
 		const { isRestDay, dayNumber, cycleNumber, todaysSplitDay } = getBasicDayInfo(data);
+		const {
+			mesocycleCyclicSetChanges,
+			workoutsOfMesocycle,
+			mesocycleExerciseSplitDays,
+			...mesocycleData
+		} = data;
+
 		if (isRestDay)
 			return {
 				workoutExercises: [],
 				workoutOfMesocycle: {
-					mesocycleName: data.name,
+					mesocycle: mesocycleData,
 					splitDayName: '',
 					workoutStatus: 'RestDay',
 					dayNumber,
@@ -73,7 +80,7 @@ export const workouts = t.router({
 					customMuscleGroup: exercise.customMuscleGroup
 				})),
 				workoutOfMesocycle: {
-					mesocycleName: data.name,
+					mesocycle: mesocycleData,
 					splitDayName: todaysSplitDay.name,
 					dayNumber,
 					cycleNumber

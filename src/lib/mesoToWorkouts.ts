@@ -1,4 +1,10 @@
-import type { MesocycleExerciseTemplate, MuscleGroup, Prisma, WorkoutStatus } from '@prisma/client';
+import type {
+	Mesocycle,
+	MesocycleExerciseTemplate,
+	MuscleGroup,
+	Prisma,
+	WorkoutStatus
+} from '@prisma/client';
 
 type SetInProgress = {
 	reps: number | undefined;
@@ -35,7 +41,7 @@ export type TodaysWorkoutData = Omit<
 		customMuscleGroup: string | null;
 	}[];
 	workoutOfMesocycle?: {
-		mesocycleName: string;
+		mesocycle: Mesocycle;
 		splitDayName: string;
 		workoutStatus?: WorkoutStatus;
 		dayNumber: number;
