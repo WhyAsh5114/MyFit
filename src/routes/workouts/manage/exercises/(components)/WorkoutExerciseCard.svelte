@@ -8,6 +8,7 @@
 	import MenuIcon from 'virtual:icons/lucide/menu';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import DeleteIcon from 'virtual:icons/lucide/trash';
+	import SkipIcon from 'virtual:icons/lucide/skip-forward';
 	import { workoutRunes } from '../../workoutRunes.svelte';
 	import SetsComponent from './SetsComponent.svelte';
 
@@ -44,6 +45,15 @@
 								class="gap-2"
 							>
 								<EditIcon /> Edit
+							</DropdownMenu.Item>
+							<DropdownMenu.Item
+								class="gap-2"
+								onclick={() => {
+									exercise.sets.forEach((set) => (set.skipped = !set.completed));
+									workoutRunes.workoutExercises = workoutRunes.workoutExercises;
+								}}
+							>
+								<SkipIcon /> Skip sets left
 							</DropdownMenu.Item>
 							<DropdownMenu.Item
 								class="gap-2 text-red-500"

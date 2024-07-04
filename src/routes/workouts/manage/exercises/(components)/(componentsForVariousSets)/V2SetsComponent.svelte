@@ -3,20 +3,30 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Separator } from '$lib/components/ui/separator';
 	import type { WorkoutExerciseInProgress } from '$lib/mesoToWorkouts';
-	import { workoutRunes } from '../../../workoutRunes.svelte';
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import EditIcon from 'virtual:icons/lucide/pencil';
+	import UndoIcon from 'virtual:icons/lucide/undo';
+	import { workoutRunes } from '../../../workoutRunes.svelte';
+
+	type WorkoutExerciseSet = WorkoutExerciseInProgress['sets'][number];
 
 	type PropsType = { reordering: boolean; exercise: WorkoutExerciseInProgress };
 	let { reordering, exercise = $bindable() }: PropsType = $props();
 
-	function shouldSetBeDisabled(
-		set: WorkoutExerciseInProgress['sets'][number],
-		idx: number
-	): boolean {
+	function shouldSetBeDisabled(set: WorkoutExerciseSet, idx: number): boolean {
 		if (set.completed) return false;
 		if (idx === 0) return false;
 		return !exercise.sets[idx - 1].completed;
+	}
+
+	function completeSet(e: SubmitEvent, set: WorkoutExerciseSet, idx: number) {
+		e.preventDefault();
+		if (set.skipped) {
+			set.skipped = false;
+			return;
+		}
+		set.completed = !set.completed;
+		workoutRunes.workoutExercises = workoutRunes.workoutExercises;
 	}
 </script>
 
@@ -28,38 +38,39 @@
 		<span class="text-center text-sm font-medium">RIR</span>
 		<span></span>
 		{#each exercise.sets as set, idx}
-			<form
-				class="contents"
-				onsubmit={(e) => {
-					e.preventDefault();
-					set.completed = !set.completed;
-					workoutRunes.workoutExercises = workoutRunes.workoutExercises;
-				}}
-			>
-				<Input
-					type="number"
-					min={0}
-					id="{exercise.name}-set-{idx + 1}-reps"
-					disabled={set.completed}
-					required
-					bind:value={set.reps}
-				/>
-				<Input
-					type="number"
-					min={0}
-					id="{exercise.name}-set-{idx + 1}-load"
-					disabled={set.completed}
-					required
-					bind:value={set.load}
-				/>
-				<Input
-					type="number"
-					min={0}
-					id="{exercise.name}-set-{idx + 1}-RIR"
-					disabled={set.completed}
-					required
-					bind:value={set.RIR}
-				/>
+			<form class="contents" onsubmit={(e) => completeSet(e, set, idx)}>
+				{#if !set.skipped}
+					<Input
+						type="number"
+						min={0}
+						id="{exercise.name}-set-{idx + 1}-reps"
+						disabled={set.completed || set.skipped}
+						required
+						bind:value={set.reps}
+					/>
+					<Input
+						type="number"
+						min={0}
+						id="{exercise.name}-set-{idx + 1}-load"
+						disabled={set.completed || set.skipped}
+						required
+						bind:value={set.load}
+					/>
+					<Input
+						type="number"
+						min={0}
+						id="{exercise.name}-set-{idx + 1}-RIR"
+						disabled={set.completed || set.skipped}
+						required
+						bind:value={set.RIR}
+					/>
+				{:else}
+					<div class="col-span-3 flex items-center gap-2">
+						<Separator class="w-px grow" />
+						<span class="text-sm text-muted-foreground">skipped</span>
+						<Separator class="w-px grow" />
+					</div>
+				{/if}
 				<Button
 					size="icon"
 					class="place-self-end"
@@ -67,7 +78,9 @@
 					variant={set.completed ? 'outline' : 'default'}
 					disabled={shouldSetBeDisabled(set, idx)}
 				>
-					{#if !set.completed}
+					{#if set.skipped}
+						<UndoIcon />
+					{:else if !set.completed}
 						<CheckIcon />
 					{:else}
 						<EditIcon />

@@ -6,6 +6,7 @@
 	import { workoutRunes } from '../../../workoutRunes.svelte';
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import EditIcon from 'virtual:icons/lucide/pencil';
+	import UndoIcon from 'virtual:icons/lucide/undo';
 
 	type WorkoutExerciseSet = WorkoutExerciseInProgress['sets'][number];
 
@@ -20,6 +21,10 @@
 
 	function completeSet(e: SubmitEvent, set: WorkoutExerciseSet, idx: number) {
 		e.preventDefault();
+		if (set.skipped) {
+			set.skipped = false;
+			return;
+		}
 		set.completed = !set.completed;
 		// If first set of straight set, set all loads of all sets to this set's load
 		if (idx === 0) exercise.sets.forEach((_set) => (_set.load = set.load));
@@ -36,34 +41,42 @@
 		<span></span>
 		{#each exercise.sets as set, idx}
 			<form class="contents" onsubmit={(e) => completeSet(e, set, idx)}>
-				<Input
-					type="number"
-					min={0}
-					id="{exercise.name}-set-{idx + 1}-reps"
-					disabled={set.completed}
-					required
-					bind:value={set.reps}
-				/>
-				{#if idx === 0}
+				{#if !set.skipped}
 					<Input
 						type="number"
 						min={0}
-						id="{exercise.name}-set-{idx + 1}-load"
-						disabled={set.completed}
+						id="{exercise.name}-set-{idx + 1}-reps"
+						disabled={set.completed || set.skipped}
 						required
-						bind:value={set.load}
+						bind:value={set.reps}
+					/>
+					{#if idx === 0}
+						<Input
+							type="number"
+							min={0}
+							id="{exercise.name}-set-{idx + 1}-load"
+							disabled={set.completed || set.skipped}
+							required
+							bind:value={set.load}
+						/>
+					{:else}
+						<span></span>
+					{/if}
+					<Input
+						type="number"
+						min={0}
+						id="{exercise.name}-set-{idx + 1}-RIR"
+						disabled={set.completed || set.skipped}
+						required
+						bind:value={set.RIR}
 					/>
 				{:else}
-					<span></span>
+					<div class="col-span-3 flex items-center gap-2">
+						<Separator class="w-px grow" />
+						<span class="text-sm text-muted-foreground">skipped</span>
+						<Separator class="w-px grow" />
+					</div>
 				{/if}
-				<Input
-					type="number"
-					min={0}
-					id="{exercise.name}-set-{idx + 1}-RIR"
-					disabled={set.completed}
-					required
-					bind:value={set.RIR}
-				/>
 				<Button
 					size="icon"
 					class="place-self-end"
@@ -71,7 +84,9 @@
 					variant={set.completed ? 'outline' : 'default'}
 					disabled={shouldSetBeDisabled(set, idx)}
 				>
-					{#if !set.completed}
+					{#if set.skipped}
+						<UndoIcon />
+					{:else if !set.completed}
 						<CheckIcon />
 					{:else}
 						<EditIcon />
