@@ -12,17 +12,17 @@
 	type PropsType = { reordering: boolean; exercise: WorkoutExerciseInProgress };
 	let { reordering, exercise = $bindable() }: PropsType = $props();
 
-	function shouldSetBeDisabled(set: WorkoutExerciseSet): boolean {
+	function shouldSetBeDisabled(set: WorkoutExerciseSet, idx: number): boolean {
 		if (set.completed) return false;
-		if (set.setIndex === 0) return false;
-		return !exercise.sets[set.setIndex - 1].completed;
+		if (idx === 0) return false;
+		return !exercise.sets[idx - 1].completed;
 	}
 
-	function completeSet(e: SubmitEvent, set: WorkoutExerciseSet) {
+	function completeSet(e: SubmitEvent, set: WorkoutExerciseSet, idx: number) {
 		e.preventDefault();
 		set.completed = !set.completed;
 		// If first set of straight set, set all loads of all sets to this set's load
-		if (set.setIndex === 0) exercise.sets.forEach((_set) => (_set.load = set.load));
+		if (idx === 0) exercise.sets.forEach((_set) => (_set.load = set.load));
 		workoutRunes.workoutExercises = workoutRunes.workoutExercises;
 	}
 </script>
@@ -34,21 +34,21 @@
 		<span class="text-center text-sm font-medium">Load</span>
 		<span class="text-center text-sm font-medium">RIR</span>
 		<span></span>
-		{#each exercise.sets as set}
-			<form class="contents" onsubmit={(e) => completeSet(e, set)}>
+		{#each exercise.sets as set, idx}
+			<form class="contents" onsubmit={(e) => completeSet(e, set, idx)}>
 				<Input
 					type="number"
 					min={0}
-					id="{exercise.name}-set-{set.setIndex}-reps"
+					id="{exercise.name}-set-{idx + 1}-reps"
 					disabled={set.completed}
 					required
 					bind:value={set.reps}
 				/>
-				{#if set.setIndex === 0}
+				{#if idx === 0}
 					<Input
 						type="number"
 						min={0}
-						id="{exercise.name}-set-{set.setIndex}-load"
+						id="{exercise.name}-set-{idx + 1}-load"
 						disabled={set.completed}
 						required
 						bind:value={set.load}
@@ -59,7 +59,7 @@
 				<Input
 					type="number"
 					min={0}
-					id="{exercise.name}-set-{set.setIndex}-RIR"
+					id="{exercise.name}-set-{idx + 1}-RIR"
 					disabled={set.completed}
 					required
 					bind:value={set.RIR}
@@ -69,7 +69,7 @@
 					class="place-self-end"
 					type="submit"
 					variant={set.completed ? 'outline' : 'default'}
-					disabled={shouldSetBeDisabled(set)}
+					disabled={shouldSetBeDisabled(set, idx)}
 				>
 					{#if !set.completed}
 						<CheckIcon />

@@ -14,12 +14,12 @@ export type WorkoutExerciseInProgress = Omit<
 > & {
 	sets: (Omit<
 		Prisma.WorkoutExerciseSetCreateWithoutWorkoutExerciseInput,
-		'reps' | 'load' | 'RIR' | 'miniSets'
+		'reps' | 'load' | 'RIR' | 'miniSets' | 'setIndex'
 	> &
 		SetInProgress & {
 			miniSets: (Omit<
 				Prisma.WorkoutExerciseMiniSetCreateWithoutParentSetInput,
-				'reps' | 'load' | 'RIR'
+				'reps' | 'load' | 'RIR' | 'setIndex'
 			> &
 				SetInProgress)[];
 		})[];
@@ -45,18 +45,22 @@ export type TodaysWorkoutData = Omit<
 };
 
 export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
-	exerciseTemplate: MesocycleExerciseTemplateWithoutIdsOrIndex
+	exerciseTemplate: MesocycleExerciseTemplateWithoutIdsOrIndex,
+	oldSets?: WorkoutExerciseInProgress['sets']
 ): WorkoutExerciseInProgress {
 	const { id, sets, ...exercise } = exerciseTemplate;
-	return {
-		...exercise,
-		sets: Array.from({ length: sets }).map((_, idx) => ({
-			reps: undefined,
-			load: undefined,
-			RIR: undefined,
-			completed: false,
-			miniSets: [],
-			setIndex: idx
-		}))
+	const defaultSet = {
+		reps: undefined,
+		load: undefined,
+		RIR: undefined,
+		completed: false,
+		miniSets: []
 	};
+
+	const newSets = oldSets ? [...oldSets] : [];
+	while (newSets.length < sets) {
+		newSets.push({ ...defaultSet });
+	}
+
+	return { ...exercise, sets: newSets.slice(0, sets) };
 }

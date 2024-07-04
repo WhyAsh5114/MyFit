@@ -10,10 +10,13 @@
 	type PropsType = { reordering: boolean; exercise: WorkoutExerciseInProgress };
 	let { reordering, exercise = $bindable() }: PropsType = $props();
 
-	function shouldSetBeDisabled(set: WorkoutExerciseInProgress['sets'][number]): boolean {
+	function shouldSetBeDisabled(
+		set: WorkoutExerciseInProgress['sets'][number],
+		idx: number
+	): boolean {
 		if (set.completed) return false;
-		if (set.setIndex === 0) return false;
-		return !exercise.sets[set.setIndex - 1].completed;
+		if (idx === 0) return false;
+		return !exercise.sets[idx - 1].completed;
 	}
 </script>
 
@@ -24,7 +27,7 @@
 		<span class="text-center text-sm font-medium">Load</span>
 		<span class="text-center text-sm font-medium">RIR</span>
 		<span></span>
-		{#each exercise.sets as set}
+		{#each exercise.sets as set, idx}
 			<form
 				class="contents"
 				onsubmit={(e) => {
@@ -36,7 +39,7 @@
 				<Input
 					type="number"
 					min={0}
-					id="{exercise.name}-set-{set.setIndex}-reps"
+					id="{exercise.name}-set-{idx + 1}-reps"
 					disabled={set.completed}
 					required
 					bind:value={set.reps}
@@ -44,7 +47,7 @@
 				<Input
 					type="number"
 					min={0}
-					id="{exercise.name}-set-{set.setIndex}-load"
+					id="{exercise.name}-set-{idx + 1}-load"
 					disabled={set.completed}
 					required
 					bind:value={set.load}
@@ -52,7 +55,7 @@
 				<Input
 					type="number"
 					min={0}
-					id="{exercise.name}-set-{set.setIndex}-RIR"
+					id="{exercise.name}-set-{idx + 1}-RIR"
 					disabled={set.completed}
 					required
 					bind:value={set.RIR}
@@ -62,7 +65,7 @@
 					class="place-self-end"
 					type="submit"
 					variant={set.completed ? 'outline' : 'default'}
-					disabled={shouldSetBeDisabled(set)}
+					disabled={shouldSetBeDisabled(set, idx)}
 				>
 					{#if !set.completed}
 						<CheckIcon />
