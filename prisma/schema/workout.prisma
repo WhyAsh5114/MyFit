@@ -48,6 +48,7 @@ model WorkoutExerciseSet {
   reps              Int
   load              Int
   RIR               Int
+  skipped           Boolean
   miniSets          WorkoutExerciseMiniSet[]
 }
 

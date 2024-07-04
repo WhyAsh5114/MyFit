@@ -54,7 +54,8 @@ export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
 		load: undefined,
 		RIR: undefined,
 		completed: false,
-		miniSets: []
+		miniSets: [],
+		skipped: false
 	};
 
 	const newSets = oldSets ? [...oldSets] : [];
