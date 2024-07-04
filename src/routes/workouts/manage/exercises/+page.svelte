@@ -10,10 +10,14 @@
 	import CompareIcon from 'virtual:icons/lucide/scale';
 	import ReorderIcon from 'virtual:icons/lucide/git-compare-arrows';
 	import EditIcon from 'virtual:icons/lucide/pencil';
+	import Progress from '$lib/components/ui/progress/progress.svelte';
+	import { arraySum } from '$lib/utils.js';
 
 	let { data } = $props();
-	let workoutData = $derived(workoutRunes.workoutData);
 	let reordering = $state(false);
+
+	let workoutData = $derived(workoutRunes.workoutData);
+	let workoutExercises = $derived(workoutRunes.workoutExercises);
 
 	onMount(async () => {
 		if (workoutRunes.workoutData === null) goto('./start');
@@ -32,8 +36,8 @@
 
 <H3>Exercises</H3>
 
-{#if workoutData !== null}
-	<div class="flex items-center gap-2">
+{#if workoutData !== null && workoutExercises !== null}
+	<div class="flex items-end">
 		<div class="mr-auto flex flex-col">
 			{#if workoutData.workoutOfMesocycle !== undefined}
 				<span class="text-lg font-semibold">
@@ -56,21 +60,28 @@
 				<p class="text-sm text-muted-foreground">Without mesocycle</p>
 			{/if}
 		</div>
-		<Button size="icon" variant="outline" onclick={() => (reordering = !reordering)}>
-			{#if !reordering}
-				<ReorderIcon />
-			{:else}
-				<EditIcon />
-			{/if}
-		</Button>
-		<Button size="icon" variant="outline" aria-label="compare-exercises">
-			<CompareIcon />
-			<!-- TODO: comparison stuff -->
-		</Button>
-		<Button size="icon" variant="outline" aria-label="add-exercise">
-			<AddIcon />
-			<!-- TODO: sheet -->
-		</Button>
+		<div class="grid grid-cols-3 gap-x-2 gap-y-1">
+			<Button size="icon" variant="outline" onclick={() => (reordering = !reordering)}>
+				{#if !reordering}
+					<ReorderIcon />
+				{:else}
+					<EditIcon />
+				{/if}
+			</Button>
+			<Button size="icon" variant="outline" aria-label="compare-exercises">
+				<CompareIcon />
+				<!-- TODO: comparison stuff -->
+			</Button>
+			<Button size="icon" variant="outline" aria-label="add-exercise">
+				<AddIcon />
+				<!-- TODO: sheet -->
+			</Button>
+			<Progress
+				class="col-span-3 h-1.5"
+				value={arraySum(workoutExercises.map((e) => e.sets.filter((set) => set.completed).length))}
+				max={arraySum(workoutExercises.map((e) => e.sets.length))}
+			/>
+		</div>
 	</div>
 {/if}
 
