@@ -9,6 +9,12 @@
 
 	type PropsType = { reordering: boolean; exercise: WorkoutExerciseInProgress };
 	let { reordering, exercise = $bindable() }: PropsType = $props();
+
+	function shouldSetBeDisabled(set: WorkoutExerciseInProgress['sets'][number]): boolean {
+		if (set.completed) return false;
+		if (set.setIndex === 0) return false;
+		return !exercise.sets[set.setIndex - 1].completed;
+	}
 </script>
 
 {#if !reordering}
@@ -61,6 +67,7 @@
 						class="place-self-end"
 						type="submit"
 						variant={set.completed ? 'outline' : 'default'}
+						disabled={shouldSetBeDisabled(set)}
 					>
 						{#if !set.completed}
 							<CheckIcon />
