@@ -29,57 +29,55 @@
 
 {#if !reordering}
 	<Separator class="my-1" />
-	{#if exercise.setType === 'Straight'}
-		<div class="grid grid-cols-4 gap-1">
-			<span class="text-center text-sm font-medium">Reps</span>
-			<span class="text-center text-sm font-medium">Load</span>
-			<span class="text-center text-sm font-medium">RIR</span>
-			<span></span>
-			{#each exercise.sets as set}
-				<form class="contents" onsubmit={(e) => completeSet(e, set)}>
+	<div class="grid grid-cols-4 gap-1">
+		<span class="text-center text-sm font-medium">Reps</span>
+		<span class="text-center text-sm font-medium">Load</span>
+		<span class="text-center text-sm font-medium">RIR</span>
+		<span></span>
+		{#each exercise.sets as set}
+			<form class="contents" onsubmit={(e) => completeSet(e, set)}>
+				<Input
+					type="number"
+					min={0}
+					id="{exercise.name}-set-{set.setIndex}-reps"
+					disabled={set.completed}
+					required
+					bind:value={set.reps}
+				/>
+				{#if set.setIndex === 0}
 					<Input
 						type="number"
 						min={0}
-						id="{exercise.name}-set-{set.setIndex}-reps"
+						id="{exercise.name}-set-{set.setIndex}-load"
 						disabled={set.completed}
 						required
-						bind:value={set.reps}
+						bind:value={set.load}
 					/>
-					{#if set.setIndex === 0}
-						<Input
-							type="number"
-							min={0}
-							id="{exercise.name}-set-{set.setIndex}-load"
-							disabled={set.completed}
-							required
-							bind:value={set.load}
-						/>
+				{:else}
+					<span></span>
+				{/if}
+				<Input
+					type="number"
+					min={0}
+					id="{exercise.name}-set-{set.setIndex}-RIR"
+					disabled={set.completed}
+					required
+					bind:value={set.RIR}
+				/>
+				<Button
+					size="icon"
+					class="place-self-end"
+					type="submit"
+					variant={set.completed ? 'outline' : 'default'}
+					disabled={shouldSetBeDisabled(set)}
+				>
+					{#if !set.completed}
+						<CheckIcon />
 					{:else}
-						<span></span>
+						<EditIcon />
 					{/if}
-					<Input
-						type="number"
-						min={0}
-						id="{exercise.name}-set-{set.setIndex}-RIR"
-						disabled={set.completed}
-						required
-						bind:value={set.RIR}
-					/>
-					<Button
-						size="icon"
-						class="place-self-end"
-						type="submit"
-						variant={set.completed ? 'outline' : 'default'}
-						disabled={shouldSetBeDisabled(set)}
-					>
-						{#if !set.completed}
-							<CheckIcon />
-						{:else}
-							<EditIcon />
-						{/if}
-					</Button>
-				</form>
-			{/each}
-		</div>
-	{/if}
+				</Button>
+			</form>
+		{/each}
+	</div>
 {/if}
