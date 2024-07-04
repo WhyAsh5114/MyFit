@@ -6,12 +6,12 @@
 	import DndComponent from './(components)/DndComponent.svelte';
 	import InfoPopover from '$lib/components/InfoPopover.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import AddIcon from 'virtual:icons/lucide/plus';
 	import CompareIcon from 'virtual:icons/lucide/scale';
 	import ReorderIcon from 'virtual:icons/lucide/git-compare-arrows';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import Progress from '$lib/components/ui/progress/progress.svelte';
 	import { arraySum } from '$lib/utils.js';
+	import AddEditExerciseDrawer from '$lib/components/mesocycleAndExerciseSplit/AddEditExerciseDrawer.svelte';
 
 	let { data } = $props();
 	let reordering = $state(false);
@@ -48,7 +48,7 @@
 						?.cycleNumber}
 					<InfoPopover ariaLabel="mesocycle-info" align="center">
 						<span class="text-sm text-foreground">
-							{workoutData.workoutOfMesocycle.mesocycleName}:
+							{workoutData.workoutOfMesocycle.mesocycle.name}:
 							{getFormattedDate(workoutData.startedAt)}
 						</span>
 					</InfoPopover>
@@ -72,10 +72,14 @@
 				<CompareIcon />
 				<!-- TODO: comparison stuff -->
 			</Button>
-			<Button size="icon" variant="outline" aria-label="add-exercise">
-				<AddIcon />
-				<!-- TODO: sheet -->
-			</Button>
+			<AddEditExerciseDrawer
+				context="workout"
+				mesocycle={workoutData.workoutOfMesocycle?.mesocycle}
+				addExercise={workoutRunes.addExercise}
+				editExercise={workoutRunes.editExercise}
+				setEditingExercise={workoutRunes.setEditingExercise}
+				editingExercise={workoutRunes.editingExercise}
+			/>
 			<Progress
 				class="col-span-3 h-1.5"
 				value={arraySum(workoutExercises.map((e) => e.sets.filter((set) => set.completed).length))}
