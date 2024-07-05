@@ -1,4 +1,4 @@
-import type { Mesocycle, MuscleGroup, Prisma, WorkoutStatus } from '@prisma/client';
+import { WorkoutStatus, type Mesocycle, type MuscleGroup, type Prisma } from '@prisma/client';
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from './components/mesocycleAndExerciseSplit/commonTypes';
 
 type SetInProgress = {

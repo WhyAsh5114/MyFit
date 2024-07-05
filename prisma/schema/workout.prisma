@@ -30,6 +30,8 @@ model WorkoutExercise {
   involvesBodyweight           Boolean
   sets                         WorkoutExerciseSet[]
   setType                      SetType
+  changeType                   ChangeType?
+  changeAmount                 Float?
   repRangeStart                Int
   repRangeEnd                  Int
   note                         String?
