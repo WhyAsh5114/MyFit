@@ -19,7 +19,7 @@ export type WorkoutExerciseInProgress = Omit<
 		SetInProgress & {
 			miniSets: (Omit<
 				Prisma.WorkoutExerciseMiniSetCreateWithoutParentSetInput,
-				'reps' | 'load' | 'RIR' | 'setIndex'
+				'reps' | 'load' | 'RIR' | 'miniSetIndex'
 			> &
 				SetInProgress)[];
 		})[];
