@@ -81,9 +81,8 @@ export const mesocycles = t.router({
 		}),
 
 	create: t.procedure.input(zodMesocycleCreateInput).mutation(async ({ input, ctx }) => {
-		const mesocycleId = cuid();
 		const mesocycle: Prisma.MesocycleUncheckedCreateInput = {
-			id: mesocycleId,
+			id: cuid(),
 			userId: ctx.userId,
 			...input.mesocycle
 		};
@@ -96,12 +95,15 @@ export const mesocycles = t.router({
 		}
 
 		const mesocycleCyclicSetChanges: Prisma.MesocycleCyclicSetChangeUncheckedCreateInput[] =
-			input.mesocycleCyclicSetChanges.map((setChange) => ({ ...setChange, mesocycleId }));
+			input.mesocycleCyclicSetChanges.map((setChange) => ({
+				...setChange,
+				mesocycleId: mesocycle.id as string
+			}));
 
 		const mesocycleExerciseSplitDays: Prisma.MesocycleExerciseSplitDayUncheckedCreateInput[] =
 			input.exerciseSplit.exerciseSplitDays.map((splitDay) => ({
 				...splitDay,
-				mesocycleId,
+				mesocycleId: mesocycle.id as string,
 				id: cuid()
 			}));
 
