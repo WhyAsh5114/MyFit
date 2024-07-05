@@ -24,12 +24,24 @@
 
 	let totalSets = $derived(
 		workoutExercises
-			? arraySum(workoutExercises.map((e) => e.sets.filter((s) => !s.skipped).length))
+			? arraySum(
+					workoutExercises.map((e) =>
+						arraySum(e.sets.filter((s) => !s.skipped).map((s) => s.miniSets.length + 1))
+					)
+				)
 			: null
 	);
 	let completedSets = $derived(
 		workoutExercises
-			? arraySum(workoutExercises.map((e) => e.sets.filter((set) => set.completed).length))
+			? arraySum(
+					workoutExercises.map((e) =>
+						arraySum(
+							e.sets
+								.filter((s) => !s.skipped)
+								.map((s) => s.miniSets.filter((ms) => ms.completed).length + (s.completed ? 1 : 0))
+						)
+					)
+				)
 			: null
 	);
 
