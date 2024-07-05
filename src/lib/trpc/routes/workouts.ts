@@ -17,6 +17,7 @@ import {
 	type Prisma,
 	type WorkoutOfMesocycle
 } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
 import cuid from 'cuid';
 import { z } from 'zod';
 
@@ -72,8 +73,11 @@ export const workouts = t.router({
 				}
 			}
 		});
-		const lastWorkout = data?.workoutsOfMesocycle.map((v) => v.workout).at(-1);
-		const userBodyweight = lastWorkout?.userBodyweight ?? null;
+		const lastBodyweight = data?.workoutsOfMesocycle
+			.map((v) => v.workout.userBodyweight)
+			.filter((b) => b !== null)
+			.at(-1);
+		const userBodyweight = lastBodyweight ?? null;
 		if (data === null)
 			return {
 				workoutExercises: [],
@@ -175,6 +179,8 @@ export const workouts = t.router({
 				})
 			);
 
+		// TODO: update mesocycleExerciseSplitDays... oh god
+
 		const transactionQueries = [
 			prisma.workout.create({ data: workout }),
 			prisma.workoutExercise.createMany({ data: workoutExercises }),
@@ -184,6 +190,27 @@ export const workouts = t.router({
 
 		await prisma.$transaction(transactionQueries);
 		return { message: 'Workout created successfully' };
+	}),
+
+	completeRestDay: t.procedure.mutation(async ({ ctx }) => {
+		const activeMesocycle = await prisma.mesocycle.findFirst({
+			where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
+			select: { id: true }
+		});
+		if (!activeMesocycle)
+			throw new TRPCError({ code: 'BAD_REQUEST', message: 'No active mesocycle found' });
+
+		await prisma.workout.create({
+			data: {
+				startedAt: new Date(),
+				endedAt: new Date(),
+				userId: ctx.userId,
+				workoutOfMesocycle: {
+					create: { splitDayName: '', mesocycleId: activeMesocycle.id, workoutStatus: 'RestDay' }
+				}
+			}
+		});
+		return { message: 'Rest day completed successfully' };
 	})
 });
 
@@ -218,7 +245,8 @@ function progressiveOverloadMagic(
 		...mesocycle
 	} = mesocycleWithProgressionData;
 
-	const todaysSplitDay = mesocycleExerciseSplitDays[workoutsOfMesocycle.length];
+	const todaysSplitDay =
+		mesocycleExerciseSplitDays[workoutsOfMesocycle.length % mesocycleExerciseSplitDays.length];
 	const workoutExercises = todaysSplitDay.mesocycleSplitDayExercises.map((fullExercise) => {
 		const { mesocycleExerciseSplitDayId, ...exercise } = fullExercise;
 		return createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(exercise);

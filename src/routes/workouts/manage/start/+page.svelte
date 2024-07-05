@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -10,9 +10,13 @@
 	import { Switch } from '$lib/components/ui/switch';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import type { TodaysWorkoutData } from '$lib/mesoToWorkouts.js';
-	import { convertCamelCaseToNormal } from '$lib/utils.js';
+	import { cn, convertCamelCaseToNormal } from '$lib/utils.js';
 	import { onMount } from 'svelte';
+	import CheckIcon from 'virtual:icons/lucide/check';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
+	import { trpc } from '$lib/trpc/client.js';
+	import { toast } from 'svelte-sonner';
 
 	let useActiveMesocycle = $state(false);
 	let workoutData: TodaysWorkoutData | 'loading' = $state('loading');
@@ -27,6 +31,7 @@
 		return Array.from(new Set(result));
 	});
 	let overwriteWorkoutDialogOpen = $state(false);
+	let completingRestDay = $state(false);
 
 	let { data } = $props();
 	onMount(async () => {
@@ -61,6 +66,14 @@
 		if (mode === 'keepCurrent') exercisesLink += '&keepCurrent';
 		goto(exercisesLink);
 	}
+
+	async function completeRestDay() {
+		completingRestDay = true;
+		const { message } = await trpc().workouts.completeRestDay.mutate();
+		toast.success(message);
+		await invalidate('workouts:start');
+		completingRestDay = false;
+	}
 </script>
 
 <H3>Start</H3>
@@ -85,14 +98,24 @@
 			/>
 		{/if}
 	</div>
-	<div class="mb-1 flex w-full flex-col gap-1.5 rounded-lg border bg-card p-4">
-		<Label for="user-bodyweight">Bodyweight</Label>
-		<Input type="number" id="user-bodyweight" placeholder="Type here" bind:value={userBodyweight} />
-	</div>
+	{#if !(useActiveMesocycle && workoutData.workoutOfMesocycle?.workoutStatus === 'RestDay')}
+		<div class="mb-1 flex w-full flex-col gap-1.5 rounded-lg border bg-card p-4">
+			<Label for="user-bodyweight">Bodyweight</Label>
+			<Input
+				type="number"
+				id="user-bodyweight"
+				placeholder="Type here"
+				bind:value={userBodyweight}
+			/>
+		</div>
+	{/if}
 	{#if useActiveMesocycle && workoutData.workoutOfMesocycle}
+		{@const splitDayName = workoutData.workoutOfMesocycle.splitDayName}
 		<Card.Root>
 			<Card.Header>
-				<Card.Title>{workoutData.workoutOfMesocycle.splitDayName}</Card.Title>
+				<Card.Title class={cn({ 'text-primary': splitDayName === '' })}>
+					{splitDayName === '' ? 'Rest' : splitDayName}
+				</Card.Title>
 				<Card.Description class="pb-1">
 					Day {workoutData.workoutOfMesocycle.dayNumber}, Cycle {workoutData.workoutOfMesocycle
 						.cycleNumber}
@@ -103,6 +126,18 @@
 					{/each}
 				</div>
 			</Card.Header>
+			{#if workoutData.workoutOfMesocycle.workoutStatus === 'RestDay'}
+				<Card.Footer>
+					<Button class="ml-auto w-32 gap-2" onclick={completeRestDay} disabled={completingRestDay}>
+						{#if completingRestDay}
+							<LoaderCircle class="animate-spin" />
+						{:else}
+							Complete
+							<CheckIcon />
+						{/if}
+					</Button>
+				</Card.Footer>
+			{/if}
 		</Card.Root>
 	{/if}
 	<Button class="mt-auto" onclick={() => startWorkout()} disabled={userBodyweight === null}>
