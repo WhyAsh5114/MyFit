@@ -93,5 +93,7 @@
 			{exercise.note}
 		</div>
 	{/if}
-	<SetsComponent bind:exercise {reordering} />
+	{#if exercise.sets.length > 0}
+		<SetsComponent bind:exercise {reordering} />
+	{/if}
 </div>
