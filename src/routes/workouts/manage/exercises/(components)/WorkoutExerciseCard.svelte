@@ -7,8 +7,8 @@
 	import GripVertical from 'virtual:icons/lucide/grip-vertical';
 	import MenuIcon from 'virtual:icons/lucide/menu';
 	import EditIcon from 'virtual:icons/lucide/pencil';
-	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import SkipIcon from 'virtual:icons/lucide/skip-forward';
+	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import { workoutRunes } from '../../workoutRunes.svelte';
 	import SetsComponent from './SetsComponent.svelte';
 
@@ -21,6 +21,15 @@
 
 	let { readOnly, idx, reordering = false, exercise = $bindable() }: PropsType = $props();
 	let isContextMenuOpen = $state(false);
+
+	function skipSetsLeft() {
+		exercise.sets.forEach((set) => {
+			if (set.completed) return;
+			set.skipped = true;
+			set.miniSets.forEach((miniSet) => (miniSet.completed = false));
+		});
+		workoutRunes.workoutExercises = workoutRunes.workoutExercises;
+	}
 </script>
 
 <div class="flex flex-col gap-0.5 rounded-md border bg-card/50 p-2 backdrop-blur-sm">
@@ -46,13 +55,7 @@
 							>
 								<EditIcon /> Edit
 							</DropdownMenu.Item>
-							<DropdownMenu.Item
-								class="gap-2"
-								onclick={() => {
-									exercise.sets.forEach((set) => (set.skipped = !set.completed));
-									workoutRunes.workoutExercises = workoutRunes.workoutExercises;
-								}}
-							>
+							<DropdownMenu.Item class="gap-2" onclick={skipSetsLeft}>
 								<SkipIcon /> Skip sets left
 							</DropdownMenu.Item>
 							<DropdownMenu.Item
