@@ -140,7 +140,8 @@ export const workouts = t.router({
 			id: cuid(),
 			userId: ctx.userId,
 			startedAt: input.workoutData.startedAt,
-			endedAt: new Date()
+			endedAt: new Date(),
+			userBodyweight: input.workoutData.userBodyweight
 		};
 		if (input.workoutData.workoutOfMesocycle)
 			workout.workoutOfMesocycle = {
