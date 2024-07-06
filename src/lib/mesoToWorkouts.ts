@@ -63,7 +63,7 @@ export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
 	if (exercise.setType !== 'Drop' && exercise.setType !== 'MyorepMatch')
 		newSets.map((set) => (set.miniSets = []));
 
-	if (['Drop', 'Down', 'Top'].includes(exercise.setType)) {
+	if (!['Drop', 'Down', 'Top'].includes(exercise.setType)) {
 		exercise.changeAmount = null;
 		exercise.changeType = null;
 	}
