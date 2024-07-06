@@ -42,7 +42,7 @@
 							}
 						});
 						if (resp.status === 200) await r.update();
-					}, 20000); // TODO: increase a lot in production
+					}, 3600000);
 				console.log(`SW Registered: ${r}`);
 			},
 			onRegisterError(error) {
