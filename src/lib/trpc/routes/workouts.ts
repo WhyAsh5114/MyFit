@@ -147,11 +147,13 @@ export const workouts = t.router({
 			endedAt: new Date(),
 			userBodyweight: input.workoutData.userBodyweight
 		};
-		if (input.workoutData.workoutOfMesocycle)
+
+		const { workoutOfMesocycle } = input.workoutData;
+		if (workoutOfMesocycle)
 			workout.workoutOfMesocycle = {
 				create: {
-					mesocycleId: input.workoutData.workoutOfMesocycle.mesocycle.id,
-					splitDayName: input.workoutData.workoutOfMesocycle.splitDayName
+					mesocycleId: workoutOfMesocycle.mesocycle.id,
+					splitDayName: workoutOfMesocycle.splitDayName
 				}
 			};
 		const workoutExercises: Prisma.WorkoutExerciseUncheckedCreateInput[] =
@@ -179,14 +181,54 @@ export const workouts = t.router({
 				})
 			);
 
-		// TODO: update mesocycleExerciseSplitDays... oh god
-
 		const transactionQueries = [
 			prisma.workout.create({ data: workout }),
 			prisma.workoutExercise.createMany({ data: workoutExercises }),
 			prisma.workoutExerciseSet.createMany({ data: workoutExercisesSets }),
 			prisma.workoutExerciseMiniSet.createMany({ data: workoutExercisesMiniSets })
 		];
+
+		if (workoutOfMesocycle && workoutOfMesocycle.workoutStatus === undefined) {
+			const todaysSplitDay = await prisma.mesocycleExerciseSplitDay.findFirst({
+				where: {
+					mesocycleId: workoutOfMesocycle.mesocycle.id,
+					dayIndex: workoutOfMesocycle.dayNumber - 1,
+					name: workoutOfMesocycle.splitDayName,
+					mesocycle: { userId: ctx.userId }
+				},
+				select: { id: true }
+			});
+			if (!todaysSplitDay)
+				throw new TRPCError({
+					code: 'BAD_REQUEST',
+					message: 'Related mesocycle exercise split day not found'
+				});
+			transactionQueries.push(
+				...[
+					prisma.mesocycleExerciseTemplate.deleteMany({
+						where: {
+							mesocycleExerciseSplitDay: {
+								name: workoutOfMesocycle.splitDayName,
+								mesocycle: {
+									id: workoutOfMesocycle.mesocycle.id,
+									userId: ctx.userId
+								}
+							}
+						}
+					}),
+					prisma.mesocycleExerciseTemplate.createMany({
+						data: workoutExercises.map((ex, exerciseIdx) => {
+							const { workoutId, ...exercise } = ex;
+							return {
+								...exercise,
+								mesocycleExerciseSplitDayId: todaysSplitDay.id,
+								sets: input.workoutExercisesSets[exerciseIdx].length
+							};
+						})
+					})
+				]
+			);
+		}
 
 		await prisma.$transaction(transactionQueries);
 		return { message: 'Workout created successfully' };
