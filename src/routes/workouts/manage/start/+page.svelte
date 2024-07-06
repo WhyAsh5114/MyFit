@@ -17,6 +17,7 @@
 	import { workoutRunes } from '../workoutRunes.svelte.js';
 	import { trpc } from '$lib/trpc/client.js';
 	import { toast } from 'svelte-sonner';
+	import { navigating } from '$app/stores';
 
 	let useActiveMesocycle = $state(false);
 	let workoutData: TodaysWorkoutData | 'loading' = $state('loading');
@@ -45,6 +46,7 @@
 			overwriteWorkoutDialogOpen = true;
 			return;
 		}
+		overwriteWorkoutDialogOpen = false;
 
 		if (workoutData === 'loading') return;
 		workoutData.userBodyweight = userBodyweight;
@@ -140,8 +142,16 @@
 			{/if}
 		</Card.Root>
 	{/if}
-	<Button class="mt-auto" onclick={() => startWorkout()} disabled={userBodyweight === null}>
-		Next
+	<Button
+		class="mt-auto"
+		onclick={() => startWorkout()}
+		disabled={userBodyweight === null || $navigating !== null}
+	>
+		{#if $navigating}
+			<LoaderCircle class="animate-spin" />
+		{:else}
+			Next
+		{/if}
 	</Button>
 {/if}
 
