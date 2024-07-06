@@ -37,10 +37,10 @@ export type TodaysWorkoutData = Omit<
 	}[];
 	workoutOfMesocycle?: {
 		mesocycle: Mesocycle;
-		splitDayName: string;
 		workoutStatus?: WorkoutStatus;
-		dayNumber: number;
+		splitDayIndex: number;
 		cycleNumber: number;
+		splitDayName: string;
 	};
 };
 

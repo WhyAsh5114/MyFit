@@ -2,7 +2,7 @@ model WorkoutOfMesocycle {
   id            String         @id @default(cuid())
   workoutId     String         @unique
   mesocycleId   String
-  splitDayName  String
+  splitDayIndex Int
   workoutStatus WorkoutStatus?
   workout       Workout        @relation(fields: [workoutId], references: [id])
   mesocycle     Mesocycle      @relation(fields: [mesocycleId], references: [id])

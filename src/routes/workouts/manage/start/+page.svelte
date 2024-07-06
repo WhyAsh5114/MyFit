@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto, invalidate } from '$app/navigation';
+	import { navigating } from '$app/stores';
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -10,14 +11,13 @@
 	import { Switch } from '$lib/components/ui/switch';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import type { TodaysWorkoutData } from '$lib/mesoToWorkouts.js';
+	import { trpc } from '$lib/trpc/client.js';
 	import { cn, convertCamelCaseToNormal } from '$lib/utils.js';
 	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
-	import { trpc } from '$lib/trpc/client.js';
-	import { toast } from 'svelte-sonner';
-	import { navigating } from '$app/stores';
 
 	let useActiveMesocycle = $state(false);
 	let workoutData: TodaysWorkoutData | 'loading' = $state('loading');
@@ -71,7 +71,9 @@
 
 	async function completeRestDay() {
 		completingRestDay = true;
-		const { message } = await trpc().workouts.completeRestDay.mutate();
+		const { message } = await trpc().workouts.completeRestDay.mutate({
+			splitDayIndex: workoutRunes.workoutData?.workoutOfMesocycle?.splitDayIndex as number
+		});
 		toast.success(message);
 		await invalidate('workouts:start');
 		completingRestDay = false;
@@ -119,8 +121,8 @@
 					{splitDayName === '' ? 'Rest' : splitDayName}
 				</Card.Title>
 				<Card.Description class="pb-1">
-					Day {workoutData.workoutOfMesocycle.dayNumber}, Cycle {workoutData.workoutOfMesocycle
-						.cycleNumber}
+					Day {workoutData.workoutOfMesocycle.splitDayIndex + 1}, Cycle {workoutData
+						.workoutOfMesocycle.cycleNumber}
 				</Card.Description>
 				<div class="flex flex-wrap gap-1">
 					{#each targetedMuscleGroups as muscleGroup}

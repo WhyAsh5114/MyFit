@@ -84,8 +84,8 @@
 					{workoutData.workoutOfMesocycle.splitDayName}
 				</span>
 				<span class="flex items-center gap-2 text-sm text-muted-foreground">
-					Day {workoutData.workoutOfMesocycle?.dayNumber}, Cycle {workoutData.workoutOfMesocycle
-						?.cycleNumber}
+					Day {workoutData.workoutOfMesocycle?.splitDayIndex + 1}, Cycle {workoutData
+						.workoutOfMesocycle?.cycleNumber}
 					<InfoPopover ariaLabel="mesocycle-info" align="center">
 						<span class="text-sm text-foreground">
 							{workoutData.workoutOfMesocycle.mesocycle.name}:
