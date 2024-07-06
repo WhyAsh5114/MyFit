@@ -9,7 +9,7 @@
 	import UndoIcon from 'virtual:icons/lucide/undo';
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import RemoveIcon from 'virtual:icons/lucide/minus';
-	import { roundToNearestMultiple } from '$lib/utils';
+	import { floorToNearestMultiple } from '$lib/utils';
 
 	type WorkoutExerciseSet = WorkoutExerciseInProgress['sets'][number];
 
@@ -65,7 +65,7 @@
 	}
 
 	function getNextLoad(set: WorkoutExerciseSet, miniSetIdx: number) {
-		return roundToNearestMultiple(
+		return floorToNearestMultiple(
 			calculateNextLoad(set, miniSetIdx),
 			exercise.minimumWeightChange ?? 5
 		).toString();
