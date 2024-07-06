@@ -5,7 +5,6 @@
 	import MyorepMatchSetsComponent from './(componentsForVariousSets)/MyorepMatchSetsComponent.svelte';
 	import StraightSetsComponent from './(componentsForVariousSets)/StraightSetsComponent.svelte';
 	import V2SetsComponent from './(componentsForVariousSets)/V2SetsComponent.svelte';
-	import MyorepSetsComponent from './(componentsForVariousSets)/MyorepSetsComponent.svelte';
 
 	type PropsType = { reordering: boolean; exercise: WorkoutExerciseInProgress };
 	let { reordering, exercise = $bindable() }: PropsType = $props();
@@ -17,7 +16,7 @@
 		{ setType: 'MyorepMatch', component: MyorepMatchSetsComponent },
 		{ setType: 'Down', component: TopDownSetsComponent },
 		{ setType: 'Top', component: TopDownSetsComponent },
-		{ setType: 'Myorep', component: MyorepSetsComponent }
+		{ setType: 'Myorep', component: StraightSetsComponent }
 	];
 	let selected = $derived(typeToComponent.find((e) => e.setType === exercise.setType));
 </script>
