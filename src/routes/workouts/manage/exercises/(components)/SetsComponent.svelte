@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { WorkoutExerciseInProgress } from '$lib/mesoToWorkouts';
+	import TopDownSetsComponent from './(componentsForVariousSets)/TopDownSetsComponent.svelte';
 	import DropSetsComponent from './(componentsForVariousSets)/DropSetsComponent.svelte';
 	import MyorepMatchSetsComponent from './(componentsForVariousSets)/MyorepMatchSetsComponent.svelte';
 	import StraightSetsComponent from './(componentsForVariousSets)/StraightSetsComponent.svelte';
@@ -12,7 +13,9 @@
 		{ setType: 'Straight', component: StraightSetsComponent },
 		{ setType: 'V2', component: V2SetsComponent },
 		{ setType: 'Drop', component: DropSetsComponent },
-		{ setType: 'MyorepMatch', component: MyorepMatchSetsComponent }
+		{ setType: 'MyorepMatch', component: MyorepMatchSetsComponent },
+		{ setType: 'Down', component: TopDownSetsComponent },
+		{ setType: 'Top', component: TopDownSetsComponent }
 	];
 	let selected = $derived(typeToComponent.find((e) => e.setType === exercise.setType));
 </script>
