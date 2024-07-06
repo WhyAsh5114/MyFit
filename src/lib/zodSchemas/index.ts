@@ -24,7 +24,7 @@ export const MesocycleCyclicSetChangeScalarFieldEnumSchema = z.enum(['id','mesoc
 
 export const MesocycleExerciseSplitDayScalarFieldEnumSchema = z.enum(['id','name','dayIndex','isRestDay','mesocycleId']);
 
-export const MesocycleExerciseTemplateScalarFieldEnumSchema = z.enum(['id','name','exerciseIndex','targetMuscleGroup','customMuscleGroup','involvesBodyweight','sets','setType','repRangeStart','repRangeEnd','changeType','changeAmount','note','mesocycleExerciseSplitDayId','preferredProgressionVariable','overloadPercentage','lastSetToFailure','forceRIRMatching']);
+export const MesocycleExerciseTemplateScalarFieldEnumSchema = z.enum(['id','name','exerciseIndex','targetMuscleGroup','customMuscleGroup','involvesBodyweight','sets','setType','repRangeStart','repRangeEnd','changeType','changeAmount','note','mesocycleExerciseSplitDayId','preferredProgressionVariable','overloadPercentage','lastSetToFailure','forceRIRMatching','minimumWeightChange']);
 
 export const UserScalarFieldEnumSchema = z.enum(['id','name','email','emailVerified','image','createdAt','updatedAt']);
 
@@ -195,6 +195,7 @@ export const MesocycleExerciseTemplateSchema = z.object({
   overloadPercentage: z.number().nullable(),
   lastSetToFailure: z.boolean().nullable(),
   forceRIRMatching: z.boolean().nullable(),
+  minimumWeightChange: z.number().nullable(),
 })
 
 export type MesocycleExerciseTemplate = z.infer<typeof MesocycleExerciseTemplateSchema>
@@ -583,6 +584,7 @@ export const MesocycleExerciseTemplateSelectSchema: z.ZodType<Prisma.MesocycleEx
   overloadPercentage: z.boolean().optional(),
   lastSetToFailure: z.boolean().optional(),
   forceRIRMatching: z.boolean().optional(),
+  minimumWeightChange: z.boolean().optional(),
   mesocycleExerciseSplitDay: z.union([z.boolean(),z.lazy(() => MesocycleExerciseSplitDayArgsSchema)]).optional(),
 }).strict()
 
@@ -1330,6 +1332,7 @@ export const MesocycleExerciseTemplateWhereInputSchema: z.ZodType<Prisma.Mesocyc
   overloadPercentage: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
   lastSetToFailure: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   forceRIRMatching: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
+  minimumWeightChange: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
   mesocycleExerciseSplitDay: z.union([ z.lazy(() => MesocycleExerciseSplitDayRelationFilterSchema),z.lazy(() => MesocycleExerciseSplitDayWhereInputSchema) ]).optional(),
 }).strict();
 
@@ -1352,6 +1355,7 @@ export const MesocycleExerciseTemplateOrderByWithRelationInputSchema: z.ZodType<
   overloadPercentage: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   lastSetToFailure: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   forceRIRMatching: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  minimumWeightChange: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   mesocycleExerciseSplitDay: z.lazy(() => MesocycleExerciseSplitDayOrderByWithRelationInputSchema).optional()
 }).strict();
 
@@ -1380,6 +1384,7 @@ export const MesocycleExerciseTemplateWhereUniqueInputSchema: z.ZodType<Prisma.M
   overloadPercentage: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
   lastSetToFailure: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   forceRIRMatching: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
+  minimumWeightChange: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
   mesocycleExerciseSplitDay: z.union([ z.lazy(() => MesocycleExerciseSplitDayRelationFilterSchema),z.lazy(() => MesocycleExerciseSplitDayWhereInputSchema) ]).optional(),
 }).strict());
 
@@ -1402,6 +1407,7 @@ export const MesocycleExerciseTemplateOrderByWithAggregationInputSchema: z.ZodTy
   overloadPercentage: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   lastSetToFailure: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   forceRIRMatching: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  minimumWeightChange: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   _count: z.lazy(() => MesocycleExerciseTemplateCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => MesocycleExerciseTemplateAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => MesocycleExerciseTemplateMaxOrderByAggregateInputSchema).optional(),
@@ -1431,6 +1437,7 @@ export const MesocycleExerciseTemplateScalarWhereWithAggregatesInputSchema: z.Zo
   overloadPercentage: z.union([ z.lazy(() => FloatNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
   lastSetToFailure: z.union([ z.lazy(() => BoolNullableWithAggregatesFilterSchema),z.boolean() ]).optional().nullable(),
   forceRIRMatching: z.union([ z.lazy(() => BoolNullableWithAggregatesFilterSchema),z.boolean() ]).optional().nullable(),
+  minimumWeightChange: z.union([ z.lazy(() => FloatNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
 }).strict();
 
 export const UserWhereInputSchema: z.ZodType<Prisma.UserWhereInput> = z.object({
@@ -2602,6 +2609,7 @@ export const MesocycleExerciseTemplateCreateInputSchema: z.ZodType<Prisma.Mesocy
   overloadPercentage: z.number().optional().nullable(),
   lastSetToFailure: z.boolean().optional().nullable(),
   forceRIRMatching: z.boolean().optional().nullable(),
+  minimumWeightChange: z.number().optional().nullable(),
   mesocycleExerciseSplitDay: z.lazy(() => MesocycleExerciseSplitDayCreateNestedOneWithoutMesocycleSplitDayExercisesInputSchema)
 }).strict();
 
@@ -2623,7 +2631,8 @@ export const MesocycleExerciseTemplateUncheckedCreateInputSchema: z.ZodType<Pris
   preferredProgressionVariable: z.lazy(() => ProgressionVariableSchema).optional().nullable(),
   overloadPercentage: z.number().optional().nullable(),
   lastSetToFailure: z.boolean().optional().nullable(),
-  forceRIRMatching: z.boolean().optional().nullable()
+  forceRIRMatching: z.boolean().optional().nullable(),
+  minimumWeightChange: z.number().optional().nullable()
 }).strict();
 
 export const MesocycleExerciseTemplateUpdateInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateUpdateInput> = z.object({
@@ -2644,6 +2653,7 @@ export const MesocycleExerciseTemplateUpdateInputSchema: z.ZodType<Prisma.Mesocy
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   mesocycleExerciseSplitDay: z.lazy(() => MesocycleExerciseSplitDayUpdateOneRequiredWithoutMesocycleSplitDayExercisesNestedInputSchema).optional()
 }).strict();
 
@@ -2666,6 +2676,7 @@ export const MesocycleExerciseTemplateUncheckedUpdateInputSchema: z.ZodType<Pris
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const MesocycleExerciseTemplateCreateManyInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateCreateManyInput> = z.object({
@@ -2686,7 +2697,8 @@ export const MesocycleExerciseTemplateCreateManyInputSchema: z.ZodType<Prisma.Me
   preferredProgressionVariable: z.lazy(() => ProgressionVariableSchema).optional().nullable(),
   overloadPercentage: z.number().optional().nullable(),
   lastSetToFailure: z.boolean().optional().nullable(),
-  forceRIRMatching: z.boolean().optional().nullable()
+  forceRIRMatching: z.boolean().optional().nullable(),
+  minimumWeightChange: z.number().optional().nullable()
 }).strict();
 
 export const MesocycleExerciseTemplateUpdateManyMutationInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateUpdateManyMutationInput> = z.object({
@@ -2707,6 +2719,7 @@ export const MesocycleExerciseTemplateUpdateManyMutationInputSchema: z.ZodType<P
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const MesocycleExerciseTemplateUncheckedUpdateManyInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateUncheckedUpdateManyInput> = z.object({
@@ -2728,6 +2741,7 @@ export const MesocycleExerciseTemplateUncheckedUpdateManyInputSchema: z.ZodType<
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
@@ -4060,7 +4074,8 @@ export const MesocycleExerciseTemplateCountOrderByAggregateInputSchema: z.ZodTyp
   preferredProgressionVariable: z.lazy(() => SortOrderSchema).optional(),
   overloadPercentage: z.lazy(() => SortOrderSchema).optional(),
   lastSetToFailure: z.lazy(() => SortOrderSchema).optional(),
-  forceRIRMatching: z.lazy(() => SortOrderSchema).optional()
+  forceRIRMatching: z.lazy(() => SortOrderSchema).optional(),
+  minimumWeightChange: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const MesocycleExerciseTemplateAvgOrderByAggregateInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateAvgOrderByAggregateInput> = z.object({
@@ -4069,7 +4084,8 @@ export const MesocycleExerciseTemplateAvgOrderByAggregateInputSchema: z.ZodType<
   repRangeStart: z.lazy(() => SortOrderSchema).optional(),
   repRangeEnd: z.lazy(() => SortOrderSchema).optional(),
   changeAmount: z.lazy(() => SortOrderSchema).optional(),
-  overloadPercentage: z.lazy(() => SortOrderSchema).optional()
+  overloadPercentage: z.lazy(() => SortOrderSchema).optional(),
+  minimumWeightChange: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const MesocycleExerciseTemplateMaxOrderByAggregateInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateMaxOrderByAggregateInput> = z.object({
@@ -4090,7 +4106,8 @@ export const MesocycleExerciseTemplateMaxOrderByAggregateInputSchema: z.ZodType<
   preferredProgressionVariable: z.lazy(() => SortOrderSchema).optional(),
   overloadPercentage: z.lazy(() => SortOrderSchema).optional(),
   lastSetToFailure: z.lazy(() => SortOrderSchema).optional(),
-  forceRIRMatching: z.lazy(() => SortOrderSchema).optional()
+  forceRIRMatching: z.lazy(() => SortOrderSchema).optional(),
+  minimumWeightChange: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const MesocycleExerciseTemplateMinOrderByAggregateInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateMinOrderByAggregateInput> = z.object({
@@ -4111,7 +4128,8 @@ export const MesocycleExerciseTemplateMinOrderByAggregateInputSchema: z.ZodType<
   preferredProgressionVariable: z.lazy(() => SortOrderSchema).optional(),
   overloadPercentage: z.lazy(() => SortOrderSchema).optional(),
   lastSetToFailure: z.lazy(() => SortOrderSchema).optional(),
-  forceRIRMatching: z.lazy(() => SortOrderSchema).optional()
+  forceRIRMatching: z.lazy(() => SortOrderSchema).optional(),
+  minimumWeightChange: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const MesocycleExerciseTemplateSumOrderByAggregateInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateSumOrderByAggregateInput> = z.object({
@@ -4120,7 +4138,8 @@ export const MesocycleExerciseTemplateSumOrderByAggregateInputSchema: z.ZodType<
   repRangeStart: z.lazy(() => SortOrderSchema).optional(),
   repRangeEnd: z.lazy(() => SortOrderSchema).optional(),
   changeAmount: z.lazy(() => SortOrderSchema).optional(),
-  overloadPercentage: z.lazy(() => SortOrderSchema).optional()
+  overloadPercentage: z.lazy(() => SortOrderSchema).optional(),
+  minimumWeightChange: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const EnumProgressionVariableNullableWithAggregatesFilterSchema: z.ZodType<Prisma.EnumProgressionVariableNullableWithAggregatesFilter> = z.object({
@@ -6763,7 +6782,8 @@ export const MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInpu
   preferredProgressionVariable: z.lazy(() => ProgressionVariableSchema).optional().nullable(),
   overloadPercentage: z.number().optional().nullable(),
   lastSetToFailure: z.boolean().optional().nullable(),
-  forceRIRMatching: z.boolean().optional().nullable()
+  forceRIRMatching: z.boolean().optional().nullable(),
+  minimumWeightChange: z.number().optional().nullable()
 }).strict();
 
 export const MesocycleExerciseTemplateUncheckedCreateWithoutMesocycleExerciseSplitDayInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateUncheckedCreateWithoutMesocycleExerciseSplitDayInput> = z.object({
@@ -6783,7 +6803,8 @@ export const MesocycleExerciseTemplateUncheckedCreateWithoutMesocycleExerciseSpl
   preferredProgressionVariable: z.lazy(() => ProgressionVariableSchema).optional().nullable(),
   overloadPercentage: z.number().optional().nullable(),
   lastSetToFailure: z.boolean().optional().nullable(),
-  forceRIRMatching: z.boolean().optional().nullable()
+  forceRIRMatching: z.boolean().optional().nullable(),
+  minimumWeightChange: z.number().optional().nullable()
 }).strict();
 
 export const MesocycleExerciseTemplateCreateOrConnectWithoutMesocycleExerciseSplitDayInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateCreateOrConnectWithoutMesocycleExerciseSplitDayInput> = z.object({
@@ -6877,6 +6898,7 @@ export const MesocycleExerciseTemplateScalarWhereInputSchema: z.ZodType<Prisma.M
   overloadPercentage: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
   lastSetToFailure: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   forceRIRMatching: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
+  minimumWeightChange: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
 }).strict();
 
 export const MesocycleExerciseSplitDayCreateWithoutMesocycleSplitDayExercisesInputSchema: z.ZodType<Prisma.MesocycleExerciseSplitDayCreateWithoutMesocycleSplitDayExercisesInput> = z.object({
@@ -8279,7 +8301,8 @@ export const MesocycleExerciseTemplateCreateManyMesocycleExerciseSplitDayInputSc
   preferredProgressionVariable: z.lazy(() => ProgressionVariableSchema).optional().nullable(),
   overloadPercentage: z.number().optional().nullable(),
   lastSetToFailure: z.boolean().optional().nullable(),
-  forceRIRMatching: z.boolean().optional().nullable()
+  forceRIRMatching: z.boolean().optional().nullable(),
+  minimumWeightChange: z.number().optional().nullable()
 }).strict();
 
 export const MesocycleExerciseTemplateUpdateWithoutMesocycleExerciseSplitDayInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateUpdateWithoutMesocycleExerciseSplitDayInput> = z.object({
@@ -8300,6 +8323,7 @@ export const MesocycleExerciseTemplateUpdateWithoutMesocycleExerciseSplitDayInpu
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const MesocycleExerciseTemplateUncheckedUpdateWithoutMesocycleExerciseSplitDayInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateUncheckedUpdateWithoutMesocycleExerciseSplitDayInput> = z.object({
@@ -8320,6 +8344,7 @@ export const MesocycleExerciseTemplateUncheckedUpdateWithoutMesocycleExerciseSpl
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const MesocycleExerciseTemplateUncheckedUpdateManyWithoutMesocycleExerciseSplitDayInputSchema: z.ZodType<Prisma.MesocycleExerciseTemplateUncheckedUpdateManyWithoutMesocycleExerciseSplitDayInput> = z.object({
@@ -8340,6 +8365,7 @@ export const MesocycleExerciseTemplateUncheckedUpdateManyWithoutMesocycleExercis
   overloadPercentage: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   lastSetToFailure: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   forceRIRMatching: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  minimumWeightChange: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const AccountCreateManyUserInputSchema: z.ZodType<Prisma.AccountCreateManyUserInput> = z.object({

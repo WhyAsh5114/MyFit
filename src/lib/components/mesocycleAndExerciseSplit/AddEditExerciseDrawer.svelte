@@ -55,7 +55,8 @@
 		overloadPercentage: null,
 		forceRIRMatching: null,
 		lastSetToFailure: null,
-		preferredProgressionVariable: null
+		preferredProgressionVariable: null,
+		minimumWeightChange: null
 	};
 
 	const defaultExercise: Partial<FullExerciseTemplate> = {
@@ -348,6 +349,27 @@
 				</Sheet.Description>
 			</Sheet.Header>
 			<form onsubmit={submitOverrides} class="mt-8 grid h-fit gap-x-2 gap-y-4">
+				<div class="flex flex-col gap-1">
+					<div class="flex items-center justify-between">
+						<Label for="exercise-minimum-weight-change-value">Minimum weight change</Label>
+						<Checkbox
+							id="exercise-override-minimum-weight-change"
+							checked={currentExercise.minimumWeightChange !== null}
+							onCheckedChange={(c) => {
+								if (c !== 'indeterminate' && 'sets' in currentExercise)
+									currentExercise.minimumWeightChange = c ? undefined : null;
+							}}
+						/>
+					</div>
+					<Input
+						id="exercise-minimum-weight-change-value"
+						type="number"
+						placeholder="5"
+						disabled={currentExercise.minimumWeightChange === null}
+						required
+						bind:value={currentExercise.minimumWeightChange}
+					/>
+				</div>
 				<div class="flex flex-col gap-1">
 					<div class="flex items-center justify-between">
 						<Label for="exercise-override-overload-percentage-value">Overload percentage</Label>
