@@ -33,7 +33,7 @@
 		exercise.sets[setIndex].miniSets.push({
 			completed: false,
 			reps: undefined,
-			load: undefined,
+			load: exercise.sets[setIndex].load,
 			RIR: undefined
 		});
 	}
@@ -51,8 +51,12 @@
 			return;
 		}
 		set.completed = !set.completed;
+		// If first set of straight set, set all loads of all sets to this set's load
+		if (idx === 0) exercise.sets.forEach((_set) => (_set.load = set.load));
 		workoutRunes.workoutExercises = workoutRunes.workoutExercises;
 	}
+
+	$inspect(exercise.sets);
 </script>
 
 {#if !reordering}
@@ -73,14 +77,18 @@
 						required
 						bind:value={set.reps}
 					/>
-					<Input
-						type="number"
-						min={0}
-						id="{exercise.name}-set-{idx + 1}-load"
-						disabled={set.completed || set.skipped}
-						required
-						bind:value={set.load}
-					/>
+					{#if idx === 0}
+						<Input
+							type="number"
+							min={0}
+							id="{exercise.name}-set-{idx + 1}-load"
+							disabled={set.completed || set.skipped}
+							required
+							bind:value={set.load}
+						/>
+					{:else}
+						<span></span>
+					{/if}
 					<Input
 						type="number"
 						min={0}
@@ -112,76 +120,71 @@
 					{/if}
 				</Button>
 			</form>
-			{#each set.miniSets as miniSet, miniIdx}
-				{@const miniSetButtonDisabled = shouldMiniSetBeDisabled(idx, miniIdx)}
-				{#if set.skipped}
-					<div class="col-span-3 flex items-center gap-2">
-						<Separator class="w-px grow" />
-						<span class="text-sm text-muted-foreground">skipped</span>
-						<Separator class="w-px grow" />
-					</div>
-					<Button size="icon" class="place-self-end" variant="secondary" disabled>
-						<CheckIcon />
-					</Button>
-				{:else}
-					<form class="contents" onsubmit={(e) => completeMiniSet(e, set, miniIdx)}>
-						<Input
-							type="number"
-							min={0}
-							id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-reps"
-							disabled={miniSet.completed}
-							required
-							bind:value={miniSet.reps}
-						/>
-						<Input
-							type="number"
-							min={0}
-							id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-load"
-							disabled={miniSet.completed}
-							required
-							bind:value={miniSet.load}
-						/>
-						<Input
-							type="number"
-							min={0}
-							id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-RIR"
-							disabled={miniSet.completed}
-							required
-							bind:value={miniSet.RIR}
-						/>
-						<Button
-							size="icon"
-							class="place-self-end"
-							disabled={miniSetButtonDisabled}
-							type="submit"
-							variant={miniSet.completed ? 'outline' : 'default'}
-						>
-							{#if !miniSet.completed}
-								<CheckIcon />
-							{:else}
-								<EditIcon />
-							{/if}
+			{#if idx > 0}
+				{#each set.miniSets as miniSet, miniIdx}
+					{@const miniSetButtonDisabled = shouldMiniSetBeDisabled(idx, miniIdx)}
+					{#if set.skipped}
+						<div class="col-span-3 flex items-center gap-2">
+							<Separator class="w-px grow" />
+							<span class="text-sm text-muted-foreground">skipped</span>
+							<Separator class="w-px grow" />
+						</div>
+						<Button size="icon" class="place-self-end" variant="secondary" disabled>
+							<CheckIcon />
 						</Button>
-					</form>
-				{/if}
-			{/each}
-			<Button
-				variant="secondary"
-				aria-label="add-mini-set-to-set-{idx + 1}-of-{exercise.name}"
-				onclick={() => addMiniSet(idx)}
-			>
-				<AddIcon />
-			</Button>
-			<Button
-				variant="secondary"
-				aria-label="remove-mini-set-from-set-{idx + 1}-of-{exercise.name}"
-				disabled={set.miniSets.length === 0}
-				onclick={() => set.miniSets.pop()}
-			>
-				<RemoveIcon />
-			</Button>
-			<span></span>
-			<span></span>
+					{:else}
+						<form class="contents" onsubmit={(e) => completeMiniSet(e, set, miniIdx)}>
+							<Input
+								type="number"
+								min={0}
+								id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-reps"
+								disabled={miniSet.completed}
+								required
+								bind:value={miniSet.reps}
+							/>
+							<span></span>
+							<Input
+								type="number"
+								min={0}
+								id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-RIR"
+								disabled={miniSet.completed}
+								required
+								bind:value={miniSet.RIR}
+							/>
+							<Button
+								size="icon"
+								class="place-self-end"
+								disabled={miniSetButtonDisabled}
+								type="submit"
+								variant={miniSet.completed ? 'outline' : 'default'}
+							>
+								{#if !miniSet.completed}
+									<CheckIcon />
+								{:else}
+									<EditIcon />
+								{/if}
+							</Button>
+						</form>
+					{/if}
+				{/each}
+				<Button
+					variant="secondary"
+					aria-label="add-mini-set-to-set-{idx + 1}-of-{exercise.name}"
+					onclick={() => addMiniSet(idx)}
+				>
+					<AddIcon />
+				</Button>
+				<Button
+					variant="secondary"
+					aria-label="remove-mini-set-from-set-{idx + 1}-of-{exercise.name}"
+					disabled={set.miniSets.length === 0}
+					onclick={() => set.miniSets.pop()}
+				>
+					<RemoveIcon />
+				</Button>
+				<span></span>
+				<span></span>
+			{/if}
 		{/each}
 	</div>
 {/if}
