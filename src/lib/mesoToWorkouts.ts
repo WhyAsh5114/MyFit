@@ -57,9 +57,15 @@ export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
 		skipped: false
 	};
 
-	const newSets = oldSets ? [...oldSets] : [];
-	while (newSets.length < sets) {
-		newSets.push({ ...defaultSet, miniSets: [] });
+	let newSets = oldSets ? [...oldSets] : [];
+	while (newSets.length < sets) newSets.push({ ...defaultSet, miniSets: [] });
+
+	if (exercise.setType !== 'Drop' && exercise.setType !== 'MyorepMatch')
+		newSets.map((set) => (set.miniSets = []));
+
+	if (['Drop', 'Down', 'Top'].includes(exercise.setType)) {
+		exercise.changeAmount = null;
+		exercise.changeType = null;
 	}
 
 	return { ...exercise, sets: newSets.slice(0, sets) };
