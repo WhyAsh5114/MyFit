@@ -76,7 +76,7 @@
 	<div class="flex items-center gap-0.5">
 		<span class="mr-auto text-sm lowercase text-muted-foreground">
 			{exercise.sets.length}
-			{exercise.setType} sets of
+			{convertCamelCaseToNormal(exercise.setType)} sets of
 			{exercise.repRangeStart} to {exercise.repRangeEnd} reps
 		</span>
 		{#if exercise.involvesBodyweight}

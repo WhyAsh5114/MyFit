@@ -53,6 +53,7 @@
 					{exerciseTemplate}
 					deleteExercise={contextProps.deleteExercise}
 					setEditingExercise={contextProps.setEditingExercise}
+					readOnly={false}
 				/>
 			{:else if contextProps.context === 'exerciseSplit'}
 				<ExerciseTemplateCard
@@ -62,6 +63,7 @@
 					{reordering}
 					deleteExercise={contextProps.deleteExercise}
 					setEditingExercise={contextProps.setEditingExercise}
+					readOnly={false}
 				/>
 			{/if}
 			{#if exerciseTemplate[SHADOW_ITEM_MARKER_PROPERTY_NAME]}

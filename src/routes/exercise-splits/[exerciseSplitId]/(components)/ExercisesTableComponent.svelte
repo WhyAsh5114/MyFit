@@ -2,7 +2,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import type { ExerciseSplitDay, ExerciseTemplate } from '@prisma/client';
-	import ExerciseTemplateCard from '../../(components)/ExerciseTemplateCard.svelte';
+	import ExerciseTemplateCard from '$lib/components/mesocycleAndExerciseSplit/ExerciseTemplateCard.svelte';
 
 	type PropsType = { exerciseSplitDays: (ExerciseSplitDay & { exercises: ExerciseTemplate[] })[] };
 	let { exerciseSplitDays }: PropsType = $props();
@@ -11,11 +11,6 @@
 		exerciseSplitDays.findIndex((splitDay) => splitDay !== null).toString()
 	);
 	let selectedSplitDay = $derived(exerciseSplitDays[parseInt(selectedDayIndex)]);
-
-	const emptyFunctions = {
-		openEditExercise: () => {},
-		deleteExercise: () => {}
-	};
 </script>
 
 <Tabs.Root bind:value={selectedDayIndex} class="flex h-full flex-col">
@@ -41,8 +36,8 @@
 				</div>
 			</div>
 			<div class="mt-2 flex h-full flex-col gap-1 overflow-y-auto">
-				{#each selectedSplitDay.exercises as exercise, idx}
-					<ExerciseTemplateCard {idx} {...emptyFunctions} readOnly exerciseTemplate={exercise} />
+				{#each selectedSplitDay.exercises as exercise}
+					<ExerciseTemplateCard readOnly exerciseTemplate={exercise} context="exerciseSplit" />
 				{/each}
 			</div>
 		</Card.Root>

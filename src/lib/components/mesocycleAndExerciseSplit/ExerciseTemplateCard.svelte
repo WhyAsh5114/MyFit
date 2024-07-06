@@ -12,23 +12,30 @@
 		SplitExerciseTemplateWithoutIdsOrIndex
 	} from './commonTypes';
 
-	type ExerciseTemplateCardProps = {
-		readOnly?: boolean;
-		idx: number;
-		reordering?: boolean;
-		deleteExercise: (idx: number) => void;
-	} & (
+	type ExerciseTemplateCardProps = ReadOnlyProps | EditableProps;
+
+	type ReadOnlyProps = { readOnly: true } & ContextProps;
+	type EditableProps = ContextProps &
+		EditableContextProps & {
+			readOnly: false;
+			idx: number;
+			reordering: boolean;
+			deleteExercise: (idx: number) => void;
+		};
+
+	type ContextProps =
+		| { context: 'exerciseSplit'; exerciseTemplate: SplitExerciseTemplateWithoutIdsOrIndex }
+		| { context: 'mesocycle'; exerciseTemplate: MesocycleExerciseTemplateWithoutIdsOrIndex };
+
+	type EditableContextProps =
 		| {
 				context: 'exerciseSplit';
-				exerciseTemplate: SplitExerciseTemplateWithoutIdsOrIndex;
 				setEditingExercise: (exercise: SplitExerciseTemplateWithoutIdsOrIndex) => void;
 		  }
 		| {
 				context: 'mesocycle';
-				exerciseTemplate: MesocycleExerciseTemplateWithoutIdsOrIndex;
 				setEditingExercise: (exercise: MesocycleExerciseTemplateWithoutIdsOrIndex) => void;
-		  }
-	);
+		  };
 
 	let { ...props }: ExerciseTemplateCardProps = $props();
 	let isContextMenuOpen = $state(false);
@@ -84,7 +91,7 @@
 			{#if props.context === 'mesocycle'}
 				{props.exerciseTemplate.sets}
 			{/if}
-			{props.exerciseTemplate.setType} sets of
+			{convertCamelCaseToNormal(props.exerciseTemplate.setType)} sets of
 			{props.exerciseTemplate.repRangeStart} to {props.exerciseTemplate.repRangeEnd} reps
 		</span>
 		{#if props.exerciseTemplate.involvesBodyweight}

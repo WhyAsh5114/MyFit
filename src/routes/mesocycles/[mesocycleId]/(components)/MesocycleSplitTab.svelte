@@ -4,7 +4,7 @@
 	import * as Tabs from '$lib/components/ui/tabs';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import type { FullMesocycle } from '../+layout.server';
-	import MesocycleExerciseTemplateCard from './MesocycleExerciseTemplateCard.svelte';
+	import ExerciseTemplateCard from '$lib/components/mesocycleAndExerciseSplit/ExerciseTemplateCard.svelte';
 	import { mesocycleExerciseSplitRunes } from '../edit-split/mesocycleExerciseSplitRunes.svelte';
 	import { goto } from '$app/navigation';
 
@@ -47,7 +47,7 @@
 	</Tabs.List>
 	<Tabs.Content value={selectedSplitDay.name} class="flex flex-col gap-1">
 		{#each selectedSplitDay.mesocycleSplitDayExercises as exercise}
-			<MesocycleExerciseTemplateCard exerciseTemplate={exercise} />
+			<ExerciseTemplateCard context="mesocycle" exerciseTemplate={exercise} readOnly />
 		{/each}
 	</Tabs.Content>
 </Tabs.Root>
