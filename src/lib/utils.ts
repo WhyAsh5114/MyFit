@@ -120,3 +120,7 @@ export const groupBy = <T extends Item>(array: T[], property: keyof T): GroupedI
 		items: grouped[key]
 	}));
 };
+
+export function roundToNearestMultiple(number: number, multiple: number) {
+	return Math.round(number / multiple) * multiple;
+}

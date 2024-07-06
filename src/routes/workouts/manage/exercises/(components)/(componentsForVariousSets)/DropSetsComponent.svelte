@@ -9,6 +9,7 @@
 	import UndoIcon from 'virtual:icons/lucide/undo';
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import RemoveIcon from 'virtual:icons/lucide/minus';
+	import { roundToNearestMultiple } from '$lib/utils';
 
 	type WorkoutExerciseSet = WorkoutExerciseInProgress['sets'][number];
 
@@ -52,6 +53,22 @@
 		}
 		set.completed = !set.completed;
 		workoutRunes.workoutExercises = workoutRunes.workoutExercises;
+	}
+
+	function calculateNextLoad(set: WorkoutExerciseSet, miniSetIdx: number) {
+		if (!exercise.changeType || set.load === undefined) return 0;
+		if (exercise.changeAmount === null || exercise.changeAmount === undefined) return 0;
+		if (exercise.changeType === 'AbsoluteLoad') {
+			return set.load - (miniSetIdx + 1) * exercise.changeAmount;
+		}
+		return set.load * (1 - (miniSetIdx + 1) * (exercise.changeAmount / 100));
+	}
+
+	function getNextLoad(set: WorkoutExerciseSet, miniSetIdx: number) {
+		return roundToNearestMultiple(
+			calculateNextLoad(set, miniSetIdx),
+			exercise.minimumWeightChange ?? 5
+		).toString();
 	}
 </script>
 
@@ -137,6 +154,7 @@
 							type="number"
 							min={0}
 							id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-load"
+							placeholder={getNextLoad(set, miniIdx)}
 							disabled={miniSet.completed}
 							required
 							bind:value={miniSet.load}
