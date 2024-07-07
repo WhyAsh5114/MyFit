@@ -3,7 +3,7 @@ import {
 	createWorkoutExerciseInProgressFromMesocycleExerciseTemplate,
 	type TodaysWorkoutData,
 	type WorkoutExerciseInProgress
-} from '$lib/mesoToWorkouts';
+} from '$lib/workoutFunctions';
 
 function createWorkoutRunes() {
 	let workoutData: TodaysWorkoutData | null = $state(null);

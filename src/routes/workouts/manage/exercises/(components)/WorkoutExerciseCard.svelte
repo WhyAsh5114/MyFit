@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import type { WorkoutExerciseInProgress } from '$lib/mesoToWorkouts';
+	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { dragHandle } from 'svelte-dnd-action';
 	import GripVertical from 'virtual:icons/lucide/grip-vertical';

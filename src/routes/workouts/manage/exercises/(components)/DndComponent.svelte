@@ -7,7 +7,7 @@
 		SHADOW_ITEM_MARKER_PROPERTY_NAME
 	} from 'svelte-dnd-action';
 	import WorkoutExerciseCard from './WorkoutExerciseCard.svelte';
-	import type { WorkoutExerciseInProgress } from '$lib/mesoToWorkouts';
+	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
 
 	type PropsType = {
 		readOnly?: boolean;

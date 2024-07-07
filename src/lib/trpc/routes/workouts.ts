@@ -1,8 +1,4 @@
-import {
-	createWorkoutExerciseInProgressFromMesocycleExerciseTemplate,
-	type TodaysWorkoutData,
-	type WorkoutExerciseInProgress
-} from '$lib/mesoToWorkouts';
+import { progressiveOverloadMagic, type TodaysWorkoutData } from '$lib/workoutFunctions';
 import { prisma } from '$lib/prisma';
 import { t } from '$lib/trpc/t';
 import {
@@ -20,24 +16,6 @@ import {
 import { TRPCError } from '@trpc/server';
 import cuid from 'cuid';
 import { z } from 'zod';
-
-const includeProgressionDataClause = {
-	mesocycleExerciseSplitDays: { include: { mesocycleSplitDayExercises: true } },
-	mesocycleCyclicSetChanges: true,
-	workoutsOfMesocycle: {
-		include: {
-			workout: {
-				include: {
-					workoutExercises: { include: { sets: { include: { miniSets: true } } } }
-				}
-			}
-		}
-	}
-} as const;
-
-type ActiveMesocycleWithProgressionData = Prisma.MesocycleGetPayload<{
-	include: typeof includeProgressionDataClause;
-}>;
 
 const todaysWorkoutDataSchema = z.object({
 	startedAt: z.date().or(z.string().datetime()),
@@ -299,31 +277,4 @@ function getBasicDayInfo(mesocycleData: {
 	const splitDayIndex = totalWorkouts % splitLength;
 	const cycleNumber = 1 + Math.floor(totalWorkouts / splitLength);
 	return { isRestDay, splitDayIndex, cycleNumber, todaysSplitDay };
-}
-
-function progressiveOverloadMagic(
-	mesocycleWithProgressionData: ActiveMesocycleWithProgressionData,
-	userBodyweight: number | null
-): WorkoutExerciseInProgress[] {
-	const {
-		mesocycleCyclicSetChanges,
-		mesocycleExerciseSplitDays,
-		workoutsOfMesocycle,
-		...mesocycle
-	} = mesocycleWithProgressionData;
-
-	const todaysSplitDay =
-		mesocycleExerciseSplitDays[workoutsOfMesocycle.length % mesocycleExerciseSplitDays.length];
-	const workoutExercises = todaysSplitDay.mesocycleSplitDayExercises.map((fullExercise) => {
-		const { mesocycleExerciseSplitDayId, ...exercise } = fullExercise;
-		return createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(exercise);
-	});
-
-	// Fill in reps, load, RIR from previous workouts (lastSetToFailure?)
-	// Add miniSets and stuff if drop / myorep match sets
-	// Match RIR according to forceRIRMatching and RIRProgression
-	// Perform progressive overload according to mesocycle progression values
-	// Increase sets based on cyclic set changes
-
-	return workoutExercises;
 }

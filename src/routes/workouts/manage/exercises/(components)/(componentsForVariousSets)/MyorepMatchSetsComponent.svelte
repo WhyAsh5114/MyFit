@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Separator } from '$lib/components/ui/separator';
-	import type { WorkoutExerciseInProgress } from '$lib/mesoToWorkouts';
+	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
 	import { workoutRunes } from '../../../workoutRunes.svelte';
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import EditIcon from 'virtual:icons/lucide/pencil';

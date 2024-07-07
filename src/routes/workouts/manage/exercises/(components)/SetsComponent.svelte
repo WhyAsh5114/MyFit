@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { WorkoutExerciseInProgress } from '$lib/mesoToWorkouts';
+	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
 	import TopDownSetsComponent from './(componentsForVariousSets)/TopDownSetsComponent.svelte';
 	import DropSetsComponent from './(componentsForVariousSets)/DropSetsComponent.svelte';
 	import MyorepMatchSetsComponent from './(componentsForVariousSets)/MyorepMatchSetsComponent.svelte';

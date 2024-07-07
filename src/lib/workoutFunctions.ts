@@ -1,6 +1,22 @@
 import { WorkoutStatus, type Mesocycle, type MuscleGroup, type Prisma } from '@prisma/client';
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from './components/mesocycleAndExerciseSplit/commonTypes';
 
+export type ActiveMesocycleWithProgressionData = Prisma.MesocycleGetPayload<{
+	include: {
+		mesocycleExerciseSplitDays: { include: { mesocycleSplitDayExercises: true } };
+		mesocycleCyclicSetChanges: true;
+		workoutsOfMesocycle: {
+			include: {
+				workout: {
+					include: {
+						workoutExercises: { include: { sets: { include: { miniSets: true } } } };
+					};
+				};
+			};
+		};
+	};
+}>;
+
 type SetInProgress = {
 	reps: number | undefined;
 	load: number | undefined;
@@ -69,4 +85,31 @@ export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
 	}
 
 	return { ...exercise, sets: newSets.slice(0, sets) };
+}
+
+export function progressiveOverloadMagic(
+	mesocycleWithProgressionData: ActiveMesocycleWithProgressionData,
+	userBodyweight: number | null
+): WorkoutExerciseInProgress[] {
+	const {
+		mesocycleCyclicSetChanges,
+		mesocycleExerciseSplitDays,
+		workoutsOfMesocycle,
+		...mesocycle
+	} = mesocycleWithProgressionData;
+
+	const todaysSplitDay =
+		mesocycleExerciseSplitDays[workoutsOfMesocycle.length % mesocycleExerciseSplitDays.length];
+	const workoutExercises = todaysSplitDay.mesocycleSplitDayExercises.map((fullExercise) => {
+		const { mesocycleExerciseSplitDayId, ...exercise } = fullExercise;
+		return createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(exercise);
+	});
+
+	// Fill in reps, load, RIR from previous workouts (lastSetToFailure?)
+	// Add miniSets and stuff if drop / myorep match sets
+	// Match RIR according to forceRIRMatching and RIRProgression
+	// Perform progressive overload according to mesocycle progression values
+	// Increase sets based on cyclic set changes
+
+	return workoutExercises;
 }

@@ -10,7 +10,7 @@
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { Switch } from '$lib/components/ui/switch';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
-	import type { TodaysWorkoutData } from '$lib/mesoToWorkouts.js';
+	import type { TodaysWorkoutData } from '$lib/workoutFunctions.js';
 	import { trpc } from '$lib/trpc/client.js';
 	import { cn, convertCamelCaseToNormal } from '$lib/utils.js';
 	import { onMount } from 'svelte';

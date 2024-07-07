@@ -5,7 +5,7 @@
 	import { toast } from 'svelte-sonner';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { workoutRunes } from '../workoutRunes.svelte';
-	import type { WorkoutExerciseInProgress } from '$lib/mesoToWorkouts';
+	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
 	import { goto, invalidate } from '$app/navigation';
 
 	let savingWorkout = $state(false);
