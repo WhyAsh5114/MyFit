@@ -34,7 +34,12 @@
 	<Separator class="my-1" />
 	<div class="grid grid-cols-4 gap-1">
 		<span class="text-center text-sm font-medium">Reps</span>
-		<span class="text-center text-sm font-medium">Load</span>
+		<span class="text-center text-sm font-medium">
+			Load
+			{#if exercise.involvesBodyweight}
+				<span class="text-xs font-semibold text-muted-foreground">(BW)</span>
+			{/if}
+		</span>
 		<span class="text-center text-sm font-medium">RIR</span>
 		<span></span>
 		{#each exercise.sets as set, idx}
