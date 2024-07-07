@@ -23,7 +23,7 @@ model WorkoutExercise {
   id                           String               @id @default(cuid())
   exerciseIndex                Int
   name                         String
-  workout                      Workout              @relation(fields: [workoutId], references: [id])
+  workout                      Workout              @relation(fields: [workoutId], references: [id], onDelete: Cascade)
   workoutId                    String
   targetMuscleGroup            MuscleGroup
   customMuscleGroup            String?
@@ -45,7 +45,7 @@ model WorkoutExercise {
 model WorkoutExerciseSet {
   id                String                   @id @default(cuid())
   setIndex          Int
-  workoutExercise   WorkoutExercise          @relation(fields: [workoutExerciseId], references: [id])
+  workoutExercise   WorkoutExercise          @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
   workoutExerciseId String
   reps              Int
   load              Int
@@ -60,6 +60,6 @@ model WorkoutExerciseMiniSet {
   reps                 Int
   load                 Int
   RIR                  Int
-  parentSet            WorkoutExerciseSet @relation(fields: [workoutExerciseSetId], references: [id])
+  parentSet            WorkoutExerciseSet @relation(fields: [workoutExerciseSetId], references: [id], onDelete: Cascade)
   workoutExerciseSetId String
 }
