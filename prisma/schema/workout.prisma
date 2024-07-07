@@ -12,7 +12,7 @@ model Workout {
   id                 String              @id @default(cuid())
   user               User                @relation(fields: [userId], references: [id])
   workoutOfMesocycle WorkoutOfMesocycle?
-  userBodyweight     Int?
+  userBodyweight     Int
   startedAt          DateTime
   endedAt            DateTime
   workoutExercises   WorkoutExercise[]
