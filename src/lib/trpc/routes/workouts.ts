@@ -24,7 +24,15 @@ import { z } from 'zod';
 const includeProgressionDataClause = {
 	mesocycleExerciseSplitDays: { include: { mesocycleSplitDayExercises: true } },
 	mesocycleCyclicSetChanges: true,
-	workoutsOfMesocycle: { include: { workout: { include: { workoutExercises: true } } } }
+	workoutsOfMesocycle: {
+		include: {
+			workout: {
+				include: {
+					workoutExercises: { include: { sets: { include: { miniSets: true } } } }
+				}
+			}
+		}
+	}
 } as const;
 
 type ActiveMesocycleWithProgressionData = Prisma.MesocycleGetPayload<{
@@ -124,11 +132,24 @@ export const workouts = t.router({
 	}),
 
 	getTodaysWorkoutExercises: t.procedure
-		.input(z.strictObject({ userBodyweight: z.number() }))
+		.input(z.strictObject({ userBodyweight: z.number(), splitDayIndex: z.number().int() }))
 		.query(async ({ ctx, input }) => {
 			const data = await prisma.mesocycle.findFirst({
 				where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
-				include: includeProgressionDataClause
+				include: {
+					mesocycleExerciseSplitDays: { include: { mesocycleSplitDayExercises: true } },
+					mesocycleCyclicSetChanges: true,
+					workoutsOfMesocycle: {
+						include: {
+							workout: {
+								include: {
+									workoutExercises: { include: { sets: { include: { miniSets: true } } } }
+								}
+							}
+						},
+						where: { splitDayIndex: input.splitDayIndex }
+					}
+				}
 			});
 			if (!data) return [];
 
