@@ -27,7 +27,7 @@ model WorkoutExercise {
   workoutId                    String
   targetMuscleGroup            MuscleGroup
   customMuscleGroup            String?
-  involvesBodyweight           Boolean
+  bodyweightFraction           Float?
   sets                         WorkoutExerciseSet[]
   setType                      SetType
   changeType                   ChangeType?

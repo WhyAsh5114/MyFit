@@ -23,7 +23,7 @@ model ExerciseTemplate {
   exerciseIndex      Int
   targetMuscleGroup  MuscleGroup
   customMuscleGroup  String?
-  involvesBodyweight Boolean
+  bodyweightFraction Float?
   setType            SetType
   repRangeStart      Int
   repRangeEnd        Int
