@@ -64,7 +64,7 @@ export function createMesocycleExerciseSplitRunes() {
 		for (let i = 0; i < splitDays.length; i++) {
 			if (splitDays[i].isRestDay || splitExercises[i] === undefined) splitExercises[i] = [];
 		}
-		for (let i = splitDays.length; i < splitExercises.length; i++) splitExercises.pop();
+		splitExercises.length = splitDays.length;
 		selectedSplitDayIndex = splitDays.findIndex((splitDay) => !splitDay.isRestDay);
 		saveStoresToLocalStorage();
 	}
