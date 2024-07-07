@@ -328,7 +328,7 @@ export const WorkoutExerciseSetSchema = z.object({
   setIndex: z.number().int(),
   workoutExerciseId: z.string(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int(),
   skipped: z.boolean(),
 })
@@ -343,7 +343,7 @@ export const WorkoutExerciseMiniSetSchema = z.object({
   id: z.string().cuid(),
   miniSetIndex: z.number().int(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int(),
   workoutExerciseSetId: z.string(),
 })
@@ -2008,7 +2008,7 @@ export const WorkoutExerciseSetWhereInputSchema: z.ZodType<Prisma.WorkoutExercis
   setIndex: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   workoutExerciseId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   reps: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  load: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  load: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
   RIR: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   skipped: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   workoutExercise: z.union([ z.lazy(() => WorkoutExerciseRelationFilterSchema),z.lazy(() => WorkoutExerciseWhereInputSchema) ]).optional(),
@@ -2038,7 +2038,7 @@ export const WorkoutExerciseSetWhereUniqueInputSchema: z.ZodType<Prisma.WorkoutE
   setIndex: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   workoutExerciseId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   reps: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  load: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  load: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
   RIR: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   skipped: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   workoutExercise: z.union([ z.lazy(() => WorkoutExerciseRelationFilterSchema),z.lazy(() => WorkoutExerciseWhereInputSchema) ]).optional(),
@@ -2068,7 +2068,7 @@ export const WorkoutExerciseSetScalarWhereWithAggregatesInputSchema: z.ZodType<P
   setIndex: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   workoutExerciseId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   reps: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  load: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  load: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
   RIR: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   skipped: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
 }).strict();
@@ -2080,7 +2080,7 @@ export const WorkoutExerciseMiniSetWhereInputSchema: z.ZodType<Prisma.WorkoutExe
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   miniSetIndex: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   reps: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  load: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  load: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
   RIR: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   workoutExerciseSetId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   parentSet: z.union([ z.lazy(() => WorkoutExerciseSetRelationFilterSchema),z.lazy(() => WorkoutExerciseSetWhereInputSchema) ]).optional(),
@@ -2106,7 +2106,7 @@ export const WorkoutExerciseMiniSetWhereUniqueInputSchema: z.ZodType<Prisma.Work
   NOT: z.union([ z.lazy(() => WorkoutExerciseMiniSetWhereInputSchema),z.lazy(() => WorkoutExerciseMiniSetWhereInputSchema).array() ]).optional(),
   miniSetIndex: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   reps: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  load: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  load: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
   RIR: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   workoutExerciseSetId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   parentSet: z.union([ z.lazy(() => WorkoutExerciseSetRelationFilterSchema),z.lazy(() => WorkoutExerciseSetWhereInputSchema) ]).optional(),
@@ -2133,7 +2133,7 @@ export const WorkoutExerciseMiniSetScalarWhereWithAggregatesInputSchema: z.ZodTy
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   miniSetIndex: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   reps: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
-  load: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  load: z.union([ z.lazy(() => FloatWithAggregatesFilterSchema),z.number() ]).optional(),
   RIR: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   workoutExerciseSetId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
@@ -3315,7 +3315,7 @@ export const WorkoutExerciseSetCreateInputSchema: z.ZodType<Prisma.WorkoutExerci
   id: z.string().cuid().optional(),
   setIndex: z.number().int(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int(),
   skipped: z.boolean(),
   workoutExercise: z.lazy(() => WorkoutExerciseCreateNestedOneWithoutSetsInputSchema),
@@ -3327,7 +3327,7 @@ export const WorkoutExerciseSetUncheckedCreateInputSchema: z.ZodType<Prisma.Work
   setIndex: z.number().int(),
   workoutExerciseId: z.string(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int(),
   skipped: z.boolean(),
   miniSets: z.lazy(() => WorkoutExerciseMiniSetUncheckedCreateNestedManyWithoutParentSetInputSchema).optional()
@@ -3337,7 +3337,7 @@ export const WorkoutExerciseSetUpdateInputSchema: z.ZodType<Prisma.WorkoutExerci
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   setIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   skipped: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   workoutExercise: z.lazy(() => WorkoutExerciseUpdateOneRequiredWithoutSetsNestedInputSchema).optional(),
@@ -3349,7 +3349,7 @@ export const WorkoutExerciseSetUncheckedUpdateInputSchema: z.ZodType<Prisma.Work
   setIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   workoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   skipped: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   miniSets: z.lazy(() => WorkoutExerciseMiniSetUncheckedUpdateManyWithoutParentSetNestedInputSchema).optional()
@@ -3360,7 +3360,7 @@ export const WorkoutExerciseSetCreateManyInputSchema: z.ZodType<Prisma.WorkoutEx
   setIndex: z.number().int(),
   workoutExerciseId: z.string(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int(),
   skipped: z.boolean()
 }).strict();
@@ -3369,7 +3369,7 @@ export const WorkoutExerciseSetUpdateManyMutationInputSchema: z.ZodType<Prisma.W
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   setIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   skipped: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -3379,7 +3379,7 @@ export const WorkoutExerciseSetUncheckedUpdateManyInputSchema: z.ZodType<Prisma.
   setIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   workoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   skipped: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -3388,7 +3388,7 @@ export const WorkoutExerciseMiniSetCreateInputSchema: z.ZodType<Prisma.WorkoutEx
   id: z.string().cuid().optional(),
   miniSetIndex: z.number().int(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int(),
   parentSet: z.lazy(() => WorkoutExerciseSetCreateNestedOneWithoutMiniSetsInputSchema)
 }).strict();
@@ -3397,7 +3397,7 @@ export const WorkoutExerciseMiniSetUncheckedCreateInputSchema: z.ZodType<Prisma.
   id: z.string().cuid().optional(),
   miniSetIndex: z.number().int(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int(),
   workoutExerciseSetId: z.string()
 }).strict();
@@ -3406,7 +3406,7 @@ export const WorkoutExerciseMiniSetUpdateInputSchema: z.ZodType<Prisma.WorkoutEx
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   miniSetIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   parentSet: z.lazy(() => WorkoutExerciseSetUpdateOneRequiredWithoutMiniSetsNestedInputSchema).optional()
 }).strict();
@@ -3415,7 +3415,7 @@ export const WorkoutExerciseMiniSetUncheckedUpdateInputSchema: z.ZodType<Prisma.
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   miniSetIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   workoutExerciseSetId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -3424,7 +3424,7 @@ export const WorkoutExerciseMiniSetCreateManyInputSchema: z.ZodType<Prisma.Worko
   id: z.string().cuid().optional(),
   miniSetIndex: z.number().int(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int(),
   workoutExerciseSetId: z.string()
 }).strict();
@@ -3433,7 +3433,7 @@ export const WorkoutExerciseMiniSetUpdateManyMutationInputSchema: z.ZodType<Pris
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   miniSetIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -3441,7 +3441,7 @@ export const WorkoutExerciseMiniSetUncheckedUpdateManyInputSchema: z.ZodType<Pri
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   miniSetIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   workoutExerciseSetId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -7764,7 +7764,7 @@ export const WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema: z.ZodTyp
   id: z.string().cuid().optional(),
   setIndex: z.number().int(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int(),
   skipped: z.boolean(),
   miniSets: z.lazy(() => WorkoutExerciseMiniSetCreateNestedManyWithoutParentSetInputSchema).optional()
@@ -7774,7 +7774,7 @@ export const WorkoutExerciseSetUncheckedCreateWithoutWorkoutExerciseInputSchema:
   id: z.string().cuid().optional(),
   setIndex: z.number().int(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int(),
   skipped: z.boolean(),
   miniSets: z.lazy(() => WorkoutExerciseMiniSetUncheckedCreateNestedManyWithoutParentSetInputSchema).optional()
@@ -7843,7 +7843,7 @@ export const WorkoutExerciseSetScalarWhereInputSchema: z.ZodType<Prisma.WorkoutE
   setIndex: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   workoutExerciseId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   reps: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  load: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  load: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
   RIR: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   skipped: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
 }).strict();
@@ -7899,7 +7899,7 @@ export const WorkoutExerciseMiniSetCreateWithoutParentSetInputSchema: z.ZodType<
   id: z.string().cuid().optional(),
   miniSetIndex: z.number().int(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int()
 }).strict();
 
@@ -7907,7 +7907,7 @@ export const WorkoutExerciseMiniSetUncheckedCreateWithoutParentSetInputSchema: z
   id: z.string().cuid().optional(),
   miniSetIndex: z.number().int(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int()
 }).strict();
 
@@ -7997,7 +7997,7 @@ export const WorkoutExerciseMiniSetScalarWhereInputSchema: z.ZodType<Prisma.Work
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   miniSetIndex: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   reps: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  load: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  load: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
   RIR: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   workoutExerciseSetId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict();
@@ -8006,7 +8006,7 @@ export const WorkoutExerciseSetCreateWithoutMiniSetsInputSchema: z.ZodType<Prism
   id: z.string().cuid().optional(),
   setIndex: z.number().int(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int(),
   skipped: z.boolean(),
   workoutExercise: z.lazy(() => WorkoutExerciseCreateNestedOneWithoutSetsInputSchema)
@@ -8017,7 +8017,7 @@ export const WorkoutExerciseSetUncheckedCreateWithoutMiniSetsInputSchema: z.ZodT
   setIndex: z.number().int(),
   workoutExerciseId: z.string(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int(),
   skipped: z.boolean()
 }).strict();
@@ -8042,7 +8042,7 @@ export const WorkoutExerciseSetUpdateWithoutMiniSetsInputSchema: z.ZodType<Prism
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   setIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   skipped: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   workoutExercise: z.lazy(() => WorkoutExerciseUpdateOneRequiredWithoutSetsNestedInputSchema).optional()
@@ -8053,7 +8053,7 @@ export const WorkoutExerciseSetUncheckedUpdateWithoutMiniSetsInputSchema: z.ZodT
   setIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   workoutExerciseId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   skipped: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -8672,7 +8672,7 @@ export const WorkoutExerciseSetCreateManyWorkoutExerciseInputSchema: z.ZodType<P
   id: z.string().cuid().optional(),
   setIndex: z.number().int(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int(),
   skipped: z.boolean()
 }).strict();
@@ -8681,7 +8681,7 @@ export const WorkoutExerciseSetUpdateWithoutWorkoutExerciseInputSchema: z.ZodTyp
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   setIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   skipped: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   miniSets: z.lazy(() => WorkoutExerciseMiniSetUpdateManyWithoutParentSetNestedInputSchema).optional()
@@ -8691,7 +8691,7 @@ export const WorkoutExerciseSetUncheckedUpdateWithoutWorkoutExerciseInputSchema:
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   setIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   skipped: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   miniSets: z.lazy(() => WorkoutExerciseMiniSetUncheckedUpdateManyWithoutParentSetNestedInputSchema).optional()
@@ -8701,7 +8701,7 @@ export const WorkoutExerciseSetUncheckedUpdateManyWithoutWorkoutExerciseInputSch
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   setIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   skipped: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -8710,7 +8710,7 @@ export const WorkoutExerciseMiniSetCreateManyParentSetInputSchema: z.ZodType<Pri
   id: z.string().cuid().optional(),
   miniSetIndex: z.number().int(),
   reps: z.number().int(),
-  load: z.number().int(),
+  load: z.number(),
   RIR: z.number().int()
 }).strict();
 
@@ -8718,7 +8718,7 @@ export const WorkoutExerciseMiniSetUpdateWithoutParentSetInputSchema: z.ZodType<
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   miniSetIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -8726,7 +8726,7 @@ export const WorkoutExerciseMiniSetUncheckedUpdateWithoutParentSetInputSchema: z
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   miniSetIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -8734,7 +8734,7 @@ export const WorkoutExerciseMiniSetUncheckedUpdateManyWithoutParentSetInputSchem
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   miniSetIndex: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   reps: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  load: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  load: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
   RIR: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 

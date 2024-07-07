@@ -48,7 +48,7 @@ model WorkoutExerciseSet {
   workoutExercise   WorkoutExercise          @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
   workoutExerciseId String
   reps              Int
-  load              Int
+  load              Float
   RIR               Int
   skipped           Boolean
   miniSets          WorkoutExerciseMiniSet[]
@@ -58,7 +58,7 @@ model WorkoutExerciseMiniSet {
   id                   String             @id @default(cuid())
   miniSetIndex         Int
   reps                 Int
-  load                 Int
+  load                 Float
   RIR                  Int
   parentSet            WorkoutExerciseSet @relation(fields: [workoutExerciseSetId], references: [id], onDelete: Cascade)
   workoutExerciseSetId String
