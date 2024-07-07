@@ -67,7 +67,7 @@
 		let exercisesLink = `./exercises?userBodyweight=${userBodyweight}`;
 		if (useActiveMesocycle) exercisesLink += '&useActiveMesocycle';
 		if (mode === 'keepCurrent') exercisesLink += '&keepCurrent';
-		if (workoutOfMesocycle) exercisesLink += `&splitDayIndex=${workoutOfMesocycle}`;
+		if (workoutOfMesocycle) exercisesLink += `&splitDayIndex=${workoutOfMesocycle.splitDayIndex}`;
 		goto(exercisesLink);
 	}
 
