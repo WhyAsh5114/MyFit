@@ -94,7 +94,7 @@
 			{convertCamelCaseToNormal(props.exerciseTemplate.setType)} sets of
 			{props.exerciseTemplate.repRangeStart} to {props.exerciseTemplate.repRangeEnd} reps
 		</span>
-		{#if props.exerciseTemplate.involvesBodyweight}
+		{#if props.exerciseTemplate.bodyweightFraction}
 			<Badge variant="outline">BW</Badge>
 		{/if}
 		<Badge class="whitespace-nowrap" variant="secondary">

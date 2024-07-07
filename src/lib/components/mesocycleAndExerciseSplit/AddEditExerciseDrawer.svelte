@@ -62,7 +62,7 @@
 	const defaultExercise: Partial<FullExerciseTemplate> = {
 		name: '',
 		setType: 'Straight',
-		involvesBodyweight: false,
+		bodyweightFraction: null,
 		...(props.context !== 'exerciseSplit' && structuredClone(extraMesocycleProps))
 	};
 
@@ -227,14 +227,34 @@
 				</div>
 			{/if}
 			<div class="flex w-full flex-col gap-1.5">
-				<Label for="exercise-involves-bodyweight">Involves bodyweight</Label>
-				<div class="flex items-center rounded-md border px-2 py-1.5">
-					<Switch
-						includeInput
-						id="exercise-involves-bodyweight"
-						name="exercise-involves-bodyweight"
-						bind:checked={currentExercise.involvesBodyweight}
-					/>
+				<Label
+					for={currentExercise.bodyweightFraction !== null
+						? 'exercise-bodyweight-fraction'
+						: 'exercise-involves-bodyweight'}>Bodyweight fraction</Label
+				>
+				<div class="flex gap-0.5">
+					{#if currentExercise.bodyweightFraction !== null}
+						<Input
+							id="exercise-bodyweight-fraction"
+							min={0.01}
+							step={0.01}
+							type="number"
+							placeholder="Fraction"
+							bind:value={currentExercise.bodyweightFraction}
+							required
+						/>
+					{/if}
+					<div class="flex grow items-center rounded-md border px-2 py-1.5">
+						<Switch
+							includeInput
+							id="exercise-involves-bodyweight"
+							name="exercise-involves-bodyweight"
+							checked={currentExercise.bodyweightFraction !== null}
+							onCheckedChange={(c) => {
+								currentExercise.bodyweightFraction = c ? undefined : null;
+							}}
+						/>
+					</div>
 				</div>
 			</div>
 			<div class="flex w-full flex-col gap-1.5">

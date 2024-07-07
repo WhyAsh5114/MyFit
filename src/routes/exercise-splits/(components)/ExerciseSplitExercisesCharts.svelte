@@ -55,7 +55,7 @@
 		if (chart) chart.destroy();
 		if (selectedChartType.value === chartTypes[0]) {
 			const bodyweightExercises = exercises.filter(
-				(exercise) => exercise.involvesBodyweight
+				(exercise) => exercise.bodyweightFraction !== null
 			).length;
 			chart = new Chart(chartCanvas, {
 				type: 'doughnut',

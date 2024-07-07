@@ -79,7 +79,7 @@
 			{convertCamelCaseToNormal(exercise.setType)} sets of
 			{exercise.repRangeStart} to {exercise.repRangeEnd} reps
 		</span>
-		{#if exercise.involvesBodyweight}
+		{#if exercise.bodyweightFraction !== null}
 			<Badge variant="outline">BW</Badge>
 		{/if}
 		<Badge class="whitespace-nowrap" variant="secondary">
@@ -94,6 +94,6 @@
 		</div>
 	{/if}
 	{#if exercise.sets.length > 0}
-		<SetsComponent bind:exercise {reordering} />
+		<SetsComponent {reordering} bind:exercise />
 	{/if}
 </div>

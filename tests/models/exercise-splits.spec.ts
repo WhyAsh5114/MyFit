@@ -22,7 +22,8 @@ test('create an exercise split', async ({ page }) => {
 	await page.locator('button').filter({ hasText: 'Pick one' }).click();
 	await page.getByRole('option', { name: 'Custom' }).click();
 	await page.getByLabel('Muscle group').fill('Soleus');
-	await page.getByLabel('Involves bodyweight').click();
+	await page.getByLabel('Bodyweight fraction').click();
+	await page.getByLabel('Bodyweight fraction').fill('1');
 	await page.locator('button').filter({ hasText: 'Straight' }).click();
 	await page.getByRole('option', { name: 'Drop' }).click();
 	await page.getByLabel('Rep range start').fill('15');
