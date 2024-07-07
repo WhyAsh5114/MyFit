@@ -87,8 +87,66 @@ export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
 	return { ...exercise, sets: newSets.slice(0, sets) };
 }
 
+function linearRegression(values: number[]) {
+	const n = values.length;
+	if (n < 2) throw new Error('At least two values are required to perform linear regression.');
+
+	const x = Array.from({ length: n }, (_, i) => i + 1);
+	const sumX = x.reduce((a, b) => a + b, 0);
+	const sumY = values.reduce((a, b) => a + b, 0);
+	const sumXY = x.reduce((sum, xi, i) => sum + xi * values[i], 0);
+	const sumXX = x.reduce((sum, xi) => sum + xi * xi, 0);
+
+	const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+	const intercept = (sumY - slope * sumX) / n;
+
+	return { slope, intercept };
+}
+
+function predictNextValue(values: number[], desiredRate: number, blendFactor = 0.5): number {
+	const { slope: actualRate } = linearRegression(values);
+	const blendedRate = actualRate * (1 - blendFactor) + desiredRate * blendFactor;
+	const lastValue = values[values.length - 1];
+	const nextValue = lastValue * (1 + blendedRate);
+
+	return nextValue;
+}
+
+function getRIRForWeek(rirArray: number[], cycle: number): number {
+	let cumulativeWeeks = 0;
+	for (let i = 0; i < rirArray.length; i++) {
+		cumulativeWeeks += rirArray[i];
+		if (cycle <= cumulativeWeeks) return rirArray.length - i - 1;
+	}
+	throw new Error('Cycle number is out of range.');
+}
+
+function setRIROfExercise(
+	exercise: WorkoutExerciseInProgress,
+	cycleNumber: number,
+	mesocycle: Mesocycle
+) {
+	const currentCycleRIR = getRIRForWeek(mesocycle.RIRProgression, cycleNumber);
+	exercise.sets.forEach((set, idx) => {
+		const oldRIR = set.RIR;
+		set.RIR = currentCycleRIR;
+		if (idx === exercise.sets.length - 1) {
+			if (typeof exercise.lastSetToFailure === 'boolean') {
+				set.RIR = exercise.lastSetToFailure ? 0 : set.RIR;
+			} else if (mesocycle.lastSetToFailure === true) {
+				set.RIR = 0;
+			}
+		}
+		if (set.reps !== undefined && oldRIR !== undefined) {
+			if (oldRIR < currentCycleRIR) {
+			}
+		}
+	});
+}
+
 export function progressiveOverloadMagic(
 	mesocycleWithProgressionData: ActiveMesocycleWithProgressionData,
+	cycleNumber: number,
 	userBodyweight: number | null
 ): WorkoutExerciseInProgress[] {
 	const {
@@ -105,11 +163,31 @@ export function progressiveOverloadMagic(
 		return createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(exercise);
 	});
 
-	// Fill in reps, load, RIR from previous workouts (lastSetToFailure?)
+	// Fill in reps, load, RIR from previous workouts
+	// Also do progressive overload here
+	if (workoutsOfMesocycle.length === 0) {
+		const currentCycleRIR = getRIRForWeek(mesocycle.RIRProgression, cycleNumber);
+		workoutExercises.forEach((ex) => {
+			ex.sets.forEach((set, idx) => {
+				set.RIR = currentCycleRIR;
+				if (idx === ex.sets.length - 1)
+					if (typeof ex.lastSetToFailure === 'boolean') set.RIR = ex.lastSetToFailure ? 0 : set.RIR;
+					else if (mesocycle.lastSetToFailure === true) set.RIR = 0;
+			});
+		});
+	} else if (workoutsOfMesocycle.length === 1) {
+		// Just fill in repLoadRIR using meso's overload rate
+	} else if (workoutsOfMesocycle.length > 1) {
+		// Perform regression
+	}
+
 	// Add miniSets and stuff if drop / myorep match sets
-	// Match RIR according to forceRIRMatching and RIRProgression
-	// Perform progressive overload according to mesocycle progression values
+
+	// Adjust RIR and reps according to forceRIRMatching and RIRProgression (lastSetToFailure?)
+
 	// Increase sets based on cyclic set changes
+
+	// Consider all progression overrides
 
 	return workoutExercises;
 }

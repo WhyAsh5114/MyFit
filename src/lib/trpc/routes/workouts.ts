@@ -131,10 +131,10 @@ export const workouts = t.router({
 			});
 			if (!data) return [];
 
-			const { isRestDay } = getBasicDayInfo(data);
+			const { isRestDay, cycleNumber } = getBasicDayInfo(data);
 			if (isRestDay) return [];
 
-			return progressiveOverloadMagic(data, input.userBodyweight);
+			return progressiveOverloadMagic(data, cycleNumber, input.userBodyweight);
 		}),
 
 	createWorkout: t.procedure.input(createWorkoutSchema).mutation(async ({ ctx, input }) => {
