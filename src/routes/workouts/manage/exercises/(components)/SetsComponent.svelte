@@ -33,10 +33,9 @@
 			return;
 		}
 		set.completed = !set.completed;
-		// If first set of straight set, set all loads of all sets to this set's load
-		if (exercise.setType === 'Straight' || exercise.setType === 'MyorepMatch') {
-			if (idx === 0) exercise.sets.forEach((_set) => (_set.load = set.load));
-		}
+		if (['Straight', 'Myorep', 'MyorepMatch'].includes(exercise.setType) && idx === 0)
+			exercise.sets.forEach((_set) => (_set.load = set.load));
+
 		workoutRunes.workoutExercises = workoutRunes.workoutExercises;
 	}
 
@@ -90,6 +89,18 @@
 		if (set.reps === undefined) return firstSet.reps;
 		return firstSet.reps - set.reps - arraySum(set.miniSets.map((miniSet) => miniSet.reps ?? 0));
 	}
+
+	function getMiniSetLoad(setIdx: number, miniSetIdx: number) {
+		if (exercise.setType !== 'Drop') return;
+		if (exercise.changeAmount === null || exercise.changeAmount === undefined) return;
+		let set = exercise.sets[setIdx];
+
+		if (typeof set.load === 'number') {
+			if (exercise.changeType === 'AbsoluteLoad')
+				return set.load - (miniSetIdx + 1) * exercise.changeAmount;
+			return set.load * (1 - (miniSetIdx + 1) * (exercise.changeAmount / 100));
+		}
+	}
 </script>
 
 {#if !reordering}
@@ -119,6 +130,7 @@
 						<Input
 							type="number"
 							min={0}
+							step={0.25}
 							id="{exercise.name}-set-{idx + 1}-load"
 							disabled={set.completed || set.skipped}
 							required
@@ -186,12 +198,15 @@
 							{#if exercise.setType === 'MyorepMatch'}
 								<span></span>
 							{:else}
+								{@const expectedLoad = getMiniSetLoad(idx, miniIdx)}
 								<Input
 									type="number"
 									min={0}
+									step={0.25}
 									id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-load"
 									disabled={miniSet.completed}
 									required
+									placeholder={expectedLoad === undefined ? expectedLoad : expectedLoad.toString()}
 									bind:value={miniSet.load}
 								/>
 							{/if}
@@ -239,7 +254,7 @@
 					<span class="grid place-items-center text-sm font-medium text-primary">
 						{#if repsLeft && repsLeft > 0}
 							{repsLeft} {repsLeft === 1 ? 'rep' : 'reps'} left
-						{:else}
+						{:else if typeof repsLeft === 'number'}
 							matched
 						{/if}
 					</span>
