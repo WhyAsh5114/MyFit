@@ -98,6 +98,7 @@
 			{:then activeMesocycle}
 				<Switch
 					id="start-mesocycle-immediately"
+					name="start-mesocycle-immediately"
 					class="place-self-end"
 					disabled={activeMesocycle !== null}
 					bind:checked={startImmediately}
