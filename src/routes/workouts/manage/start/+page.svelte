@@ -63,9 +63,11 @@
 		} else if (workoutRunes.workoutData === null) workoutRunes.workoutData = workoutData;
 		workoutRunes.saveStoresToLocalStorage();
 
+		const workoutOfMesocycle = workoutRunes.workoutData.workoutOfMesocycle;
 		let exercisesLink = `./exercises?userBodyweight=${userBodyweight}`;
 		if (useActiveMesocycle) exercisesLink += '&useActiveMesocycle';
 		if (mode === 'keepCurrent') exercisesLink += '&keepCurrent';
+		if (workoutOfMesocycle) exercisesLink += `&splitDayIndex=${workoutOfMesocycle}`;
 		goto(exercisesLink);
 	}
 
