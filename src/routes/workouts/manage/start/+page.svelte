@@ -72,9 +72,14 @@
 	}
 
 	async function completeRestDay() {
+		if (typeof userBodyweight !== 'number') {
+			toast.error('Enter your bodyweight');
+			return;
+		}
 		completingRestDay = true;
 		const { message } = await trpc().workouts.completeRestDay.mutate({
-			splitDayIndex: workoutRunes.workoutData?.workoutOfMesocycle?.splitDayIndex as number
+			splitDayIndex: workoutRunes.workoutData?.workoutOfMesocycle?.splitDayIndex as number,
+			userBodyweight
 		});
 		toast.success(message);
 		await invalidate('workouts:start');

@@ -24,8 +24,14 @@
 			sets.map((set) => set.miniSets)
 		);
 
+		if (typeof workoutRunes.workoutData?.userBodyweight !== 'number') {
+			toast.error('Invalid user bodyweight at start page');
+			return;
+		}
+		const userBodyweight = workoutRunes.workoutData.userBodyweight;
+
 		const { message } = await trpc().workouts.createWorkout.mutate({
-			workoutData: workoutRunes.workoutData,
+			workoutData: { ...workoutRunes.workoutData, userBodyweight },
 			workoutExercises: workoutRunes.workoutExercises.map((ex, idx) => {
 				const { sets, ...exercise } = ex;
 				return { ...exercise, exerciseIndex: idx };

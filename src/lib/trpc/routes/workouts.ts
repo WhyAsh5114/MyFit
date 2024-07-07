@@ -19,7 +19,7 @@ import { z } from 'zod';
 
 const todaysWorkoutDataSchema = z.object({
 	startedAt: z.date().or(z.string().datetime()),
-	userBodyweight: z.number().nullable(),
+	userBodyweight: z.number(),
 	workoutOfMesocycle: z
 		.object({
 			mesocycle: z.object({ id: z.string().cuid() }),
@@ -232,7 +232,7 @@ export const workouts = t.router({
 	}),
 
 	completeRestDay: t.procedure
-		.input(z.strictObject({ splitDayIndex: z.number().int() }))
+		.input(z.strictObject({ splitDayIndex: z.number().int(), userBodyweight: z.number() }))
 		.mutation(async ({ ctx, input }) => {
 			const activeMesocycle = await prisma.mesocycle.findFirst({
 				where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
@@ -252,7 +252,8 @@ export const workouts = t.router({
 							mesocycleId: activeMesocycle.id,
 							workoutStatus: 'RestDay'
 						}
-					}
+					},
+					userBodyweight: input.userBodyweight
 				}
 			});
 			return { message: 'Rest day completed successfully' };
