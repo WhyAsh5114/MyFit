@@ -13,7 +13,6 @@
 	function updateChartJSColors() {
 		const style = getComputedStyle(document.body);
 		const primaryColor = style.getPropertyValue('--primary').split(' ').join(', ');
-		const foregroundColor = style.getPropertyValue('--foreground').split(' ').join(', ');
 		const foregroundMutedColor = style.getPropertyValue('--muted-foreground').split(' ').join(', ');
 
 		Chart.defaults.backgroundColor = `hsl(${primaryColor})`;

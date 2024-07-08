@@ -23,6 +23,7 @@
 </script>
 
 <svelte:head>
+	<!-- eslint-disable -->
 	{@html webManifestLink}
 </svelte:head>
 

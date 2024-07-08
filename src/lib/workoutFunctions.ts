@@ -73,7 +73,7 @@ export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
 		skipped: false
 	};
 
-	let newSets = oldSets ? [...oldSets] : [];
+	const newSets = oldSets ? [...oldSets] : [];
 	while (newSets.length < sets) newSets.push({ ...defaultSet, miniSets: [] });
 
 	if (exercise.setType !== 'Drop' && exercise.setType !== 'MyorepMatch')
@@ -87,31 +87,6 @@ export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
 	return { ...exercise, sets: newSets.slice(0, sets) };
 }
 
-function linearRegression(values: number[]) {
-	const n = values.length;
-	if (n < 2) throw new Error('At least two values are required to perform linear regression.');
-
-	const x = Array.from({ length: n }, (_, i) => i + 1);
-	const sumX = x.reduce((a, b) => a + b, 0);
-	const sumY = values.reduce((a, b) => a + b, 0);
-	const sumXY = x.reduce((sum, xi, i) => sum + xi * values[i], 0);
-	const sumXX = x.reduce((sum, xi) => sum + xi * xi, 0);
-
-	const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
-	const intercept = (sumY - slope * sumX) / n;
-
-	return { slope, intercept };
-}
-
-function predictNextValue(values: number[], desiredRate: number, blendFactor = 0.5): number {
-	const { slope: actualRate } = linearRegression(values);
-	const blendedRate = actualRate * (1 - blendFactor) + desiredRate * blendFactor;
-	const lastValue = values[values.length - 1];
-	const nextValue = lastValue * (1 + blendedRate);
-
-	return nextValue;
-}
-
 function getRIRForWeek(rirArray: number[], cycle: number): number {
 	let cumulativeWeeks = 0;
 	for (let i = 0; i < rirArray.length; i++) {
@@ -119,29 +94,6 @@ function getRIRForWeek(rirArray: number[], cycle: number): number {
 		if (cycle <= cumulativeWeeks) return rirArray.length - i - 1;
 	}
 	throw new Error('Cycle number is out of range.');
-}
-
-function setRIROfExercise(
-	exercise: WorkoutExerciseInProgress,
-	cycleNumber: number,
-	mesocycle: Mesocycle
-) {
-	const currentCycleRIR = getRIRForWeek(mesocycle.RIRProgression, cycleNumber);
-	exercise.sets.forEach((set, idx) => {
-		const oldRIR = set.RIR;
-		set.RIR = currentCycleRIR;
-		if (idx === exercise.sets.length - 1) {
-			if (typeof exercise.lastSetToFailure === 'boolean') {
-				set.RIR = exercise.lastSetToFailure ? 0 : set.RIR;
-			} else if (mesocycle.lastSetToFailure === true) {
-				set.RIR = 0;
-			}
-		}
-		if (set.reps !== undefined && oldRIR !== undefined) {
-			if (oldRIR < currentCycleRIR) {
-			}
-		}
-	});
 }
 
 export function progressiveOverloadMagic(

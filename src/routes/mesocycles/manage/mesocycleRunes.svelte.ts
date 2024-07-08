@@ -174,7 +174,7 @@ export function createMesocycleRunes() {
 		}
 
 		function distributeEvenly(volume: number, n: number) {
-			let distribution = Array(n).fill(0);
+			const distribution = Array(n).fill(0);
 			const base = Math.floor(volume / n);
 			const remainder = volume % n;
 

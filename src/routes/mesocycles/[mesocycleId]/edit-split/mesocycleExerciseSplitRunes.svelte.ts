@@ -51,7 +51,7 @@ export function createMesocycleExerciseSplitRunes() {
 	}
 
 	function getDataLossDays() {
-		let dataLossDays: number[] = [];
+		const dataLossDays: number[] = [];
 		for (let i = 0; i < splitExercises.length; i++) {
 			if (splitDays[i] === undefined && splitExercises[i].length === 0) continue;
 			if (splitDays[i] === undefined && splitExercises[i].length > 0) dataLossDays.push(i);

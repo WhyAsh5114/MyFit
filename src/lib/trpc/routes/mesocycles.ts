@@ -129,7 +129,7 @@ export const mesocycles = t.router({
 	editById: t.procedure
 		.input(z.strictObject({ id: z.string().cuid(), mesocycleData: zodMesocycleEditInput }))
 		.mutation(async ({ input, ctx }) => {
-			await prisma.$transaction(async (tx) => {
+			await prisma.$transaction(async () => {
 				const mesocycle = await prisma.mesocycle.update({
 					where: { id: input.id, userId: ctx.userId },
 					data: { ...input.mesocycleData.mesocycle },

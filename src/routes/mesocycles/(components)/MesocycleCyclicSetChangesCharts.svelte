@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
-	import { convertCamelCaseToNormal, groupBy } from '$lib/utils';
+	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { type Prisma } from '@prisma/client';
 	import type { Selected } from 'bits-ui';
 	import {

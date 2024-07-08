@@ -20,6 +20,7 @@ export const test = baseTest.extend<
 	// Use the same storage state for all tests in this worker.
 	storageState: ({ workerStorageState }, use) => use(workerStorageState),
 	userData: [
+		// eslint-disable-next-line no-empty-pattern
 		async ({}, use) => {
 			// Use parallelIndex as a unique identifier for each worker.
 			const userData = JSON.parse(process.env.TEST_USERS_DATA as string)[test.info().parallelIndex];

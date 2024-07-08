@@ -5,7 +5,6 @@
 	import DownloadIcon from 'virtual:icons/lucide/download';
 	import UpdateIcon from 'virtual:icons/lucide/refresh-cw';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { cn } from '$lib/utils';
 
 	let { isMobile }: { isMobile: boolean } = $props();
