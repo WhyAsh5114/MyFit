@@ -33,7 +33,7 @@
 	{/if}
 	<Table.Root class="mt-1">
 		<Table.Header>
-			<Table.Row class="h-2 border-none bg-muted">
+			<Table.Row class="h-2 border-none bg-secondary">
 				<Table.Head class="h-8 w-5"></Table.Head>
 				<Table.Head class="h-8 text-center text-foreground">Reps</Table.Head>
 				<Table.Head class="h-8 text-center text-foreground">Load</Table.Head>
