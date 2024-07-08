@@ -1,23 +1,67 @@
 <script lang="ts">
+	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
+	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
-	import type { WorkoutWithMesoData } from '../../+page.server';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { convertCamelCaseToNormal } from '$lib/utils';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
+	import MenuIcon from 'virtual:icons/lucide/menu';
+	import EditIcon from 'virtual:icons/lucide/pencil';
+	import DeleteIcon from 'virtual:icons/lucide/trash';
+	import type { FullWorkoutWithMesoData } from '../+page.server';
 
-	let { workout }: { workout: WorkoutWithMesoData } = $props();
+	type PropsType = { workout: FullWorkoutWithMesoData };
+	let { workout }: PropsType = $props();
+	let deleteConfirmDrawerOpen = $state(false);
+	let callingDeleteEndpoint = $state(false);
 
 	function getMinuteDifference(date1: Date, date2: Date): number {
 		const msInMinute = 60 * 1000;
 		const diffInMs = Math.abs(date1.getTime() - date2.getTime());
 		return Math.floor(diffInMs / msInMinute);
 	}
+
+	const targetedMuscleGroups = new Set(
+		workout.workoutExercises.map((ex) => ex.customMuscleGroup ?? ex.targetMuscleGroup)
+	);
+
+	async function editWorkout() {
+		// TODO
+	}
+
+	async function deleteWorkout() {
+		callingDeleteEndpoint = true;
+		// TODO
+		callingDeleteEndpoint = false;
+	}
 </script>
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title>
+		<Card.Title class="flex items-center justify-between">
 			{workout.startedAt.toLocaleDateString(undefined, {
 				day: '2-digit',
 				month: 'long'
 			})}
+			<DropdownMenu.Root>
+				<DropdownMenu.Trigger aria-label="workout-options">
+					<MenuIcon />
+				</DropdownMenu.Trigger>
+				<DropdownMenu.Content align="end">
+					<DropdownMenu.Group>
+						<DropdownMenu.Item class="gap-2" onclick={editWorkout}>
+							<EditIcon /> Edit
+						</DropdownMenu.Item>
+						<DropdownMenu.Item
+							class="gap-2 text-red-500"
+							on:click={() => (deleteConfirmDrawerOpen = true)}
+						>
+							<DeleteIcon /> Delete
+						</DropdownMenu.Item>
+					</DropdownMenu.Group>
+				</DropdownMenu.Content>
+			</DropdownMenu.Root>
 		</Card.Title>
 		<Card.Description>
 			{workout.startedAt.toLocaleTimeString(undefined, {
@@ -29,10 +73,54 @@
 			({getMinuteDifference(workout.endedAt, workout.startedAt)} minutes)
 		</Card.Description>
 	</Card.Header>
-	<Card.Content>
-		<p>Card Content</p>
+	<Card.Content class="space-y-3">
+		<div class="flex flex-col">
+			<span class="text-sm text-muted-foreground">Mesocycle</span>
+			{#if workout.workoutOfMesocycle}
+				{@const wm = workout.workoutOfMesocycle}
+				{@const splitDay = wm.mesocycle.mesocycleExerciseSplitDays[wm.splitDayIndex]}
+				<div class="flex items-center justify-between">
+					<a class="font-semibold underline" href="/mesocycles/{wm.mesocycle.id}">
+						{wm.mesocycle.name}
+					</a>
+					<Badge variant={splitDay.name === '' ? 'outline' : 'secondary'}>
+						{splitDay.name === '' ? 'Rest' : splitDay.name}
+					</Badge>
+				</div>
+			{:else}
+				<span class="font-semibold">No mesocycle</span>
+			{/if}
+		</div>
+		<div class="flex flex-col">
+			<span class="text-sm text-muted-foreground">User bodyweight</span>
+			<span class="font-semibold">{workout.userBodyweight}</span>
+		</div>
+		<div class="flex flex-col gap-1">
+			<span class="text-sm text-muted-foreground">Targeted muscle groups</span>
+			<div class="flex flex-wrap gap-1">
+				{#each targetedMuscleGroups as muscleGroup}
+					<Badge variant="secondary">{convertCamelCaseToNormal(muscleGroup)}</Badge>
+				{/each}
+			</div>
+		</div>
 	</Card.Content>
-	<Card.Footer>
-		<p>Card Footer</p>
-	</Card.Footer>
 </Card.Root>
+
+<ResponsiveDialog needTrigger={false} title="Are you sure?" bind:open={deleteConfirmDrawerOpen}>
+	<p>
+		Delete workout? This action cannot be undone and might cause problems with analytics and
+		progression.
+	</p>
+	<Button
+		class="mt-2 gap-2"
+		disabled={callingDeleteEndpoint}
+		onclick={deleteWorkout}
+		variant="destructive"
+	>
+		{#if callingDeleteEndpoint}
+			<LoaderCircle class="animate-spin" />
+		{:else}
+			Yes, delete
+		{/if}
+	</Button>
+</ResponsiveDialog>
