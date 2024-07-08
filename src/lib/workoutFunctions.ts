@@ -99,6 +99,7 @@ function getRIRForWeek(rirArray: number[], cycle: number): number {
 export function progressiveOverloadMagic(
 	mesocycleWithProgressionData: ActiveMesocycleWithProgressionData,
 	cycleNumber: number,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	userBodyweight: number | null
 ): WorkoutExerciseInProgress[] {
 	const {

@@ -10,7 +10,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"postinstall": "prisma generate"
+		"postinstall": "prisma generate",
+		"lint": "eslint . && prettier --check ."
 	},
 	"devDependencies": {
 		"@iconify/json": "^2.2.206",

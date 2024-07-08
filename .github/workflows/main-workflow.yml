@@ -16,8 +16,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-environment
-      - name: Run Prettier Check
-        run: npx prettier --check .
+      - name: Run ESLint and Prettier Check
+        run: npm run lint
 
   svelte_check:
     runs-on: ubuntu-latest
