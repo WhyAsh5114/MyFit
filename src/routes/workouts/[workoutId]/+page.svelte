@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import WorkoutBasicTab from './(components)/WorkoutBasicTab.svelte';
+	import WorkoutExercisesTab from './(components)/WorkoutExercisesTab.svelte';
 	import type { FullWorkoutWithMesoData } from './+page.server';
 
 	let { data } = $props();
@@ -22,7 +23,7 @@
 {:else if workout === null}
 	<div class="muted-text-box">Workout not found</div>
 {:else}
-	<Tabs.Root class="w-full" value="basics">
+	<Tabs.Root class="flex w-full grow flex-col" value="basics">
 		<Tabs.List class="grid grid-cols-2">
 			<Tabs.Trigger value="basics">Basics</Tabs.Trigger>
 			<Tabs.Trigger value="exercises">Exercises</Tabs.Trigger>
@@ -30,6 +31,10 @@
 		<Tabs.Content value="basics">
 			<WorkoutBasicTab {workout} />
 		</Tabs.Content>
-		<Tabs.Content value="exercises">Change your password here.</Tabs.Content>
+		<Tabs.Content class="grow" value="exercises">
+			<div class="flex h-full flex-col">
+				<WorkoutExercisesTab {workout} />
+			</div>
+		</Tabs.Content>
 	</Tabs.Root>
 {/if}
