@@ -8,6 +8,7 @@ import {
 function createWorkoutRunes() {
 	let workoutData: TodaysWorkoutData | null = $state(null);
 	let workoutExercises: WorkoutExerciseInProgress[] | null = $state(null);
+	let editingWorkoutId: string | null = $state(null);
 
 	let editingExerciseIndex: number | undefined = $state();
 	let editingExercise: MesocycleExerciseTemplateWithoutIdsOrIndex | undefined = $state();
@@ -18,12 +19,16 @@ function createWorkoutRunes() {
 	}
 
 	function saveStoresToLocalStorage() {
-		localStorage.setItem('workoutRunes', JSON.stringify({ workoutData, workoutExercises }));
+		localStorage.setItem(
+			'workoutRunes',
+			JSON.stringify({ workoutData, workoutExercises, editingWorkoutId })
+		);
 	}
 
 	function resetStores() {
 		workoutData = null;
 		workoutExercises = null;
+		editingWorkoutId = null;
 		saveStoresToLocalStorage();
 	}
 
@@ -91,6 +96,12 @@ function createWorkoutRunes() {
 		},
 		set editingExercise(value) {
 			editingExercise = value;
+		},
+		get editingWorkoutId() {
+			return editingWorkoutId;
+		},
+		set editingWorkoutId(value) {
+			editingWorkoutId = value;
 		},
 		saveStoresToLocalStorage,
 		resetStores,
