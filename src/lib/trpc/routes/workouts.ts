@@ -41,12 +41,7 @@ const createWorkoutSchema = z.strictObject({
 
 export const workouts = t.router({
 	load: t.procedure
-		.input(
-			z.strictObject({
-				cursorId: z.string().cuid().optional(),
-				searchString: z.string().optional()
-			})
-		)
+		.input(z.strictObject({ cursorId: z.string().cuid().optional() }))
 		.query(async ({ input, ctx }) => {
 			return prisma.workout.findMany({
 				where: { userId: ctx.userId },
@@ -62,7 +57,8 @@ export const workouts = t.router({
 										orderBy: { dayIndex: 'asc' }
 									}
 								}
-							}
+							},
+							splitDayIndex: true
 						}
 					}
 				},
