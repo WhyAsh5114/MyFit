@@ -3,7 +3,7 @@
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import BasicsTabContent from './(components)/BasicsTabContent.svelte';
+	import WorkoutBasicTab from './(components)/WorkoutBasicTab.svelte';
 	import type { FullWorkoutWithMesoData } from './+page.server';
 
 	let { data } = $props();
@@ -28,7 +28,7 @@
 			<Tabs.Trigger value="exercises">Exercises</Tabs.Trigger>
 		</Tabs.List>
 		<Tabs.Content value="basics">
-			<BasicsTabContent {workout} />
+			<WorkoutBasicTab {workout} />
 		</Tabs.Content>
 		<Tabs.Content value="exercises">Change your password here.</Tabs.Content>
 	</Tabs.Root>
