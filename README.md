@@ -21,6 +21,7 @@ https://my-fit-whyash5114.vercel.app/
 ### Prerequisites
 
 - **Node.js**: Ensure you have Node.js installed. If not, you can download it from [nodejs.org](https://nodejs.org/).
+- **MongoDB**: A running instance of Mongo, either in cloud via Atlas or locally [mongodb.com](https://www.mongodb.com/docs/manual/installation/). Create a `.env` file with the `MONGODB_URI` key set to the db's URI.
 
 ### Installation
 
