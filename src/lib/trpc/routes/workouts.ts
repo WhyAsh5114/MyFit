@@ -84,7 +84,8 @@ export const workouts = t.router({
 						},
 						splitDayIndex: true
 					}
-				}
+				},
+				workoutExercises: { include: { sets: { include: { miniSets: true } } } }
 			}
 		})
 	),

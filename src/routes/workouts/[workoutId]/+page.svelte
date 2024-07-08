@@ -4,15 +4,14 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import BasicsTabContent from './(components)/BasicsTabContent.svelte';
-	import type { WorkoutWithMesoData } from '../+page.server';
+	import type { FullWorkoutWithMesoData } from './+page.server';
 
 	let { data } = $props();
-	let workout: WorkoutWithMesoData | null | 'loading' = $state('loading');
+	let workout: FullWorkoutWithMesoData | null | 'loading' = $state('loading');
 
 	onMount(async () => {
 		workout = await data.workout;
 		if (workout === null) toast.error('Workout not found');
-		console.log(workout);
 	});
 </script>
 
