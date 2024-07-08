@@ -68,6 +68,26 @@ export const workouts = t.router({
 			});
 		}),
 
+	findById: t.procedure.input(z.string().cuid()).query(({ input, ctx }) =>
+		prisma.workout.findUnique({
+			where: { id: input, userId: ctx.userId },
+			include: {
+				workoutOfMesocycle: {
+					select: {
+						mesocycle: {
+							select: {
+								id: true,
+								name: true,
+								mesocycleExerciseSplitDays: { select: { name: true }, orderBy: { dayIndex: 'asc' } }
+							}
+						},
+						splitDayIndex: true
+					}
+				}
+			}
+		})
+	),
+
 	getTodaysWorkoutData: t.procedure.query(async ({ ctx }) => {
 		const data = await prisma.mesocycle.findFirst({
 			where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
