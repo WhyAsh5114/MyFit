@@ -40,6 +40,38 @@ const createWorkoutSchema = z.strictObject({
 });
 
 export const workouts = t.router({
+	load: t.procedure
+		.input(
+			z.strictObject({
+				cursorId: z.string().cuid().optional(),
+				searchString: z.string().optional()
+			})
+		)
+		.query(async ({ input, ctx }) => {
+			return prisma.workout.findMany({
+				where: { userId: ctx.userId },
+				orderBy: { startedAt: 'desc' },
+				include: {
+					workoutOfMesocycle: {
+						select: {
+							mesocycle: {
+								select: {
+									name: true,
+									mesocycleExerciseSplitDays: {
+										select: { name: true },
+										orderBy: { dayIndex: 'asc' }
+									}
+								}
+							}
+						}
+					}
+				},
+				cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,
+				skip: input.cursorId !== undefined ? 1 : 0,
+				take: 10
+			});
+		}),
+
 	getTodaysWorkoutData: t.procedure.query(async ({ ctx }) => {
 		const data = await prisma.mesocycle.findFirst({
 			where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
