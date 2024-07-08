@@ -51,6 +51,7 @@ export const workouts = t.router({
 						select: {
 							mesocycle: {
 								select: {
+									id: true,
 									name: true,
 									mesocycleExerciseSplitDays: {
 										select: { name: true },

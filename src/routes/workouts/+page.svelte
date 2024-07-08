@@ -8,23 +8,13 @@
 	import { trpc } from '$lib/trpc/client';
 	import { InfiniteLoader, loaderState } from 'svelte-infinite';
 	import { page } from '$app/stores';
-	import type { Workout } from '@prisma/client';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { workoutRunes } from './manage/workoutRunes.svelte.js';
-
-	type WorkoutWithMesoInfo = Workout & {
-		workoutOfMesocycle: {
-			mesocycle: {
-				name: string;
-				mesocycleExerciseSplitDays: { name: string }[];
-			};
-			splitDayIndex: number;
-		} | null;
-	};
+	import type { WorkoutWithMesoData } from './+page.server.js';
 
 	let { data } = $props();
-	let workouts: WorkoutWithMesoInfo[] | 'loading' = $state('loading');
+	let workouts: WorkoutWithMesoData[] | 'loading' = $state('loading');
 	let searchString = $state($page.url.searchParams.get('search') ?? '');
 
 	afterNavigate(async () => {
@@ -58,13 +48,6 @@
 		if (workoutRunes.editingWorkoutId !== null) workoutRunes.resetStores();
 		goto('/workouts/manage/start');
 	}
-
-	function formatDate(dateString: Date) {
-		return dateString.toLocaleDateString(undefined, {
-			day: '2-digit',
-			month: 'short'
-		});
-	}
 </script>
 
 <H2>Workouts</H2>
@@ -96,18 +79,17 @@
 						href="/workouts/{workout.id}"
 						variant="outline"
 					>
+						<span class="text-lg font-semibold">
+							{workout.startedAt.toLocaleDateString(undefined, {
+								day: '2-digit',
+								month: 'long'
+							})}
+						</span>
 						{#if workoutOfMesocycle}
-							<span class="truncate text-lg font-semibold">
+							<span class="truncate text-muted-foreground">
 								{workoutOfMesocycle.mesocycle.mesocycleExerciseSplitDays[
 									workoutOfMesocycle.splitDayIndex
 								].name}
-							</span>
-							<span class="text-muted-foreground">
-								{formatDate(workout.startedAt)}
-							</span>
-						{:else}
-							<span class="text-lg font-semibold">
-								{formatDate(workout.startedAt)}
 							</span>
 						{/if}
 					</Button>
