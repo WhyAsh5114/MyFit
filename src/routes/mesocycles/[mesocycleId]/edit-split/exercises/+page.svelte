@@ -44,21 +44,21 @@
 <H3>Exercises</H3>
 <Tabs.Root
 	class="flex w-full grow flex-col"
-	value={splitDayName}
 	onValueChange={(v) => {
 		mesocycleExerciseSplitRunes.selectedSplitDayIndex =
 			mesocycleExerciseSplitRunes.splitDays.findIndex((splitDay) => splitDay.name === v);
 	}}
+	value={splitDayName}
 >
 	<Tabs.List class="flex justify-start overflow-x-auto">
 		{#each mesocycleExerciseSplitRunes.splitExercises as _, idx}
 			{@const { name, isRestDay } = mesocycleExerciseSplitRunes.splitDays[idx]}
-			<Tabs.Trigger value={name} disabled={isRestDay} class="px-4">
+			<Tabs.Trigger class="px-4" disabled={isRestDay} value={name}>
 				{name !== '' ? name : 'Rest'}
 			</Tabs.Trigger>
 		{/each}
 	</Tabs.List>
-	<Tabs.Content value={splitDayName} class="grow">
+	<Tabs.Content class="grow" value={splitDayName}>
 		<div class="flex h-full flex-col gap-2">
 			<div class="flex items-center gap-2">
 				<div class="mr-auto flex flex-col">
@@ -68,14 +68,14 @@
 					</span>
 				</div>
 				<AddEditExerciseDrawer
-					context="mesocycle"
-					mesocycle={mesocycleExerciseSplitRunes.mesocycle as Mesocycle}
 					addExercise={mesocycleExerciseSplitRunes.addExercise}
+					context="mesocycle"
 					editExercise={mesocycleExerciseSplitRunes.editExercise}
-					setEditingExercise={mesocycleExerciseSplitRunes.setEditingExercise}
 					editingExercise={mesocycleExerciseSplitRunes.editingExercise}
+					mesocycle={mesocycleExerciseSplitRunes.mesocycle as Mesocycle}
+					setEditingExercise={mesocycleExerciseSplitRunes.setEditingExercise}
 				/>
-				<Button size="icon" variant="outline" onclick={() => (reordering = !reordering)}>
+				<Button onclick={() => (reordering = !reordering)} size="icon" variant="outline">
 					{#if !reordering}
 						<ReorderIcon />
 					{:else}
@@ -85,10 +85,10 @@
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
 						<Button
+							aria-label="exercise-split-functions"
 							builders={[builder]}
 							size="icon"
 							variant="outline"
-							aria-label="exercise-split-functions"
 						>
 							<MenuIcon />
 						</Button>
@@ -97,22 +97,22 @@
 						<DropdownMenu.Group>
 							<DropdownMenu.Item
 								class="gap-2"
-								onclick={mesocycleExerciseSplitRunes.cutExercises}
 								disabled={selectedSplitDayExercises.length === 0}
+								onclick={mesocycleExerciseSplitRunes.cutExercises}
 							>
 								<CutIcon /> Cut
 							</DropdownMenu.Item>
 							<DropdownMenu.Item
 								class="gap-2"
-								onclick={mesocycleExerciseSplitRunes.copyExercises}
 								disabled={selectedSplitDayExercises.length === 0}
+								onclick={mesocycleExerciseSplitRunes.copyExercises}
 							>
 								<CopyIcon /> Copy
 							</DropdownMenu.Item>
 							<DropdownMenu.Item
 								class="gap-2"
-								onclick={mesocycleExerciseSplitRunes.pasteExercises}
 								disabled={mesocycleExerciseSplitRunes.copiedExercises === undefined}
+								onclick={mesocycleExerciseSplitRunes.pasteExercises}
 							>
 								<PasteIcon /> Paste
 							</DropdownMenu.Item>
@@ -127,11 +127,11 @@
 				<DndComponent
 					context="mesocycle"
 					deleteExercise={mesocycleExerciseSplitRunes.deleteExercise}
+					{reordering}
 					setEditingExercise={mesocycleExerciseSplitRunes.setEditingExercise}
 					bind:itemList={mesocycleExerciseSplitRunes.splitExercises[
 						mesocycleExerciseSplitRunes.selectedSplitDayIndex
 					]}
-					{reordering}
 				/>
 			</div>
 		</div>
@@ -139,13 +139,13 @@
 </Tabs.Root>
 
 <div class="mt-2 grid grid-cols-2 gap-1">
-	<Button variant="secondary" href="./structure">Previous</Button>
+	<Button href="./structure" variant="secondary">Previous</Button>
 	<Button onclick={submitExercises}>Next</Button>
 </div>
 
 <SwapExercisesDialog
-	splitDays={mesocycleExerciseSplitRunes.splitDays}
 	selectedSplitDayIndex={mesocycleExerciseSplitRunes.selectedSplitDayIndex}
+	splitDays={mesocycleExerciseSplitRunes.splitDays}
 	swapExercises={mesocycleExerciseSplitRunes.swapExercises}
 	bind:open={swapDialogOpen}
 />

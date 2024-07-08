@@ -38,7 +38,7 @@
 	<Dialog.Root bind:open>
 		{#if needTrigger}
 			<Dialog.Trigger asChild let:builder>
-				<Button {variant} {size} aria-label={ariaLabel} builders={[builder]}>
+				<Button aria-label={ariaLabel} builders={[builder]} {size} {variant}>
 					<slot name="buttonContent" />
 				</Button>
 			</Dialog.Trigger>
@@ -56,10 +56,10 @@
 		</Dialog.Content>
 	</Dialog.Root>
 {:else}
-	<Drawer.Root bind:open {dismissible}>
+	<Drawer.Root {dismissible} bind:open>
 		{#if needTrigger}
 			<Drawer.Trigger asChild let:builder>
-				<Button {variant} {size} aria-label={ariaLabel} builders={[builder]}>
+				<Button aria-label={ariaLabel} builders={[builder]} {size} {variant}>
 					<slot name="buttonContent" />
 				</Button>
 			</Drawer.Trigger>
@@ -78,7 +78,7 @@
 			</div>
 			<Drawer.Footer class="my-0 shrink pt-2">
 				<Drawer.Close asChild let:builder>
-					<Button variant={cancelVariant} builders={[builder]}>Cancel</Button>
+					<Button builders={[builder]} variant={cancelVariant}>Cancel</Button>
 				</Drawer.Close>
 			</Drawer.Footer>
 		</Drawer.Content>

@@ -149,10 +149,10 @@
 				<span class="text-sm text-muted-foreground">RIR progression</span>
 				<Badge variant="outline">{arraySum(mesocycle.RIRProgression)} cycles</Badge>
 			</div>
-			<Resizable.PaneGroup direction="horizontal" class="min-h-10 w-full rounded-lg border">
+			<Resizable.PaneGroup class="min-h-10 w-full rounded-lg border" direction="horizontal">
 				{#each mesocycle.RIRProgression.toReversed() as cycles, idx}
 					{@const size = (cycles / arraySum(mesocycle.RIRProgression)) * 100}
-					<Resizable.Pane minSize={size} maxSize={size} class="flex items-center justify-center">
+					<Resizable.Pane class="flex items-center justify-center" maxSize={size} minSize={size}>
 						<Popover.Root portal={null}>
 							<Popover.Trigger>
 								{mesocycle.RIRProgression.length - idx - 1}
@@ -172,7 +172,7 @@
 		<div class="flex flex-col">
 			<span class="text-sm text-muted-foreground">Start exercise template</span>
 			{#if mesocycle.exerciseSplit}
-				<a href="/exercise-splits/{mesocycle.exerciseSplit.id}" class="font-semibold underline">
+				<a class="font-semibold underline" href="/exercise-splits/{mesocycle.exerciseSplit.id}">
 					{mesocycle.exerciseSplit.name}
 				</a>
 			{:else}
@@ -192,7 +192,7 @@
 			</span>
 		</div>
 		<div class="flex flex-col gap-1">
-			<span class="text-sm text-muted-foreground" id="last-set-to-failure-label">
+			<span id="last-set-to-failure-label" class="text-sm text-muted-foreground">
 				Last set to failure
 			</span>
 			<Switch
@@ -203,7 +203,7 @@
 			/>
 		</div>
 		<div class="flex flex-col gap-1">
-			<span class="text-sm text-muted-foreground" id="force-RIR-matching-label">
+			<span id="force-RIR-matching-label" class="text-sm text-muted-foreground">
 				Force RIR matching
 			</span>
 			<Switch
@@ -216,7 +216,7 @@
 	</Card.Content>
 	{#if !mesocycle.endDate}
 		<Card.Footer class="justify-end">
-			<Button onclick={progressMesocycle} disabled={callingPatchEndpoint} class="w-36">
+			<Button class="w-36" disabled={callingPatchEndpoint} onclick={progressMesocycle}>
 				{#if callingPatchEndpoint}
 					<LoaderCircle class="animate-spin" />
 				{:else}
@@ -227,16 +227,16 @@
 	{/if}
 </Card.Root>
 
-<ResponsiveDialog title="Are you sure?" needTrigger={false} bind:open={deleteConfirmDrawerOpen}>
+<ResponsiveDialog needTrigger={false} title="Are you sure?" bind:open={deleteConfirmDrawerOpen}>
 	<p>
 		Delete mesocycle <span class="font-semibold">{mesocycle.name}</span>? This action cannot be
 		undone.
 	</p>
 	<Button
-		variant="destructive"
-		onclick={deleteMesocycle}
-		disabled={callingDeleteEndpoint}
 		class="gap-2"
+		disabled={callingDeleteEndpoint}
+		onclick={deleteMesocycle}
+		variant="destructive"
 	>
 		{#if callingDeleteEndpoint}
 			<LoaderCircle class="animate-spin" />

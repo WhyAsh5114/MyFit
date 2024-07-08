@@ -46,11 +46,11 @@
 		<span class="mr-auto truncate">{props.exerciseTemplate.name}</span>
 		{#if !props.readOnly}
 			{#if props.reordering}
-				<div use:dragHandle role="button" tabindex="0">
+				<div role="button" tabindex="0" use:dragHandle>
 					<GripVertical />
 				</div>
 			{:else}
-				<DropdownMenu.Root open={isContextMenuOpen} onOpenChange={(v) => (isContextMenuOpen = v)}>
+				<DropdownMenu.Root onOpenChange={(v) => (isContextMenuOpen = v)} open={isContextMenuOpen}>
 					<DropdownMenu.Trigger asChild let:builder>
 						<button use:builder.action {...builder} class="px-0.5 py-0">
 							<MenuIcon class="h-4 w-4" />
@@ -59,12 +59,12 @@
 					<DropdownMenu.Content align="end">
 						<DropdownMenu.Group>
 							<DropdownMenu.Item
+								class="gap-2"
 								onclick={() => {
 									if (props.context === 'exerciseSplit')
 										props.setEditingExercise(props.exerciseTemplate);
 									else props.setEditingExercise(props.exerciseTemplate);
 								}}
-								class="gap-2"
 							>
 								<EditIcon /> Edit
 							</DropdownMenu.Item>

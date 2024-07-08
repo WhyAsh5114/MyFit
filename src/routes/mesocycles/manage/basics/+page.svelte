@@ -67,12 +67,12 @@
 	<div class="flex gap-2">
 		<div class="flex basis-1/2 flex-col gap-1.5">
 			<Select.Root
-				required
-				selected={selectedRIR}
 				onSelectedChange={(s) => {
 					if (!s) return;
 					generateRIRDistribution(s.value, totalDuration);
 				}}
+				required
+				selected={selectedRIR}
 			>
 				<Select.Label class="p-0 text-sm font-medium leading-none">Start RIR</Select.Label>
 				<Select.Trigger>
@@ -93,22 +93,22 @@
 			<Label for="mesocycle-duration">Mesocycle duration</Label>
 			<Input
 				id="mesocycle-duration"
-				placeholder="Type here"
-				type="number"
-				min={selectedRIR.value + 1}
 				max={20}
-				required
-				value={totalDuration}
+				min={selectedRIR.value + 1}
 				oninput={(e) => {
 					totalDuration = e.currentTarget.valueAsNumber;
 					if (!isNaN(totalDuration)) generateRIRDistribution(selectedRIR.value, totalDuration);
 				}}
+				placeholder="Type here"
+				required
+				type="number"
+				value={totalDuration}
 			/>
 		</div>
 	</div>
 
 	<span class="text-sm font-medium leading-none">RIR progression</span>
-	<Resizable.PaneGroup direction="vertical" class="rounded-lg border">
+	<Resizable.PaneGroup class="rounded-lg border" direction="vertical">
 		{#each RIRProgression.toReversed() as cyclesPerRIR, idx}
 			{#key selectedRIR.value + totalDuration}
 				<Resizable.Pane
@@ -128,11 +128,11 @@
 			{/key}
 			{#if idx !== RIRProgression.length - 1}
 				<Resizable.Handle
-					withHandle
 					onDraggingChange={(dragging) => {
 						manualDragging = dragging;
 						if (!dragging) panes[idx].resize((100 / totalDuration) * cyclesPerRIR);
 					}}
+					withHandle
 				/>
 			{/if}
 		{/each}

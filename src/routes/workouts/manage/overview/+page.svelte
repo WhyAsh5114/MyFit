@@ -88,8 +88,8 @@
 
 <!-- TODO: stuff -->
 <div class="mt-auto grid grid-cols-2 gap-1">
-	<Button variant="secondary" onclick={() => window.history.back()}>Previous</Button>
-	<Button onclick={saveWorkout} disabled={savingWorkout}>
+	<Button onclick={() => window.history.back()} variant="secondary">Previous</Button>
+	<Button disabled={savingWorkout} onclick={saveWorkout}>
 		{#if savingWorkout}
 			<LoaderCircle class="animate-spin" />
 		{:else}

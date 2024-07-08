@@ -9,7 +9,7 @@
 	let { cyclicSetChanges }: PropsType = $props();
 </script>
 
-<ScrollArea orientation="both" class="h-px grow">
+<ScrollArea class="h-px grow" orientation="both">
 	<Table.Root>
 		<Table.Header>
 			<Table.Row>

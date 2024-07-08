@@ -10,7 +10,7 @@
 	let { splitExercises }: PropsType = $props();
 </script>
 
-<Tabs.Root value="volume" class="mb-auto w-full">
+<Tabs.Root class="mb-auto w-full" value="volume">
 	<Tabs.List class="grid grid-cols-3">
 		<Tabs.Trigger value="volume">Volume</Tabs.Trigger>
 		<Tabs.Trigger value="exercises">Exercises</Tabs.Trigger>

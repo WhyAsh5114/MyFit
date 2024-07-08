@@ -8,11 +8,11 @@
 
 <DropdownMenu.Content align="start">
 	<DropdownMenu.Group>
-		<DropdownMenu.Item href="/profile" class="gap-2">
+		<DropdownMenu.Item class="gap-2" href="/profile">
 			<UserIcon />
 			Profile
 		</DropdownMenu.Item>
-		<DropdownMenu.Item href="/settings" class="gap-2">
+		<DropdownMenu.Item class="gap-2" href="/settings">
 			<SettingsIcon />
 			Settings
 		</DropdownMenu.Item>

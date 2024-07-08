@@ -118,7 +118,7 @@
 </Card.Root>
 
 <div class="mt-auto grid grid-cols-2 gap-1">
-	<Button variant="secondary" onclick={() => window.history.back()}>Previous</Button>
+	<Button onclick={() => window.history.back()} variant="secondary">Previous</Button>
 	<Button disabled={savingMesocycle} onclick={createOrEditMesocycle}>
 		{#if savingMesocycle}
 			<LoaderCircle class="animate-spin" />

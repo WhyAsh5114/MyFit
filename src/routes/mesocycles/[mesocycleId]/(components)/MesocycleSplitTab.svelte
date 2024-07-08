@@ -25,27 +25,27 @@
 
 <Card.Root class="mb-2 flex items-center justify-between gap-2 p-2">
 	<span class="text-sm font-medium text-muted-foreground">The current split of the mesocycle</span>
-	<Button size="sm" class="gap-2" onclick={editMesocycleExerciseSplit}>
+	<Button class="gap-2" onclick={editMesocycleExerciseSplit} size="sm">
 		Edit <EditIcon />
 	</Button>
 </Card.Root>
 <Tabs.Root
-	value={selectedSplitDay.name}
+	class="w-full"
 	onValueChange={(v) => {
 		selectedSplitDay = mesocycle.mesocycleExerciseSplitDays.find(
 			(splitDay) => splitDay.name === v
 		) as MesocycleSplitDay;
 	}}
-	class="w-full"
+	value={selectedSplitDay.name}
 >
 	<Tabs.List class="flex justify-start overflow-x-auto">
 		{#each mesocycle.mesocycleExerciseSplitDays as splitDay}
-			<Tabs.Trigger value={splitDay.name} disabled={splitDay.isRestDay}>
+			<Tabs.Trigger disabled={splitDay.isRestDay} value={splitDay.name}>
 				{splitDay.isRestDay ? 'Rest' : splitDay.name}
 			</Tabs.Trigger>
 		{/each}
 	</Tabs.List>
-	<Tabs.Content value={selectedSplitDay.name} class="flex flex-col gap-1">
+	<Tabs.Content class="flex flex-col gap-1" value={selectedSplitDay.name}>
 		{#each selectedSplitDay.mesocycleSplitDayExercises as exercise}
 			<ExerciseTemplateCard context="mesocycle" exerciseTemplate={exercise} readOnly />
 		{/each}

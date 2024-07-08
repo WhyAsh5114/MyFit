@@ -119,22 +119,22 @@
 			<form class="contents" onsubmit={(e) => completeSet(e, set, idx)}>
 				{#if !set.skipped}
 					<Input
-						type="number"
-						min={0}
 						id="{exercise.name}-set-{idx + 1}-reps"
 						disabled={set.completed || set.skipped}
+						min={0}
 						required
+						type="number"
 						bind:value={set.reps}
 					/>
 					{#if idx === 0 || !['Straight', 'Myorep', 'MyorepMatch'].includes(exercise.setType)}
 						<Input
-							type="number"
-							min={0}
-							step={0.25}
 							id="{exercise.name}-set-{idx + 1}-load"
 							disabled={set.completed || set.skipped}
-							required
+							min={0}
 							placeholder={getNextLoad(idx)}
+							required
+							step={0.25}
+							type="number"
 							bind:value={set.load}
 						/>
 					{:else if exercise.setType === 'MyorepMatch'}
@@ -143,11 +143,11 @@
 						<span></span>
 					{/if}
 					<Input
-						type="number"
-						min={0}
 						id="{exercise.name}-set-{idx + 1}-RIR"
 						disabled={set.completed || set.skipped}
+						min={0}
 						required
+						type="number"
 						bind:value={set.RIR}
 					/>
 				{:else}
@@ -158,11 +158,11 @@
 					</div>
 				{/if}
 				<Button
-					size="icon"
 					class="place-self-end"
+					disabled={shouldSetBeDisabled(set, idx)}
+					size="icon"
 					type="submit"
 					variant={set.completed ? 'outline' : 'default'}
-					disabled={shouldSetBeDisabled(set, idx)}
 				>
 					{#if set.skipped}
 						<UndoIcon />
@@ -182,17 +182,17 @@
 							<span class="text-sm text-muted-foreground">skipped</span>
 							<Separator class="w-px grow" />
 						</div>
-						<Button size="icon" class="place-self-end" variant="secondary" disabled>
+						<Button class="place-self-end" disabled size="icon" variant="secondary">
 							<CheckIcon />
 						</Button>
 					{:else}
 						<form class="contents" onsubmit={(e) => completeMiniSet(e, set, miniIdx)}>
 							<Input
-								type="number"
-								min={0}
 								id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-reps"
 								disabled={miniSet.completed}
+								min={0}
 								required
+								type="number"
 								bind:value={miniSet.reps}
 							/>
 							{#if exercise.setType === 'MyorepMatch'}
@@ -200,28 +200,28 @@
 							{:else}
 								{@const expectedLoad = getMiniSetLoad(idx, miniIdx)}
 								<Input
-									type="number"
-									min={0}
-									step={0.25}
 									id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-load"
 									disabled={miniSet.completed}
-									required
+									min={0}
 									placeholder={expectedLoad === undefined ? expectedLoad : expectedLoad.toString()}
+									required
+									step={0.25}
+									type="number"
 									bind:value={miniSet.load}
 								/>
 							{/if}
 							<Input
-								type="number"
-								min={0}
 								id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-RIR"
 								disabled={miniSet.completed}
+								min={0}
 								required
+								type="number"
 								bind:value={miniSet.RIR}
 							/>
 							<Button
-								size="icon"
 								class="place-self-end"
 								disabled={miniSetButtonDisabled}
+								size="icon"
 								type="submit"
 								variant={miniSet.completed ? 'outline' : 'default'}
 							>
@@ -235,17 +235,17 @@
 					{/if}
 				{/each}
 				<Button
-					variant="secondary"
 					aria-label="add-mini-set-to-set-{idx + 1}-of-{exercise.name}"
 					onclick={() => addMiniSet(idx)}
+					variant="secondary"
 				>
 					<AddIcon />
 				</Button>
 				<Button
-					variant="secondary"
 					aria-label="remove-mini-set-from-set-{idx + 1}-of-{exercise.name}"
 					disabled={set.miniSets.length === 0}
 					onclick={() => set.miniSets.pop()}
+					variant="secondary"
 				>
 					<RemoveIcon />
 				</Button>

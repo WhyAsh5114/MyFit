@@ -5,7 +5,7 @@
 	import MenuIcon from 'virtual:icons/lucide/menu';
 </script>
 
-<Tabs.Root value="basics" class="flex w-full grow flex-col">
+<Tabs.Root class="flex w-full grow flex-col" value="basics">
 	<Tabs.List class="grid grid-cols-4">
 		<Tabs.Trigger value="basics">Basics</Tabs.Trigger>
 		<Tabs.Trigger value="split">Split</Tabs.Trigger>

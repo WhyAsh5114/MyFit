@@ -58,7 +58,7 @@
 	<span class="mb-0.5 text-sm font-medium">Starting exercise split</span>
 	<Popover.Root>
 		<Popover.Trigger asChild let:builder>
-			<Button builders={[builder]} variant="outline" role="combobox" class="w-full justify-between">
+			<Button class="w-full justify-between" builders={[builder]} role="combobox" variant="outline">
 				{#if exerciseSplits !== 'loading'}
 					{selectedExerciseSplit === null ? 'Pick one' : selectedExerciseSplit.name}
 				{:else}
@@ -69,7 +69,7 @@
 		</Popover.Trigger>
 		<Popover.Content class="mt-0.5 p-0" align="start">
 			<Command.Root shouldFilter={false}>
-				<Command.Input placeholder="Search" class="h-9" bind:value={searchString} />
+				<Command.Input class="h-9" placeholder="Search" bind:value={searchString} />
 				{#if exerciseSplits === 'loading'}
 					<Command.Empty class="flex items-center justify-center gap-2">
 						<LoaderCircle class="h-5 w-5 animate-spin" />
@@ -80,12 +80,12 @@
 						<div class="flex max-h-32 flex-col overflow-y-auto">
 							{#each filterExerciseSplits(exerciseSplits) as exerciseSplit}
 								<Command.Item
-									value={exerciseSplit.id.toString()}
 									onSelect={(currentValue) => {
 										if (exerciseSplits === 'loading') return;
 										selectedExerciseSplit =
 											exerciseSplits.find((split) => split.id === currentValue) ?? null;
 									}}
+									value={exerciseSplit.id.toString()}
 								>
 									<Check
 										class={cn('mr-2 h-4 w-4', {
@@ -124,13 +124,13 @@
 			</Card.Header>
 			<Card.Content class="grid grid-cols-1 gap-5 md:grid-cols-2">
 				<Select.Root
-					selected={{
-						value: mesocycleRunes.mesocycle.preferredProgressionVariable,
-						label: mesocycleRunes.mesocycle.preferredProgressionVariable
-					}}
 					onSelectedChange={(s) => {
 						if (!s) return;
 						mesocycleRunes.mesocycle.preferredProgressionVariable = s.value;
+					}}
+					selected={{
+						value: mesocycleRunes.mesocycle.preferredProgressionVariable,
+						label: mesocycleRunes.mesocycle.preferredProgressionVariable
 					}}
 				>
 					<div class="flex flex-col gap-1">
@@ -141,11 +141,11 @@
 							</InfoPopover>
 						</Select.Label>
 						<Select.Trigger id="mesocycle-progression-option">
-							<Select.Value placeholder="Select" class="capitalize" />
+							<Select.Value class="capitalize" placeholder="Select" />
 						</Select.Trigger>
 						<Select.Content>
 							{#each Object.values(ProgressionVariable) as progressionOption}
-								<Select.Item value={progressionOption} class="capitalize">
+								<Select.Item class="capitalize" value={progressionOption}>
 									{progressionOption}
 								</Select.Item>
 							{/each}
@@ -155,8 +155,8 @@
 				{#if mesocycleRunes.editingMesocycleId === null}
 					<div class="flex w-full max-w-sm flex-col gap-1.5">
 						<Label
-							for="distribution-min-sets-per-exercise"
 							class="flex items-center justify-between"
+							for="distribution-min-sets-per-exercise"
 						>
 							Minimum sets per exercise
 							<InfoPopover ariaLabel="distribution-min-sets-per-exercise-info">
@@ -164,21 +164,21 @@
 							</InfoPopover>
 						</Label>
 						<Input
-							type="number"
-							step={1}
-							min={0}
-							max={maxMinSetsValue}
 							id="distribution-min-sets-per-exercise"
+							max={maxMinSetsValue}
+							min={0}
 							placeholder="Type here"
 							required
+							step={1}
+							type="number"
 							bind:value={mesocycleRunes.minSets}
 						/>
 					</div>
 				{/if}
 				<div class="relative flex items-center justify-between rounded-md border p-2">
 					<Label
-						for="mesocycle-last-set-to-failure"
 						class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+						for="mesocycle-last-set-to-failure"
 					>
 						Take last set to failure
 					</Label>
@@ -196,8 +196,8 @@
 				</div>
 				<div class="relative flex items-center justify-between rounded-md border p-2">
 					<Label
-						for="mesocycle-last-set-to-failure"
 						class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+						for="mesocycle-last-set-to-failure"
 					>
 						Force RIR matching
 					</Label>
@@ -221,11 +221,11 @@
 						</span>
 					</div>
 					<Slider
-						value={[mesocycleRunes.mesocycle.startOverloadPercentage]}
-						onValueChange={(value) => (mesocycleRunes.mesocycle.startOverloadPercentage = value[0])}
-						min={0}
 						max={10}
+						min={0}
+						onValueChange={(value) => (mesocycleRunes.mesocycle.startOverloadPercentage = value[0])}
 						step={0.25}
+						value={[mesocycleRunes.mesocycle.startOverloadPercentage]}
 					/>
 				</div>
 			</Card.Content>
@@ -234,7 +234,7 @@
 
 	<div class="grid grid-cols-2 gap-1">
 		<Button variant="secondary">
-			<a href="./basics" class="w-full">Previous</a>
+			<a class="w-full" href="./basics">Previous</a>
 		</Button>
 		<Button onclick={savePreferencesAndExerciseSplit}>Next</Button>
 	</div>

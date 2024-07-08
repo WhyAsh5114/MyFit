@@ -35,8 +35,8 @@
 
 <H3>Structure</H3>
 <form
-	class="contents"
 	id="exercise-split-structure-form"
+	class="contents"
 	onsubmit={(e) => {
 		e.preventDefault();
 		submitStructure();
@@ -67,8 +67,8 @@
 					<Table.Cell>
 						<Input
 							id="exercise-split-day-{dayNumber + 1}-name"
-							placeholder={splitDay.isRestDay ? 'Rest' : `Day ${dayNumber + 1}`}
 							disabled={splitDay.isRestDay}
+							placeholder={splitDay.isRestDay ? 'Rest' : `Day ${dayNumber + 1}`}
 							required
 							bind:value={splitDay.name}
 						/>
@@ -90,25 +90,25 @@
 
 <div class="mb-1 mt-auto grid grid-cols-2 gap-1 pt-1">
 	<Button
-		variant="secondary"
 		class="gap-2"
-		onclick={exerciseSplitRunes.removeSplitDay}
 		disabled={exerciseSplitRunes.splitDays.length === 1}
+		onclick={exerciseSplitRunes.removeSplitDay}
+		variant="secondary"
 	>
 		<RemoveIcon /> Remove
 	</Button>
-	<Button variant="secondary" class="gap-2" onclick={exerciseSplitRunes.addSplitDay}>
+	<Button class="gap-2" onclick={exerciseSplitRunes.addSplitDay} variant="secondary">
 		<AddIcon /> Add
 	</Button>
 </div>
-<Button type="submit" form="exercise-split-structure-form">Next</Button>
+<Button form="exercise-split-structure-form" type="submit">Next</Button>
 
-<ResponsiveDialog title="Warning" needTrigger={false} bind:open={warningDialogOpen}>
+<ResponsiveDialog needTrigger={false} title="Warning" bind:open={warningDialogOpen}>
 	<p>
 		You'll lose exercise data from the following days:
 		<span class="font-semibold text-yellow-500">
 			{dataLossDays.map((day) => `Day ${day + 1}`).join(', ')}
 		</span>. Continue?
 	</p>
-	<Button variant="destructive" onclick={() => submitStructure(true)}>Continue</Button>
+	<Button onclick={() => submitStructure(true)} variant="destructive">Continue</Button>
 </ResponsiveDialog>

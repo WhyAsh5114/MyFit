@@ -23,21 +23,21 @@
 </script>
 
 <div
+	class="flex h-px grow flex-col gap-1 overflow-y-auto"
+	onconsider={handleSort}
+	onfinalize={handleSort}
 	use:dragHandleZone={{
 		items: itemList,
 		flipDurationMs: 200,
 		dropTargetClasses: ['border-none'],
 		dropTargetStyle: {}
 	}}
-	onconsider={handleSort}
-	onfinalize={handleSort}
-	class="flex h-px grow flex-col gap-1 overflow-y-auto"
 >
 	{#each itemList as exercise, idx (exercise.name)}
 		<div class="relative" animate:flip={{ duration: 200 }}>
-			<WorkoutExerciseCard {idx} {reordering} {readOnly} bind:exercise={itemList[idx]} />
+			<WorkoutExerciseCard {idx} {readOnly} {reordering} bind:exercise={itemList[idx]} />
 			{#if exercise[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
-				<div in:fade={{ duration: 200 }} class="custom-shadow-item"></div>
+				<div class="custom-shadow-item" in:fade={{ duration: 200 }}></div>
 			{/if}
 		</div>
 	{:else}

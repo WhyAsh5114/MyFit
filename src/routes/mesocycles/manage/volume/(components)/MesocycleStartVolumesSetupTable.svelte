@@ -104,7 +104,7 @@
 		<Table.Row>
 			<Table.Head>
 				<Popover.Root bind:open={muscleGroupPopoverOpen}>
-					<Popover.Trigger aria-label="add-muscle-group" class="flex items-center text-left">
+					<Popover.Trigger class="flex items-center text-left" aria-label="add-muscle-group">
 						Muscle Group
 						<Plus class="shrink-0 basis-4" />
 					</Popover.Trigger>
@@ -113,15 +113,15 @@
 							<div class="flex grow flex-col gap-2">
 								<Select.Root
 									name="exercise-target-muscle-group"
-									selected={{
-										value: selectedMuscleGroup.value,
-										label: convertCamelCaseToNormal(selectedMuscleGroup?.value)
-									}}
 									onSelectedChange={(v) => {
 										if (!v) return;
 										selectedMuscleGroup.value = v.value;
 									}}
 									required
+									selected={{
+										value: selectedMuscleGroup.value,
+										label: convertCamelCaseToNormal(selectedMuscleGroup?.value)
+									}}
 								>
 									<Select.Label class="p-0 text-sm font-medium leading-none">
 										Add muscle group
@@ -132,8 +132,8 @@
 									<Select.Content class="h-48 overflow-y-auto">
 										{#each Object.values(MuscleGroup) as muscleGroup}
 											<Select.Item
-												value={muscleGroup}
 												label={convertCamelCaseToNormal(muscleGroup)}
+												value={muscleGroup}
 											/>
 										{/each}
 									</Select.Content>
@@ -175,24 +175,24 @@
 											bind:checked={state.value}
 										/>
 										<Label
-											for="replace-all-{state.setChangeProperty}"
 											class="text-sm font-medium leading-none"
+											for="replace-all-{state.setChangeProperty}"
 										>
 											{title}
 										</Label>
 									</div>
 								{:else}
 									<div class="flex grow flex-col">
-										<Label for="replace-all-{state.setChangeProperty}" class="mb-1.5">
+										<Label class="mb-1.5" for="replace-all-{state.setChangeProperty}">
 											{title}
 										</Label>
 										<Input
-											type="number"
 											id="replace-all-{state.setChangeProperty}"
-											placeholder="Type here"
-											min={state.min}
 											max={state.max}
+											min={state.min}
+											placeholder="Type here"
 											required
+											type="number"
 											bind:value={state.value}
 										/>
 									</div>
@@ -222,10 +222,10 @@
 					<Table.Cell>
 						{#if setChange.inSplit}
 							<Input
-								type="number"
-								aria-label="{muscleGroup}-start-volume"
 								id="{muscleGroup}-start-volume"
+								aria-label="{muscleGroup}-start-volume"
 								required
+								type="number"
 								bind:value={setChange.startVolume}
 							/>
 						{/if}
@@ -233,24 +233,24 @@
 				{/if}
 				<Table.Cell>
 					<Input
-						type="number"
-						aria-label="{muscleGroup}-max-volume"
 						id="{muscleGroup}-max-volume"
+						aria-label="{muscleGroup}-max-volume"
 						required
+						type="number"
 						bind:value={setChange.maxVolume}
 					/>
 				</Table.Cell>
 				<Table.Cell>
 					<Select.Root
-						required
-						selected={{
-							value: setChange.setIncreaseAmount,
-							label: setChange.setIncreaseAmount.toString()
-						}}
 						onSelectedChange={(s) => {
 							if (!s) return;
 							if (s.value === 0) setChange.regardlessOfProgress = false;
 							setChange.setIncreaseAmount = s.value;
+						}}
+						required
+						selected={{
+							value: setChange.setIncreaseAmount,
+							label: setChange.setIncreaseAmount.toString()
 						}}
 					>
 						<Select.Trigger class="w-16" aria-label="{muscleGroup}-set-increase-amount">

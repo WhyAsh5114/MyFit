@@ -37,11 +37,11 @@
 		<span class="mr-auto truncate">{exercise.name}</span>
 		{#if !readOnly}
 			{#if reordering}
-				<div use:dragHandle role="button" tabindex="0">
+				<div role="button" tabindex="0" use:dragHandle>
 					<GripVertical />
 				</div>
 			{:else}
-				<DropdownMenu.Root open={isContextMenuOpen} onOpenChange={(v) => (isContextMenuOpen = v)}>
+				<DropdownMenu.Root onOpenChange={(v) => (isContextMenuOpen = v)} open={isContextMenuOpen}>
 					<DropdownMenu.Trigger asChild let:builder>
 						<button use:builder.action {...builder} class="px-0.5 py-0">
 							<MenuIcon class="h-4 w-4" />
@@ -50,8 +50,8 @@
 					<DropdownMenu.Content align="end">
 						<DropdownMenu.Group>
 							<DropdownMenu.Item
-								onclick={() => workoutRunes.setEditingExercise(exercise)}
 								class="gap-2"
+								onclick={() => workoutRunes.setEditingExercise(exercise)}
 							>
 								<EditIcon /> Edit
 							</DropdownMenu.Item>

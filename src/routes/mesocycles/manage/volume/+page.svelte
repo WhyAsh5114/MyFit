@@ -33,11 +33,11 @@
 
 <H3>Volume</H3>
 {#if exerciseSplit !== 'loading' || data.editing}
-	<ScrollArea orientation="both" class="h-px grow">
+	<ScrollArea class="h-px grow" orientation="both">
 		<MesocycleStartVolumesSetupTable />
 	</ScrollArea>
 	<div class="grid grid-cols-2 gap-1">
-		<Button variant="secondary" href="./progression">Previous</Button>
+		<Button href="./progression" variant="secondary">Previous</Button>
 		<Button onclick={submitVolume}>Next</Button>
 	</div>
 {:else}

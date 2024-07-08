@@ -33,41 +33,41 @@
 </script>
 
 <div
+	class="flex h-px grow flex-col gap-1 overflow-y-auto"
+	onconsider={handleSort}
+	onfinalize={handleSort}
 	use:dragHandleZone={{
 		items: itemList,
 		flipDurationMs: 200,
 		dropTargetClasses: ['border-none'],
 		dropTargetStyle: {}
 	}}
-	onconsider={handleSort}
-	onfinalize={handleSort}
-	class="flex h-px grow flex-col gap-1 overflow-y-auto"
 >
 	{#each itemList as exerciseTemplate, idx (exerciseTemplate.name)}
 		<div class="relative" animate:flip={{ duration: 200 }}>
 			{#if 'sets' in exerciseTemplate && contextProps.context === 'mesocycle'}
 				<ExerciseTemplateCard
 					context="mesocycle"
-					{idx}
-					{reordering}
-					{exerciseTemplate}
 					deleteExercise={contextProps.deleteExercise}
-					setEditingExercise={contextProps.setEditingExercise}
+					{exerciseTemplate}
+					{idx}
 					readOnly={false}
+					{reordering}
+					setEditingExercise={contextProps.setEditingExercise}
 				/>
 			{:else if contextProps.context === 'exerciseSplit'}
 				<ExerciseTemplateCard
 					context="exerciseSplit"
-					{idx}
-					{exerciseTemplate}
-					{reordering}
 					deleteExercise={contextProps.deleteExercise}
-					setEditingExercise={contextProps.setEditingExercise}
+					{exerciseTemplate}
+					{idx}
 					readOnly={false}
+					{reordering}
+					setEditingExercise={contextProps.setEditingExercise}
 				/>
 			{/if}
 			{#if exerciseTemplate[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
-				<div in:fade={{ duration: 200 }} class="custom-shadow-item"></div>
+				<div class="custom-shadow-item" in:fade={{ duration: 200 }}></div>
 			{/if}
 		</div>
 	{:else}

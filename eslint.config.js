@@ -9,7 +9,7 @@ export default [
 	{ ignores: ['.vercel/', '.svelte-kit/', 'postcss.config.cjs', 'src/lib/components/ui/'] },
 	js.configs.recommended,
 	...ts.configs.recommended,
-	...svelte.configs['flat/recommended'],
+	...svelte.configs['flat/all'],
 	prettier,
 	...svelte.configs['flat/prettier'],
 	{ languageOptions: { globals: { ...globals.browser, ...globals.node } } },
@@ -31,7 +31,15 @@ export default [
 					ignoreRestSiblings: true
 				}
 			],
-			'@svelte/no-at-html-tags': 'off'
+			'svelte/no-at-html-tags': 'off',
+			'svelte/block-lang': ['error', { script: ['ts'], style: ['postcss'] }],
+			'svelte/experimental-require-strict-events': 'off',
+			'svelte/no-unused-class-name': 'off',
+			'svelte/no-goto-without-base': 'off',
+			'svelte/require-each-key': 'off',
+			'svelte/no-inline-styles': ['error', { allowTransitions: true }],
+			'svelte/prefer-destructured-store-props': 'off',
+			'svelte/experimental-require-slot-types': 'off'
 		}
 	}
 ];

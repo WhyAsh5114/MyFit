@@ -39,8 +39,8 @@
 
 <MesocycleExerciseSplitStats splitExercises={mesocycleExerciseSplitRunes.splitExercises} />
 <div class="mt-2 grid grid-cols-2 gap-1">
-	<Button variant="secondary" href="./exercises">Previous</Button>
-	<Button onclick={saveMesocycleExerciseSplit} disabled={savingMesocycleExerciseSplit}>
+	<Button href="./exercises" variant="secondary">Previous</Button>
+	<Button disabled={savingMesocycleExerciseSplit} onclick={saveMesocycleExerciseSplit}>
 		{#if !savingMesocycleExerciseSplit}
 			Save
 		{:else}

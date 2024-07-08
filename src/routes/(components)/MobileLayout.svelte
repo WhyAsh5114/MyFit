@@ -22,21 +22,21 @@
 
 <header class="flex shrink-0 items-center gap-2 border-b bg-muted p-1">
 	<Sheet.Root bind:open={sheetOpen}>
-		<Sheet.Trigger aria-label="Menu" class="px-2">
+		<Sheet.Trigger class="px-2" aria-label="Menu">
 			<MenuIcon />
 		</Sheet.Trigger>
 		<Sheet.Content side="left">
 			<Sheet.Header class="items-start">
 				<Sheet.Title>
 					<Button
-						variant="link"
 						class="justify-start gap-2 text-foreground"
 						onclick={async () => {
 							await goto('/');
 							sheetOpen = false;
 						}}
+						variant="link"
 					>
-						<img src="/favicon.webp" alt="MyFit logo" width={52} height={52} />
+						<img alt="MyFit logo" height={52} src="/favicon.webp" width={52} />
 						<h1 class="text-2xl font-bold">MyFit</h1>
 					</Button>
 				</Sheet.Title>
@@ -44,13 +44,13 @@
 			<NavLinks bind:sheetOpen />
 		</Sheet.Content>
 	</Sheet.Root>
-	<a href="/" class="mx-1 mr-auto">
+	<a class="mx-1 mr-auto" href="/">
 		{#if $navigating}
 			<div class="flex h-10 w-10 items-center justify-center">
-				<LoaderCircle width={24} height={24} class="animate-spin text-primary" />
+				<LoaderCircle class="animate-spin text-primary" height={24} width={24} />
 			</div>
 		{:else}
-			<img src="/favicon.webp" alt="MyFit logo" width={40} height={40} />
+			<img alt="MyFit logo" height={40} src="/favicon.webp" width={40} />
 		{/if}
 	</a>
 	<PWAButtons isMobile={true} />
@@ -67,7 +67,7 @@
 	{:else}
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild let:builder>
-				<Button size="sm" variant="ghost" builders={[builder]}>Login</Button>
+				<Button builders={[builder]} size="sm" variant="ghost">Login</Button>
 			</DropdownMenu.Trigger>
 			<LoginProviderMenu />
 		</DropdownMenu.Root>

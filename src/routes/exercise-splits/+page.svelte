@@ -61,18 +61,18 @@
 	<div class="flex gap-1">
 		<form class="contents" onsubmit={updateSearchParam}>
 			<Input
-				bind:value={searchString}
 				id="search-exercise-splits"
 				placeholder="Search"
 				type="search"
+				bind:value={searchString}
 			/>
-			<Button variant="secondary" aria-label="search" type="submit">
+			<Button aria-label="search" type="submit" variant="secondary">
 				<SearchIcon />
 			</Button>
 		</form>
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild let:builder>
-				<Button builders={[builder]} aria-label="exercise-split-new-options"><AddIcon /></Button>
+				<Button aria-label="exercise-split-new-options" builders={[builder]}><AddIcon /></Button>
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content align="end">
 				<DropdownMenu.Group>
@@ -94,9 +94,9 @@
 			<InfiniteLoader triggerLoad={loadMore}>
 				{#each exerciseSplits as exerciseSplit}
 					<Button
-						variant="outline"
 						class="mb-1 flex h-12 items-center justify-between rounded-md border bg-card p-2"
 						href="/exercise-splits/{exerciseSplit.id}"
+						variant="outline"
 					>
 						<span class="truncate text-lg font-semibold">{exerciseSplit.name}</span>
 						<Badge>{exerciseSplit.exerciseSplitDays.length} days / cycle</Badge>
@@ -108,7 +108,7 @@
 					<LoaderCircle class="animate-spin" />
 				{/snippet}
 				{#snippet error(load)}
-					<Button variant="outline" onclick={load}>An error occurred. Retry?</Button>
+					<Button onclick={load} variant="outline">An error occurred. Retry?</Button>
 				{/snippet}
 				{#snippet noData()}
 					{#if exerciseSplits.length > 0}

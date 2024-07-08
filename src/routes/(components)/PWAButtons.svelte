@@ -59,19 +59,19 @@
 
 {#if isMobile}
 	{#if $needRefresh}
-		<Button variant="ghost" size="icon" onclick={updateApplication}>
+		<Button onclick={updateApplication} size="icon" variant="ghost">
 			<UpdateIcon class={cn({ 'animate-spin': reloading })} />
 		</Button>
 	{:else if showInstallButton}
 		<Button
-			variant="ghost"
-			size="icon"
 			aria-label="Download"
 			onclick={() => {
 				// @ts-expect-error Not standard API yet, so need this ignore
 				deferredPrompt.prompt();
 				deferredPrompt = null;
 			}}
+			size="icon"
+			variant="ghost"
 		>
 			<DownloadIcon />
 		</Button>
@@ -80,26 +80,26 @@
 	<div class="grow">
 		{#if $needRefresh}
 			<Button
-				variant="outline"
 				class="w-full gap-2 text-base"
-				size="lg"
 				disabled={reloading}
 				onclick={updateApplication}
+				size="lg"
+				variant="outline"
 			>
 				<UpdateIcon class={cn({ 'animate-spin': reloading })} />
 				Reload
 			</Button>
 		{:else if showInstallButton}
 			<Button
-				variant="outline"
 				class="w-full gap-2 text-base"
-				size="lg"
 				aria-label="Download"
 				onclick={() => {
 					// @ts-expect-error Not standard API yet, so need this ignore
 					deferredPrompt.prompt();
 					deferredPrompt = null;
 				}}
+				size="lg"
+				variant="outline"
 			>
 				<DownloadIcon /> Download
 			</Button>

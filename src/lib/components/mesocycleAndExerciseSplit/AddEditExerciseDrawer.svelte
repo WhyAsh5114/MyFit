@@ -125,28 +125,28 @@
 >
 	<Sheet.Trigger asChild let:builder>
 		<Button
+			aria-label="add-exercise"
+			builders={[builder]}
+			onclick={resetDrawerState}
 			size="icon"
 			variant="outline"
-			builders={[builder]}
-			aria-label="add-exercise"
-			onclick={resetDrawerState}
 		>
 			<AddIcon />
 		</Button>
 	</Sheet.Trigger>
-	<Sheet.Content side="right" class="w-11/12 overflow-y-auto px-4">
+	<Sheet.Content class="w-11/12 overflow-y-auto px-4" side="right">
 		<Sheet.Header>
 			<Sheet.Title>{mode} exercise</Sheet.Title>
 		</Sheet.Header>
-		<form onsubmit={submitForm} class="mt-8 grid h-fit grid-cols-2 gap-x-2 gap-y-4">
+		<form class="mt-8 grid h-fit grid-cols-2 gap-x-2 gap-y-4" onsubmit={submitForm}>
 			<div class="col-span-2 flex w-full flex-col gap-1.5">
 				<span class="text-sm font-medium">Exercise name</span>
 				<Command.Root class="bg-background">
 					<Command.Input
-						bind:value={currentExercise.name}
-						placeholder="Type here or search..."
 						onFocus={() => (searching = true)}
+						placeholder="Type here or search..."
 						required
+						bind:value={currentExercise.name}
 					/>
 					{#if searching}
 						<Command.List class="max-h-32 bg-muted">
@@ -172,15 +172,15 @@
 			>
 				<Select.Root
 					name="exercise-target-muscle-group"
-					selected={{
-						value: currentExercise.targetMuscleGroup,
-						label: convertCamelCaseToNormal(currentExercise.targetMuscleGroup)
-					}}
 					onSelectedChange={(v) => {
 						currentExercise.targetMuscleGroup = v?.value;
 						if (v?.value !== 'Custom') currentExercise.customMuscleGroup = null;
 					}}
 					required
+					selected={{
+						value: currentExercise.targetMuscleGroup,
+						label: convertCamelCaseToNormal(currentExercise.targetMuscleGroup)
+					}}
 				>
 					<Select.Label class="p-0 text-sm font-medium leading-none">
 						Target muscle group
@@ -190,7 +190,7 @@
 					</Select.Trigger>
 					<Select.Content class="h-48 overflow-y-auto">
 						{#each Object.values(MuscleGroup) as muscleGroup}
-							<Select.Item value={muscleGroup} label={convertCamelCaseToNormal(muscleGroup)} />
+							<Select.Item label={convertCamelCaseToNormal(muscleGroup)} value={muscleGroup} />
 						{/each}
 					</Select.Content>
 				</Select.Root>
@@ -201,8 +201,8 @@
 					<Input
 						id="exercise-custom-muscle-group"
 						placeholder="Type here"
-						bind:value={currentExercise.customMuscleGroup}
 						required
+						bind:value={currentExercise.customMuscleGroup}
 					/>
 				</div>
 			{/if}
@@ -212,15 +212,15 @@
 					<Input
 						id="exercise-sets"
 						min={0}
-						type="number"
 						placeholder="Type here"
-						bind:value={currentExercise.sets}
 						required
+						type="number"
+						bind:value={currentExercise.sets}
 					/>
 				</div>
 				<div class="flex flex-col gap-1.5">
 					<span class="text-sm font-medium leading-none">Progression</span>
-					<Button variant="secondary" class="gap-2" onclick={() => (overridesSheetOpen = true)}>
+					<Button class="gap-2" onclick={() => (overridesSheetOpen = true)} variant="secondary">
 						<span class="pointer-events-none">Overrides</span>
 						<ChevronRight class="pointer-events-none" />
 					</Button>
@@ -237,19 +237,19 @@
 						<Input
 							id="exercise-bodyweight-fraction"
 							min={0.01}
+							placeholder="Fraction"
+							required
 							step={0.01}
 							type="number"
-							placeholder="Fraction"
 							bind:value={currentExercise.bodyweightFraction}
-							required
 						/>
 					{/if}
 					<div class="flex grow items-center rounded-md border px-2 py-1.5">
 						<Switch
-							includeInput
 							id="exercise-involves-bodyweight"
 							name="exercise-involves-bodyweight"
 							checked={currentExercise.bodyweightFraction !== null}
+							includeInput
 							onCheckedChange={(c) => {
 								currentExercise.bodyweightFraction = c ? undefined : null;
 							}}
@@ -260,12 +260,12 @@
 			<div class="flex w-full flex-col gap-1.5">
 				<Select.Root
 					name="exercise-set-type"
+					onSelectedChange={(v) => (currentExercise.setType = v?.value ?? 'Straight')}
+					required
 					selected={{
 						value: currentExercise.setType,
 						label: convertCamelCaseToNormal(currentExercise.setType)
 					}}
-					onSelectedChange={(v) => (currentExercise.setType = v?.value ?? 'Straight')}
-					required
 				>
 					<Select.Label class="p-0 text-sm font-medium leading-none">Set type</Select.Label>
 					<Select.Trigger>
@@ -273,7 +273,7 @@
 					</Select.Trigger>
 					<Select.Content>
 						{#each Object.values(SetType) as setTemplate}
-							<Select.Item value={setTemplate} label={convertCamelCaseToNormal(setTemplate)} />
+							<Select.Item label={convertCamelCaseToNormal(setTemplate)} value={setTemplate} />
 						{/each}
 					</Select.Content>
 				</Select.Root>
@@ -282,12 +282,6 @@
 				<div class="flex w-full flex-col gap-1.5">
 					<Select.Root
 						name="exercise-set-change-type"
-						selected={{
-							value: currentExercise.changeType ?? 'Percentage',
-							label: currentExercise.changeType
-								? convertCamelCaseToNormal(currentExercise.changeType)
-								: 'Percentage'
-						}}
 						onSelectedChange={(v) => {
 							if (
 								currentExercise.setType === 'Drop' ||
@@ -297,6 +291,12 @@
 								currentExercise.changeType = v?.value ?? 'Percentage';
 						}}
 						required
+						selected={{
+							value: currentExercise.changeType ?? 'Percentage',
+							label: currentExercise.changeType
+								? convertCamelCaseToNormal(currentExercise.changeType)
+								: 'Percentage'
+						}}
 					>
 						<Select.Label class="p-0 text-sm font-medium leading-none">
 							Load change type
@@ -306,7 +306,7 @@
 						</Select.Trigger>
 						<Select.Content>
 							{#each Object.values(ChangeType) as changeType}
-								<Select.Item value={changeType} label={convertCamelCaseToNormal(changeType)} />
+								<Select.Item label={convertCamelCaseToNormal(changeType)} value={changeType} />
 							{/each}
 						</Select.Content>
 					</Select.Root>
@@ -316,9 +316,9 @@
 					<Input
 						id="exercise-set-decrement"
 						placeholder="Type here"
+						required
 						type="number"
 						bind:value={currentExercise.changeAmount}
-						required
 					/>
 				</div>
 			{/if}
@@ -327,10 +327,10 @@
 				<Input
 					id="exercise-rep-range-start"
 					min={1}
-					type="number"
 					placeholder="Type here"
-					bind:value={currentExercise.repRangeStart}
 					required
+					type="number"
+					bind:value={currentExercise.repRangeStart}
 				/>
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
@@ -338,22 +338,22 @@
 				<Input
 					id="exercise-rep-range-end"
 					min={(currentExercise.repRangeStart ?? 0) + 1}
-					type="number"
 					placeholder="Type here"
-					bind:value={currentExercise.repRangeEnd}
 					required
+					type="number"
+					bind:value={currentExercise.repRangeEnd}
 				/>
 			</div>
 			<div class="col-span-2 flex w-full flex-col gap-1.5">
 				<Label for="exercise-note">Note</Label>
 				<Textarea
 					id="exercise-note"
-					placeholder="Exercise cues, machine heights, etc."
 					class="resize-none"
+					placeholder="Exercise cues, machine heights, etc."
 					bind:value={currentExercise.note}
 				/>
 			</div>
-			<Button type="submit" class="col-span-2">{mode} exercise</Button>
+			<Button class="col-span-2" type="submit">{mode} exercise</Button>
 		</form>
 	</Sheet.Content>
 </Sheet.Root>
@@ -368,7 +368,7 @@
 					them here for each exercise
 				</Sheet.Description>
 			</Sheet.Header>
-			<form onsubmit={submitOverrides} class="mt-8 grid h-fit gap-x-2 gap-y-4">
+			<form class="mt-8 grid h-fit gap-x-2 gap-y-4" onsubmit={submitOverrides}>
 				<div class="flex flex-col gap-1">
 					<div class="flex items-center justify-between">
 						<Label for="exercise-minimum-weight-change-value">Minimum weight change</Label>
@@ -383,10 +383,10 @@
 					</div>
 					<Input
 						id="exercise-minimum-weight-change-value"
-						type="number"
-						placeholder="5"
 						disabled={currentExercise.minimumWeightChange === null}
+						placeholder="5"
 						required
+						type="number"
 						bind:value={currentExercise.minimumWeightChange}
 					/>
 				</div>
@@ -404,10 +404,10 @@
 					</div>
 					<Input
 						id="exercise-override-overload-percentage-value"
-						type="number"
-						placeholder={props.mesocycle?.startOverloadPercentage.toString()}
 						disabled={currentExercise.overloadPercentage === null}
+						placeholder={props.mesocycle?.startOverloadPercentage.toString()}
 						required
+						type="number"
 						bind:value={currentExercise.overloadPercentage}
 					/>
 				</div>
@@ -425,14 +425,14 @@
 					</div>
 					<Select.Root
 						disabled={currentExercise.preferredProgressionVariable === null}
+						onSelectedChange={(s) => {
+							if (s !== undefined && 'sets' in currentExercise)
+								currentExercise.preferredProgressionVariable = s.value;
+						}}
 						required
 						selected={{
 							value: props.mesocycle?.preferredProgressionVariable,
 							label: props.mesocycle?.preferredProgressionVariable
-						}}
-						onSelectedChange={(s) => {
-							if (s !== undefined && 'sets' in currentExercise)
-								currentExercise.preferredProgressionVariable = s.value;
 						}}
 					>
 						<Select.Trigger class="w-full">
@@ -497,7 +497,7 @@
 						</div>
 					{/key}
 				</div>
-				<Button variant="secondary" class="gap-2" type="submit">
+				<Button class="gap-2" type="submit" variant="secondary">
 					<ChevronLeft />
 					Basics
 				</Button>

@@ -86,7 +86,7 @@
 				<span class="flex items-center gap-2 text-sm text-muted-foreground">
 					Day {workoutData.workoutOfMesocycle?.splitDayIndex + 1}, Cycle {workoutData
 						.workoutOfMesocycle?.cycleNumber}
-					<InfoPopover ariaLabel="mesocycle-info" align="center">
+					<InfoPopover align="center" ariaLabel="mesocycle-info">
 						<span class="text-sm text-foreground">
 							{workoutData.workoutOfMesocycle.mesocycle.name}:
 							{getFormattedDate(workoutData.startedAt)}
@@ -101,27 +101,27 @@
 			{/if}
 		</div>
 		<div class="grid grid-cols-3 gap-x-2 gap-y-1">
-			<Button size="icon" variant="outline" onclick={() => (reordering = !reordering)}>
+			<Button onclick={() => (reordering = !reordering)} size="icon" variant="outline">
 				{#if !reordering}
 					<ReorderIcon />
 				{:else}
 					<EditIcon />
 				{/if}
 			</Button>
-			<Button size="icon" variant="outline" aria-label="compare-exercises">
+			<Button aria-label="compare-exercises" size="icon" variant="outline">
 				<CompareIcon />
 				<!-- TODO: comparison stuff -->
 			</Button>
 			<AddEditExerciseDrawer
-				context="workout"
-				mesocycle={workoutData.workoutOfMesocycle?.mesocycle}
 				addExercise={workoutRunes.addExercise}
+				context="workout"
 				editExercise={workoutRunes.editExercise}
-				setEditingExercise={workoutRunes.setEditingExercise}
 				editingExercise={workoutRunes.editingExercise}
+				mesocycle={workoutData.workoutOfMesocycle?.mesocycle}
+				setEditingExercise={workoutRunes.setEditingExercise}
 			/>
 			{#if totalSets !== null && completedSets !== null}
-				<Progress class="col-span-3 h-1.5" value={completedSets} max={totalSets} />
+				<Progress class="col-span-3 h-1.5" max={totalSets} value={completedSets} />
 			{:else}
 				<Skeleton class="col-span-3 h-1.5 w-full" />
 			{/if}
@@ -136,11 +136,11 @@
 	</div>
 {:else}
 	<div class="mt-2 flex h-px grow flex-col overflow-y-auto">
-		<DndComponent bind:itemList={workoutRunes.workoutExercises} {reordering} />
+		<DndComponent {reordering} bind:itemList={workoutRunes.workoutExercises} />
 	</div>
 {/if}
 
 <div class="mt-2 grid grid-cols-2 gap-1">
-	<Button variant="secondary" href="./start">Previous</Button>
+	<Button href="./start" variant="secondary">Previous</Button>
 	<Button onclick={submitWorkoutExercises}>Next</Button>
 </div>

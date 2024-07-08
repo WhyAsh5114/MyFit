@@ -23,9 +23,9 @@
 
 {#each exerciseSplitTemplates as { description, exerciseSplit }}
 	<Button
-		variant="outline"
 		class="mb-1 flex h-fit flex-col rounded-md border bg-card p-2"
 		onclick={() => templateExerciseSplit(exerciseSplit)}
+		variant="outline"
 	>
 		<div class="pointer-events-none flex w-full items-center justify-between">
 			<span class="text-lg font-semibold">{exerciseSplit.name}</span>

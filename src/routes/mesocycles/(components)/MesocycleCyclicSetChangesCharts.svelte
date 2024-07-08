@@ -126,9 +126,9 @@
 
 <div class="mb-2 w-full grow">
 	<canvas
-		class:max-h-56={selectedChartType.value === 'Regardless of progress'}
 		bind:this={chartCanvas}
 		id="chart-canvas"
+		class:max-h-56={selectedChartType.value === 'Regardless of progress'}
 	></canvas>
 </div>
 

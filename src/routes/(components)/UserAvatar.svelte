@@ -13,6 +13,6 @@
 </script>
 
 <Avatar.Root class="h-8 w-8">
-	<Avatar.Image src={session.user?.image} alt="Profile picture" referrerpolicy="no-referrer" />
+	<Avatar.Image alt="Profile picture" referrerpolicy="no-referrer" src={session.user?.image} />
 	<Avatar.Fallback>{getInitials(session.user?.name)}</Avatar.Fallback>
 </Avatar.Root>

@@ -43,22 +43,22 @@
 <H3>Exercises</H3>
 <Tabs.Root
 	class="flex w-full grow flex-col"
-	value={splitDayName}
 	onValueChange={(v) => {
 		exerciseSplitRunes.selectedSplitDayIndex = exerciseSplitRunes.splitDays.findIndex(
 			(splitDay) => splitDay.name === v
 		);
 	}}
+	value={splitDayName}
 >
 	<Tabs.List class="flex justify-start overflow-x-auto">
 		{#each exerciseSplitRunes.splitExercises as _, idx}
 			{@const { name, isRestDay } = exerciseSplitRunes.splitDays[idx]}
-			<Tabs.Trigger value={name} disabled={isRestDay} class="px-4">
+			<Tabs.Trigger class="px-4" disabled={isRestDay} value={name}>
 				{name !== '' ? name : 'Rest'}
 			</Tabs.Trigger>
 		{/each}
 	</Tabs.List>
-	<Tabs.Content value={splitDayName} class="grow">
+	<Tabs.Content class="grow" value={splitDayName}>
 		<div class="flex h-full flex-col gap-2">
 			<div class="flex items-center gap-2">
 				<div class="mr-auto flex flex-col">
@@ -68,13 +68,13 @@
 					</span>
 				</div>
 				<AddEditExerciseDrawer
-					context="exerciseSplit"
 					addExercise={exerciseSplitRunes.addExercise}
+					context="exerciseSplit"
 					editExercise={exerciseSplitRunes.editExercise}
-					setEditingExercise={exerciseSplitRunes.setEditingExercise}
 					editingExercise={exerciseSplitRunes.editingExercise}
+					setEditingExercise={exerciseSplitRunes.setEditingExercise}
 				/>
-				<Button size="icon" variant="outline" onclick={() => (reordering = !reordering)}>
+				<Button onclick={() => (reordering = !reordering)} size="icon" variant="outline">
 					{#if !reordering}
 						<ReorderIcon />
 					{:else}
@@ -84,10 +84,10 @@
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
 						<Button
+							aria-label="exercise-split-functions"
 							builders={[builder]}
 							size="icon"
 							variant="outline"
-							aria-label="exercise-split-functions"
 						>
 							<MenuIcon />
 						</Button>
@@ -96,22 +96,22 @@
 						<DropdownMenu.Group>
 							<DropdownMenu.Item
 								class="gap-2"
-								onclick={exerciseSplitRunes.cutExercises}
 								disabled={selectedSplitDayExercises.length === 0}
+								onclick={exerciseSplitRunes.cutExercises}
 							>
 								<CutIcon /> Cut
 							</DropdownMenu.Item>
 							<DropdownMenu.Item
 								class="gap-2"
-								onclick={exerciseSplitRunes.copyExercises}
 								disabled={selectedSplitDayExercises.length === 0}
+								onclick={exerciseSplitRunes.copyExercises}
 							>
 								<CopyIcon /> Copy
 							</DropdownMenu.Item>
 							<DropdownMenu.Item
 								class="gap-2"
-								onclick={exerciseSplitRunes.pasteExercises}
 								disabled={exerciseSplitRunes.copiedExercises === undefined}
+								onclick={exerciseSplitRunes.pasteExercises}
 							>
 								<PasteIcon /> Paste
 							</DropdownMenu.Item>
@@ -126,11 +126,11 @@
 				<DndComponent
 					context="exerciseSplit"
 					deleteExercise={exerciseSplitRunes.deleteExercise}
+					{reordering}
 					setEditingExercise={exerciseSplitRunes.setEditingExercise}
 					bind:itemList={exerciseSplitRunes.splitExercises[
 						exerciseSplitRunes.selectedSplitDayIndex
 					]}
-					{reordering}
 				/>
 			</div>
 		</div>
@@ -138,13 +138,13 @@
 </Tabs.Root>
 
 <div class="mt-2 grid grid-cols-2 gap-1">
-	<Button variant="secondary" href="./structure">Previous</Button>
+	<Button href="./structure" variant="secondary">Previous</Button>
 	<Button onclick={submitExercises}>Next</Button>
 </div>
 
 <SwapExercisesDialog
-	splitDays={exerciseSplitRunes.splitDays}
 	selectedSplitDayIndex={exerciseSplitRunes.selectedSplitDayIndex}
+	splitDays={exerciseSplitRunes.splitDays}
 	swapExercises={exerciseSplitRunes.swapExercises}
 	bind:open={swapDialogOpen}
 />

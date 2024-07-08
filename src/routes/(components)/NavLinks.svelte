@@ -14,10 +14,10 @@
 	{#each linkItems as { text, href }}
 		<li>
 			<Button
-				variant="link"
 				class="text-foreground lg:text-base"
-				onclick={() => (sheetOpen = false)}
 				{href}
+				onclick={() => (sheetOpen = false)}
+				variant="link"
 			>
 				{text}
 			</Button>

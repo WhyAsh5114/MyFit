@@ -67,7 +67,7 @@
 </script>
 
 <H3>Overview</H3>
-<Tabs.Root value="exercises" class="w-full">
+<Tabs.Root class="w-full" value="exercises">
 	<Tabs.List class="grid grid-cols-2">
 		<Tabs.Trigger value="exercises">Exercises</Tabs.Trigger>
 		<Tabs.Trigger value="muscleGroups">Muscle groups</Tabs.Trigger>
@@ -85,7 +85,7 @@
 </Tabs.Root>
 
 <div class="mt-auto grid grid-cols-2 gap-1">
-	<Button variant="secondary" href="./exercises">Previous</Button>
+	<Button href="./exercises" variant="secondary">Previous</Button>
 	<Button disabled={savingExerciseSplit} onclick={createOrEditExerciseSplit}>
 		{#if savingExerciseSplit}
 			<LoaderCircle class="animate-spin" />

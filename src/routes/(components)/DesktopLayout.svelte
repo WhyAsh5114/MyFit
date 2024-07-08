@@ -17,25 +17,25 @@
 </script>
 
 <header class="flex h-screen w-96 flex-col bg-muted p-10">
-	<Button variant="link" class="justify-start gap-2 text-foreground" href="/">
+	<Button class="justify-start gap-2 text-foreground" href="/" variant="link">
 		{#if $navigating}
 			<div class="flex h-[72px] w-[72px] items-center justify-center">
-				<LoaderCircle width={48} height={48} class="animate-spin text-primary" />
+				<LoaderCircle class="animate-spin text-primary" height={48} width={48} />
 			</div>
 		{:else}
-			<img src="/favicon.webp" alt="MyFit logo" width={72} height={72} />
+			<img alt="MyFit logo" height={72} src="/favicon.webp" width={72} />
 		{/if}
 		<h1 class="text-4xl font-bold">MyFit</h1>
 	</Button>
 	<NavLinks />
 	<div class="flex gap-1">
-		<ModeToggle variant="outline" size="lg" />
+		<ModeToggle size="lg" variant="outline" />
 		<PWAButtons isMobile={false} />
 	</div>
 	{#if $page.data.session}
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild let:builder>
-				<Button builders={[builder]} variant="secondary" size="lg" class="mt-1 justify-around">
+				<Button class="mt-1 justify-around" builders={[builder]} size="lg" variant="secondary">
 					<UserAvatar session={$page.data.session} />
 					<span class="text-base font-semibold">{$page.data.session.user?.name}</span>
 				</Button>
@@ -46,10 +46,10 @@
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild let:builder>
 				<Button
-					variant="outline"
+					class="mt-1 justify-around text-base"
 					builders={[builder]}
 					size="lg"
-					class="mt-1 justify-around text-base"
+					variant="outline"
 				>
 					Login
 				</Button>

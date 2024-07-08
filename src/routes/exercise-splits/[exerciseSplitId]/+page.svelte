@@ -94,7 +94,7 @@
 {#if exerciseSplit === 'loading'}
 	<ExerciseSplitSkeleton />
 {:else}
-	<Tabs.Root bind:value={selectedTabValue} class="flex w-full grow flex-col">
+	<Tabs.Root class="flex w-full grow flex-col" bind:value={selectedTabValue}>
 		<Tabs.List class="grid w-full grid-cols-2">
 			<Tabs.Trigger value="info">Info</Tabs.Trigger>
 			<Tabs.Trigger value="exercises">Exercises</Tabs.Trigger>
@@ -143,7 +143,7 @@
 				</Card.Content>
 			</Card.Root>
 		</Tabs.Content>
-		<Tabs.Content value="exercises" class="grow">
+		<Tabs.Content class="grow" value="exercises">
 			{#if chartMode}
 				<Card.Root class="p-4">
 					<ExerciseSplitMuscleGroupsCharts
@@ -155,12 +155,12 @@
 			{/if}
 		</Tabs.Content>
 	</Tabs.Root>
-	<ResponsiveDialog title="Are you sure?" needTrigger={false} bind:open={deleteConfirmDrawerOpen}>
+	<ResponsiveDialog needTrigger={false} title="Are you sure?" bind:open={deleteConfirmDrawerOpen}>
 		<p>
 			Delete split <span class="font-semibold">{exerciseSplit.name}</span>? This action cannot be
 			undone.
 		</p>
-		<Button variant="destructive" onclick={deleteExerciseSplit} disabled={callingDeleteEndpoint}>
+		<Button disabled={callingDeleteEndpoint} onclick={deleteExerciseSplit} variant="destructive">
 			{#if callingDeleteEndpoint}
 				<LoaderCircle class="animate-spin" />
 			{:else}
@@ -170,7 +170,7 @@
 	</ResponsiveDialog>
 {/if}
 
-<ResponsiveDialog title="Note" needTrigger={false} bind:open={editExerciseSplitNoteDrawerOpen}>
+<ResponsiveDialog needTrigger={false} title="Note" bind:open={editExerciseSplitNoteDrawerOpen}>
 	<p class="text-sm">
 		Editing an exercise split won't change the mesocycle split it is used in. To modify that, use
 		the <b>Split</b> tab in <b>View mesocycle</b>

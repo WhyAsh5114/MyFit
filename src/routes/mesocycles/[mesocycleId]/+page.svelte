@@ -29,7 +29,7 @@
 {#if mesocycle === 'loading'}
 	<MesocycleSkeleton />
 {:else}
-	<Tabs.Root bind:value={selectedTabValue} class="flex w-full grow flex-col">
+	<Tabs.Root class="flex w-full grow flex-col" bind:value={selectedTabValue}>
 		<Tabs.List class="grid grid-cols-4">
 			<Tabs.Trigger value="basics">Basics</Tabs.Trigger>
 			<Tabs.Trigger value="split">Split</Tabs.Trigger>
@@ -50,7 +50,7 @@
 				/>
 			{/if}
 		</Tabs.Content>
-		<Tabs.Content value="volume" class="grow">
+		<Tabs.Content class="grow" value="volume">
 			{#if !chartMode}
 				<div class="flex h-full flex-col">
 					<MesocycleVolumeTab cyclicSetChanges={mesocycle.mesocycleCyclicSetChanges} />
@@ -61,7 +61,7 @@
 				</Card.Root>
 			{/if}
 		</Tabs.Content>
-		<Tabs.Content value="workouts" class="grow">
+		<Tabs.Content class="grow" value="workouts">
 			{#if !chartMode}
 				TODO: workouts list and some stats like: most progressed muscle group, exercise, least
 				progressed, highest volumes, etc

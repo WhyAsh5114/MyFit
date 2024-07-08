@@ -113,9 +113,9 @@
 		<div class="mb-1 flex w-full flex-col gap-1.5 rounded-lg border bg-card p-4">
 			<Label for="user-bodyweight">Bodyweight</Label>
 			<Input
-				type="number"
 				id="user-bodyweight"
 				placeholder="Type here"
+				type="number"
 				bind:value={userBodyweight}
 			/>
 		</div>
@@ -139,7 +139,7 @@
 			</Card.Header>
 			{#if workoutData.workoutOfMesocycle.workoutStatus === 'RestDay'}
 				<Card.Footer>
-					<Button class="ml-auto w-32 gap-2" onclick={completeRestDay} disabled={completingRestDay}>
+					<Button class="ml-auto w-32 gap-2" disabled={completingRestDay} onclick={completeRestDay}>
 						{#if completingRestDay}
 							<LoaderCircle class="animate-spin" />
 						{:else}
@@ -153,8 +153,8 @@
 	{/if}
 	<Button
 		class="mt-auto"
-		onclick={() => startWorkout()}
 		disabled={userBodyweight === null || $navigating !== null}
+		onclick={() => startWorkout()}
 	>
 		{#if $navigating}
 			<LoaderCircle class="animate-spin" />
@@ -164,7 +164,7 @@
 	</Button>
 {/if}
 
-<ResponsiveDialog title="Warning" needTrigger={false} bind:open={overwriteWorkoutDialogOpen}>
+<ResponsiveDialog needTrigger={false} title="Warning" bind:open={overwriteWorkoutDialogOpen}>
 	<p>
 		A workout is already in progress with <span class="font-semibold"
 			>{workoutRunes.workoutExercises?.length} exercises</span
@@ -172,6 +172,6 @@
 	</p>
 	<div class="grid grid-cols-2 gap-1.5">
 		<Button onclick={() => startWorkout(true, 'keepCurrent')}>Keep current</Button>
-		<Button variant="destructive" onclick={() => startWorkout(true, 'overwrite')}>Overwrite</Button>
+		<Button onclick={() => startWorkout(true, 'overwrite')} variant="destructive">Overwrite</Button>
 	</div>
 </ResponsiveDialog>

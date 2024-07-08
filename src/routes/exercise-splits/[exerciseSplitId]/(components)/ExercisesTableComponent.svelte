@@ -13,13 +13,13 @@
 	let selectedSplitDay = $derived(exerciseSplitDays[parseInt(selectedDayIndex)]);
 </script>
 
-<Tabs.Root bind:value={selectedDayIndex} class="flex h-full flex-col">
+<Tabs.Root class="flex h-full flex-col" bind:value={selectedDayIndex}>
 	<Tabs.List class="w-full shrink-0 justify-start overflow-x-auto">
 		{#each exerciseSplitDays as splitDay, i}
 			<Tabs.Trigger
 				class="shrink-0 grow basis-20"
-				value={i.toString()}
 				disabled={splitDay.isRestDay}
+				value={i.toString()}
 			>
 				{splitDay.isRestDay ? 'Rest' : splitDay.name}
 			</Tabs.Trigger>
@@ -37,7 +37,7 @@
 			</div>
 			<div class="mt-2 flex h-full flex-col gap-1 overflow-y-auto">
 				{#each selectedSplitDay.exercises as exercise}
-					<ExerciseTemplateCard readOnly exerciseTemplate={exercise} context="exerciseSplit" />
+					<ExerciseTemplateCard context="exerciseSplit" exerciseTemplate={exercise} readOnly />
 				{/each}
 			</div>
 		</Card.Root>

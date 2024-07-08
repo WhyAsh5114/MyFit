@@ -56,15 +56,15 @@
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
 		<form class="contents" onsubmit={updateSearchParam}>
-			<Input bind:value={searchString} id="search-mesocycles" placeholder="Search" type="search" />
-			<Button variant="secondary" aria-label="search" type="submit">
+			<Input id="search-mesocycles" placeholder="Search" type="search" bind:value={searchString} />
+			<Button aria-label="search" type="submit" variant="secondary">
 				<SearchIcon />
 			</Button>
 		</form>
 		<Button
 			aria-label="create-new-mesocycle"
-			onclick={createNewMesocycle}
-			href="/mesocycles/manage/basics"><AddIcon /></Button
+			href="/mesocycles/manage/basics"
+			onclick={createNewMesocycle}><AddIcon /></Button
 		>
 	</div>
 	<div class="flex items-center gap-2">
@@ -80,9 +80,9 @@
 		<div class="muted-text-box">No active mesocycle</div>
 	{:else}
 		<Button
-			variant="outline"
 			class="mb-1 flex h-12 items-center justify-between rounded-md border bg-card p-2"
 			href="/mesocycles/{activeMesocycle.id}"
+			variant="outline"
 		>
 			<span class="text-lg font-semibold">{activeMesocycle.name}</span>
 			<Badge>Active</Badge>
@@ -105,9 +105,9 @@
 			<InfiniteLoader triggerLoad={loadMore}>
 				{#each mesocycles as mesocycle}
 					<Button
-						variant="outline"
 						class="mb-1 flex h-12 items-center justify-between rounded-md border bg-card p-2"
 						href="/mesocycles/{mesocycle.id}"
+						variant="outline"
 					>
 						<span class="text-lg font-semibold">{mesocycle.name}</span>
 						{#if !mesocycle.startDate}
@@ -125,7 +125,7 @@
 					<LoaderCircle class="animate-spin" />
 				{/snippet}
 				{#snippet error(load)}
-					<Button variant="outline" onclick={load}>An error occurred. Retry?</Button>
+					<Button onclick={load} variant="outline">An error occurred. Retry?</Button>
 				{/snippet}
 				{#snippet noData()}
 					{#if mesocycles.length > 0}
