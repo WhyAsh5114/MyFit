@@ -165,7 +165,10 @@ export const workouts = t.router({
 			const data = await prisma.mesocycle.findFirst({
 				where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
 				include: {
-					mesocycleExerciseSplitDays: { include: { mesocycleSplitDayExercises: true } },
+					mesocycleExerciseSplitDays: {
+						include: { mesocycleSplitDayExercises: true },
+						where: { dayIndex: input.splitDayIndex }
+					},
 					mesocycleCyclicSetChanges: true,
 					workoutsOfMesocycle: {
 						include: {

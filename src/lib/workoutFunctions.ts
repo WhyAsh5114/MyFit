@@ -109,8 +109,7 @@ export function progressiveOverloadMagic(
 		...mesocycle
 	} = mesocycleWithProgressionData;
 
-	const todaysSplitDay =
-		mesocycleExerciseSplitDays[workoutsOfMesocycle.length % mesocycleExerciseSplitDays.length];
+	const todaysSplitDay = mesocycleExerciseSplitDays[0];
 	const workoutExercises = todaysSplitDay.mesocycleSplitDayExercises.map((fullExercise) => {
 		const { mesocycleExerciseSplitDayId, ...exercise } = fullExercise;
 		return createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(exercise);
