@@ -6,6 +6,7 @@
 	import WorkoutBasicTab from './(components)/WorkoutBasicTab.svelte';
 	import WorkoutExercisesTab from './(components)/WorkoutExercisesTab.svelte';
 	import type { FullWorkoutWithMesoData } from './+page.server';
+	import WorkoutSkeleton from './(components)/WorkoutSkeleton.svelte';
 
 	let { data } = $props();
 	let workout: FullWorkoutWithMesoData | null | 'loading' = $state('loading');
@@ -21,7 +22,7 @@
 <H2 showChartIcon={selectedTabValue !== 'basics'} bind:chartMode>View workout</H2>
 
 {#if workout === 'loading'}
-	TODO: skeletons
+	<WorkoutSkeleton />
 {:else if workout === null}
 	<div class="muted-text-box">Workout not found</div>
 {:else}
