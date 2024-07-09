@@ -86,10 +86,12 @@
 							})}
 						</span>
 						{#if workoutOfMesocycle}
-							<span class="truncate text-muted-foreground">
-								{workoutOfMesocycle.mesocycle.mesocycleExerciseSplitDays[
+							{@const splitDayName =
+								workoutOfMesocycle.mesocycle.mesocycleExerciseSplitDays[
 									workoutOfMesocycle.splitDayIndex
 								].name}
+							<span class="truncate text-muted-foreground">
+								{splitDayName === '' ? 'Rest' : splitDayName}
 							</span>
 						{/if}
 					</Button>
