@@ -11,4 +11,4 @@ runs:
 
     - name: Install dependencies
       shell: bash
-      run: npm ci --force
+      run: npm i --force
