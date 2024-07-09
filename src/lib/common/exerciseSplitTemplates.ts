@@ -74,7 +74,7 @@ export const exerciseSplitTemplates: {
 							targetMuscleGroup: 'Chest',
 							customMuscleGroup: null,
 							bodyweightFraction: null,
-							setType: 'Drop',
+							setType: 'Down',
 							repRangeStart: 5,
 							repRangeEnd: 10,
 							changeType: 'Percentage',
