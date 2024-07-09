@@ -29,6 +29,14 @@ jobs:
 
   playwright_tests:
     runs-on: ubuntu-latest
+    # Use when v24.2 https://github.com/cockroachdb/cockroach/issues/122441
+    # services:
+    #   cockroach_db:
+    #     image: cockroachdb/cockroach:latest
+    #     env:
+    #       COCKROACH_ARGS: 'start-single-node --insecure'
+    #     ports:
+    #       - 26257:26257
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-environment
