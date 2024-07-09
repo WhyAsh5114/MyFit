@@ -31,7 +31,7 @@
 		if (mode === 'edit') {
 			mesocycleRunes.loadMesocycle(getMesocycleWithoutIds(), mesocycle.id);
 		} else if (mode === 'clone') {
-			mesocycleRunes.loadMesocycle(getMesocycleWithoutIds());
+			mesocycleRunes.loadMesocycle({ ...getMesocycleWithoutIds(), startDate: null, endDate: null });
 		}
 		goto(`/mesocycles/manage/basics`);
 	}
