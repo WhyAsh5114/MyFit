@@ -10,10 +10,9 @@
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { Switch } from '$lib/components/ui/switch';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
-	import type { TodaysWorkoutData } from '$lib/workoutFunctions.js';
 	import { trpc } from '$lib/trpc/client.js';
 	import { cn, convertCamelCaseToNormal } from '$lib/utils.js';
-	import { onMount } from 'svelte';
+	import type { TodaysWorkoutData } from '$lib/workoutFunctions.js';
 	import { toast } from 'svelte-sonner';
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
@@ -35,10 +34,12 @@
 	let completingRestDay = $state(false);
 
 	let { data } = $props();
-	onMount(async () => {
-		workoutData = await data.workoutData;
-		userBodyweight = userBodyweight ?? workoutData.userBodyweight;
-		if (workoutData.workoutOfMesocycle !== undefined) useActiveMesocycle = true;
+	$effect(() => {
+		data.workoutData.then((data) => {
+			workoutData = data;
+			userBodyweight = userBodyweight ?? workoutData.userBodyweight;
+			if (workoutData.workoutOfMesocycle !== undefined) useActiveMesocycle = true;
+		});
 	});
 
 	function startWorkout(fromDialog = false, mode: 'keepCurrent' | 'overwrite' = 'overwrite') {
@@ -151,17 +152,19 @@
 			{/if}
 		</Card.Root>
 	{/if}
-	<Button
-		class="mt-auto"
-		disabled={userBodyweight === null || $navigating !== null}
-		onclick={() => startWorkout()}
-	>
-		{#if $navigating}
-			<LoaderCircle class="animate-spin" />
-		{:else}
-			Next
-		{/if}
-	</Button>
+	{#if workoutData.workoutOfMesocycle?.workoutStatus !== 'RestDay'}
+		<Button
+			class="mt-auto"
+			disabled={userBodyweight === null || $navigating !== null}
+			onclick={() => startWorkout()}
+		>
+			{#if $navigating}
+				<LoaderCircle class="animate-spin" />
+			{:else}
+				Next
+			{/if}
+		</Button>
+	{/if}
 {/if}
 
 <ResponsiveDialog needTrigger={false} title="Warning" bind:open={overwriteWorkoutDialogOpen}>
