@@ -18,6 +18,8 @@
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
 
+	let { data } = $props();
+
 	let useActiveMesocycle = $state(false);
 	let workoutData: TodaysWorkoutData | 'loading' = $state('loading');
 	let userBodyweight: null | number = $state(workoutRunes.workoutData?.userBodyweight ?? null);
@@ -33,16 +35,24 @@
 	let overwriteWorkoutDialogOpen = $state(false);
 	let completingRestDay = $state(false);
 
-	let { data } = $props();
 	$effect(() => {
 		data.workoutData.then((data) => {
-			workoutData = data;
+			if (workoutRunes.editingWorkoutId === null) workoutData = data;
+			else workoutData = workoutRunes.workoutData as TodaysWorkoutData;
+
 			userBodyweight = userBodyweight ?? workoutData.userBodyweight;
 			if (workoutData.workoutOfMesocycle !== undefined) useActiveMesocycle = true;
 		});
 	});
 
-	function startWorkout(fromDialog = false, mode: 'keepCurrent' | 'overwrite' = 'overwrite') {
+	async function startWorkout(fromDialog = false, mode: 'keepCurrent' | 'overwrite' = 'overwrite') {
+		if (workoutRunes.editingWorkoutId) {
+			if (workoutRunes.workoutData) workoutRunes.workoutData.userBodyweight = userBodyweight;
+			workoutRunes.saveStoresToLocalStorage();
+			await goto('./exercises?editing');
+			return;
+		}
+
 		if (workoutRunes.workoutExercises !== null && !fromDialog) {
 			overwriteWorkoutDialogOpen = true;
 			return;
@@ -97,20 +107,22 @@
 	<Skeleton class="h-[166px] w-full" />
 	<Skeleton class="mt-auto h-10 w-full" />
 {:else}
-	<div class="mb-1 flex items-center justify-between gap-2 rounded-lg border bg-card p-4">
-		<Label for="use-active-mesocycle">
-			{workoutData.workoutOfMesocycle === undefined ? 'No' : 'Use'} active mesocycle
-		</Label>
-		{#if workoutData.workoutOfMesocycle === undefined}
-			<Switch id="use-active-mesocycle" name="use-active-mesocycle" disabled />
-		{:else}
-			<Switch
-				id="use-active-mesocycle"
-				name="use-active-mesocycle"
-				bind:checked={useActiveMesocycle}
-			/>
-		{/if}
-	</div>
+	{#if workoutRunes.editingWorkoutId === null}
+		<div class="mb-1 flex items-center justify-between gap-2 rounded-lg border bg-card p-4">
+			<Label for="use-active-mesocycle">
+				{workoutData.workoutOfMesocycle === undefined ? 'No' : 'Use'} active mesocycle
+			</Label>
+			{#if workoutData.workoutOfMesocycle === undefined}
+				<Switch id="use-active-mesocycle" name="use-active-mesocycle" disabled />
+			{:else}
+				<Switch
+					id="use-active-mesocycle"
+					name="use-active-mesocycle"
+					bind:checked={useActiveMesocycle}
+				/>
+			{/if}
+		</div>
+	{/if}
 	{#if !(useActiveMesocycle && workoutData.workoutOfMesocycle?.workoutStatus === 'RestDay')}
 		<div class="mb-1 flex w-full flex-col gap-1.5 rounded-lg border bg-card p-4">
 			<Label for="user-bodyweight">Bodyweight</Label>

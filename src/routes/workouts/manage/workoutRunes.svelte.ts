@@ -4,6 +4,7 @@ import {
 	type TodaysWorkoutData,
 	type WorkoutExerciseInProgress
 } from '$lib/workoutFunctions';
+import type { FullWorkoutWithMesoData } from '../[workoutId]/+page.server';
 
 function createWorkoutRunes() {
 	let workoutData: TodaysWorkoutData | null = $state(null);
@@ -77,6 +78,23 @@ function createWorkoutRunes() {
 		saveStoresToLocalStorage();
 	}
 
+	function loadWorkout(workout: FullWorkoutWithMesoData) {
+		editingWorkoutId = workout.id;
+		workoutData = {
+			startedAt: workout.startedAt,
+			userBodyweight: workout.userBodyweight,
+			workoutExercises: []
+		};
+		workoutExercises = workout.workoutExercises.map((ex) => ({
+			...ex,
+			sets: ex.sets.map((set) => ({
+				...set,
+				completed: true,
+				miniSets: set.miniSets.map((miniSet) => ({ ...miniSet, completed: true }))
+			}))
+		}));
+	}
+
 	return {
 		get workoutData() {
 			return workoutData;
@@ -108,7 +126,8 @@ function createWorkoutRunes() {
 		addExercise,
 		setEditingExercise,
 		editExercise,
-		deleteExercise
+		deleteExercise,
+		loadWorkout
 	};
 }
 

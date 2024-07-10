@@ -97,7 +97,9 @@
 				<span class="text-lg font-semibold">
 					{getFormattedDate(workoutData.startedAt)}
 				</span>
-				<p class="text-sm text-muted-foreground">Without mesocycle</p>
+				<p class="text-sm text-muted-foreground">
+					{workoutRunes.editingWorkoutId === null ? 'Without mesocycle' : 'Edit mode'}
+				</p>
 			{/if}
 		</div>
 		<div class="grid grid-cols-3 gap-x-2 gap-y-1">

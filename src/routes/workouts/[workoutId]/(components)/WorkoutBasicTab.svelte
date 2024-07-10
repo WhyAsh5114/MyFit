@@ -14,6 +14,7 @@
 	import { trpc } from '$lib/trpc/client';
 	import { invalidate, goto } from '$app/navigation';
 	import { TRPCClientError } from '@trpc/client';
+	import { workoutRunes } from '../../manage/workoutRunes.svelte';
 
 	type PropsType = { workout: FullWorkoutWithMesoData };
 	let { workout }: PropsType = $props();
@@ -31,7 +32,8 @@
 	);
 
 	async function editWorkout() {
-		console.log($state.snapshot(workout));
+		workoutRunes.loadWorkout(workout);
+		await goto('/workouts/manage/start');
 	}
 
 	async function deleteWorkout() {
