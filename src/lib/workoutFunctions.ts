@@ -58,6 +58,7 @@ export type TodaysWorkoutData = Omit<
 		cycleNumber: number;
 		splitDayName: string;
 	};
+	endedAt?: Date | string;
 };
 
 export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
