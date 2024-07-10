@@ -1,7 +1,13 @@
 import { createContext } from '$lib/trpc/context';
 import { createCaller } from '$lib/trpc/router';
-import type { WorkoutExercise, WorkoutExerciseMiniSet, WorkoutExerciseSet } from '@prisma/client';
-import type { WorkoutWithMesoData } from '../+page.server.js';
+import type {
+	Mesocycle,
+	Workout,
+	WorkoutExercise,
+	WorkoutExerciseMiniSet,
+	WorkoutExerciseSet,
+	WorkoutOfMesocycle
+} from '@prisma/client';
 
 export const load = async (event) => {
 	const trpc = createCaller(await createContext(event));
@@ -9,7 +15,14 @@ export const load = async (event) => {
 	return { workout };
 };
 
-export type FullWorkoutWithMesoData = WorkoutWithMesoData & {
+export type FullWorkoutWithMesoData = Workout & {
+	workoutOfMesocycle:
+		| (WorkoutOfMesocycle & {
+				mesocycle: Mesocycle & {
+					mesocycleExerciseSplitDays: { name: string }[];
+				};
+		  })
+		| null;
 	workoutExercises: (WorkoutExercise & {
 		sets: (WorkoutExerciseSet & { miniSets: WorkoutExerciseMiniSet[] })[];
 	})[];
