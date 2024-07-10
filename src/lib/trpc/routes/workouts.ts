@@ -92,6 +92,11 @@ export const workouts = t.router({
 		})
 	),
 
+	deleteById: t.procedure.input(z.string().cuid()).mutation(async ({ input, ctx }) => {
+		await prisma.workout.delete({ where: { userId: ctx.userId, id: input } });
+		return { message: 'Workout deleted successfully' };
+	}),
+
 	getTodaysWorkoutData: t.procedure.query(async ({ ctx }) => {
 		const data = await prisma.mesocycle.findFirst({
 			where: { userId: ctx.userId, startDate: { not: null }, endDate: null },

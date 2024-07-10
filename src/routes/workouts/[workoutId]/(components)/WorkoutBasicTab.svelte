@@ -10,6 +10,10 @@
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import type { FullWorkoutWithMesoData } from '../+page.server';
+	import { toast } from 'svelte-sonner';
+	import { trpc } from '$lib/trpc/client';
+	import { invalidate, goto } from '$app/navigation';
+	import { TRPCClientError } from '@trpc/client';
 
 	type PropsType = { workout: FullWorkoutWithMesoData };
 	let { workout }: PropsType = $props();
@@ -27,12 +31,19 @@
 	);
 
 	async function editWorkout() {
-		// TODO
+		console.log($state.snapshot(workout));
 	}
 
 	async function deleteWorkout() {
 		callingDeleteEndpoint = true;
-		// TODO
+		try {
+			const response = await trpc().workouts.deleteById.mutate(workout.id);
+			toast.success(response.message);
+			await invalidate('workouts:all');
+			await goto('/workouts');
+		} catch (error) {
+			if (error instanceof TRPCClientError) toast.error(error.message);
+		}
 		callingDeleteEndpoint = false;
 	}
 </script>
