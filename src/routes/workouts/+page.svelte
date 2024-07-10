@@ -2,7 +2,6 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import AddIcon from 'virtual:icons/lucide/plus';
-	import SearchIcon from 'virtual:icons/lucide/search';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { trpc } from '$lib/trpc/client';
@@ -12,26 +11,16 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { workoutRunes } from './manage/workoutRunes.svelte.js';
 	import type { WorkoutWithMesoData } from './+page.server.js';
+	import FilterComponent from './(components)/FilterComponent.svelte';
 
 	let { data } = $props();
 	let workouts: WorkoutWithMesoData[] | 'loading' = $state('loading');
-	let searchString = $state($page.url.searchParams.get('search') ?? '');
 
 	afterNavigate(async () => {
 		loaderState.reset();
 		workouts = await data.workouts;
 		if (workouts.length !== 10) loaderState.complete();
 	});
-
-	function updateSearchParam(e: Event) {
-		e.preventDefault();
-		const url = new URL($page.url);
-		if (searchString) url.searchParams.set('search', searchString);
-		else url.searchParams.delete('search');
-
-		workouts = 'loading';
-		goto(url);
-	}
 
 	async function loadMore() {
 		const lastWorkout = workouts.at(-1);
@@ -54,12 +43,7 @@
 
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
-		<form class="contents" onsubmit={updateSearchParam}>
-			<div class="muted-text-box w-full">TODO: filters</div>
-			<Button aria-label="search" type="submit" variant="secondary">
-				<SearchIcon />
-			</Button>
-		</form>
+		<FilterComponent />
 		<Button aria-label="create-workout" onclick={createNewWorkout}><AddIcon /></Button>
 	</div>
 	<div class="flex h-px grow flex-col gap-1 overflow-y-auto">
