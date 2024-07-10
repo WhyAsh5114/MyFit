@@ -82,17 +82,28 @@ function createWorkoutRunes() {
 		editingWorkoutId = workout.id;
 		workoutData = {
 			startedAt: workout.startedAt,
+			endedAt: workout.endedAt,
 			userBodyweight: workout.userBodyweight,
 			workoutExercises: []
 		};
-		workoutExercises = workout.workoutExercises.map((ex) => ({
-			...ex,
-			sets: ex.sets.map((set) => ({
-				...set,
-				completed: true,
-				miniSets: set.miniSets.map((miniSet) => ({ ...miniSet, completed: true }))
-			}))
-		}));
+		workoutExercises = workout.workoutExercises.map((ex) => {
+			const { id, workoutId, ...exercise } = ex;
+			return {
+				...exercise,
+				sets: ex.sets.map((set) => {
+					const { id, workoutExerciseId, ...rest } = set;
+					return {
+						...rest,
+						completed: true,
+						miniSets: set.miniSets.map((miniSet) => {
+							const { id, workoutExerciseSetId, ...rest } = miniSet;
+							return { ...rest, completed: true };
+						})
+					};
+				})
+			};
+		});
+		saveStoresToLocalStorage();
 	}
 
 	return {
