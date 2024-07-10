@@ -302,14 +302,10 @@ export const workouts = t.router({
 				userBodyweight: input.data.workoutData.userBodyweight
 			};
 
-			const { workoutOfMesocycle } = input.data.workoutData;
-			if (workoutOfMesocycle)
-				workout.workoutOfMesocycle = {
-					create: {
-						mesocycleId: workoutOfMesocycle.mesocycle.id,
-						splitDayIndex: workoutOfMesocycle.splitDayIndex
-					}
-				};
+			const workoutOfMesocycle = await prisma.workoutOfMesocycle.findFirst({
+				where: { workoutId: input.id }
+			});
+
 			const workoutExercises: Prisma.WorkoutExerciseUncheckedCreateInput[] =
 				input.data.workoutExercises.map((ex) => ({
 					...ex,
@@ -344,7 +340,10 @@ export const workouts = t.router({
 				prisma.workout.create({ data: workout }),
 				prisma.workoutExercise.createMany({ data: workoutExercises }),
 				prisma.workoutExerciseSet.createMany({ data: workoutExercisesSets }),
-				prisma.workoutExerciseMiniSet.createMany({ data: workoutExercisesMiniSets })
+				prisma.workoutExerciseMiniSet.createMany({ data: workoutExercisesMiniSets }),
+				...(workoutOfMesocycle
+					? [prisma.workoutOfMesocycle.create({ data: workoutOfMesocycle })]
+					: [])
 			];
 
 			await prisma.$transaction(transactionQueries);
