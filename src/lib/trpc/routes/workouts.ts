@@ -59,7 +59,8 @@ export const workouts = t.router({
 									}
 								}
 							},
-							splitDayIndex: true
+							splitDayIndex: true,
+							workoutStatus: true
 						}
 					}
 				},
@@ -82,7 +83,8 @@ export const workouts = t.router({
 								mesocycleExerciseSplitDays: { select: { name: true }, orderBy: { dayIndex: 'asc' } }
 							}
 						},
-						splitDayIndex: true
+						splitDayIndex: true,
+						workoutStatus: true
 					}
 				},
 				workoutExercises: { include: { sets: { include: { miniSets: true } } } }

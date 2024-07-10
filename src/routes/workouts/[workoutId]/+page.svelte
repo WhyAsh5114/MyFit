@@ -7,6 +7,7 @@
 	import WorkoutExercisesTab from './(components)/WorkoutExercisesTab.svelte';
 	import type { FullWorkoutWithMesoData } from './+page.server';
 	import WorkoutSkeleton from './(components)/WorkoutSkeleton.svelte';
+	import WorkoutExerciseCharts from './(components)/WorkoutExerciseCharts.svelte';
 
 	let { data } = $props();
 	let workout: FullWorkoutWithMesoData | null | 'loading' = $state('loading');
@@ -40,7 +41,7 @@
 					<WorkoutExercisesTab {workout} />
 				</div>
 			{:else}
-				TODO: workout stats
+				<WorkoutExerciseCharts {workout} />
 			{/if}
 		</Tabs.Content>
 	</Tabs.Root>

@@ -83,8 +83,8 @@
 					<a class="font-semibold underline" href="/mesocycles/{wm.mesocycle.id}">
 						{wm.mesocycle.name}
 					</a>
-					<Badge variant={splitDay.name === '' ? 'outline' : 'secondary'}>
-						{splitDay.name === '' ? 'Rest' : splitDay.name}
+					<Badge variant={wm.workoutStatus === null ? 'secondary' : 'outline'}>
+						{wm.workoutStatus === null ? splitDay.name : convertCamelCaseToNormal(wm.workoutStatus)}
 					</Badge>
 				</div>
 			{:else}
@@ -95,14 +95,16 @@
 			<span class="text-sm text-muted-foreground">User bodyweight</span>
 			<span class="font-semibold">{workout.userBodyweight}</span>
 		</div>
-		<div class="flex flex-col gap-1">
-			<span class="text-sm text-muted-foreground">Targeted muscle groups</span>
-			<div class="flex flex-wrap gap-1">
-				{#each targetedMuscleGroups as muscleGroup}
-					<Badge variant="secondary">{convertCamelCaseToNormal(muscleGroup)}</Badge>
-				{/each}
+		{#if workout.workoutOfMesocycle?.workoutStatus === null}
+			<div class="flex flex-col gap-1">
+				<span class="text-sm text-muted-foreground">Targeted muscle groups</span>
+				<div class="flex flex-wrap gap-1">
+					{#each targetedMuscleGroups as muscleGroup}
+						<Badge variant="secondary">{convertCamelCaseToNormal(muscleGroup)}</Badge>
+					{/each}
+				</div>
 			</div>
-		</div>
+		{/if}
 	</Card.Content>
 </Card.Root>
 

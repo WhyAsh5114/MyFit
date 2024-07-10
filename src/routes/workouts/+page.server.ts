@@ -1,6 +1,6 @@
 import { createContext } from '$lib/trpc/context';
 import { createCaller } from '$lib/trpc/router';
-import type { Workout } from '@prisma/client';
+import type { Workout, WorkoutStatus } from '@prisma/client';
 
 export const load = async (event) => {
 	event.depends('workouts:all');
@@ -18,5 +18,6 @@ export type WorkoutWithMesoData = Workout & {
 			mesocycleExerciseSplitDays: { name: string }[];
 		};
 		splitDayIndex: number;
+		workoutStatus: WorkoutStatus | null;
 	} | null;
 };
