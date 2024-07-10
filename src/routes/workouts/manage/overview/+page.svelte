@@ -7,6 +7,7 @@
 	import { workoutRunes } from '../workoutRunes.svelte';
 	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
 	import { goto, invalidate } from '$app/navigation';
+	import type { RouterInputs } from '$lib/trpc/router';
 
 	let savingWorkout = $state(false);
 
@@ -30,7 +31,7 @@
 		}
 		const userBodyweight = workoutRunes.workoutData.userBodyweight;
 
-		const { message } = await trpc().workouts.createWorkout.mutate({
+		const createData: RouterInputs['workouts']['create'] = {
 			workoutData: { ...workoutRunes.workoutData, userBodyweight },
 			workoutExercises: workoutRunes.workoutExercises.map((ex, idx) => {
 				const { sets, ...exercise } = ex;
@@ -75,8 +76,19 @@
 					})
 				)
 			)
-		});
-		toast.success(message);
+		};
+
+		if (workoutRunes.editingWorkoutId === null) {
+			const { message } = await trpc().workouts.create.mutate(createData);
+			toast.success(message);
+		} else {
+			const { message } = await trpc().workouts.editById.mutate({
+				id: workoutRunes.editingWorkoutId,
+				endedAt: workoutRunes.workoutData.endedAt as Date | string,
+				data: createData
+			});
+			toast.success(message);
+		}
 		await invalidate('workouts:all');
 		await goto('/workouts');
 		workoutRunes.resetStores();
