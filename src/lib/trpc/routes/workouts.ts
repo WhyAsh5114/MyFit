@@ -48,7 +48,7 @@ export const workouts = t.router({
 				orderBy: { startedAt: 'desc' },
 				include: {
 					workoutOfMesocycle: {
-						select: {
+						include: {
 							mesocycle: {
 								select: {
 									id: true,
@@ -58,9 +58,7 @@ export const workouts = t.router({
 										orderBy: { dayIndex: 'asc' }
 									}
 								}
-							},
-							splitDayIndex: true,
-							workoutStatus: true
+							}
 						}
 					}
 				},
@@ -75,16 +73,14 @@ export const workouts = t.router({
 			where: { id: input, userId: ctx.userId },
 			include: {
 				workoutOfMesocycle: {
-					select: {
+					include: {
 						mesocycle: {
 							select: {
 								id: true,
 								name: true,
 								mesocycleExerciseSplitDays: { select: { name: true }, orderBy: { dayIndex: 'asc' } }
 							}
-						},
-						splitDayIndex: true,
-						workoutStatus: true
+						}
 					}
 				},
 				workoutExercises: { include: { sets: { include: { miniSets: true } } } }
