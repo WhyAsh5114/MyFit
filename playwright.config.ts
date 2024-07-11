@@ -21,8 +21,10 @@ const config: PlaywrightTestConfig = {
 	},
 	timeout: 60000,
 	projects: [
-		{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }
-		// TODO: maybe add more browsers? but it's very annoying to deal with minor bugs
+		{ name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+		{ name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+		{ name: 'webkit', use: { ...devices['Desktop Safari'] } }
+		// TODO: maybe add more browsers? (mobile and stuff)
 	]
 };
 

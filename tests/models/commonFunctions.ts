@@ -11,6 +11,7 @@ export async function createTemplateExerciseSplit(page: Page) {
 	await expect(
 		page.getByRole('status').filter({ hasText: 'Exercise split created successfully' })
 	).toBeVisible({ timeout: 10000 });
+	await page.waitForURL('/exercise-splits');
 }
 
 export async function createMesocycle(page: Page) {
@@ -27,4 +28,8 @@ export async function createMesocycle(page: Page) {
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByLabel('Start immediately').click();
 	await page.getByRole('button', { name: 'Save' }).click();
+	await expect(
+		page.getByRole('status').filter({ hasText: 'Mesocycle created successfully' })
+	).toBeVisible({ timeout: 10000 });
+	await page.waitForURL('/mesocycles');
 }
