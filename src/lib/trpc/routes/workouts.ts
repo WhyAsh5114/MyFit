@@ -350,16 +350,16 @@ export const workouts = t.router({
 			return { message: 'Workout edited successfully' };
 		}),
 
-	completeRestDay: t.procedure
-		.input(z.strictObject({ splitDayIndex: z.number().int(), userBodyweight: z.number() }))
+	completeWorkoutWithoutExercises: t.procedure
+		.input(
+			z.strictObject({
+				splitDayIndex: z.number().int(),
+				userBodyweight: z.number(),
+				workoutStatus: z.nativeEnum(WorkoutStatus),
+				mesocycleId: z.string().cuid()
+			})
+		)
 		.mutation(async ({ ctx, input }) => {
-			const activeMesocycle = await prisma.mesocycle.findFirst({
-				where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
-				select: { id: true }
-			});
-			if (!activeMesocycle)
-				throw new TRPCError({ code: 'BAD_REQUEST', message: 'No active mesocycle found' });
-
 			await prisma.workout.create({
 				data: {
 					startedAt: new Date(),
@@ -368,14 +368,15 @@ export const workouts = t.router({
 					workoutOfMesocycle: {
 						create: {
 							splitDayIndex: input.splitDayIndex,
-							mesocycleId: activeMesocycle.id,
-							workoutStatus: 'RestDay'
+							mesocycleId: input.mesocycleId,
+							workoutStatus: input.workoutStatus
 						}
 					},
 					userBodyweight: input.userBodyweight
 				}
 			});
-			return { message: 'Rest day completed successfully' };
+			if (input.workoutStatus === 'RestDay') return { message: 'Rest day completed successfully' };
+			else return { message: 'Workout skipped successfully' };
 		})
 });
 

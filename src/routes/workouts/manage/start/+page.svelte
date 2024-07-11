@@ -17,6 +17,8 @@
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
+	import type { WorkoutStatus } from '@prisma/client';
+	import SkipIcon from 'virtual:icons/lucide/skip-forward';
 
 	let { data } = $props();
 
@@ -33,7 +35,7 @@
 		return Array.from(new Set(result));
 	});
 	let overwriteWorkoutDialogOpen = $state(false);
-	let completingRestDay = $state(false);
+	let completingWorkout = $state(false);
 
 	$effect(() => {
 		data.workoutData.then((data) => {
@@ -82,20 +84,22 @@
 		goto(exercisesLink);
 	}
 
-	async function completeRestDay() {
+	async function completeWorkout(workoutStatus: WorkoutStatus) {
 		if (workoutData === 'loading') return;
 		if (typeof userBodyweight !== 'number') {
 			toast.error('Enter your bodyweight');
 			return;
 		}
-		completingRestDay = true;
-		const { message } = await trpc().workouts.completeRestDay.mutate({
+		completingWorkout = true;
+		const { message } = await trpc().workouts.completeWorkoutWithoutExercises.mutate({
 			splitDayIndex: workoutData.workoutOfMesocycle?.splitDayIndex as number,
-			userBodyweight
+			mesocycleId: workoutData.workoutOfMesocycle?.mesocycle.id as string,
+			userBodyweight,
+			workoutStatus
 		});
 		toast.success(message);
 		await invalidate('workouts:start');
-		completingRestDay = false;
+		completingWorkout = false;
 	}
 </script>
 
@@ -135,6 +139,7 @@
 		</div>
 	{/if}
 	{#if useActiveMesocycle && workoutData.workoutOfMesocycle}
+		{@const workoutStatus = workoutData.workoutOfMesocycle.workoutStatus}
 		{@const splitDayName = workoutData.workoutOfMesocycle.splitDayName}
 		<Card.Root>
 			<Card.Header>
@@ -151,18 +156,24 @@
 					{/each}
 				</div>
 			</Card.Header>
-			{#if workoutData.workoutOfMesocycle.workoutStatus === 'RestDay'}
-				<Card.Footer>
-					<Button class="ml-auto w-32 gap-2" disabled={completingRestDay} onclick={completeRestDay}>
-						{#if completingRestDay}
-							<LoaderCircle class="animate-spin" />
-						{:else}
-							Complete
+			<Card.Footer>
+				<Button
+					class="ml-auto w-32 gap-2"
+					disabled={completingWorkout}
+					onclick={() => completeWorkout(workoutStatus === 'RestDay' ? 'RestDay' : 'Skipped')}
+				>
+					{#if completingWorkout}
+						<LoaderCircle class="animate-spin" />
+					{:else}
+						{workoutStatus === 'RestDay' ? 'Complete' : 'Skip'}
+						{#if workoutStatus === 'RestDay'}
 							<CheckIcon />
+						{:else}
+							<SkipIcon />
 						{/if}
-					</Button>
-				</Card.Footer>
-			{/if}
+					{/if}
+				</Button>
+			</Card.Footer>
 		</Card.Root>
 	{/if}
 	{#if workoutData.workoutOfMesocycle?.workoutStatus !== 'RestDay'}
