@@ -63,9 +63,11 @@
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content align="end">
 					<DropdownMenu.Group>
-						<DropdownMenu.Item class="gap-2" onclick={editWorkout}>
-							<EditIcon /> Edit
-						</DropdownMenu.Item>
+						{#if workout.workoutOfMesocycle?.workoutStatus === null}
+							<DropdownMenu.Item class="gap-2" onclick={editWorkout}>
+								<EditIcon /> Edit
+							</DropdownMenu.Item>
+						{/if}
 						<DropdownMenu.Item
 							class="gap-2 text-red-500"
 							on:click={() => (deleteConfirmDrawerOpen = true)}
