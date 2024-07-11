@@ -161,6 +161,7 @@
 					class="ml-auto w-32 gap-2"
 					disabled={completingWorkout}
 					onclick={() => completeWorkout(workoutStatus === 'RestDay' ? 'RestDay' : 'Skipped')}
+					variant={workoutStatus === 'RestDay' ? 'default' : 'destructive'}
 				>
 					{#if completingWorkout}
 						<LoaderCircle class="animate-spin" />
