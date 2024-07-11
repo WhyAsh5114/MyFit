@@ -5,7 +5,7 @@ model WorkoutOfMesocycle {
   splitDayIndex Int
   workoutStatus WorkoutStatus?
   workout       Workout        @relation(fields: [workoutId], references: [id], onDelete: Cascade)
-  mesocycle     Mesocycle      @relation(fields: [mesocycleId], references: [id])
+  mesocycle     Mesocycle      @relation(fields: [mesocycleId], references: [id], onDelete: Cascade)
 }
 
 model Workout {
