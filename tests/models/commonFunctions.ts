@@ -14,12 +14,7 @@ export async function createTemplateExerciseSplit(page: Page) {
 }
 
 export async function createMesocycle(page: Page) {
-	await page.getByLabel('exercise-split-new-options').click();
-	await page.getByRole('menuitem', { name: 'Use template' }).click();
-	await page.getByRole('button', { name: 'Pull Push Legs 7 days / cycle' }).click();
-	await page.getByRole('button', { name: 'Next' }).click();
-	await page.getByRole('button', { name: 'Next' }).click();
-	await page.getByRole('button', { name: 'Save' }).click();
+	await createTemplateExerciseSplit(page);
 	await page.goto('/mesocycles');
 	await page.getByLabel('create-new-mesocycle').click();
 	await page.getByLabel('Mesocycle name').click();
