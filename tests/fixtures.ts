@@ -10,6 +10,7 @@ const prisma = new PrismaClient();
 export async function deleteUserData(userId: string) {
 	await prisma.mesocycle.deleteMany({ where: { userId } });
 	await prisma.exerciseSplit.deleteMany({ where: { userId } });
+	await prisma.workout.deleteMany({ where: { userId } });
 }
 
 export * from '@playwright/test';

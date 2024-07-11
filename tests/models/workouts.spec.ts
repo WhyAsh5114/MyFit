@@ -70,6 +70,9 @@ test('create a workout with active mesocycle', async ({ page }) => {
 			name: `${new Date().toLocaleDateString(undefined, { month: 'long', day: '2-digit' })} Pull A`
 		})
 		.click();
+	await expect(page.getByRole('tabpanel')).toContainText(
+		'Mesocycle MyMeso Pull A User bodyweight 100'
+	);
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
 		'Pull-ups 3 Straight sets of 5 to 15 reps BW Lats Reps Load RIR 1 12 0 3 2 11 0 3 3 10 0 0'
@@ -107,7 +110,11 @@ test('create workout without using active mesocycle', async ({ page }) => {
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 	await expect(page.getByRole('status')).toContainText('Workout created successfully');
-	await page.getByRole('link', { name: 'July' }).click();
+	await page
+		.getByRole('link', {
+			name: `${new Date().toLocaleDateString(undefined, { month: 'long', day: '2-digit' })}`
+		})
+		.click();
 	await expect(page.getByRole('tabpanel')).toContainText(
 		'Mesocycle No mesocycle User bodyweight 100'
 	);
