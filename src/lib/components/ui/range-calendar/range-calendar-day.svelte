@@ -13,9 +13,6 @@
 </script>
 
 <RangeCalendarPrimitive.Day
-	on:click
-	{date}
-	{month}
 	class={cn(
 		buttonVariants({ variant: 'ghost' }),
 		'h-9 w-9 p-0 font-normal data-[selected]:opacity-100',
@@ -32,12 +29,15 @@
 		'data-[unavailable]:text-destructive-foreground data-[unavailable]:line-through',
 		className
 	)}
+	{date}
+	{month}
+	on:click
 	{...$$restProps}
+	let:builder
 	let:disabled
 	let:unavailable
-	let:builder
 >
-	<slot {disabled} {unavailable} {builder}>
+	<slot {builder} {disabled} {unavailable}>
 		{date.day}
 	</slot>
 </RangeCalendarPrimitive.Day>

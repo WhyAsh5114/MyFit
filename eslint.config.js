@@ -6,7 +6,7 @@ import globals from 'globals';
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
-	{ ignores: ['.vercel/', '.svelte-kit/', 'postcss.config.cjs', 'src/lib/components/ui/'] },
+	{ ignores: ['.vercel/', '.svelte-kit/', 'postcss.config.cjs'] },
 	js.configs.recommended,
 	...ts.configs.recommended,
 	...svelte.configs['flat/all'],
@@ -40,6 +40,18 @@ export default [
 			'svelte/no-inline-styles': ['error', { allowTransitions: true }],
 			'svelte/prefer-destructured-store-props': 'off',
 			'svelte/experimental-require-slot-types': 'off'
+		}
+	},
+	{
+		files: ['src/lib/components/ui/**/*.svelte'],
+		rules: {
+			'@typescript-eslint/no-unused-vars': [
+				'warn',
+				{
+					argsIgnorePattern: '^_',
+					varsIgnorePattern: '^\\$\\$(Props|Events|Slots|Generic)$'
+				}
+			]
 		}
 	}
 ];

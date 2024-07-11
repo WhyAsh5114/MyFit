@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Dialog as SheetPrimitive } from 'bits-ui';
-	import { cn } from '$lib/utils';
 	import { fade } from 'svelte/transition';
+	import { cn } from '$lib/utils.js';
 
 	type $$Props = SheetPrimitive.OverlayProps;
 
@@ -14,8 +14,8 @@
 </script>
 
 <SheetPrimitive.Overlay
+	class={cn('fixed inset-0 z-50 bg-background/80 backdrop-blur-sm ', className)}
 	{transition}
 	{transitionConfig}
-	class={cn('fixed inset-0 z-50 bg-background/80 backdrop-blur-sm ', className)}
 	{...$$restProps}
 />

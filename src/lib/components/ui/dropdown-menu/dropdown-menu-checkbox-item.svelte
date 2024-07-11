@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { DropdownMenu as DropdownMenuPrimitive } from 'bits-ui';
 	import Check from 'virtual:icons/lucide/check';
-	import { cn } from '$lib/utils';
+	import { cn } from '$lib/utils.js';
 
 	type $$Props = DropdownMenuPrimitive.CheckboxItemProps;
 	type $$Events = DropdownMenuPrimitive.CheckboxItemEvents;
@@ -12,11 +12,11 @@
 </script>
 
 <DropdownMenuPrimitive.CheckboxItem
-	bind:checked
 	class={cn(
 		'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50',
 		className
 	)}
+	bind:checked
 	{...$$restProps}
 	on:click
 	on:keydown

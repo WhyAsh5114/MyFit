@@ -17,7 +17,7 @@
 >
 	{@render children()}
 	{#if showChartIcon}
-		<Button size="icon" variant="outline" onclick={() => (chartMode = !chartMode)}>
+		<Button onclick={() => (chartMode = !chartMode)} size="icon" variant="outline">
 			{#if !chartMode}
 				<ChartIcon />
 			{:else}

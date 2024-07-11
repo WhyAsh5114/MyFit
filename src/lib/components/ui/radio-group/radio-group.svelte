@@ -9,6 +9,6 @@
 	export { className as class };
 </script>
 
-<RadioGroupPrimitive.Root bind:value class={cn('grid gap-2', className)} {...$$restProps}>
+<RadioGroupPrimitive.Root class={cn('grid gap-2', className)} bind:value {...$$restProps}>
 	<slot />
 </RadioGroupPrimitive.Root>

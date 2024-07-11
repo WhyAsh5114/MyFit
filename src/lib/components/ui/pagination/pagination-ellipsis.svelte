@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { cn } from '$lib/utils.js';
 	import Ellipsis from 'virtual:icons/lucide/ellipsis';
 	import type { HTMLAttributes } from 'svelte/elements';
+	import { cn } from '$lib/utils.js';
 
 	type $$Props = HTMLAttributes<HTMLSpanElement>;
 
@@ -10,8 +10,8 @@
 </script>
 
 <span
-	aria-hidden="true"
 	class={cn('flex h-9 w-9 items-center justify-center', className)}
+	aria-hidden={true}
 	{...$$restProps}
 >
 	<Ellipsis class="h-4 w-4" />

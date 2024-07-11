@@ -10,8 +10,8 @@
 </script>
 
 <DrawerPrimitive.Description
-	bind:el
 	class={cn('text-sm text-muted-foreground', className)}
+	bind:el
 	{...$$restProps}
 >
 	<slot />

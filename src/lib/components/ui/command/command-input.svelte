@@ -3,13 +3,11 @@
 	import Search from 'virtual:icons/lucide/search';
 	import { cn } from '$lib/utils.js';
 
-	type $$Props = CommandPrimitive.InputProps & { onFocus?: () => void; onBlur?: () => void };
+	type $$Props = CommandPrimitive.InputProps;
 
 	let className: string | undefined | null = undefined;
 	export { className as class };
 	export let value: string = '';
-	export let onFocus = () => {};
-	export let onBlur = () => {};
 </script>
 
 <div class="flex items-center border-b px-2" data-cmdk-input-wrapper="">
@@ -20,8 +18,6 @@
 			className
 		)}
 		{...$$restProps}
-		on:focus={onFocus}
-		on:blur={onBlur}
 		bind:value
 	/>
 </div>

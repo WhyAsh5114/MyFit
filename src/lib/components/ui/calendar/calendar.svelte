@@ -16,10 +16,10 @@
 </script>
 
 <CalendarPrimitive.Root
+	class={cn('p-3', className)}
+	{weekdayFormat}
 	bind:value
 	bind:placeholder
-	{weekdayFormat}
-	class={cn('p-3', className)}
 	{...$$restProps}
 	on:keydown
 	let:months

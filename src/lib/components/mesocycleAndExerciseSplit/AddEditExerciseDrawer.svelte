@@ -143,7 +143,7 @@
 				<span class="text-sm font-medium">Exercise name</span>
 				<Command.Root class="bg-background">
 					<Command.Input
-						onFocus={() => (searching = true)}
+						onfocus={() => (searching = true)}
 						placeholder="Type here or search..."
 						required
 						bind:value={currentExercise.name}

@@ -13,9 +13,9 @@
 
 <PaginationPrimitive.NextButton asChild let:builder>
 	<Button
-		variant="ghost"
 		class={cn('gap-1 pr-2.5', className)}
 		builders={[builder]}
+		variant="ghost"
 		on:click
 		{...$$restProps}
 	>

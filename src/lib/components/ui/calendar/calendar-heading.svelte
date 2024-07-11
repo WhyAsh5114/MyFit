@@ -9,8 +9,8 @@
 </script>
 
 <CalendarPrimitive.Heading
-	let:headingValue
 	class={cn('text-sm font-medium', className)}
+	let:headingValue
 	{...$$restProps}
 >
 	<slot {headingValue}>

@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { type Variant, badgeVariants } from './index.js';
 	import { cn } from '$lib/utils.js';
-	import { badgeVariants, type Variant } from './index.js';
 
 	let className: string | undefined | null = undefined;
 	export let href: string | undefined = undefined;
@@ -10,8 +10,8 @@
 
 <svelte:element
 	this={href ? 'a' : 'span'}
-	{href}
 	class={cn(badgeVariants({ variant, className }))}
+	{href}
 	{...$$restProps}
 >
 	<slot />

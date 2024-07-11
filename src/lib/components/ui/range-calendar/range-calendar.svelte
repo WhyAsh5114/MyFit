@@ -16,12 +16,12 @@
 </script>
 
 <RangeCalendarPrimitive.Root
+	class={cn('p-3', className)}
+	{weekdayFormat}
 	on:keydown
 	bind:value
 	bind:placeholder
 	bind:startValue
-	{weekdayFormat}
-	class={cn('p-3', className)}
 	{...$$restProps}
 	let:months
 	let:weekdays

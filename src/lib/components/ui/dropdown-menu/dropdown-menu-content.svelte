@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { DropdownMenu as DropdownMenuPrimitive } from 'bits-ui';
-	import { cn, flyAndScale } from '$lib/utils';
+	import { cn, flyAndScale } from '$lib/utils.js';
 
 	type $$Props = DropdownMenuPrimitive.ContentProps;
 	type $$Events = DropdownMenuPrimitive.ContentEvents;
@@ -13,13 +13,13 @@
 </script>
 
 <DropdownMenuPrimitive.Content
-	{transition}
-	{transitionConfig}
-	{sideOffset}
 	class={cn(
 		'z-50 min-w-[8rem] rounded-md border bg-popover p-1 text-popover-foreground shadow-md focus:outline-none',
 		className
 	)}
+	{sideOffset}
+	{transition}
+	{transitionConfig}
 	{...$$restProps}
 	on:keydown
 >

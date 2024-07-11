@@ -13,9 +13,6 @@
 </script>
 
 <CalendarPrimitive.Day
-	on:click
-	{date}
-	{month}
 	class={cn(
 		buttonVariants({ variant: 'ghost' }),
 		'h-9 w-9 p-0 font-normal ',
@@ -30,13 +27,16 @@
 		'data-[outside-month]:pointer-events-none data-[outside-month]:text-muted-foreground data-[outside-month]:opacity-50 [&[data-outside-month][data-selected]]:bg-accent/50 [&[data-outside-month][data-selected]]:text-muted-foreground [&[data-outside-month][data-selected]]:opacity-30',
 		className
 	)}
+	{date}
+	{month}
+	on:click
 	{...$$restProps}
-	let:selected
-	let:disabled
-	let:unavailable
 	let:builder
+	let:disabled
+	let:selected
+	let:unavailable
 >
-	<slot {selected} {disabled} {unavailable} {builder}>
+	<slot {builder} {disabled} {selected} {unavailable}>
 		{date.day}
 	</slot>
 </CalendarPrimitive.Day>

@@ -10,8 +10,8 @@
 </script>
 
 <DrawerPrimitive.Title
-	bind:el
 	class={cn('text-lg font-semibold leading-none tracking-tight', className)}
+	bind:el
 	{...$$restProps}
 >
 	<slot />
