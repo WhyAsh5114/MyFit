@@ -76,6 +76,7 @@
 								].name}
 							<span class="truncate text-muted-foreground">
 								{splitDayName === '' ? 'Rest' : splitDayName}
+								{workoutOfMesocycle.workoutStatus === 'Skipped' ? '(skipped)' : ''}
 							</span>
 						{/if}
 					</Button>
