@@ -7,15 +7,23 @@
 		SHADOW_ITEM_MARKER_PROPERTY_NAME
 	} from 'svelte-dnd-action';
 	import WorkoutExerciseCard from './WorkoutExerciseCard.svelte';
-	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
+	import type { WorkoutExerciseInProgress, WorkoutExerciseWithSets } from '$lib/workoutFunctions';
 
 	type PropsType = {
 		readOnly?: boolean;
 		reordering: boolean;
+		comparing: boolean;
 		itemList: (WorkoutExerciseInProgress & { isDndShadowItem?: boolean })[];
+		previousWorkoutExercises: WorkoutExerciseWithSets[];
 	};
 
-	let { itemList = $bindable(), reordering, readOnly }: PropsType = $props();
+	let {
+		itemList = $bindable(),
+		reordering,
+		comparing,
+		readOnly,
+		previousWorkoutExercises
+	}: PropsType = $props();
 
 	function handleSort(e: CustomEvent<DndEvent<WorkoutExerciseInProgress>>) {
 		itemList = e.detail.items;
@@ -34,8 +42,16 @@
 	}}
 >
 	{#each itemList as exercise, idx (exercise.name)}
+		{@const prevExercise = previousWorkoutExercises.find((ex) => ex.name === exercise.name)}
 		<div class="relative" animate:flip={{ duration: 200 }}>
-			<WorkoutExerciseCard {idx} {readOnly} {reordering} bind:exercise={itemList[idx]} />
+			<WorkoutExerciseCard
+				{comparing}
+				{idx}
+				{prevExercise}
+				{readOnly}
+				{reordering}
+				bind:exercise={itemList[idx]}
+			/>
 			{#if exercise[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
 				<div class="custom-shadow-item" in:fade={{ duration: 200 }}></div>
 			{/if}

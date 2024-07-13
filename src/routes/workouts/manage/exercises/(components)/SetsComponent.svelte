@@ -11,12 +11,9 @@
 	import { workoutRunes } from '../../workoutRunes.svelte';
 	import { arraySum, floorToNearestMultiple } from '$lib/utils';
 
-	type PropsType = {
-		reordering: boolean;
-		exercise: WorkoutExerciseInProgress;
-	};
+	type PropsType = { exercise: WorkoutExerciseInProgress };
 	type WorkoutExerciseSet = WorkoutExerciseInProgress['sets'][number];
-	let { reordering, exercise = $bindable() }: PropsType = $props();
+	let { exercise = $bindable() }: PropsType = $props();
 
 	function shouldSetBeDisabled(set: WorkoutExerciseSet, idx: number): boolean {
 		if (set.completed) return false;
@@ -103,166 +100,163 @@
 	}
 </script>
 
-{#if !reordering}
-	<Separator class="my-1" />
-	<div class="grid grid-cols-4 gap-1">
-		<span class="text-center text-sm font-medium">Reps</span>
-		<span class="text-center text-sm font-medium">
-			Load
-			{#if typeof exercise.bodyweightFraction === 'number'}
-				<span class="text-xs font-semibold text-muted-foreground">(BW)</span>
-			{/if}
-		</span>
-		<span class="text-center text-sm font-medium">RIR</span>
-		<span></span>
-		{#each exercise.sets as set, idx}
-			<form class="contents" onsubmit={(e) => completeSet(e, set, idx)}>
-				{#if !set.skipped}
+<div class="grid grid-cols-4 gap-1">
+	<span class="text-center text-sm font-medium">Reps</span>
+	<span class="text-center text-sm font-medium">
+		Load
+		{#if typeof exercise.bodyweightFraction === 'number'}
+			<span class="text-xs font-semibold text-muted-foreground">(BW)</span>
+		{/if}
+	</span>
+	<span class="text-center text-sm font-medium">RIR</span>
+	<span></span>
+	{#each exercise.sets as set, idx}
+		<form class="contents" onsubmit={(e) => completeSet(e, set, idx)}>
+			{#if !set.skipped}
+				<Input
+					id="{exercise.name}-set-{idx + 1}-reps"
+					disabled={set.completed || set.skipped}
+					min={0}
+					required
+					type="number"
+					bind:value={set.reps}
+				/>
+				{#if idx === 0 || !['Straight', 'Myorep', 'MyorepMatch'].includes(exercise.setType)}
 					<Input
-						id="{exercise.name}-set-{idx + 1}-reps"
+						id="{exercise.name}-set-{idx + 1}-load"
 						disabled={set.completed || set.skipped}
 						min={0}
+						placeholder={getNextLoad(idx)}
 						required
+						step={0.25}
 						type="number"
-						bind:value={set.reps}
+						bind:value={set.load}
 					/>
-					{#if idx === 0 || !['Straight', 'Myorep', 'MyorepMatch'].includes(exercise.setType)}
-						<Input
-							id="{exercise.name}-set-{idx + 1}-load"
-							disabled={set.completed || set.skipped}
-							min={0}
-							placeholder={getNextLoad(idx)}
-							required
-							step={0.25}
-							type="number"
-							bind:value={set.load}
-						/>
-					{:else if exercise.setType === 'MyorepMatch'}
-						<span></span>
-					{:else}
-						<span></span>
-					{/if}
-					<Input
-						id="{exercise.name}-set-{idx + 1}-RIR"
-						disabled={set.completed || set.skipped}
-						min={0}
-						required
-						type="number"
-						bind:value={set.RIR}
-					/>
+				{:else if exercise.setType === 'MyorepMatch'}
+					<span></span>
 				{:else}
+					<span></span>
+				{/if}
+				<Input
+					id="{exercise.name}-set-{idx + 1}-RIR"
+					disabled={set.completed || set.skipped}
+					min={0}
+					required
+					type="number"
+					bind:value={set.RIR}
+				/>
+			{:else}
+				<div class="col-span-3 flex items-center gap-2">
+					<Separator class="w-px grow" />
+					<span class="text-sm text-muted-foreground">skipped</span>
+					<Separator class="w-px grow" />
+				</div>
+			{/if}
+			<Button
+				class="place-self-end"
+				disabled={shouldSetBeDisabled(set, idx)}
+				size="icon"
+				type="submit"
+				variant={set.completed ? 'outline' : 'default'}
+			>
+				{#if set.skipped}
+					<UndoIcon />
+				{:else if !set.completed}
+					<CheckIcon />
+				{:else}
+					<EditIcon />
+				{/if}
+			</Button>
+		</form>
+		{#if (idx > 0 && exercise.setType === 'MyorepMatch') || exercise.setType === 'Drop'}
+			{#each set.miniSets as miniSet, miniIdx}
+				{@const miniSetButtonDisabled = shouldMiniSetBeDisabled(idx, miniIdx)}
+				{#if set.skipped}
 					<div class="col-span-3 flex items-center gap-2">
 						<Separator class="w-px grow" />
 						<span class="text-sm text-muted-foreground">skipped</span>
 						<Separator class="w-px grow" />
 					</div>
-				{/if}
-				<Button
-					class="place-self-end"
-					disabled={shouldSetBeDisabled(set, idx)}
-					size="icon"
-					type="submit"
-					variant={set.completed ? 'outline' : 'default'}
-				>
-					{#if set.skipped}
-						<UndoIcon />
-					{:else if !set.completed}
+					<Button class="place-self-end" disabled size="icon" variant="secondary">
 						<CheckIcon />
-					{:else}
-						<EditIcon />
-					{/if}
-				</Button>
-			</form>
-			{#if (idx > 0 && exercise.setType === 'MyorepMatch') || exercise.setType === 'Drop'}
-				{#each set.miniSets as miniSet, miniIdx}
-					{@const miniSetButtonDisabled = shouldMiniSetBeDisabled(idx, miniIdx)}
-					{#if set.skipped}
-						<div class="col-span-3 flex items-center gap-2">
-							<Separator class="w-px grow" />
-							<span class="text-sm text-muted-foreground">skipped</span>
-							<Separator class="w-px grow" />
-						</div>
-						<Button class="place-self-end" disabled size="icon" variant="secondary">
-							<CheckIcon />
-						</Button>
-					{:else}
-						<form class="contents" onsubmit={(e) => completeMiniSet(e, set, miniIdx)}>
-							<Input
-								id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-reps"
-								disabled={miniSet.completed}
-								min={0}
-								required
-								type="number"
-								bind:value={miniSet.reps}
-							/>
-							{#if exercise.setType === 'MyorepMatch'}
-								<span></span>
-							{:else}
-								{@const expectedLoad = getMiniSetLoad(idx, miniIdx)}
-								<Input
-									id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-load"
-									disabled={miniSet.completed}
-									min={0}
-									placeholder={expectedLoad === undefined ? expectedLoad : expectedLoad.toString()}
-									required
-									step={0.25}
-									type="number"
-									bind:value={miniSet.load}
-								/>
-							{/if}
-							<Input
-								id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-RIR"
-								disabled={miniSet.completed}
-								min={0}
-								required
-								type="number"
-								bind:value={miniSet.RIR}
-							/>
-							<Button
-								class="place-self-end"
-								disabled={miniSetButtonDisabled}
-								size="icon"
-								type="submit"
-								variant={miniSet.completed ? 'outline' : 'default'}
-							>
-								{#if !miniSet.completed}
-									<CheckIcon />
-								{:else}
-									<EditIcon />
-								{/if}
-							</Button>
-						</form>
-					{/if}
-				{/each}
-				<Button
-					aria-label="add-mini-set-to-set-{idx + 1}-of-{exercise.name}"
-					onclick={() => addMiniSet(idx)}
-					variant="secondary"
-				>
-					<AddIcon />
-				</Button>
-				<Button
-					aria-label="remove-mini-set-from-set-{idx + 1}-of-{exercise.name}"
-					disabled={set.miniSets.length === 0}
-					onclick={() => set.miniSets.pop()}
-					variant="secondary"
-				>
-					<RemoveIcon />
-				</Button>
-				{#if exercise.setType === 'MyorepMatch'}
-					{@const repsLeft = getRemainingMyorepMatchReps(idx)}
-					<span class="grid place-items-center text-sm font-medium text-primary">
-						{#if repsLeft && repsLeft > 0}
-							{repsLeft} {repsLeft === 1 ? 'rep' : 'reps'} left
-						{:else if typeof repsLeft === 'number'}
-							matched
-						{/if}
-					</span>
+					</Button>
 				{:else}
-					<span></span>
+					<form class="contents" onsubmit={(e) => completeMiniSet(e, set, miniIdx)}>
+						<Input
+							id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-reps"
+							disabled={miniSet.completed}
+							min={0}
+							required
+							type="number"
+							bind:value={miniSet.reps}
+						/>
+						{#if exercise.setType === 'MyorepMatch'}
+							<span></span>
+						{:else}
+							{@const expectedLoad = getMiniSetLoad(idx, miniIdx)}
+							<Input
+								id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-load"
+								disabled={miniSet.completed}
+								min={0}
+								placeholder={expectedLoad === undefined ? expectedLoad : expectedLoad.toString()}
+								required
+								step={0.25}
+								type="number"
+								bind:value={miniSet.load}
+							/>
+						{/if}
+						<Input
+							id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-RIR"
+							disabled={miniSet.completed}
+							min={0}
+							required
+							type="number"
+							bind:value={miniSet.RIR}
+						/>
+						<Button
+							class="place-self-end"
+							disabled={miniSetButtonDisabled}
+							size="icon"
+							type="submit"
+							variant={miniSet.completed ? 'outline' : 'default'}
+						>
+							{#if !miniSet.completed}
+								<CheckIcon />
+							{:else}
+								<EditIcon />
+							{/if}
+						</Button>
+					</form>
 				{/if}
+			{/each}
+			<Button
+				aria-label="add-mini-set-to-set-{idx + 1}-of-{exercise.name}"
+				onclick={() => addMiniSet(idx)}
+				variant="secondary"
+			>
+				<AddIcon />
+			</Button>
+			<Button
+				aria-label="remove-mini-set-from-set-{idx + 1}-of-{exercise.name}"
+				disabled={set.miniSets.length === 0}
+				onclick={() => set.miniSets.pop()}
+				variant="secondary"
+			>
+				<RemoveIcon />
+			</Button>
+			{#if exercise.setType === 'MyorepMatch'}
+				{@const repsLeft = getRemainingMyorepMatchReps(idx)}
+				<span class="grid place-items-center text-sm font-medium text-primary">
+					{#if repsLeft && repsLeft > 0}
+						{repsLeft} {repsLeft === 1 ? 'rep' : 'reps'} left
+					{:else if typeof repsLeft === 'number'}
+						matched
+					{/if}
+				</span>
+			{:else}
 				<span></span>
 			{/if}
-		{/each}
-	</div>
-{/if}
+			<span></span>
+		{/if}
+	{/each}
+</div>

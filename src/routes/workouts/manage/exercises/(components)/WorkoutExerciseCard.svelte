@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
+	import type { WorkoutExerciseInProgress, WorkoutExerciseWithSets } from '$lib/workoutFunctions';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { dragHandle } from 'svelte-dnd-action';
 	import GripVertical from 'virtual:icons/lucide/grip-vertical';
@@ -11,15 +11,26 @@
 	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import { workoutRunes } from '../../workoutRunes.svelte';
 	import SetsComponent from './SetsComponent.svelte';
+	import CompareComponent from './CompareComponent.svelte';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 
 	type PropsType = {
 		readOnly?: boolean;
 		idx: number;
 		reordering?: boolean;
+		comparing?: boolean;
 		exercise: WorkoutExerciseInProgress;
+		prevExercise?: WorkoutExerciseWithSets | undefined;
 	};
 
-	let { readOnly, idx, reordering = false, exercise = $bindable() }: PropsType = $props();
+	let {
+		readOnly,
+		idx,
+		reordering = false,
+		comparing = false,
+		prevExercise = undefined,
+		exercise = $bindable()
+	}: PropsType = $props();
 	let isContextMenuOpen = $state(false);
 
 	function skipSetsLeft() {
@@ -93,7 +104,12 @@
 			{exercise.note}
 		</div>
 	{/if}
-	{#if exercise.sets.length > 0}
-		<SetsComponent {reordering} bind:exercise />
+	{#if exercise.sets.length > 0 && !reordering}
+		<Separator class="my-1" />
+		{#if comparing}
+			<CompareComponent {exercise} {prevExercise} />
+		{:else}
+			<SetsComponent bind:exercise />
+		{/if}
 	{/if}
 </div>

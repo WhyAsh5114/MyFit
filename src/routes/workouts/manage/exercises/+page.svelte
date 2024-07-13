@@ -15,12 +15,15 @@
 	import CompareIcon from 'virtual:icons/lucide/scale';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
 	import DndComponent from './(components)/DndComponent.svelte';
+	import type { WorkoutExerciseWithSets } from '$lib/workoutFunctions.js';
 
 	let { data } = $props();
 	let reordering = $state(false);
+	let comparing = $state(false);
 
 	let workoutData = $derived(workoutRunes.workoutData);
 	let workoutExercises = $derived(workoutRunes.workoutExercises);
+	let previousWorkoutExercises: WorkoutExerciseWithSets[] = $state([]);
 
 	let totalSets = $derived(
 		workoutExercises
@@ -50,6 +53,7 @@
 		const serverData = await data.serverData;
 		if (workoutRunes.workoutExercises === null)
 			workoutRunes.workoutExercises = serverData?.todaysWorkoutExercises ?? [];
+		previousWorkoutExercises = serverData?.previousWorkoutExercises ?? [];
 	});
 
 	function getFormattedDate(date: string | Date) {
@@ -104,16 +108,31 @@
 			{/if}
 		</div>
 		<div class="grid grid-cols-3 gap-x-2 gap-y-1">
-			<Button onclick={() => (reordering = !reordering)} size="icon" variant="outline">
+			<Button
+				aria-label="reorder-toggle"
+				disabled={comparing}
+				onclick={() => (reordering = !reordering)}
+				size="icon"
+				variant="outline"
+			>
 				{#if !reordering}
 					<ReorderIcon />
 				{:else}
 					<EditIcon />
 				{/if}
 			</Button>
-			<Button aria-label="compare-exercises" size="icon" variant="outline">
-				<CompareIcon />
-				<!-- TODO: comparison stuff -->
+			<Button
+				aria-label="compare-exercises"
+				disabled={reordering}
+				onclick={() => (comparing = !comparing)}
+				size="icon"
+				variant="outline"
+			>
+				{#if !comparing}
+					<CompareIcon />
+				{:else}
+					<EditIcon />
+				{/if}
 			</Button>
 			<AddEditExerciseDrawer
 				addExercise={workoutRunes.addExercise}
@@ -139,7 +158,12 @@
 	</div>
 {:else}
 	<div class="mt-2 flex h-px grow flex-col overflow-y-auto">
-		<DndComponent {reordering} bind:itemList={workoutRunes.workoutExercises} />
+		<DndComponent
+			{comparing}
+			{previousWorkoutExercises}
+			{reordering}
+			bind:itemList={workoutRunes.workoutExercises}
+		/>
 	</div>
 {/if}
 
