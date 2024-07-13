@@ -114,10 +114,7 @@ export function progressiveOverloadMagic(
 	cycleNumber: number,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	userBodyweight: number | null
-): {
-	todaysWorkoutExercises: WorkoutExerciseInProgress[];
-	previousWorkoutExercises: WorkoutExerciseWithSets[];
-} {
+) {
 	const {
 		mesocycleCyclicSetChanges,
 		mesocycleExerciseSplitDays,
@@ -157,9 +154,15 @@ export function progressiveOverloadMagic(
 
 	// Consider all progression overrides
 
-	const previousWorkoutExercises =
-		workoutsOfMesocycle.filter((wm) => wm.workoutStatus === null).at(-1)?.workout
-			.workoutExercises ?? [];
+	const previousWorkout = workoutsOfMesocycle
+		.filter((wm) => wm.workoutStatus === null)
+		.at(-1)?.workout;
+	const previousUserBodyweight = previousWorkout?.userBodyweight;
+	const previousWorkoutExercises = previousWorkout?.workoutExercises ?? [];
 
-	return { todaysWorkoutExercises: workoutExercises, previousWorkoutExercises };
+	return {
+		todaysWorkoutExercises: workoutExercises,
+		previousWorkoutExercises,
+		previousUserBodyweight
+	};
 }
