@@ -40,7 +40,7 @@
 		let volumes = getTheoreticalVolumes(setIdx);
 		if (!volumes) return;
 		let { volume, oldVolume } = volumes;
-		return volume / oldVolume - 1;
+		return (volume / oldVolume - 1) * 100;
 	}
 
 	function getTotalVolumeChange() {
@@ -57,7 +57,7 @@
 				return getTheoreticalVolumes(idx)?.oldVolume ?? 0;
 			})
 		);
-		return totalVolume / totalOldVolume - 1;
+		return (totalVolume / totalOldVolume - 1) * 100;
 	}
 
 	let totalVolumeChange = $derived(getTotalVolumeChange());
