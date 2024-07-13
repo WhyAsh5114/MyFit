@@ -3,7 +3,9 @@ import {
 	type Mesocycle,
 	type MuscleGroup,
 	type Prisma,
-	type WorkoutExercise
+	type WorkoutExercise,
+	type WorkoutExerciseMiniSet,
+	type WorkoutExerciseSet
 } from '@prisma/client';
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from './components/mesocycleAndExerciseSplit/commonTypes';
 
@@ -45,6 +47,10 @@ export type WorkoutExerciseInProgress = Omit<
 			> &
 				SetInProgress)[];
 		})[];
+};
+
+export type WorkoutExerciseWithSets = WorkoutExercise & {
+	sets: (WorkoutExerciseSet & { miniSets: WorkoutExerciseMiniSet[] })[];
 };
 
 export type TodaysWorkoutData = Omit<
@@ -110,7 +116,7 @@ export function progressiveOverloadMagic(
 	userBodyweight: number | null
 ): {
 	todaysWorkoutExercises: WorkoutExerciseInProgress[];
-	previousWorkoutExercises: WorkoutExercise[];
+	previousWorkoutExercises: WorkoutExerciseWithSets[];
 } {
 	const {
 		mesocycleCyclicSetChanges,
