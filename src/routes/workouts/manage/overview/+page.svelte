@@ -8,8 +8,11 @@
 	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
 	import { goto, invalidate } from '$app/navigation';
 	import type { RouterInputs } from '$lib/trpc/router';
+	import * as Tabs from '$lib/components/ui/tabs';
+	import ExerciseSplitExercisesCharts from '../../../exercise-splits/(components)/ExerciseSplitExercisesCharts.svelte';
 
 	let savingWorkout = $state(false);
+	let workoutExercises = $derived(workoutRunes.workoutExercises ?? []);
 
 	async function saveWorkout() {
 		if (workoutRunes.workoutData === null || workoutRunes.workoutExercises === null) return;
@@ -98,7 +101,19 @@
 
 <H3>Overview</H3>
 
-<!-- TODO: stuff -->
+<Tabs.Root class="w-full" value="progression">
+	<Tabs.List class="grid grid-cols-2">
+		<Tabs.Trigger value="progression">Progression</Tabs.Trigger>
+		<Tabs.Trigger value="basic">Basic</Tabs.Trigger>
+	</Tabs.List>
+	<Tabs.Content value="progression">
+		TODO: what to even put here? do we even need this?
+	</Tabs.Content>
+	<Tabs.Content class="rounded-md border bg-card p-4" value="basic">
+		<ExerciseSplitExercisesCharts exercises={workoutExercises} />
+	</Tabs.Content>
+</Tabs.Root>
+
 <div class="mt-auto grid grid-cols-2 gap-1">
 	<Button onclick={() => window.history.back()} variant="secondary">Previous</Button>
 	<Button disabled={savingWorkout} onclick={saveWorkout}>
