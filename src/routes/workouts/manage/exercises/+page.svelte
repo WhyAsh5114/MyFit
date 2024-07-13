@@ -124,7 +124,7 @@
 			</Button>
 			<Button
 				aria-label="compare-exercises"
-				disabled={reordering}
+				disabled={reordering || workoutRunes.editingWorkoutId !== null}
 				onclick={() => (comparing = !comparing)}
 				size="icon"
 				variant="outline"
