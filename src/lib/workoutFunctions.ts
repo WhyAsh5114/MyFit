@@ -157,12 +157,15 @@ export function progressiveOverloadMagic(
 	const previousWorkout = workoutsOfMesocycle
 		.filter((wm) => wm.workoutStatus === null)
 		.at(-1)?.workout;
-	const previousUserBodyweight = previousWorkout?.userBodyweight;
-	const previousWorkoutExercises = previousWorkout?.workoutExercises ?? [];
+	const previousWorkoutData = previousWorkout
+		? {
+				exercises: previousWorkout.workoutExercises,
+				userBodyweight: previousWorkout.userBodyweight
+			}
+		: null;
 
 	return {
 		todaysWorkoutExercises: workoutExercises,
-		previousWorkoutExercises,
-		previousUserBodyweight
+		previousWorkoutData
 	};
 }

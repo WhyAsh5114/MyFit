@@ -173,8 +173,10 @@ export const workouts = t.router({
 				input
 			}): Promise<{
 				todaysWorkoutExercises: WorkoutExerciseInProgress[];
-				previousWorkoutExercises: WorkoutExerciseWithSets[];
-				previousUserBodyweight: number | undefined;
+				previousWorkoutData: {
+					exercises: WorkoutExerciseWithSets[];
+					userBodyweight: number;
+				} | null;
 			}> => {
 				const data = await prisma.mesocycle.findFirst({
 					where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
@@ -197,9 +199,8 @@ export const workouts = t.router({
 					}
 				});
 				const noExercisesData = {
-					previousWorkoutExercises: [],
 					todaysWorkoutExercises: [],
-					previousUserBodyweight: undefined
+					previousWorkoutData: null
 				};
 				if (!data) return noExercisesData;
 
