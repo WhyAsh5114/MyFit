@@ -138,5 +138,5 @@
 		{/each}
 	</div>
 {:else}
-	<span class="text-sm text-center">Reference exercise not found</span>
+	<span class="text-center text-sm">Reference exercise not found</span>
 {/if}
