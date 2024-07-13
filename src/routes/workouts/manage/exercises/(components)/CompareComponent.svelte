@@ -1,15 +1,19 @@
 <script lang="ts">
-	import type { WorkoutExerciseInProgress, WorkoutExerciseWithSets } from '$lib/workoutFunctions';
+	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
+	import { workoutRunes } from '../../workoutRunes.svelte';
 
-	type PropsType = {
-		exercise: WorkoutExerciseInProgress;
-		prevExercise: WorkoutExerciseWithSets | undefined;
-	};
-	let { exercise, prevExercise }: PropsType = $props();
+	type PropsType = { exercise: WorkoutExerciseInProgress };
+	let { exercise }: PropsType = $props();
+
+	let prevExercise = workoutRunes.previousWorkoutData?.exercises.find(
+		(ex) => ex.name === exercise.name
+	);
 </script>
 
-<div class="flex flex-col">
-	{#each exercise.sets as set, idx}
-		<span>{set.reps} -> {prevExercise?.sets[idx].reps}</span>
-	{/each}
-</div>
+{#if prevExercise}
+	<div class="flex flex-col">
+		{#each exercise.sets as set, idx}
+			<span>{prevExercise.sets[idx].reps} -> {set.reps}</span>
+		{/each}
+	</div>
+{/if}

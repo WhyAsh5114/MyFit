@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import type { WorkoutExerciseInProgress, WorkoutExerciseWithSets } from '$lib/workoutFunctions';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { convertCamelCaseToNormal } from '$lib/utils';
+	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
 	import { dragHandle } from 'svelte-dnd-action';
 	import GripVertical from 'virtual:icons/lucide/grip-vertical';
 	import MenuIcon from 'virtual:icons/lucide/menu';
@@ -10,9 +11,8 @@
 	import SkipIcon from 'virtual:icons/lucide/skip-forward';
 	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import { workoutRunes } from '../../workoutRunes.svelte';
-	import SetsComponent from './SetsComponent.svelte';
 	import CompareComponent from './CompareComponent.svelte';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import SetsComponent from './SetsComponent.svelte';
 
 	type PropsType = {
 		readOnly?: boolean;
@@ -20,7 +20,6 @@
 		reordering?: boolean;
 		comparing?: boolean;
 		exercise: WorkoutExerciseInProgress;
-		prevExercise?: WorkoutExerciseWithSets | undefined;
 	};
 
 	let {
@@ -28,7 +27,6 @@
 		idx,
 		reordering = false,
 		comparing = false,
-		prevExercise = undefined,
 		exercise = $bindable()
 	}: PropsType = $props();
 	let isContextMenuOpen = $state(false);
@@ -107,7 +105,7 @@
 	{#if exercise.sets.length > 0 && !reordering}
 		<Separator class="my-1" />
 		{#if comparing}
-			<CompareComponent {exercise} {prevExercise} />
+			<CompareComponent {exercise} />
 		{:else}
 			<SetsComponent bind:exercise />
 		{/if}

@@ -15,7 +15,6 @@
 	import CompareIcon from 'virtual:icons/lucide/scale';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
 	import DndComponent from './(components)/DndComponent.svelte';
-	import type { WorkoutExerciseWithSets } from '$lib/workoutFunctions.js';
 
 	let { data } = $props();
 	let reordering = $state(false);
@@ -23,7 +22,6 @@
 
 	let workoutData = $derived(workoutRunes.workoutData);
 	let workoutExercises = $derived(workoutRunes.workoutExercises);
-	let previousWorkoutExercises: WorkoutExerciseWithSets[] = $state([]);
 
 	let totalSets = $derived(
 		workoutExercises
@@ -51,9 +49,12 @@
 	onMount(async () => {
 		if (workoutRunes.workoutData === null) goto('./start');
 		const serverData = await data.serverData;
-		if (workoutRunes.workoutExercises === null)
+		if (workoutRunes.workoutExercises === null) {
 			workoutRunes.workoutExercises = serverData?.todaysWorkoutExercises ?? [];
-		previousWorkoutExercises = serverData?.previousWorkoutExercises ?? [];
+		}
+		if (workoutRunes.previousWorkoutData === null) {
+			workoutRunes.previousWorkoutData = serverData?.previousWorkoutData ?? null;
+		}
 	});
 
 	function getFormattedDate(date: string | Date) {
@@ -158,12 +159,7 @@
 	</div>
 {:else}
 	<div class="mt-2 flex h-px grow flex-col overflow-y-auto">
-		<DndComponent
-			{comparing}
-			{previousWorkoutExercises}
-			{reordering}
-			bind:itemList={workoutRunes.workoutExercises}
-		/>
+		<DndComponent {comparing} {reordering} bind:itemList={workoutRunes.workoutExercises} />
 	</div>
 {/if}
 
