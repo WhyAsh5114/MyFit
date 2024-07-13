@@ -183,10 +183,10 @@ export const workouts = t.router({
 					}
 				}
 			});
-			if (!data) return [];
+			if (!data) return { previousWorkoutExercises: [], todaysWorkoutExercises: [] };
 
 			const { isRestDay, cycleNumber } = getBasicDayInfo(data);
-			if (isRestDay) return [];
+			if (isRestDay) return { previousWorkoutExercises: [], todaysWorkoutExercises: [] };
 
 			return progressiveOverloadMagic(data, cycleNumber, input.userBodyweight);
 		}),

@@ -15,9 +15,9 @@ export const load = async (event) => {
 	if (isNaN(splitDayIndex) || splitDayIndex < 0) error(400, 'Invalid split day index');
 
 	const trpc = createCaller(await createContext(event));
-	const workoutExercises = trpc.workouts.getTodaysWorkoutExercises({
+	const serverData = trpc.workouts.getTodaysWorkoutExercises({
 		userBodyweight,
 		splitDayIndex
 	});
-	return { workoutExercises };
+	return { serverData };
 };

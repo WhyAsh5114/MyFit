@@ -47,8 +47,9 @@
 
 	onMount(async () => {
 		if (workoutRunes.workoutData === null) goto('./start');
+		const serverData = await data.serverData;
 		if (workoutRunes.workoutExercises === null)
-			workoutRunes.workoutExercises = await data.workoutExercises;
+			workoutRunes.workoutExercises = serverData?.todaysWorkoutExercises ?? [];
 	});
 
 	function getFormattedDate(date: string | Date) {

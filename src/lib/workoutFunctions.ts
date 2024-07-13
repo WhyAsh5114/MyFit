@@ -1,4 +1,10 @@
-import { WorkoutStatus, type Mesocycle, type MuscleGroup, type Prisma } from '@prisma/client';
+import {
+	WorkoutStatus,
+	type Mesocycle,
+	type MuscleGroup,
+	type Prisma,
+	type WorkoutExercise
+} from '@prisma/client';
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from './components/mesocycleAndExerciseSplit/commonTypes';
 
 export type ActiveMesocycleWithProgressionData = Prisma.MesocycleGetPayload<{
@@ -102,7 +108,10 @@ export function progressiveOverloadMagic(
 	cycleNumber: number,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	userBodyweight: number | null
-): WorkoutExerciseInProgress[] {
+): {
+	todaysWorkoutExercises: WorkoutExerciseInProgress[];
+	previousWorkoutExercises: WorkoutExercise[];
+} {
 	const {
 		mesocycleCyclicSetChanges,
 		mesocycleExerciseSplitDays,
@@ -142,5 +151,9 @@ export function progressiveOverloadMagic(
 
 	// Consider all progression overrides
 
-	return workoutExercises;
+	const previousWorkoutExercises =
+		workoutsOfMesocycle.filter((wm) => wm.workoutStatus === null).at(-1)?.workout
+			.workoutExercises ?? [];
+
+	return { todaysWorkoutExercises: workoutExercises, previousWorkoutExercises };
 }
