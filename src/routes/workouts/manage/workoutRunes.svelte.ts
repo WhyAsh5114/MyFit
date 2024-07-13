@@ -2,27 +2,35 @@ import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from '$lib/components
 import {
 	createWorkoutExerciseInProgressFromMesocycleExerciseTemplate,
 	type TodaysWorkoutData,
-	type WorkoutExerciseInProgress
+	type WorkoutExerciseInProgress,
+	type WorkoutExerciseWithSets
 } from '$lib/workoutFunctions';
 import type { FullWorkoutWithMesoData } from '../[workoutId]/+page.server';
+
+type PreviousWorkoutData = {
+	exercises: WorkoutExerciseWithSets[];
+	userBodyweight: number;
+};
 
 function createWorkoutRunes() {
 	let workoutData: TodaysWorkoutData | null = $state(null);
 	let workoutExercises: WorkoutExerciseInProgress[] | null = $state(null);
 	let editingWorkoutId: string | null = $state(null);
+	let previousWorkoutData: PreviousWorkoutData | null = $state(null);
 
 	let editingExerciseIndex: number | undefined = $state();
 	let editingExercise: MesocycleExerciseTemplateWithoutIdsOrIndex | undefined = $state();
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('workoutRunes');
-		if (savedState) ({ workoutData, workoutExercises } = JSON.parse(savedState));
+		if (savedState)
+			({ workoutData, workoutExercises, previousWorkoutData } = JSON.parse(savedState));
 	}
 
 	function saveStoresToLocalStorage() {
 		localStorage.setItem(
 			'workoutRunes',
-			JSON.stringify({ workoutData, workoutExercises, editingWorkoutId })
+			JSON.stringify({ workoutData, workoutExercises, editingWorkoutId, previousWorkoutData })
 		);
 	}
 
@@ -30,6 +38,7 @@ function createWorkoutRunes() {
 		workoutData = null;
 		workoutExercises = null;
 		editingWorkoutId = null;
+		previousWorkoutData = null;
 		saveStoresToLocalStorage();
 	}
 
@@ -131,6 +140,13 @@ function createWorkoutRunes() {
 		},
 		set editingWorkoutId(value) {
 			editingWorkoutId = value;
+		},
+		get previousWorkoutData() {
+			return previousWorkoutData;
+		},
+		set previousWorkoutData(value) {
+			previousWorkoutData = value;
+			saveStoresToLocalStorage();
 		},
 		saveStoresToLocalStorage,
 		resetStores,
