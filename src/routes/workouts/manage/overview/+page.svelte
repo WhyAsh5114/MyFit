@@ -10,6 +10,7 @@
 	import type { RouterInputs } from '$lib/trpc/router';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import ExerciseSplitExercisesCharts from '../../../exercise-splits/(components)/ExerciseSplitExercisesCharts.svelte';
+	import { TRPCClientError } from '@trpc/client';
 
 	let savingWorkout = $state(false);
 	let workoutExercises = $derived(workoutRunes.workoutExercises ?? []);
@@ -81,20 +82,26 @@
 			)
 		};
 
-		if (workoutRunes.editingWorkoutId === null) {
-			const { message } = await trpc().workouts.create.mutate(createData);
+		try {
+			let message;
+			if (workoutRunes.editingWorkoutId === null) {
+				message = (await trpc().workouts.create.mutate(createData)).message;
+			} else {
+				message = (
+					await trpc().workouts.editById.mutate({
+						id: workoutRunes.editingWorkoutId,
+						endedAt: workoutRunes.workoutData.endedAt as Date | string,
+						data: createData
+					})
+				).message;
+			}
 			toast.success(message);
-		} else {
-			const { message } = await trpc().workouts.editById.mutate({
-				id: workoutRunes.editingWorkoutId,
-				endedAt: workoutRunes.workoutData.endedAt as Date | string,
-				data: createData
-			});
-			toast.success(message);
+			await invalidate('workouts:all');
+			await goto('/workouts');
+			workoutRunes.resetStores();
+		} catch (error) {
+			if (error instanceof TRPCClientError) toast.error(error.message);
 		}
-		await invalidate('workouts:all');
-		await goto('/workouts');
-		workoutRunes.resetStores();
 		savingWorkout = false;
 	}
 </script>
