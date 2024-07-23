@@ -14,13 +14,9 @@
   let modalText = "";
   let modalTitle = "";
   async function deleteWorkout() {
-    if (!data.mesocycle) {
-      console.error("No mesocycle found, maybe deleted?");
-      return;
-    }
     const requestBody: APIWorkoutsDeleteWorkout = {
       workoutId: $page.params.workoutId,
-      performedMesocycleId: data.mesocycle?.id
+      performedMesocycleId: data.mesocycle?.id ?? null
     };
     callingEndpoint = true;
     const response = await fetch("/api/workouts/deleteWorkout", {

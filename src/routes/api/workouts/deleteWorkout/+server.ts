@@ -14,21 +14,23 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   const { workoutId, performedMesocycleId }: APIWorkoutsDeleteWorkout = await request.json();
   const client = await clientPromise;
   try {
-    const performedMesocycle = await client
-      .db()
-      .collection<MesocycleDocument>("mesocycles")
-      .findOneAndUpdate(
-        {
-          userId: new ObjectId(session.user.id),
-          _id: new ObjectId(performedMesocycleId)
-        },
-        {
-          $pullAll: { workouts: [new ObjectId(workoutId)] }
-        }
-      );
+    if (performedMesocycleId !== null) {
+      const performedMesocycle = await client
+        .db()
+        .collection<MesocycleDocument>("mesocycles")
+        .findOneAndUpdate(
+          {
+            userId: new ObjectId(session.user.id),
+            _id: new ObjectId(performedMesocycleId)
+          },
+          {
+            $pullAll: { workouts: [new ObjectId(workoutId)] }
+          }
+        );
 
-    if (!performedMesocycle) {
-      return new Response("Performed mesocycle not found", { status: 400 });
+      if (!performedMesocycle) {
+        return new Response("Performed mesocycle not found", { status: 400 });
+      }
     }
 
     await client

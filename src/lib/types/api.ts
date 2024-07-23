@@ -48,5 +48,5 @@ type APIGetPreviousSorenessValues = APIGetWorkoutsThatPreviouslyTargeted;
 
 interface APIWorkoutsDeleteWorkout {
   workoutId: string;
-  performedMesocycleId: string;
+  performedMesocycleId: string | null;
 }
