@@ -36,6 +36,7 @@
 	});
 	let overwriteWorkoutDialogOpen = $state(false);
 	let completingWorkout = $state(false);
+	let skipWorkoutWithWorkoutExercisesDialogOpen = $state(false);
 
 	$effect(() => {
 		data.workoutData.then((data) => {
@@ -84,10 +85,14 @@
 		goto(exercisesLink);
 	}
 
-	async function completeWorkout(workoutStatus: WorkoutStatus) {
+	async function completeWorkout(workoutStatus: WorkoutStatus, force = false) {
 		if (workoutData === 'loading') return;
 		if (typeof userBodyweight !== 'number') {
 			toast.error('Enter your bodyweight');
+			return;
+		}
+		if (workoutRunes.workoutExercises !== null && !force) {
+			skipWorkoutWithWorkoutExercisesDialogOpen = true;
 			return;
 		}
 		completingWorkout = true;
@@ -98,6 +103,8 @@
 			workoutStatus
 		});
 		toast.success(message);
+		skipWorkoutWithWorkoutExercisesDialogOpen = false;
+		workoutRunes.resetStores();
 		await invalidate('workouts:start');
 		completingWorkout = false;
 	}
@@ -202,4 +209,17 @@
 		<Button onclick={() => startWorkout(true, 'keepCurrent')}>Keep current</Button>
 		<Button onclick={() => startWorkout(true, 'overwrite')} variant="destructive">Overwrite</Button>
 	</div>
+</ResponsiveDialog>
+
+<ResponsiveDialog
+	needTrigger={false}
+	title="Warning"
+	bind:open={skipWorkoutWithWorkoutExercisesDialogOpen}
+>
+	<p>
+		A workout is already in progress with <span class="font-semibold"
+			>{workoutRunes.workoutExercises?.length} exercises</span
+		>, skipping will get rid of it.
+	</p>
+	<Button onclick={() => completeWorkout('Skipped', true)} variant="destructive">Skip</Button>
 </ResponsiveDialog>
