@@ -15,6 +15,7 @@
 	import CompareIcon from 'virtual:icons/lucide/scale';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
 	import DndComponent from './(components)/DndComponent.svelte';
+	import ExerciseHistorySheet from './(components)/ExerciseHistorySheet.svelte';
 
 	let { data } = $props();
 	let reordering = $state(false);
@@ -167,3 +168,5 @@
 	<Button href="./start" variant="secondary">Previous</Button>
 	<Button onclick={submitWorkoutExercises}>Next</Button>
 </div>
+
+<ExerciseHistorySheet />
