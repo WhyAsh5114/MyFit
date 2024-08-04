@@ -21,6 +21,9 @@ function createWorkoutRunes() {
 	let editingExerciseIndex: number | undefined = $state();
 	let editingExercise: MesocycleExerciseTemplateWithoutIdsOrIndex | undefined = $state();
 
+	let exerciseHistorySheetOpen = $state(false);
+	let exerciseHistorySheetName: string | undefined = $state();
+
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('workoutRunes');
 		if (savedState)
@@ -87,6 +90,11 @@ function createWorkoutRunes() {
 		saveStoresToLocalStorage();
 	}
 
+	function openExerciseHistorySheet(exerciseName: string) {
+		exerciseHistorySheetName = exerciseName;
+		exerciseHistorySheetOpen = true;
+	}
+
 	function loadWorkout(workout: FullWorkoutWithMesoData) {
 		editingWorkoutId = workout.id;
 		workoutData = {
@@ -148,13 +156,26 @@ function createWorkoutRunes() {
 			previousWorkoutData = value;
 			saveStoresToLocalStorage();
 		},
+		get exerciseHistorySheetName() {
+			return exerciseHistorySheetName;
+		},
+		set exerciseHistorySheetName(value) {
+			exerciseHistorySheetName = value;
+		},
+		get exerciseHistorySheetOpen() {
+			return exerciseHistorySheetOpen;
+		},
+		set exerciseHistorySheetOpen(value) {
+			exerciseHistorySheetOpen = value;
+		},
 		saveStoresToLocalStorage,
 		resetStores,
 		addExercise,
 		setEditingExercise,
 		editExercise,
 		deleteExercise,
-		loadWorkout
+		loadWorkout,
+		openExerciseHistorySheet
 	};
 }
 
