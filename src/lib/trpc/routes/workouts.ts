@@ -397,6 +397,22 @@ export const workouts = t.router({
 			});
 			if (input.workoutStatus === 'RestDay') return { message: 'Rest day completed successfully' };
 			else return { message: 'Workout skipped successfully' };
+		}),
+
+	getExerciseHistory: t.procedure
+		.input(z.strictObject({ exerciseName: z.string(), cursorId: z.string().cuid().optional() }))
+		.query(async ({ ctx, input }) => {
+			return await prisma.workoutExercise.findMany({
+				where: { workout: { userId: ctx.userId }, name: input.exerciseName },
+				include: {
+					workout: { select: { startedAt: true } },
+					sets: { include: { miniSets: true } }
+				},
+				cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,
+				skip: input.cursorId !== undefined ? 1 : 0,
+				take: 10,
+				orderBy: { workout: { startedAt: 'desc' } }
+			});
 		})
 });
 
