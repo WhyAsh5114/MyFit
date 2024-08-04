@@ -29,6 +29,7 @@
 
 		({ needRefresh, updateServiceWorker } = useRegisterSW({
 			onRegisteredSW(swUrl, r) {
+				// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 				r &&
 					setInterval(async () => {
 						if (!(!r.installing && navigator)) return;
