@@ -187,6 +187,8 @@ export const mesocycles = t.router({
 	updateExerciseSplit: t.procedure
 		.input(zodUpdateExerciseSplitInput)
 		.mutation(async ({ input, ctx }) => {
+			// TODO: modify splitDayIndex of all workoutOfMesocycle join table records if split days re-arranged
+			// * is it better to link by splitDayName instead? makes stuff a lot more simpler tbh
 			const mesocycle = await prisma.mesocycle.findUniqueOrThrow({
 				where: { id: input.mesocycleId, userId: ctx.userId },
 				select: { id: true }
