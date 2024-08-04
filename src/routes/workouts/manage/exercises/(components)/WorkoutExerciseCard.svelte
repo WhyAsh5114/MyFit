@@ -10,6 +10,7 @@
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import SkipIcon from 'virtual:icons/lucide/skip-forward';
 	import DeleteIcon from 'virtual:icons/lucide/trash';
+	import HistoryIcon from 'virtual:icons/lucide/history';
 	import { workoutRunes } from '../../workoutRunes.svelte';
 	import CompareComponent from './CompareComponent.svelte';
 	import SetsComponent from './SetsComponent.svelte';
@@ -29,6 +30,7 @@
 		comparing = false,
 		exercise = $bindable()
 	}: PropsType = $props();
+
 	let isContextMenuOpen = $state(false);
 
 	function skipSetsLeft() {
@@ -66,6 +68,12 @@
 							</DropdownMenu.Item>
 							<DropdownMenu.Item class="gap-2" onclick={skipSetsLeft}>
 								<SkipIcon /> Skip sets left
+							</DropdownMenu.Item>
+							<DropdownMenu.Item
+								class="gap-2"
+								onclick={() => workoutRunes.openExerciseHistorySheet(exercise.name)}
+							>
+								<HistoryIcon /> History
 							</DropdownMenu.Item>
 							<DropdownMenu.Item
 								class="gap-2 text-red-500"
