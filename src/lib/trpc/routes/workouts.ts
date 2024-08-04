@@ -405,7 +405,25 @@ export const workouts = t.router({
 			return await prisma.workoutExercise.findMany({
 				where: { workout: { userId: ctx.userId }, name: input.exerciseName },
 				include: {
-					workout: { select: { startedAt: true } },
+					workout: {
+						select: {
+							startedAt: true,
+							workoutOfMesocycle: {
+								select: {
+									splitDayIndex: true,
+									mesocycle: {
+										select: {
+											name: true,
+											mesocycleExerciseSplitDays: {
+												select: { name: true },
+												orderBy: { dayIndex: 'asc' }
+											}
+										}
+									}
+								}
+							}
+						}
+					},
 					sets: { include: { miniSets: true } }
 				},
 				cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,

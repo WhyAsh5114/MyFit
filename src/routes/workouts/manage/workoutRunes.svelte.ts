@@ -5,6 +5,7 @@ import {
 	type WorkoutExerciseInProgress,
 	type WorkoutExerciseWithSets
 } from '$lib/workoutFunctions';
+import type { Prisma } from '@prisma/client';
 import type { FullWorkoutWithMesoData } from '../[workoutId]/+page.server';
 
 type PreviousWorkoutData = {
@@ -95,6 +96,30 @@ function createWorkoutRunes() {
 		exerciseHistorySheetOpen = true;
 	}
 
+	function copyExerciseSetNumbersFromHistory(
+		exerciseFromHistory: Prisma.WorkoutExerciseGetPayload<{
+			include: { sets: { include: { miniSets: true } } };
+		}>
+	) {
+		const exerciseToEdit = workoutExercises?.find((ex) => ex.name === exerciseHistorySheetName);
+		if (!exerciseToEdit) return;
+
+		for (let i = 0; i < exerciseToEdit.sets.length; i++) {
+			if (!exerciseFromHistory.sets[i]) break;
+			const historySet = exerciseFromHistory.sets[i];
+			exerciseToEdit.sets[i] = {
+				...historySet,
+				completed: false,
+				miniSets: historySet.miniSets.map((miniSet) => ({
+					...miniSet,
+					completed: false
+				}))
+			};
+		}
+
+		exerciseHistorySheetOpen = false;
+	}
+
 	function loadWorkout(workout: FullWorkoutWithMesoData) {
 		editingWorkoutId = workout.id;
 		workoutData = {
@@ -175,7 +200,8 @@ function createWorkoutRunes() {
 		editExercise,
 		deleteExercise,
 		loadWorkout,
-		openExerciseHistorySheet
+		openExerciseHistorySheet,
+		copyExerciseSetNumbersFromHistory
 	};
 }
 

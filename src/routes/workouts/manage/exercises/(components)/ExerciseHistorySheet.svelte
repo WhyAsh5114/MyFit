@@ -9,6 +9,7 @@
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { untrack } from 'svelte';
 	import WorkoutExerciseCard from '../../../[workoutId]/(components)/WorkoutExerciseCard.svelte';
+	import CopyIcon from 'virtual:icons/lucide/clipboard-copy';
 
 	let exercisesFound: RouterOutputs['workouts']['getExerciseHistory'] = $state([]);
 
@@ -49,8 +50,29 @@
 				triggerLoad={loadMore}
 			>
 				{#each exercisesFound as exercise}
-					<WorkoutExerciseCard {exercise} workoutStartedAt={exercise.workout.startedAt} />
-					<div class="mb-1"></div>
+					{@const wm = exercise.workout.workoutOfMesocycle}
+					<div class="mb-1 mt-4 flex items-start gap-1">
+						<Button
+							onclick={() => workoutRunes.copyExerciseSetNumbersFromHistory(exercise)}
+							size="icon"
+							variant="secondary"
+						>
+							<CopyIcon />
+						</Button>
+						<div class="mr-auto flex flex-col">
+							<span class="font-bold"
+								>{wm?.mesocycle.mesocycleExerciseSplitDays[wm.splitDayIndex].name}</span
+							>
+							<span class="text-xs font-semibold">{wm?.mesocycle.name}</span>
+						</div>
+						<span class="font-semibold text-muted-foreground">
+							{exercise.workout.startedAt.toLocaleDateString(undefined, {
+								day: 'numeric',
+								month: 'short'
+							})}
+						</span>
+					</div>
+					<WorkoutExerciseCard {exercise} />
 				{:else}
 					<div class="muted-text-box">No exercise history found</div>
 				{/each}
