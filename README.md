@@ -1,16 +1,12 @@
 # MyFit v2: Mobile Workout Tracking App
 
-MyFit is a powerful workout tracking app designed to help you achieve your fitness goals effectively. Inspired by the RP Hypertrophy app, MyFit offers a comprehensive set of features including mesocycle creation, automatic volume management, exercise progression metrics, and a science-based recommendation algorithm. Whether you are a beginner or an experienced fitness enthusiast, MyFit is your ideal companion on your fitness journey.
+MyFit is a powerful workout tracking app designed to help you achieve your fitness goals effectively. Inspired by the RP Hypertrophy app, MyFit offers a comprehensive set of features including mesocycle creation and exercise progression metrics. Whether you are a beginner or an experienced fitness enthusiast, MyFit is your ideal companion on your fitness journey.
 
 ## Features
 
 - **Mesocycle Creation**: Plan your workouts efficiently with the mesocycle creation feature. Organize your training into structured cycles for optimal results.
 
-- **Automatic Volume Management**: MyFit automatically manages your workout volume, ensuring that you are progressively overloading your muscles for continuous growth and strength gains.
-
 - **Exercise Progression Metrics**: Track your progress with detailed exercise metrics. Monitor your lifts, repetitions, and weights to stay motivated and on track.
-
-- **Science-Based Recommendation Algorithm**: Receive personalized workout recommendations based on scientific principles. MyFit helps you make informed decisions about your training routine.
 
 ## Getting Started
 
@@ -57,7 +53,7 @@ Contributions are welcome! Feel free to open an issue or submit a pull request.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the AGPL-3.0 License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 
