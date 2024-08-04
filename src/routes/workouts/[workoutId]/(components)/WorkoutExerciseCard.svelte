@@ -2,15 +2,25 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import MiniSetIcon from 'virtual:icons/lucide/arrow-down-right';
 	import { convertCamelCaseToNormal } from '$lib/utils';
-	import type { FullWorkoutWithMesoData } from '../+page.server';
 	import * as Table from '$lib/components/ui/table';
+	import type { Prisma } from '@prisma/client';
 
-	type PropsType = { exercise: FullWorkoutWithMesoData['workoutExercises'][number] };
-	let { exercise }: PropsType = $props();
+	type PropsType = {
+		exercise: Prisma.WorkoutExerciseGetPayload<{
+			include: { sets: { include: { miniSets: true } } };
+		}>;
+		workoutStartedAt?: Date;
+	};
+	let { exercise, workoutStartedAt }: PropsType = $props();
 </script>
 
 <div class="flex flex-col gap-0.5 rounded-md border bg-card/50 p-2 backdrop-blur-sm">
-	<span class="truncate">{exercise.name}</span>
+	<div class="flex items-start justify-between">
+		<span class="truncate">{exercise.name}</span>
+		<span class="text-sm font-semibold text-muted-foreground">
+			{workoutStartedAt?.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
+		</span>
+	</div>
 	<div class="flex items-center gap-0.5">
 		<span class="mr-auto text-sm lowercase text-muted-foreground">
 			{exercise.sets.length}
