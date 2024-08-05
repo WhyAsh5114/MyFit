@@ -7,6 +7,7 @@ import {
 } from '$lib/workoutFunctions';
 import type { Prisma } from '@prisma/client';
 import type { FullWorkoutWithMesoData } from '../[workoutId]/+page.server';
+import { settingsRunes } from '../../settings/settingsRunes.svelte';
 
 type PreviousWorkoutData = {
 	exercises: WorkoutExerciseWithSets[];
@@ -24,6 +25,7 @@ function createWorkoutRunes() {
 
 	let exerciseHistorySheetOpen = $state(false);
 	let exerciseHistorySheetName: string | undefined = $state();
+	let workoutPendingTimer: NodeJS.Timeout;
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('workoutRunes');
@@ -154,6 +156,18 @@ function createWorkoutRunes() {
 		},
 		set workoutData(value) {
 			workoutData = value;
+			if (value !== null) {
+				workoutPendingTimer = setTimeout(
+					() => {
+						settingsRunes.addNotification({
+							title: 'Workout still pending',
+							description: 'Forgot to finish it?',
+							timestamp: Number(new Date())
+						});
+					},
+					1000 * 60 * 60 * 2 // TODO: customize this. auto infer from user workouts or settings option
+				);
+			} else clearTimeout(workoutPendingTimer);
 		},
 		get workoutExercises() {
 			return workoutExercises;
