@@ -1,18 +1,46 @@
+type Notification = {
+	title: string;
+	description?: string;
+	timestamp: number;
+};
+
 function createSettingsRunes() {
 	let pushNotificationsEnabled = $state(false);
-	let notifications = $state<{ title: string; timestamp: number }[]>([]);
+	let notifications = $state<Notification[]>([]);
 
-	if (globalThis.localStorage) {
+	if (globalThis.localStorage && globalThis.Notification) {
 		const savedState = localStorage.getItem('settingsRunes');
-		if (savedState) ({ notifications, pushNotificationsEnabled } = JSON.parse(savedState));
-		if (Notification.permission !== 'granted') pushNotificationsEnabled = false;
+		if (savedState) ({ notifications } = JSON.parse(savedState));
+		pushNotificationsEnabled = Notification.permission === 'granted';
 	}
 
 	function saveStoresToLocalStorage() {
 		localStorage.setItem(
 			'settingsRunes',
-			JSON.stringify({ settingsRunes, pushNotificationsEnabled })
+			JSON.stringify({ notifications, pushNotificationsEnabled })
 		);
+	}
+
+	function addNotification(notification: Notification) {
+		notifications.push(notification);
+		saveStoresToLocalStorage();
+
+		if (pushNotificationsEnabled) {
+			new Notification(notification.title, {
+				body: notification.description,
+				icon: '/favicon.webp'
+			});
+		}
+	}
+
+	function deleteNotification(idx: number) {
+		notifications.splice(idx, 1);
+		saveStoresToLocalStorage();
+	}
+
+	function clearAllNotifications() {
+		notifications = [];
+		saveStoresToLocalStorage();
 	}
 
 	return {
@@ -21,7 +49,6 @@ function createSettingsRunes() {
 		},
 		set notifications(value) {
 			notifications = value;
-			saveStoresToLocalStorage();
 		},
 		get pushNotificationsEnabled() {
 			return pushNotificationsEnabled;
@@ -30,7 +57,10 @@ function createSettingsRunes() {
 			pushNotificationsEnabled = value;
 			saveStoresToLocalStorage();
 		},
-		saveStoresToLocalStorage
+		saveStoresToLocalStorage,
+		addNotification,
+		deleteNotification,
+		clearAllNotifications
 	};
 }
 

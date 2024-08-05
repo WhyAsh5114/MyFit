@@ -1,8 +1,10 @@
 <script lang="ts">
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import BellRing from 'virtual:icons/lucide/bell-ring';
+	import ClearIcon from 'virtual:icons/lucide/x';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import { settingsRunes } from './settingsRunes.svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -42,15 +44,28 @@
 			/>
 		</div>
 		<div>
-			{#each settingsRunes.notifications as notification, idx (idx)}
-				<div class="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
-					<span class="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500"></span>
-					<div class="space-y-1">
-						<p class="text-sm font-medium leading-none">
-							{notification.title}
-						</p>
+			{#each settingsRunes.notifications.toReversed() as notification, idx (idx)}
+				<div class="mb-2 grid items-start pb-4 last:mb-0 last:pb-0">
+					<div class="space-y-0.5">
+						<div class="flex items-center justify-between">
+							<p class="text-sm font-medium leading-none">
+								{notification.title}
+							</p>
+							<Button
+								class="h-5 w-5 p-0"
+								onclick={() => {
+									settingsRunes.deleteNotification(settingsRunes.notifications.length - idx - 1);
+								}}
+								variant="ghost"
+							>
+								<ClearIcon />
+							</Button>
+						</div>
 						<p class="text-sm text-muted-foreground">
-							{notification.timestamp}
+							{new Date(notification.timestamp).toLocaleString(undefined, {
+								timeStyle: 'short',
+								dateStyle: 'medium'
+							})}
 						</p>
 					</div>
 				</div>
@@ -59,4 +74,9 @@
 			{/each}
 		</div>
 	</Card.Content>
+	<Card.Footer>
+		<Button class="w-full gap-2">
+			Clear all <ClearIcon />
+		</Button>
+	</Card.Footer>
 </Card.Root>
