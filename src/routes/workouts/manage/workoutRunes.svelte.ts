@@ -108,7 +108,7 @@ function createWorkoutRunes() {
 
 		for (let i = 0; i < exerciseToEdit.sets.length; i++) {
 			if (!exerciseFromHistory.sets[i]) break;
-			const historySet = exerciseFromHistory.sets[i];
+			const { workoutExerciseId, ...historySet } = exerciseFromHistory.sets[i];
 			exerciseToEdit.sets[i] = {
 				...historySet,
 				completed: false,
