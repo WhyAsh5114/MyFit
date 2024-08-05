@@ -8,6 +8,8 @@ function createSettingsRunes() {
 	let pushNotificationsEnabled = $state(false);
 	let notifications = $state<Notification[]>([]);
 
+	let workoutDurationInterval: NodeJS.Timeout;
+
 	if (globalThis.localStorage && globalThis.Notification) {
 		const savedState = localStorage.getItem('settingsRunes');
 		if (savedState) ({ notifications } = JSON.parse(savedState));
@@ -43,6 +45,42 @@ function createSettingsRunes() {
 		saveStoresToLocalStorage();
 	}
 
+	function startWorkoutNotification() {
+		if (!pushNotificationsEnabled) return;
+		stopWorkoutNotification();
+
+		const options: NotificationOptions = {
+			icon: '/favicon.webp',
+			body: `Duration: ${new Date(0).toISOString().slice(11, 19)}`,
+			requireInteraction: true,
+			tag: 'workout-notification'
+		};
+
+		navigator.serviceWorker.ready.then(function (registration) {
+			registration.showNotification('Workout in progress', options);
+
+			let seconds = 0;
+			workoutDurationInterval = setInterval(() => {
+				seconds += 1;
+				registration.showNotification('Workout in progress', {
+					...options,
+					body: `Duration: ${new Date(seconds * 1000).toISOString().slice(11, 19)}`
+				});
+			}, 1000);
+		});
+	}
+
+	function stopWorkoutNotification() {
+		clearInterval(workoutDurationInterval);
+		navigator.serviceWorker.ready.then(function (registration) {
+			registration.getNotifications({ tag: 'workout-notification' }).then((notifications) => {
+				notifications.forEach((notification) => {
+					notification.close();
+				});
+			});
+		});
+	}
+
 	return {
 		get notifications() {
 			return notifications;
@@ -60,7 +98,9 @@ function createSettingsRunes() {
 		saveStoresToLocalStorage,
 		addNotification,
 		deleteNotification,
-		clearAllNotifications
+		clearAllNotifications,
+		startWorkoutNotification,
+		stopWorkoutNotification
 	};
 }
 
