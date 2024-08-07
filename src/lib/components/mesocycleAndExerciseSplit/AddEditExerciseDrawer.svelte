@@ -152,9 +152,8 @@
 		<form class="mt-8 grid h-fit grid-cols-2 gap-x-2 gap-y-4" onsubmit={submitForm}>
 			<div class="col-span-2 flex w-full flex-col gap-1.5">
 				<span class="text-sm font-medium">Exercise name</span>
-				<Command.Root class="bg-background">
+				<Command.Root class="bg-background" shouldFilter={false}>
 					<Command.Input
-						onblur={() => (searching = false)}
 						onfocus={() => (searching = true)}
 						placeholder="Type here or search..."
 						required
