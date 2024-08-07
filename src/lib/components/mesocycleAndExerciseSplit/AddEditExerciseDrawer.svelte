@@ -71,6 +71,17 @@
 	let mode = $derived(props.editingExercise === undefined ? 'Add' : 'Edit');
 	let searching = $state(false);
 	let currentExercise: Partial<FullExerciseTemplate> = $state(structuredClone(defaultExercise));
+	let filteredExercises = $derived(
+		commonExercisePerMuscleGroup.map((exercisesForMuscleGroup) => {
+			const { muscleGroup, exercises } = exercisesForMuscleGroup;
+			return {
+				muscleGroup,
+				exercises: exercises.filter((ex) =>
+					ex.name.toLowerCase().includes(currentExercise.name ?? '')
+				)
+			};
+		})
+	);
 
 	$effect(() => {
 		if (props.editingExercise) {
@@ -143,6 +154,7 @@
 				<span class="text-sm font-medium">Exercise name</span>
 				<Command.Root class="bg-background">
 					<Command.Input
+						onblur={() => (searching = false)}
 						onfocus={() => (searching = true)}
 						placeholder="Type here or search..."
 						required
@@ -150,7 +162,7 @@
 					/>
 					{#if searching}
 						<Command.List class="max-h-32 bg-muted">
-							{#each commonExercisePerMuscleGroup as exercisesForMuscleGroup}
+							{#each filteredExercises as exercisesForMuscleGroup}
 								{#if exercisesForMuscleGroup.exercises.length > 0}
 									<Command.Group heading={exercisesForMuscleGroup.muscleGroup}>
 										{#each exercisesForMuscleGroup.exercises as exercise}
