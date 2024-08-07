@@ -73,8 +73,6 @@
 						</span>
 					</div>
 					<WorkoutExerciseCard {exercise} />
-				{:else}
-					<div class="muted-text-box">No exercise history found</div>
 				{/each}
 				{#snippet loading()}
 					<LoaderCircle class="animate-spin" />
@@ -89,6 +87,8 @@
 							<span class="whitespace-nowrap">That's all!</span>
 							<Separator class="h-0.5 w-20" />
 						</div>
+					{:else}
+						<div class="muted-text-box w-full">No exercise history found</div>
 					{/if}
 				{/snippet}
 			</InfiniteLoader>
