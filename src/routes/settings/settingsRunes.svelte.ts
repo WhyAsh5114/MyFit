@@ -53,7 +53,8 @@ function createSettingsRunes() {
 			icon: '/favicon.webp',
 			body: `Duration: ${new Date(0).toISOString().slice(11, 19)}`,
 			requireInteraction: true,
-			tag: 'workout-notification'
+			tag: 'workout-notification',
+			silent: true
 		};
 
 		navigator.serviceWorker.ready.then(function (registration) {
