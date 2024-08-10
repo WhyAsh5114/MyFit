@@ -116,8 +116,7 @@ export const workouts = t.router({
 		});
 		const lastBodyweight = data?.workoutsOfMesocycle
 			.map((v) => v.workout.userBodyweight)
-			.filter((b) => b !== null)
-			.at(-1);
+			.filter((b) => b !== null)[0];
 		const userBodyweight = lastBodyweight ?? null;
 		if (data === null)
 			return {
