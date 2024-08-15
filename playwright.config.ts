@@ -17,8 +17,7 @@ const config: PlaywrightTestConfig = {
 	use: {
 		baseURL: 'http://localhost:4173',
 		trace: 'on-first-retry',
-		video: 'retain-on-failure',
-		locale: 'en-IN'
+		video: 'retain-on-failure'
 	},
 	timeout: 60000,
 	projects: [
