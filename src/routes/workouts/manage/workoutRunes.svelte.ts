@@ -7,7 +7,6 @@ import {
 } from '$lib/workoutFunctions';
 import type { Prisma } from '@prisma/client';
 import type { FullWorkoutWithMesoData } from '../[workoutId]/+page.server';
-import { settingsRunes } from '../../settings/settingsRunes.svelte';
 
 type PreviousWorkoutData = {
 	exercises: WorkoutExerciseWithSets[];
@@ -44,7 +43,6 @@ function createWorkoutRunes() {
 		workoutExercises = null;
 		editingWorkoutId = null;
 		previousWorkoutData = null;
-		settingsRunes.stopWorkoutNotification();
 		saveStoresToLocalStorage();
 	}
 
@@ -155,6 +153,7 @@ function createWorkoutRunes() {
 			return workoutData;
 		},
 		set workoutData(value) {
+			// TODO: notification stuff, background sync API?
 			workoutData = value;
 			// if (value !== null) {
 			// 	workoutPendingTimer = setTimeout(
@@ -165,10 +164,9 @@ function createWorkoutRunes() {
 			// 				timestamp: Number(new Date())
 			// 			});
 			// 		},
-			// 		1000 * 60 * 60 * 2 // TODO: customize this. auto infer from user workouts or settings option
+			// 		1000 * 60 * 60 * 2
 			// 	);
 			// } else clearTimeout(workoutPendingTimer);
-			settingsRunes.startWorkoutNotification();
 		},
 		get workoutExercises() {
 			return workoutExercises;
