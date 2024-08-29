@@ -42,7 +42,7 @@ https://my-fit-whyash5114.vercel.app/
 4. **Create .env file from sample env file**:
 
    ```sh
-   cp env.sample .env
+   cp sample.env .env
    ```
 
 5. **Add authorization secrets to support login via [github](https://authjs.dev/guides/configuring-github)/[google](https://authjs.dev/getting-started/providers/google)**
