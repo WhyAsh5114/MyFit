@@ -39,13 +39,21 @@ https://my-fit-whyash5114.vercel.app/
    npm install
    ```
 
-4. **Start the development server**:
+4. **Create .env file from sample env file**:
+
+   ```sh
+   cp sample.env .env
+   ```
+
+5. **Add authorization secrets to support login via [github](https://authjs.dev/guides/configuring-github)/[google](https://authjs.dev/getting-started/providers/google)**
+
+6. **Start the development server**:
 
    ```sh
    npm run dev
    ```
 
-   MyFit will be accessible at `http://localhost:4173`.
+   MyFit will be accessible at `http://localhost:5173`.
 
 ## Contributing
 
