@@ -14,6 +14,14 @@ export type FullMesocycle = Prisma.MesocycleGetPayload<{
 		exerciseSplit: true;
 		mesocycleExerciseSplitDays: { include: { mesocycleSplitDayExercises: true } };
 		mesocycleCyclicSetChanges: true;
-		workoutsOfMesocycle: true
+		workoutsOfMesocycle: {
+			include: {
+				workout: {
+					include: {
+						workoutExercises: { include: { sets: { include: { miniSets: true } } } };
+					};
+				};
+			};
+		};
 	};
 }>;
