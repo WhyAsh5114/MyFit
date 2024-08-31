@@ -57,7 +57,8 @@ export const mesocycles = t.router({
 						include: { mesocycleSplitDayExercises: { orderBy: { exerciseIndex: 'asc' } } },
 						orderBy: { dayIndex: 'asc' }
 					},
-					mesocycleCyclicSetChanges: true
+					mesocycleCyclicSetChanges: true,
+					workoutsOfMesocycle: true
 				}
 			})
 	),
