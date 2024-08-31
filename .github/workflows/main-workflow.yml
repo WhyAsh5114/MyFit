@@ -29,32 +29,23 @@ jobs:
 
   playwright_tests:
     runs-on: ubuntu-latest
-    # Use when v24.2 https://github.com/cockroachdb/cockroach/issues/122441
-    # services:
-    #   cockroach_db:
-    #     image: cockroachdb/cockroach:latest
-    #     env:
-    #       COCKROACH_ARGS: 'start-single-node --insecure'
-    #     ports:
-    #       - 26257:26257
+    services:
+      cockroach_db:
+        image: cockroachdb/cockroach:latest
+        env:
+          COCKROACH_ARGS: 'start-single-node --insecure'
+        ports:
+          - 26257:26257
+
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-environment
 
-      - name: Download & extract database binary
-        run: |
-          wget https://binaries.cockroachdb.com/cockroach-v24.1.1.linux-amd64.tgz
-          tar -xvzf cockroach-v24.1.1.linux-amd64.tgz
-
-      - name: Start database server
-        run: |
-          ./cockroach-v24.1.1.linux-amd64/cockroach start-single-node --insecure --background
-          echo "DATABASE_URL=postgresql://root@localhost:26257/defaultdb?sslmode=disable" >> $GITHUB_ENV
+      - name: Set DATABASE_URL
+        run: echo "DATABASE_URL=postgresql://root@localhost:26257/defaultdb?sslmode=disable" >> $GITHUB_ENV
 
       - name: Initialize database schema
         run: npx prisma db push
-        env:
-          DATABASE_URL: ${{ env.DATABASE_URL }}
 
       - name: Generate AUTH_SECRET
         run: echo "AUTH_SECRET=$(openssl rand -base64 33)" >> $GITHUB_ENV
@@ -64,9 +55,6 @@ jobs:
 
       - name: Run Playwright tests
         run: npx playwright test
-        env:
-          DATABASE_URL: ${{ env.DATABASE_URL }}
-          AUTH_SECRET: ${{ env.AUTH_SECRET }}
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
