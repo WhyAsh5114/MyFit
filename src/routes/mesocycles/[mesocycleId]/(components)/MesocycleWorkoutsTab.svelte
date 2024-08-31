@@ -48,7 +48,8 @@
 				maxCount = count;
 			}
 		}
-		return mesocycle.mesocycleExerciseSplitDays[parseInt(mostOccurring ?? '-1')].name;
+		if (mostOccurring === undefined) return null;
+		return mesocycle.mesocycleExerciseSplitDays[parseInt(mostOccurring)].name;
 	});
 
 	const allExercises = $derived(
@@ -102,66 +103,75 @@
 	);
 </script>
 
-<div class="grid grid-cols-2 gap-1">
-	<Card.Root>
-		<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
-			<Card.Title class="text-sm font-medium">Completion</Card.Title>
-		</Card.Header>
-		<Card.Content class="p-4 pt-0">
-			<div class="text-2xl font-bold">
-				{((totalWorkoutsOfMesocycle / totalMesocycleLength) * 100).toFixed(2)}%
-			</div>
-			<p class="text-xs text-muted-foreground">
-				{totalWorkoutsOfMesocycle}/{totalMesocycleLength} workouts
-			</p>
-		</Card.Content>
-	</Card.Root>
+{#if mesocycle.workoutsOfMesocycle.length}
+	<div class="grid grid-cols-2 gap-1">
+		<Card.Root>
+			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
+				<Card.Title class="text-sm font-medium">Completion</Card.Title>
+			</Card.Header>
+			<Card.Content class="p-4 pt-0">
+				<div class="text-2xl font-bold">
+					{((totalWorkoutsOfMesocycle / totalMesocycleLength) * 100).toFixed(2)}%
+				</div>
+				<p class="text-xs text-muted-foreground">
+					{totalWorkoutsOfMesocycle}/{totalMesocycleLength} workouts
+				</p>
+			</Card.Content>
+		</Card.Root>
 
-	<Card.Root>
-		<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
-			<Card.Title class="text-sm font-medium">Skipped</Card.Title>
-		</Card.Header>
-		<Card.Content class="p-4 pt-0">
-			<p>
-				<span class="text-2xl font-bold">{totalSkippedWorkouts}</span>
-				<span class="text-sm">/ {totalWorkoutsOfMesocycle}</span>
-			</p>
-			<p class="text-xs text-muted-foreground">
-				Most skipped: <span class="font-semibold">{mostSkippedWorkoutDay}</span>
-			</p>
-		</Card.Content>
-	</Card.Root>
+		<Card.Root>
+			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
+				<Card.Title class="text-sm font-medium">Skipped</Card.Title>
+			</Card.Header>
+			<Card.Content class="p-4 pt-0">
+				<p>
+					<span class="text-2xl font-bold">{totalSkippedWorkouts}</span>
+					<span class="text-sm">/ {totalWorkoutsOfMesocycle}</span>
+				</p>
+				<p class="text-xs text-muted-foreground">
+					Most skipped: <span class="font-semibold">{mostSkippedWorkoutDay}</span>
+				</p>
+			</Card.Content>
+		</Card.Root>
 
-	<Card.Root>
-		<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
-			<Card.Title class="text-sm font-medium">Best muscle</Card.Title>
-		</Card.Header>
-		<Card.Content class="p-4 pt-0">
-			<div class="text-2xl font-bold">
-				{convertCamelCaseToNormal(
-					sortedByPerformanceChangeMuscleGroups[sortedByPerformanceChangeMuscleGroups.length - 1]
-						.muscleGroup
-				)}
-			</div>
-			<p class="text-xs text-muted-foreground">
-				{sortedByPerformanceChangeMuscleGroups[
-					sortedByPerformanceChangeMuscleGroups.length - 1
-				].averageIncrease.toFixed(2)}% cyclic increase
-			</p>
-		</Card.Content>
-	</Card.Root>
+		<Card.Root>
+			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
+				<Card.Title class="text-sm font-medium">Best muscle</Card.Title>
+			</Card.Header>
+			<Card.Content class="p-4 pt-0">
+				<div class="text-2xl font-bold">
+					{convertCamelCaseToNormal(
+						sortedByPerformanceChangeMuscleGroups[sortedByPerformanceChangeMuscleGroups.length - 1]
+							.muscleGroup
+					)}
+				</div>
+				<p class="text-xs text-muted-foreground">
+					{sortedByPerformanceChangeMuscleGroups[
+						sortedByPerformanceChangeMuscleGroups.length - 1
+					].averageIncrease.toFixed(2)}% cyclic increase
+				</p>
+			</Card.Content>
+		</Card.Root>
 
-	<Card.Root>
-		<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
-			<Card.Title class="text-sm font-medium">Worst muscle</Card.Title>
-		</Card.Header>
-		<Card.Content class="p-4 pt-0">
-			<div class="text-2xl font-bold">
-				{convertCamelCaseToNormal(sortedByPerformanceChangeMuscleGroups[0].muscleGroup)}
-			</div>
-			<p class="text-xs text-muted-foreground">
-				{sortedByPerformanceChangeMuscleGroups[0].averageIncrease.toFixed(2)}% cyclic increase
-			</p>
-		</Card.Content>
-	</Card.Root>
-</div>
+		<Card.Root>
+			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
+				<Card.Title class="text-sm font-medium">Worst muscle</Card.Title>
+			</Card.Header>
+			<Card.Content class="p-4 pt-0">
+				<div class="text-2xl font-bold">
+					{convertCamelCaseToNormal(sortedByPerformanceChangeMuscleGroups[0].muscleGroup)}
+				</div>
+				<p class="text-xs text-muted-foreground">
+					{sortedByPerformanceChangeMuscleGroups[0].averageIncrease.toFixed(2)}% cyclic increase
+				</p>
+			</Card.Content>
+		</Card.Root>
+	</div>
+{:else}
+	<div class="muted-text-box">No workouts created</div>
+{/if}
+
+<br />
+TODO: Maybe put these stats in basics tab chart mode, makes more sense that way
+<br /><br />
+TODO: Workouts list
