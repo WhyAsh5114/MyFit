@@ -130,21 +130,43 @@ export function progressiveOverloadMagic(
 
 	// Fill in reps, load, RIR from previous workouts
 	// Also do progressive overload here
-	if (workoutsOfMesocycle.length === 0) {
-		const currentCycleRIR = getRIRForWeek(mesocycle.RIRProgression, cycleNumber);
-		workoutExercises.forEach((ex) => {
-			ex.sets.forEach((set, idx) => {
-				set.RIR = currentCycleRIR;
-				if (idx === ex.sets.length - 1)
-					if (typeof ex.lastSetToFailure === 'boolean') set.RIR = ex.lastSetToFailure ? 0 : set.RIR;
-					else if (mesocycle.lastSetToFailure === true) set.RIR = 0;
-			});
-		});
-	} else if (workoutsOfMesocycle.length === 1) {
+
+	if (workoutsOfMesocycle.length > 0) {
 		// Just fill in repLoadRIR using meso's overload rate
-	} else if (workoutsOfMesocycle.length > 1) {
-		// Perform regression
+		// TODO: Temporary fix, just fill in reps, load, and RIR without any progressive overload
+		const lastWorkout = workoutsOfMesocycle[workoutsOfMesocycle.length - 1].workout;
+		workoutExercises.forEach((ex) => {
+			const lastExercise = lastWorkout.workoutExercises.find((_ex) => _ex.name === ex.name);
+			if (!lastExercise) return;
+			for (let i = 0; i < ex.sets.length; i++) {
+				if (!lastExercise.sets[i]) continue;
+				ex.sets[i] = {
+					...lastExercise.sets[i],
+					completed: false,
+					miniSets: lastExercise.sets[i].miniSets.map((miniSet) => ({
+						...miniSet,
+						completed: false
+					}))
+				};
+			}
+		});
 	}
+
+	const currentCycleRIR = getRIRForWeek(mesocycle.RIRProgression, cycleNumber);
+	workoutExercises.forEach((ex) => {
+		ex.sets.forEach((set, idx) => {
+			const oldRIR = set.RIR ?? currentCycleRIR;
+			set.RIR = currentCycleRIR;
+			if (idx === ex.sets.length - 1)
+				if (typeof ex.lastSetToFailure === 'boolean') set.RIR = ex.lastSetToFailure ? 0 : set.RIR;
+				else if (mesocycle.lastSetToFailure === true) set.RIR = 0;
+
+			// Adjust reps when RIR changed
+			const RIRDifference = set.RIR - oldRIR;
+			if (set.reps !== undefined && set.reps > ex.repRangeStart + RIRDifference)
+				set.reps -= RIRDifference;
+		});
+	});
 
 	// Add miniSets and stuff if drop / myorep match sets
 
