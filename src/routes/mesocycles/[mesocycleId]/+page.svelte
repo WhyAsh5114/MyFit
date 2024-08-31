@@ -1,16 +1,17 @@
 <script lang="ts">
-	import MesocycleBasicsTab from './(components)/MesocycleBasicsTab.svelte';
-	import H2 from '$lib/components/ui/typography/H2.svelte';
+	import * as Card from '$lib/components/ui/card';
 	import * as Tabs from '$lib/components/ui/tabs';
+	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import type { FullMesocycle } from './+layout.server';
+	import MesocycleCyclicSetChangesCharts from '../(components)/MesocycleCyclicSetChangesCharts.svelte';
+	import MesocycleBasicsTab from './(components)/MesocycleBasicsTab.svelte';
+	import MesocycleExerciseSplitStats from './(components)/MesocycleExerciseSplitStats.svelte';
 	import MesocycleSkeleton from './(components)/MesocycleSkeleton.svelte';
 	import MesocycleSplitTab from './(components)/MesocycleSplitTab.svelte';
 	import MesocycleVolumeTab from './(components)/MesocycleVolumeTab.svelte';
-	import MesocycleCyclicSetChangesCharts from '../(components)/MesocycleCyclicSetChangesCharts.svelte';
-	import * as Card from '$lib/components/ui/card';
-	import MesocycleExerciseSplitStats from './(components)/MesocycleExerciseSplitStats.svelte';
+	import MesocycleWorkoutsTab from './(components)/MesocycleWorkoutsTab.svelte';
+	import type { FullMesocycle } from './+layout.server';
 
 	let { data } = $props();
 	let mesocycle: FullMesocycle | 'loading' = $state('loading');
@@ -63,8 +64,7 @@
 		</Tabs.Content>
 		<Tabs.Content class="grow" value="workouts">
 			{#if !chartMode}
-				TODO: workouts list and some stats like: most progressed muscle group, exercise, least
-				progressed, highest volumes, etc
+				<MesocycleWorkoutsTab {mesocycle} />
 			{:else}
 				TODO: charts that show progression
 			{/if}
