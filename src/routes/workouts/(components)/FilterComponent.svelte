@@ -20,7 +20,7 @@
 			Filters <FilterIcon />
 		</Button>
 	</Popover.Trigger>
-	<Popover.Content class="flex w-11/12 flex-col gap-1">
+	<Popover.Content class="flex w-11/12 max-w-xl flex-col gap-1">
 		<span class="font-semibold">Filters</span>
 		<DateRangePicker bind:value={dateRangeValue} />
 		<span class="text-sm">
