@@ -227,5 +227,13 @@ export const mesocycles = t.router({
 			});
 			await prisma.$transaction([deleteQuery, createSplitDaysQuery, createSplitExercisesQuery]);
 			return { message: 'Mesocycle exercise split edited successfully' };
+		}),
+
+	getPastWorkouts: t.procedure
+		.input(z.strictObject({ splitDayIndex: z.number(), mesocycleId: z.string().cuid() }))
+		.query(async ({ ctx, input }) => {
+			return await prisma.workout.findMany({
+				where: { workoutOfMesocycle: input, userId: ctx.userId }
+			});
 		})
 });
