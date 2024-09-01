@@ -227,7 +227,8 @@ export const mesocycles = t.router({
 		.input(z.strictObject({ splitDayIndex: z.number(), mesocycleId: z.string().cuid() }))
 		.query(async ({ ctx, input }) => {
 			return await prisma.workout.findMany({
-				where: { workoutOfMesocycle: input, userId: ctx.userId }
+				where: { workoutOfMesocycle: input, userId: ctx.userId },
+				include: { workoutExercises: { include: { sets: { include: { miniSets: true } } } } }
 			});
 		})
 });

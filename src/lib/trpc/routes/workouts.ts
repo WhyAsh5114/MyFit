@@ -105,7 +105,7 @@ export const workouts = t.router({
 				},
 				mesocycleCyclicSetChanges: true,
 				workoutsOfMesocycle: {
-					include: { workout: { include: { workoutExercises: true } } },
+					include: { workout: true },
 					orderBy: { workout: { startedAt: 'desc' } }
 				}
 			}
