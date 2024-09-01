@@ -82,7 +82,24 @@ export function generateShadesAndTints(count: number): string[] {
 }
 
 export function arraySum(arr: number[]) {
-	return arr.reduce((acc, val) => acc + val, 0);
+	return arr.reduce((sum, num) => sum + num, 0);
+}
+
+export function arrayAverage(arr: number[]): number {
+	return arraySum(arr) / arr.length;
+}
+
+export function averagePercentageChange(arr: number[]): number {
+	if (arr.length < 2) return 0;
+
+	const totalPercentageChange = arr.slice(1).reduce((sum, current, index) => {
+		const previous = arr[index];
+		const percentageChange = ((current - previous) / previous) * 100;
+		return sum + percentageChange;
+	}, 0);
+
+	const numberOfIncrements = arr.length - 1;
+	return totalPercentageChange / numberOfIncrements;
 }
 
 export function convertCamelCaseToNormal(text?: string): string {
