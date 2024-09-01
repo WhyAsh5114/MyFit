@@ -3,9 +3,18 @@
 	import { arraySum, convertCamelCaseToNormal } from '$lib/utils';
 	import {
 		generatePerformanceChangesPerMuscleGroup,
-		generatePerformanceChangesPerSplitDay
+		generatePerformanceChangesPerSplitDay,
+		getSetsPerformedPerMuscleGroup
 	} from '$lib/utils/mesocycleUtils';
 	import type { FullMesocycle } from '../+layout.server';
+	import CircleCheck from 'virtual:icons/lucide/circle-check';
+	import CircleX from 'virtual:icons/lucide/circle-X';
+	import BicepsFlexed from 'virtual:icons/lucide/biceps-flexed';
+	import Frown from 'virtual:icons/lucide/frown';
+	import CalendarHeart from 'virtual:icons/lucide/calendar-heart';
+	import CalendarArrowDown from 'virtual:icons/lucide/calendar-arrow-down';
+	import ChartColumnIncreasing from 'virtual:icons/lucide/chart-column-increasing';
+	import ChartColumnDecreasing from 'virtual:icons/lucide/chart-column-decreasing';
 
 	let { mesocycle }: { mesocycle: FullMesocycle } = $props();
 
@@ -41,6 +50,8 @@
 	);
 
 	const performanceChangesPerSplitDay = $derived(generatePerformanceChangesPerSplitDay(mesocycle));
+
+	const setsPerformedPerMuscleGroup = $derived(getSetsPerformedPerMuscleGroup(mesocycle.workoutsOfMesocycle));
 </script>
 
 {#if mesocycle.workoutsOfMesocycle.length}
@@ -48,6 +59,7 @@
 		<Card.Root>
 			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
 				<Card.Title class="text-sm font-medium">Completion</Card.Title>
+				<CircleCheck />
 			</Card.Header>
 			<Card.Content class="p-4 pt-0">
 				<div class="text-2xl font-bold">
@@ -62,6 +74,7 @@
 		<Card.Root>
 			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
 				<Card.Title class="text-sm font-medium">Skipped</Card.Title>
+				<CircleX />
 			</Card.Header>
 			<Card.Content class="p-4 pt-0">
 				<p>
@@ -77,6 +90,7 @@
 		<Card.Root>
 			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
 				<Card.Title class="text-sm font-medium">Best muscle</Card.Title>
+				<BicepsFlexed />
 			</Card.Header>
 			<Card.Content class="p-4 pt-0">
 				<div class="text-2xl font-bold">
@@ -95,6 +109,7 @@
 		<Card.Root>
 			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
 				<Card.Title class="text-sm font-medium">Worst muscle</Card.Title>
+				<Frown />
 			</Card.Header>
 			<Card.Content class="p-4 pt-0">
 				<div class="text-2xl font-bold">
@@ -109,6 +124,7 @@
 		<Card.Root>
 			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
 				<Card.Title class="text-sm font-medium">Best day</Card.Title>
+				<CalendarHeart />
 			</Card.Header>
 			<Card.Content class="p-4 pt-0">
 				<div class="text-2xl font-bold">
@@ -124,6 +140,7 @@
 		<Card.Root>
 			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
 				<Card.Title class="text-sm font-medium">Worst day</Card.Title>
+				<CalendarArrowDown />
 			</Card.Header>
 			<Card.Content class="p-4 pt-0">
 				<div class="text-2xl font-bold">
@@ -131,6 +148,36 @@
 				</div>
 				<p class="text-xs text-muted-foreground">
 					{performanceChangesPerSplitDay[0].averagePercentageChange.toFixed(2)}% cyclic increase
+				</p>
+			</Card.Content>
+		</Card.Root>
+
+		<Card.Root>
+			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
+				<Card.Title class="text-sm font-medium">Most sets</Card.Title>
+				<ChartColumnIncreasing />
+			</Card.Header>
+			<Card.Content class="p-4 pt-0">
+				<div class="text-2xl font-bold">
+					{setsPerformedPerMuscleGroup[setsPerformedPerMuscleGroup.length - 1].muscleGroup}
+				</div>
+				<p class="text-xs text-muted-foreground">
+					Total: {setsPerformedPerMuscleGroup[setsPerformedPerMuscleGroup.length - 1].totalSets} sets
+				</p>
+			</Card.Content>
+		</Card.Root>
+
+		<Card.Root>
+			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
+				<Card.Title class="text-sm font-medium">Least sets</Card.Title>
+				<ChartColumnDecreasing />
+			</Card.Header>
+			<Card.Content class="p-4 pt-0">
+				<div class="text-2xl font-bold">
+					{setsPerformedPerMuscleGroup[0].muscleGroup}
+				</div>
+				<p class="text-xs text-muted-foreground">
+					Total: {setsPerformedPerMuscleGroup[0].totalSets} sets
 				</p>
 			</Card.Content>
 		</Card.Root>

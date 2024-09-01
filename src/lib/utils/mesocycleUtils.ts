@@ -1,4 +1,4 @@
-import { arrayAverage, averagePercentageChange } from '$lib/utils';
+import { arrayAverage, arraySum, averagePercentageChange } from '$lib/utils';
 import type { Mesocycle, Workout, WorkoutExercise, WorkoutsOfMesocycle } from './types';
 import { getExerciseVolume, getWorkoutVolume } from './workoutUtils';
 
@@ -84,8 +84,24 @@ export function generatePerformanceChangesPerSplitDay(mesocycle: Mesocycle) {
 	const workoutsOfMesocycle = mesocycle.workoutsOfMesocycle.filter((wm) => wm.workoutStatus === null);
 	const groupedWorkouts = groupWorkoutsBySplitDayName(workoutsOfMesocycle, mesocycle.mesocycleExerciseSplitDays);
 
-	return groupedWorkouts.map(({ splitDayName, workouts }) => ({
+	const performanceChangesPerSplitDay = groupedWorkouts.map(({ splitDayName, workouts }) => ({
 		splitDayName,
 		averagePercentageChange: averagePercentageChange(workouts.map((workout) => getWorkoutVolume(workout)))
 	}));
+	performanceChangesPerSplitDay.sort((a, b) => a.averagePercentageChange - b.averagePercentageChange);
+
+	return performanceChangesPerSplitDay;
+}
+
+export function getSetsPerformedPerMuscleGroup(workoutsOfMesocycle: WorkoutsOfMesocycle) {
+	const allExercises = workoutsOfMesocycle.flatMap((wm) => wm.workout.workoutExercises);
+	const groupedExercisesByMuscleGroup = groupExercisesByMuscleGroup(allExercises);
+
+	const setsPerformedPerMuscleGroup = groupedExercisesByMuscleGroup.map(({ exercises, muscleGroup }) => ({
+		muscleGroup,
+		totalSets: arraySum(exercises.map((exercise) => exercise.sets.length))
+	}));
+	setsPerformedPerMuscleGroup.sort((a, b) => a.totalSets - b.totalSets);
+
+	return setsPerformedPerMuscleGroup;
 }
