@@ -10,6 +10,7 @@ import {
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from './components/mesocycleAndExerciseSplit/commonTypes';
 
 // TODO: merge with workoutUtils.ts
+// TODO: better types
 
 export type ActiveMesocycleWithProgressionData = Prisma.MesocycleGetPayload<{
 	include: {
