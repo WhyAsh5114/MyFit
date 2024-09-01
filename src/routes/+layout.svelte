@@ -3,8 +3,8 @@
 	import { pwaInfo } from 'virtual:pwa-info';
 	import { ModeWatcher } from 'mode-watcher';
 	import { Toaster } from '$lib/components/ui/sonner';
-	import MobileLayout from './(components)/MobileLayout.svelte';
-	import DesktopLayout from './(components)/DesktopLayout.svelte';
+	import MobileLayout from './(components)/layout/MobileLayout.svelte';
+	import DesktopLayout from './(components)/layout/DesktopLayout.svelte';
 	import { onMount } from 'svelte';
 
 	import { overrideItemIdKeyNameBeforeInitialisingDndZones } from 'svelte-dnd-action';
