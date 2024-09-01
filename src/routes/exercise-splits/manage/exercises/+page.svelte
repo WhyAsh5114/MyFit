@@ -19,12 +19,8 @@
 
 	let swapDialogOpen = $state(false);
 	let reordering = $state(false);
-	let splitDayName = $derived(
-		exerciseSplitRunes.splitDays[exerciseSplitRunes.selectedSplitDayIndex].name
-	);
-	let selectedSplitDayExercises = $derived(
-		exerciseSplitRunes.splitExercises[exerciseSplitRunes.selectedSplitDayIndex]
-	);
+	let splitDayName = $derived(exerciseSplitRunes.splitDays[exerciseSplitRunes.selectedSplitDayIndex].name);
+	let selectedSplitDayExercises = $derived(exerciseSplitRunes.splitExercises[exerciseSplitRunes.selectedSplitDayIndex]);
 
 	function submitExercises() {
 		const noExerciseAddedDays = exerciseSplitRunes.splitDays.filter((splitDay, idx) => {
@@ -83,12 +79,7 @@
 				</Button>
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
-						<Button
-							aria-label="exercise-split-functions"
-							builders={[builder]}
-							size="icon"
-							variant="outline"
-						>
+						<Button aria-label="exercise-split-functions" builders={[builder]} size="icon" variant="outline">
 							<MenuIcon />
 						</Button>
 					</DropdownMenu.Trigger>
@@ -128,9 +119,7 @@
 					deleteExercise={exerciseSplitRunes.deleteExercise}
 					{reordering}
 					setEditingExercise={exerciseSplitRunes.setEditingExercise}
-					bind:itemList={exerciseSplitRunes.splitExercises[
-						exerciseSplitRunes.selectedSplitDayIndex
-					]}
+					bind:itemList={exerciseSplitRunes.splitExercises[exerciseSplitRunes.selectedSplitDayIndex]}
 				/>
 			</div>
 		</div>

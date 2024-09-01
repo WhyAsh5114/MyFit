@@ -60,12 +60,7 @@
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
 		<form class="contents" onsubmit={updateSearchParam}>
-			<Input
-				id="search-exercise-splits"
-				placeholder="Search"
-				type="search"
-				bind:value={searchString}
-			/>
+			<Input id="search-exercise-splits" placeholder="Search" type="search" bind:value={searchString} />
 			<Button aria-label="search" type="submit" variant="secondary">
 				<SearchIcon />
 			</Button>

@@ -27,8 +27,7 @@ function createWorkoutRunes() {
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('workoutRunes');
-		if (savedState)
-			({ workoutData, workoutExercises, previousWorkoutData } = JSON.parse(savedState));
+		if (savedState) ({ workoutData, workoutExercises, previousWorkoutData } = JSON.parse(savedState));
 	}
 
 	function saveStoresToLocalStorage() {
@@ -48,9 +47,7 @@ function createWorkoutRunes() {
 
 	function exerciseNameExists(exerciseName: string, exceptIndex?: number) {
 		if (!workoutExercises) return;
-		const exercise = workoutExercises.find(
-			(ex, idx) => ex.name === exerciseName && idx !== exceptIndex
-		);
+		const exercise = workoutExercises.find((ex, idx) => ex.name === exerciseName && idx !== exceptIndex);
 		return exercise !== undefined;
 	}
 
@@ -63,14 +60,12 @@ function createWorkoutRunes() {
 	}
 
 	function editExercise(exercise: MesocycleExerciseTemplateWithoutIdsOrIndex) {
-		if (!editingExercise || editingExerciseIndex === undefined || workoutExercises === null)
-			return false;
+		if (!editingExercise || editingExerciseIndex === undefined || workoutExercises === null) return false;
 		if (exerciseNameExists(exercise.name, editingExerciseIndex)) return false;
-		workoutExercises[editingExerciseIndex] =
-			createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
-				exercise,
-				workoutExercises[editingExerciseIndex].sets
-			);
+		workoutExercises[editingExerciseIndex] = createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
+			exercise,
+			workoutExercises[editingExerciseIndex].sets
+		);
 		saveStoresToLocalStorage();
 		return true;
 	}

@@ -13,12 +13,7 @@
 <ul class="mb-auto lg:mt-8">
 	{#each linkItems as { text, href }}
 		<li>
-			<Button
-				class="text-foreground lg:text-base"
-				{href}
-				onclick={() => (sheetOpen = false)}
-				variant="link"
-			>
+			<Button class="text-foreground lg:text-base" {href} onclick={() => (sheetOpen = false)} variant="link">
 				{text}
 			</Button>
 		</li>

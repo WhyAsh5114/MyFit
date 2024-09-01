@@ -37,15 +37,9 @@
 	}
 
 	function getMesocycleWithoutIds() {
-		const {
-			exerciseSplit,
-			mesocycleCyclicSetChanges,
-			mesocycleExerciseSplitDays,
-			...mesocycleData
-		} = mesocycle;
+		const { exerciseSplit, mesocycleCyclicSetChanges, mesocycleExerciseSplitDays, ...mesocycleData } = mesocycle;
 
-		const { id, userId, exerciseSplitId, workoutsOfMesocycle, ...mesocycleDataWithoutIds } =
-			mesocycleData;
+		const { id, userId, exerciseSplitId, workoutsOfMesocycle, ...mesocycleDataWithoutIds } = mesocycleData;
 		const mesocycleWithoutIds: FullMesocycleWithoutIds = {
 			...mesocycleDataWithoutIds,
 			mesocycleCyclicSetChanges: mesocycleCyclicSetChanges.map((setChange) => {
@@ -112,10 +106,7 @@
 						<DropdownMenu.Item class="gap-2" onclick={() => loadMesocycle('clone')}>
 							<CloneIcon /> Clone
 						</DropdownMenu.Item>
-						<DropdownMenu.Item
-							class="gap-2 text-red-500"
-							on:click={() => (deleteConfirmDrawerOpen = true)}
-						>
+						<DropdownMenu.Item class="gap-2 text-red-500" on:click={() => (deleteConfirmDrawerOpen = true)}>
 							<DeleteIcon /> Delete
 						</DropdownMenu.Item>
 					</DropdownMenu.Group>
@@ -193,9 +184,7 @@
 			</span>
 		</div>
 		<div class="flex flex-col gap-1">
-			<span id="last-set-to-failure-label" class="text-sm text-muted-foreground">
-				Last set to failure
-			</span>
+			<span id="last-set-to-failure-label" class="text-sm text-muted-foreground"> Last set to failure </span>
 			<Switch
 				name="mesocycle-last-set-to-failure"
 				aria-labelledby="last-set-to-failure-label"
@@ -204,9 +193,7 @@
 			/>
 		</div>
 		<div class="flex flex-col gap-1">
-			<span id="force-RIR-matching-label" class="text-sm text-muted-foreground">
-				Force RIR matching
-			</span>
+			<span id="force-RIR-matching-label" class="text-sm text-muted-foreground"> Force RIR matching </span>
 			<Switch
 				name="mesocycle-force-RIR-matching"
 				aria-labelledby="force-RIR-matching-label"
@@ -230,15 +217,9 @@
 
 <ResponsiveDialog needTrigger={false} title="Are you sure?" bind:open={deleteConfirmDrawerOpen}>
 	<p>
-		Delete mesocycle <span class="font-semibold">{mesocycle.name}</span>? This action cannot be
-		undone.
+		Delete mesocycle <span class="font-semibold">{mesocycle.name}</span>? This action cannot be undone.
 	</p>
-	<Button
-		class="gap-2"
-		disabled={callingDeleteEndpoint}
-		onclick={deleteMesocycle}
-		variant="destructive"
-	>
+	<Button class="gap-2" disabled={callingDeleteEndpoint} onclick={deleteMesocycle} variant="destructive">
 		{#if callingDeleteEndpoint}
 			<LoaderCircle class="animate-spin" />
 		{:else}

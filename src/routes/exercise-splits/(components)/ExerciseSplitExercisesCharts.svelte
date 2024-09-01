@@ -54,9 +54,7 @@
 
 		if (chart) chart.destroy();
 		if (selectedChartType.value === chartTypes[0]) {
-			const bodyweightExercises = exercises.filter(
-				(exercise) => exercise.bodyweightFraction !== null
-			).length;
+			const bodyweightExercises = exercises.filter((exercise) => exercise.bodyweightFraction !== null).length;
 			chart = new Chart(chartCanvas, {
 				type: 'doughnut',
 				data: {
@@ -96,9 +94,7 @@
 			});
 		} else {
 			const setTypes = Object.values(SetType);
-			const data = setTypes.map(
-				(setType) => exercises.filter((exercise) => exercise.setType === setType).length
-			);
+			const data = setTypes.map((setType) => exercises.filter((exercise) => exercise.setType === setType).length);
 			chart = new Chart(chartCanvas, {
 				type: 'polarArea',
 				data: {

@@ -1,14 +1,6 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
-	import {
-		Chart,
-		Tooltip,
-		Legend,
-		BarController,
-		BarElement,
-		CategoryScale,
-		LinearScale
-	} from 'chart.js';
+	import { Chart, Tooltip, Legend, BarController, BarElement, CategoryScale, LinearScale } from 'chart.js';
 	import type { Selected } from 'bits-ui';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import type { SplitExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
@@ -24,16 +16,12 @@
 		new Set(
 			splitExercises.flatMap((dayExercises) =>
 				dayExercises.map((exercise) =>
-					exercise.targetMuscleGroup === 'Custom'
-						? (exercise.customMuscleGroup as string)
-						: exercise.targetMuscleGroup
+					exercise.targetMuscleGroup === 'Custom' ? (exercise.customMuscleGroup as string) : exercise.targetMuscleGroup
 				)
 			)
 		)
 	);
-	const sortedMuscleGroups = muscleGroups.toSorted(
-		(a, b) => getTotalExercises(b) - getTotalExercises(a)
-	);
+	const sortedMuscleGroups = muscleGroups.toSorted((a, b) => getTotalExercises(b) - getTotalExercises(a));
 
 	let selectedMuscleGroups: Selected<string>[] = $state(
 		sortedMuscleGroups
@@ -48,19 +36,14 @@
 
 	function getTotalFrequency(muscleGroup: string) {
 		return splitExercises.reduce((totalFrequency, splitDayExercises) => {
-			const hasTargetedExercise = splitDayExercises.some(
-				(exercise) => exercise.targetMuscleGroup === muscleGroup
-			);
+			const hasTargetedExercise = splitDayExercises.some((exercise) => exercise.targetMuscleGroup === muscleGroup);
 			return totalFrequency + (hasTargetedExercise ? 1 : 0);
 		}, 0);
 	}
 
 	function getTotalExercises(muscleGroup: string) {
 		return splitExercises.reduce((totalExercises, splitDayExercises) => {
-			return (
-				totalExercises +
-				splitDayExercises.filter((exercise) => exercise.targetMuscleGroup === muscleGroup).length
-			);
+			return totalExercises + splitDayExercises.filter((exercise) => exercise.targetMuscleGroup === muscleGroup).length;
 		}, 0);
 	}
 
@@ -82,9 +65,7 @@
 				maintainAspectRatio: false,
 				scales: {
 					y: {
-						suggestedMax: Math.round(
-							Math.max(...selectedMuscleGroups.map((item) => dataFunction(item.value))) * 1.5
-						)
+						suggestedMax: Math.round(Math.max(...selectedMuscleGroups.map((item) => dataFunction(item.value))) * 1.5)
 					}
 				}
 			}

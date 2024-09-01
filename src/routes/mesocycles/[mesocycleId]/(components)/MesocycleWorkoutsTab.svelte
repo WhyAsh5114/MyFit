@@ -52,28 +52,21 @@
 		return mesocycle.mesocycleExerciseSplitDays[parseInt(mostOccurring)].name;
 	});
 
-	const allExercises = $derived(
-		mesocycle.workoutsOfMesocycle.flatMap((wm) => wm.workout.workoutExercises)
-	);
+	const allExercises = $derived(mesocycle.workoutsOfMesocycle.flatMap((wm) => wm.workout.workoutExercises));
 	const groupedExercises = $derived.by(() => {
 		const groupedExercisesByMuscleGroup = Object.entries(
-			Object.groupBy(
-				allExercises,
-				({ targetMuscleGroup, customMuscleGroup }) => customMuscleGroup ?? targetMuscleGroup
-			)
+			Object.groupBy(allExercises, ({ targetMuscleGroup, customMuscleGroup }) => customMuscleGroup ?? targetMuscleGroup)
 		).map(([muscleGroup, exercises]) => ({
 			muscleGroup,
 			exercises
 		}));
 
-		const fullyGroupedExercises = groupedExercisesByMuscleGroup.map(
-			({ muscleGroup, exercises }) => ({
-				muscleGroup,
-				exercises: Object.entries(Object.groupBy(exercises ?? [], ({ name }) => name)).map(
-					([exerciseName, performances]) => ({ exerciseName, performances })
-				)
-			})
-		);
+		const fullyGroupedExercises = groupedExercisesByMuscleGroup.map(({ muscleGroup, exercises }) => ({
+			muscleGroup,
+			exercises: Object.entries(Object.groupBy(exercises ?? [], ({ name }) => name)).map(
+				([exerciseName, performances]) => ({ exerciseName, performances })
+			)
+		}));
 		return fullyGroupedExercises;
 	});
 
@@ -90,8 +83,8 @@
 										(set) =>
 											(set.reps + set.RIR) * set.load +
 											(p.bodyweightFraction ?? 0) *
-												(mesocycle.workoutsOfMesocycle.find((wm) => wm.workoutId === p.workoutId)
-													?.workout.userBodyweight ?? 0)
+												(mesocycle.workoutsOfMesocycle.find((wm) => wm.workoutId === p.workoutId)?.workout
+													.userBodyweight ?? 0)
 									)
 								)
 							) ?? []
@@ -141,8 +134,7 @@
 			<Card.Content class="p-4 pt-0">
 				<div class="text-2xl font-bold">
 					{convertCamelCaseToNormal(
-						sortedByPerformanceChangeMuscleGroups[sortedByPerformanceChangeMuscleGroups.length - 1]
-							.muscleGroup
+						sortedByPerformanceChangeMuscleGroups[sortedByPerformanceChangeMuscleGroups.length - 1].muscleGroup
 					)}
 				</div>
 				<p class="text-xs text-muted-foreground">

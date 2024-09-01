@@ -25,9 +25,7 @@
 				return { ...set, setIndex: idx };
 			});
 		});
-		const workoutExercisesMiniSets = workoutExercisesSets.map((sets) =>
-			sets.map((set) => set.miniSets)
-		);
+		const workoutExercisesMiniSets = workoutExercisesSets.map((sets) => sets.map((set) => set.miniSets));
 
 		if (typeof workoutRunes.workoutData?.userBodyweight !== 'number') {
 			toast.error('Invalid user bodyweight at start page');
@@ -60,14 +58,9 @@
 					miniSets.map((_miniSet, miniSetIndex) => {
 						const exercises = workoutRunes.workoutExercises as WorkoutExerciseInProgress[];
 						const { completed, ...miniSet } = _miniSet;
-						if (exercises[exerciseIndex].sets[setIndex].skipped)
-							[miniSet.reps, miniSet.load, miniSet.RIR] = [0, 0, 0];
+						if (exercises[exerciseIndex].sets[setIndex].skipped) [miniSet.reps, miniSet.load, miniSet.RIR] = [0, 0, 0];
 
-						if (
-							miniSet.reps === undefined ||
-							miniSet.load === undefined ||
-							miniSet.RIR === undefined
-						) {
+						if (miniSet.reps === undefined || miniSet.load === undefined || miniSet.RIR === undefined) {
 							throw new Error('Rep, Load, or RIR is undefined');
 						}
 						return {
@@ -113,9 +106,7 @@
 		<Tabs.Trigger value="progression">Progression</Tabs.Trigger>
 		<Tabs.Trigger value="basic">Basic</Tabs.Trigger>
 	</Tabs.List>
-	<Tabs.Content value="progression">
-		TODO: what to even put here? do we even need this?
-	</Tabs.Content>
+	<Tabs.Content value="progression">TODO: what to even put here? do we even need this?</Tabs.Content>
 	<Tabs.Content class="rounded-md border bg-card p-4" value="basic">
 		<ExerciseSplitExercisesCharts exercises={workoutExercises} />
 	</Tabs.Content>

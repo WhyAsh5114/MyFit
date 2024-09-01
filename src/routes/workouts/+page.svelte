@@ -71,9 +71,7 @@
 						</span>
 						{#if workoutOfMesocycle}
 							{@const splitDayName =
-								workoutOfMesocycle.mesocycle.mesocycleExerciseSplitDays[
-									workoutOfMesocycle.splitDayIndex
-								].name}
+								workoutOfMesocycle.mesocycle.mesocycleExerciseSplitDays[workoutOfMesocycle.splitDayIndex].name}
 							<span class="truncate text-muted-foreground">
 								{splitDayName === '' ? 'Rest' : splitDayName}
 								{workoutOfMesocycle.workoutStatus === 'Skipped' ? '(skipped)' : ''}

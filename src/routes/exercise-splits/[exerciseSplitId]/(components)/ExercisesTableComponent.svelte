@@ -7,20 +7,14 @@
 	type PropsType = { exerciseSplitDays: (ExerciseSplitDay & { exercises: ExerciseTemplate[] })[] };
 	let { exerciseSplitDays }: PropsType = $props();
 
-	let selectedDayIndex = $state(
-		exerciseSplitDays.findIndex((splitDay) => splitDay !== null).toString()
-	);
+	let selectedDayIndex = $state(exerciseSplitDays.findIndex((splitDay) => splitDay !== null).toString());
 	let selectedSplitDay = $derived(exerciseSplitDays[parseInt(selectedDayIndex)]);
 </script>
 
 <Tabs.Root class="flex h-full flex-col" bind:value={selectedDayIndex}>
 	<Tabs.List class="w-full shrink-0 justify-start overflow-x-auto">
 		{#each exerciseSplitDays as splitDay, i}
-			<Tabs.Trigger
-				class="shrink-0 grow basis-20"
-				disabled={splitDay.isRestDay}
-				value={i.toString()}
-			>
+			<Tabs.Trigger class="shrink-0 grow basis-20" disabled={splitDay.isRestDay} value={i.toString()}>
 				{splitDay.isRestDay ? 'Rest' : splitDay.name}
 			</Tabs.Trigger>
 		{/each}

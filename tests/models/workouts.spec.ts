@@ -40,9 +40,7 @@ test('create workout', async ({ page }) => {
 			name: `${new Date().toLocaleDateString(undefined, { month: 'long', day: '2-digit' })}`
 		})
 		.click();
-	await expect(page.getByRole('tabpanel')).toContainText(
-		'Mesocycle No mesocycle User bodyweight 100'
-	);
+	await expect(page.getByRole('tabpanel')).toContainText('Mesocycle No mesocycle User bodyweight 100');
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
 		'Barbell bench press 2 Down sets of 5 to 10 reps Chest Reps Load RIR 1 9 100 2 2 8 95 1'
@@ -87,10 +85,7 @@ test('create workout with all set types', async ({ page, browserName }) => {
 	await page.locator('[id="Dumbbell\\ bicep\\ curls-set-1-load"]').fill('10');
 	await page.locator('[id="Dumbbell\\ bicep\\ curls-set-1-RIR"]').click();
 	await page.locator('[id="Dumbbell\\ bicep\\ curls-set-1-RIR"]').fill('2');
-	await page
-		.locator('div:nth-child(2) > div > div:nth-child(4) > form > .inline-flex')
-		.first()
-		.click();
+	await page.locator('div:nth-child(2) > div > div:nth-child(4) > form > .inline-flex').first().click();
 	await expect(page.getByRole('main')).toContainText('12 reps left');
 	await page.locator('[id="Dumbbell\\ bicep\\ curls-set-2-reps"]').click();
 	await page.locator('[id="Dumbbell\\ bicep\\ curls-set-2-reps"]').fill('10');
@@ -103,9 +98,7 @@ test('create workout with all set types', async ({ page, browserName }) => {
 	await expect(page.getByRole('main')).toContainText('matched');
 	await page.locator('[id="Dumbbell\\ bicep\\ curls-set-2-mini-set-1-RIR"]').click();
 	await page.locator('[id="Dumbbell\\ bicep\\ curls-set-2-mini-set-1-RIR"]').fill('0');
-	await page
-		.locator('div:nth-child(2) > div > div:nth-child(4) > form:nth-child(6) > .inline-flex')
-		.click();
+	await page.locator('div:nth-child(2) > div > div:nth-child(4) > form:nth-child(6) > .inline-flex').click();
 	await page.locator('form:nth-child(7) > .inline-flex').click();
 	await page.getByLabel('add-exercise').click();
 	await page.getByRole('option', { name: 'Leaning dumbbell lateral' }).click();
@@ -126,9 +119,7 @@ test('create workout with all set types', async ({ page, browserName }) => {
 	await page.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-1-RIR"]').fill('2');
 	await page.getByLabel('add-mini-set-to-set-1-of-').click();
 	await page.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-1-mini-set-1-reps"]').click();
-	await page
-		.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-1-mini-set-1-reps"]')
-		.fill('12');
+	await page.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-1-mini-set-1-reps"]').fill('12');
 	await page.getByPlaceholder('5', { exact: true }).click();
 	await page.getByPlaceholder('5', { exact: true }).fill('5');
 	await page.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-1-mini-set-1-RIR"]').click();
@@ -143,13 +134,9 @@ test('create workout with all set types', async ({ page, browserName }) => {
 	await page.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-2-RIR"]').click();
 	await page.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-2-RIR"]').fill('2');
 	await page.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-2-mini-set-1-reps"]').click();
-	await page
-		.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-2-mini-set-1-reps"]')
-		.fill('10');
+	await page.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-2-mini-set-1-reps"]').fill('10');
 	await page.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-2-mini-set-1-load"]').click();
-	await page
-		.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-2-mini-set-1-load"]')
-		.fill('5');
+	await page.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-2-mini-set-1-load"]').fill('5');
 	await page.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-2-mini-set-1-RIR"]').click();
 	await page.locator('[id="Leaning\\ dumbbell\\ lateral\\ raises-set-2-mini-set-1-RIR"]').fill('2');
 	await page.locator('form:nth-child(11) > .inline-flex').click();
@@ -208,9 +195,7 @@ test('create workout with all set types', async ({ page, browserName }) => {
 			name: `${new Date().toLocaleDateString(undefined, { month: 'long', day: '2-digit' })}`
 		})
 		.click();
-	await expect(page.getByRole('tabpanel')).toContainText(
-		'Mesocycle No mesocycle User bodyweight 100'
-	);
+	await expect(page.getByRole('tabpanel')).toContainText('Mesocycle No mesocycle User bodyweight 100');
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('main')).toContainText(
 		'Barbell bench press 2 Down sets of 5 to 10 reps Chest Reps Load RIR 1 9 50 1 2 8 45 1 Dumbbell bicep curls 2 Myorep match sets of 10 to 20 reps Biceps Reps Load RIR 1 12 10 2 2 10 10 0 1 2 10 0Leaning dumbbell lateral raises 2 Drop sets of 10 to 20 reps Side delts Reps Load RIR 1 18 10 2 1 12 5 22 16 10 2 1 10 5 2Incline dumbbell press 2 V2 sets of 10 to 15 reps Chest Reps Load RIR 1 14 20 2 2 12 15 1 Leg press 2 Myorep sets of 10 to 20 reps BW Quads Reps Load RIR 1 18 180 2 2 12 180 0'
@@ -220,9 +205,7 @@ test('create workout with all set types', async ({ page, browserName }) => {
 test('create a workout with active mesocycle', async ({ page }) => {
 	await createMesoForTest(page);
 	await page.getByLabel('create-workout').click();
-	await expect(page.getByRole('main')).toContainText(
-		'Pull A Day 1, Cycle 1 LatsTrapsBicepsRear delts'
-	);
+	await expect(page.getByRole('main')).toContainText('Pull A Day 1, Cycle 1 LatsTrapsBicepsRear delts');
 	await page.getByPlaceholder('Type here').click();
 	await page.getByPlaceholder('Type here').fill('100');
 	await page.getByRole('button', { name: 'Next' }).click();
@@ -281,9 +264,7 @@ test('create a workout with active mesocycle', async ({ page }) => {
 			name: `${new Date().toLocaleDateString(undefined, { month: 'long', day: '2-digit' })} Pull A`
 		})
 		.click();
-	await expect(page.getByRole('tabpanel')).toContainText(
-		'Mesocycle MyMeso Pull A User bodyweight 100'
-	);
+	await expect(page.getByRole('tabpanel')).toContainText('Mesocycle MyMeso Pull A User bodyweight 100');
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
 		'Pull-ups 3 Straight sets of 5 to 15 reps BW Lats Reps Load RIR 1 12 0 3 2 11 0 3 3 10 0 0'
@@ -327,9 +308,7 @@ test('create workout without using active mesocycle', async ({ page }) => {
 			name: `${new Date().toLocaleDateString(undefined, { month: 'long', day: '2-digit' })}`
 		})
 		.click();
-	await expect(page.getByRole('tabpanel')).toContainText(
-		'Mesocycle No mesocycle User bodyweight 100'
-	);
+	await expect(page.getByRole('tabpanel')).toContainText('Mesocycle No mesocycle User bodyweight 100');
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
 		'Barbell bench press 2 Down sets of 5 to 10 reps Chest Reps Load RIR 1 9 100 2 2 8 95 1'

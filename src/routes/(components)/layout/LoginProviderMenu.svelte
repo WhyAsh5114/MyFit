@@ -14,10 +14,7 @@
 <DropdownMenu.Content align="start">
 	<DropdownMenu.Group>
 		{#each providerList as { name, logo }}
-			<DropdownMenu.Item
-				class="gap-2"
-				onclick={() => signIn(name, { callbackUrl: $page.url.pathname })}
-			>
+			<DropdownMenu.Item class="gap-2" onclick={() => signIn(name, { callbackUrl: $page.url.pathname })}>
 				<svelte:component this={logo} class="h-6 w-6 lg:h-7 lg:w-7" />
 				<span class="capitalize">{name}</span>
 			</DropdownMenu.Item>

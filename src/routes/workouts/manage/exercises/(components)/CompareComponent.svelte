@@ -13,9 +13,7 @@
 	type PropsType = { exercise: WorkoutExerciseInProgress };
 	let { exercise }: PropsType = $props();
 
-	let prevExercise = workoutRunes.previousWorkoutData?.exercises.find(
-		(ex) => ex.name === exercise.name
-	);
+	let prevExercise = workoutRunes.previousWorkoutData?.exercises.find((ex) => ex.name === exercise.name);
 
 	function getTheoreticalVolumes(setIdx: number) {
 		const prevSet = prevExercise?.sets[setIdx];
@@ -27,8 +25,7 @@
 		let oldLoad = prevSet.load;
 		if (typeof exercise.bodyweightFraction === 'number') {
 			load += (workoutRunes.workoutData?.userBodyweight as number) * exercise.bodyweightFraction;
-			oldLoad +=
-				(workoutRunes.previousWorkoutData?.userBodyweight as number) * exercise.bodyweightFraction;
+			oldLoad += (workoutRunes.previousWorkoutData?.userBodyweight as number) * exercise.bodyweightFraction;
 		}
 
 		let volume = (reps + RIR) * load;
@@ -70,9 +67,7 @@
 			Load
 			{#if exercise.bodyweightFraction !== null}
 				<Popover.Root>
-					<Popover.Trigger class="text-xs font-semibold text-muted-foreground underline">
-						(BW)
-					</Popover.Trigger>
+					<Popover.Trigger class="text-xs font-semibold text-muted-foreground underline">(BW)</Popover.Trigger>
 					<Popover.Content class="w-48 text-center text-base">
 						<span class="text-muted-foreground">
 							{workoutRunes.previousWorkoutData?.userBodyweight} -&gt;

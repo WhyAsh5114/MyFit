@@ -61,10 +61,8 @@
 				<SearchIcon />
 			</Button>
 		</form>
-		<Button
-			aria-label="create-new-mesocycle"
-			href="/mesocycles/manage/basics"
-			onclick={createNewMesocycle}><AddIcon /></Button
+		<Button aria-label="create-new-mesocycle" href="/mesocycles/manage/basics" onclick={createNewMesocycle}
+			><AddIcon /></Button
 		>
 	</div>
 	<div class="flex items-center gap-2">

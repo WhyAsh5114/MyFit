@@ -126,23 +126,14 @@
 			{#if workoutData.workoutOfMesocycle === undefined}
 				<Switch id="use-active-mesocycle" name="use-active-mesocycle" disabled />
 			{:else}
-				<Switch
-					id="use-active-mesocycle"
-					name="use-active-mesocycle"
-					bind:checked={useActiveMesocycle}
-				/>
+				<Switch id="use-active-mesocycle" name="use-active-mesocycle" bind:checked={useActiveMesocycle} />
 			{/if}
 		</div>
 	{/if}
 	{#if !(useActiveMesocycle && workoutData.workoutOfMesocycle?.workoutStatus === 'RestDay')}
 		<div class="mb-1 flex w-full flex-col gap-1.5 rounded-lg border bg-card p-4">
 			<Label for="user-bodyweight">Bodyweight</Label>
-			<Input
-				id="user-bodyweight"
-				placeholder="Type here"
-				type="number"
-				bind:value={userBodyweight}
-			/>
+			<Input id="user-bodyweight" placeholder="Type here" type="number" bind:value={userBodyweight} />
 		</div>
 	{/if}
 	{#if useActiveMesocycle && workoutData.workoutOfMesocycle}
@@ -154,8 +145,7 @@
 					{splitDayName === '' ? 'Rest' : splitDayName}
 				</Card.Title>
 				<Card.Description class="pb-1">
-					Day {workoutData.workoutOfMesocycle.splitDayIndex + 1}, Cycle {workoutData
-						.workoutOfMesocycle.cycleNumber}
+					Day {workoutData.workoutOfMesocycle.splitDayIndex + 1}, Cycle {workoutData.workoutOfMesocycle.cycleNumber}
 				</Card.Description>
 				<div class="flex flex-wrap gap-1">
 					{#each targetedMuscleGroups as muscleGroup}
@@ -185,11 +175,7 @@
 		</Card.Root>
 	{/if}
 	{#if workoutData.workoutOfMesocycle?.workoutStatus !== 'RestDay'}
-		<Button
-			class="mt-auto"
-			disabled={userBodyweight === null || $navigating !== null}
-			onclick={() => startWorkout()}
-		>
+		<Button class="mt-auto" disabled={userBodyweight === null || $navigating !== null} onclick={() => startWorkout()}>
 			{#if $navigating}
 				<LoaderCircle class="animate-spin" />
 			{:else}
@@ -211,11 +197,7 @@
 	</div>
 </ResponsiveDialog>
 
-<ResponsiveDialog
-	needTrigger={false}
-	title="Warning"
-	bind:open={skipWorkoutWithWorkoutExercisesDialogOpen}
->
+<ResponsiveDialog needTrigger={false} title="Warning" bind:open={skipWorkoutWithWorkoutExercisesDialogOpen}>
 	<p>
 		A workout is already in progress with <span class="font-semibold"
 			>{workoutRunes.workoutExercises?.length} exercises</span

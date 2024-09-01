@@ -23,13 +23,7 @@
 		exercise: WorkoutExerciseInProgress;
 	};
 
-	let {
-		readOnly,
-		idx,
-		reordering = false,
-		comparing = false,
-		exercise = $bindable()
-	}: PropsType = $props();
+	let { readOnly, idx, reordering = false, comparing = false, exercise = $bindable() }: PropsType = $props();
 
 	let isContextMenuOpen = $state(false);
 
@@ -60,19 +54,13 @@
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content align="end">
 						<DropdownMenu.Group>
-							<DropdownMenu.Item
-								class="gap-2"
-								onclick={() => workoutRunes.setEditingExercise(exercise)}
-							>
+							<DropdownMenu.Item class="gap-2" onclick={() => workoutRunes.setEditingExercise(exercise)}>
 								<EditIcon /> Edit
 							</DropdownMenu.Item>
 							<DropdownMenu.Item class="gap-2" onclick={skipSetsLeft}>
 								<SkipIcon /> Skip sets left
 							</DropdownMenu.Item>
-							<DropdownMenu.Item
-								class="gap-2"
-								onclick={() => workoutRunes.openExerciseHistorySheet(exercise.name)}
-							>
+							<DropdownMenu.Item class="gap-2" onclick={() => workoutRunes.openExerciseHistorySheet(exercise.name)}>
 								<HistoryIcon /> History
 							</DropdownMenu.Item>
 							<DropdownMenu.Item

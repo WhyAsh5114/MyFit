@@ -25,13 +25,9 @@
 	let showWarningIcon = $derived.by(() => {
 		if (mesocycleExerciseSplitRunes.mesocycle === null) return false;
 		const mesocycleSplitDayNames = new Set(
-			mesocycleExerciseSplitRunes.mesocycle?.mesocycleExerciseSplitDays.map(
-				(splitDay) => splitDay.name
-			)
+			mesocycleExerciseSplitRunes.mesocycle?.mesocycleExerciseSplitDays.map((splitDay) => splitDay.name)
 		);
-		const currentSplitDayNames = new Set(
-			mesocycleExerciseSplitRunes.splitDays.map((splitDay) => splitDay.name)
-		);
+		const currentSplitDayNames = new Set(mesocycleExerciseSplitRunes.splitDays.map((splitDay) => splitDay.name));
 		const inconsistentDays = difference(mesocycleSplitDayNames, currentSplitDayNames);
 		consistencyLossDays = Array.from(inconsistentDays);
 		return inconsistentDays.size > 0;
@@ -82,8 +78,8 @@
 							</span>
 							<br />
 							<p class="text-muted-foreground">
-								Avoid unnecessarily changing split day names, as this can exclude workouts with
-								unmatched split names from progression calculations and analytics.
+								Avoid unnecessarily changing split day names, as this can exclude workouts with unmatched split names
+								from progression calculations and analytics.
 							</p>
 						</Popover.Content>
 					</Popover.Root>

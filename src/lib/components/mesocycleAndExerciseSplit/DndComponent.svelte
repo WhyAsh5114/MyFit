@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate';
 	import { fade } from 'svelte/transition';
-	import {
-		dragHandleZone,
-		type DndEvent,
-		SHADOW_ITEM_MARKER_PROPERTY_NAME
-	} from 'svelte-dnd-action';
+	import { dragHandleZone, type DndEvent, SHADOW_ITEM_MARKER_PROPERTY_NAME } from 'svelte-dnd-action';
 	import ExerciseTemplateCard from './ExerciseTemplateCard.svelte';
 	import type {
 		ExerciseTemplateWithoutIdsOrIndex,

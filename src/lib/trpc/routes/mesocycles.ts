@@ -77,9 +77,7 @@ export const mesocycles = t.router({
 	}),
 
 	load: t.procedure
-		.input(
-			z.object({ cursorId: z.string().cuid().optional(), searchString: z.string().optional() })
-		)
+		.input(z.object({ cursorId: z.string().cuid().optional(), searchString: z.string().optional() }))
 		.query(async ({ input, ctx }) => {
 			return prisma.mesocycle.findMany({
 				where: { userId: ctx.userId, name: { contains: input.searchString, mode: 'insensitive' } },
@@ -99,8 +97,7 @@ export const mesocycles = t.router({
 
 		if (input.startImmediately) {
 			const activeMesocycle = await getActiveMesocycle(ctx.userId);
-			if (activeMesocycle)
-				throw new TRPCError({ code: 'BAD_REQUEST', message: 'A mesocycle is already active' });
+			if (activeMesocycle) throw new TRPCError({ code: 'BAD_REQUEST', message: 'A mesocycle is already active' });
 			mesocycle.startDate = new Date();
 		}
 
@@ -194,40 +191,36 @@ export const mesocycles = t.router({
 			};
 		}),
 
-	updateExerciseSplit: t.procedure
-		.input(zodUpdateExerciseSplitInput)
-		.mutation(async ({ input, ctx }) => {
-			// TODO: modify splitDayIndex of all workoutOfMesocycle join table records if split days re-arranged
-			// * is it better to link by splitDayName instead? makes stuff a lot more simpler tbh
-			const mesocycle = await prisma.mesocycle.findUniqueOrThrow({
-				where: { id: input.mesocycleId, userId: ctx.userId },
-				select: { id: true }
-			});
-			const deleteQuery = prisma.mesocycleExerciseSplitDay.deleteMany({
-				where: { mesocycleId: mesocycle.id }
-			});
+	updateExerciseSplit: t.procedure.input(zodUpdateExerciseSplitInput).mutation(async ({ input, ctx }) => {
+		// TODO: modify splitDayIndex of all workoutOfMesocycle join table records if split days re-arranged
+		// * is it better to link by splitDayName instead? makes stuff a lot more simpler tbh
+		const mesocycle = await prisma.mesocycle.findUniqueOrThrow({
+			where: { id: input.mesocycleId, userId: ctx.userId },
+			select: { id: true }
+		});
+		const deleteQuery = prisma.mesocycleExerciseSplitDay.deleteMany({
+			where: { mesocycleId: mesocycle.id }
+		});
 
-			const newSplitDaysIds = Array.from({ length: input.mesocycleExerciseSplitDays.length }).map(
-				() => cuid()
-			);
-			const createSplitDaysQuery = prisma.mesocycleExerciseSplitDay.createMany({
-				data: input.mesocycleExerciseSplitDays.map((splitDay, idx) => ({
-					...splitDay,
-					id: newSplitDaysIds[idx],
-					mesocycleId: mesocycle.id
-				}))
-			});
-			const createSplitExercisesQuery = prisma.mesocycleExerciseTemplate.createMany({
-				data: input.mesocycleExerciseTemplates.flatMap((dayExercises, idx) => {
-					return dayExercises.map((exercise) => ({
-						...exercise,
-						mesocycleExerciseSplitDayId: newSplitDaysIds[idx]
-					}));
-				})
-			});
-			await prisma.$transaction([deleteQuery, createSplitDaysQuery, createSplitExercisesQuery]);
-			return { message: 'Mesocycle exercise split edited successfully' };
-		}),
+		const newSplitDaysIds = Array.from({ length: input.mesocycleExerciseSplitDays.length }).map(() => cuid());
+		const createSplitDaysQuery = prisma.mesocycleExerciseSplitDay.createMany({
+			data: input.mesocycleExerciseSplitDays.map((splitDay, idx) => ({
+				...splitDay,
+				id: newSplitDaysIds[idx],
+				mesocycleId: mesocycle.id
+			}))
+		});
+		const createSplitExercisesQuery = prisma.mesocycleExerciseTemplate.createMany({
+			data: input.mesocycleExerciseTemplates.flatMap((dayExercises, idx) => {
+				return dayExercises.map((exercise) => ({
+					...exercise,
+					mesocycleExerciseSplitDayId: newSplitDaysIds[idx]
+				}));
+			})
+		});
+		await prisma.$transaction([deleteQuery, createSplitDaysQuery, createSplitExercisesQuery]);
+		return { message: 'Mesocycle exercise split edited successfully' };
+	}),
 
 	getPastWorkouts: t.procedure
 		.input(z.strictObject({ splitDayIndex: z.number(), mesocycleId: z.string().cuid() }))

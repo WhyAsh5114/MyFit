@@ -9,16 +9,12 @@ export type FullExerciseSplitWithoutIdsOrIndex = Omit<
 	Prisma.ExerciseSplitCreateWithoutUserInput,
 	'exerciseSplitDays'
 > & {
-	exerciseSplitDays: (Omit<
-		Prisma.ExerciseSplitDayCreateWithoutExerciseSplitInput,
-		'exercises' | 'dayIndex'
-	> & { exercises: SplitExerciseTemplateWithoutIdsOrIndex[] })[];
+	exerciseSplitDays: (Omit<Prisma.ExerciseSplitDayCreateWithoutExerciseSplitInput, 'exercises' | 'dayIndex'> & {
+		exercises: SplitExerciseTemplateWithoutIdsOrIndex[];
+	})[];
 };
 
-type ExerciseSplitDayWithoutIds = Omit<
-	Prisma.ExerciseSplitDayCreateWithoutExerciseSplitInput,
-	'dayIndex'
->;
+type ExerciseSplitDayWithoutIds = Omit<Prisma.ExerciseSplitDayCreateWithoutExerciseSplitInput, 'dayIndex'>;
 
 export function createExerciseSplitRunes() {
 	let splitName = $state('');
@@ -34,8 +30,7 @@ export function createExerciseSplitRunes() {
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('exerciseSplitRunes');
-		if (savedState)
-			({ splitName, splitDays, splitExercises, editingExerciseSplitId } = JSON.parse(savedState));
+		if (savedState) ({ splitName, splitDays, splitExercises, editingExerciseSplitId } = JSON.parse(savedState));
 	}
 
 	function addSplitDay() {
@@ -55,9 +50,7 @@ export function createExerciseSplitRunes() {
 	}
 
 	function validateSplitStructure() {
-		const splitDayNames = splitDays
-			.filter((splitDay) => !splitDay.isRestDay)
-			.map((splitDay) => splitDay.name);
+		const splitDayNames = splitDays.filter((splitDay) => !splitDay.isRestDay).map((splitDay) => splitDay.name);
 
 		return new Set(splitDayNames).size === splitDayNames.length;
 	}
@@ -100,9 +93,7 @@ export function createExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
-	function setEditingExercise(
-		exerciseTemplate: SplitExerciseTemplateWithoutIdsOrIndex | undefined
-	) {
+	function setEditingExercise(exerciseTemplate: SplitExerciseTemplateWithoutIdsOrIndex | undefined) {
 		editingExercise = exerciseTemplate;
 	}
 
@@ -157,10 +148,7 @@ export function createExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
-	function loadExerciseSplit(
-		exerciseSplit: FullExerciseSplitWithoutIdsOrIndex,
-		editingId?: string
-	) {
+	function loadExerciseSplit(exerciseSplit: FullExerciseSplitWithoutIdsOrIndex, editingId?: string) {
 		editingExerciseSplitId = editingId ?? null;
 		splitName = exerciseSplit.name;
 		splitDays = exerciseSplit.exerciseSplitDays.map((splitDay) => ({

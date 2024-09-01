@@ -27,9 +27,7 @@
 	const maxMinSetsValue = Math.min(
 		...mesocycleRunes.mesocycleCyclicSetChanges.map((setChange) => setChange.startVolume)
 	);
-	let selectedExerciseSplit: ExerciseSplit | null = $state(
-		mesocycleRunes.selectedExerciseSplit ?? null
-	);
+	let selectedExerciseSplit: ExerciseSplit | null = $state(mesocycleRunes.selectedExerciseSplit ?? null);
 
 	onMount(async () => (exerciseSplits = await data.exerciseSplits));
 
@@ -82,16 +80,14 @@
 								<Command.Item
 									onSelect={(currentValue) => {
 										if (exerciseSplits === 'loading') return;
-										selectedExerciseSplit =
-											exerciseSplits.find((split) => split.id === currentValue) ?? null;
+										selectedExerciseSplit = exerciseSplits.find((split) => split.id === currentValue) ?? null;
 									}}
 									value={exerciseSplit.id.toString()}
 								>
 									<Check
 										class={cn('mr-2 h-4 w-4', {
 											'text-transparent':
-												selectedExerciseSplit === null ||
-												selectedExerciseSplit.id !== exerciseSplit.id
+												selectedExerciseSplit === null || selectedExerciseSplit.id !== exerciseSplit.id
 										})}
 									/>
 									{exerciseSplit.name}
@@ -154,10 +150,7 @@
 				</Select.Root>
 				{#if mesocycleRunes.editingMesocycleId === null}
 					<div class="flex w-full max-w-sm flex-col gap-1.5">
-						<Label
-							class="flex items-center justify-between"
-							for="distribution-min-sets-per-exercise"
-						>
+						<Label class="flex items-center justify-between" for="distribution-min-sets-per-exercise">
 							Minimum sets per exercise
 							<InfoPopover ariaLabel="distribution-min-sets-per-exercise-info">
 								To avoid excessive exercise variation at the start of the mesocycle

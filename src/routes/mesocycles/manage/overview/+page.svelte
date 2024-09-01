@@ -43,10 +43,7 @@
 		try {
 			let response;
 			if (mesocycleRunes.editingMesocycleId)
-				response = await editMesocycle(
-					mesocycleRunes.editingMesocycleId,
-					mesocycleCyclicSetChanges
-				);
+				response = await editMesocycle(mesocycleRunes.editingMesocycleId, mesocycleCyclicSetChanges);
 			else response = await createMesocycle(mesocycleCyclicSetChanges);
 
 			toast.success(response.message);

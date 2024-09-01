@@ -44,12 +44,7 @@
 >
 	<div class="mb-4 flex w-full flex-col gap-1.5">
 		<Label for="exercise-split-name">Exercise split name</Label>
-		<Input
-			id="exercise-split-name"
-			placeholder="Type here"
-			required
-			bind:value={exerciseSplitRunes.splitName}
-		/>
+		<Input id="exercise-split-name" placeholder="Type here" required bind:value={exerciseSplitRunes.splitName} />
 	</div>
 	<span class="mb-1.5 text-sm font-medium">Exercise split structure</span>
 	<Table.Root>

@@ -73,10 +73,7 @@
 	function getNextLoad(setIdx: number) {
 		if (!['Top', 'Down'].includes(exercise.setType)) return;
 		if (typeof exercise.sets[0].load !== 'number') return;
-		return floorToNearestMultiple(
-			calculateNextLoad(setIdx),
-			exercise.minimumWeightChange ?? 5
-		).toString();
+		return floorToNearestMultiple(calculateNextLoad(setIdx), exercise.minimumWeightChange ?? 5).toString();
 	}
 
 	function getRemainingMyorepMatchReps(setIdx: number) {
@@ -93,8 +90,7 @@
 		let set = exercise.sets[setIdx];
 
 		if (typeof set.load === 'number') {
-			if (exercise.changeType === 'AbsoluteLoad')
-				return set.load - (miniSetIdx + 1) * exercise.changeAmount;
+			if (exercise.changeType === 'AbsoluteLoad') return set.load - (miniSetIdx + 1) * exercise.changeAmount;
 			return set.load * (1 - (miniSetIdx + 1) * (exercise.changeAmount / 100));
 		}
 	}

@@ -76,8 +76,7 @@
 
 	function addMuscleGroup(e: SubmitEvent) {
 		e.preventDefault();
-		const muscleGroup =
-			selectedMuscleGroup.value === 'Custom' ? customMuscleGroup : selectedMuscleGroup.value;
+		const muscleGroup = selectedMuscleGroup.value === 'Custom' ? customMuscleGroup : selectedMuscleGroup.value;
 		const successfulAdd = mesocycleRunes.addMuscleGroupToCyclicSetChanges(muscleGroup, false);
 
 		if (successfulAdd) {
@@ -123,18 +122,13 @@
 										label: convertCamelCaseToNormal(selectedMuscleGroup?.value)
 									}}
 								>
-									<Select.Label class="p-0 text-sm font-medium leading-none">
-										Add muscle group
-									</Select.Label>
+									<Select.Label class="p-0 text-sm font-medium leading-none">Add muscle group</Select.Label>
 									<Select.Trigger>
 										<Select.Value placeholder="Pick one" />
 									</Select.Trigger>
 									<Select.Content class="h-48 overflow-y-auto">
 										{#each Object.values(MuscleGroup) as muscleGroup}
-											<Select.Item
-												label={convertCamelCaseToNormal(muscleGroup)}
-												value={muscleGroup}
-											/>
+											<Select.Item label={convertCamelCaseToNormal(muscleGroup)} value={muscleGroup} />
 										{/each}
 									</Select.Content>
 								</Select.Root>
@@ -170,14 +164,8 @@
 							<form class="flex items-end gap-2" onsubmit={(e) => applyChangesToAll(e, state)}>
 								{#if typeof state.value === 'boolean'}
 									<div class="flex items-center space-x-2 place-self-center">
-										<Checkbox
-											id="replace-all-{state.setChangeProperty}"
-											bind:checked={state.value}
-										/>
-										<Label
-											class="text-sm font-medium leading-none"
-											for="replace-all-{state.setChangeProperty}"
-										>
+										<Checkbox id="replace-all-{state.setChangeProperty}" bind:checked={state.value} />
+										<Label class="text-sm font-medium leading-none" for="replace-all-{state.setChangeProperty}">
 											{title}
 										</Label>
 									</div>
@@ -211,9 +199,7 @@
 	<Table.Body>
 		{#each mesocycleRunes.mesocycleCyclicSetChanges as setChange}
 			{@const muscleGroup =
-				setChange.muscleGroup === 'Custom'
-					? (setChange.customMuscleGroup as string)
-					: setChange.muscleGroup}
+				setChange.muscleGroup === 'Custom' ? (setChange.customMuscleGroup as string) : setChange.muscleGroup}
 			<Table.Row>
 				<Table.Cell class="font-semibold">
 					{convertCamelCaseToNormal(muscleGroup)}

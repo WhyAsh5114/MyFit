@@ -14,16 +14,7 @@
 		PieController,
 		Tooltip
 	} from 'chart.js';
-	Chart.register(
-		Tooltip,
-		Legend,
-		BarController,
-		BarElement,
-		CategoryScale,
-		LinearScale,
-		PieController,
-		ArcElement
-	);
+	Chart.register(Tooltip, Legend, BarController, BarElement, CategoryScale, LinearScale, PieController, ArcElement);
 
 	type PropsType = {
 		cyclicSetChanges: Prisma.MesocycleCyclicSetChangeCreateWithoutMesocycleInput[];
@@ -36,9 +27,7 @@
 	const muscleGroups = Array.from(
 		new Set(
 			cyclicSetChanges.map((setChange) =>
-				setChange.muscleGroup === 'Custom'
-					? (setChange.customMuscleGroup as string)
-					: setChange.muscleGroup
+				setChange.muscleGroup === 'Custom' ? (setChange.customMuscleGroup as string) : setChange.muscleGroup
 			)
 		)
 	);
@@ -91,18 +80,14 @@
 							label: 'Total muscle groups',
 							data: possibleSetIncreaseAmounts.map(
 								(setIncreaseAmount) =>
-									cyclicSetChanges.filter(
-										(setChange) => setChange.setIncreaseAmount === setIncreaseAmount
-									).length
+									cyclicSetChanges.filter((setChange) => setChange.setIncreaseAmount === setIncreaseAmount).length
 							)
 						}
 					]
 				}
 			});
 		} else if (selectedChartType.value === 'Regardless of progress') {
-			const totalRegardlessOfProgress = cyclicSetChanges.filter(
-				(s) => s.regardlessOfProgress
-			).length;
+			const totalRegardlessOfProgress = cyclicSetChanges.filter((s) => s.regardlessOfProgress).length;
 			chart = new Chart(chartCanvas, {
 				type: 'pie',
 				data: {
@@ -110,10 +95,7 @@
 					datasets: [
 						{
 							label: 'Regardless of progress',
-							data: [
-								totalRegardlessOfProgress,
-								cyclicSetChanges.length - totalRegardlessOfProgress
-							],
+							data: [totalRegardlessOfProgress, cyclicSetChanges.length - totalRegardlessOfProgress],
 							borderWidth: 0,
 							backgroundColor: [`hsl(${primaryColor})`, `hsl(${secondaryColor})`]
 						}

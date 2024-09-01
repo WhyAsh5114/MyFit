@@ -45,9 +45,7 @@
 				<MesocycleSplitTab {mesocycle} />
 			{:else}
 				<MesocycleExerciseSplitStats
-					splitExercises={mesocycle.mesocycleExerciseSplitDays.map(
-						(splitDay) => splitDay.mesocycleSplitDayExercises
-					)}
+					splitExercises={mesocycle.mesocycleExerciseSplitDays.map((splitDay) => splitDay.mesocycleSplitDayExercises)}
 				/>
 			{/if}
 		</Tabs.Content>

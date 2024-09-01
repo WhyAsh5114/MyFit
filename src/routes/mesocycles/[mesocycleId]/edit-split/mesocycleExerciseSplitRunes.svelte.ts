@@ -43,9 +43,7 @@ export function createMesocycleExerciseSplitRunes() {
 	}
 
 	function validateSplitStructure() {
-		const splitDayNames = splitDays
-			.filter((splitDay) => !splitDay.isRestDay)
-			.map((splitDay) => splitDay.name);
+		const splitDayNames = splitDays.filter((splitDay) => !splitDay.isRestDay).map((splitDay) => splitDay.name);
 
 		return new Set(splitDayNames).size === splitDayNames.length;
 	}
@@ -88,9 +86,7 @@ export function createMesocycleExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
-	function setEditingExercise(
-		exerciseTemplate: MesocycleExerciseTemplateWithoutIdsOrIndex | undefined
-	) {
+	function setEditingExercise(exerciseTemplate: MesocycleExerciseTemplateWithoutIdsOrIndex | undefined) {
 		editingExercise = exerciseTemplate;
 	}
 
@@ -128,10 +124,7 @@ export function createMesocycleExerciseSplitRunes() {
 	}
 
 	function saveStoresToLocalStorage() {
-		localStorage.setItem(
-			'mesocycleExerciseSplitRunes',
-			JSON.stringify({ splitDays, splitExercises, mesocycle })
-		);
+		localStorage.setItem('mesocycleExerciseSplitRunes', JSON.stringify({ splitDays, splitExercises, mesocycle }));
 	}
 
 	function resetStores() {

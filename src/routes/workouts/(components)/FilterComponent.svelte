@@ -23,9 +23,7 @@
 	<Popover.Content class="flex w-11/12 max-w-xl flex-col gap-1">
 		<span class="font-semibold">Filters</span>
 		<DateRangePicker bind:value={dateRangeValue} />
-		<span class="text-sm">
-			TODO: mesocycle, workout days, exercise filters, name and muscle groups
-		</span>
+		<span class="text-sm"> TODO: mesocycle, workout days, exercise filters, name and muscle groups </span>
 		<span class="text-sm"> TODO: Clear and submit button </span>
 	</Popover.Content>
 </Popover.Root>

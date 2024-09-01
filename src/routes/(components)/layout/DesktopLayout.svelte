@@ -45,14 +45,7 @@
 	{:else}
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild let:builder>
-				<Button
-					class="mt-1 justify-around text-base"
-					builders={[builder]}
-					size="lg"
-					variant="outline"
-				>
-					Login
-				</Button>
+				<Button class="mt-1 justify-around text-base" builders={[builder]} size="lg" variant="outline">Login</Button>
 			</DropdownMenu.Trigger>
 			<LoginProviderMenu />
 		</DropdownMenu.Root>

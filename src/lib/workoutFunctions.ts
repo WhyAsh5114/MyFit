@@ -89,8 +89,7 @@ export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
 	const newSets = oldSets ? [...oldSets] : [];
 	while (newSets.length < sets) newSets.push({ ...defaultSet, miniSets: [] });
 
-	if (exercise.setType !== 'Drop' && exercise.setType !== 'MyorepMatch')
-		newSets.map((set) => (set.miniSets = []));
+	if (exercise.setType !== 'Drop' && exercise.setType !== 'MyorepMatch') newSets.map((set) => (set.miniSets = []));
 
 	if (!['Drop', 'Down', 'Top'].includes(exercise.setType)) {
 		exercise.changeAmount = null;
@@ -115,12 +114,8 @@ export function progressiveOverloadMagic(
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	userBodyweight: number | null
 ) {
-	const {
-		mesocycleCyclicSetChanges,
-		mesocycleExerciseSplitDays,
-		workoutsOfMesocycle,
-		...mesocycle
-	} = mesocycleWithProgressionData;
+	const { mesocycleCyclicSetChanges, mesocycleExerciseSplitDays, workoutsOfMesocycle, ...mesocycle } =
+		mesocycleWithProgressionData;
 
 	const todaysSplitDay = mesocycleExerciseSplitDays[0];
 	const workoutExercises = todaysSplitDay.mesocycleSplitDayExercises.map((fullExercise) => {
@@ -163,8 +158,7 @@ export function progressiveOverloadMagic(
 
 			// Adjust reps when RIR changed
 			const RIRDifference = set.RIR - oldRIR;
-			if (set.reps !== undefined && set.reps > ex.repRangeStart + RIRDifference)
-				set.reps -= RIRDifference;
+			if (set.reps !== undefined && set.reps > ex.repRangeStart + RIRDifference) set.reps -= RIRDifference;
 		});
 	});
 
@@ -176,9 +170,7 @@ export function progressiveOverloadMagic(
 
 	// Consider all progression overrides
 
-	const previousWorkout = workoutsOfMesocycle
-		.filter((wm) => wm.workoutStatus === null)
-		.at(-1)?.workout;
+	const previousWorkout = workoutsOfMesocycle.filter((wm) => wm.workoutStatus === null).at(-1)?.workout;
 	const previousWorkoutData = previousWorkout
 		? {
 				exercises: previousWorkout.workoutExercises,

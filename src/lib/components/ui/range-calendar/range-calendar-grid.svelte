@@ -8,9 +8,6 @@
 	export { className as class };
 </script>
 
-<RangeCalendarPrimitive.Grid
-	class={cn('w-full border-collapse space-y-1', className)}
-	{...$$restProps}
->
+<RangeCalendarPrimitive.Grid class={cn('w-full border-collapse space-y-1', className)} {...$$restProps}>
 	<slot />
 </RangeCalendarPrimitive.Grid>

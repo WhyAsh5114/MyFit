@@ -12,13 +12,7 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
-	import {
-		ChangeType,
-		MuscleGroup,
-		ProgressionVariable,
-		SetType,
-		type Mesocycle
-	} from '@prisma/client';
+	import { ChangeType, MuscleGroup, ProgressionVariable, SetType, type Mesocycle } from '@prisma/client';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { commonExercisePerMuscleGroup } from '$lib/common/commonExercises';
 	import type {
@@ -76,9 +70,7 @@
 			const { muscleGroup, exercises } = exercisesForMuscleGroup;
 			return {
 				muscleGroup,
-				exercises: exercises.filter((ex) =>
-					ex.name.toLowerCase().includes(currentExercise.name ?? '')
-				)
+				exercises: exercises.filter((ex) => ex.name.toLowerCase().includes(currentExercise.name ?? ''))
 			};
 		})
 	);
@@ -129,19 +121,9 @@
 	}
 </script>
 
-<Sheet.Root
-	closeOnOutsideClick={false}
-	onOpenChange={(o) => !o && props.setEditingExercise(undefined)}
-	bind:open
->
+<Sheet.Root closeOnOutsideClick={false} onOpenChange={(o) => !o && props.setEditingExercise(undefined)} bind:open>
 	<Sheet.Trigger asChild let:builder>
-		<Button
-			aria-label="add-exercise"
-			builders={[builder]}
-			onclick={resetDrawerState}
-			size="icon"
-			variant="outline"
-		>
+		<Button aria-label="add-exercise" builders={[builder]} onclick={resetDrawerState} size="icon" variant="outline">
 			<AddIcon />
 		</Button>
 	</Sheet.Trigger>
@@ -193,9 +175,7 @@
 						label: convertCamelCaseToNormal(currentExercise.targetMuscleGroup)
 					}}
 				>
-					<Select.Label class="p-0 text-sm font-medium leading-none">
-						Target muscle group
-					</Select.Label>
+					<Select.Label class="p-0 text-sm font-medium leading-none">Target muscle group</Select.Label>
 					<Select.Trigger>
 						<Select.Value placeholder="Pick one" />
 					</Select.Trigger>
@@ -304,14 +284,10 @@
 						required
 						selected={{
 							value: currentExercise.changeType ?? 'Percentage',
-							label: currentExercise.changeType
-								? convertCamelCaseToNormal(currentExercise.changeType)
-								: 'Percentage'
+							label: currentExercise.changeType ? convertCamelCaseToNormal(currentExercise.changeType) : 'Percentage'
 						}}
 					>
-						<Select.Label class="p-0 text-sm font-medium leading-none">
-							Load change type
-						</Select.Label>
+						<Select.Label class="p-0 text-sm font-medium leading-none">Load change type</Select.Label>
 						<Select.Trigger>
 							<Select.Value placeholder="Pick one" />
 						</Select.Trigger>
@@ -375,8 +351,8 @@
 			<Sheet.Header>
 				<Sheet.Title>Overrides</Sheet.Title>
 				<Sheet.Description>
-					Exercise progressions are based on the mesocycle by default, you can override (customize)
-					them here for each exercise
+					Exercise progressions are based on the mesocycle by default, you can override (customize) them here for each
+					exercise
 				</Sheet.Description>
 			</Sheet.Header>
 			<form class="mt-8 grid h-fit gap-x-2 gap-y-4" onsubmit={submitOverrides}>
@@ -437,8 +413,7 @@
 					<Select.Root
 						disabled={currentExercise.preferredProgressionVariable === null}
 						onSelectedChange={(s) => {
-							if (s !== undefined && 'sets' in currentExercise)
-								currentExercise.preferredProgressionVariable = s.value;
+							if (s !== undefined && 'sets' in currentExercise) currentExercise.preferredProgressionVariable = s.value;
 						}}
 						required
 						selected={{

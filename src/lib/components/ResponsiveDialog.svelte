@@ -6,24 +6,11 @@
 
 	export let dismissible = true;
 	export let needTrigger = true;
-	export let variant:
-		| 'outline'
-		| 'link'
-		| 'default'
-		| 'destructive'
-		| 'secondary'
-		| 'ghost'
-		| undefined = 'outline';
+	export let variant: 'outline' | 'link' | 'default' | 'destructive' | 'secondary' | 'ghost' | undefined = 'outline';
 	export let size: 'default' | 'sm' | 'lg' | 'icon' | undefined = 'default';
 	export let ariaLabel = '';
-	export let cancelVariant:
-		| 'outline'
-		| 'link'
-		| 'default'
-		| 'destructive'
-		| 'secondary'
-		| 'ghost'
-		| undefined = 'outline';
+	export let cancelVariant: 'outline' | 'link' | 'default' | 'destructive' | 'secondary' | 'ghost' | undefined =
+		'outline';
 	export let title: string;
 	export let description: string | undefined = undefined;
 	export let open = false;

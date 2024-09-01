@@ -29,8 +29,7 @@
 					<Table.Cell>{setChange.setIncreaseAmount}</Table.Cell>
 					<Table.Cell>
 						<Checkbox
-							id="{setChange.customMuscleGroup ??
-								setChange.muscleGroup}-increase-volume-regardless-of-progress"
+							id="{setChange.customMuscleGroup ?? setChange.muscleGroup}-increase-volume-regardless-of-progress"
 							checked={setChange.regardlessOfProgress}
 							disabled
 						/>

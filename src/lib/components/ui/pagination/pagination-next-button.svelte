@@ -12,13 +12,7 @@
 </script>
 
 <PaginationPrimitive.NextButton asChild let:builder>
-	<Button
-		class={cn('gap-1 pr-2.5', className)}
-		builders={[builder]}
-		variant="ghost"
-		on:click
-		{...$$restProps}
-	>
+	<Button class={cn('gap-1 pr-2.5', className)} builders={[builder]} variant="ghost" on:click {...$$restProps}>
 		<slot>
 			<span>Next</span>
 			<ChevronRight class="h-4 w-4" />

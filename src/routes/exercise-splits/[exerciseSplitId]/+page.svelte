@@ -61,9 +61,7 @@
 			exerciseSplitDays: exerciseSplit.exerciseSplitDays.map(({ name, isRestDay, exercises }) => ({
 				name,
 				isRestDay,
-				exercises: exercises.map(
-					({ id, exerciseSplitDayId, ...exerciseTemplate }) => exerciseTemplate
-				)
+				exercises: exercises.map(({ id, exerciseSplitDayId, ...exerciseTemplate }) => exerciseTemplate)
 			}))
 		};
 		return noIdsSplit;
@@ -81,10 +79,7 @@
 
 	function editExerciseSplit() {
 		if (exerciseSplit === 'loading') return;
-		exerciseSplitRunes.loadExerciseSplit(
-			getExerciseSplitWithoutIds(exerciseSplit),
-			exerciseSplit.id
-		);
+		exerciseSplitRunes.loadExerciseSplit(getExerciseSplitWithoutIds(exerciseSplit), exerciseSplit.id);
 		goto(`/exercise-splits/manage/structure`);
 	}
 </script>
@@ -116,10 +111,7 @@
 									<DropdownMenu.Item class="gap-2" onclick={() => loadExerciseSplit('clone')}>
 										<CloneIcon /> Clone
 									</DropdownMenu.Item>
-									<DropdownMenu.Item
-										class="gap-2 text-red-500"
-										onclick={() => (deleteConfirmDrawerOpen = true)}
-									>
+									<DropdownMenu.Item class="gap-2 text-red-500" onclick={() => (deleteConfirmDrawerOpen = true)}>
 										<DeleteIcon /> Delete
 									</DropdownMenu.Item>
 								</DropdownMenu.Group>
@@ -157,8 +149,7 @@
 	</Tabs.Root>
 	<ResponsiveDialog needTrigger={false} title="Are you sure?" bind:open={deleteConfirmDrawerOpen}>
 		<p>
-			Delete split <span class="font-semibold">{exerciseSplit.name}</span>? This action cannot be
-			undone.
+			Delete split <span class="font-semibold">{exerciseSplit.name}</span>? This action cannot be undone.
 		</p>
 		<Button disabled={callingDeleteEndpoint} onclick={deleteExerciseSplit} variant="destructive">
 			{#if callingDeleteEndpoint}
@@ -172,8 +163,8 @@
 
 <ResponsiveDialog needTrigger={false} title="Note" bind:open={editExerciseSplitNoteDrawerOpen}>
 	<p class="text-sm">
-		Editing an exercise split won't change the mesocycle split it is used in. To modify that, use
-		the <b>Split</b> tab in <b>View mesocycle</b>
+		Editing an exercise split won't change the mesocycle split it is used in. To modify that, use the <b>Split</b> tab
+		in <b>View mesocycle</b>
 	</p>
 	<Button onclick={editExerciseSplit}>Continue</Button>
 </ResponsiveDialog>

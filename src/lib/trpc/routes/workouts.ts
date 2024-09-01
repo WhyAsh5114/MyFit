@@ -39,39 +39,35 @@ const createWorkoutSchema = z.strictObject({
 	workoutData: todaysWorkoutDataSchema,
 	workoutExercises: z.array(WorkoutExerciseCreateWithoutWorkoutInputSchema),
 	workoutExercisesSets: z.array(z.array(WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema)),
-	workoutExercisesMiniSets: z.array(
-		z.array(z.array(WorkoutExerciseMiniSetCreateWithoutParentSetInputSchema))
-	)
+	workoutExercisesMiniSets: z.array(z.array(z.array(WorkoutExerciseMiniSetCreateWithoutParentSetInputSchema)))
 });
 
 export const workouts = t.router({
-	load: t.procedure
-		.input(z.strictObject({ cursorId: z.string().cuid().optional() }))
-		.query(async ({ input, ctx }) => {
-			return prisma.workout.findMany({
-				where: { userId: ctx.userId },
-				orderBy: { startedAt: 'desc' },
-				include: {
-					workoutOfMesocycle: {
-						include: {
-							mesocycle: {
-								select: {
-									id: true,
-									name: true,
-									mesocycleExerciseSplitDays: {
-										select: { name: true },
-										orderBy: { dayIndex: 'asc' }
-									}
+	load: t.procedure.input(z.strictObject({ cursorId: z.string().cuid().optional() })).query(async ({ input, ctx }) => {
+		return prisma.workout.findMany({
+			where: { userId: ctx.userId },
+			orderBy: { startedAt: 'desc' },
+			include: {
+				workoutOfMesocycle: {
+					include: {
+						mesocycle: {
+							select: {
+								id: true,
+								name: true,
+								mesocycleExerciseSplitDays: {
+									select: { name: true },
+									orderBy: { dayIndex: 'asc' }
 								}
 							}
 						}
 					}
-				},
-				cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,
-				skip: input.cursorId !== undefined ? 1 : 0,
-				take: 10
-			});
-		}),
+				}
+			},
+			cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,
+			skip: input.cursorId !== undefined ? 1 : 0,
+			take: 10
+		});
+	}),
 
 	findById: t.procedure.input(z.string().cuid()).query(({ input, ctx }) =>
 		prisma.workout.findUnique({
@@ -114,9 +110,7 @@ export const workouts = t.router({
 				}
 			}
 		});
-		const lastBodyweight = data?.workoutsOfMesocycle
-			.map((v) => v.workout.userBodyweight)
-			.filter((b) => b !== null)[0];
+		const lastBodyweight = data?.workoutsOfMesocycle.map((v) => v.workout.userBodyweight).filter((b) => b !== null)[0];
 		const userBodyweight = lastBodyweight ?? null;
 		if (data === null)
 			return {
@@ -126,12 +120,7 @@ export const workouts = t.router({
 			} satisfies TodaysWorkoutData;
 
 		const { isRestDay, splitDayIndex, cycleNumber, todaysSplitDay } = getBasicDayInfo(data);
-		const {
-			mesocycleCyclicSetChanges,
-			workoutsOfMesocycle,
-			mesocycleExerciseSplitDays,
-			...mesocycleData
-		} = data;
+		const { mesocycleCyclicSetChanges, workoutsOfMesocycle, mesocycleExerciseSplitDays, ...mesocycleData } = data;
 
 		if (isRestDay)
 			return {
@@ -227,17 +216,20 @@ export const workouts = t.router({
 					splitDayIndex: workoutOfMesocycle.splitDayIndex
 				}
 			};
-		const workoutExercises: Prisma.WorkoutExerciseUncheckedCreateInput[] =
-			input.workoutExercises.map((ex) => ({ ...ex, workoutId: workout.id as string, id: cuid() }));
+		const workoutExercises: Prisma.WorkoutExerciseUncheckedCreateInput[] = input.workoutExercises.map((ex) => ({
+			...ex,
+			workoutId: workout.id as string,
+			id: cuid()
+		}));
 
-		const workoutExercisesSets: Prisma.WorkoutExerciseSetUncheckedCreateInput[] =
-			input.workoutExercisesSets.flatMap((sets, exerciseIdx) =>
+		const workoutExercisesSets: Prisma.WorkoutExerciseSetUncheckedCreateInput[] = input.workoutExercisesSets.flatMap(
+			(sets, exerciseIdx) =>
 				sets.map((set) => ({
 					...set,
 					id: cuid(),
 					workoutExerciseId: workoutExercises[exerciseIdx].id as string
 				}))
-			);
+		);
 
 		let setIndex = 0;
 		const workoutExercisesMiniSets: Prisma.WorkoutExerciseMiniSetUncheckedCreateInput[] =
@@ -325,12 +317,11 @@ export const workouts = t.router({
 				where: { workoutId: input.id }
 			});
 
-			const workoutExercises: Prisma.WorkoutExerciseUncheckedCreateInput[] =
-				input.data.workoutExercises.map((ex) => ({
-					...ex,
-					workoutId: workout.id as string,
-					id: cuid()
-				}));
+			const workoutExercises: Prisma.WorkoutExerciseUncheckedCreateInput[] = input.data.workoutExercises.map((ex) => ({
+				...ex,
+				workoutId: workout.id as string,
+				id: cuid()
+			}));
 
 			const workoutExercisesSets: Prisma.WorkoutExerciseSetUncheckedCreateInput[] =
 				input.data.workoutExercisesSets.flatMap((sets, exerciseIdx) =>
@@ -360,9 +351,7 @@ export const workouts = t.router({
 				prisma.workoutExercise.createMany({ data: workoutExercises }),
 				prisma.workoutExerciseSet.createMany({ data: workoutExercisesSets }),
 				prisma.workoutExerciseMiniSet.createMany({ data: workoutExercisesMiniSets }),
-				...(workoutOfMesocycle
-					? [prisma.workoutOfMesocycle.create({ data: workoutOfMesocycle })]
-					: [])
+				...(workoutOfMesocycle ? [prisma.workoutOfMesocycle.create({ data: workoutOfMesocycle })] : [])
 			];
 
 			await prisma.$transaction(transactionQueries);

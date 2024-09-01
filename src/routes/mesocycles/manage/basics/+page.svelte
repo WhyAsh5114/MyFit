@@ -15,9 +15,7 @@
 	let manualDragging = false;
 	let panes: PaneAPI[] = [];
 
-	let RIRProgression = $state(
-		structuredClone($state.snapshot(mesocycleRunes.mesocycle.RIRProgression))
-	);
+	let RIRProgression = $state(structuredClone($state.snapshot(mesocycleRunes.mesocycle.RIRProgression)));
 	let totalDuration = $state(arraySum(mesocycleRunes.mesocycle.RIRProgression));
 	let selectedRIR: Selected<number> = $derived({
 		value: RIRProgression.length - 1,
@@ -56,12 +54,7 @@
 <form class="flex grow flex-col gap-2" onsubmit={saveBasics}>
 	<div class="flex w-full flex-col gap-1.5">
 		<Label for="mesocycle-name">Mesocycle name</Label>
-		<Input
-			id="mesocycle-name"
-			placeholder="Type here"
-			required
-			bind:value={mesocycleRunes.mesocycle.name}
-		/>
+		<Input id="mesocycle-name" placeholder="Type here" required bind:value={mesocycleRunes.mesocycle.name} />
 	</div>
 
 	<div class="flex gap-2">

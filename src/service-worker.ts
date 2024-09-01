@@ -1,9 +1,5 @@
 /// <reference lib="WebWorker" />
-import {
-	PrecacheFallbackPlugin,
-	precacheAndRoute,
-	cleanupOutdatedCaches
-} from 'workbox-precaching';
+import { PrecacheFallbackPlugin, precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { NetworkFirst, CacheFirst, NetworkOnly } from 'workbox-strategies';
 import { BackgroundSyncPlugin } from 'workbox-background-sync';

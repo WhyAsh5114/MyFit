@@ -20,11 +20,10 @@ export type FullMesocycleWithoutIds = MesocycleWithoutIds & {
 	})[];
 };
 
-export type MesocycleCyclicSetChangeWithExtraProps =
-	Prisma.MesocycleCyclicSetChangeCreateWithoutMesocycleInput & {
-		startVolume: number;
-		inSplit: boolean;
-	};
+export type MesocycleCyclicSetChangeWithExtraProps = Prisma.MesocycleCyclicSetChangeCreateWithoutMesocycleInput & {
+	startVolume: number;
+	inSplit: boolean;
+};
 
 export function createMesocycleRunes() {
 	let mesocycle: MesocycleWithoutIds = $state(structuredClone(defaultMesocycle));
@@ -64,11 +63,10 @@ export function createMesocycleRunes() {
 		mesocycleExerciseTemplates = selectedExerciseSplit.exerciseSplitDays.map((splitDay) =>
 			splitDay.exercises.map((exercise) => {
 				const { id, exerciseSplitDayId, ...rest } = exercise;
-				const mesocycleExerciseTemplate: Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput =
-					{
-						...rest,
-						sets: 0
-					};
+				const mesocycleExerciseTemplate: Prisma.MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInput = {
+					...rest,
+					sets: 0
+				};
 				return mesocycleExerciseTemplate;
 			})
 		);
@@ -79,15 +77,11 @@ export function createMesocycleRunes() {
 		const allMuscleGroupsFromExercises = new Set(
 			mesocycleExerciseTemplates.flatMap((exercises) =>
 				exercises.map((exercise) =>
-					exercise.targetMuscleGroup === 'Custom'
-						? (exercise.customMuscleGroup as string)
-						: exercise.targetMuscleGroup
+					exercise.targetMuscleGroup === 'Custom' ? (exercise.customMuscleGroup as string) : exercise.targetMuscleGroup
 				)
 			)
 		);
-		allMuscleGroupsFromExercises.forEach((muscleGroup) =>
-			addMuscleGroupToCyclicSetChanges(muscleGroup, true)
-		);
+		allMuscleGroupsFromExercises.forEach((muscleGroup) => addMuscleGroupToCyclicSetChanges(muscleGroup, true));
 	}
 
 	function isEnumMuscleGroup(muscleGroup: string): muscleGroup is MuscleGroup {
@@ -138,15 +132,11 @@ export function createMesocycleRunes() {
 
 			muscleGroupTargetedOnDays.forEach((dayIndex, i) => {
 				const dayVolume = startVolumeDistributionAcrossDays[i];
-				const targetingExercises = mesocycleRunes.mesocycleExerciseTemplates[dayIndex].filter(
-					(exercise) => mesocycleRunes.isExerciseAndSetChangeMuscleSame(exercise, setChange)
+				const targetingExercises = mesocycleRunes.mesocycleExerciseTemplates[dayIndex].filter((exercise) =>
+					mesocycleRunes.isExerciseAndSetChangeMuscleSame(exercise, setChange)
 				);
 
-				const exerciseVolumeDistribution = distributeEvenlyWithMinimum(
-					dayVolume,
-					targetingExercises.length,
-					minSets
-				);
+				const exerciseVolumeDistribution = distributeEvenlyWithMinimum(dayVolume, targetingExercises.length, minSets);
 				targetingExercises.forEach((exercise, idx) => {
 					exercise.sets = exerciseVolumeDistribution[idx];
 				});
@@ -161,14 +151,10 @@ export function createMesocycleRunes() {
 			}, [] as number[]);
 		}
 
-		function getMuscleGroupTargetedOnDaysArray(
-			setChange: MesocycleCyclicSetChangeWithExtraProps
-		): number[] {
+		function getMuscleGroupTargetedOnDaysArray(setChange: MesocycleCyclicSetChangeWithExtraProps): number[] {
 			return getTrueIndexes(
 				mesocycleRunes.mesocycleExerciseTemplates.map((exerciseTemplates) =>
-					exerciseTemplates.some((exercise) =>
-						mesocycleRunes.isExerciseAndSetChangeMuscleSame(exercise, setChange)
-					)
+					exerciseTemplates.some((exercise) => mesocycleRunes.isExerciseAndSetChangeMuscleSame(exercise, setChange))
 				)
 			);
 		}
@@ -203,9 +189,7 @@ export function createMesocycleRunes() {
 		} = mesocycleData;
 		mesocycle = onlyMesocycleData;
 
-		mesocycleExerciseTemplates = mesocycleExerciseSplitDays.map(
-			(splitDay) => splitDay.mesocycleSplitDayExercises
-		);
+		mesocycleExerciseTemplates = mesocycleExerciseSplitDays.map((splitDay) => splitDay.mesocycleSplitDayExercises);
 		mesocycleCyclicSetChanges = mesocycleCyclicSetChangesData.map((setChange) => ({
 			...setChange,
 			inSplit: true,

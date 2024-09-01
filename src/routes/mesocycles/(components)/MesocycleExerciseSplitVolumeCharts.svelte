@@ -14,16 +14,7 @@
 		PieController,
 		Tooltip
 	} from 'chart.js';
-	Chart.register(
-		Tooltip,
-		Legend,
-		BarController,
-		BarElement,
-		CategoryScale,
-		LinearScale,
-		PieController,
-		ArcElement
-	);
+	Chart.register(Tooltip, Legend, BarController, BarElement, CategoryScale, LinearScale, PieController, ArcElement);
 
 	type PropsType = { mesocycleSplitExercises: MesocycleExerciseTemplateWithoutIdsOrIndex[][] };
 
@@ -36,9 +27,7 @@
 			mesocycleSplitExercises
 				.flat()
 				.map((exercise) =>
-					exercise.targetMuscleGroup === 'Custom'
-						? (exercise.customMuscleGroup as string)
-						: exercise.targetMuscleGroup
+					exercise.targetMuscleGroup === 'Custom' ? (exercise.customMuscleGroup as string) : exercise.targetMuscleGroup
 				)
 		)
 	);
@@ -48,10 +37,7 @@
 			.map((muscleGroup) => ({ value: muscleGroup, label: convertCamelCaseToNormal(muscleGroup) }))
 	);
 
-	const chartTypes = [
-		'Microcycle volume distribution',
-		'Muscle group volume distribution'
-	] as const;
+	const chartTypes = ['Microcycle volume distribution', 'Muscle group volume distribution'] as const;
 	let selectedChartType: Selected<(typeof chartTypes)[number]> = $state({
 		value: 'Microcycle volume distribution',
 		label: 'Microcycle volume distribution'

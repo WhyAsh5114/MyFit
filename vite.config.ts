@@ -5,8 +5,7 @@ import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 
 export default defineConfig({
 	define: {
-		'process.env.NODE_ENV':
-			process.env.NODE_ENV === 'production' ? '"production"' : '"development"',
+		'process.env.NODE_ENV': process.env.NODE_ENV === 'production' ? '"production"' : '"development"',
 		'import.meta.env.VERCEL_ANALYTICS_ID': JSON.stringify(process.env.VERCEL_ANALYTICS_ID)
 	},
 	plugins: [

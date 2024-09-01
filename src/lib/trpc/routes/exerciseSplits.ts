@@ -28,14 +28,14 @@ const createOrEditExerciseSplit = async (
 		exerciseSplitId: exerciseSplit.id
 	}));
 
-	const exerciseTemplates: Prisma.ExerciseTemplateUncheckedCreateInput[] =
-		input.splitExercises.flatMap((dayExercises, dayNumber) =>
+	const exerciseTemplates: Prisma.ExerciseTemplateUncheckedCreateInput[] = input.splitExercises.flatMap(
+		(dayExercises, dayNumber) =>
 			dayExercises.map((exercise) => ({
 				...exercise,
 				id: cuid(),
 				exerciseSplitDayId: exerciseSplitDays[dayNumber].id
 			}))
-		);
+	);
 
 	const transactionQueries = [
 		prisma.exerciseSplit.create({ data: exerciseSplit }),
@@ -43,8 +43,7 @@ const createOrEditExerciseSplit = async (
 		prisma.exerciseTemplate.createMany({ data: exerciseTemplates })
 	];
 
-	if (editingId)
-		transactionQueries.unshift(prisma.exerciseSplit.delete({ where: { id: editingId, userId } }));
+	if (editingId) transactionQueries.unshift(prisma.exerciseSplit.delete({ where: { id: editingId, userId } }));
 
 	await prisma.$transaction(transactionQueries);
 };

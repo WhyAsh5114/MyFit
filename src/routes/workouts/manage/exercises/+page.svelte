@@ -27,9 +27,7 @@
 	let totalSets = $derived(
 		workoutExercises
 			? arraySum(
-					workoutExercises.map((e) =>
-						arraySum(e.sets.filter((s) => !s.skipped).map((s) => s.miniSets.length + 1))
-					)
+					workoutExercises.map((e) => arraySum(e.sets.filter((s) => !s.skipped).map((s) => s.miniSets.length + 1)))
 				)
 			: null
 	);
@@ -91,8 +89,7 @@
 					{workoutData.workoutOfMesocycle.splitDayName}
 				</span>
 				<span class="flex items-center gap-2 text-sm text-muted-foreground">
-					Day {workoutData.workoutOfMesocycle?.splitDayIndex + 1}, Cycle {workoutData
-						.workoutOfMesocycle?.cycleNumber}
+					Day {workoutData.workoutOfMesocycle?.splitDayIndex + 1}, Cycle {workoutData.workoutOfMesocycle?.cycleNumber}
 					<InfoPopover align="center" ariaLabel="mesocycle-info">
 						<span class="text-sm text-foreground">
 							{workoutData.workoutOfMesocycle.mesocycle.name}:

@@ -61,8 +61,7 @@
 							<DropdownMenu.Item
 								class="gap-2"
 								onclick={() => {
-									if (props.context === 'exerciseSplit')
-										props.setEditingExercise(props.exerciseTemplate);
+									if (props.context === 'exerciseSplit') props.setEditingExercise(props.exerciseTemplate);
 									else props.setEditingExercise(props.exerciseTemplate);
 								}}
 							>
@@ -84,10 +83,7 @@
 		{/if}
 	</div>
 	<div class="flex items-center gap-0.5">
-		<span
-			class="mr-auto text-sm text-muted-foreground"
-			class:lowercase={props.context === 'mesocycle'}
-		>
+		<span class="mr-auto text-sm text-muted-foreground" class:lowercase={props.context === 'mesocycle'}>
 			{#if props.context === 'mesocycle'}
 				{props.exerciseTemplate.sets}
 			{/if}

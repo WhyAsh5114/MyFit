@@ -15,10 +15,7 @@ function createSettingsRunes() {
 	}
 
 	function saveStoresToLocalStorage() {
-		localStorage.setItem(
-			'settingsRunes',
-			JSON.stringify({ notifications, pushNotificationsEnabled })
-		);
+		localStorage.setItem('settingsRunes', JSON.stringify({ notifications, pushNotificationsEnabled }));
 	}
 
 	function addNotification(notification: Notification) {

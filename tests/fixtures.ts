@@ -14,10 +14,7 @@ export async function deleteUserData(userId: string) {
 }
 
 export * from '@playwright/test';
-export const test = baseTest.extend<
-	{ autoTestFixture: string },
-	{ workerStorageState: string; userData: UserData }
->({
+export const test = baseTest.extend<{ autoTestFixture: string }, { workerStorageState: string; userData: UserData }>({
 	// Use the same storage state for all tests in this worker.
 	storageState: ({ workerStorageState }, use) => use(workerStorageState),
 	userData: [

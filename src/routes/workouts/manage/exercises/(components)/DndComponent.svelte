@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate';
 	import { fade } from 'svelte/transition';
-	import {
-		dragHandleZone,
-		type DndEvent,
-		SHADOW_ITEM_MARKER_PROPERTY_NAME
-	} from 'svelte-dnd-action';
+	import { dragHandleZone, type DndEvent, SHADOW_ITEM_MARKER_PROPERTY_NAME } from 'svelte-dnd-action';
 	import WorkoutExerciseCard from './WorkoutExerciseCard.svelte';
 	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
 
@@ -36,13 +32,7 @@
 >
 	{#each itemList as exercise, idx (exercise.name)}
 		<div class="relative" animate:flip={{ duration: 200 }}>
-			<WorkoutExerciseCard
-				{comparing}
-				{idx}
-				{readOnly}
-				{reordering}
-				bind:exercise={itemList[idx]}
-			/>
+			<WorkoutExerciseCard {comparing} {idx} {readOnly} {reordering} bind:exercise={itemList[idx]} />
 			{#if exercise[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
 				<div class="custom-shadow-item" in:fade={{ duration: 200 }}></div>
 			{/if}

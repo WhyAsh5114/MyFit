@@ -11,12 +11,7 @@
 		selectedSplitDayIndex: number;
 		swapExercises: (swapFromIndex: number) => void;
 	};
-	let {
-		open = $bindable(false),
-		swapExercises,
-		splitDays,
-		selectedSplitDayIndex
-	}: PropsType = $props();
+	let { open = $bindable(false), swapExercises, splitDays, selectedSplitDayIndex }: PropsType = $props();
 
 	let swapExercisesFrom: Selected<number> | undefined = $state();
 
@@ -44,11 +39,7 @@
 				{#each splitDays as splitDay, idx}
 					{@const isSelectedDay = idx === selectedSplitDayIndex}
 					{#if !splitDay.isRestDay}
-						<Select.Item
-							class={cn({ 'text-primary': isSelectedDay })}
-							disabled={isSelectedDay}
-							value={idx}
-						>
+						<Select.Item class={cn({ 'text-primary': isSelectedDay })} disabled={isSelectedDay} value={idx}>
 							{splitDay.name} (Day {idx + 1})
 						</Select.Item>
 					{:else if splitDay}

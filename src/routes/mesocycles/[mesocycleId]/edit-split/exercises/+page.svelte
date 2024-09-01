@@ -45,8 +45,9 @@
 <Tabs.Root
 	class="flex w-full grow flex-col"
 	onValueChange={(v) => {
-		mesocycleExerciseSplitRunes.selectedSplitDayIndex =
-			mesocycleExerciseSplitRunes.splitDays.findIndex((splitDay) => splitDay.name === v);
+		mesocycleExerciseSplitRunes.selectedSplitDayIndex = mesocycleExerciseSplitRunes.splitDays.findIndex(
+			(splitDay) => splitDay.name === v
+		);
 	}}
 	value={splitDayName}
 >
@@ -84,12 +85,7 @@
 				</Button>
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
-						<Button
-							aria-label="exercise-split-functions"
-							builders={[builder]}
-							size="icon"
-							variant="outline"
-						>
+						<Button aria-label="exercise-split-functions" builders={[builder]} size="icon" variant="outline">
 							<MenuIcon />
 						</Button>
 					</DropdownMenu.Trigger>
@@ -129,9 +125,7 @@
 					deleteExercise={mesocycleExerciseSplitRunes.deleteExercise}
 					{reordering}
 					setEditingExercise={mesocycleExerciseSplitRunes.setEditingExercise}
-					bind:itemList={mesocycleExerciseSplitRunes.splitExercises[
-						mesocycleExerciseSplitRunes.selectedSplitDayIndex
-					]}
+					bind:itemList={mesocycleExerciseSplitRunes.splitExercises[mesocycleExerciseSplitRunes.selectedSplitDayIndex]}
 				/>
 			</div>
 		</div>

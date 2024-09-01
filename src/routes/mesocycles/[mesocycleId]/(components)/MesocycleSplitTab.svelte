@@ -12,9 +12,7 @@
 	let { mesocycle }: { mesocycle: FullMesocycle } = $props();
 
 	let selectedSplitDay = $state(
-		mesocycle.mesocycleExerciseSplitDays.find(
-			(splitDay) => !splitDay.isRestDay
-		) as MesocycleSplitDay
+		mesocycle.mesocycleExerciseSplitDays.find((splitDay) => !splitDay.isRestDay) as MesocycleSplitDay
 	);
 
 	function editMesocycleExerciseSplit() {
