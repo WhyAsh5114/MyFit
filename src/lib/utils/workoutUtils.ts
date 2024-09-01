@@ -1,5 +1,14 @@
 import { arraySum } from '$lib/utils';
-import type { WorkoutExercise } from './types';
+import type { Workout, WorkoutExercise } from './types';
+
+export function getSetVolume(
+	set: WorkoutExercise['sets'][number],
+	userBodyweight: number,
+	bodyweightFraction: number | null
+) {
+	// TODO: Mini sets?
+	return (set.reps + set.RIR) * set.load + (bodyweightFraction ?? 0) * userBodyweight;
+}
 
 export function getExerciseVolume(workoutExercise: WorkoutExercise, userBodyweight: number) {
 	return arraySum(
@@ -7,11 +16,6 @@ export function getExerciseVolume(workoutExercise: WorkoutExercise, userBodyweig
 	);
 }
 
-export function getSetVolume(
-	set: WorkoutExercise['sets'][number],
-	userBodyweight: number,
-	bodyweightFraction: number | null
-) {
-  // TODO: Mini sets?
-	return (set.reps + set.RIR) * set.load + (bodyweightFraction ?? 0) * userBodyweight;
+export function getWorkoutVolume(workout: Workout) {
+	return arraySum(workout.workoutExercises.map((exercise) => getExerciseVolume(exercise, workout.userBodyweight)));
 }

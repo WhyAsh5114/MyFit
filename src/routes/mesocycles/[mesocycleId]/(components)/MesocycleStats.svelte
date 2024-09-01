@@ -1,7 +1,10 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
 	import { arraySum, convertCamelCaseToNormal } from '$lib/utils';
-	import { generatePerformanceChanges } from '$lib/utils/mesocycleUtils';
+	import {
+		generatePerformanceChangesPerMuscleGroup,
+		generatePerformanceChangesPerSplitDay
+	} from '$lib/utils/mesocycleUtils';
 	import type { FullMesocycle } from '../+layout.server';
 
 	let { mesocycle }: { mesocycle: FullMesocycle } = $props();
@@ -33,7 +36,11 @@
 		return mesocycle.mesocycleExerciseSplitDays[parseInt(mostOccurring)].name;
 	});
 
-	const sortedByPerformanceChangeMuscleGroups = $derived(generatePerformanceChanges(mesocycle.workoutsOfMesocycle));
+	const performanceChangesPerMuscleGroups = $derived(
+		generatePerformanceChangesPerMuscleGroup(mesocycle.workoutsOfMesocycle)
+	);
+
+	const performanceChangesPerSplitDay = $derived(generatePerformanceChangesPerSplitDay(mesocycle));
 </script>
 
 {#if mesocycle.workoutsOfMesocycle.length}
@@ -74,13 +81,13 @@
 			<Card.Content class="p-4 pt-0">
 				<div class="text-2xl font-bold">
 					{convertCamelCaseToNormal(
-						sortedByPerformanceChangeMuscleGroups[sortedByPerformanceChangeMuscleGroups.length - 1].muscleGroup
+						performanceChangesPerMuscleGroups[performanceChangesPerMuscleGroups.length - 1].muscleGroup
 					)}
 				</div>
 				<p class="text-xs text-muted-foreground">
-					{sortedByPerformanceChangeMuscleGroups[
-						sortedByPerformanceChangeMuscleGroups.length - 1
-					].averageIncrease.toFixed(2)}% cyclic increase
+					{performanceChangesPerMuscleGroups[
+						performanceChangesPerMuscleGroups.length - 1
+					].averagePercentageChange.toFixed(2)}% cyclic increase
 				</p>
 			</Card.Content>
 		</Card.Root>
@@ -91,19 +98,43 @@
 			</Card.Header>
 			<Card.Content class="p-4 pt-0">
 				<div class="text-2xl font-bold">
-					{convertCamelCaseToNormal(sortedByPerformanceChangeMuscleGroups[0].muscleGroup)}
+					{convertCamelCaseToNormal(performanceChangesPerMuscleGroups[0].muscleGroup)}
 				</div>
 				<p class="text-xs text-muted-foreground">
-					{sortedByPerformanceChangeMuscleGroups[0].averageIncrease.toFixed(2)}% cyclic increase
+					{performanceChangesPerMuscleGroups[0].averagePercentageChange.toFixed(2)}% cyclic increase
+				</p>
+			</Card.Content>
+		</Card.Root>
+
+		<Card.Root>
+			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
+				<Card.Title class="text-sm font-medium">Best day</Card.Title>
+			</Card.Header>
+			<Card.Content class="p-4 pt-0">
+				<div class="text-2xl font-bold">
+					{performanceChangesPerSplitDay[performanceChangesPerSplitDay.length - 1].splitDayName}
+				</div>
+				<p class="text-xs text-muted-foreground">
+					{performanceChangesPerSplitDay[performanceChangesPerSplitDay.length - 1].averagePercentageChange.toFixed(2)}%
+					cyclic increase
+				</p>
+			</Card.Content>
+		</Card.Root>
+
+		<Card.Root>
+			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
+				<Card.Title class="text-sm font-medium">Worst day</Card.Title>
+			</Card.Header>
+			<Card.Content class="p-4 pt-0">
+				<div class="text-2xl font-bold">
+					{performanceChangesPerSplitDay[0].splitDayName}
+				</div>
+				<p class="text-xs text-muted-foreground">
+					{performanceChangesPerSplitDay[0].averagePercentageChange.toFixed(2)}% cyclic increase
 				</p>
 			</Card.Content>
 		</Card.Root>
 	</div>
 {:else}
-	<div class="muted-text-box">No workouts created</div>
+	<div class="muted-text-box">No workouts for stat generation</div>
 {/if}
-
-<br />
-TODO: Maybe put these stats in basics tab chart mode, makes more sense that way
-<br /><br />
-TODO: Workouts list

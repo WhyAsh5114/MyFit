@@ -9,8 +9,8 @@
 	import MesocycleExerciseSplitStats from './(components)/MesocycleExerciseSplitStats.svelte';
 	import MesocycleSkeleton from './(components)/MesocycleSkeleton.svelte';
 	import MesocycleSplitTab from './(components)/MesocycleSplitTab.svelte';
+	import MesocycleStats from './(components)/MesocycleStats.svelte';
 	import MesocycleVolumeTab from './(components)/MesocycleVolumeTab.svelte';
-	import MesocycleWorkoutsTab from './(components)/MesocycleWorkoutsTab.svelte';
 	import type { FullMesocycle } from './+layout.server';
 
 	let { data } = $props();
@@ -25,7 +25,7 @@
 	});
 </script>
 
-<H2 showChartIcon={selectedTabValue !== 'basics'} bind:chartMode>View mesocycle</H2>
+<H2 showChartIcon bind:chartMode>View mesocycle</H2>
 
 {#if mesocycle === 'loading'}
 	<MesocycleSkeleton />
@@ -38,7 +38,11 @@
 			<Tabs.Trigger value="workouts">Workouts</Tabs.Trigger>
 		</Tabs.List>
 		<Tabs.Content value="basics">
-			<MesocycleBasicsTab {mesocycle} />
+			{#if !chartMode}
+				<MesocycleBasicsTab {mesocycle} />
+			{:else}
+				<MesocycleStats {mesocycle} />
+			{/if}
 		</Tabs.Content>
 		<Tabs.Content value="split">
 			{#if !chartMode}
@@ -62,7 +66,7 @@
 		</Tabs.Content>
 		<Tabs.Content class="grow" value="workouts">
 			{#if !chartMode}
-				<MesocycleWorkoutsTab {mesocycle} />
+				<MesocycleStats {mesocycle} />
 			{:else}
 				TODO: charts that show progression
 			{/if}

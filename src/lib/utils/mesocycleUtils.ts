@@ -1,6 +1,6 @@
 import { arrayAverage, averagePercentageChange } from '$lib/utils';
-import type { WorkoutExercise, WorkoutsOfMesocycle } from './types';
-import { getExerciseVolume } from './workoutUtils';
+import type { Mesocycle, Workout, WorkoutExercise, WorkoutsOfMesocycle } from './types';
+import { getExerciseVolume, getWorkoutVolume } from './workoutUtils';
 
 type GroupedExercisesByMuscleGroup = {
 	muscleGroup: string;
@@ -24,7 +24,7 @@ type GroupedExercisesByName = {
 }[];
 
 export function groupExercisesByName(exercises: WorkoutExercise[]): GroupedExercisesByName {
-	return Object.entries(Object.groupBy(exercises ?? [], ({ name }) => name)).map(([name, exercises]) => ({
+	return Object.entries(Object.groupBy(exercises, ({ name }) => name)).map(([name, exercises]) => ({
 		name,
 		performances: exercises ?? []
 	}));
@@ -41,7 +41,7 @@ export function getAveragePercentageChangeOfExercisePerformances(
 	return averagePercentageChange(exerciseVolumes);
 }
 
-export function generatePerformanceChanges(workoutsOfMesocycle: WorkoutsOfMesocycle) {
+export function generatePerformanceChangesPerMuscleGroup(workoutsOfMesocycle: WorkoutsOfMesocycle) {
 	const allExercises = workoutsOfMesocycle.flatMap((wm) => wm.workout.workoutExercises);
 	const groupedExercisesByMuscleGroup = groupExercisesByMuscleGroup(allExercises);
 
@@ -52,13 +52,40 @@ export function generatePerformanceChanges(workoutsOfMesocycle: WorkoutsOfMesocy
 
 	const performanceChangesPerMuscleGroups = fullyGroupedExercises.map(({ exercises, muscleGroup }) => ({
 		muscleGroup,
-		averageIncrease: arrayAverage(
+		averagePercentageChange: arrayAverage(
 			exercises.map(({ performances }) =>
 				getAveragePercentageChangeOfExercisePerformances(performances, workoutsOfMesocycle)
 			)
 		)
 	}));
 
-	performanceChangesPerMuscleGroups.sort((a, b) => a.averageIncrease - b.averageIncrease);
+	performanceChangesPerMuscleGroups.sort((a, b) => a.averagePercentageChange - b.averagePercentageChange);
 	return performanceChangesPerMuscleGroups;
+}
+
+type GroupedWorkoutsBySplitDayName = {
+	splitDayName: string;
+	workouts: Workout[];
+}[];
+
+export function groupWorkoutsBySplitDayName(
+	workoutsOfMesocycle: WorkoutsOfMesocycle,
+	splitDays: Mesocycle['mesocycleExerciseSplitDays']
+): GroupedWorkoutsBySplitDayName {
+	const groupedObject = Object.groupBy(workoutsOfMesocycle, ({ splitDayIndex }) => splitDayIndex);
+
+	return Object.entries(groupedObject).map(([splitDayIndex, workoutsOfMesocycle]) => ({
+		splitDayName: splitDays[Number(splitDayIndex)].name,
+		workouts: (workoutsOfMesocycle ?? []).map((wm) => wm.workout)
+	}));
+}
+
+export function generatePerformanceChangesPerSplitDay(mesocycle: Mesocycle) {
+	const workoutsOfMesocycle = mesocycle.workoutsOfMesocycle.filter((wm) => wm.workoutStatus === null);
+	const groupedWorkouts = groupWorkoutsBySplitDayName(workoutsOfMesocycle, mesocycle.mesocycleExerciseSplitDays);
+
+	return groupedWorkouts.map(({ splitDayName, workouts }) => ({
+		splitDayName,
+		averagePercentageChange: averagePercentageChange(workouts.map((workout) => getWorkoutVolume(workout)))
+	}));
 }
