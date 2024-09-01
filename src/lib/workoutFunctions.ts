@@ -9,6 +9,8 @@ import {
 } from '@prisma/client';
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from './components/mesocycleAndExerciseSplit/commonTypes';
 
+// TODO: merge with workoutUtils.ts
+
 export type ActiveMesocycleWithProgressionData = Prisma.MesocycleGetPayload<{
 	include: {
 		mesocycleExerciseSplitDays: { include: { mesocycleSplitDayExercises: true } };
@@ -99,7 +101,7 @@ export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
 	return { ...exercise, sets: newSets.slice(0, sets) };
 }
 
-function getRIRForWeek(rirArray: number[], cycle: number): number {
+export function getRIRForWeek(rirArray: number[], cycle: number): number {
 	let cumulativeWeeks = 0;
 	for (let i = 0; i < rirArray.length; i++) {
 		cumulativeWeeks += rirArray[i];
