@@ -1,34 +1,15 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
 	import { arraySum, convertCamelCaseToNormal } from '$lib/utils';
+	import { generatePerformanceChanges } from '$lib/utils/mesocycleUtils';
 	import type { FullMesocycle } from '../+layout.server';
 
 	let { mesocycle }: { mesocycle: FullMesocycle } = $props();
 
-	function averagePercentageIncrease(arr: number[]): number {
-		if (arr.length < 2) return 0;
-
-		const totalPercentageIncrease = arr.slice(1).reduce((sum, current, index) => {
-			const previous = arr[index];
-			const percentageIncrease = ((current - previous) / previous) * 100;
-			return sum + percentageIncrease;
-		}, 0);
-		const numberOfIncrements = arr.length - 1;
-		return totalPercentageIncrease / numberOfIncrements;
-	}
-
-	function getAverage(arr: number[]): number {
-		if (arr.length === 0) return 0;
-
-		const sum = arr.reduce((acc, curr) => acc + curr, 0);
-		return sum / arr.length;
-	}
-
+	const totalWorkoutsOfMesocycle = $derived(mesocycle.workoutsOfMesocycle.length);
 	const totalMesocycleLength = $derived(
 		mesocycle.mesocycleExerciseSplitDays.length * arraySum(mesocycle.RIRProgression)
 	);
-	const totalWorkoutsOfMesocycle = $derived(mesocycle.workoutsOfMesocycle.length);
-
 	const totalSkippedWorkouts = $derived(
 		mesocycle.workoutsOfMesocycle.filter((wm) => wm.workoutStatus === 'Skipped').length
 	);
@@ -52,48 +33,7 @@
 		return mesocycle.mesocycleExerciseSplitDays[parseInt(mostOccurring)].name;
 	});
 
-	const allExercises = $derived(mesocycle.workoutsOfMesocycle.flatMap((wm) => wm.workout.workoutExercises));
-	const groupedExercises = $derived.by(() => {
-		const groupedExercisesByMuscleGroup = Object.entries(
-			Object.groupBy(allExercises, ({ targetMuscleGroup, customMuscleGroup }) => customMuscleGroup ?? targetMuscleGroup)
-		).map(([muscleGroup, exercises]) => ({
-			muscleGroup,
-			exercises
-		}));
-
-		const fullyGroupedExercises = groupedExercisesByMuscleGroup.map(({ muscleGroup, exercises }) => ({
-			muscleGroup,
-			exercises: Object.entries(Object.groupBy(exercises ?? [], ({ name }) => name)).map(
-				([exerciseName, performances]) => ({ exerciseName, performances })
-			)
-		}));
-		return fullyGroupedExercises;
-	});
-
-	const sortedByPerformanceChangeMuscleGroups = $derived(
-		groupedExercises
-			.map(({ exercises, muscleGroup }) => ({
-				muscleGroup,
-				averageIncrease: getAverage(
-					exercises.map(({ performances }) =>
-						averagePercentageIncrease(
-							performances?.map((p) =>
-								arraySum(
-									p?.sets.map(
-										(set) =>
-											(set.reps + set.RIR) * set.load +
-											(p.bodyweightFraction ?? 0) *
-												(mesocycle.workoutsOfMesocycle.find((wm) => wm.workoutId === p.workoutId)?.workout
-													.userBodyweight ?? 0)
-									)
-								)
-							) ?? []
-						)
-					)
-				)
-			}))
-			.sort((a, b) => a.averageIncrease - b.averageIncrease)
-	);
+	const sortedByPerformanceChangeMuscleGroups = $derived(generatePerformanceChanges(mesocycle.workoutsOfMesocycle));
 </script>
 
 {#if mesocycle.workoutsOfMesocycle.length}
