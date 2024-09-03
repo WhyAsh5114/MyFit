@@ -3,6 +3,7 @@
 A web-based workout tracking application designed to help users track their workouts, monitor progression, and optimize their training. The app supports detailed logging of reps, load, and RIR (Reps in Reserve) across weeks, with complex progression formulas built in to help users progressively overload their exercises.
 
 ## Direct link
+
 For web app access, use the [direct link](https://my-fit-v3.vercel.app/). Can be installed on device through supported browsers and platforms, recommended browser is Google Chrome.
 
 ## Features
@@ -27,6 +28,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/WhyAsh5114/workout-tracking-app.git
    cd workout-tracking-app
