@@ -1,5 +1,5 @@
-import posthog from 'posthog-js';
 import { browser } from '$app/environment';
+import posthog from 'posthog-js';
 
 export const load = async () => {
 	if (browser) {
