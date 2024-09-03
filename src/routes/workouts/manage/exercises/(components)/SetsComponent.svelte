@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Separator } from '$lib/components/ui/separator';
-	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
+	import type { WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import RemoveIcon from 'virtual:icons/lucide/minus';
 	import EditIcon from 'virtual:icons/lucide/pencil';

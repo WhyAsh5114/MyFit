@@ -1,12 +1,12 @@
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
-import {
-	createWorkoutExerciseInProgressFromMesocycleExerciseTemplate,
-	type WorkoutExerciseInProgress,
-	type WorkoutExerciseWithSets
-} from '$lib/workoutFunctions';
 import type { Prisma } from '@prisma/client';
 import type { FullWorkoutWithMesoData } from '../[workoutId]/+page.server';
 import type { RouterOutputs } from '$lib/trpc/router';
+import {
+	type WorkoutExerciseWithSets,
+	type WorkoutExerciseInProgress,
+	createWorkoutExerciseInProgressFromMesocycleExerciseTemplate
+} from '$lib/utils/workoutUtils';
 
 type PreviousWorkoutData = {
 	exercises: WorkoutExerciseWithSets[];

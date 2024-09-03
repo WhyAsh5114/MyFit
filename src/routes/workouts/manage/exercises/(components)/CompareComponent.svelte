@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
+	import type { WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
 	import * as Popover from '$lib/components/ui/popover';
 	import { workoutRunes } from '../../workoutRunes.svelte';
 	import TrendUpIcon from 'virtual:icons/lucide/trending-up';

@@ -1,10 +1,10 @@
+import { prisma } from '$lib/prisma';
+import { t } from '$lib/trpc/t';
 import {
 	progressiveOverloadMagic,
 	type WorkoutExerciseInProgress,
 	type WorkoutExerciseWithSets
-} from '$lib/workoutFunctions';
-import { prisma } from '$lib/prisma';
-import { t } from '$lib/trpc/t';
+} from '$lib/utils/workoutUtils';
 import {
 	WorkoutExerciseCreateWithoutWorkoutInputSchema,
 	WorkoutExerciseMiniSetCreateWithoutParentSetInputSchema,
@@ -43,24 +43,32 @@ type TodaysWorkoutExercises = {
 	};
 };
 
-const activeMesocycleWithProgressionDataInclude = Prisma.validator<Prisma.MesocycleInclude>()({
-	mesocycleExerciseSplitDays: {
-		include: { mesocycleSplitDayExercises: true }
-	},
-	mesocycleCyclicSetChanges: true,
-	workoutsOfMesocycle: {
-		include: {
-			workout: {
-				include: {
-					workoutExercises: { include: { sets: { include: { miniSets: true } } } }
+const createActiveMesocycleWithProgressionDataInclude = (splitDayIndex?: number) => {
+	const splitDayWhere = splitDayIndex !== undefined ? { where: { dayIndex: splitDayIndex } } : {};
+	const workoutsWhere = splitDayIndex !== undefined ? { where: { splitDayIndex } } : {};
+
+	// Construct the include object with the conditional 'where' clauses
+	return Prisma.validator<Prisma.MesocycleInclude>()({
+		mesocycleExerciseSplitDays: {
+			include: { mesocycleSplitDayExercises: true },
+			...splitDayWhere
+		},
+		mesocycleCyclicSetChanges: true,
+		workoutsOfMesocycle: {
+			include: {
+				workout: {
+					include: {
+						workoutExercises: { include: { sets: { include: { miniSets: true } } } }
+					}
 				}
-			}
+			},
+			...workoutsWhere
 		}
-	}
-});
+	});
+};
 
 export type ActiveMesocycleWithProgressionData = Prisma.MesocycleGetPayload<{
-	include: typeof activeMesocycleWithProgressionDataInclude;
+	include: ReturnType<typeof createActiveMesocycleWithProgressionDataInclude>;
 }>;
 
 const workoutInputDataSchema = z.object({
@@ -194,15 +202,9 @@ export const workouts = t.router({
 				where: {
 					userId: ctx.userId,
 					startDate: { not: null },
-					endDate: null,
-					mesocycleExerciseSplitDays: {
-						some: { dayIndex: input.splitDayIndex }
-					},
-					workoutsOfMesocycle: {
-						some: { splitDayIndex: input.splitDayIndex }
-					}
+					endDate: null
 				},
-				include: activeMesocycleWithProgressionDataInclude
+				include: createActiveMesocycleWithProgressionDataInclude(input.splitDayIndex)
 			});
 
 			const noExercisesData: TodaysWorkoutExercises = {

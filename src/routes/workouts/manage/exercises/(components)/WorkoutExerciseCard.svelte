@@ -3,7 +3,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { convertCamelCaseToNormal } from '$lib/utils';
-	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
+	import type { WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
 	import { dragHandle } from 'svelte-dnd-action';
 	import GripVertical from 'virtual:icons/lucide/grip-vertical';
 	import MenuIcon from 'virtual:icons/lucide/menu';

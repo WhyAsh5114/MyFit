@@ -4,7 +4,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import type { RouterOutputs } from '$lib/trpc/router';
-	import { getRIRForWeek } from '$lib/workoutFunctions';
+	import { getRIRForWeek } from '$lib/utils/workoutUtils';
 	import WorkoutProgressionChart from './WorkoutProgressionChart.svelte';
 	import ChevronRight from 'virtual:icons/lucide/chevron-right';
 

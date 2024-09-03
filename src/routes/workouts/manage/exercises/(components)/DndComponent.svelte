@@ -3,7 +3,7 @@
 	import { fade } from 'svelte/transition';
 	import { dragHandleZone, type DndEvent, SHADOW_ITEM_MARKER_PROPERTY_NAME } from 'svelte-dnd-action';
 	import WorkoutExerciseCard from './WorkoutExerciseCard.svelte';
-	import type { WorkoutExerciseInProgress } from '$lib/workoutFunctions';
+	import type { WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
 
 	type PropsType = {
 		readOnly?: boolean;
