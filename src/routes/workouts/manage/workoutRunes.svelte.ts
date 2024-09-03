@@ -1,12 +1,12 @@
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
 import {
 	createWorkoutExerciseInProgressFromMesocycleExerciseTemplate,
-	type TodaysWorkoutData,
 	type WorkoutExerciseInProgress,
 	type WorkoutExerciseWithSets
 } from '$lib/workoutFunctions';
 import type { Prisma } from '@prisma/client';
 import type { FullWorkoutWithMesoData } from '../[workoutId]/+page.server';
+import type { RouterOutputs } from '$lib/trpc/router';
 
 type PreviousWorkoutData = {
 	exercises: WorkoutExerciseWithSets[];
@@ -14,7 +14,7 @@ type PreviousWorkoutData = {
 };
 
 function createWorkoutRunes() {
-	let workoutData: TodaysWorkoutData | null = $state(null);
+	let workoutData: RouterOutputs['workouts']['getTodaysWorkoutData'] | null = $state(null);
 	let workoutExercises: WorkoutExerciseInProgress[] | null = $state(null);
 	let editingWorkoutId: string | null = $state(null);
 	let previousWorkoutData: PreviousWorkoutData | null = $state(null);

@@ -1,32 +1,9 @@
-import {
-	WorkoutStatus,
-	type Mesocycle,
-	type MuscleGroup,
-	type Prisma,
-	type WorkoutExercise,
-	type WorkoutExerciseMiniSet,
-	type WorkoutExerciseSet
-} from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from './components/mesocycleAndExerciseSplit/commonTypes';
+import type { ActiveMesocycleWithProgressionData } from './trpc/routes/workouts';
 
 // TODO: merge with workoutUtils.ts
 // TODO: better types
-
-export type ActiveMesocycleWithProgressionData = Prisma.MesocycleGetPayload<{
-	include: {
-		mesocycleExerciseSplitDays: { include: { mesocycleSplitDayExercises: true } };
-		mesocycleCyclicSetChanges: true;
-		workoutsOfMesocycle: {
-			include: {
-				workout: {
-					include: {
-						workoutExercises: { include: { sets: { include: { miniSets: true } } } };
-					};
-				};
-			};
-		};
-	};
-}>;
 
 type SetInProgress = {
 	reps: number | undefined;
@@ -52,29 +29,9 @@ export type WorkoutExerciseInProgress = Omit<
 		})[];
 };
 
-export type WorkoutExerciseWithSets = WorkoutExercise & {
-	sets: (WorkoutExerciseSet & { miniSets: WorkoutExerciseMiniSet[] })[];
-};
-
-export type TodaysWorkoutData = Omit<
-	Prisma.WorkoutCreateWithoutUserInput,
-	'userBodyweight' | 'workoutExercises' | 'workoutOfMesocycle' | 'endedAt'
-> & {
-	userBodyweight: number | null;
-	workoutExercises: {
-		name: string;
-		targetMuscleGroup: MuscleGroup;
-		customMuscleGroup: string | null;
-	}[];
-	workoutOfMesocycle?: {
-		mesocycle: Mesocycle;
-		workoutStatus?: WorkoutStatus;
-		splitDayIndex: number;
-		cycleNumber: number;
-		splitDayName: string;
-	};
-	endedAt?: Date | string;
-};
+export type WorkoutExerciseWithSets = Prisma.WorkoutExerciseGetPayload<{
+	include: { sets: { include: { miniSets: true } } };
+}>;
 
 export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
 	exerciseTemplate: MesocycleExerciseTemplateWithoutIdsOrIndex,

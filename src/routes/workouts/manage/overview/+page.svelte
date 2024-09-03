@@ -34,7 +34,7 @@
 		const userBodyweight = workoutRunes.workoutData.userBodyweight;
 
 		const createData: RouterInputs['workouts']['create'] = {
-			workoutData: { ...workoutRunes.workoutData, userBodyweight },
+			workoutData: { ...workoutRunes.workoutData, userBodyweight  },
 			workoutExercises: workoutRunes.workoutExercises.map((ex, idx) => {
 				const { sets, ...exercise } = ex;
 				return { ...exercise, exerciseIndex: idx };

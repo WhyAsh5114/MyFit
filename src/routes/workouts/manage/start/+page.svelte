@@ -12,18 +12,18 @@
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import { trpc } from '$lib/trpc/client.js';
 	import { cn, convertCamelCaseToNormal } from '$lib/utils.js';
-	import type { TodaysWorkoutData } from '$lib/workoutFunctions.js';
 	import { toast } from 'svelte-sonner';
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
 	import type { WorkoutStatus } from '@prisma/client';
 	import SkipIcon from 'virtual:icons/lucide/skip-forward';
+	import type { RouterOutputs } from '$lib/trpc/router.js';
 
 	let { data } = $props();
 
 	let useActiveMesocycle = $state(false);
-	let workoutData: TodaysWorkoutData | 'loading' = $state('loading');
+	let workoutData: RouterOutputs['workouts']['getTodaysWorkoutData'] | 'loading' = $state('loading');
 	let userBodyweight: null | number = $state(workoutRunes.workoutData?.userBodyweight ?? null);
 	let targetedMuscleGroups = $derived.by(() => {
 		let result: string[] = [];
@@ -41,7 +41,7 @@
 	$effect(() => {
 		data.workoutData.then((data) => {
 			if (workoutRunes.editingWorkoutId === null) workoutData = data;
-			else workoutData = workoutRunes.workoutData as TodaysWorkoutData;
+			else workoutData = workoutRunes.workoutData as RouterOutputs['workouts']['getTodaysWorkoutData'];
 
 			userBodyweight = userBodyweight ?? workoutData.userBodyweight;
 			if (workoutData.workoutOfMesocycle !== undefined) useActiveMesocycle = true;

@@ -1,6 +1,5 @@
 import {
 	progressiveOverloadMagic,
-	type TodaysWorkoutData,
 	type WorkoutExerciseInProgress,
 	type WorkoutExerciseWithSets
 } from '$lib/workoutFunctions';
@@ -12,31 +11,73 @@ import {
 	WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema
 } from '$lib/zodSchemas';
 import {
+	Prisma,
 	WorkoutStatus,
+	type Mesocycle,
 	type MesocycleExerciseSplitDay,
 	type MuscleGroup,
-	type Prisma,
+	type WorkoutExercise,
 	type WorkoutOfMesocycle
 } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import cuid from 'cuid';
 import { z } from 'zod';
 
-const todaysWorkoutDataSchema = z.object({
+type TodaysWorkoutData = {
+	startedAt: Date | string;
+	endedAt: Date | string | null;
+	userBodyweight: number | null;
+	workoutExercises: Pick<WorkoutExercise, 'name' | 'targetMuscleGroup' | 'customMuscleGroup'>[];
+	workoutOfMesocycle?: Pick<WorkoutOfMesocycle, 'workoutStatus' | 'splitDayIndex'> & {
+		mesocycle: Mesocycle;
+		cycleNumber: number;
+		splitDayName: string;
+	};
+};
+
+type TodaysWorkoutExercises = {
+	todaysWorkoutExercises: WorkoutExerciseInProgress[];
+	previousWorkoutData: null | {
+		exercises: WorkoutExerciseWithSets[];
+		userBodyweight: number;
+	};
+};
+
+const activeMesocycleWithProgressionDataInclude = Prisma.validator<Prisma.MesocycleInclude>()({
+	mesocycleExerciseSplitDays: {
+		include: { mesocycleSplitDayExercises: true }
+	},
+	mesocycleCyclicSetChanges: true,
+	workoutsOfMesocycle: {
+		include: {
+			workout: {
+				include: {
+					workoutExercises: { include: { sets: { include: { miniSets: true } } } }
+				}
+			}
+		}
+	}
+});
+
+export type ActiveMesocycleWithProgressionData = Prisma.MesocycleGetPayload<{
+	include: typeof activeMesocycleWithProgressionDataInclude;
+}>;
+
+const workoutInputDataSchema = z.object({
 	startedAt: z.date().or(z.string().datetime()),
 	userBodyweight: z.number(),
 	workoutOfMesocycle: z
 		.object({
 			mesocycle: z.object({ id: z.string().cuid() }),
 			splitDayIndex: z.number().int(),
-			workoutStatus: z.nativeEnum(WorkoutStatus).optional(),
+			workoutStatus: z.nativeEnum(WorkoutStatus).nullable(),
 			cycleNumber: z.number().int()
 		})
 		.optional()
 });
 
 const createWorkoutSchema = z.strictObject({
-	workoutData: todaysWorkoutDataSchema,
+	workoutData: workoutInputDataSchema,
 	workoutExercises: z.array(WorkoutExerciseCreateWithoutWorkoutInputSchema),
 	workoutExercisesSets: z.array(z.array(WorkoutExerciseSetCreateWithoutWorkoutExerciseInputSchema)),
 	workoutExercisesMiniSets: z.array(z.array(z.array(WorkoutExerciseMiniSetCreateWithoutParentSetInputSchema)))
@@ -112,92 +153,74 @@ export const workouts = t.router({
 		});
 		const lastBodyweight = data?.workoutsOfMesocycle.map((v) => v.workout.userBodyweight).filter((b) => b !== null)[0];
 		const userBodyweight = lastBodyweight ?? null;
-		if (data === null)
-			return {
-				workoutExercises: [],
-				userBodyweight,
-				startedAt: new Date()
-			} satisfies TodaysWorkoutData;
+
+		const todaysWorkoutData: TodaysWorkoutData = {
+			workoutExercises: [],
+			userBodyweight,
+			startedAt: new Date(),
+			endedAt: null
+		};
+
+		if (data === null) {
+			return todaysWorkoutData;
+		}
 
 		const { isRestDay, splitDayIndex, cycleNumber, todaysSplitDay } = getBasicDayInfo(data);
 		const { mesocycleCyclicSetChanges, workoutsOfMesocycle, mesocycleExerciseSplitDays, ...mesocycleData } = data;
 
-		if (isRestDay)
-			return {
-				workoutExercises: [],
-				workoutOfMesocycle: {
-					mesocycle: mesocycleData,
-					splitDayName: todaysSplitDay.name,
-					workoutStatus: 'RestDay',
-					cycleNumber,
-					splitDayIndex
-				},
-				userBodyweight,
-				startedAt: new Date()
-			} satisfies TodaysWorkoutData;
-		else
-			return {
-				workoutExercises: todaysSplitDay.mesocycleSplitDayExercises.map((exercise) => ({
-					name: exercise.name,
-					targetMuscleGroup: exercise.targetMuscleGroup,
-					customMuscleGroup: exercise.customMuscleGroup
-				})),
-				workoutOfMesocycle: {
-					mesocycle: mesocycleData,
-					splitDayName: todaysSplitDay.name,
-					splitDayIndex,
-					cycleNumber
-				},
-				userBodyweight,
-				startedAt: new Date()
-			} satisfies TodaysWorkoutData;
+		todaysWorkoutData.workoutOfMesocycle = {
+			mesocycle: mesocycleData,
+			splitDayName: todaysSplitDay.name,
+			workoutStatus: isRestDay ? 'RestDay' : null,
+			cycleNumber,
+			splitDayIndex
+		};
+
+		if (!isRestDay) {
+			todaysWorkoutData.workoutExercises = todaysSplitDay.mesocycleSplitDayExercises.map((exercise) => ({
+				name: exercise.name,
+				targetMuscleGroup: exercise.targetMuscleGroup,
+				customMuscleGroup: exercise.customMuscleGroup
+			}));
+		}
+
+		return todaysWorkoutData;
 	}),
 
 	getTodaysWorkoutExercises: t.procedure
 		.input(z.strictObject({ userBodyweight: z.number(), splitDayIndex: z.number().int() }))
-		.query(
-			async ({
-				ctx,
-				input
-			}): Promise<{
-				todaysWorkoutExercises: WorkoutExerciseInProgress[];
-				previousWorkoutData: {
-					exercises: WorkoutExerciseWithSets[];
-					userBodyweight: number;
-				} | null;
-			}> => {
-				const data = await prisma.mesocycle.findFirst({
-					where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
-					include: {
-						mesocycleExerciseSplitDays: {
-							include: { mesocycleSplitDayExercises: true },
-							where: { dayIndex: input.splitDayIndex }
-						},
-						mesocycleCyclicSetChanges: true,
-						workoutsOfMesocycle: {
-							include: {
-								workout: {
-									include: {
-										workoutExercises: { include: { sets: { include: { miniSets: true } } } }
-									}
-								}
-							},
-							where: { splitDayIndex: input.splitDayIndex }
-						}
+		.query(async ({ ctx, input }) => {
+			const data: ActiveMesocycleWithProgressionData | null = await prisma.mesocycle.findFirst({
+				where: {
+					userId: ctx.userId,
+					startDate: { not: null },
+					endDate: null,
+					mesocycleExerciseSplitDays: {
+						some: { dayIndex: input.splitDayIndex }
+					},
+					workoutsOfMesocycle: {
+						some: { splitDayIndex: input.splitDayIndex }
 					}
-				});
-				const noExercisesData = {
-					todaysWorkoutExercises: [],
-					previousWorkoutData: null
-				};
-				if (!data) return noExercisesData;
+				},
+				include: activeMesocycleWithProgressionDataInclude
+			});
 
-				const { isRestDay, cycleNumber } = getBasicDayInfo(data);
-				if (isRestDay) return noExercisesData;
+			const noExercisesData: TodaysWorkoutExercises = {
+				todaysWorkoutExercises: [],
+				previousWorkoutData: null
+			};
+			if (!data) return noExercisesData;
 
-				return progressiveOverloadMagic(data, cycleNumber, input.userBodyweight);
-			}
-		),
+			const { isRestDay, cycleNumber } = getBasicDayInfo(data);
+			if (isRestDay) return noExercisesData;
+
+			const todaysWorkoutExercises: TodaysWorkoutExercises = progressiveOverloadMagic(
+				data,
+				cycleNumber,
+				input.userBodyweight
+			);
+			return todaysWorkoutExercises;
+		}),
 
 	create: t.procedure.input(createWorkoutSchema).mutation(async ({ ctx, input }) => {
 		const workout: Prisma.WorkoutUncheckedCreateInput = {
