@@ -19,6 +19,21 @@ export function getExerciseVolume(workoutExercise: WorkoutExercise, userBodyweig
 	);
 }
 
+export function brzyckiOverload(
+	oldSet: WorkoutExercise['sets'][number],
+	bodyweightFraction: number | null,
+	userBodyweight: number,
+	overloadPercentage: number,
+	plannedRIR: number
+) {
+	const totalLoad = oldSet.load + (bodyweightFraction ?? 0) * userBodyweight;
+	const numerator = totalLoad * (oldSet.reps + oldSet.RIR - 37);
+	const denominator = (1 + overloadPercentage) * totalLoad;
+	const RHSConstants = 37 - plannedRIR;
+	const newReps = numerator / denominator + RHSConstants;
+	return newReps;
+}
+
 export function getWorkoutVolume(workout: Workout) {
 	return arraySum(workout.workoutExercises.map((exercise) => getExerciseVolume(exercise, workout.userBodyweight)));
 }
