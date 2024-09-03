@@ -164,7 +164,7 @@
 							<form class="flex items-end gap-2" onsubmit={(e) => applyChangesToAll(e, state)}>
 								{#if typeof state.value === 'boolean'}
 									<div class="flex items-center space-x-2 place-self-center">
-										<Checkbox id="replace-all-{state.setChangeProperty}" bind:checked={state.value} />
+										<Checkbox id="replace-all-{state.setChangeProperty}" bind:checked={state.value as boolean} />
 										<Label class="text-sm font-medium leading-none" for="replace-all-{state.setChangeProperty}">
 											{title}
 										</Label>
@@ -253,7 +253,7 @@
 					<Checkbox
 						aria-label="{muscleGroup}-increase-volume-regardless-of-progress"
 						disabled={setChange.setIncreaseAmount === 0}
-						bind:checked={setChange.regardlessOfProgress}
+						bind:checked={setChange.regardlessOfProgress as boolean}
 					/>
 				</Table.Cell>
 			</Table.Row>

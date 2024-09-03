@@ -337,7 +337,7 @@
 					id="exercise-note"
 					class="resize-none"
 					placeholder="Exercise cues, machine heights, etc."
-					bind:value={currentExercise.note}
+					bind:value={currentExercise.note as string}
 				/>
 			</div>
 			<Button class="col-span-2" type="submit">{mode} exercise</Button>
