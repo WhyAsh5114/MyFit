@@ -17,6 +17,7 @@
 	import SwapExercisesDialog from '$lib/components/mesocycleAndExerciseSplit/SwapExercisesDialog.svelte';
 	import AddEditExerciseDrawer from '$lib/components/mesocycleAndExerciseSplit/AddEditExerciseDrawer.svelte';
 	import type { Mesocycle } from '@prisma/client';
+	import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
 
 	let swapDialogOpen = $state(false);
 	let reordering = $state(false);
@@ -125,7 +126,9 @@
 					deleteExercise={mesocycleExerciseSplitRunes.deleteExercise}
 					{reordering}
 					setEditingExercise={mesocycleExerciseSplitRunes.setEditingExercise}
-					bind:itemList={mesocycleExerciseSplitRunes.splitExercises[mesocycleExerciseSplitRunes.selectedSplitDayIndex]}
+					bind:itemList={mesocycleExerciseSplitRunes.splitExercises[
+						mesocycleExerciseSplitRunes.selectedSplitDayIndex
+					] as MesocycleExerciseTemplateWithoutIdsOrIndex[]}
 				/>
 			</div>
 		</div>
