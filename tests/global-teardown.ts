@@ -7,4 +7,13 @@ export default async function globalTeardown() {
 	await prisma.user.deleteMany({
 		where: { id: { in: testUsersData.map(({ userId }) => userId) } }
 	});
+
+	await prisma.user.deleteMany({
+		where: {
+			email: {
+				startsWith: 'test-user-',
+				endsWith: '@myfit.com'
+			}
+		}
+	});
 }
