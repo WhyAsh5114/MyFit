@@ -17,12 +17,14 @@
 <Card.Root>
 	{#await todaysWorkoutData}
 		<Card.Header>
-			<Card.Title><Skeleton class="text-lg-skeleton" /></Card.Title>
-			<Card.Description><Skeleton class="text-base-skeleton" /></Card.Description>
+			<Card.Title><Skeleton class="card-title-skeleton" /></Card.Title>
+			<Card.Description><Skeleton class="card-description-skeleton !w-40" /></Card.Description>
 		</Card.Header>
-		<Card.Content></Card.Content>
+		<Card.Content>
+			<Skeleton class="h-20 w-full" />
+		</Card.Content>
 		<Card.Footer>
-			<Button class="ml-auto">Start</Button>
+			<Skeleton class="button-skeleton ml-auto" />
 		</Card.Footer>
 	{:then todaysWorkoutData}
 		{@const wm = todaysWorkoutData.workoutOfMesocycle}
@@ -42,6 +44,18 @@
 					Start
 					<ChevronRight />
 				</Button>
+			</Card.Footer>
+		{:else}
+			<Card.Header>
+				<Card.Title>No workout found</Card.Title>
+				<Card.Description>No active mesocycle</Card.Description>
+			</Card.Header>
+			<Card.Content class="h-20 text-sm leading-snug">
+				You can log workouts even without a mesocycle, you'll miss out on automatic progression and mesocycle statistics
+			</Card.Content>
+			<Card.Footer class="flex flex-col items-end gap-2">
+				<Button href="/workouts/manage/start" variant="secondary">Start a workout without mesocycle</Button>
+				<Button href="/mesocycles">Go to mesocycles</Button>
 			</Card.Footer>
 		{/if}
 	{/await}

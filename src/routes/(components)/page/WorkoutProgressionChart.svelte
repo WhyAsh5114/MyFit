@@ -74,4 +74,4 @@
 {:else if pastWorkouts === 'loading'}
 	TODO: chart skeleton
 {:else}{/if}
-<canvas bind:this={chartCanvas}></canvas>
+<canvas bind:this={chartCanvas} class="h-20"></canvas>
