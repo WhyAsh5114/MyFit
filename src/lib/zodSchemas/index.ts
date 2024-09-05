@@ -54,7 +54,7 @@ export const MuscleGroupSchema = z.enum(['Chest','FrontDelts','SideDelts','RearD
 
 export type MuscleGroupType = `${z.infer<typeof MuscleGroupSchema>}`
 
-export const SetTypeSchema = z.enum(['Straight','V2','Drop','Down','Top','Myorep','MyorepMatch']);
+export const SetTypeSchema = z.enum(['Straight','V2','Drop','Down','Myorep','MyorepMatch']);
 
 export type SetTypeType = `${z.infer<typeof SetTypeSchema>}`
 
