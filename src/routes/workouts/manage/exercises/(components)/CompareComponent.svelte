@@ -8,7 +8,7 @@
 	import DownIcon from 'virtual:icons/lucide/chevron-down';
 	import Minus from 'virtual:icons/lucide/minus';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import { arraySum } from '$lib/utils';
+	import { arrayAverage } from '$lib/utils';
 
 	type PropsType = { exercise: WorkoutExerciseInProgress };
 	let { exercise }: PropsType = $props();
@@ -40,24 +40,14 @@
 		return (volume / oldVolume - 1) * 100;
 	}
 
-	function getTotalVolumeChange() {
+	function getAverageVolumeChangeOfAllSets() {
 		if (!prevExercise) return;
-		const totalVolume = arraySum(
-			prevExercise.sets.map((_, idx) => {
-				if (exercise.sets[idx].skipped) return 0;
-				return getTheoreticalVolumes(idx)?.volume ?? 0;
-			})
+		return arrayAverage(
+			prevExercise.sets.map((_, idx) => getTheoreticalVolumeChange(idx)).filter((v) => v !== undefined)
 		);
-		const totalOldVolume = arraySum(
-			prevExercise.sets.map((_, idx) => {
-				if (exercise.sets[idx].skipped) return 0;
-				return getTheoreticalVolumes(idx)?.oldVolume ?? 0;
-			})
-		);
-		return (totalVolume / totalOldVolume - 1) * 100;
 	}
 
-	let totalVolumeChange = $derived(getTotalVolumeChange());
+	let totalVolumeChange = $derived(getAverageVolumeChangeOfAllSets());
 </script>
 
 {#if prevExercise}
