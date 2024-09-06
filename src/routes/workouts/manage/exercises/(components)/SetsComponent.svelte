@@ -203,15 +203,21 @@
 			{/if}
 			<div class="flex items-center">
 				{#if idx === 0 || !isSameLoadExercise}
-					{@const hasLoadChanged = set.load !== originalSetLoads[idx]}
+					{@const hasLoadChanged = set.load !== originalSetLoads[idx] && originalSetLoads[idx] !== undefined}
 					{#if hasLoadChanged}
-						<Button class="h-7 w-7 p-1" onclick={() => adjustLoads(idx)} variant="outline">
+						<Button
+							class="h-7 w-7 p-1"
+							data-testid="{exercise.name}-set-{idx + 1}-adjust-reps"
+							onclick={() => adjustLoads(idx)}
+							variant="outline"
+						>
 							<TargetIcon />
 						</Button>
 					{/if}
 				{/if}
 				<Button
 					class="ml-auto"
+					data-testid="{exercise.name}-set-{idx + 1}-action"
 					disabled={shouldSetBeDisabled(set, idx)}
 					size="icon"
 					type="submit"
@@ -274,6 +280,7 @@
 						/>
 						<Button
 							class="place-self-end"
+							data-testid="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-action"
 							disabled={miniSetButtonDisabled}
 							size="icon"
 							type="submit"
