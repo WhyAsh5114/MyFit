@@ -369,6 +369,7 @@
 						disabled={currentExercise.minimumWeightChange === null}
 						placeholder="5"
 						required
+						step={0.5}
 						type="number"
 						bind:value={currentExercise.minimumWeightChange}
 					/>
@@ -390,6 +391,7 @@
 						disabled={currentExercise.overloadPercentage === null}
 						placeholder={props.mesocycle?.startOverloadPercentage.toString()}
 						required
+						step={0.1}
 						type="number"
 						bind:value={currentExercise.overloadPercentage}
 					/>
