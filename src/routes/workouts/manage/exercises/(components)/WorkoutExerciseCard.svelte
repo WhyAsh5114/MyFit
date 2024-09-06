@@ -25,6 +25,7 @@
 
 	let { readOnly, idx, reordering = false, comparing = false, exercise = $bindable() }: PropsType = $props();
 
+	let originalSetLoads = $state(exercise.sets.map((set) => set.load));
 	let isContextMenuOpen = $state(false);
 
 	function skipSetsLeft() {
@@ -103,7 +104,7 @@
 		{#if comparing}
 			<CompareComponent {exercise} />
 		{:else}
-			<SetsComponent bind:exercise />
+			<SetsComponent bind:originalSetLoads bind:exercise />
 		{/if}
 	{/if}
 </div>
