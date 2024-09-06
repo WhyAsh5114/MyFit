@@ -170,7 +170,10 @@ export const workouts = t.router({
 			return todaysWorkoutData;
 		}
 
-		const { isRestDay, splitDayIndex, cycleNumber, todaysSplitDay } = getBasicDayInfo(data);
+		const { isRestDay, splitDayIndex, cycleNumber, todaysSplitDay } = getBasicDayInfo(
+			data,
+			data.workoutsOfMesocycle.length
+		);
 		const { mesocycleCyclicSetChanges, workoutsOfMesocycle, mesocycleExerciseSplitDays, ...mesocycleData } = data;
 
 		todaysWorkoutData.workoutOfMesocycle = {
@@ -210,7 +213,8 @@ export const workouts = t.router({
 			};
 			if (!data) return noExercisesData;
 
-			const { isRestDay, cycleNumber, splitDayIndex } = getBasicDayInfo(data);
+			const totalWorkouts = await prisma.workoutOfMesocycle.count({ where: { mesocycleId: data?.id } });
+			const { isRestDay, cycleNumber, splitDayIndex } = getBasicDayInfo(data, totalWorkouts);
 			if (isRestDay) return noExercisesData;
 
 			const todaysWorkoutExercises: TodaysWorkoutExercises = progressiveOverloadMagic(
@@ -445,18 +449,20 @@ export const workouts = t.router({
 		})
 });
 
-function getBasicDayInfo(mesocycleData: {
-	mesocycleExerciseSplitDays: (MesocycleExerciseSplitDay & {
-		mesocycleSplitDayExercises: {
-			name: string;
-			targetMuscleGroup: MuscleGroup;
-			customMuscleGroup: string | null;
-		}[];
-	})[];
-	workoutsOfMesocycle: WorkoutOfMesocycle[];
-}) {
-	const { mesocycleExerciseSplitDays, workoutsOfMesocycle } = mesocycleData;
-	const totalWorkouts = workoutsOfMesocycle.length;
+function getBasicDayInfo(
+	mesocycleData: {
+		mesocycleExerciseSplitDays: (MesocycleExerciseSplitDay & {
+			mesocycleSplitDayExercises: {
+				name: string;
+				targetMuscleGroup: MuscleGroup;
+				customMuscleGroup: string | null;
+			}[];
+		})[];
+		workoutsOfMesocycle: WorkoutOfMesocycle[];
+	},
+	totalWorkouts: number
+) {
+	const { mesocycleExerciseSplitDays } = mesocycleData;
 	const splitLength = mesocycleExerciseSplitDays.length;
 	const todaysSplitDay = mesocycleExerciseSplitDays[totalWorkouts % splitLength];
 	const isRestDay = todaysSplitDay.isRestDay;
