@@ -77,16 +77,28 @@
 			{#if prevExercise.sets[idx] && !set.skipped}
 				{@const volumeChange = getTheoreticalVolumeChange(idx)}
 				<p>
-					<span class="text-muted-foreground">{prevExercise.sets[idx].reps} -&gt;</span>
-					{set.reps}
+					{#if prevExercise.sets[idx].reps !== set.reps}
+						<span class="text-muted-foreground">{prevExercise.sets[idx].reps} -&gt;</span>
+						{set.reps}
+					{:else}
+						{set.reps}
+					{/if}
 				</p>
 				<p>
-					<span class="text-muted-foreground">{prevExercise.sets[idx].load} -&gt;</span>
-					{set.load}
+					{#if prevExercise.sets[idx].load !== set.load}
+						<span class="text-muted-foreground">{prevExercise.sets[idx].load} -&gt;</span>
+						{set.load}
+					{:else}
+						{set.load}
+					{/if}
 				</p>
 				<p>
-					<span class="text-muted-foreground">{prevExercise.sets[idx].RIR} -&gt;</span>
-					{set.RIR}
+					{#if prevExercise.sets[idx].RIR !== set.RIR}
+						<span class="text-muted-foreground">{prevExercise.sets[idx].RIR} -&gt;</span>
+						{set.RIR}
+					{:else}
+						{set.RIR}
+					{/if}
 				</p>
 				<span class="flex w-full items-center justify-end gap-1 text-sm font-light">
 					{#if typeof volumeChange === 'number'}
