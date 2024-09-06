@@ -53,7 +53,7 @@
 						label: 'Work volume'
 					}
 				]
-			},
+			}
 		});
 	});
 </script>
