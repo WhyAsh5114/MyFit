@@ -1,6 +1,6 @@
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
 import type { ActiveMesocycleWithProgressionData } from '$lib/trpc/routes/workouts';
-import { arraySum } from '$lib/utils';
+import { arrayAverage, arraySum } from '$lib/utils';
 import type { Workout, WorkoutExercise } from './types';
 import { type Prisma } from '@prisma/client';
 
@@ -170,6 +170,45 @@ function addExtraSetProperties(exerciseSet: WorkoutExercise['sets'][number]) {
 	};
 }
 
+function getPerformanceChanges(performances: { exercise: WorkoutExercise; oldUserBodyweight: number }[]) {
+	const performanceChanges: number[] = [];
+	if (performances.length < 2) return performanceChanges;
+	for (let i = 0; i < performances.length - 1; i++) {
+		const oldPerformance = performances[i];
+		const newPerformance = performances[i + 1];
+
+		const setPerformanceChanges: number[] = [];
+		for (let j = 0; j <= setPerformanceChanges.length; j++) {
+			const oldSet = oldPerformance.exercise.sets[j];
+			const newSet = newPerformance.exercise.sets[j];
+			if (!oldSet || !newSet) break;
+
+			setPerformanceChanges.push(
+				solveBrzyckiFormula(BrzyckiVariable.OverloadPercentage, {
+					oldSet,
+					newSet,
+					bodyweightFraction: newPerformance.exercise.bodyweightFraction,
+					newUserBodyweight: newPerformance.oldUserBodyweight,
+					oldUserBodyweight: oldPerformance.oldUserBodyweight
+				})
+			);
+		}
+		performanceChanges.push(arrayAverage(setPerformanceChanges));
+	}
+	return performanceChanges;
+}
+
+function adjustIdealPerformance(actualPerformances: number[], idealPerformance: number) {
+	const weights = actualPerformances.map((_, index) => index + 1);
+	const weightedSum = actualPerformances.reduce((acc, performance, index) => {
+		return acc + performance * weights[index];
+	}, 0);
+	const totalWeight = weights.reduce((acc, weight) => acc + weight, 0);
+	const weightedAverage = weightedSum / totalWeight;
+	const adjustedIdealPerformance = (idealPerformance + weightedAverage) / 2;
+	return adjustedIdealPerformance;
+}
+
 export function progressiveOverloadMagic(
 	mesocycleWithProgressionData: ActiveMesocycleWithProgressionData,
 	cycleNumber: number,
@@ -192,21 +231,23 @@ export function progressiveOverloadMagic(
 	if (workoutsOfMesocycle.length > 0) {
 		// Just fill in repLoadRIR using meso's overload rate
 		workoutExercises.forEach((ex) => {
-			const allPreviousPerformances = workoutsOfMesocycle
-				.flatMap((wm) => ({
-					exercise: wm.workout.workoutExercises.find((exercise) => ex.name === exercise.name),
-					oldUserBodyweight: wm.workout.userBodyweight
-				}))
-				.filter(({ exercise }) => exercise !== undefined);
+			const mappedPerformances = workoutsOfMesocycle.map((wm) => ({
+				exercise: wm.workout.workoutExercises.find((exercise) => ex.name === exercise.name),
+				oldUserBodyweight: wm.workout.userBodyweight
+			}));
+
+			const allPreviousPerformances = mappedPerformances.filter(
+				(item): item is { exercise: WorkoutExercise; oldUserBodyweight: number } => item.exercise !== undefined
+			);
 
 			const lastPerformance = allPreviousPerformances.at(-1);
 			if (!lastPerformance?.exercise) return;
 
 			const averageDropOffs = generateAverageRepDropOffs(
-				allPreviousPerformances.map(({ exercise }) => exercise!.sets.map((s) => s.reps + s.RIR))
+				allPreviousPerformances.map(({ exercise }) => exercise.sets.map((s) => s.reps + s.RIR))
 			);
 			const lastDropOffs = generateAverageRepDropOffs([
-				allPreviousPerformances[allPreviousPerformances.length - 1].exercise!.sets.map((s) => s.reps + s.RIR)
+				allPreviousPerformances[allPreviousPerformances.length - 1].exercise.sets.map((s) => s.reps + s.RIR)
 			]);
 
 			let dropOffDifferences = averageDropOffs.map((averageDropOff, idx) => lastDropOffs[idx] - averageDropOff);
@@ -216,11 +257,15 @@ export function progressiveOverloadMagic(
 					: [0, ...dropOffDifferences];
 
 			const idealTotalOverloadPercentagePerSet = ex.overloadPercentage ?? mesocycle.startOverloadPercentage;
+			const adjustedTotalOverloadPercentagePerSet = adjustIdealPerformance(
+				getPerformanceChanges(allPreviousPerformances),
+				idealTotalOverloadPercentagePerSet
+			);
 			const setPriorities = (dropOffDifferences = getMaxIndexes(dropOffDifferences));
-			let remainingTotalOverload = idealTotalOverloadPercentagePerSet * lastPerformance.exercise.sets.length;
+			let remainingTotalOverload = adjustedTotalOverloadPercentagePerSet * lastPerformance.exercise.sets.length;
 
 			for (const setIndex of setPriorities) {
-				const oldSet = lastPerformance.exercise!.sets[setIndex];
+				const oldSet = lastPerformance.exercise.sets[setIndex];
 				if (!oldSet) continue;
 
 				const lastSetToFailure = ex.lastSetToFailure ?? mesocycle.lastSetToFailure;
@@ -253,7 +298,6 @@ export function progressiveOverloadMagic(
 			const reps = set.reps as number;
 			return reps >= ex.repRangeEnd;
 		});
-		console.log(needLoadIncrease);
 		if (!needLoadIncrease) return;
 
 		ex.sets.forEach((set) => {
