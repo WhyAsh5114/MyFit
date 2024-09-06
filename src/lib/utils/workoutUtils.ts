@@ -77,6 +77,11 @@ type SetInProgress = {
 	completed: boolean;
 };
 
+type PreviousPerformance = {
+	exercise: WorkoutExercise;
+	oldUserBodyweight: number;
+};
+
 export type WorkoutExerciseInProgress = Omit<
 	Prisma.WorkoutExerciseCreateWithoutWorkoutInput,
 	'sets' | 'exerciseIndex'
@@ -209,16 +214,96 @@ function adjustIdealPerformance(actualPerformances: number[], idealPerformance: 
 	return adjustedIdealPerformance;
 }
 
+function getTotalCyclicSetsPerMuscleGroup(
+	mesocycleExerciseSplitDays: ActiveMesocycleWithProgressionData['mesocycleExerciseSplitDays']
+) {
+	const cyclicSetsPerMuscleGroup: Map<string, number> = new Map();
+	mesocycleExerciseSplitDays.forEach((splitDay) => {
+		splitDay.mesocycleSplitDayExercises.forEach((exercise) => {
+			const muscleGroup = exercise.customMuscleGroup ?? exercise.targetMuscleGroup;
+			const previousSets = cyclicSetsPerMuscleGroup.get(muscleGroup) || 0;
+			cyclicSetsPerMuscleGroup.set(muscleGroup, previousSets + exercise.sets);
+		});
+	});
+	return cyclicSetsPerMuscleGroup;
+}
+
+function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: number) {
+	const needLoadIncrease = ex.sets.some((set) => {
+		const reps = set.reps as number;
+		return reps >= ex.repRangeEnd;
+	});
+	if (!needLoadIncrease) return ex.sets;
+
+	return ex.sets.map((set) => {
+		if (set.reps === undefined || set.load === undefined || set.RIR === undefined) return set;
+		const newLoad = set.load + (ex.minimumWeightChange ?? 5);
+		const newReps = solveBrzyckiFormula(BrzyckiVariable.NewReps, {
+			oldSet: { reps: set.reps, load: set.load, RIR: set.RIR },
+			newSet: { load: newLoad, RIR: set.RIR },
+			bodyweightFraction: ex.bodyweightFraction,
+			newUserBodyweight: userBodyweight,
+			oldUserBodyweight: userBodyweight,
+			overloadPercentage: 0
+		});
+		set.reps = Math.round(newReps);
+		set.load = newLoad;
+		return set;
+	});
+}
+
+function increaseSets(
+	mesocycleWithData: ActiveMesocycleWithProgressionData,
+	exercise: WorkoutExerciseInProgress,
+	performanceChanges: number[],
+	adjustedTotalOverloadPercentagePerSet: number
+) {
+	const cyclicSetsPerMuscleGroup = getTotalCyclicSetsPerMuscleGroup(mesocycleWithData.mesocycleExerciseSplitDays);
+	const cyclicSetChange = mesocycleWithData.mesocycleCyclicSetChanges.find((setChange) => {
+		if (setChange.muscleGroup === 'Custom') {
+			return setChange.customMuscleGroup === exercise.customMuscleGroup;
+		}
+		return setChange.muscleGroup === exercise.targetMuscleGroup;
+	});
+	if (!cyclicSetChange) return exercise.sets;
+
+	const muscleGroup = exercise.customMuscleGroup ?? exercise.targetMuscleGroup;
+	const cyclicSetsForMuscleGroup = cyclicSetsPerMuscleGroup.get(muscleGroup) ?? 0;
+	if (cyclicSetsForMuscleGroup > cyclicSetChange.maxVolume) return exercise.sets;
+
+	let setsToIncrease = 1;
+	if (performanceChanges.length > 0) {
+		setsToIncrease = Math.floor(
+			(performanceChanges.at(-1)! - 0.8 * adjustedTotalOverloadPercentagePerSet) /
+				(0.1 * adjustedTotalOverloadPercentagePerSet)
+		);
+		setsToIncrease = Math.min(setsToIncrease, cyclicSetChange.setIncreaseAmount);
+	}
+
+	return [
+		...exercise.sets,
+		...Array.from({ length: setsToIncrease }).map((_) => ({
+			reps: undefined,
+			load: undefined,
+			RIR: undefined,
+			skipped: false,
+			completed: false,
+			miniSets: []
+		}))
+	];
+}
+
 export function progressiveOverloadMagic(
 	mesocycleWithProgressionData: ActiveMesocycleWithProgressionData,
 	cycleNumber: number,
-	userBodyweight: number
+	userBodyweight: number,
+	splitDayIndex: number
 ) {
 	const { mesocycleCyclicSetChanges, mesocycleExerciseSplitDays, workoutsOfMesocycle, ...mesocycle } =
 		mesocycleWithProgressionData;
 
 	const currentCycleRIR = getRIRForWeek(mesocycle.RIRProgression, cycleNumber);
-	const todaysSplitDay = mesocycleExerciseSplitDays[0];
+	const todaysSplitDay = mesocycleExerciseSplitDays[splitDayIndex];
 	const workoutExercises = todaysSplitDay.mesocycleSplitDayExercises.map((fullExercise) => {
 		const { mesocycleExerciseSplitDayId, ...exercise } = fullExercise;
 		return createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(exercise);
@@ -232,7 +317,7 @@ export function progressiveOverloadMagic(
 				oldUserBodyweight: wm.workout.userBodyweight
 			}));
 			const allPreviousPerformances = mappedPerformances.filter(
-				(item): item is { exercise: WorkoutExercise; oldUserBodyweight: number } => item.exercise !== undefined
+				(item): item is PreviousPerformance => item.exercise !== undefined
 			);
 
 			const lastPerformance = allPreviousPerformances.at(-1);
@@ -252,8 +337,9 @@ export function progressiveOverloadMagic(
 					: [0, ...dropOffDifferences];
 
 			const idealTotalOverloadPercentagePerSet = ex.overloadPercentage ?? mesocycle.startOverloadPercentage;
+			const performanceChanges = getPerformanceChanges(allPreviousPerformances);
 			const adjustedTotalOverloadPercentagePerSet = adjustIdealPerformance(
-				getPerformanceChanges(allPreviousPerformances),
+				performanceChanges,
 				idealTotalOverloadPercentagePerSet
 			);
 			const setPriorities = (dropOffDifferences = getMaxIndexes(dropOffDifferences));
@@ -286,27 +372,13 @@ export function progressiveOverloadMagic(
 				}
 			}
 
-			// Load increasing
-			const needLoadIncrease = ex.sets.some((set) => {
-				const reps = set.reps as number;
-				return reps >= ex.repRangeEnd;
-			});
-			if (!needLoadIncrease) return;
-
-			ex.sets.forEach((set) => {
-				if (set.reps === undefined || set.load === undefined || set.RIR === undefined) return;
-				const newLoad = set.load + (ex.minimumWeightChange ?? 5);
-				const newReps = solveBrzyckiFormula(BrzyckiVariable.NewReps, {
-					oldSet: { reps: set.reps, load: set.load, RIR: set.RIR },
-					newSet: { load: newLoad, RIR: set.RIR },
-					bodyweightFraction: ex.bodyweightFraction,
-					newUserBodyweight: userBodyweight,
-					oldUserBodyweight: userBodyweight,
-					overloadPercentage: 0
-				});
-				set.reps = Math.round(newReps);
-				set.load = newLoad;
-			});
+			ex.sets = increaseLoadOfSets(ex, userBodyweight);
+			ex.sets = increaseSets(
+				mesocycleWithProgressionData,
+				ex,
+				performanceChanges,
+				adjustedTotalOverloadPercentagePerSet
+			);
 		});
 	}
 
@@ -327,7 +399,6 @@ export function progressiveOverloadMagic(
 		});
 	});
 
-	// TODO: Increase sets based on cyclic set changes
 	// TODO: Add miniSets and stuff if drop / myorep match sets
 	// TODO: Remaining overrides to implement: load first progression
 
