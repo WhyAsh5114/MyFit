@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
+	import { BrzyckiVariable, solveBrzyckiFormula, type WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
 	import * as Popover from '$lib/components/ui/popover';
 	import { workoutRunes } from '../../workoutRunes.svelte';
 	import TrendUpIcon from 'virtual:icons/lucide/trending-up';
@@ -15,29 +15,22 @@
 
 	let prevExercise = workoutRunes.previousWorkoutData?.exercises.find((ex) => ex.name === exercise.name);
 
-	function getTheoreticalVolumes(setIdx: number) {
+	function getTheoreticalVolumeChange(setIdx: number) {
 		const prevSet = prevExercise?.sets[setIdx];
 		if (!prevSet) return;
 
 		let { reps, load, RIR } = exercise.sets[setIdx];
 		if (reps === undefined || load === undefined || RIR === undefined) return;
 
-		let oldLoad = prevSet.load;
-		if (typeof exercise.bodyweightFraction === 'number') {
-			load += (workoutRunes.workoutData?.userBodyweight as number) * exercise.bodyweightFraction;
-			oldLoad += (workoutRunes.previousWorkoutData?.userBodyweight as number) * exercise.bodyweightFraction;
-		}
+		const actualOverload = solveBrzyckiFormula(BrzyckiVariable.OverloadPercentage, {
+			oldSet: prevSet,
+			newReps: reps,
+			userBodyweight: workoutRunes.workoutData?.userBodyweight as number,
+			bodyweightFraction: exercise.bodyweightFraction,
+			plannedRIR: RIR
+		});
 
-		let volume = (reps + RIR) * load;
-		let oldVolume = (prevSet.reps + prevSet.RIR) * oldLoad;
-		return { volume, oldVolume };
-	}
-
-	function getTheoreticalVolumeChange(setIdx: number) {
-		let volumes = getTheoreticalVolumes(setIdx);
-		if (!volumes) return;
-		let { volume, oldVolume } = volumes;
-		return (volume / oldVolume - 1) * 100;
+		return (actualOverload - 1) * 100;
 	}
 
 	function getAverageVolumeChangeOfAllSets() {
@@ -51,7 +44,7 @@
 </script>
 
 {#if prevExercise}
-	<div class="grid grid-cols-4 place-items-center gap-y-2">
+	<div class="custom-grid grid grid-cols-4 place-items-center gap-y-2">
 		<span class="text-sm font-medium">Reps</span>
 		<span class="text-sm font-medium">
 			Load
@@ -125,3 +118,9 @@
 {:else}
 	<span class="text-center text-sm">Reference exercise not found</span>
 {/if}
+
+<style lang="postcss">
+	.custom-grid {
+		grid-template-columns: 1fr 1.25fr 1fr 1fr;
+	}
+</style>
