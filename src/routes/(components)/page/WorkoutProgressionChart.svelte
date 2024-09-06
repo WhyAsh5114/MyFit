@@ -34,7 +34,6 @@
 		const style = getComputedStyle(document.body);
 		const primaryColor = style.getPropertyValue('--primary').split(' ').join(', ');
 		const secondaryColor = style.getPropertyValue('--secondary').split(' ').join(', ');
-		const foregroundColor = style.getPropertyValue('--foreground').split(' ').join(', ');
 
 		new Chart(chartCanvas, {
 			type: 'line',
@@ -54,16 +53,6 @@
 						label: 'Work volume'
 					}
 				]
-			},
-			options: {
-				plugins: {
-					title: {
-						display: true,
-						text: 'Work volume',
-						font: { weight: 450, size: 14, style: 'normal' },
-						color: `hsl(${foregroundColor})`
-					}
-				}
 			}
 		});
 	});
@@ -74,4 +63,4 @@
 {:else if pastWorkouts === 'loading'}
 	TODO: chart skeleton
 {:else}{/if}
-<canvas bind:this={chartCanvas}></canvas>
+<canvas bind:this={chartCanvas} class="h-20"></canvas>

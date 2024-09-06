@@ -24,7 +24,6 @@ enum SetType {
   V2
   Drop
   Down
-  Top
   Myorep
   MyorepMatch
 }

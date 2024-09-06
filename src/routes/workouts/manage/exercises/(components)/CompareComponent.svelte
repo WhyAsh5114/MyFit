@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
+	import { BrzyckiVariable, solveBrzyckiFormula, type WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
 	import * as Popover from '$lib/components/ui/popover';
 	import { workoutRunes } from '../../workoutRunes.svelte';
 	import TrendUpIcon from 'virtual:icons/lucide/trending-up';
@@ -8,60 +8,43 @@
 	import DownIcon from 'virtual:icons/lucide/chevron-down';
 	import Minus from 'virtual:icons/lucide/minus';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import { arraySum } from '$lib/utils';
+	import { arrayAverage } from '$lib/utils';
 
 	type PropsType = { exercise: WorkoutExerciseInProgress };
 	let { exercise }: PropsType = $props();
 
 	let prevExercise = workoutRunes.previousWorkoutData?.exercises.find((ex) => ex.name === exercise.name);
 
-	function getTheoreticalVolumes(setIdx: number) {
+	function getTheoreticalVolumeChange(setIdx: number) {
 		const prevSet = prevExercise?.sets[setIdx];
 		if (!prevSet) return;
 
 		let { reps, load, RIR } = exercise.sets[setIdx];
 		if (reps === undefined || load === undefined || RIR === undefined) return;
 
-		let oldLoad = prevSet.load;
-		if (typeof exercise.bodyweightFraction === 'number') {
-			load += (workoutRunes.workoutData?.userBodyweight as number) * exercise.bodyweightFraction;
-			oldLoad += (workoutRunes.previousWorkoutData?.userBodyweight as number) * exercise.bodyweightFraction;
-		}
+		const actualOverload = solveBrzyckiFormula(BrzyckiVariable.OverloadPercentage, {
+			oldSet: prevSet,
+			newSet: { reps, load, RIR },
+			newUserBodyweight: workoutRunes.workoutData?.userBodyweight as number,
+			oldUserBodyweight: workoutRunes.previousWorkoutData?.userBodyweight,
+			bodyweightFraction: exercise.bodyweightFraction
+		});
 
-		let volume = (reps + RIR) * load;
-		let oldVolume = (prevSet.reps + prevSet.RIR) * oldLoad;
-		return { volume, oldVolume };
+		return actualOverload;
 	}
 
-	function getTheoreticalVolumeChange(setIdx: number) {
-		let volumes = getTheoreticalVolumes(setIdx);
-		if (!volumes) return;
-		let { volume, oldVolume } = volumes;
-		return (volume / oldVolume - 1) * 100;
-	}
-
-	function getTotalVolumeChange() {
+	function getAverageVolumeChangeOfAllSets() {
 		if (!prevExercise) return;
-		const totalVolume = arraySum(
-			prevExercise.sets.map((_, idx) => {
-				if (exercise.sets[idx].skipped) return 0;
-				return getTheoreticalVolumes(idx)?.volume ?? 0;
-			})
+		return arrayAverage(
+			prevExercise.sets.map((_, idx) => getTheoreticalVolumeChange(idx)).filter((v) => v !== undefined)
 		);
-		const totalOldVolume = arraySum(
-			prevExercise.sets.map((_, idx) => {
-				if (exercise.sets[idx].skipped) return 0;
-				return getTheoreticalVolumes(idx)?.oldVolume ?? 0;
-			})
-		);
-		return (totalVolume / totalOldVolume - 1) * 100;
 	}
 
-	let totalVolumeChange = $derived(getTotalVolumeChange());
+	let totalVolumeChange = $derived(getAverageVolumeChangeOfAllSets());
 </script>
 
 {#if prevExercise}
-	<div class="grid grid-cols-4 place-items-center gap-y-2">
+	<div class="custom-grid grid grid-cols-4 place-items-center gap-y-2">
 		<span class="text-sm font-medium">Reps</span>
 		<span class="text-sm font-medium">
 			Load
@@ -94,16 +77,28 @@
 			{#if prevExercise.sets[idx] && !set.skipped}
 				{@const volumeChange = getTheoreticalVolumeChange(idx)}
 				<p>
-					<span class="text-muted-foreground">{prevExercise.sets[idx].reps} -&gt;</span>
-					{set.reps}
+					{#if prevExercise.sets[idx].reps !== set.reps}
+						<span class="text-muted-foreground">{prevExercise.sets[idx].reps} -&gt;</span>
+						{set.reps}
+					{:else}
+						{set.reps}
+					{/if}
 				</p>
 				<p>
-					<span class="text-muted-foreground">{prevExercise.sets[idx].load} -&gt;</span>
-					{set.load}
+					{#if prevExercise.sets[idx].load !== set.load}
+						<span class="text-muted-foreground">{prevExercise.sets[idx].load} -&gt;</span>
+						{set.load}
+					{:else}
+						{set.load}
+					{/if}
 				</p>
 				<p>
-					<span class="text-muted-foreground">{prevExercise.sets[idx].RIR} -&gt;</span>
-					{set.RIR}
+					{#if prevExercise.sets[idx].RIR !== set.RIR}
+						<span class="text-muted-foreground">{prevExercise.sets[idx].RIR} -&gt;</span>
+						{set.RIR}
+					{:else}
+						{set.RIR}
+					{/if}
 				</p>
 				<span class="flex w-full items-center justify-end gap-1 text-sm font-light">
 					{#if typeof volumeChange === 'number'}
@@ -135,3 +130,9 @@
 {:else}
 	<span class="text-center text-sm">Reference exercise not found</span>
 {/if}
+
+<style lang="postcss">
+	.custom-grid {
+		grid-template-columns: 1fr 1.25fr 1fr 1fr;
+	}
+</style>

@@ -44,14 +44,11 @@ type TodaysWorkoutExercises = {
 };
 
 const createActiveMesocycleWithProgressionDataInclude = (splitDayIndex?: number) => {
-	const splitDayWhere = splitDayIndex !== undefined ? { where: { dayIndex: splitDayIndex } } : {};
 	const workoutsWhere = splitDayIndex !== undefined ? { where: { splitDayIndex } } : {};
 
-	// Construct the include object with the conditional 'where' clauses
 	return Prisma.validator<Prisma.MesocycleInclude>()({
 		mesocycleExerciseSplitDays: {
-			include: { mesocycleSplitDayExercises: true },
-			...splitDayWhere
+			include: { mesocycleSplitDayExercises: true }
 		},
 		mesocycleCyclicSetChanges: true,
 		workoutsOfMesocycle: {
@@ -213,13 +210,14 @@ export const workouts = t.router({
 			};
 			if (!data) return noExercisesData;
 
-			const { isRestDay, cycleNumber } = getBasicDayInfo(data);
+			const { isRestDay, cycleNumber, splitDayIndex } = getBasicDayInfo(data);
 			if (isRestDay) return noExercisesData;
 
 			const todaysWorkoutExercises: TodaysWorkoutExercises = progressiveOverloadMagic(
 				data,
 				cycleNumber,
-				input.userBodyweight
+				input.userBodyweight,
+				splitDayIndex
 			);
 			return todaysWorkoutExercises;
 		}),
