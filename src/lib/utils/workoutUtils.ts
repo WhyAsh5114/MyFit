@@ -349,11 +349,7 @@ export function progressiveOverloadMagic(
 				const oldSet = lastPerformance.exercise.sets[setIndex];
 				if (!oldSet) continue;
 
-				const lastSetToFailure = ex.lastSetToFailure ?? mesocycle.lastSetToFailure;
-				const isLastSet = setIndex === ex.sets.length - 1;
-				const plannedRIR = isLastSet && lastSetToFailure ? 0 : currentCycleRIR;
-
-				const newSet = { ...oldSet, reps: oldSet.reps + 1 + (oldSet.RIR - plannedRIR) };
+				const newSet = { ...oldSet, reps: oldSet.reps + 1 };
 				const overloadAchieved = solveBrzyckiFormula(BrzyckiVariable.OverloadPercentage, {
 					oldSet,
 					newSet,
