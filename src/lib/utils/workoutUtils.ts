@@ -28,7 +28,7 @@ export function solveBrzyckiFormula(
 	variableToSolve: BrzyckiVariable,
 	knownValues: {
 		oldSet: { reps: number; load: number; RIR: number };
-		newSet: { reps: number | undefined; load: number; RIR: number };
+		newSet: { reps?: number | undefined; load: number; RIR: number };
 		bodyweightFraction?: number | null;
 		oldUserBodyweight?: number;
 		newUserBodyweight?: number;
@@ -223,7 +223,11 @@ export function progressiveOverloadMagic(
 				const oldSet = lastPerformance.exercise!.sets[setIndex];
 				if (!oldSet) continue;
 
-				const newSet = { ...oldSet, reps: oldSet.reps + 1 + (oldSet.RIR - currentCycleRIR), RIR: currentCycleRIR };
+				const lastSetToFailure = ex.lastSetToFailure ?? mesocycle.lastSetToFailure;
+				const isLastSet = setIndex === ex.sets.length - 1;
+				const plannedRIR = isLastSet && lastSetToFailure ? 0 : currentCycleRIR;
+
+				const newSet = { ...oldSet, reps: oldSet.reps + 1 + (oldSet.RIR - plannedRIR) };
 				const overloadAchieved = solveBrzyckiFormula(BrzyckiVariable.OverloadPercentage, {
 					oldSet,
 					newSet,
@@ -245,6 +249,30 @@ export function progressiveOverloadMagic(
 	}
 
 	workoutExercises.forEach((ex) => {
+		const needLoadIncrease = ex.sets.some((set) => {
+			const reps = set.reps as number;
+			return reps >= ex.repRangeEnd;
+		});
+		console.log(needLoadIncrease);
+		if (!needLoadIncrease) return;
+
+		ex.sets.forEach((set) => {
+			if (set.reps === undefined || set.load === undefined || set.RIR === undefined) return;
+			const newLoad = set.load + (ex.minimumWeightChange ?? 5);
+			const newReps = solveBrzyckiFormula(BrzyckiVariable.NewReps, {
+				oldSet: { reps: set.reps, load: set.load, RIR: set.RIR },
+				newSet: { load: newLoad, RIR: set.RIR },
+				bodyweightFraction: ex.bodyweightFraction,
+				newUserBodyweight: userBodyweight,
+				oldUserBodyweight: userBodyweight,
+				overloadPercentage: 0
+			});
+			set.reps = Math.round(newReps);
+			set.load = newLoad;
+		});
+	});
+
+	workoutExercises.forEach((ex) => {
 		ex.sets.forEach((set, idx) => {
 			const oldRIR = set.RIR ?? currentCycleRIR;
 			set.RIR = currentCycleRIR;
@@ -254,12 +282,12 @@ export function progressiveOverloadMagic(
 
 			// Adjust reps when RIR changed
 			const RIRDifference = set.RIR - oldRIR;
-			if (set.reps !== undefined && set.reps > ex.repRangeStart + RIRDifference) set.reps -= RIRDifference;
+			if (set.reps === undefined) return;
+			set.reps -= RIRDifference;
 		});
 	});
 
 	// TODO: Add miniSets and stuff if drop / myorep match sets
-	// TODO: Adjust RIR and reps according to forceRIRMatching and RIRProgression (lastSetToFailure?)
 	// TODO: Increase sets based on cyclic set changes
 	// TODO: Consider all progression overrides
 	// TODO: Consider load first progression
