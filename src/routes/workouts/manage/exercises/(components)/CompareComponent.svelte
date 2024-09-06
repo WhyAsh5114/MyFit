@@ -24,13 +24,13 @@
 
 		const actualOverload = solveBrzyckiFormula(BrzyckiVariable.OverloadPercentage, {
 			oldSet: prevSet,
-			newReps: reps,
-			userBodyweight: workoutRunes.workoutData?.userBodyweight as number,
-			bodyweightFraction: exercise.bodyweightFraction,
-			plannedRIR: RIR
+			newSet: { reps, load, RIR },
+			newUserBodyweight: workoutRunes.workoutData?.userBodyweight as number,
+			oldUserBodyweight: workoutRunes.previousWorkoutData?.userBodyweight,
+			bodyweightFraction: exercise.bodyweightFraction
 		});
 
-		return (actualOverload - 1) * 100;
+		return actualOverload;
 	}
 
 	function getAverageVolumeChangeOfAllSets() {

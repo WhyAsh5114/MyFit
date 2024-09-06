@@ -19,19 +19,51 @@ export function getExerciseVolume(workoutExercise: WorkoutExercise, userBodyweig
 	);
 }
 
-export function brzyckiOverload(
-	oldSet: WorkoutExercise['sets'][number],
-	bodyweightFraction: number | null,
-	userBodyweight: number,
-	overloadPercentage: number,
-	plannedRIR: number
+export enum BrzyckiVariable {
+	NewReps,
+	OverloadPercentage
+}
+
+export function solveBrzyckiFormula(
+	variableToSolve: BrzyckiVariable,
+	knownValues: {
+		oldSet: { reps: number; load: number; RIR: number };
+		newSet: { reps: number | undefined; load: number; RIR: number };
+		bodyweightFraction?: number | null;
+		oldUserBodyweight?: number;
+		newUserBodyweight?: number;
+		overloadPercentage?: number;
+	}
 ) {
-	const totalLoad = oldSet.load + (bodyweightFraction ?? 0) * userBodyweight;
-	const numerator = totalLoad * (oldSet.reps + oldSet.RIR - 37);
-	const denominator = (1 + overloadPercentage) * totalLoad;
-	const RHSConstants = 37 - plannedRIR;
-	const newReps = numerator / denominator + RHSConstants;
-	return newReps;
+	const {
+		oldSet,
+		newSet,
+		bodyweightFraction = null,
+		oldUserBodyweight = 0,
+		newUserBodyweight = 0,
+		overloadPercentage = 0
+	} = knownValues;
+
+	const oldLoad = oldSet.load + (bodyweightFraction ?? 0) * oldUserBodyweight;
+	const newLoad = newSet.load + (bodyweightFraction ?? 0) * newUserBodyweight;
+	const RHSConstants = 37 - newSet.RIR;
+
+	switch (variableToSolve) {
+		case BrzyckiVariable.NewReps: {
+			const numerator = newLoad * (oldSet.reps + oldSet.RIR - 37);
+			const denominator = (1 + overloadPercentage / 100) * oldLoad;
+			return numerator / denominator + RHSConstants;
+		}
+
+		case BrzyckiVariable.OverloadPercentage: {
+			if (!newSet.reps) {
+				throw new Error('New set reps needed to calculate overload');
+			}
+			const numerator = newLoad * (oldSet.reps + oldSet.RIR - 37);
+			const denominator = oldLoad * (newSet.reps + newSet.RIR - 37);
+			return (numerator / denominator - 1) * 100;
+		}
+	}
 }
 
 export function getWorkoutVolume(workout: Workout) {
@@ -101,11 +133,47 @@ export function getRIRForWeek(rirArray: number[], cycle: number): number {
 	throw new Error('Cycle number is out of range.');
 }
 
+function generateAverageRepDropOffs(repsPerSetPerPerformance: number[][]) {
+	const rateOfChangeSums: number[] = [];
+
+	for (const arr of repsPerSetPerPerformance) {
+		for (let i = 0; i < arr.length - 1; i++) {
+			const rateOfChange = arr[i] - arr[i + 1];
+			rateOfChangeSums[i] = (rateOfChangeSums[i] || 0) + rateOfChange;
+		}
+	}
+
+	const averageRatesOfChange = rateOfChangeSums.map((sum) => sum / repsPerSetPerPerformance.length);
+	return averageRatesOfChange;
+}
+
+function getMaxIndexes(arr: number[]) {
+	return arr
+		.map((value, index) => ({ value, index }))
+		.sort((a, b) => b.value - a.value)
+		.map((item) => item.index);
+}
+
+function addExtraSetProperties(exerciseSet: WorkoutExercise['sets'][number]) {
+	const { workoutExerciseId, ...rest } = exerciseSet;
+	const exerciseSetWithoutIds = {
+		...rest,
+		miniSets: rest.miniSets.map(({ workoutExerciseSetId, ...rest }) => rest)
+	};
+	return {
+		...exerciseSetWithoutIds,
+		completed: false,
+		miniSets: exerciseSetWithoutIds.miniSets.map((miniSet) => ({
+			...miniSet,
+			completed: false
+		}))
+	};
+}
+
 export function progressiveOverloadMagic(
 	mesocycleWithProgressionData: ActiveMesocycleWithProgressionData,
 	cycleNumber: number,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	userBodyweight: number | null
+	userBodyweight: number
 ) {
 	const { mesocycleCyclicSetChanges, mesocycleExerciseSplitDays, workoutsOfMesocycle, ...mesocycle } =
 		mesocycleWithProgressionData;
@@ -116,31 +184,66 @@ export function progressiveOverloadMagic(
 		return createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(exercise);
 	});
 
+	const currentCycleRIR = getRIRForWeek(mesocycle.RIRProgression, cycleNumber);
+
 	// Fill in reps, load, RIR from previous workouts
 	// Also do progressive overload here
 
 	if (workoutsOfMesocycle.length > 0) {
 		// Just fill in repLoadRIR using meso's overload rate
-		// TODO: Temporary fix, just fill in reps, load, and RIR without any progressive overload
-		const lastWorkout = workoutsOfMesocycle[workoutsOfMesocycle.length - 1].workout;
 		workoutExercises.forEach((ex) => {
-			const lastExercise = lastWorkout.workoutExercises.find((_ex) => _ex.name === ex.name);
-			if (!lastExercise) return;
-			for (let i = 0; i < ex.sets.length; i++) {
-				if (!lastExercise.sets[i]) continue;
-				ex.sets[i] = {
-					...lastExercise.sets[i],
-					completed: false,
-					miniSets: lastExercise.sets[i].miniSets.map((miniSet) => ({
-						...miniSet,
-						completed: false
-					}))
-				};
+			const allPreviousPerformances = workoutsOfMesocycle
+				.flatMap((wm) => ({
+					exercise: wm.workout.workoutExercises.find((exercise) => ex.name === exercise.name),
+					oldUserBodyweight: wm.workout.userBodyweight
+				}))
+				.filter(({ exercise }) => exercise !== undefined);
+
+			const lastPerformance = allPreviousPerformances.at(-1);
+			if (!lastPerformance?.exercise) return;
+
+			const averageDropOffs = generateAverageRepDropOffs(
+				allPreviousPerformances.map(({ exercise }) => exercise!.sets.map((s) => s.reps + s.RIR))
+			);
+			const lastDropOffs = generateAverageRepDropOffs([
+				allPreviousPerformances[allPreviousPerformances.length - 1].exercise!.sets.map((s) => s.reps + s.RIR)
+			]);
+
+			let dropOffDifferences = averageDropOffs.map((averageDropOff, idx) => lastDropOffs[idx] - averageDropOff);
+			dropOffDifferences =
+				dropOffDifferences[0] < 0
+					? [Math.abs(dropOffDifferences[0]), 0, ...dropOffDifferences.slice(1)]
+					: [0, ...dropOffDifferences];
+
+			const idealTotalOverloadPercentagePerSet = ex.overloadPercentage ?? mesocycle.startOverloadPercentage;
+			const setPriorities = (dropOffDifferences = getMaxIndexes(dropOffDifferences));
+			let remainingTotalOverload = idealTotalOverloadPercentagePerSet * lastPerformance.exercise.sets.length;
+
+			for (const setIndex of setPriorities) {
+				const oldSet = lastPerformance.exercise!.sets[setIndex];
+				if (!oldSet) continue;
+
+				const newSet = { ...oldSet, reps: oldSet.reps + 1 + (oldSet.RIR - currentCycleRIR), RIR: currentCycleRIR };
+				const overloadAchieved = solveBrzyckiFormula(BrzyckiVariable.OverloadPercentage, {
+					oldSet,
+					newSet,
+					oldUserBodyweight: lastPerformance.oldUserBodyweight,
+					newUserBodyweight: userBodyweight,
+					bodyweightFraction: ex.bodyweightFraction
+				});
+
+				const previousRemainingTotalOverload = remainingTotalOverload;
+				remainingTotalOverload -= overloadAchieved;
+
+				if (Math.abs(remainingTotalOverload) < previousRemainingTotalOverload) {
+					ex.sets[setIndex] = addExtraSetProperties(newSet);
+				} else {
+					ex.sets[setIndex] = addExtraSetProperties(oldSet);
+				}
 			}
 		});
 	}
 
-	const currentCycleRIR = getRIRForWeek(mesocycle.RIRProgression, cycleNumber);
 	workoutExercises.forEach((ex) => {
 		ex.sets.forEach((set, idx) => {
 			const oldRIR = set.RIR ?? currentCycleRIR;
@@ -155,13 +258,11 @@ export function progressiveOverloadMagic(
 		});
 	});
 
-	// Add miniSets and stuff if drop / myorep match sets
-
-	// Adjust RIR and reps according to forceRIRMatching and RIRProgression (lastSetToFailure?)
-
-	// Increase sets based on cyclic set changes
-
-	// Consider all progression overrides
+	// TODO: Add miniSets and stuff if drop / myorep match sets
+	// TODO: Adjust RIR and reps according to forceRIRMatching and RIRProgression (lastSetToFailure?)
+	// TODO: Increase sets based on cyclic set changes
+	// TODO: Consider all progression overrides
+	// TODO: Consider load first progression
 
 	const previousWorkout = workoutsOfMesocycle.filter((wm) => wm.workoutStatus === null).at(-1)?.workout;
 	const previousWorkoutData = previousWorkout
