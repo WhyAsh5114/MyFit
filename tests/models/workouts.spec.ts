@@ -26,7 +26,7 @@ test('create workout', async ({ page }) => {
 	await page.locator('[id="Barbell\\ bench\\ press-set-2-RIR"]').fill('1');
 	await page.getByTestId('Barbell bench press-set-1-action').click();
 	await page.getByTestId('Barbell bench press-set-2-action').click();
-	
+
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 	await expect(page.getByRole('status')).toContainText('Workout created successfully');
@@ -130,7 +130,7 @@ test('create workout with all set types', async ({ page, browserName }) => {
 	await page.locator('[id="Incline\\ dumbbell\\ press-set-2-RIR"]').fill('1');
 	await page.getByTestId('Incline dumbbell press-set-1-action').click();
 	await page.getByTestId('Incline dumbbell press-set-2-action').click();
-	
+
 	await page.getByLabel('add-exercise').click();
 	await page.getByPlaceholder('Type here or search...').click();
 	await page.getByRole('option', { name: 'Leg press' }).click();
@@ -179,7 +179,7 @@ test('create a workout with active mesocycle', async ({ page }) => {
 	await page.getByTestId('Pull-ups-set-1-action').click();
 	await page.getByTestId('Pull-ups-set-2-action').click();
 	await page.getByTestId('Pull-ups-set-3-action').click();
-	
+
 	await page.locator('[id="Barbell\\ rows-set-1-reps"]').fill('15');
 	await page.locator('[id="Barbell\\ rows-set-2-reps"]').fill('14');
 	await page.locator('[id="Barbell\\ rows-set-3-reps"]').fill('15');
