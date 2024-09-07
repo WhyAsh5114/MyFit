@@ -77,6 +77,48 @@ Run the tests to ensure your changes don't break anything:
 npm run test
 ```
 
+### Creating New Tests
+
+Follow these steps to create new tests using Playwright:
+
+1. Install Playwright if you haven't already:
+   ```bash
+   npx install playwright
+   ```
+
+2. In your development environment, log in with any account.
+
+3. Open your browser's developer tools, navigate to the `Application` tab, and locate the `authjs.session-token` cookie. Copy its value.
+
+4. Create an `auth.json` file in the root directory of your project with the following content:
+
+   ```json
+   {
+     "cookies": [
+       {
+         "name": "authjs.session-token",
+         "value": "YOUR_SESSION_TOKEN",
+         "domain": "localhost",
+         "path": "/",
+         "expires": -1,
+         "httpOnly": true,
+         "secure": false,
+         "sameSite": "Lax"
+       }
+     ]
+   }
+   ```
+
+   Replace `"YOUR_SESSION_TOKEN"` with the actual session token you copied.
+
+5. Generate your test code using Playwright by running:
+
+   ```bash
+   npx playwright codegen localhost:5173 --load-storage=auth.json
+   ```
+
+This will launch a browser instance with your stored session, allowing you to record new test interactions.
+
 We use Playwright for end-to-end testing, so make sure to write tests covering new features or bug fixes.
 
 ## Code Reviews
