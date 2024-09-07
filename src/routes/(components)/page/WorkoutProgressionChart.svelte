@@ -1,6 +1,8 @@
 <script lang="ts">
+	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { trpc } from '$lib/trpc/client';
 	import type { RouterOutputs } from '$lib/trpc/router';
+	import { cn } from '$lib/utils';
 	import { getWorkoutVolume } from '$lib/utils/workoutUtils';
 	import {
 		CategoryScale,
@@ -59,6 +61,6 @@
 </script>
 
 {#if pastWorkouts === 'loading'}
-	TODO: chart skeleton
-{:else}{/if}
-<canvas bind:this={chartCanvas} class="h-20"></canvas>
+	<Skeleton class="h-40 w-full" />
+{/if}
+<canvas bind:this={chartCanvas} class={cn({ hidden: pastWorkouts === 'loading' })} height="160"></canvas>
