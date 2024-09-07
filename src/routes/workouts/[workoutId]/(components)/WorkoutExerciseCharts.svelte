@@ -6,7 +6,7 @@
 	let { workout }: PropsType = $props();
 </script>
 
-{#if workout.workoutOfMesocycle?.workoutStatus !== null}
+{#if typeof workout.workoutOfMesocycle?.workoutStatus === 'string'}
 	<div class="muted-text-box">
 		{convertCamelCaseToNormal(workout.workoutOfMesocycle?.workoutStatus)}
 	</div>

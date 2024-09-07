@@ -58,9 +58,7 @@
 	});
 </script>
 
-{#if workoutOfMesocycle === undefined}
-	TODO: no active mesocycle
-{:else if pastWorkouts === 'loading'}
+{#if pastWorkouts === 'loading'}
 	TODO: chart skeleton
 {:else}{/if}
 <canvas bind:this={chartCanvas} class="h-20"></canvas>
