@@ -19,22 +19,38 @@ export function getExerciseVolume(workoutExercise: WorkoutExercise, userBodyweig
 	);
 }
 
-export enum BrzyckiVariable {
-	NewReps,
-	OverloadPercentage
-}
+type SetDetails = {
+	reps: number;
+	load: number;
+	RIR: number;
+};
 
-export function solveBrzyckiFormula(
-	variableToSolve: BrzyckiVariable,
-	knownValues: {
-		oldSet: { reps: number; load: number; RIR: number };
-		newSet: { reps?: number | undefined; load: number; RIR: number };
-		bodyweightFraction?: number | null;
-		oldUserBodyweight?: number;
-		newUserBodyweight?: number;
-		overloadPercentage?: number;
-	}
-) {
+type CommonBrzyckiType = {
+	bodyweightFraction: number | null;
+	oldUserBodyweight?: number;
+	newUserBodyweight?: number;
+	overloadPercentage?: number;
+	oldSet: SetDetails;
+};
+
+type BrzyckiNewReps = {
+	variableToSolve: 'NewReps';
+	knownValues: CommonBrzyckiType & {
+		newSet: Omit<SetDetails, 'reps'> & { reps?: number };
+	};
+};
+
+type BrzyckiOverloadPercentage = {
+	variableToSolve: 'OverloadPercentage';
+	knownValues: CommonBrzyckiType & {
+		newSet: SetDetails;
+	};
+};
+
+type BrzyckiInput = BrzyckiNewReps | BrzyckiOverloadPercentage;
+
+export function solveBrzyckiFormula(input: BrzyckiInput) {
+	const { variableToSolve, knownValues } = input;
 	const {
 		oldSet,
 		newSet,
@@ -49,18 +65,15 @@ export function solveBrzyckiFormula(
 	const RHSConstants = 37 - newSet.RIR;
 
 	switch (variableToSolve) {
-		case BrzyckiVariable.NewReps: {
+		case 'NewReps': {
 			const numerator = newLoad * (oldSet.reps + oldSet.RIR - 37);
 			const denominator = (1 + overloadPercentage / 100) * oldLoad;
 			return numerator / denominator + RHSConstants;
 		}
 
-		case BrzyckiVariable.OverloadPercentage: {
-			if (!newSet.reps) {
-				throw new Error('New set reps needed to calculate overload');
-			}
+		case 'OverloadPercentage': {
 			const numerator = newLoad * (oldSet.reps + oldSet.RIR - 37);
-			const denominator = oldLoad * (newSet.reps + newSet.RIR - 37);
+			const denominator = oldLoad * (knownValues.newSet.reps + newSet.RIR - 37);
 			return (numerator / denominator - 1) * 100;
 		}
 	}
@@ -189,12 +202,15 @@ function getPerformanceChanges(performances: { exercise: WorkoutExercise; oldUse
 			if (!oldSet || !newSet) break;
 
 			setPerformanceChanges.push(
-				solveBrzyckiFormula(BrzyckiVariable.OverloadPercentage, {
-					oldSet,
-					newSet,
-					bodyweightFraction: newPerformance.exercise.bodyweightFraction,
-					newUserBodyweight: newPerformance.oldUserBodyweight,
-					oldUserBodyweight: oldPerformance.oldUserBodyweight
+				solveBrzyckiFormula({
+					variableToSolve: 'OverloadPercentage',
+					knownValues: {
+						oldSet,
+						newSet,
+						bodyweightFraction: newPerformance.exercise.bodyweightFraction,
+						newUserBodyweight: newPerformance.oldUserBodyweight,
+						oldUserBodyweight: oldPerformance.oldUserBodyweight
+					}
 				})
 			);
 		}
@@ -238,13 +254,16 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 	return ex.sets.map((set) => {
 		if (set.reps === undefined || set.load === undefined || set.RIR === undefined) return set;
 		const newLoad = set.load + (ex.minimumWeightChange ?? 5);
-		const newReps = solveBrzyckiFormula(BrzyckiVariable.NewReps, {
-			oldSet: { reps: set.reps, load: set.load, RIR: set.RIR },
-			newSet: { load: newLoad, RIR: set.RIR },
-			bodyweightFraction: ex.bodyweightFraction,
-			newUserBodyweight: userBodyweight,
-			oldUserBodyweight: userBodyweight,
-			overloadPercentage: 0
+		const newReps = solveBrzyckiFormula({
+			variableToSolve: 'NewReps',
+			knownValues: {
+				oldSet: { reps: set.reps, load: set.load, RIR: set.RIR },
+				newSet: { load: newLoad, RIR: set.RIR },
+				bodyweightFraction: ex.bodyweightFraction ?? null,
+				newUserBodyweight: userBodyweight,
+				oldUserBodyweight: userBodyweight,
+				overloadPercentage: 0
+			}
 		});
 		set.reps = Math.round(newReps);
 		set.load = newLoad;
@@ -350,12 +369,15 @@ export function progressiveOverloadMagic(
 				if (!oldSet) continue;
 
 				const newSet = { ...oldSet, reps: oldSet.reps + 1 };
-				const overloadAchieved = solveBrzyckiFormula(BrzyckiVariable.OverloadPercentage, {
-					oldSet,
-					newSet,
-					oldUserBodyweight: lastPerformance.oldUserBodyweight,
-					newUserBodyweight: userBodyweight,
-					bodyweightFraction: ex.bodyweightFraction
+				const overloadAchieved = solveBrzyckiFormula({
+					variableToSolve: 'OverloadPercentage',
+					knownValues: {
+						oldSet,
+						newSet,
+						oldUserBodyweight: lastPerformance.oldUserBodyweight,
+						newUserBodyweight: userBodyweight,
+						bodyweightFraction: ex.bodyweightFraction ?? null
+					}
 				});
 
 				const previousRemainingTotalOverload = remainingTotalOverload;

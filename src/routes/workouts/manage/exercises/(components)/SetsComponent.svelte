@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Separator } from '$lib/components/ui/separator';
-	import { BrzyckiVariable, solveBrzyckiFormula, type WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
+	import { solveBrzyckiFormula, type WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import RemoveIcon from 'virtual:icons/lucide/minus';
 	import EditIcon from 'virtual:icons/lucide/pencil';
@@ -108,12 +108,15 @@
 		if (!isSameLoadExercise) {
 			if (exerciseSet.reps === undefined || exerciseSet.RIR === undefined) return;
 			const newReps = Math.round(
-				solveBrzyckiFormula(BrzyckiVariable.NewReps, {
-					oldSet: { reps: exerciseSet.reps, load: oldLoad, RIR: exerciseSet.RIR },
-					newSet: { load: newLoad, RIR: exerciseSet.RIR },
-					oldUserBodyweight: workoutRunes.previousWorkoutData?.userBodyweight,
-					newUserBodyweight: workoutRunes.workoutData?.userBodyweight as number,
-					bodyweightFraction: exercise.bodyweightFraction
+				solveBrzyckiFormula({
+					variableToSolve: 'NewReps',
+					knownValues: {
+						oldSet: { reps: exerciseSet.reps, load: oldLoad, RIR: exerciseSet.RIR },
+						newSet: { load: newLoad, RIR: exerciseSet.RIR },
+						oldUserBodyweight: workoutRunes.previousWorkoutData?.userBodyweight,
+						newUserBodyweight: workoutRunes.workoutData?.userBodyweight as number,
+						bodyweightFraction: exercise.bodyweightFraction ?? null
+					}
 				})
 			);
 			exercise.sets[setIdx] = { ...exerciseSet, reps: newReps, load: newLoad };
@@ -125,22 +128,28 @@
 			if (set.reps === undefined || set.RIR === undefined) return;
 
 			const newReps = Math.round(
-				solveBrzyckiFormula(BrzyckiVariable.NewReps, {
-					oldSet: { reps: set.reps, load: oldLoad, RIR: set.RIR },
-					newSet: { load: newLoad, RIR: set.RIR },
-					oldUserBodyweight: workoutRunes.previousWorkoutData?.userBodyweight,
-					newUserBodyweight: workoutRunes.workoutData?.userBodyweight as number,
-					bodyweightFraction: exercise.bodyweightFraction,
-					overloadPercentage: -extraOverloadAchieved
+				solveBrzyckiFormula({
+					variableToSolve: 'NewReps',
+					knownValues: {
+						oldSet: { reps: set.reps, load: oldLoad, RIR: set.RIR },
+						newSet: { load: newLoad, RIR: set.RIR },
+						oldUserBodyweight: workoutRunes.previousWorkoutData?.userBodyweight,
+						newUserBodyweight: workoutRunes.workoutData?.userBodyweight as number,
+						bodyweightFraction: exercise.bodyweightFraction ?? null,
+						overloadPercentage: -extraOverloadAchieved
+					}
 				})
 			);
 
-			extraOverloadAchieved += solveBrzyckiFormula(BrzyckiVariable.OverloadPercentage, {
-				oldSet: { reps: set.reps, load: oldLoad, RIR: set.RIR },
-				newSet: { reps: newReps, load: newLoad, RIR: set.RIR },
-				oldUserBodyweight: workoutRunes.previousWorkoutData?.userBodyweight,
-				newUserBodyweight: workoutRunes.workoutData?.userBodyweight as number,
-				bodyweightFraction: exercise.bodyweightFraction
+			extraOverloadAchieved += solveBrzyckiFormula({
+				variableToSolve: 'OverloadPercentage',
+				knownValues: {
+					oldSet: { reps: set.reps, load: oldLoad, RIR: set.RIR },
+					newSet: { reps: newReps, load: newLoad, RIR: set.RIR },
+					oldUserBodyweight: workoutRunes.previousWorkoutData?.userBodyweight,
+					newUserBodyweight: workoutRunes.workoutData?.userBodyweight as number,
+					bodyweightFraction: exercise.bodyweightFraction ?? null
+				}
 			});
 
 			exercise.sets[setIdx] = { ...set, reps: newReps, load: newLoad };

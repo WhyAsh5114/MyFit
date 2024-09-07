@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { BrzyckiVariable, solveBrzyckiFormula, type WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
+	import { solveBrzyckiFormula, type WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
 	import * as Popover from '$lib/components/ui/popover';
 	import { workoutRunes } from '../../workoutRunes.svelte';
 	import TrendUpIcon from 'virtual:icons/lucide/trending-up';
@@ -22,12 +22,15 @@
 		let { reps, load, RIR } = exercise.sets[setIdx];
 		if (reps === undefined || load === undefined || RIR === undefined) return;
 
-		const actualOverload = solveBrzyckiFormula(BrzyckiVariable.OverloadPercentage, {
-			oldSet: prevSet,
-			newSet: { reps, load, RIR },
-			newUserBodyweight: workoutRunes.workoutData?.userBodyweight as number,
-			oldUserBodyweight: workoutRunes.previousWorkoutData?.userBodyweight,
-			bodyweightFraction: exercise.bodyweightFraction
+		const actualOverload = solveBrzyckiFormula({
+			variableToSolve: 'OverloadPercentage',
+			knownValues: {
+				oldSet: prevSet,
+				newSet: { reps, load, RIR },
+				newUserBodyweight: workoutRunes.workoutData?.userBodyweight as number,
+				oldUserBodyweight: workoutRunes.previousWorkoutData?.userBodyweight,
+				bodyweightFraction: exercise.bodyweightFraction ?? null
+			}
 		});
 
 		return actualOverload;
