@@ -82,6 +82,7 @@ npm run test
 Follow these steps to create new tests using Playwright:
 
 1. Install Playwright if you haven't already:
+
    ```bash
    npx install playwright
    ```
@@ -94,18 +95,18 @@ Follow these steps to create new tests using Playwright:
 
    ```json
    {
-     "cookies": [
-       {
-         "name": "authjs.session-token",
-         "value": "YOUR_SESSION_TOKEN",
-         "domain": "localhost",
-         "path": "/",
-         "expires": -1,
-         "httpOnly": true,
-         "secure": false,
-         "sameSite": "Lax"
-       }
-     ]
+   	"cookies": [
+   		{
+   			"name": "authjs.session-token",
+   			"value": "YOUR_SESSION_TOKEN",
+   			"domain": "localhost",
+   			"path": "/",
+   			"expires": -1,
+   			"httpOnly": true,
+   			"secure": false,
+   			"sameSite": "Lax"
+   		}
+   	]
    }
    ```
 
