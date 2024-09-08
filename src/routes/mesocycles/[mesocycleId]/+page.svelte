@@ -12,6 +12,7 @@
 	import MesocycleStats from './(components)/MesocycleStats.svelte';
 	import MesocycleVolumeTab from './(components)/MesocycleVolumeTab.svelte';
 	import type { FullMesocycle } from './+layout.server';
+	import MesocycleWorkoutsTab from './(components)/MesocycleWorkoutsTab.svelte';
 
 	let { data } = $props();
 	let mesocycle: FullMesocycle | 'loading' = $state('loading');
@@ -66,7 +67,7 @@
 		</Tabs.Content>
 		<Tabs.Content class="grow" value="workouts">
 			{#if !chartMode}
-				<MesocycleStats {mesocycle} />
+				<MesocycleWorkoutsTab {mesocycle} />
 			{:else}
 				TODO: charts that show progression
 			{/if}
