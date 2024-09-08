@@ -1,8 +1,5 @@
 <script lang="ts">
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { trpc } from '$lib/trpc/client';
 	import type { RouterOutputs } from '$lib/trpc/router';
-	import { cn } from '$lib/utils';
 	import { getWorkoutVolume } from '$lib/utils/workoutUtils';
 	import {
 		CategoryScale,
@@ -12,26 +9,22 @@
 		LineController,
 		LineElement,
 		PointElement,
-		Tooltip,
-		Title
+		Title,
+		Tooltip
 	} from 'chart.js';
 	import { onMount } from 'svelte';
 	Chart.register(Tooltip, CategoryScale, LineController, LineElement, PointElement, Filler, LinearScale, Title);
 
-	type PropsType = { workoutOfMesocycle: RouterOutputs['workouts']['getTodaysWorkoutData']['workoutOfMesocycle'] };
-	let { workoutOfMesocycle }: PropsType = $props();
+	type PropsType = {
+		workoutOfMesocycle: RouterOutputs['workouts']['getTodaysWorkoutData']['workoutOfMesocycle'];
+		pastWorkouts: RouterOutputs['mesocycles']['getPastWorkoutsForTodaysSplitDay'];
+	};
+	let { workoutOfMesocycle, pastWorkouts }: PropsType = $props();
 
 	let chartCanvas: HTMLCanvasElement | undefined = $state();
-	let pastWorkouts: 'loading' | RouterOutputs['mesocycles']['getPastWorkouts'] = $state('loading');
 
 	onMount(async () => {
 		if (workoutOfMesocycle === undefined || chartCanvas === undefined) return;
-
-		// TODO: not ideal, should fetch during render, not after...
-		pastWorkouts = await trpc().mesocycles.getPastWorkouts.query({
-			mesocycleId: workoutOfMesocycle?.mesocycle.id,
-			splitDayIndex: workoutOfMesocycle?.splitDayIndex
-		});
 
 		const style = getComputedStyle(document.body);
 		const primaryColor = style.getPropertyValue('--primary').split(' ').join(', ');
@@ -60,7 +53,4 @@
 	});
 </script>
 
-{#if pastWorkouts === 'loading'}
-	<Skeleton class="h-40 w-full" />
-{/if}
-<canvas bind:this={chartCanvas} class={cn({ hidden: pastWorkouts === 'loading' })} height="160"></canvas>
+<canvas bind:this={chartCanvas} height="160"></canvas>

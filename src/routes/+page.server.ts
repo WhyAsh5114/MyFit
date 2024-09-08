@@ -10,5 +10,9 @@ export const load = async (event) => {
 	}
 
 	const trpc = createCaller(await createContext(event));
-	return { todaysWorkoutData: trpc.workouts.getTodaysWorkoutData() };
+
+	return {
+		todaysWorkoutData: trpc.workouts.getTodaysWorkoutData(),
+		pastWorkouts: trpc.mesocycles.getPastWorkoutsForTodaysSplitDay()
+	};
 };

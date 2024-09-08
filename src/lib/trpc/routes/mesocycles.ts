@@ -223,12 +223,23 @@ export const mesocycles = t.router({
 		return { message: 'Mesocycle exercise split edited successfully' };
 	}),
 
-	getPastWorkouts: t.procedure
-		.input(z.strictObject({ splitDayIndex: z.number(), mesocycleId: z.string().cuid() }))
-		.query(async ({ ctx, input }) => {
-			return await prisma.workout.findMany({
-				where: { workoutOfMesocycle: input, userId: ctx.userId },
-				include: { workoutExercises: { include: { sets: { include: { miniSets: true } } } } }
-			});
-		})
+	getPastWorkoutsForTodaysSplitDay: t.procedure.query(async ({ ctx }) => {
+		const activeMesocycle = await prisma.mesocycle.findFirst({
+			where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
+			select: {
+				id: true,
+				_count: { select: { mesocycleExerciseSplitDays: true, workoutsOfMesocycle: true } }
+			}
+		});
+		if (!activeMesocycle) return [];
+
+		const totalWorkouts = activeMesocycle._count.workoutsOfMesocycle;
+		const splitLength = activeMesocycle._count.mesocycleExerciseSplitDays;
+		const splitDayIndex = totalWorkouts % splitLength;
+
+		return await prisma.workout.findMany({
+			where: { workoutOfMesocycle: { mesocycleId: activeMesocycle.id, splitDayIndex }, userId: ctx.userId },
+			include: { workoutExercises: { include: { sets: { include: { miniSets: true } } } } }
+		});
+	})
 });

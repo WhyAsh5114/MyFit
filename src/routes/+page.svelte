@@ -10,5 +10,5 @@
 
 {#if data.todaysWorkoutData}
 	<H3>Today's workout</H3>
-	<TodaysWorkoutCard todaysWorkoutData={data.todaysWorkoutData} />
+	<TodaysWorkoutCard {...data} />
 {/if}

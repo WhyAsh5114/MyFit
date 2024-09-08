@@ -10,8 +10,9 @@
 
 	type PropsType = {
 		todaysWorkoutData: Promise<RouterOutputs['workouts']['getTodaysWorkoutData']>;
+		pastWorkouts: Promise<RouterOutputs['mesocycles']['getPastWorkoutsForTodaysSplitDay']>;
 	};
-	let { todaysWorkoutData }: PropsType = $props();
+	let { todaysWorkoutData, pastWorkouts }: PropsType = $props();
 </script>
 
 <Card.Root>
@@ -37,7 +38,11 @@
 				<Card.Description>{wm?.mesocycle.name}</Card.Description>
 			</Card.Header>
 			<Card.Content>
-				<WorkoutProgressionChart workoutOfMesocycle={wm} />
+				{#await pastWorkouts}
+					<Skeleton class="h-40 w-full" />
+				{:then pastWorkouts}
+					<WorkoutProgressionChart {pastWorkouts} workoutOfMesocycle={wm} />
+				{/await}
 			</Card.Content>
 			<Card.Footer>
 				<Button class="ml-auto gap-2" href="/workouts/manage/start">
