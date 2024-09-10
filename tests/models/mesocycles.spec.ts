@@ -1,5 +1,5 @@
-import { test, expect } from '../fixtures';
-import { createTemplateExerciseSplit } from './commonFunctions';
+import { expect, test } from '../fixtures';
+import { createMesocycle, createTemplateExerciseSplit } from './commonFunctions';
 
 test.beforeEach(async ({ page }) => {
 	await page.goto('/exercise-splits');
@@ -170,4 +170,31 @@ test("edit mesocycle's exercise split", async ({ page }) => {
 	).toBeVisible({ timeout: 10000 });
 	await page.getByRole('tab', { name: 'Split' }).click();
 	await expect(page.getByRole('main')).toContainText('Face pulls 4 Straight sets of 15 to 30 reps Rear delts');
+});
+
+test('extract exercise split from mesocycle', async ({ page }) => {
+	await createMesocycle(page, { exerciseSplitCreated: true });
+	await page.getByRole('link', { name: 'MyMeso' }).first().click();
+	await page.getByRole('tab', { name: 'Split' }).click();
+	await page.getByRole('button', { name: 'Edit' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('tabpanel').getByRole('list').getByRole('button').first().click();
+	await page.getByRole('menuitem', { name: 'Edit' }).click();
+	await page.getByPlaceholder('Type here or search...').fill('Lat pulldowns');
+	await page.locator('#exercise-involves-bodyweight').click();
+	await page.getByRole('button', { name: 'Edit exercise' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('button', { name: 'Save' }).click();
+
+	await page.getByLabel('mesocycle-options').click();
+	await page.getByRole('menuitem', { name: 'Extract split' }).click();
+	await page.getByPlaceholder('Type here').fill('MyMeso exercise split');
+	await page.getByRole('button', { name: 'Yes, extract' }).click();
+	await expect(page.getByRole('status').filter({ hasText: 'Exercise split created successfully' })).toBeVisible();
+	await page.getByRole('link', { name: 'Exercise splits' }).click();
+	await page.getByRole('link', { name: 'MyMeso exercise split 7 days' }).click();
+	await page.getByRole('tab', { name: 'Exercises' }).click();
+	await expect(page.getByRole('tabpanel')).toContainText(
+		'Pull A Day 1 Lat pulldowns Straight sets of 5 to 15 reps Lats Barbell rows Straight sets of 10 to 15 reps Traps Dumbbell bicep curls Straight sets of 10 to 20 reps Biceps Face pulls Straight sets of 15 to 30 reps Rear delts'
+	);
 });

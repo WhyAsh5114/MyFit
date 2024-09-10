@@ -50,6 +50,7 @@ test('create workout with all set types', async ({ page, browserName }) => {
 	await page.getByRole('button', { name: 'Next' }).click();
 
 	await page.getByLabel('add-exercise').click();
+	await page.getByPlaceholder('Type here or search...').click();
 	await page.getByRole('option', { name: 'Barbell bench press' }).click();
 	await page.getByRole('button', { name: 'Add exercise' }).click();
 	await page.getByLabel('Sets').fill('2');
@@ -65,6 +66,7 @@ test('create workout with all set types', async ({ page, browserName }) => {
 	await page.getByTestId('Barbell bench press-set-2-action').click();
 
 	await page.getByLabel('add-exercise').click();
+	await page.getByPlaceholder('Type here or search...').click();
 	await page.getByRole('option', { name: 'Dumbbell bicep curls' }).click();
 	await page.getByLabel('Sets').fill('2');
 	await page.locator('button').filter({ hasText: 'Straight' }).click();
@@ -87,6 +89,7 @@ test('create workout with all set types', async ({ page, browserName }) => {
 	await page.getByTestId('Dumbbell bicep curls-set-2-mini-set-1-action').click();
 
 	await page.getByLabel('add-exercise').click();
+	await page.getByPlaceholder('Type here or search...').click();
 	await page.getByRole('option', { name: 'Leaning dumbbell lateral' }).click();
 	await page.getByLabel('Sets').fill('2');
 	await page.locator('button').filter({ hasText: 'Straight' }).click();
@@ -116,6 +119,7 @@ test('create workout with all set types', async ({ page, browserName }) => {
 	await page.getByTestId('Leaning dumbbell lateral raises-set-2-mini-set-1-action').click();
 
 	await page.getByLabel('add-exercise').click();
+	await page.getByPlaceholder('Type here or search...').click();
 	await page.getByRole('option', { name: 'Incline dumbbell press' }).click();
 	await page.locator('button').filter({ hasText: 'Straight' }).click();
 	await page.getByRole('option', { name: 'V2' }).click();
