@@ -95,18 +95,30 @@
 			skipWorkoutWithWorkoutExercisesDialogOpen = true;
 			return;
 		}
+
 		completingWorkout = true;
-		const { message } = await trpc().workouts.completeWorkoutWithoutExercises.mutate({
-			splitDayIndex: workoutData.workoutOfMesocycle?.splitDayIndex as number,
-			mesocycleId: workoutData.workoutOfMesocycle?.mesocycle.id as string,
-			userBodyweight,
-			workoutStatus
+		const { message, mesocycleCompleted } = await trpc().workouts.create.mutate({
+			workoutData: {
+				userBodyweight,
+				workoutOfMesocycle: {
+					splitDayIndex: workoutData.workoutOfMesocycle?.splitDayIndex as number,
+					mesocycle: { id: workoutData.workoutOfMesocycle?.mesocycle.id as string },
+					workoutStatus
+				}
+			},
+			workoutExercises: [],
+			workoutExercisesSets: [],
+			workoutExercisesMiniSets: []
 		});
 		toast.success(message);
 		skipWorkoutWithWorkoutExercisesDialogOpen = false;
 		workoutRunes.resetStores();
 		await invalidate('workouts:start');
 		completingWorkout = false;
+
+		if (mesocycleCompleted) {
+			await goto(`/mesocycles/${workoutData.workoutOfMesocycle?.mesocycle.id}?completion`);
+		}
 	}
 </script>
 

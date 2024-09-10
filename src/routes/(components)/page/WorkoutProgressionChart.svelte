@@ -6,15 +6,16 @@
 		CategoryScale,
 		Chart,
 		Filler,
+		Legend,
 		LinearScale,
 		LineController,
 		LineElement,
 		PointElement,
-		Tooltip,
-		Title
+		Title,
+		Tooltip
 	} from 'chart.js';
 	import { onMount } from 'svelte';
-	Chart.register(Tooltip, CategoryScale, LineController, LineElement, PointElement, Filler, LinearScale, Title);
+	Chart.register(Tooltip, CategoryScale, LineController, LineElement, PointElement, Filler, LinearScale, Title, Legend);
 
 	type PropsType = { workoutOfMesocycle: RouterOutputs['workouts']['getTodaysWorkoutData']['workoutOfMesocycle'] };
 	let { workoutOfMesocycle }: PropsType = $props();

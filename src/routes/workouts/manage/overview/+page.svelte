@@ -76,9 +76,9 @@
 		};
 
 		try {
-			let message;
+			let message, mesocycleCompleted;
 			if (workoutRunes.editingWorkoutId === null) {
-				message = (await trpc().workouts.create.mutate(createData)).message;
+				({ message, mesocycleCompleted } = await trpc().workouts.create.mutate(createData));
 			} else {
 				message = (
 					await trpc().workouts.editById.mutate({
@@ -92,6 +92,10 @@
 			await invalidate('workouts:all');
 			await goto('/workouts');
 			workoutRunes.resetStores();
+
+			if (mesocycleCompleted) {
+				await goto(`/mesocycles/${workoutRunes.workoutData.workoutOfMesocycle?.mesocycle.id}?completion`);
+			}
 		} catch (error) {
 			if (error instanceof TRPCClientError) toast.error(error.message);
 		}

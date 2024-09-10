@@ -12,16 +12,22 @@
 	import MesocycleStats from './(components)/MesocycleStats.svelte';
 	import MesocycleVolumeTab from './(components)/MesocycleVolumeTab.svelte';
 	import type { FullMesocycle } from './+layout.server';
+	import { page } from '$app/stores';
+	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 
 	let { data } = $props();
 	let mesocycle: FullMesocycle | 'loading' = $state('loading');
 	let selectedTabValue = $state('basics');
 	let chartMode = $state(false);
+	const completion = $page.url.searchParams.has('completion');
 
 	onMount(async () => {
 		const serverMesocycle = await data.mesocycle;
-		if (serverMesocycle) mesocycle = serverMesocycle;
-		else toast.error('Mesocycle not found');
+		if (serverMesocycle) {
+			mesocycle = serverMesocycle;
+		} else {
+			toast.error('Mesocycle not found');
+		}
 	});
 </script>
 
@@ -73,3 +79,10 @@
 		</Tabs.Content>
 	</Tabs.Root>
 {/if}
+
+<ResponsiveDialog
+	description="You have successfully completed this mesocycle"
+	needTrigger={false}
+	open={completion}
+	title="Congratulations! 🎉"
+></ResponsiveDialog>
