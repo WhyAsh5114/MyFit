@@ -71,14 +71,13 @@ export type ActiveMesocycleWithProgressionData = Prisma.MesocycleGetPayload<{
 }>;
 
 const workoutInputDataSchema = z.object({
-	startedAt: z.date().or(z.string().datetime()),
+	startedAt: z.date().or(z.string().datetime()).optional(),
 	userBodyweight: z.number(),
 	workoutOfMesocycle: z
 		.object({
 			mesocycle: z.object({ id: z.string().cuid() }),
 			splitDayIndex: z.number().int(),
-			workoutStatus: z.nativeEnum(WorkoutStatus).nullable(),
-			cycleNumber: z.number().int()
+			workoutStatus: z.nativeEnum(WorkoutStatus).nullable()
 		})
 		.optional()
 });
@@ -232,7 +231,7 @@ export const workouts = t.router({
 		const workout: Prisma.WorkoutUncheckedCreateInput = {
 			id: cuid(),
 			userId: ctx.userId,
-			startedAt: input.workoutData.startedAt,
+			startedAt: input.workoutData.startedAt ?? new Date(),
 			endedAt: new Date(),
 			userBodyweight: input.workoutData.userBodyweight
 		};
@@ -282,28 +281,32 @@ export const workouts = t.router({
 			prisma.workoutExerciseMiniSet.createMany({ data: workoutExercisesMiniSets })
 		];
 
+		if (!workoutOfMesocycle) {
+			return { message: 'Workout created successfully' };
+		}
+
+		// Update mesocycle data using this new workout
 		let mesocycleCompleted: boolean | undefined = undefined;
-
-		if (workoutOfMesocycle && workoutOfMesocycle.workoutStatus === undefined) {
-			const mesocycleData = await prisma.mesocycle.findFirst({
-				where: { id: workoutOfMesocycle.mesocycle.id, userId: ctx.userId },
-				select: {
-					RIRProgression: true,
-					mesocycleExerciseSplitDays: { select: { id: true }, orderBy: { dayIndex: 'asc' } },
-					_count: { select: { workoutsOfMesocycle: true } }
-				}
-			});
-
-			if (!mesocycleData) {
-				throw new TRPCError({ code: 'BAD_REQUEST', message: 'Mesocycle not found' });
+		const mesocycleData = await prisma.mesocycle.findFirst({
+			where: { id: workoutOfMesocycle.mesocycle.id, userId: ctx.userId },
+			select: {
+				RIRProgression: true,
+				mesocycleExerciseSplitDays: { select: { id: true }, orderBy: { dayIndex: 'asc' } },
+				_count: { select: { workoutsOfMesocycle: true } }
 			}
+		});
 
+		if (!mesocycleData) {
+			throw new TRPCError({ code: 'BAD_REQUEST', message: 'Mesocycle not found' });
+		}
+
+		// Update mesocycle's exercise templates according to new workout
+		if (workoutOfMesocycle.workoutStatus === undefined) {
 			const todaysSplitDay = mesocycleData.mesocycleExerciseSplitDays[workoutOfMesocycle.splitDayIndex];
 			if (!todaysSplitDay) {
 				throw new TRPCError({ code: 'BAD_REQUEST', message: 'Related mesocycle exercise split day not found' });
 			}
 
-			// Update mesocycle's exercise templates according to new workout
 			transactionQueries.push(
 				prisma.mesocycleExerciseTemplate.deleteMany({
 					where: {
@@ -327,26 +330,32 @@ export const workouts = t.router({
 					})
 				})
 			);
+		}
 
-			// End mesocycle if all workouts completed
-			const totalWorkouts = arraySum(mesocycleData.RIRProgression) * mesocycleData.mesocycleExerciseSplitDays.length;
-			const completedWorkouts = mesocycleData._count.workoutsOfMesocycle;
+		// End mesocycle if all workouts completed
+		const totalWorkouts = arraySum(mesocycleData.RIRProgression) * mesocycleData.mesocycleExerciseSplitDays.length;
+		const completedWorkouts = mesocycleData._count.workoutsOfMesocycle + 1; // +1 as we assume this new workout to be completed as well
+		mesocycleCompleted = completedWorkouts >= totalWorkouts;
 
-			if (completedWorkouts >= totalWorkouts) {
-				transactionQueries.push(
-					prisma.mesocycle.update({
-						where: { id: workoutOfMesocycle.mesocycle.id, userId: ctx.userId },
-						data: { endDate: new Date() }
-					})
-				);
-				mesocycleCompleted = true;
-			} else {
-				mesocycleCompleted = false;
-			}
+		if (mesocycleCompleted) {
+			transactionQueries.push(
+				prisma.mesocycle.update({
+					where: { id: workoutOfMesocycle.mesocycle.id, userId: ctx.userId },
+					data: { endDate: new Date() }
+				})
+			);
 		}
 
 		await prisma.$transaction(transactionQueries);
-		return { message: 'Workout created successfully', mesocycleCompleted };
+
+		let message = 'Workout created successfully';
+		if (workoutOfMesocycle?.workoutStatus === 'RestDay') {
+			message = 'Rest day completed successfully';
+		}
+		if (workoutOfMesocycle?.workoutStatus === 'Skipped') {
+			message = 'Workout skipped successfully';
+		}
+		return { message, mesocycleCompleted };
 	}),
 
 	editById: t.procedure
@@ -361,7 +370,7 @@ export const workouts = t.router({
 			const workout: Prisma.WorkoutUncheckedCreateInput = {
 				id: input.id,
 				userId: ctx.userId,
-				startedAt: input.data.workoutData.startedAt,
+				startedAt: input.data.workoutData.startedAt!,
 				endedAt: input.endedAt,
 				userBodyweight: input.data.workoutData.userBodyweight
 			};
@@ -409,35 +418,6 @@ export const workouts = t.router({
 
 			await prisma.$transaction(transactionQueries);
 			return { message: 'Workout edited successfully' };
-		}),
-
-	completeWorkoutWithoutExercises: t.procedure
-		.input(
-			z.strictObject({
-				splitDayIndex: z.number().int(),
-				userBodyweight: z.number(),
-				workoutStatus: z.nativeEnum(WorkoutStatus),
-				mesocycleId: z.string().cuid()
-			})
-		)
-		.mutation(async ({ ctx, input }) => {
-			await prisma.workout.create({
-				data: {
-					startedAt: new Date(),
-					endedAt: new Date(),
-					userId: ctx.userId,
-					workoutOfMesocycle: {
-						create: {
-							splitDayIndex: input.splitDayIndex,
-							mesocycleId: input.mesocycleId,
-							workoutStatus: input.workoutStatus
-						}
-					},
-					userBodyweight: input.userBodyweight
-				}
-			});
-			if (input.workoutStatus === 'RestDay') return { message: 'Rest day completed successfully' };
-			else return { message: 'Workout skipped successfully' };
 		}),
 
 	getExerciseHistory: t.procedure

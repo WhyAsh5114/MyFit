@@ -95,12 +95,20 @@
 			skipWorkoutWithWorkoutExercisesDialogOpen = true;
 			return;
 		}
+
 		completingWorkout = true;
-		const { message } = await trpc().workouts.completeWorkoutWithoutExercises.mutate({
-			splitDayIndex: workoutData.workoutOfMesocycle?.splitDayIndex as number,
-			mesocycleId: workoutData.workoutOfMesocycle?.mesocycle.id as string,
-			userBodyweight,
-			workoutStatus
+		const { message } = await trpc().workouts.create.mutate({
+			workoutData: {
+				userBodyweight,
+				workoutOfMesocycle: {
+					splitDayIndex: workoutData.workoutOfMesocycle?.splitDayIndex as number,
+					mesocycle: { id: workoutData.workoutOfMesocycle?.mesocycle.id as string },
+					workoutStatus
+				}
+			},
+			workoutExercises: [],
+			workoutExercisesSets: [],
+			workoutExercisesMiniSets: []
 		});
 		toast.success(message);
 		skipWorkoutWithWorkoutExercisesDialogOpen = false;
