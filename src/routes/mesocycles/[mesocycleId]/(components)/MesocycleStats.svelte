@@ -52,9 +52,11 @@
 	const performanceChangesPerSplitDay = $derived(generatePerformanceChangesPerSplitDay(mesocycle));
 
 	const setsPerformedPerMuscleGroup = $derived(getSetsPerformedPerMuscleGroup(mesocycle.workoutsOfMesocycle));
+
+	console.log(mesocycle.workoutsOfMesocycle);
 </script>
 
-{#if mesocycle.workoutsOfMesocycle.filter((wm) => wm.workoutStatus === undefined).length}
+{#if mesocycle.workoutsOfMesocycle.filter((wm) => wm.workoutStatus === null).length}
 	<div class="grid grid-cols-2 gap-1">
 		<Card.Root>
 			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
