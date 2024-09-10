@@ -97,7 +97,7 @@
 		}
 
 		completingWorkout = true;
-		const { message } = await trpc().workouts.create.mutate({
+		const { message, mesocycleCompleted } = await trpc().workouts.create.mutate({
 			workoutData: {
 				userBodyweight,
 				workoutOfMesocycle: {
@@ -115,6 +115,10 @@
 		workoutRunes.resetStores();
 		await invalidate('workouts:start');
 		completingWorkout = false;
+
+		if (mesocycleCompleted) {
+			await goto(`/mesocycles/${workoutData.workoutOfMesocycle?.mesocycle.id}?completion`);
+		}
 	}
 </script>
 
