@@ -14,8 +14,10 @@ export async function createTemplateExerciseSplit(page: Page) {
 	await page.waitForURL('/exercise-splits');
 }
 
-export async function createMesocycle(page: Page) {
-	await createTemplateExerciseSplit(page);
+export async function createMesocycle(page: Page, options?: { exerciseSplitCreated: boolean }) {
+	if (!options?.exerciseSplitCreated) {
+		await createTemplateExerciseSplit(page);
+	}
 	await page.goto('/mesocycles');
 	await page.getByLabel('create-new-mesocycle').click();
 	await page.getByLabel('Mesocycle name').click();
