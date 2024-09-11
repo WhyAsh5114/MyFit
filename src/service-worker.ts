@@ -10,8 +10,8 @@ const fallbackPlugin = new PrecacheFallbackPlugin({ fallbackURL: '/offline' });
 const backgroundSyncPlugin = new BackgroundSyncPlugin('pendingRequests');
 
 function routingStrategyFunction(mode: 'networkFirst' | 'cacheFirst', request: Request, url: URL) {
-	// Ignore POST API endpoints (should be network only)
-	if (url.pathname.startsWith('/api') && request.method === 'POST') return false;
+	// Ignore all tRPC functions
+	if (url.pathname.match(/__data\.json/)) return false;
 	// Ignore /auth requests
 	if (url.pathname.startsWith('/auth')) return false;
 	// Decide whether or not asset should be cached (cacheFirstDestinations, and unplugin-icons)
@@ -32,15 +32,14 @@ self.addEventListener('message', (event) => {
 });
 
 registerRoute(
-	({ url }) => url.pathname.startsWith('/api'),
+	({ url }) => url.pathname.match(/__data\.json/),
 	new NetworkOnly({
 		plugins: [backgroundSyncPlugin],
 		networkTimeoutSeconds: 5
-	}),
-	'POST'
+	})
 );
 
-// Network first for everything except static assets, /auth, and /api
+// Network first for everything except static assets and /auth
 registerRoute(
 	({ request, url }) => routingStrategyFunction('networkFirst', request, url),
 	new NetworkFirst({ plugins: [fallbackPlugin], networkTimeoutSeconds: 5 })
