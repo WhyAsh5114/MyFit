@@ -283,6 +283,7 @@ export const workouts = t.router({
 		];
 
 		if (!workoutOfMesocycle) {
+			await prisma.$transaction(transactionQueries);
 			return { message: 'Workout created successfully' };
 		}
 
