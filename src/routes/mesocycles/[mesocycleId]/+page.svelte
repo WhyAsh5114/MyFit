@@ -4,6 +4,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
+	import type { RouterOutputs } from '$lib/trpc/router';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import MesocycleCyclicSetChangesCharts from '../(components)/MesocycleCyclicSetChangesCharts.svelte';
@@ -13,11 +14,11 @@
 	import MesocycleSplitTab from './(components)/MesocycleSplitTab.svelte';
 	import MesocycleStats from './(components)/MesocycleStats.svelte';
 	import MesocycleVolumeTab from './(components)/MesocycleVolumeTab.svelte';
+	import MesocycleWorkoutsCharts from './(components)/MesocycleWorkoutsCharts.svelte';
 	import MesocycleWorkoutsTab from './(components)/MesocycleWorkoutsTab.svelte';
-	import type { FullMesocycle } from './+layout.server';
 
 	let { data } = $props();
-	let mesocycle: FullMesocycle | 'loading' = $state('loading');
+	let mesocycle: NonNullable<RouterOutputs['mesocycles']['findById']> | 'loading' = $state('loading');
 	let selectedTabValue = $state('basics');
 	let chartMode = $state(false);
 	const completion = $page.url.searchParams.has('completion');
@@ -75,7 +76,7 @@
 			{#if !chartMode}
 				<MesocycleWorkoutsTab {mesocycle} />
 			{:else}
-				TODO: charts that show progression
+				<MesocycleWorkoutsCharts {mesocycle} />
 			{/if}
 		</Tabs.Content>
 	</Tabs.Root>

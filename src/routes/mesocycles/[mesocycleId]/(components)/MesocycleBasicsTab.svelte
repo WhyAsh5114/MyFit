@@ -18,14 +18,14 @@
 
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { arraySum } from '$lib/utils';
-	import type { FullMesocycle } from '../+layout.server';
 	import { trpc } from '$lib/trpc/client';
 	import { toast } from 'svelte-sonner';
 	import { goto, invalidate } from '$app/navigation';
 	import { mesocycleRunes, type FullMesocycleWithoutIds } from '../../manage/mesocycleRunes.svelte';
 	import { TRPCClientError } from '@trpc/client';
+	import type { RouterOutputs } from '$lib/trpc/router';
 
-	let { mesocycle }: { mesocycle: FullMesocycle } = $props();
+	let { mesocycle }: { mesocycle: NonNullable<RouterOutputs['mesocycles']['findById']> } = $props();
 	let deleteConfirmDrawerOpen = $state(false);
 	let extractSplitConfirmDrawerOpen = $state(false);
 	let extractedExerciseSplitName = $state('');
@@ -96,7 +96,9 @@
 	}
 
 	function convertMesocycleSplitDayExerciseToExerciseSplitDayExercise(
-		exercise: FullMesocycle['mesocycleExerciseSplitDays'][number]['mesocycleSplitDayExercises'][number]
+		exercise: NonNullable<
+			RouterOutputs['mesocycles']['findById']
+		>['mesocycleExerciseSplitDays'][number]['mesocycleSplitDayExercises'][number]
 	) {
 		const {
 			sets,

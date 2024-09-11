@@ -3,15 +3,15 @@
 	import { arraySum } from '$lib/utils';
 	import { getLocalTimeZone, isSameDay, parseDate, today } from '@internationalized/date';
 	import type { DateRange } from 'bits-ui';
-	import type { FullMesocycle } from '../+layout.server';
 	import CustomRangeCalendar from './CustomRangeCalendar.svelte';
+	import type { RouterOutputs } from '$lib/trpc/router';
 
 	function dateToCalendarDate(date: Date | undefined) {
 		if (!date) date = new Date();
 		return parseDate(date.toISOString().slice(0, 10));
 	}
 
-	let { mesocycle }: { mesocycle: FullMesocycle } = $props();
+	let { mesocycle }: { mesocycle: NonNullable<RouterOutputs['mesocycles']['findById']> } = $props();
 
 	const workoutStartDates = mesocycle.workoutsOfMesocycle.map((wm) => ({
 		date: dateToCalendarDate(wm.workout.startedAt),
