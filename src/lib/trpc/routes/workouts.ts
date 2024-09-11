@@ -241,7 +241,8 @@ export const workouts = t.router({
 			workout.workoutOfMesocycle = {
 				create: {
 					mesocycleId: workoutOfMesocycle.mesocycle.id,
-					splitDayIndex: workoutOfMesocycle.splitDayIndex
+					splitDayIndex: workoutOfMesocycle.splitDayIndex,
+					workoutStatus: workoutOfMesocycle.workoutStatus
 				}
 			};
 		}
