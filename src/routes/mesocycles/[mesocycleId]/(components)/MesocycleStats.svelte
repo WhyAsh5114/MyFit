@@ -54,7 +54,7 @@
 	const setsPerformedPerMuscleGroup = $derived(getSetsPerformedPerMuscleGroup(mesocycle.workoutsOfMesocycle));
 </script>
 
-{#if mesocycle.workoutsOfMesocycle.length}
+{#if mesocycle.workoutsOfMesocycle.filter((wm) => wm.workoutStatus === null).length}
 	<div class="grid grid-cols-2 gap-1">
 		<Card.Root>
 			<Card.Header class="flex flex-row items-center justify-between space-y-0 p-4 pb-1.5">
@@ -94,14 +94,10 @@
 			</Card.Header>
 			<Card.Content class="p-4 pt-0">
 				<div class="text-2xl font-bold">
-					{convertCamelCaseToNormal(
-						performanceChangesPerMuscleGroups[performanceChangesPerMuscleGroups.length - 1].muscleGroup
-					)}
+					{convertCamelCaseToNormal(performanceChangesPerMuscleGroups.at(-1)!.muscleGroup)}
 				</div>
 				<p class="text-xs text-muted-foreground">
-					{performanceChangesPerMuscleGroups[
-						performanceChangesPerMuscleGroups.length - 1
-					].averagePercentageChange.toFixed(2)}% cyclic increase
+					{performanceChangesPerMuscleGroups.at(-1)!.averagePercentageChange.toFixed(2)}% cyclic increase
 				</p>
 			</Card.Content>
 		</Card.Root>
@@ -128,11 +124,10 @@
 			</Card.Header>
 			<Card.Content class="p-4 pt-0">
 				<div class="text-2xl font-bold">
-					{performanceChangesPerSplitDay[performanceChangesPerSplitDay.length - 1].splitDayName}
+					{performanceChangesPerSplitDay.at(-1)!.splitDayName}
 				</div>
 				<p class="text-xs text-muted-foreground">
-					{performanceChangesPerSplitDay[performanceChangesPerSplitDay.length - 1].averagePercentageChange.toFixed(2)}%
-					cyclic increase
+					{performanceChangesPerSplitDay.at(-1)!.averagePercentageChange.toFixed(2)}% cyclic increase
 				</p>
 			</Card.Content>
 		</Card.Root>
@@ -159,10 +154,10 @@
 			</Card.Header>
 			<Card.Content class="p-4 pt-0">
 				<div class="text-2xl font-bold">
-					{setsPerformedPerMuscleGroup[setsPerformedPerMuscleGroup.length - 1].muscleGroup}
+					{setsPerformedPerMuscleGroup.at(-1)!.muscleGroup}
 				</div>
 				<p class="text-xs text-muted-foreground">
-					Total: {setsPerformedPerMuscleGroup[setsPerformedPerMuscleGroup.length - 1].totalSets} sets
+					Total: {setsPerformedPerMuscleGroup.at(-1)!.totalSets} sets
 				</p>
 			</Card.Content>
 		</Card.Root>

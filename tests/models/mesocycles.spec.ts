@@ -1,5 +1,5 @@
-import { test, expect } from '../fixtures';
-import { createTemplateExerciseSplit } from './commonFunctions';
+import { expect, test } from '../fixtures';
+import { createMesocycle, createTemplateExerciseSplit } from './commonFunctions';
 
 test.beforeEach(async ({ page }) => {
 	await page.goto('/exercise-splits');
@@ -170,4 +170,69 @@ test("edit mesocycle's exercise split", async ({ page }) => {
 	).toBeVisible({ timeout: 10000 });
 	await page.getByRole('tab', { name: 'Split' }).click();
 	await expect(page.getByRole('main')).toContainText('Face pulls 4 Straight sets of 15 to 30 reps Rear delts');
+});
+
+test('extract exercise split from mesocycle', async ({ page }) => {
+	await createMesocycle(page, { exerciseSplitCreated: true });
+	await page.getByRole('link', { name: 'MyMeso' }).first().click();
+	await page.getByRole('tab', { name: 'Split' }).click();
+	await page.getByRole('button', { name: 'Edit' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('tabpanel').getByRole('list').getByRole('button').first().click();
+	await page.getByRole('menuitem', { name: 'Edit' }).click();
+	await page.getByPlaceholder('Type here or search...').fill('Lat pulldowns');
+	await page.locator('#exercise-involves-bodyweight').click();
+	await page.getByRole('button', { name: 'Edit exercise' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('button', { name: 'Save' }).click();
+
+	await page.getByLabel('mesocycle-options').click();
+	await page.getByRole('menuitem', { name: 'Extract split' }).click();
+	await page.getByPlaceholder('Type here').fill('MyMeso exercise split');
+	await page.getByRole('button', { name: 'Yes, extract' }).click();
+	await expect(page.getByRole('status').filter({ hasText: 'Exercise split created successfully' })).toBeVisible();
+	await page.getByRole('link', { name: 'Exercise splits' }).click();
+	await page.getByRole('link', { name: 'MyMeso exercise split 7 days' }).click();
+	await page.getByRole('tab', { name: 'Exercises' }).click();
+	await expect(page.getByRole('tabpanel')).toContainText(
+		'Pull A Day 1 Lat pulldowns Straight sets of 5 to 15 reps Lats Barbell rows Straight sets of 10 to 15 reps Traps Dumbbell bicep curls Straight sets of 10 to 20 reps Biceps Face pulls Straight sets of 15 to 30 reps Rear delts'
+	);
+});
+
+test('complete a mesocycle', async ({ page }) => {
+	await page.getByLabel('create-new-mesocycle').click();
+	await page.getByLabel('Mesocycle name').fill('MyMeso');
+	await page.getByLabel('Mesocycle duration').fill('1');
+	await page.getByRole('combobox').click();
+	await page.getByRole('option', { name: '0 RIR' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByText('Pick one').click();
+	await page.getByRole('option', { name: 'Pull Push Legs' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByLabel('Start immediately').click();
+	await page.getByRole('button', { name: 'Save' }).click();
+	await page.waitForURL('/mesocycles');
+
+	await page.getByRole('link', { name: 'Workouts' }).click();
+	await page.getByLabel('create-workout').click();
+	await page.getByPlaceholder('Type here').fill('70');
+	await page.getByRole('button', { name: 'Skip' }).click();
+	await expect(page.getByRole('paragraph')).toContainText('Day 2, Cycle 1');
+	await page.getByRole('button', { name: 'Skip' }).click();
+	await expect(page.getByRole('paragraph')).toContainText('Day 3, Cycle 1');
+	await page.getByRole('button', { name: 'Skip' }).click();
+	await expect(page.getByRole('paragraph')).toContainText('Day 4, Cycle 1');
+	await page.getByRole('button', { name: 'Skip' }).click();
+	await expect(page.getByRole('paragraph')).toContainText('Day 5, Cycle 1');
+	await page.getByRole('button', { name: 'Skip' }).click();
+	await expect(page.getByRole('paragraph')).toContainText('Day 6, Cycle 1');
+	await page.getByRole('button', { name: 'Skip' }).click();
+	await page.getByRole('button', { name: 'Complete' }).click();
+
+	await page.waitForURL(/\/mesocycles\/[a-zA-Z0-9]+(\?completion)/);
+	await expect(page.getByRole('dialog')).toContainText(
+		'Congratulations! 🎉 You have successfully completed this mesocycle'
+	);
+	await expect(page.getByRole('tabpanel')).toContainText('Completed');
 });

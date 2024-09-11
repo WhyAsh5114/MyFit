@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
@@ -11,18 +13,22 @@
 	import MesocycleSplitTab from './(components)/MesocycleSplitTab.svelte';
 	import MesocycleStats from './(components)/MesocycleStats.svelte';
 	import MesocycleVolumeTab from './(components)/MesocycleVolumeTab.svelte';
-	import type { FullMesocycle } from './+layout.server';
 	import MesocycleWorkoutsTab from './(components)/MesocycleWorkoutsTab.svelte';
+	import type { FullMesocycle } from './+layout.server';
 
 	let { data } = $props();
 	let mesocycle: FullMesocycle | 'loading' = $state('loading');
 	let selectedTabValue = $state('basics');
 	let chartMode = $state(false);
+	const completion = $page.url.searchParams.has('completion');
 
 	onMount(async () => {
 		const serverMesocycle = await data.mesocycle;
-		if (serverMesocycle) mesocycle = serverMesocycle;
-		else toast.error('Mesocycle not found');
+		if (serverMesocycle) {
+			mesocycle = serverMesocycle;
+		} else {
+			toast.error('Mesocycle not found');
+		}
 	});
 </script>
 
@@ -74,3 +80,10 @@
 		</Tabs.Content>
 	</Tabs.Root>
 {/if}
+
+<ResponsiveDialog
+	description="You have successfully completed this mesocycle"
+	needTrigger={false}
+	open={completion}
+	title="Congratulations! 🎉"
+></ResponsiveDialog>

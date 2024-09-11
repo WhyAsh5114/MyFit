@@ -32,18 +32,24 @@
 		{#if wm}
 			<Card.Header>
 				<Card.Title class="flex items-center justify-between">
-					{wm?.splitDayName}
-					<Badge variant="secondary">{getRIRForWeek(wm?.mesocycle.RIRProgression, wm?.cycleNumber)} RIR</Badge>
+					{#if wm.workoutStatus !== 'RestDay'}
+						{wm.splitDayName}
+						<Badge variant="secondary">{getRIRForWeek(wm.mesocycle.RIRProgression, wm.cycleNumber)} RIR</Badge>
+					{:else}
+						<span class="text-primary">Rest</span>
+					{/if}
 				</Card.Title>
 				<Card.Description>{wm?.mesocycle.name}</Card.Description>
 			</Card.Header>
-			<Card.Content>
-				{#await pastWorkouts}
-					<Skeleton class="h-40 w-full" />
-				{:then pastWorkouts}
-					<WorkoutProgressionChart {pastWorkouts} workoutOfMesocycle={wm} />
-				{/await}
-			</Card.Content>
+			{#if wm.workoutStatus !== 'RestDay'}
+				<Card.Content>
+					{#await pastWorkouts}
+						<Skeleton class="h-40 w-full" />
+					{:then pastWorkouts}
+						<WorkoutProgressionChart {pastWorkouts} workoutOfMesocycle={wm} />
+					{/await}
+				</Card.Content>
+			{/if}
 			<Card.Footer>
 				<Button class="ml-auto gap-2" href="/workouts/manage/start">
 					Start
