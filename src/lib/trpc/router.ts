@@ -3,11 +3,13 @@ import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { exerciseSplits } from './routes/exerciseSplits';
 import { mesocycles } from './routes/mesocycles';
 import { workouts } from './routes/workouts';
+import { users } from './routes/users';
 
 export const router = t.router({
 	exerciseSplits,
 	mesocycles,
-	workouts
+	workouts,
+	users
 });
 
 export const createCaller = t.createCallerFactory(router);
