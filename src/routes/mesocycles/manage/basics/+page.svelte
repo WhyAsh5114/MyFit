@@ -13,7 +13,7 @@
 	import { goto } from '$app/navigation';
 
 	let manualDragging = false;
-	let panes: PaneAPI[] = [];
+	let panes: PaneAPI[] = $state([]);
 
 	let RIRProgression = $state(structuredClone($state.snapshot(mesocycleRunes.mesocycle.RIRProgression)));
 	let totalDuration = $state(arraySum(mesocycleRunes.mesocycle.RIRProgression));
