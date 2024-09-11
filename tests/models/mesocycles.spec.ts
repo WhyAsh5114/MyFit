@@ -42,8 +42,8 @@ test('create a mesocycle', async ({ page }) => {
 	);
 
 	await page.getByRole('tab', { name: 'Volume' }).click();
-	await expect(page.locator('tbody')).toContainText('50');
-	await expect(page.locator('tbody')).toContainText('2');
+	await expect(page.getByTestId('mesocycle-volume-table-body')).toContainText('50');
+	await expect(page.getByTestId('mesocycle-volume-table-body')).toContainText('2');
 });
 
 test('delete a mesocycle', async ({ page }) => {
@@ -106,8 +106,8 @@ test('edit a mesocycle', async ({ page }) => {
 		'RIR progression 10 cycles 3 2 1 0 Start exercise template Pull Push Legs Preferred progression variable Load Start overload percentage 1.25% Last set to failure Force RIR matching'
 	);
 	await page.getByRole('tab', { name: 'Volume' }).click();
-	await expect(page.locator('tbody')).toContainText('45');
-	await expect(page.locator('tbody')).toContainText('3');
+	await expect(page.getByTestId('mesocycle-volume-table-body')).toContainText('45');
+	await expect(page.getByTestId('mesocycle-volume-table-body')).toContainText('3');
 });
 
 test('start and stop a mesocycle', async ({ page }) => {

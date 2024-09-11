@@ -19,7 +19,7 @@
 				<Table.Head>Regardless of progress</Table.Head>
 			</Table.Row>
 		</Table.Header>
-		<Table.Body>
+		<Table.Body data-testid="mesocycle-volume-table-body">
 			{#each cyclicSetChanges as setChange}
 				<Table.Row>
 					<Table.Cell class="font-medium">
