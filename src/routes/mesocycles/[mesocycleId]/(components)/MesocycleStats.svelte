@@ -52,8 +52,6 @@
 	const performanceChangesPerSplitDay = $derived(generatePerformanceChangesPerSplitDay(mesocycle));
 
 	const setsPerformedPerMuscleGroup = $derived(getSetsPerformedPerMuscleGroup(mesocycle.workoutsOfMesocycle));
-
-	console.log(mesocycle.workoutsOfMesocycle);
 </script>
 
 {#if mesocycle.workoutsOfMesocycle.filter((wm) => wm.workoutStatus === null).length}
