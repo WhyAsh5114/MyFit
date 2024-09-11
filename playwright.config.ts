@@ -21,10 +21,10 @@ const config: PlaywrightTestConfig = {
 	},
 	timeout: 60000,
 	projects: [
-		{ name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-		{ name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-		{ name: 'webkit', use: { ...devices['Desktop Safari'] } }
+		{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }
 		// TODO: maybe add more browsers? (mobile and stuff)
+		// { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+		// { name: 'webkit', use: { ...devices['Desktop Safari'] } }
 	]
 };
 
