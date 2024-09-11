@@ -7,7 +7,7 @@
 	import TodaysWorkoutCard from './(components)/page/TodaysWorkoutCard.svelte';
 
 	let { data } = $props();
-	let entityCounts: RouterOutputs['users']['getEntityCounts'] | 'loading' = $state('loading');
+	let entityCounts: RouterOutputs['users']['getEntityCounts'] | undefined = $state(undefined);
 
 	onMount(async () => {
 		if (data.entityCounts === undefined) {
@@ -19,14 +19,9 @@
 </script>
 
 <H2>Home</H2>
+<GetStartedComponent {entityCounts} />
 
 {#if data.todaysWorkoutData}
 	<H3>Today's workout</H3>
 	<TodaysWorkoutCard {...data} />
-{/if}
-
-{#if entityCounts === 'loading'}
-	TODO: skeletons
-{:else}
-	<GetStartedComponent {entityCounts} />
 {/if}
