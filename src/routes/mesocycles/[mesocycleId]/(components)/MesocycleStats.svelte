@@ -6,7 +6,6 @@
 		generatePerformanceChangesPerSplitDay,
 		getSetsPerformedPerMuscleGroup
 	} from '$lib/utils/mesocycleUtils';
-	import type { FullMesocycle } from '../+layout.server';
 	import CircleCheck from 'virtual:icons/lucide/circle-check';
 	import CircleX from 'virtual:icons/lucide/circle-X';
 	import BicepsFlexed from 'virtual:icons/lucide/biceps-flexed';
@@ -15,8 +14,9 @@
 	import CalendarArrowDown from 'virtual:icons/lucide/calendar-arrow-down';
 	import ChartColumnIncreasing from 'virtual:icons/lucide/chart-column-increasing';
 	import ChartColumnDecreasing from 'virtual:icons/lucide/chart-column-decreasing';
+	import type { RouterOutputs } from '$lib/trpc/router';
 
-	let { mesocycle }: { mesocycle: FullMesocycle } = $props();
+	let { mesocycle }: { mesocycle: NonNullable<RouterOutputs['mesocycles']['findById']> } = $props();
 
 	const totalWorkoutsOfMesocycle = $derived(mesocycle.workoutsOfMesocycle.length);
 	const totalMesocycleLength = $derived(

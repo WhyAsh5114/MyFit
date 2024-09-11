@@ -122,6 +122,11 @@
 	});
 </script>
 
+<canvas
+	bind:this={chartCanvas}
+	class={cn('my-4 max-h-96', { 'max-h-56': selectedChartType.value === 'Bodyweight & weighted' })}
+></canvas>
+
 <Select.Root bind:selected={selectedChartType}>
 	<Select.Label class="mb-0.5 p-0">Chart type</Select.Label>
 	<Select.Trigger class="w-full">
@@ -133,8 +138,3 @@
 		{/each}
 	</Select.Content>
 </Select.Root>
-
-<canvas
-	bind:this={chartCanvas}
-	class={cn('my-4 max-h-96', { 'max-h-56': selectedChartType.value === 'Bodyweight & weighted' })}
-></canvas>

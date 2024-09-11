@@ -10,8 +10,9 @@
 
 	type PropsType = {
 		todaysWorkoutData: Promise<RouterOutputs['workouts']['getTodaysWorkoutData']>;
+		pastWorkouts: Promise<RouterOutputs['mesocycles']['getWorkouts']>;
 	};
-	let { todaysWorkoutData }: PropsType = $props();
+	let { todaysWorkoutData, pastWorkouts }: PropsType = $props();
 </script>
 
 <Card.Root>
@@ -42,7 +43,11 @@
 			</Card.Header>
 			{#if wm.workoutStatus !== 'RestDay'}
 				<Card.Content>
-					<WorkoutProgressionChart workoutOfMesocycle={wm} />
+					{#await pastWorkouts}
+						<Skeleton class="h-40 w-full" />
+					{:then pastWorkouts}
+						<WorkoutProgressionChart {pastWorkouts} />
+					{/await}
 				</Card.Content>
 			{/if}
 			<Card.Footer>

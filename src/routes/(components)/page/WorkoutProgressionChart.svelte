@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { trpc } from '$lib/trpc/client';
 	import type { RouterOutputs } from '$lib/trpc/router';
 	import { getWorkoutVolume } from '$lib/utils/workoutUtils';
 	import {
@@ -14,29 +13,23 @@
 		Title,
 		Tooltip
 	} from 'chart.js';
-	import { onMount } from 'svelte';
 	Chart.register(Tooltip, CategoryScale, LineController, LineElement, PointElement, Filler, LinearScale, Title, Legend);
 
-	type PropsType = { workoutOfMesocycle: RouterOutputs['workouts']['getTodaysWorkoutData']['workoutOfMesocycle'] };
-	let { workoutOfMesocycle }: PropsType = $props();
+	type PropsType = { pastWorkouts: RouterOutputs['mesocycles']['getWorkouts'] };
+	let { pastWorkouts }: PropsType = $props();
 
+	let chart: Chart;
 	let chartCanvas: HTMLCanvasElement | undefined = $state();
-	let pastWorkouts: 'loading' | RouterOutputs['mesocycles']['getPastWorkouts'] = $state('loading');
 
-	onMount(async () => {
-		if (workoutOfMesocycle === undefined || chartCanvas === undefined) return;
-
-		// TODO: not ideal, should fetch during render, not after...
-		pastWorkouts = await trpc().mesocycles.getPastWorkouts.query({
-			mesocycleId: workoutOfMesocycle?.mesocycle.id,
-			splitDayIndex: workoutOfMesocycle?.splitDayIndex
-		});
+	$effect(() => {
+		if (chartCanvas === undefined) return;
+		if (chart) chart.destroy();
 
 		const style = getComputedStyle(document.body);
 		const primaryColor = style.getPropertyValue('--primary').split(' ').join(', ');
 		const secondaryColor = style.getPropertyValue('--secondary').split(' ').join(', ');
 
-		new Chart(chartCanvas, {
+		chart = new Chart(chartCanvas, {
 			type: 'line',
 			data: {
 				labels: pastWorkouts.map((workout) =>
@@ -59,7 +52,4 @@
 	});
 </script>
 
-{#if pastWorkouts === 'loading'}
-	TODO: chart skeleton
-{:else}{/if}
-<canvas bind:this={chartCanvas} class="h-20"></canvas>
+<canvas bind:this={chartCanvas} height="160"></canvas>

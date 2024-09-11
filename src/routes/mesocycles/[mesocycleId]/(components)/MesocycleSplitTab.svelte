@@ -3,17 +3,13 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import EditIcon from 'virtual:icons/lucide/pencil';
-	import type { FullMesocycle } from '../+layout.server';
 	import ExerciseTemplateCard from '$lib/components/mesocycleAndExerciseSplit/ExerciseTemplateCard.svelte';
 	import { mesocycleExerciseSplitRunes } from '../edit-split/mesocycleExerciseSplitRunes.svelte';
 	import { goto } from '$app/navigation';
+	import type { RouterOutputs } from '$lib/trpc/router';
 
-	type MesocycleSplitDay = FullMesocycle['mesocycleExerciseSplitDays'][number];
-	let { mesocycle }: { mesocycle: FullMesocycle } = $props();
-
-	let selectedSplitDay = $state(
-		mesocycle.mesocycleExerciseSplitDays.find((splitDay) => !splitDay.isRestDay) as MesocycleSplitDay
-	);
+	let { mesocycle }: { mesocycle: NonNullable<RouterOutputs['mesocycles']['findById']> } = $props();
+	let selectedSplitDay = $state(mesocycle.mesocycleExerciseSplitDays.find((splitDay) => !splitDay.isRestDay)!);
 
 	function editMesocycleExerciseSplit() {
 		mesocycleExerciseSplitRunes.loadExerciseSplit(mesocycle);
@@ -30,9 +26,7 @@
 <Tabs.Root
 	class="w-full"
 	onValueChange={(v) => {
-		selectedSplitDay = mesocycle.mesocycleExerciseSplitDays.find(
-			(splitDay) => splitDay.name === v
-		) as MesocycleSplitDay;
+		selectedSplitDay = mesocycle.mesocycleExerciseSplitDays.find((splitDay) => splitDay.name === v)!;
 	}}
 	value={selectedSplitDay.name}
 >

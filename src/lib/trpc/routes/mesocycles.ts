@@ -10,7 +10,7 @@ import {
 	MesocycleUncheckedCreateWithoutUserInputSchema,
 	MesocycleUpdateInputSchema
 } from '$lib/zodSchemas';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import cuid from 'cuid';
 import { TRPCError } from '@trpc/server';
 
@@ -223,12 +223,31 @@ export const mesocycles = t.router({
 		return { message: 'Mesocycle exercise split edited successfully' };
 	}),
 
-	getPastWorkouts: t.procedure
-		.input(z.strictObject({ splitDayIndex: z.number(), mesocycleId: z.string().cuid() }))
-		.query(async ({ ctx, input }) => {
-			return await prisma.workout.findMany({
-				where: { workoutOfMesocycle: input, userId: ctx.userId },
-				include: { workoutExercises: { include: { sets: { include: { miniSets: true } } } } }
-			});
-		})
+	getWorkouts: t.procedure.input(z.enum(['nextSplitDay', 'allSplitDays'])).query(async ({ ctx, input }) => {
+		const includeClause = Prisma.validator<Prisma.WorkoutInclude>()({
+			workoutExercises: { include: { sets: { include: { miniSets: true } } } }
+		});
+
+		if (input === 'allSplitDays') {
+			return await prisma.workout.findMany({ where: { userId: ctx.userId }, include: includeClause });
+		}
+
+		const activeMesocycle = await prisma.mesocycle.findFirst({
+			where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
+			select: {
+				id: true,
+				_count: { select: { mesocycleExerciseSplitDays: true, workoutsOfMesocycle: true } }
+			}
+		});
+		if (!activeMesocycle) return [];
+
+		const totalWorkouts = activeMesocycle._count.workoutsOfMesocycle;
+		const splitLength = activeMesocycle._count.mesocycleExerciseSplitDays;
+		const splitDayIndex = totalWorkouts % splitLength;
+
+		return await prisma.workout.findMany({
+			where: { workoutOfMesocycle: { mesocycleId: activeMesocycle.id, splitDayIndex }, userId: ctx.userId },
+			include: includeClause
+		});
+	})
 });
