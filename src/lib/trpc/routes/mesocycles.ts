@@ -10,7 +10,7 @@ import {
 	MesocycleUncheckedCreateWithoutUserInputSchema,
 	MesocycleUpdateInputSchema
 } from '$lib/zodSchemas';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import cuid from 'cuid';
 import { TRPCError } from '@trpc/server';
 
@@ -223,7 +223,15 @@ export const mesocycles = t.router({
 		return { message: 'Mesocycle exercise split edited successfully' };
 	}),
 
-	getPastWorkoutsForTodaysSplitDay: t.procedure.query(async ({ ctx }) => {
+	getWorkouts: t.procedure.input(z.enum(['nextSplitDay', 'allSplitDays'])).query(async ({ ctx, input }) => {
+		const includeClause = Prisma.validator<Prisma.WorkoutInclude>()({
+			workoutExercises: { include: { sets: { include: { miniSets: true } } } }
+		});
+
+		if (input === 'allSplitDays') {
+			return await prisma.workout.findMany({ where: { userId: ctx.userId }, include: includeClause });
+		}
+
 		const activeMesocycle = await prisma.mesocycle.findFirst({
 			where: { userId: ctx.userId, startDate: { not: null }, endDate: null },
 			select: {
@@ -239,7 +247,7 @@ export const mesocycles = t.router({
 
 		return await prisma.workout.findMany({
 			where: { workoutOfMesocycle: { mesocycleId: activeMesocycle.id, splitDayIndex }, userId: ctx.userId },
-			include: { workoutExercises: { include: { sets: { include: { miniSets: true } } } } }
+			include: includeClause
 		});
 	})
 });

@@ -13,6 +13,6 @@ export const load = async (event) => {
 
 	return {
 		todaysWorkoutData: trpc.workouts.getTodaysWorkoutData(),
-		pastWorkouts: trpc.mesocycles.getPastWorkoutsForTodaysSplitDay()
+		pastWorkouts: trpc.mesocycles.getWorkouts('nextSplitDay')
 	};
 };

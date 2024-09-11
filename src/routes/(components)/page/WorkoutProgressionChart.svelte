@@ -16,16 +16,13 @@
 	import { onMount } from 'svelte';
 	Chart.register(Tooltip, CategoryScale, LineController, LineElement, PointElement, Filler, LinearScale, Title, Legend);
 
-	type PropsType = {
-		workoutOfMesocycle: RouterOutputs['workouts']['getTodaysWorkoutData']['workoutOfMesocycle'];
-		pastWorkouts: RouterOutputs['mesocycles']['getPastWorkoutsForTodaysSplitDay'];
-	};
-	let { workoutOfMesocycle, pastWorkouts }: PropsType = $props();
+	type PropsType = { pastWorkouts: RouterOutputs['mesocycles']['getWorkouts'] };
+	let { pastWorkouts }: PropsType = $props();
 
 	let chartCanvas: HTMLCanvasElement | undefined = $state();
 
 	onMount(async () => {
-		if (workoutOfMesocycle === undefined || chartCanvas === undefined) return;
+		if (chartCanvas === undefined) return;
 
 		const style = getComputedStyle(document.body);
 		const primaryColor = style.getPropertyValue('--primary').split(' ').join(', ');
