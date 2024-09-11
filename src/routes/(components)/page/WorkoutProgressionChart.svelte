@@ -13,22 +13,23 @@
 		Title,
 		Tooltip
 	} from 'chart.js';
-	import { onMount } from 'svelte';
 	Chart.register(Tooltip, CategoryScale, LineController, LineElement, PointElement, Filler, LinearScale, Title, Legend);
 
 	type PropsType = { pastWorkouts: RouterOutputs['mesocycles']['getWorkouts'] };
 	let { pastWorkouts }: PropsType = $props();
 
+	let chart: Chart;
 	let chartCanvas: HTMLCanvasElement | undefined = $state();
 
-	onMount(async () => {
+	$effect(() => {
 		if (chartCanvas === undefined) return;
+		if (chart) chart.destroy();
 
 		const style = getComputedStyle(document.body);
 		const primaryColor = style.getPropertyValue('--primary').split(' ').join(', ');
 		const secondaryColor = style.getPropertyValue('--secondary').split(' ').join(', ');
 
-		new Chart(chartCanvas, {
+		chart = new Chart(chartCanvas, {
 			type: 'line',
 			data: {
 				labels: pastWorkouts.map((workout) =>
