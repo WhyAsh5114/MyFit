@@ -262,3 +262,49 @@ test('create workout without using active mesocycle', async ({ page }) => {
 		'Barbell bench press 2 Down sets of 5 to 10 reps Chest Reps Load RIR 1 9 100 2 2 8 95 1'
 	);
 });
+
+test('skip a workout', async ({ page }) => {
+	await createMesoForTest(page);
+	await page.getByLabel('create-workout').click();
+	await page.getByPlaceholder('Type here').fill('100');
+	await page.getByRole('button', { name: 'Skip' }).click();
+	await expect(page.getByRole('status')).toContainText('Workout skipped successfully');
+	await page.getByRole('link', { name: 'Workouts' }).click();
+
+	const todaysDateString = new Date().toLocaleDateString(undefined, { month: 'long', day: '2-digit' });
+	await expect(page.getByRole('main')).toContainText(`${todaysDateString} Pull A (skipped)`);
+});
+
+test('delete a workout', async ({ page }) => {
+  await page.getByLabel('create-workout').click();
+  await page.getByPlaceholder('Type here').fill('100');
+  await page.getByRole('button', { name: 'Next' }).click();
+
+  await page.getByTestId('Pull-ups-menu-button').click();
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
+  await page.getByTestId('Barbell rows-menu-button').click();
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
+  await page.getByTestId('Dumbbell bicep curls-menu-button').click();
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
+
+  await page.locator('[id="Face\\ pulls-set-1-reps"]').fill('5');
+  await page.locator('[id="Face\\ pulls-set-2-reps"]').fill('5');
+  await page.locator('[id="Face\\ pulls-set-3-reps"]').fill('5');
+  await page.locator('[id="Face\\ pulls-set-1-load"]').fill('5');
+  await page.getByTestId('Face pulls-set-1-action').click();
+  await page.getByTestId('Face pulls-set-2-action').click();
+  await page.getByTestId('Face pulls-set-3-action').click();
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('button', { name: 'Save' }).click();
+
+  await page.getByLabel('create-workout').click();
+  await expect(page.getByRole('main')).toContainText('Push A Day 2, Cycle 1 ChestTricepsSide delts');
+  await page.getByRole('link', { name: 'Workouts' }).click();
+  await page.getByRole('link', { name: 'September 11 Pull A' }).click();
+  await page.getByLabel('workout-options').click();
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
+  await page.getByRole('button', { name: 'Yes, delete' }).click();
+  await expect(page.getByRole('status')).toContainText('Workout deleted successfully');
+  await page.getByLabel('create-workout').click();
+  await expect(page.getByRole('main')).toContainText('Pull A Day 1, Cycle 1 LatsTrapsBicepsRear delts');
+});
