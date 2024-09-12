@@ -1,7 +1,9 @@
 import { test, expect, type Page } from '../fixtures';
 import { createMesocycle } from './commonFunctions';
 
-const todaysDateString = new Date().toLocaleDateString(undefined, { month: 'long', day: '2-digit' });
+function getTodaysDateString() {
+	return new Date().toLocaleDateString(undefined, { month: 'long', day: '2-digit' });
+}
 
 async function createMesoForTest(page: Page) {
 	await page.goto('/exercise-splits');
@@ -32,7 +34,7 @@ test('create workout', async ({ page }) => {
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 	await expect(page.getByRole('status')).toContainText('Workout created successfully');
-	await page.getByRole('link', { name: `${todaysDateString}` }).click();
+	await page.getByRole('link', { name: `${getTodaysDateString()}` }).click();
 	await expect(page.getByRole('tabpanel')).toContainText('Mesocycle No mesocycle User bodyweight 100');
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
@@ -91,7 +93,7 @@ test('create workout with all set types', async ({ page }) => {
 	await page.getByLabel('Sets').fill('2');
 	await page.locator('button').filter({ hasText: 'Straight' }).click();
 	await page.getByRole('option', { name: 'Drop' }).click();
-	await page.locator('button').filter({ hasText: 'Percentage' }).click();
+	await page.locator('button').filter({ hasText: 'Pick one' }).click();
 	await page.getByRole('option', { name: 'Absolute load' }).click();
 	await page.locator('#exercise-set-decrement').fill('5');
 	await page.getByRole('button', { name: 'Add exercise' }).click();
@@ -151,7 +153,7 @@ test('create workout with all set types', async ({ page }) => {
 	await page.getByTestId('Leg press-set-2-action').click();
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
-	await page.getByRole('link', { name: `${todaysDateString}` }).click();
+	await page.getByRole('link', { name: `${getTodaysDateString()}` }).click();
 	await expect(page.getByRole('tabpanel')).toContainText('Mesocycle No mesocycle User bodyweight 100');
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('main')).toContainText(
@@ -204,7 +206,7 @@ test('create a workout with active mesocycle', async ({ page }) => {
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 	await expect(page.getByRole('status')).toContainText('Workout created successfully');
-	await page.getByRole('link', { name: `${todaysDateString} Pull A` }).click();
+	await page.getByRole('link', { name: `${getTodaysDateString()} Pull A` }).click();
 	await expect(page.getByRole('tabpanel')).toContainText('Mesocycle MyMeso Pull A User bodyweight 100');
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
@@ -240,7 +242,7 @@ test('create workout without using active mesocycle', async ({ page }) => {
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 	await expect(page.getByRole('status')).toContainText('Workout created successfully');
-	await page.getByRole('link', { name: `${todaysDateString}` }).click();
+	await page.getByRole('link', { name: `${getTodaysDateString()}` }).click();
 	await expect(page.getByRole('tabpanel')).toContainText('Mesocycle No mesocycle User bodyweight 100');
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
@@ -255,7 +257,7 @@ test('skip a workout', async ({ page }) => {
 	await page.getByRole('button', { name: 'Skip' }).click();
 	await expect(page.getByRole('status')).toContainText('Workout skipped successfully');
 	await page.getByRole('link', { name: 'Workouts' }).click();
-	await expect(page.getByRole('main')).toContainText(`${todaysDateString} Pull A (skipped)`);
+	await expect(page.getByRole('main')).toContainText(`${getTodaysDateString()} Pull A (skipped)`);
 });
 
 test('delete a workout', async ({ page }) => {
@@ -284,7 +286,7 @@ test('delete a workout', async ({ page }) => {
 	await page.getByLabel('create-workout').click();
 	await expect(page.getByRole('main')).toContainText('Push A Day 2, Cycle 1 ChestTricepsSide delts');
 	await page.getByRole('link', { name: 'Workouts' }).click();
-	await page.getByRole('link', { name: 'September 11 Pull A' }).click();
+	await page.getByRole('link', { name: `${getTodaysDateString()} Pull A` }).click();
 	await page.getByLabel('workout-options').click();
 	await page.getByRole('menuitem', { name: 'Delete' }).click();
 	await page.getByRole('button', { name: 'Yes, delete' }).click();
@@ -314,7 +316,7 @@ test('edit a workout', async ({ page }) => {
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 
-	await page.getByRole('link', { name: 'September 11 Pull A' }).click();
+	await page.getByRole('link', { name: `${getTodaysDateString()} Pull A` }).click();
 	await page.getByLabel('workout-options').click();
 	await page.getByRole('menuitem', { name: 'Edit' }).click();
 	await page.getByPlaceholder('Type here').fill('95');
@@ -325,7 +327,7 @@ test('edit a workout', async ({ page }) => {
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
 
-	await page.getByRole('link', { name: 'September 11 Pull A' }).click();
+	await page.getByRole('link', { name: `${getTodaysDateString()} Pull A` }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
 		'Mesocycle MyMeso Pull A User bodyweight 95 Targeted muscle groups Lats'
 	);
