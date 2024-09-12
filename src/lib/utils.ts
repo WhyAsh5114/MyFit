@@ -102,7 +102,7 @@ export function averagePercentageChange(arr: number[]): number {
 	return totalPercentageChange / numberOfIncrements;
 }
 
-export function convertCamelCaseToNormal(text?: string): string {
+export function convertCamelCaseToNormal(text?: string | null): string {
 	if (!text) return '';
 	return text
 		.replace(/([a-z])([A-Z])/g, '$1 $2')

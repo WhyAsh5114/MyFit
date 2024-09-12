@@ -74,7 +74,7 @@
 	}
 
 	function getNextLoad(setIdx: number) {
-		if (!['Top', 'Down'].includes(exercise.setType)) return;
+		if (!['Down'].includes(exercise.setType)) return;
 		if (typeof exercise.sets[0].load !== 'number') return;
 		return floorToNearestMultiple(calculateNextLoad(setIdx), exercise.minimumWeightChange ?? 5).toString();
 	}
@@ -190,8 +190,6 @@
 						type="number"
 						bind:value={set.load}
 					/>
-				{:else if exercise.setType === 'MyorepMatch'}
-					<span></span>
 				{:else}
 					<span></span>
 				{/if}

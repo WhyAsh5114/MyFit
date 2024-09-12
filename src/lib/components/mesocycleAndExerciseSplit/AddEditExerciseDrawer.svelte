@@ -279,8 +279,8 @@
 						}}
 						required
 						selected={{
-							value: currentExercise.changeType ?? 'Percentage',
-							label: currentExercise.changeType ? convertCamelCaseToNormal(currentExercise.changeType) : 'Percentage'
+							value: currentExercise.changeType,
+							label: convertCamelCaseToNormal(currentExercise.changeType)
 						}}
 					>
 						<Select.Label class="p-0 text-sm font-medium leading-none">Load change type</Select.Label>
@@ -300,6 +300,7 @@
 						id="exercise-set-decrement"
 						placeholder="Type here"
 						required
+						step={0.5}
 						type="number"
 						bind:value={currentExercise.changeAmount}
 					/>
