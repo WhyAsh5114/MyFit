@@ -103,7 +103,6 @@
 		const {
 			sets,
 			mesocycleExerciseSplitDayId,
-			preferredProgressionVariable,
 			overloadPercentage,
 			lastSetToFailure,
 			forceRIRMatching,
@@ -220,12 +219,6 @@
 			{:else}
 				<span class="font-semibold text-red-500">Deleted</span>
 			{/if}
-		</div>
-		<div class="flex flex-col">
-			<span class="text-sm text-muted-foreground">Preferred progression variable</span>
-			<span class="font-semibold capitalize">
-				{mesocycle.preferredProgressionVariable}
-			</span>
 		</div>
 		<div class="flex flex-col">
 			<span class="text-sm text-muted-foreground">Start overload percentage</span>
