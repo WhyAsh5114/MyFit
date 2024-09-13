@@ -98,12 +98,12 @@
 </div>
 <Button form="exercise-split-structure-form" type="submit">Next</Button>
 
-<ResponsiveDialog needTrigger={false} title="Warning" bind:open={warningDialogOpen}>
-	<p>
+<ResponsiveDialog title="Warning" bind:open={warningDialogOpen}>
+	{#snippet description()}
 		You'll lose exercise data from the following days:
 		<span class="font-semibold text-yellow-500">
 			{dataLossDays.map((day) => `Day ${day + 1}`).join(', ')}
 		</span>. Continue?
-	</p>
+	{/snippet}
 	<Button onclick={() => submitStructure(true)} variant="destructive">Continue</Button>
 </ResponsiveDialog>

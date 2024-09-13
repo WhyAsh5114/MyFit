@@ -23,13 +23,13 @@
 	}
 </script>
 
-<ResponsiveDialog needTrigger={false} title="Swap exercises" bind:open>
-	<p>
+<ResponsiveDialog title="Swap exercises" bind:open>
+	{#snippet description()}
 		Swap <span class="font-semibold">
 			{splitDays[selectedSplitDayIndex].name}
 			<span class="text-muted-foreground">(Day {selectedSplitDayIndex + 1})</span>
 		</span> exercises with:
-	</p>
+	{/snippet}
 	<form class="flex w-full gap-2" onsubmit={startSwap}>
 		<Select.Root required bind:selected={swapExercisesFrom}>
 			<Select.Trigger class="grow">

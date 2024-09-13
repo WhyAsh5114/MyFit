@@ -258,7 +258,7 @@
 	{/if}
 </Card.Root>
 
-<ResponsiveDialog needTrigger={false} title="Are you sure?" bind:open={deleteConfirmDrawerOpen}>
+<ResponsiveDialog title="Are you sure?" bind:open={deleteConfirmDrawerOpen}>
 	<p>
 		Delete mesocycle <span class="font-semibold">{mesocycle.name}</span>? This action cannot be undone.
 	</p>
@@ -271,12 +271,10 @@
 	</Button>
 </ResponsiveDialog>
 
-<ResponsiveDialog
-	description="Extract the mesocycle's exercise split into an independent exercise split"
-	needTrigger={false}
-	title="Extract split"
-	bind:open={extractSplitConfirmDrawerOpen}
->
+<ResponsiveDialog title="Extract split" bind:open={extractSplitConfirmDrawerOpen}>
+	{#snippet description()}
+		Extract the mesocycle's exercise split into an independent exercise split
+	{/snippet}
 	<form class="contents" onsubmit={extractExerciseSplit}>
 		<div class="flex w-full max-w-sm flex-col gap-1.5">
 			<Label for="extracted-split-name">Exercise split name</Label>

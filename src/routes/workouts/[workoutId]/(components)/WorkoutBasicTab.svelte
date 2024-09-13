@@ -120,8 +120,10 @@
 	</Card.Content>
 </Card.Root>
 
-<ResponsiveDialog needTrigger={false} title="Are you sure?" bind:open={deleteConfirmDrawerOpen}>
-	<p>Delete workout? This action cannot be undone and might cause problems with analytics and progression.</p>
+<ResponsiveDialog title="Are you sure?" bind:open={deleteConfirmDrawerOpen}>
+	{#snippet description()}
+		Delete workout? This action cannot be undone.
+	{/snippet}
 	<Button class="mt-2 gap-2" disabled={callingDeleteEndpoint} onclick={deleteWorkout} variant="destructive">
 		{#if callingDeleteEndpoint}
 			<LoaderCircle class="animate-spin" />

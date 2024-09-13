@@ -197,23 +197,23 @@
 	{/if}
 {/if}
 
-<ResponsiveDialog needTrigger={false} title="Warning" bind:open={overwriteWorkoutDialogOpen}>
-	<p>
+<ResponsiveDialog title="Warning" bind:open={overwriteWorkoutDialogOpen}>
+	{#snippet description()}
 		A workout is already in progress with <span class="font-semibold"
 			>{workoutRunes.workoutExercises?.length} exercises</span
 		>, do you want to overwrite it?
-	</p>
+	{/snippet}
 	<div class="grid grid-cols-2 gap-1.5">
 		<Button onclick={() => startWorkout(true, 'keepCurrent')}>Keep current</Button>
 		<Button onclick={() => startWorkout(true, 'overwrite')} variant="destructive">Overwrite</Button>
 	</div>
 </ResponsiveDialog>
 
-<ResponsiveDialog needTrigger={false} title="Warning" bind:open={skipWorkoutWithWorkoutExercisesDialogOpen}>
-	<p>
+<ResponsiveDialog title="Warning" bind:open={skipWorkoutWithWorkoutExercisesDialogOpen}>
+	{#snippet description()}
 		A workout is already in progress with <span class="font-semibold"
 			>{workoutRunes.workoutExercises?.length} exercises</span
 		>, skipping will get rid of it.
-	</p>
+	{/snippet}
 	<Button onclick={() => completeWorkout('Skipped', true)} variant="destructive">Skip</Button>
 </ResponsiveDialog>

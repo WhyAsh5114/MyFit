@@ -82,9 +82,8 @@
 	</Tabs.Root>
 {/if}
 
-<ResponsiveDialog
-	description="You have successfully completed this mesocycle"
-	needTrigger={false}
-	open={completion}
-	title="Congratulations! 🎉"
-></ResponsiveDialog>
+<ResponsiveDialog open={completion} title="Congratulations! 🎉">
+	{#snippet description()}
+		You have successfully completed this mesocycle
+	{/snippet}
+</ResponsiveDialog>
