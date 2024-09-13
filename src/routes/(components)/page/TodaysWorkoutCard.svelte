@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import type { RouterOutputs } from '$lib/trpc/router';
 	import { getRIRForWeek } from '$lib/utils/workoutUtils';
+	import { workoutRunes } from '../../workouts/manage/workoutRunes.svelte';
 	import WorkoutProgressionChart from './WorkoutProgressionChart.svelte';
 	import ChevronRight from 'virtual:icons/lucide/chevron-right';
 
@@ -13,6 +15,11 @@
 		pastWorkouts: Promise<RouterOutputs['mesocycles']['getWorkouts']>;
 	};
 	let { todaysWorkoutData, pastWorkouts }: PropsType = $props();
+
+	function createNewWorkout() {
+		if (workoutRunes.editingWorkoutId !== null) workoutRunes.resetStores();
+		goto('/workouts/manage/start');
+	}
 </script>
 
 <Card.Root>
@@ -51,7 +58,7 @@
 				</Card.Content>
 			{/if}
 			<Card.Footer>
-				<Button class="ml-auto gap-2" href="/workouts/manage/start">
+				<Button class="ml-auto gap-2" onclick={createNewWorkout}>
 					Start
 					<ChevronRight />
 				</Button>
