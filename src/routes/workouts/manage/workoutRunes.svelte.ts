@@ -101,10 +101,10 @@ function createWorkoutRunes() {
 			exerciseToEdit.sets[i] = {
 				...historySet,
 				completed: false,
-				miniSets: historySet.miniSets.map((miniSet) => ({
-					...miniSet,
-					completed: false
-				}))
+				miniSets: historySet.miniSets.map((miniSet) => {
+					const { id, workoutExerciseSetId, ...restOfTheMiniSet } = miniSet;
+					return { ...restOfTheMiniSet, completed: false };
+				})
 			};
 		}
 

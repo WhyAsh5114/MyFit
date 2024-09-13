@@ -418,6 +418,15 @@ export function progressiveOverloadMagic(
 	});
 
 	// TODO: Add miniSets and stuff if drop / myorep match sets
+	workoutExercises.forEach((ex) => {
+		ex.sets.forEach((set) => {
+			set.miniSets = set.miniSets.map((miniSet) => {
+				const { id, ...rest } = miniSet;
+				return rest;
+			});
+		});
+	});
+
 	// TODO: Remaining overrides to implement: load first progression
 
 	return workoutExercises;
