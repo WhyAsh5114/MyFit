@@ -20,12 +20,7 @@ const config: PlaywrightTestConfig = {
 		video: 'retain-on-failure'
 	},
 	timeout: 60000,
-	projects: [
-		{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }
-		// TODO: maybe add more browsers? (mobile and stuff)
-		// { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-		// { name: 'webkit', use: { ...devices['Desktop Safari'] } }
-	]
+	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }]
 };
 
 export default config;

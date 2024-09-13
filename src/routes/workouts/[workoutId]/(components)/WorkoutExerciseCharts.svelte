@@ -11,5 +11,5 @@
 		{convertCamelCaseToNormal(workout.workoutOfMesocycle?.workoutStatus)}
 	</div>
 {:else}
-	TODO: charts
+	<!-- #86 -->
 {/if}
