@@ -33,11 +33,6 @@ enum ChangeType {
   AbsoluteLoad
 }
 
-enum ProgressionVariable {
-  Reps
-  Load
-}
-
 enum WorkoutStatus {
   Skipped
   RestDay

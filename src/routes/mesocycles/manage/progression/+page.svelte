@@ -1,24 +1,23 @@
 <script lang="ts">
-	import H3 from '$lib/components/ui/typography/H3.svelte';
+	import { goto } from '$app/navigation';
+	import InfoPopover from '$lib/components/InfoPopover.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Command from '$lib/components/ui/command/index.js';
+	import { Input } from '$lib/components/ui/input';
+	import Label from '$lib/components/ui/label/label.svelte';
+	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Slider } from '$lib/components/ui/slider/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
-	import Label from '$lib/components/ui/label/label.svelte';
-	import * as Command from '$lib/components/ui/command/index.js';
-	import * as Popover from '$lib/components/ui/popover/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
-	import { mesocycleRunes } from '../mesocycleRunes.svelte';
+	import H3 from '$lib/components/ui/typography/H3.svelte';
+	import { cn } from '$lib/utils.js';
+	import { type ExerciseSplit } from '@prisma/client';
+	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
 	import Check from 'virtual:icons/lucide/check';
 	import CaretSort from 'virtual:icons/lucide/chevrons-up-down';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-	import { cn } from '$lib/utils.js';
-	import { goto } from '$app/navigation';
-	import { ProgressionVariable, type ExerciseSplit } from '@prisma/client';
-	import { toast } from 'svelte-sonner';
-	import { Input } from '$lib/components/ui/input';
-	import { onMount } from 'svelte';
-	import InfoPopover from '$lib/components/InfoPopover.svelte';
+	import { mesocycleRunes } from '../mesocycleRunes.svelte';
 	let { data } = $props();
 
 	let searchString = $state('');
@@ -119,35 +118,6 @@
 				</Card.Title>
 			</Card.Header>
 			<Card.Content class="grid grid-cols-1 gap-5 md:grid-cols-2">
-				<Select.Root
-					onSelectedChange={(s) => {
-						if (!s) return;
-						mesocycleRunes.mesocycle.preferredProgressionVariable = s.value;
-					}}
-					selected={{
-						value: mesocycleRunes.mesocycle.preferredProgressionVariable,
-						label: mesocycleRunes.mesocycle.preferredProgressionVariable
-					}}
-				>
-					<div class="flex flex-col gap-1">
-						<Select.Label class="flex items-center justify-between p-0 font-medium">
-							Preferred progression variable
-							<InfoPopover ariaLabel="preferred-progression-variable-info">
-								Prefer adjusting this variable first when reaching the limits of the rep range
-							</InfoPopover>
-						</Select.Label>
-						<Select.Trigger id="mesocycle-progression-option">
-							<Select.Value class="capitalize" placeholder="Select" />
-						</Select.Trigger>
-						<Select.Content>
-							{#each Object.values(ProgressionVariable) as progressionOption}
-								<Select.Item class="capitalize" value={progressionOption}>
-									{progressionOption}
-								</Select.Item>
-							{/each}
-						</Select.Content>
-					</div>
-				</Select.Root>
 				{#if mesocycleRunes.editingMesocycleId === null}
 					<div class="flex w-full max-w-sm flex-col gap-1.5">
 						<Label class="flex items-center justify-between" for="distribution-min-sets-per-exercise">

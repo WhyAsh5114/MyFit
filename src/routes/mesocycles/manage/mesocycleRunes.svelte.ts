@@ -7,7 +7,6 @@ const defaultMesocycle: MesocycleWithoutIds = {
 	RIRProgression: [1, 3, 3, 3],
 	startDate: null,
 	endDate: null,
-	preferredProgressionVariable: 'Reps',
 	startOverloadPercentage: 2.5,
 	lastSetToFailure: true,
 	forceRIRMatching: true

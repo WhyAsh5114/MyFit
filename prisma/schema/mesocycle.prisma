@@ -8,7 +8,6 @@ model Mesocycle {
   RIRProgression               Int[]
   startDate                    DateTime?
   endDate                      DateTime?
-  preferredProgressionVariable ProgressionVariable
   startOverloadPercentage      Float
   lastSetToFailure             Boolean
   forceRIRMatching             Boolean
@@ -54,7 +53,6 @@ model MesocycleExerciseTemplate {
   note                         String?
   mesocycleExerciseSplitDay    MesocycleExerciseSplitDay @relation(fields: [mesocycleExerciseSplitDayId], references: [id], onDelete: Cascade)
   mesocycleExerciseSplitDayId  String
-  preferredProgressionVariable ProgressionVariable?
   overloadPercentage           Float?
   lastSetToFailure             Boolean?
   forceRIRMatching             Boolean?

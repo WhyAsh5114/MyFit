@@ -20,8 +20,6 @@ test('create a mesocycle', async ({ page }) => {
 	await page.getByRole('option', { name: 'Pull Push Legs' }).click();
 	await page.getByLabel('Take last set to failure').click();
 	await page.locator('span > .absolute').click();
-	await page.locator('#mesocycle-progression-option').click();
-	await page.getByRole('option', { name: 'Load' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
 
 	await page.getByLabel('Chest-start-volume').fill('12');
@@ -38,7 +36,7 @@ test('create a mesocycle', async ({ page }) => {
 	await page.getByRole('link', { name: 'My Mesocycle Unused' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText('My Mesocycle No dates available Unused');
 	await expect(page.getByRole('tabpanel')).toContainText(
-		'RIR progression 12 cycles 2 1 0 Start exercise template Pull Push Legs Preferred progression variable Load Start overload percentage 1.25% Last set to failure Force RIR matching'
+		'RIR progression 12 cycles 2 1 0 Start exercise template Pull Push Legs Start overload percentage 1.25% Last set to failure Force RIR matching'
 	);
 
 	await page.getByRole('tab', { name: 'Volume' }).click();
@@ -78,13 +76,12 @@ test('edit a mesocycle', async ({ page }) => {
 	await page.waitForURL(/\/mesocycles\/manage\/volume/);
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('button', { name: 'Save' }).click();
+
 	await page.getByRole('link', { name: 'MesoName Unused' }).click();
 	await page.getByLabel('mesocycle-options').click();
 	await page.getByRole('menuitem', { name: 'Edit' }).click();
 	await page.getByLabel('Mesocycle name').fill('MesoName (edited)');
 	await page.getByRole('button', { name: 'Next' }).click();
-	await page.locator('#mesocycle-progression-option').click();
-	await page.getByRole('option', { name: 'Load' }).click();
 	await page.locator('#mesocycle-force-RIR-matching').click();
 	await page.getByLabel('Take last set to failure').click();
 	await page.locator('span > .absolute').click();
@@ -100,10 +97,11 @@ test('edit a mesocycle', async ({ page }) => {
 	await expect(page.getByRole('status').filter({ hasText: 'Mesocycle edited successfully' })).toBeVisible({
 		timeout: 10000
 	});
+
 	await page.getByRole('link', { name: 'MesoName (edited) Unused' }).click();
 	await expect(page.locator('h3')).toContainText('MesoName (edited)');
 	await expect(page.getByRole('tabpanel')).toContainText(
-		'RIR progression 10 cycles 3 2 1 0 Start exercise template Pull Push Legs Preferred progression variable Load Start overload percentage 1.25% Last set to failure Force RIR matching'
+		'RIR progression 10 cycles 3 2 1 0 Start exercise template Pull Push Legs Start overload percentage 1.25% Last set to failure Force RIR matching'
 	);
 	await page.getByRole('tab', { name: 'Volume' }).click();
 	await expect(page.getByTestId('mesocycle-volume-table-body')).toContainText('45');

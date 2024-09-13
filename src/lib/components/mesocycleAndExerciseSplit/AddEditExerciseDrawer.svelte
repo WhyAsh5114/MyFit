@@ -12,7 +12,7 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
-	import { ChangeType, MuscleGroup, ProgressionVariable, SetType, type Mesocycle } from '@prisma/client';
+	import { ChangeType, MuscleGroup, SetType, type Mesocycle } from '@prisma/client';
 	import { convertCamelCaseToNormal } from '$lib/utils';
 	import { commonExercisePerMuscleGroup } from '$lib/common/commonExercises';
 	import type {
@@ -49,7 +49,6 @@
 		overloadPercentage: null,
 		forceRIRMatching: null,
 		lastSetToFailure: null,
-		preferredProgressionVariable: null,
 		minimumWeightChange: null
 	};
 
@@ -396,39 +395,6 @@
 						type="number"
 						bind:value={currentExercise.overloadPercentage}
 					/>
-				</div>
-				<div class="flex flex-col gap-1">
-					<div class="flex items-center justify-between">
-						<span class="text-sm font-medium leading-none">Preferred progression variable</span>
-						<Checkbox
-							id="exercise-override-preferred-progression-variable"
-							checked={currentExercise.preferredProgressionVariable !== null}
-							onCheckedChange={(c) => {
-								if (c !== 'indeterminate' && 'sets' in currentExercise)
-									currentExercise.preferredProgressionVariable = c ? undefined : null;
-							}}
-						/>
-					</div>
-					<Select.Root
-						disabled={currentExercise.preferredProgressionVariable === null}
-						onSelectedChange={(s) => {
-							if (s !== undefined && 'sets' in currentExercise) currentExercise.preferredProgressionVariable = s.value;
-						}}
-						required
-						selected={{
-							value: props.mesocycle?.preferredProgressionVariable,
-							label: props.mesocycle?.preferredProgressionVariable
-						}}
-					>
-						<Select.Trigger class="w-full">
-							<Select.Value />
-						</Select.Trigger>
-						<Select.Content>
-							{#each Object.values(ProgressionVariable) as progressionVariable}
-								<Select.Item value={progressionVariable}>{progressionVariable}</Select.Item>
-							{/each}
-						</Select.Content>
-					</Select.Root>
 				</div>
 				<div class="flex flex-col gap-1">
 					<div class="flex items-center justify-between">
