@@ -98,6 +98,7 @@
 			// 1. User attempts active meso edit but doesn't complete it (stores save meso data)
 			// 2. User performs workouts affecting the meso split structure
 			// 3. User tries to update meso again, but sees old data as it didn't sync the new changes from workouts
+			// So to prevent this from happening, just reset the meso split runes after a workout is completed
 			mesocycleExerciseSplitRunes.resetStores();
 
 			if (mesocycleCompleted) {
