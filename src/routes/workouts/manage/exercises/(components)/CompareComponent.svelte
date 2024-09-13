@@ -18,6 +18,7 @@
 	function getTheoreticalVolumeChange(setIdx: number) {
 		const prevSet = prevExercise?.sets[setIdx];
 		if (!prevSet) return;
+		if (!exercise.sets[setIdx]) return;
 
 		let { reps, load, RIR } = exercise.sets[setIdx];
 		if (reps === undefined || load === undefined || RIR === undefined) return;

@@ -37,7 +37,7 @@ type TodaysWorkoutData = {
 	};
 };
 
-type TodaysWorkoutExercises = {
+type WorkoutExercisesWithPreviousData = {
 	todaysWorkoutExercises: WorkoutExerciseInProgress[];
 	previousWorkoutData: null | {
 		exercises: WorkoutExerciseWithSets[];
@@ -196,7 +196,7 @@ export const workouts = t.router({
 		return todaysWorkoutData;
 	}),
 
-	getTodaysWorkoutExercises: t.procedure
+	getWorkoutExercisesWithPreviousData: t.procedure
 		.input(z.strictObject({ userBodyweight: z.number(), splitDayIndex: z.number().int() }))
 		.query(async ({ ctx, input }) => {
 			const data: ActiveMesocycleWithProgressionData | null = await prisma.mesocycle.findFirst({
@@ -208,23 +208,32 @@ export const workouts = t.router({
 				include: createActiveMesocycleWithProgressionDataInclude(input.splitDayIndex)
 			});
 
-			const noExercisesData: TodaysWorkoutExercises = {
+			const workoutExercisesWithPreviousData: WorkoutExercisesWithPreviousData = {
 				todaysWorkoutExercises: [],
 				previousWorkoutData: null
 			};
-			if (!data) return noExercisesData;
+			if (!data) return workoutExercisesWithPreviousData;
 
 			const totalWorkouts = await prisma.workoutOfMesocycle.count({ where: { mesocycleId: data?.id } });
 			const { isRestDay, cycleNumber, splitDayIndex } = getBasicDayInfo(data, totalWorkouts);
-			if (isRestDay) return noExercisesData;
+			if (isRestDay) return workoutExercisesWithPreviousData;
 
-			const todaysWorkoutExercises: TodaysWorkoutExercises = progressiveOverloadMagic(
+			workoutExercisesWithPreviousData.todaysWorkoutExercises = progressiveOverloadMagic(
 				data,
 				cycleNumber,
 				input.userBodyweight,
 				splitDayIndex
 			);
-			return todaysWorkoutExercises;
+
+			const previousWorkout = data.workoutsOfMesocycle.filter((wm) => wm.workoutStatus === null).at(-1)?.workout;
+			if (previousWorkout) {
+				workoutExercisesWithPreviousData.previousWorkoutData = {
+					exercises: previousWorkout.workoutExercises,
+					userBodyweight: previousWorkout.userBodyweight
+				};
+			}
+
+			return workoutExercisesWithPreviousData;
 		}),
 
 	create: t.procedure.input(createWorkoutSchema).mutation(async ({ ctx, input }) => {
@@ -303,7 +312,7 @@ export const workouts = t.router({
 		}
 
 		// Update mesocycle's exercise templates according to new workout
-		if (workoutOfMesocycle.workoutStatus === undefined) {
+		if (workoutOfMesocycle.workoutStatus === null) {
 			const todaysSplitDay = mesocycleData.mesocycleExerciseSplitDays[workoutOfMesocycle.splitDayIndex];
 			if (!todaysSplitDay) {
 				throw new TRPCError({ code: 'BAD_REQUEST', message: 'Related mesocycle exercise split day not found' });

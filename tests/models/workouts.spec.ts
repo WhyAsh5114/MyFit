@@ -5,7 +5,7 @@ function getTodaysDateString() {
 	return new Date().toLocaleDateString(undefined, { month: 'long', day: '2-digit' });
 }
 
-async function createMesoForTest(page: Page) {
+async function createSplitAndMesoForTest(page: Page) {
 	await page.goto('/exercise-splits');
 	await createMesocycle(page);
 	await page.goto('/workouts');
@@ -162,7 +162,7 @@ test('create workout with all set types', async ({ page }) => {
 });
 
 test('create a workout with active mesocycle', async ({ page }) => {
-	await createMesoForTest(page);
+	await createSplitAndMesoForTest(page);
 	await page.getByLabel('create-workout').click();
 	await expect(page.getByRole('main')).toContainText('Pull A Day 1, Cycle 1 LatsTrapsBicepsRear delts');
 	await page.getByPlaceholder('Type here').click();
@@ -218,7 +218,7 @@ test('create a workout with active mesocycle', async ({ page }) => {
 });
 
 test('create workout without using active mesocycle', async ({ page }) => {
-	await createMesoForTest(page);
+	await createSplitAndMesoForTest(page);
 	await page.getByLabel('create-workout').click();
 	await page.getByLabel('Use active mesocycle').click();
 	await page.getByPlaceholder('Type here').click();
@@ -251,7 +251,7 @@ test('create workout without using active mesocycle', async ({ page }) => {
 });
 
 test('skip a workout', async ({ page }) => {
-	await createMesoForTest(page);
+	await createSplitAndMesoForTest(page);
 	await page.getByLabel('create-workout').click();
 	await page.getByPlaceholder('Type here').fill('100');
 	await page.getByRole('button', { name: 'Skip' }).click();
@@ -261,7 +261,7 @@ test('skip a workout', async ({ page }) => {
 });
 
 test('delete a workout', async ({ page }) => {
-	await createMesoForTest(page);
+	await createSplitAndMesoForTest(page);
 	await page.getByLabel('create-workout').click();
 	await page.getByPlaceholder('Type here').fill('100');
 	await page.getByRole('button', { name: 'Next' }).click();
@@ -292,14 +292,15 @@ test('delete a workout', async ({ page }) => {
 	await page.getByRole('button', { name: 'Yes, delete' }).click();
 	await expect(page.getByRole('status').filter({ hasText: 'Workout deleted successfully' })).toBeVisible();
 	await page.getByLabel('create-workout').click();
-	await expect(page.getByRole('main')).toContainText('Pull A Day 1, Cycle 1 LatsTrapsBicepsRear delts');
+	await expect(page.getByRole('main')).toContainText('Pull A Day 1, Cycle 1 Rear delts');
 });
 
 test('edit a workout', async ({ page }) => {
-	await createMesoForTest(page);
+	await createSplitAndMesoForTest(page);
 	await page.getByLabel('create-workout').click();
 	await page.getByPlaceholder('Type here').fill('100');
 	await page.getByRole('button', { name: 'Next' }).click();
+
 	await page.getByTestId('Barbell rows-menu-button').click();
 	await page.getByRole('menuitem', { name: 'Delete' }).click();
 	await page.getByTestId('Dumbbell bicep curls-menu-button').click();
@@ -334,5 +335,43 @@ test('edit a workout', async ({ page }) => {
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
 		'Pull-ups 3 Straight sets of 5 to 15 reps BW Lats Reps Load RIR 1 7 0 3 2 6 0 3 3 5 0 0'
+	);
+});
+
+test('workout changes should update mesocycle split', async ({ page }) => {
+	await createSplitAndMesoForTest(page);
+	await page.getByLabel('create-workout').click();
+	await page.getByPlaceholder('Type here').fill('100');
+	await page.getByRole('button', { name: 'Next' }).click();
+
+	await page.getByTestId('Barbell rows-menu-button').click();
+	await page.getByRole('menuitem', { name: 'Delete' }).click();
+	await page.getByTestId('Dumbbell bicep curls-menu-button').click();
+	await page.getByRole('menuitem', { name: 'Delete' }).click();
+	await page.getByTestId('Face pulls-menu-button').click();
+	await page.getByRole('menuitem', { name: 'Delete' }).click();
+
+	await page.locator('#Pull-ups-set-1-reps').fill('8');
+	await page.locator('#Pull-ups-set-2-reps').fill('7');
+	await page.locator('#Pull-ups-set-1-load').fill('0');
+	await page.getByTestId('Pull-ups-menu-button').click();
+	await page.getByRole('menuitem', { name: 'Edit' }).click();
+	await page.getByLabel('Sets').fill('2');
+	await page.getByPlaceholder('Exercise cues, machine').click();
+	await page.getByPlaceholder('Exercise cues, machine').fill('Custom note');
+	await page.getByRole('button', { name: 'Edit exercise' }).click();
+	await expect(page.getByRole('main')).toContainText('Custom note');
+
+	await page.getByTestId('Pull-ups-set-1-action').click();
+	await page.getByTestId('Pull-ups-set-2-action').click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('button', { name: 'Save' }).click();
+	await page.waitForURL('/workouts');
+
+	await page.getByRole('link', { name: 'Mesocycles' }).click();
+	await page.getByRole('link', { name: 'MyMeso Active' }).first().click();
+	await page.getByRole('tab', { name: 'Split' }).click();
+	await expect(page.getByRole('main')).toContainText(
+		'Pull APush ALegs APull BPush BLegs BRest Pull-ups 2 Straight sets of 5 to 15 reps BW Lats Custom note'
 	);
 });
