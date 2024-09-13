@@ -336,3 +336,40 @@ test('edit a workout', async ({ page }) => {
 		'Pull-ups 3 Straight sets of 5 to 15 reps BW Lats Reps Load RIR 1 7 0 3 2 6 0 3 3 5 0 0'
 	);
 });
+
+test('workout changes should update mesocycle split', async ({ page }) => {
+	await createMesocycle(page, { exerciseSplitCreated: true });
+	await page.getByRole('link', { name: 'Workouts' }).click();
+	await page.getByPlaceholder('Type here').fill('100');
+	await page.getByRole('button', { name: 'Next' }).click();
+
+	await page.getByTestId('Barbell rows-menu-button').click();
+	await page.getByRole('menuitem', { name: 'Delete' }).click();
+	await page.getByTestId('Dumbbell bicep curls-menu-button').click();
+	await page.getByRole('menuitem', { name: 'Delete' }).click();
+	await page.getByTestId('Face pulls-menu-button').click();
+	await page.getByRole('menuitem', { name: 'Delete' }).click();
+
+	await page.locator('#Pull-ups-set-1-reps').fill('8');
+	await page.locator('#Pull-ups-set-2-reps').fill('7');
+	await page.locator('#Pull-ups-set-1-load').fill('0');
+	await page.getByTestId('Pull-ups-menu-button').click();
+	await page.getByRole('menuitem', { name: 'Edit' }).click();
+	await page.getByLabel('Sets').fill('2');
+	await page.getByPlaceholder('Exercise cues, machine').click();
+	await page.getByPlaceholder('Exercise cues, machine').fill('Custom note');
+	await page.getByRole('button', { name: 'Edit exercise' }).click();
+	await expect(page.getByRole('main')).toContainText('Custom note');
+
+	await page.getByTestId('Pull-ups-set-1-action').click();
+	await page.getByTestId('Pull-ups-set-2-action').click();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await page.getByRole('button', { name: 'Save' }).click();
+
+	await page.getByRole('link', { name: 'Mesocycles' }).click();
+	await page.getByRole('link', { name: 'MyMeso Active' }).first().click();
+	await page.getByRole('tab', { name: 'Split' }).click();
+	await expect(page.getByRole('main')).toContainText(
+		'Pull APush ALegs APull BPush BLegs BRest Pull-ups 2 Straight sets of 5 to 15 reps BW Lats Custom note'
+	);
+});
