@@ -9,7 +9,7 @@ export function getSetVolume(
 	userBodyweight: number,
 	bodyweightFraction: number | null
 ) {
-	// TODO: Mini sets?
+	// #55
 	return (set.reps + set.RIR) * set.load + (bodyweightFraction ?? 0) * userBodyweight;
 }
 
@@ -50,6 +50,7 @@ type BrzyckiOverloadPercentage = {
 type BrzyckiInput = BrzyckiNewReps | BrzyckiOverloadPercentage;
 
 export function solveBrzyckiFormula(input: BrzyckiInput) {
+	// #84
 	const { variableToSolve, knownValues } = input;
 	const {
 		oldSet,
@@ -417,7 +418,7 @@ export function progressiveOverloadMagic(
 		});
 	});
 
-	// TODO: Add miniSets and stuff if drop / myorep match sets
+	// Remove miniSet IDs
 	workoutExercises.forEach((ex) => {
 		ex.sets.forEach((set) => {
 			set.miniSets = set.miniSets.map((miniSet) => {
@@ -426,8 +427,6 @@ export function progressiveOverloadMagic(
 			});
 		});
 	});
-
-	// TODO: Remaining overrides to implement: load first progression
 
 	return workoutExercises;
 }

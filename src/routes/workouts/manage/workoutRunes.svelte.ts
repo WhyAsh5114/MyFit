@@ -144,20 +144,7 @@ function createWorkoutRunes() {
 			return workoutData;
 		},
 		set workoutData(value) {
-			// TODO: notification stuff, background sync API?
 			workoutData = value;
-			// if (value !== null) {
-			// 	workoutPendingTimer = setTimeout(
-			// 		() => {
-			// 			settingsRunes.addNotification({
-			// 				title: 'Workout still pending',
-			// 				description: 'Forgot to finish it?',
-			// 				timestamp: Number(new Date())
-			// 			});
-			// 		},
-			// 		1000 * 60 * 60 * 2
-			// 	);
-			// } else clearTimeout(workoutPendingTimer);
 		},
 		get workoutExercises() {
 			return workoutExercises;

@@ -89,6 +89,7 @@
 {#if exerciseSplit === 'loading'}
 	<ExerciseSplitSkeleton />
 {:else}
+	{@const exerciseSplitName = exerciseSplit.name}
 	<Tabs.Root class="flex w-full grow flex-col" bind:value={selectedTabValue}>
 		<Tabs.List class="grid w-full grid-cols-2">
 			<Tabs.Trigger value="info">Info</Tabs.Trigger>
@@ -147,10 +148,10 @@
 			{/if}
 		</Tabs.Content>
 	</Tabs.Root>
-	<ResponsiveDialog needTrigger={false} title="Are you sure?" bind:open={deleteConfirmDrawerOpen}>
-		<p>
-			Delete split <span class="font-semibold">{exerciseSplit.name}</span>? This action cannot be undone.
-		</p>
+	<ResponsiveDialog title="Are you sure?" bind:open={deleteConfirmDrawerOpen}>
+		{#snippet description()}
+			Delete split <span class="font-semibold">{exerciseSplitName}</span>? This action cannot be undone.
+		{/snippet}
 		<Button disabled={callingDeleteEndpoint} onclick={deleteExerciseSplit} variant="destructive">
 			{#if callingDeleteEndpoint}
 				<LoaderCircle class="animate-spin" />
@@ -161,10 +162,10 @@
 	</ResponsiveDialog>
 {/if}
 
-<ResponsiveDialog needTrigger={false} title="Note" bind:open={editExerciseSplitNoteDrawerOpen}>
-	<p class="text-sm">
+<ResponsiveDialog title="Note" bind:open={editExerciseSplitNoteDrawerOpen}>
+	{#snippet description()}
 		Editing an exercise split won't change the mesocycle split it is used in. To modify that, use the <b>Split</b> tab
 		in <b>View mesocycle</b>
-	</p>
+	{/snippet}
 	<Button onclick={editExerciseSplit}>Continue</Button>
 </ResponsiveDialog>

@@ -116,7 +116,7 @@
 						{/if}
 					{/if}
 				</span>
-				<!-- TODO: mini sets comparison -->
+				<!-- #85 -->
 			{:else}
 				<Separator />
 				<span class="text-sm text-muted-foreground">

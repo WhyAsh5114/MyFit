@@ -192,9 +192,7 @@ export const mesocycles = t.router({
 		}),
 
 	updateExerciseSplit: t.procedure.input(zodUpdateExerciseSplitInput).mutation(async ({ input, ctx }) => {
-		// TODO: modify splitDayIndex of all workoutOfMesocycle join table records if split days re-arranged
-		// * is it better to link by splitDayName instead? makes stuff a lot more simpler tbh
-		// * should we even allow changing length of the split during a meso? makes stats calculations really messy and wrong
+		// #87
 		const mesocycle = await prisma.mesocycle.findUniqueOrThrow({
 			where: { id: input.mesocycleId, userId: ctx.userId },
 			select: { id: true }
