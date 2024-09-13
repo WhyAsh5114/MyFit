@@ -303,7 +303,7 @@ export const workouts = t.router({
 		}
 
 		// Update mesocycle's exercise templates according to new workout
-		if (workoutOfMesocycle.workoutStatus === undefined) {
+		if (workoutOfMesocycle.workoutStatus === null) {
 			const todaysSplitDay = mesocycleData.mesocycleExerciseSplitDays[workoutOfMesocycle.splitDayIndex];
 			if (!todaysSplitDay) {
 				throw new TRPCError({ code: 'BAD_REQUEST', message: 'Related mesocycle exercise split day not found' });
