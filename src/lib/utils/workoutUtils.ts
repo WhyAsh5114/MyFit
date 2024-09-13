@@ -420,16 +420,5 @@ export function progressiveOverloadMagic(
 	// TODO: Add miniSets and stuff if drop / myorep match sets
 	// TODO: Remaining overrides to implement: load first progression
 
-	const previousWorkout = workoutsOfMesocycle.filter((wm) => wm.workoutStatus === null).at(-1)?.workout;
-	const previousWorkoutData = previousWorkout
-		? {
-				exercises: previousWorkout.workoutExercises,
-				userBodyweight: previousWorkout.userBodyweight
-			}
-		: null;
-
-	return {
-		todaysWorkoutExercises: workoutExercises,
-		previousWorkoutData
-	};
+	return workoutExercises;
 }
