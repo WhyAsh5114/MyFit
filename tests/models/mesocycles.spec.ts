@@ -46,6 +46,10 @@ test('create a mesocycle', async ({ page }) => {
 	await expect(page.getByTestId('mesocycle-volume-table-body')).toContainText('2');
 });
 
+test('workout modification should update the MesocycleExerciseSplitDay', async ({ page }) => {
+	// TODO
+})
+
 test('delete a mesocycle', async ({ page }) => {
 	await page.getByLabel('create-new-mesocycle').click();
 	await page.getByLabel('Mesocycle name').fill('MesoToDelete');
