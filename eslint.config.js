@@ -4,13 +4,11 @@ import svelte from 'eslint-plugin-svelte';
 import prettier from 'eslint-config-prettier';
 import globals from 'globals';
 
-/** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
 	{ ignores: ['.vercel/', '.svelte-kit/', 'postcss.config.cjs'] },
 	js.configs.recommended,
-	...ts.configs.recommended,
-	...svelte.configs['flat/all'],
 	prettier,
+	...ts.configs.recommended,
 	...svelte.configs['flat/prettier'],
 	{ languageOptions: { globals: { ...globals.browser, ...globals.node } } },
 	{
@@ -30,16 +28,7 @@ export default [
 					varsIgnorePattern: '^_',
 					ignoreRestSiblings: true
 				}
-			],
-			'svelte/no-at-html-tags': 'off',
-			'svelte/block-lang': ['error', { script: ['ts'], style: ['postcss'] }],
-			'svelte/experimental-require-strict-events': 'off',
-			'svelte/no-unused-class-name': 'off',
-			'svelte/no-goto-without-base': 'off',
-			'svelte/require-each-key': 'off',
-			'svelte/no-inline-styles': ['error', { allowTransitions: true }],
-			'svelte/prefer-destructured-store-props': 'off',
-			'svelte/experimental-require-slot-types': 'off'
+			]
 		}
 	},
 	{
