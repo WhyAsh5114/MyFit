@@ -35,7 +35,6 @@ model WorkoutExercise {
   repRangeStart                Int
   repRangeEnd                  Int
   note                         String?
-  preferredProgressionVariable ProgressionVariable?
   overloadPercentage           Float?
   lastSetToFailure             Boolean?
   forceRIRMatching             Boolean?
