@@ -183,7 +183,7 @@
 					<Input
 						id="{exercise.name}-set-{idx + 1}-load"
 						disabled={set.completed || set.skipped}
-						min={0}
+						min={exercise.bodyweightFraction ? undefined : 0}
 						placeholder={getNextLoad(idx)}
 						required
 						step={0.25}
@@ -269,7 +269,7 @@
 							<Input
 								id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-load"
 								disabled={miniSet.completed}
-								min={0}
+								min={exercise.bodyweightFraction ? undefined : 0}
 								placeholder={expectedLoad === undefined ? expectedLoad : expectedLoad.toString()}
 								required
 								step={0.25}
