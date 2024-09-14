@@ -12,7 +12,7 @@ const config: PlaywrightTestConfig = {
 	retries: 2,
 	globalSetup: './tests/global-setup',
 	globalTeardown: './tests/global-teardown',
-	workers: process.env.CI ? 1 : undefined,
+	workers: process.env.CI ? 1 : '50%',
 	reporter: process.env.CI ? 'list' : 'html',
 	use: {
 		baseURL: 'http://localhost:4173',
