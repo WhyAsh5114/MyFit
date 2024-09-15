@@ -58,7 +58,7 @@
 						>
 							<LockIcon class="h-4 w-4" />
 						</Popover.Trigger>
-						<Popover.Content class="w-60 text-sm" align="end">
+						<Popover.Content class="w-60 text-sm" align="start">
 							Cannot change the length or rest days of the mesocycle's exercise split after workouts have been added
 						</Popover.Content>
 					</Popover.Root>
