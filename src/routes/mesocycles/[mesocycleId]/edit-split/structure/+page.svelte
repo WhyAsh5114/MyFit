@@ -8,30 +8,15 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import RemoveIcon from 'virtual:icons/lucide/minus';
-	import WarningIcon from 'virtual:icons/lucide/triangle-alert';
+	import LockIcon from 'virtual:icons/lucide/lock';
 	import { mesocycleExerciseSplitRunes } from '../mesocycleExerciseSplitRunes.svelte';
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import { cn } from '$lib/utils';
 
-	const difference = <T,>(setA: Set<T>, setB: Set<T>): Set<T> => {
-		return new Set([...setA].filter((x) => !setB.has(x)));
-	};
-
-	let consistencyLossDays: string[] = $state([]);
 	let dataLossDays: number[] = $state([]);
 	let warningDialogOpen = $state(false);
-
-	let showWarningIcon = $derived.by(() => {
-		if (mesocycleExerciseSplitRunes.mesocycle === null) return false;
-		const mesocycleSplitDayNames = new Set(
-			mesocycleExerciseSplitRunes.mesocycle?.mesocycleExerciseSplitDays.map((splitDay) => splitDay.name)
-		);
-		const currentSplitDayNames = new Set(mesocycleExerciseSplitRunes.splitDays.map((splitDay) => splitDay.name));
-		const inconsistentDays = difference(mesocycleSplitDayNames, currentSplitDayNames);
-		consistencyLossDays = Array.from(inconsistentDays);
-		return inconsistentDays.size > 0;
-	});
+	let exerciseSplitLocked = $derived(mesocycleExerciseSplitRunes.mesocycle!.workoutsOfMesocycle.length > 0);
 
 	async function submitStructure(warningAcknowledged = false) {
 		if (!mesocycleExerciseSplitRunes.validateSplitStructure()) {
@@ -67,20 +52,14 @@
 				<Table.Head>
 					<Popover.Root>
 						<Popover.Trigger
-							class={cn({ 'text-background': !showWarningIcon })}
-							aria-label="mesocycle-exercise-split-edit-warning"
+							disabled={!exerciseSplitLocked}
+							class={cn({ hidden: !exerciseSplitLocked })}
+							aria-label="mesocycle-exercise-split-edit-lock"
 						>
-							<WarningIcon class="h-4 w-4" />
+							<LockIcon class="h-4 w-4" />
 						</Popover.Trigger>
 						<Popover.Content class="w-60 text-sm" align="end">
-							Unmatched day names: <span class="font-semibold">
-								{consistencyLossDays.join(', ')}
-							</span>
-							<br />
-							<p class="text-muted-foreground">
-								Avoid unnecessarily changing split day names, as this can exclude workouts with unmatched split names
-								from progression calculations and analytics.
-							</p>
+							Cannot change the length or rest days of the mesocycle's exercise split after workouts have been added
 						</Popover.Content>
 					</Popover.Root>
 				</Table.Head>
@@ -104,6 +83,7 @@
 					<Table.Cell class="p-0 text-center">
 						<Checkbox
 							checked={splitDay.isRestDay}
+							disabled={exerciseSplitLocked}
 							onCheckedChange={(checked) => {
 								if (checked === 'indeterminate') return;
 								mesocycleExerciseSplitRunes.toggleSplitDay(dayNumber, checked);
@@ -119,13 +99,18 @@
 <div class="mb-1 mt-auto grid grid-cols-2 gap-1 pt-1">
 	<Button
 		class="gap-2"
-		disabled={mesocycleExerciseSplitRunes.splitDays.length === 1}
+		disabled={mesocycleExerciseSplitRunes.splitDays.length === 1 || exerciseSplitLocked}
 		onclick={mesocycleExerciseSplitRunes.removeSplitDay}
 		variant="secondary"
 	>
 		<RemoveIcon /> Remove
 	</Button>
-	<Button class="gap-2" onclick={mesocycleExerciseSplitRunes.addSplitDay} variant="secondary">
+	<Button
+		class="gap-2"
+		onclick={mesocycleExerciseSplitRunes.addSplitDay}
+		disabled={exerciseSplitLocked}
+		variant="secondary"
+	>
 		<AddIcon /> Add
 	</Button>
 </div>
