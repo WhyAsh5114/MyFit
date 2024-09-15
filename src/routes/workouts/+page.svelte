@@ -1,17 +1,19 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	import H2 from '$lib/components/ui/typography/H2.svelte';
-	import AddIcon from 'virtual:icons/lucide/plus';
-	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
+	import NoWorkoutsFilterComponent from './NoWorkoutsFilterComponent.svelte';
+
 	import { afterNavigate, goto } from '$app/navigation';
-	import { trpc } from '$lib/trpc/client';
-	import { InfiniteLoader, loaderState } from 'svelte-infinite';
 	import { page } from '$app/stores';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import { workoutRunes } from './manage/workoutRunes.svelte.js';
-	import FilterComponent from './(components)/FilterComponent.svelte';
+	import H2 from '$lib/components/ui/typography/H2.svelte';
+	import { trpc } from '$lib/trpc/client';
 	import type { RouterOutputs } from '$lib/trpc/router.js';
+	import { InfiniteLoader, loaderState } from 'svelte-infinite';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
+	import AddIcon from 'virtual:icons/lucide/plus';
+	import FilterComponent from './(components)/FilterComponent.svelte';
+	import { workoutRunes } from './manage/workoutRunes.svelte.js';
 
 	let { data } = $props();
 	let workouts: RouterOutputs['workouts']['load'] | 'loading' = $state('loading');
@@ -43,7 +45,11 @@
 
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
-		<FilterComponent />
+		{#if workouts !== 'loading' && workouts.length > 0}
+			<FilterComponent {workouts} />
+		{:else}
+			<NoWorkoutsFilterComponent />
+		{/if}
 		<Button aria-label="create-workout" onclick={createNewWorkout}><AddIcon /></Button>
 	</div>
 	<div class="flex h-px grow flex-col gap-1 overflow-y-auto">
