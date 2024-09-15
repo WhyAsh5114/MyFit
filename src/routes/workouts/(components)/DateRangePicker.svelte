@@ -7,17 +7,21 @@
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Button } from '$lib/components/ui/button';
 
-	let { value = $bindable() }: { value: DateRange } = $props();
+	type PropsType = {
+		value: DateRange;
+		firstWorkoutDate: DateValue;
+		lastWorkoutDate: DateValue;
+	};
+	let { value = $bindable(), firstWorkoutDate, lastWorkoutDate }: PropsType = $props();
 
 	const df = new DateFormatter('en-US', { dateStyle: 'medium' });
-	let startValue: DateValue | undefined = $state(undefined);
 </script>
 
 <div class="grid gap-2">
 	<Popover.Root openFocus>
 		<Popover.Trigger asChild let:builder>
 			<Button
-				class={cn('w-fit justify-start text-left font-normal', !value && 'text-muted-foreground')}
+				class={cn('w-full justify-start text-left font-normal', !value && 'text-muted-foreground')}
 				builders={[builder]}
 				variant="outline"
 			>
@@ -28,15 +32,21 @@
 					{:else}
 						{df.format(value.start.toDate(getLocalTimeZone()))}
 					{/if}
-				{:else if startValue}
-					{df.format(startValue.toDate(getLocalTimeZone()))}
+				{:else if firstWorkoutDate}
+					{df.format(firstWorkoutDate.toDate(getLocalTimeZone()))}
 				{:else}
 					Pick a date
 				{/if}
 			</Button>
 		</Popover.Trigger>
-		<Popover.Content class="w-auto p-0" align="start">
-			<RangeCalendar initialFocus placeholder={value?.start} bind:value bind:startValue />
+		<Popover.Content class="w-auto border-none p-0" align="start">
+			<RangeCalendar
+				class="w-fit rounded-md border"
+				initialFocus
+				minValue={firstWorkoutDate}
+				maxValue={lastWorkoutDate}
+				bind:value
+			/>
 		</Popover.Content>
 	</Popover.Root>
 </div>
