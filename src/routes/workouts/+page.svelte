@@ -10,11 +10,11 @@
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { workoutRunes } from './manage/workoutRunes.svelte.js';
-	import type { WorkoutWithMesoData } from './+page.server.js';
 	import FilterComponent from './(components)/FilterComponent.svelte';
+	import type { RouterOutputs } from '$lib/trpc/router.js';
 
 	let { data } = $props();
-	let workouts: WorkoutWithMesoData[] | 'loading' = $state('loading');
+	let workouts: RouterOutputs['workouts']['load'] | 'loading' = $state('loading');
 
 	afterNavigate(async () => {
 		loaderState.reset();
