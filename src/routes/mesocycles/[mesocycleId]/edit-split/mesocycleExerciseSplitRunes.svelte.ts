@@ -1,4 +1,5 @@
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
+import type { RouterOutputs } from '$lib/trpc/router';
 import type { Prisma } from '@prisma/client';
 
 export type FullMesocycleWithExerciseSplit = Prisma.MesocycleGetPayload<{
@@ -11,7 +12,7 @@ type MesocycleExerciseSplitDayWithoutIds = Omit<
 >;
 
 export function createMesocycleExerciseSplitRunes() {
-	let mesocycle: FullMesocycleWithExerciseSplit | null = $state(null);
+	let mesocycle: RouterOutputs['mesocycles']['findById'] = $state(null);
 	let splitDays: MesocycleExerciseSplitDayWithoutIds[] = $state(
 		Array.from({ length: 7 }).map(() => ({ name: '', isRestDay: false }))
 	);
@@ -137,7 +138,7 @@ export function createMesocycleExerciseSplitRunes() {
 		saveStoresToLocalStorage();
 	}
 
-	function loadExerciseSplit(mesocycleWithExerciseSplit: FullMesocycleWithExerciseSplit) {
+	function loadExerciseSplit(mesocycleWithExerciseSplit: NonNullable<RouterOutputs['mesocycles']['findById']>) {
 		// Same mesocycle, don't reset and load new data, reuse and continue editing
 		if (mesocycleWithExerciseSplit.id === mesocycle?.id) return;
 
