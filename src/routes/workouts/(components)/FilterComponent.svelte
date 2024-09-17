@@ -21,6 +21,7 @@
 	};
 	let { workouts, setFilters }: PropsType = $props();
 
+	let open = $state(false);
 	let firstWorkoutDate = $derived(dateToCalendarDate(workouts[0].startedAt));
 	let lastWorkoutDate = $derived(dateToCalendarDate(workouts.at(-1)!.startedAt));
 
@@ -41,10 +42,11 @@
 				.filter(([_, value]) => value)
 				.map(([key]) => key)
 		);
+		open = false;
 	}
 </script>
 
-<Popover.Root>
+<Popover.Root bind:open>
 	<Popover.Trigger asChild let:builder>
 		<Button class="grow gap-2" aria-label="search" builders={[builder]} variant="secondary">
 			Filters <FilterIcon />
