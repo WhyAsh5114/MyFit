@@ -47,17 +47,29 @@
 		selectedWorkoutStatus: (WorkoutStatus | null)[]
 	) {
 		const newURL = new URL($page.url);
+
 		if (selectedDateRange.start) {
 			newURL.searchParams.set('startDate', selectedDateRange.start.toString());
+		} else {
+			newURL.searchParams.delete('startDate');
 		}
+
 		if (selectedDateRange.end) {
 			newURL.searchParams.set('endDate', selectedDateRange.end.toString());
+		} else {
+			newURL.searchParams.delete('endDate');
 		}
+
 		if (selectedMesocycles.length) {
 			newURL.searchParams.set('selectedMesocycle', JSON.stringify(selectedMesocycles));
+		} else {
+			newURL.searchParams.delete('selectedMesocycle');
 		}
+		
 		if (selectedWorkoutStatus.length) {
 			newURL.searchParams.set('selectedWorkoutStatus', JSON.stringify(selectedWorkoutStatus));
+		} else {
+			newURL.searchParams.delete('selectedWorkoutStatus');
 		}
 		goto(newURL);
 	}
