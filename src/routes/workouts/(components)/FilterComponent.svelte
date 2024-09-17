@@ -11,17 +11,37 @@
 	import DateRangePicker from './DateRangePicker.svelte';
 	import type { WorkoutStatus } from '@prisma/client';
 
-	let { workouts }: { workouts: RouterOutputs['workouts']['load'] } = $props();
+	type PropsType = {
+		workouts: RouterOutputs['workouts']['load'];
+		setFilters: (
+			selectedDateRange: DateRange,
+			selectedMesocycles: (string | null)[],
+			selectedWorkoutStatus: (WorkoutStatus | null)[]
+		) => void;
+	};
+	let { workouts, setFilters }: PropsType = $props();
+
 	let firstWorkoutDate = $derived(dateToCalendarDate(workouts[0].startedAt));
 	let lastWorkoutDate = $derived(dateToCalendarDate(workouts.at(-1)!.startedAt));
 
 	let selectedDateRange: DateRange = $state({ start: dateToCalendarDate(workouts[0].startedAt), end: undefined });
-	let selectedMesocycles: Selected<string>[] = $state([]);
+	let selectedMesocycles: Selected<string | null>[] = $state([]);
 
-	let selectedworkoutStatus: Map<WorkoutStatus | null, boolean> = new Map();
-	selectedworkoutStatus.set(null, true);
-	selectedworkoutStatus.set('Skipped', true);
-	selectedworkoutStatus.set('RestDay', true);
+	let selectedworkoutStatus: Map<WorkoutStatus | null, boolean> = new Map([
+		[null, false],
+		['Skipped', false],
+		['RestDay', false]
+	]);
+
+	function applyFilters() {
+		setFilters(
+			selectedDateRange,
+			selectedMesocycles.map((s) => s.value),
+			Array.from(selectedworkoutStatus.entries())
+				.filter(([_, value]) => value)
+				.map(([key]) => key)
+		);
+	}
 </script>
 
 <Popover.Root>
@@ -72,6 +92,6 @@
 				</div>
 			{/each}
 		</div>
-		<Button class="mt-2">Apply</Button>
+		<Button class="mt-2" onclick={applyFilters}>Apply</Button>
 	</Popover.Content>
 </Popover.Root>

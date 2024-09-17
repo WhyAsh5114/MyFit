@@ -7,6 +7,8 @@
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { trpc } from '$lib/trpc/client';
 	import type { RouterOutputs } from '$lib/trpc/router.js';
+	import type { WorkoutStatus } from '@prisma/client';
+	import type { DateRange } from 'bits-ui';
 	import { InfiniteLoader, loaderState } from 'svelte-infinite';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import AddIcon from 'virtual:icons/lucide/plus';
@@ -27,7 +29,7 @@
 		const lastWorkout = workouts.at(-1);
 		if (typeof lastWorkout === 'string' || lastWorkout === undefined) return;
 
-		const newWorkouts = await trpc($page).workouts.load.query({
+		const newWorkouts = await trpc().workouts.load.query({
 			cursorId: lastWorkout.id
 		});
 		if (workouts !== 'loading') workouts.push(...newWorkouts);
@@ -38,6 +40,27 @@
 		if (workoutRunes.editingWorkoutId !== null) workoutRunes.resetStores();
 		goto('/workouts/manage/start');
 	}
+
+	function setFilters(
+		selectedDateRange: DateRange,
+		selectedMesocycles: (string | null)[],
+		selectedWorkoutStatus: (WorkoutStatus | null)[]
+	) {
+		const newURL = new URL($page.url);
+		if (selectedDateRange.start) {
+			newURL.searchParams.set('startDate', selectedDateRange.start.toString());
+		}
+		if (selectedDateRange.end) {
+			newURL.searchParams.set('endDate', selectedDateRange.end.toString());
+		}
+		if (selectedMesocycles.length) {
+			newURL.searchParams.set('selectedMesocycle', JSON.stringify(selectedMesocycles));
+		}
+		if (selectedWorkoutStatus.length) {
+			newURL.searchParams.set('selectedWorkoutStatus', JSON.stringify(selectedWorkoutStatus));
+		}
+		goto(newURL);
+	}
 </script>
 
 <H2>Workouts</H2>
@@ -45,7 +68,7 @@
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
 		{#if workouts !== 'loading' && workouts.length > 0}
-			<FilterComponent {workouts} />
+			<FilterComponent {workouts} {setFilters} />
 		{:else}
 			<NoWorkoutsFilterComponent />
 		{/if}
