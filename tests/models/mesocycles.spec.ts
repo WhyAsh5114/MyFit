@@ -126,7 +126,7 @@ test('start and stop a mesocycle', async ({ page }) => {
 	});
 	await expect(page.getByRole('tabpanel')).toContainText(`MesoName ${new Date().toLocaleDateString()} Active`);
 	await page.getByRole('link', { name: 'Mesocycles' }).click();
-	await expect(page.getByRole('main')).toContainText("Active MesoName Active All MesoName Active That's all!");
+	await expect(page.getByRole('main')).toContainText("Active MesoName Active All MesoName Active That's all");
 	await page.getByRole('link', { name: 'MesoName Active' }).first().click();
 	await page.getByRole('button', { name: 'Stop mesocycle' }).click();
 	await expect(page.getByRole('status').filter({ hasText: 'Mesocycle stopped successfully' })).toBeVisible({
@@ -136,7 +136,7 @@ test('start and stop a mesocycle', async ({ page }) => {
 		`MesoName ${new Date().toLocaleDateString()} to ${new Date().toLocaleDateString()} Completed`
 	);
 	await page.getByRole('link', { name: 'Mesocycles' }).click();
-	await expect(page.getByRole('main')).toContainText("Active No active mesocycle All MesoName Completed That's all!");
+	await expect(page.getByRole('main')).toContainText("Active No active mesocycle All MesoName Completed That's all");
 });
 
 test("edit mesocycle's exercise split", async ({ page }) => {
