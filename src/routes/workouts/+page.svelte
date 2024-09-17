@@ -13,8 +13,8 @@
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import FilterComponent from './(components)/FilterComponent.svelte';
-	import NoWorkoutsFilterComponent from './(components)/NoWorkoutsFilterComponent.svelte';
 	import { workoutRunes } from './manage/workoutRunes.svelte.js';
+	import NoWorkoutsFilterComponent from './(components)/NoWorkoutsFilterComponent.svelte';
 
 	let { data } = $props();
 	let workouts: RouterOutputs['workouts']['load'] | 'loading' = $state('loading');
@@ -61,15 +61,15 @@
 		}
 
 		if (selectedMesocycles.length) {
-			newURL.searchParams.set('selectedMesocycle', JSON.stringify(selectedMesocycles));
+			newURL.searchParams.set('selectedMesocycles', JSON.stringify(selectedMesocycles));
 		} else {
-			newURL.searchParams.delete('selectedMesocycle');
+			newURL.searchParams.delete('selectedMesocycles');
 		}
-		
+
 		if (selectedWorkoutStatus.length) {
-			newURL.searchParams.set('selectedWorkoutStatus', JSON.stringify(selectedWorkoutStatus));
+			newURL.searchParams.set('selectedWorkoutStatuses', JSON.stringify(selectedWorkoutStatus));
 		} else {
-			newURL.searchParams.delete('selectedWorkoutStatus');
+			newURL.searchParams.delete('selectedWorkoutStatuses');
 		}
 		goto(newURL);
 	}
@@ -80,9 +80,15 @@
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
 		{#if workouts !== 'loading' && workouts.length > 0}
-			<FilterComponent {workouts} {setFilters} />
-		{:else}
-			<NoWorkoutsFilterComponent />
+			{#await data.filterData}
+				TODO: skeleton
+			{:then filterData}
+				{#if filterData}
+					<FilterComponent {filterData} {setFilters} />
+				{:else}
+					<NoWorkoutsFilterComponent />
+				{/if}
+			{/await}
 		{/if}
 		<Button aria-label="create-workout" onclick={createNewWorkout}><AddIcon /></Button>
 	</div>

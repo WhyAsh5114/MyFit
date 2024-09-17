@@ -1,16 +1,16 @@
 <script lang="ts">
 	import type { DateRange } from 'bits-ui';
 	import CalendarIcon from 'virtual:icons/lucide/calendar';
-	import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date';
-	import { cn } from '$lib/utils.js';
+	import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
+	import { cn, dateToCalendarDate } from '$lib/utils.js';
 	import { RangeCalendar } from '$lib/components/ui/range-calendar/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Button } from '$lib/components/ui/button';
 
 	type PropsType = {
 		value: DateRange;
-		firstWorkoutDate: DateValue;
-		lastWorkoutDate: DateValue;
+		firstWorkoutDate: Date;
+		lastWorkoutDate: Date;
 	};
 	let { value = $bindable(), firstWorkoutDate, lastWorkoutDate }: PropsType = $props();
 
@@ -33,7 +33,7 @@
 						{df.format(value.start.toDate(getLocalTimeZone()))}
 					{/if}
 				{:else if firstWorkoutDate}
-					{df.format(firstWorkoutDate.toDate(getLocalTimeZone()))}
+					{df.format(dateToCalendarDate(firstWorkoutDate).toDate(getLocalTimeZone()))}
 				{:else}
 					Pick a date
 				{/if}
@@ -43,8 +43,8 @@
 			<RangeCalendar
 				class="w-fit rounded-md border"
 				initialFocus
-				minValue={firstWorkoutDate}
-				maxValue={lastWorkoutDate}
+				minValue={dateToCalendarDate(firstWorkoutDate)}
+				maxValue={dateToCalendarDate(lastWorkoutDate)}
 				bind:value
 			/>
 		</Popover.Content>

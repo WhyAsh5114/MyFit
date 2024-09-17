@@ -95,8 +95,8 @@ const loadWorkoutsSchema = z.strictObject({
 		.strictObject({
 			startDate: z.date().optional(),
 			endDate: z.date().optional(),
-			selectedWorkoutStatus: z.array(z.union([z.literal('RestDay'), z.literal('Skipped')])),
-			selectedMesocycle: z.array(z.string())
+			selectedWorkoutStatuses: z.array(z.union([z.literal('RestDay'), z.literal('Skipped')])),
+			selectedMesocycles: z.array(z.string())
 		})
 		.optional()
 });
@@ -116,12 +116,12 @@ export const workouts = t.router({
 			whereClause = { ...whereClause, startedAt: { lte: filters.endDate } };
 		}
 
-		if (filters?.selectedWorkoutStatus) {
-			whereClause = { ...whereClause, workoutOfMesocycle: { workoutStatus: { in: filters.selectedWorkoutStatus } } };
+		if (filters?.selectedWorkoutStatuses) {
+			whereClause = { ...whereClause, workoutOfMesocycle: { workoutStatus: { in: filters.selectedWorkoutStatuses } } };
 		}
 
-		if (filters?.selectedMesocycle) {
-			whereClause = { ...whereClause, workoutOfMesocycle: { mesocycle: { name: { in: filters.selectedMesocycle } } } };
+		if (filters?.selectedMesocycles) {
+			whereClause = { ...whereClause, workoutOfMesocycle: { mesocycle: { name: { in: filters.selectedMesocycles } } } };
 		}
 
 		return prisma.workout.findMany({
