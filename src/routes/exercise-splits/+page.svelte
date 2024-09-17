@@ -12,10 +12,8 @@
 	import type { InfiniteEvent } from 'svelte-infinite-loading';
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import SearchIcon from 'virtual:icons/lucide/search';
+	import DefaultInfiniteLoader from '../../lib/components/DefaultInfiniteLoader.svelte';
 	import { exerciseSplitRunes } from './manage/exerciseSplitRunes.svelte.js';
-	import InfiniteLoading from 'svelte-infinite-loading';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 
 	let exerciseSplits: RouterOutputs['exerciseSplits']['load'] = $state([]);
 	let searchString = $state($page.url.searchParams.get('search') ?? '');
@@ -87,16 +85,6 @@
 				<Badge>{exerciseSplit.exerciseSplitDays.length} days / cycle</Badge>
 			</Button>
 		{/each}
-		<InfiniteLoading on:infinite={loadMore} identifier={searchString}>
-			<div class="flex items-center justify-center gap-2 py-2 text-muted-foreground" slot="noMore">
-				<Separator class="w-20" />
-				That's all
-				<Separator class="w-20" />
-			</div>
-			<div class="muted-text-box text-left" slot="noResults">No workouts found</div>
-			<div slot="spinner">
-				<LoaderCircle class="mx-auto my-2 animate-spin" />
-			</div>
-		</InfiniteLoading>
+		<DefaultInfiniteLoader {loadMore} identifier={searchString} entityPlural="exercise splits" />
 	</div>
 </div>

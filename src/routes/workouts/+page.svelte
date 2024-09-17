@@ -1,19 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import DefaultInfiniteLoader from '$lib/components/DefaultInfiniteLoader.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { trpc } from '$lib/trpc/client';
 	import type { RouterInputs, RouterOutputs } from '$lib/trpc/router.js';
 	import type { WorkoutStatus } from '@prisma/client';
 	import type { DateRange } from 'bits-ui';
-	import InfiniteLoading, { type InfiniteLoadingEvents } from 'svelte-infinite-loading';
+	import { type InfiniteLoadingEvents } from 'svelte-infinite-loading';
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import FilterComponent from './(components)/FilterComponent.svelte';
 	import NoWorkoutsFilterComponent from './(components)/NoWorkoutsFilterComponent.svelte';
 	import { workoutRunes } from './manage/workoutRunes.svelte.js';
-	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
 
 	let { data } = $props();
 	let workouts: RouterOutputs['workouts']['load'] = $state([]);
@@ -140,16 +139,6 @@
 				{/if}
 			</Button>
 		{/each}
-		<InfiniteLoading on:infinite={loadMore} identifier={currentFilters}>
-			<div class="flex items-center justify-center gap-2 py-2 text-muted-foreground" slot="noMore">
-				<Separator class="w-20" />
-				That's all
-				<Separator class="w-20" />
-			</div>
-			<div class="muted-text-box text-left" slot="noResults">No workouts found</div>
-			<div slot="spinner">
-				<LoaderCircle class="mx-auto my-2 animate-spin" />
-			</div>
-		</InfiniteLoading>
+		<DefaultInfiniteLoader {loadMore} identifier={currentFilters} entityPlural="workouts" />
 	</div>
 </div>
