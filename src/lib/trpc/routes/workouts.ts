@@ -92,37 +92,56 @@ const createWorkoutSchema = z.strictObject({
 const loadWorkoutsSchema = z.strictObject({
 	cursorId: z.string().cuid().optional(),
 	filters: z
-		.strictObject({
+		.object({
 			startDate: z.date().optional(),
 			endDate: z.date().optional(),
-			selectedWorkoutStatuses: z.array(z.union([z.literal('RestDay'), z.literal('Skipped')])),
-			selectedMesocycles: z.array(z.string())
+			selectedWorkoutStatuses: z.array(z.union([z.literal('RestDay'), z.literal('Skipped'), z.null()])).optional(),
+			selectedMesocycles: z.array(z.union([z.string(), z.null()])).optional()
 		})
 		.optional()
 });
 
 export const workouts = t.router({
 	load: t.procedure.input(loadWorkoutsSchema).query(async ({ input, ctx }) => {
+		let whereClause: Prisma.WorkoutWhereInput = { userId: ctx.userId };
+		const andConditions: Prisma.WorkoutWhereInput['AND'] = [];
 		const { filters } = input;
-		let whereClause: Prisma.WorkoutWhereInput = {
-			userId: ctx.userId
-		};
 
 		if (filters?.startDate) {
 			whereClause = { ...whereClause, startedAt: { gte: filters.startDate } };
 		}
 
 		if (filters?.endDate) {
-			whereClause = { ...whereClause, startedAt: { lte: filters.endDate } };
+			const endDate = new Date(Number(filters.endDate) + 1000 * 60 * 60 * 24);
+			whereClause = { ...whereClause, startedAt: { lte: endDate } };
 		}
 
 		if (filters?.selectedWorkoutStatuses) {
-			whereClause = { ...whereClause, workoutOfMesocycle: { workoutStatus: { in: filters.selectedWorkoutStatuses } } };
+			const orClause: Prisma.WorkoutWhereInput['OR'] = [
+				{ workoutOfMesocycle: { workoutStatus: { in: filters.selectedWorkoutStatuses.filter((m) => m !== null) } } }
+			];
+
+			if (filters.selectedWorkoutStatuses.includes(null)) {
+				orClause.push({ workoutOfMesocycle: { workoutStatus: { equals: null } } });
+				orClause.push({ workoutOfMesocycle: null });
+			}
+
+			andConditions.push({ OR: orClause });
 		}
 
 		if (filters?.selectedMesocycles) {
-			whereClause = { ...whereClause, workoutOfMesocycle: { mesocycle: { name: { in: filters.selectedMesocycles } } } };
+			const orClause: Prisma.WorkoutWhereInput['OR'] = [
+				{ workoutOfMesocycle: { mesocycle: { name: { in: filters.selectedMesocycles.filter((m) => m !== null) } } } }
+			];
+
+			if (filters.selectedMesocycles.includes(null)) {
+				orClause.push({ workoutOfMesocycle: null });
+			}
+
+			andConditions.push({ OR: orClause });
 		}
+
+		whereClause = { ...whereClause, AND: andConditions };
 
 		return prisma.workout.findMany({
 			where: whereClause,
