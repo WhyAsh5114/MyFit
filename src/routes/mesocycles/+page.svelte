@@ -28,6 +28,8 @@
 	function updateSearchParam(e: Event) {
 		e.preventDefault();
 		const url = new URL($page.url);
+		if (searchString === (url.searchParams.get('search') ?? '')) return;
+
 		if (searchString) url.searchParams.set('search', searchString);
 		else url.searchParams.delete('search');
 

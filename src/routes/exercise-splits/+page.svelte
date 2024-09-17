@@ -21,6 +21,8 @@
 	function updateSearchParam(e: Event) {
 		e.preventDefault();
 		const url = new URL($page.url);
+		if (searchString === (url.searchParams.get('search') ?? '')) return;
+
 		if (searchString) url.searchParams.set('search', searchString);
 		else url.searchParams.delete('search');
 
@@ -32,7 +34,8 @@
 		const lastExerciseSplit = exerciseSplits.at(-1);
 
 		const newExerciseSplits = await trpc().exerciseSplits.load.query({
-			cursorId: lastExerciseSplit?.id
+			cursorId: lastExerciseSplit?.id,
+			searchString
 		});
 
 		if (newExerciseSplits.length === 0) {
@@ -84,6 +87,10 @@
 				<Badge>{exerciseSplit.exerciseSplitDays.length} days / cycle</Badge>
 			</Button>
 		{/each}
-		<DefaultInfiniteLoader {loadMore} identifier={searchString} entityPlural="exercise splits" />
+		<DefaultInfiniteLoader
+			{loadMore}
+			identifier={$page.url.searchParams.get('search')}
+			entityPlural="exercise splits"
+		/>
 	</div>
 </div>

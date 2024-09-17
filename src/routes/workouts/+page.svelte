@@ -95,6 +95,7 @@
 			newURL.searchParams.delete('selectedWorkoutStatuses');
 		}
 
+		if (newURL.toString() === $page.url.toString()) return;
 		workouts = [];
 		goto(newURL);
 	}
