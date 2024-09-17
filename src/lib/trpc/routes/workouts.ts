@@ -89,10 +89,43 @@ const createWorkoutSchema = z.strictObject({
 	workoutExercisesMiniSets: z.array(z.array(z.array(WorkoutExerciseMiniSetCreateWithoutParentSetInputSchema)))
 });
 
+const loadWorkoutsSchema = z.strictObject({
+	cursorId: z.string().cuid().optional(),
+	filters: z
+		.strictObject({
+			startDate: z.date().optional(),
+			endDate: z.date().optional(),
+			selectedWorkoutStatus: z.array(z.union([z.literal('RestDay'), z.literal('Skipped')])),
+			selectedMesocycle: z.array(z.string())
+		})
+		.optional()
+});
+
 export const workouts = t.router({
-	load: t.procedure.input(z.strictObject({ cursorId: z.string().cuid().optional() })).query(async ({ input, ctx }) => {
+	load: t.procedure.input(loadWorkoutsSchema).query(async ({ input, ctx }) => {
+		const { filters } = input;
+		let whereClause: Prisma.WorkoutWhereInput = {
+			userId: ctx.userId
+		};
+
+		if (filters?.startDate) {
+			whereClause = { ...whereClause, startedAt: { gte: filters.startDate } };
+		}
+
+		if (filters?.endDate) {
+			whereClause = { ...whereClause, startedAt: { lte: filters.endDate } };
+		}
+
+		if (filters?.selectedWorkoutStatus) {
+			whereClause = { ...whereClause, workoutOfMesocycle: { workoutStatus: { in: filters.selectedWorkoutStatus } } };
+		}
+
+		if (filters?.selectedMesocycle) {
+			whereClause = { ...whereClause, workoutOfMesocycle: { mesocycle: { name: { in: filters.selectedMesocycle } } } };
+		}
+
 		return prisma.workout.findMany({
-			where: { userId: ctx.userId },
+			where: whereClause,
 			orderBy: { startedAt: 'desc' },
 			include: {
 				workoutOfMesocycle: {
@@ -114,6 +147,33 @@ export const workouts = t.router({
 			skip: input.cursorId !== undefined ? 1 : 0,
 			take: 10
 		});
+	}),
+
+	getFilterData: t.procedure.query(async ({ ctx }) => {
+		const firstWorkout = await prisma.workout.findFirst({
+			where: { userId: ctx.userId },
+			select: { startedAt: true },
+			orderBy: { startedAt: 'asc' }
+		});
+
+		if (!firstWorkout) {
+			return null;
+		}
+		const firstWorkoutDate = firstWorkout.startedAt;
+
+		const lastWorkout = await prisma.workout.findFirst({
+			where: { userId: ctx.userId },
+			select: { startedAt: true },
+			orderBy: { startedAt: 'desc' }
+		});
+		const lastWorkoutDate = lastWorkout!.startedAt;
+
+		const allMesocycles = await prisma.mesocycle.findMany({
+			where: { userId: ctx.userId },
+			select: { name: true, startDate: true, endDate: true }
+		});
+
+		return { firstWorkoutDate, lastWorkoutDate, allMesocycles };
 	}),
 
 	findById: t.procedure.input(z.string().cuid()).query(({ input, ctx }) =>
