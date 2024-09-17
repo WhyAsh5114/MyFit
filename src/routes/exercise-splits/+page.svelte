@@ -8,7 +8,6 @@
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { trpc } from '$lib/trpc/client';
 	import type { RouterOutputs } from '$lib/trpc/router.js';
-	import { loaderState } from 'svelte-infinite';
 	import type { InfiniteEvent } from 'svelte-infinite-loading';
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import SearchIcon from 'virtual:icons/lucide/search';
@@ -45,7 +44,7 @@
 
 		infiniteEvent.detail.loaded();
 		exerciseSplits.push(...newExerciseSplits);
-		if (newExerciseSplits.length < 10) loaderState.complete();
+		if (newExerciseSplits.length < 10) infiniteEvent.detail.complete();
 	}
 
 	function createNewExerciseSplit() {
