@@ -5,13 +5,12 @@
 	import * as Popover from '$lib/components/ui/popover';
 	import * as Select from '$lib/components/ui/select';
 	import type { RouterInputs, RouterOutputs } from '$lib/trpc/router';
+	import { dateToCalendarDate } from '$lib/utils';
 	import type { WorkoutStatus } from '@prisma/client';
 	import type { DateRange, Selected } from 'bits-ui';
+	import { onMount } from 'svelte';
 	import FilterIcon from 'virtual:icons/lucide/filter';
 	import DateRangePicker from './DateRangePicker.svelte';
-	import Badge from '$lib/components/ui/badge/badge.svelte';
-	import { onMount } from 'svelte';
-	import { dateToCalendarDate } from '$lib/utils';
 
 	type PropsType = {
 		currentFilters: Exclude<RouterInputs['workouts']['load']['filters'], undefined>;
@@ -90,7 +89,7 @@
 					<Select.Item class="flex items-center justify-between" value={mesocycle.name}>
 						{mesocycle.name}
 						{#if isActive}
-							<Badge>Active</Badge>
+							<div class="h-2 w-2 rounded-full bg-primary"></div>
 						{/if}
 					</Select.Item>
 				{/each}
