@@ -1,29 +1,28 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import DefaultInfiniteLoader from '$lib/components/DefaultInfiniteLoader.svelte';
+	import { Badge } from '$lib/components/ui/badge/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Input } from '$lib/components/ui/input';
-	import H2 from '$lib/components/ui/typography/H2.svelte';
-	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-	import AddIcon from 'virtual:icons/lucide/plus';
-	import SearchIcon from 'virtual:icons/lucide/search';
-	import { afterNavigate, goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { trpc } from '$lib/trpc/client.js';
 	import type { Mesocycle } from '@prisma/client';
-	import { InfiniteLoader, loaderState } from 'svelte-infinite';
-	import { Badge } from '$lib/components/ui/badge/index.js';
+	import { onMount } from 'svelte';
+	import type { InfiniteEvent } from 'svelte-infinite-loading';
+	import AddIcon from 'virtual:icons/lucide/plus';
+	import SearchIcon from 'virtual:icons/lucide/search';
 	import { mesocycleRunes } from './manage/mesocycleRunes.svelte.js';
 
 	let { data } = $props();
 	let activeMesocycle: Pick<Mesocycle, 'id' | 'name'> | null | 'loading' = $state('loading');
-	let mesocycles: Mesocycle[] | 'loading' = $state('loading');
+	let mesocycles: Mesocycle[] = $state([]);
 	let searchString = $state($page.url.searchParams.get('search') ?? '');
 
-	afterNavigate(async () => {
-		loaderState.reset();
-		[activeMesocycle, mesocycles] = await Promise.all([data.activeMesocycle, data.mesocycles]);
-		if (mesocycles.length !== 10) loaderState.complete();
+	onMount(async () => {
+		activeMesocycle = await data.activeMesocycle;
 	});
 
 	function updateSearchParam(e: Event) {
@@ -32,17 +31,22 @@
 		if (searchString) url.searchParams.set('search', searchString);
 		else url.searchParams.delete('search');
 
-		mesocycles = 'loading';
+		mesocycles = [];
 		goto(url);
 	}
 
-	async function loadMore() {
+	async function loadMore(infiniteEvent: InfiniteEvent) {
 		const lastMesocycle = mesocycles.at(-1);
-		if (typeof lastMesocycle === 'string' || lastMesocycle === undefined) return;
+		const newMesocycles = await trpc().mesocycles.load.query({ cursorId: lastMesocycle?.id, searchString });
 
-		const newMesocycles = await trpc().mesocycles.load.query({ cursorId: lastMesocycle.id });
-		if (mesocycles !== 'loading') mesocycles.push(...newMesocycles);
-		if (newMesocycles.length !== 10) loaderState.complete();
+		if (newMesocycles.length === 0) {
+			infiniteEvent.detail.complete();
+			return;
+		}
+
+		infiniteEvent.detail.loaded();
+		mesocycles.push(...newMesocycles);
+		if (newMesocycles.length < 10) infiniteEvent.detail.complete();
 	}
 
 	function createNewMesocycle() {
@@ -92,49 +96,22 @@
 		<Separator class="w-px grow" />
 	</div>
 	<div class="flex h-px grow flex-col gap-1 overflow-y-auto">
-		{#if mesocycles === 'loading'}
-			{#each Array(10) as _}
-				<div class="flex h-12 items-center justify-between rounded-md border bg-card p-2">
-					<Skeleton class="text-lg-skeleton" />
-					<Skeleton class="badge-skeleton" />
-				</div>
-			{/each}
-		{:else}
-			<InfiniteLoader triggerLoad={loadMore}>
-				{#each mesocycles as mesocycle}
-					<Button
-						class="mb-1 flex h-12 items-center justify-between rounded-md border bg-card p-2"
-						href="/mesocycles/{mesocycle.id}"
-						variant="outline"
-					>
-						<span class="text-lg font-semibold">{mesocycle.name}</span>
-						{#if !mesocycle.startDate}
-							<Badge variant="secondary">Unused</Badge>
-						{:else if !mesocycle.endDate}
-							<Badge>Active</Badge>
-						{:else}
-							<Badge variant="outline">Completed</Badge>
-						{/if}
-					</Button>
+		{#each mesocycles as mesocycle}
+			<Button
+				class="flex h-12 items-center justify-between rounded-md border bg-card p-2"
+				href="/mesocycles/{mesocycle.id}"
+				variant="outline"
+			>
+				<span class="text-lg font-semibold">{mesocycle.name}</span>
+				{#if !mesocycle.startDate}
+					<Badge variant="secondary">Unused</Badge>
+				{:else if !mesocycle.endDate}
+					<Badge>Active</Badge>
 				{:else}
-					<div class="muted-text-box">No mesocycles found</div>
-				{/each}
-				{#snippet loading()}
-					<LoaderCircle class="animate-spin" />
-				{/snippet}
-				{#snippet error(load)}
-					<Button onclick={load} variant="outline">An error occurred. Retry?</Button>
-				{/snippet}
-				{#snippet noData()}
-					{#if mesocycles.length > 0}
-						<div class="flex items-center justify-start gap-2 font-semibold text-muted-foreground">
-							<Separator class="h-0.5 w-20" />
-							<span class="whitespace-nowrap">That's all!</span>
-							<Separator class="h-0.5 w-20" />
-						</div>
-					{/if}
-				{/snippet}
-			</InfiniteLoader>
-		{/if}
+					<Badge variant="outline">Completed</Badge>
+				{/if}
+			</Button>
+		{/each}
+		<DefaultInfiniteLoader {loadMore} identifier={$page.url.searchParams.get('search')} entityPlural="mesocycles" />
 	</div>
 </div>
