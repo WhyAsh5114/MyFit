@@ -1,6 +1,4 @@
 <script lang="ts">
-	import NoWorkoutsFilterComponent from './NoWorkoutsFilterComponent.svelte';
-
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -13,6 +11,7 @@
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import FilterComponent from './(components)/FilterComponent.svelte';
+	import NoWorkoutsFilterComponent from './(components)/NoWorkoutsFilterComponent.svelte';
 	import { workoutRunes } from './manage/workoutRunes.svelte.js';
 
 	let { data } = $props();
