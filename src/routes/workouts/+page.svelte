@@ -44,7 +44,7 @@
 	function setFilters(
 		selectedDateRange: DateRange,
 		selectedMesocycles: (string | null)[],
-		selectedWorkoutStatus: (WorkoutStatus | null)[],
+		selectedWorkoutStatus: (WorkoutStatus | null)[]
 	) {
 		const newURL = new URL($page.url);
 
