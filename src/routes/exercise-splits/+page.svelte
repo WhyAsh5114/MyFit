@@ -30,10 +30,9 @@
 
 	async function loadMore(infiniteEvent: InfiniteEvent) {
 		const lastExerciseSplit = exerciseSplits.at(-1);
-		if (typeof lastExerciseSplit === 'string' || lastExerciseSplit === undefined) return;
 
 		const newExerciseSplits = await trpc().exerciseSplits.load.query({
-			cursorId: lastExerciseSplit.id
+			cursorId: lastExerciseSplit?.id
 		});
 
 		if (newExerciseSplits.length === 0) {
@@ -77,7 +76,7 @@
 	<div class="flex h-px grow flex-col gap-1 overflow-y-auto">
 		{#each exerciseSplits as exerciseSplit}
 			<Button
-				class="mb-1 flex h-12 items-center justify-between rounded-md border bg-card p-2"
+				class="flex h-12 items-center justify-between rounded-md border bg-card p-2"
 				href="/exercise-splits/{exerciseSplit.id}"
 				variant="outline"
 			>
