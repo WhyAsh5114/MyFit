@@ -1,44 +1,66 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Popover from '$lib/components/ui/popover';
-	import * as Select from '$lib/components/ui/select';
-	import type { RouterOutputs } from '$lib/trpc/router';
-	import { dateToCalendarDate } from '$lib/utils';
-	import type { DateRange, Selected } from 'bits-ui';
-	import FilterIcon from 'virtual:icons/lucide/filter';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import Label from '$lib/components/ui/label/label.svelte';
-	import DateRangePicker from './DateRangePicker.svelte';
+	import * as Popover from '$lib/components/ui/popover';
+	import * as Select from '$lib/components/ui/select';
+	import type { RouterInputs, RouterOutputs } from '$lib/trpc/router';
 	import type { WorkoutStatus } from '@prisma/client';
+	import type { DateRange, Selected } from 'bits-ui';
+	import FilterIcon from 'virtual:icons/lucide/filter';
+	import DateRangePicker from './DateRangePicker.svelte';
+	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import { onMount } from 'svelte';
+	import { dateToCalendarDate } from '$lib/utils';
 
 	type PropsType = {
-		workouts: RouterOutputs['workouts']['load'];
+		currentFilters: Exclude<RouterInputs['workouts']['load']['filters'], undefined>;
+		filterData: NonNullable<RouterOutputs['workouts']['getFilterData']>;
 		setFilters: (
 			selectedDateRange: DateRange,
 			selectedMesocycles: (string | null)[],
 			selectedWorkoutStatus: (WorkoutStatus | null)[]
 		) => void;
 	};
-	let { workouts, setFilters }: PropsType = $props();
+	let { currentFilters, filterData, setFilters }: PropsType = $props();
 
 	let open = $state(false);
-	let firstWorkoutDate = $derived(dateToCalendarDate(workouts[0].startedAt));
-	let lastWorkoutDate = $derived(dateToCalendarDate(workouts.at(-1)!.startedAt));
-
-	let selectedDateRange: DateRange = $state({ start: dateToCalendarDate(workouts[0].startedAt), end: undefined });
+	let selectedDateRange: DateRange = $state({ start: undefined, end: undefined });
 	let selectedMesocycles: Selected<string | null>[] = $state([]);
-
-	let selectedworkoutStatus: Map<WorkoutStatus | null, boolean> = new Map([
-		[null, false],
-		['Skipped', false],
-		['RestDay', false]
+	let selectedWorkoutStatuses: Map<WorkoutStatus | null, boolean> = new Map([
+		[null, true],
+		['Skipped', true],
+		['RestDay', true]
 	]);
+
+	onMount(() => {
+		if (currentFilters.startDate) {
+			selectedDateRange.start = dateToCalendarDate(new Date(currentFilters.startDate));
+		}
+		if (currentFilters.endDate) {
+			selectedDateRange.end = dateToCalendarDate(new Date(currentFilters.endDate));
+		}
+		if (currentFilters.selectedMesocycles) {
+			selectedMesocycles = currentFilters.selectedMesocycles.map((mesocycleName) => ({
+				value: mesocycleName,
+				label: mesocycleName ?? 'Non-meso workouts'
+			}));
+		}
+		if (currentFilters.selectedWorkoutStatuses) {
+			selectedWorkoutStatuses.set(null, false);
+			selectedWorkoutStatuses.set('Skipped', false);
+			selectedWorkoutStatuses.set('RestDay', false);
+			currentFilters.selectedWorkoutStatuses.forEach((workoutStatus) => {
+				selectedWorkoutStatuses.set(workoutStatus, true);
+			});
+		}
+	});
 
 	function applyFilters() {
 		setFilters(
 			selectedDateRange,
 			selectedMesocycles.map((s) => s.value),
-			Array.from(selectedworkoutStatus.entries())
+			Array.from(selectedWorkoutStatuses.entries())
 				.filter(([_, value]) => value)
 				.map(([key]) => key)
 		);
@@ -54,7 +76,7 @@
 	</Popover.Trigger>
 	<Popover.Content class="flex w-11/12 max-w-xl flex-col gap-1">
 		<span class="text-sm font-semibold">Date range</span>
-		<DateRangePicker bind:value={selectedDateRange} {firstWorkoutDate} {lastWorkoutDate} />
+		<DateRangePicker bind:value={selectedDateRange} {...filterData} />
 
 		<span class="mt-2 text-sm font-semibold">Mesocycles</span>
 		<Select.Root multiple bind:selected={selectedMesocycles}>
@@ -62,33 +84,32 @@
 				<Select.Value placeholder="Select a value" />
 			</Select.Trigger>
 			<Select.Content>
-				{#each Object.keys(Object.groupBy(workouts, ({ workoutOfMesocycle }) => workoutOfMesocycle?.mesocycle.name ?? '')) as mesocycleName}
-					{#if mesocycleName !== ''}
-						<Select.Item value={mesocycleName}>{mesocycleName}</Select.Item>
-					{:else}
-						<Select.Item class="italic" value={null}>Non-meso workouts</Select.Item>
-					{/if}
+				<Select.Item class="italic" value={null}>Non-meso workouts</Select.Item>
+				{#each filterData.allMesocycles as mesocycle}
+					{@const isActive = mesocycle.startDate && mesocycle.endDate === null}
+					<Select.Item class="flex items-center justify-between" value={mesocycle.name}>
+						{mesocycle.name}
+						{#if isActive}
+							<Badge>Active</Badge>
+						{/if}
+					</Select.Item>
 				{/each}
 			</Select.Content>
 		</Select.Root>
 
 		<span class="mt-2 text-sm font-semibold">Workout types</span>
 		<div class="flex justify-between rounded-md border p-3">
-			{#each selectedworkoutStatus as [workoutStatus, selected]}
+			{#each selectedWorkoutStatuses as [workoutStatus, selected]}
 				<div class="flex items-center gap-2">
 					<Label for="{workoutStatus}-workout-status" class="text-sm leading-none">
-						{#if workoutStatus}
-							{workoutStatus}
-						{:else}
-							Normal
-						{/if}
+						{workoutStatus ?? 'Normal'}
 					</Label>
 					<Checkbox
 						id="{workoutStatus}-workout-status"
 						checked={selected}
 						onCheckedChange={(c) => {
 							if (typeof c === 'string') return;
-							selectedworkoutStatus.set(workoutStatus, c);
+							selectedWorkoutStatuses.set(workoutStatus, c);
 						}}
 					/>
 				</div>

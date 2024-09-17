@@ -44,7 +44,7 @@
 	function setFilters(
 		selectedDateRange: DateRange,
 		selectedMesocycles: (string | null)[],
-		selectedWorkoutStatus: (WorkoutStatus | null)[]
+		selectedWorkoutStatus: (WorkoutStatus | null)[],
 	) {
 		const newURL = new URL($page.url);
 
@@ -79,12 +79,12 @@
 
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
-		{#if workouts !== 'loading' && workouts.length > 0}
+		{#if workouts !== 'loading'}
 			{#await data.filterData}
 				TODO: skeleton
 			{:then filterData}
 				{#if filterData}
-					<FilterComponent {filterData} {setFilters} />
+					<FilterComponent {filterData} currentFilters={data.currentFilters} {setFilters} />
 				{:else}
 					<NoWorkoutsFilterComponent />
 				{/if}
