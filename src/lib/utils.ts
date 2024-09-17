@@ -1,7 +1,8 @@
+import { parseDate } from '@internationalized/date';
 import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
 import { cubicOut } from 'svelte/easing';
 import type { TransitionConfig } from 'svelte/transition';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -54,6 +55,11 @@ export const flyAndScale = (
 		easing: cubicOut
 	};
 };
+
+export function dateToCalendarDate(date: Date | undefined) {
+	if (!date) date = new Date();
+	return parseDate(date.toISOString().slice(0, 10));
+}
 
 export function generateShadesAndTints(count: number): string[] {
 	const baseColor = '3079ca';

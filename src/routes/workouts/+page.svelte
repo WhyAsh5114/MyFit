@@ -1,20 +1,23 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	import H2 from '$lib/components/ui/typography/H2.svelte';
-	import AddIcon from 'virtual:icons/lucide/plus';
-	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import { afterNavigate, goto } from '$app/navigation';
-	import { trpc } from '$lib/trpc/client';
-	import { InfiniteLoader, loaderState } from 'svelte-infinite';
 	import { page } from '$app/stores';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import { workoutRunes } from './manage/workoutRunes.svelte.js';
-	import type { WorkoutWithMesoData } from './+page.server.js';
+	import H2 from '$lib/components/ui/typography/H2.svelte';
+	import { trpc } from '$lib/trpc/client';
+	import type { RouterOutputs } from '$lib/trpc/router.js';
+	import type { WorkoutStatus } from '@prisma/client';
+	import type { DateRange } from 'bits-ui';
+	import { InfiniteLoader, loaderState } from 'svelte-infinite';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
+	import AddIcon from 'virtual:icons/lucide/plus';
 	import FilterComponent from './(components)/FilterComponent.svelte';
+	import { workoutRunes } from './manage/workoutRunes.svelte.js';
+	import NoWorkoutsFilterComponent from './(components)/NoWorkoutsFilterComponent.svelte';
 
 	let { data } = $props();
-	let workouts: WorkoutWithMesoData[] | 'loading' = $state('loading');
+	let workouts: RouterOutputs['workouts']['load'] | 'loading' = $state('loading');
 
 	afterNavigate(async () => {
 		loaderState.reset();
@@ -26,7 +29,7 @@
 		const lastWorkout = workouts.at(-1);
 		if (typeof lastWorkout === 'string' || lastWorkout === undefined) return;
 
-		const newWorkouts = await trpc($page).workouts.load.query({
+		const newWorkouts = await trpc().workouts.load.query({
 			cursorId: lastWorkout.id
 		});
 		if (workouts !== 'loading') workouts.push(...newWorkouts);
@@ -37,13 +40,56 @@
 		if (workoutRunes.editingWorkoutId !== null) workoutRunes.resetStores();
 		goto('/workouts/manage/start');
 	}
+
+	function setFilters(
+		selectedDateRange: DateRange,
+		selectedMesocycles: (string | null)[],
+		selectedWorkoutStatus: (WorkoutStatus | null)[]
+	) {
+		const newURL = new URL($page.url);
+
+		if (selectedDateRange.start) {
+			newURL.searchParams.set('startDate', selectedDateRange.start.toString());
+		} else {
+			newURL.searchParams.delete('startDate');
+		}
+
+		if (selectedDateRange.end) {
+			newURL.searchParams.set('endDate', selectedDateRange.end.toString());
+		} else {
+			newURL.searchParams.delete('endDate');
+		}
+
+		if (selectedMesocycles.length) {
+			newURL.searchParams.set('selectedMesocycles', JSON.stringify(selectedMesocycles));
+		} else {
+			newURL.searchParams.delete('selectedMesocycles');
+		}
+
+		if (selectedWorkoutStatus.length) {
+			newURL.searchParams.set('selectedWorkoutStatuses', JSON.stringify(selectedWorkoutStatus));
+		} else {
+			newURL.searchParams.delete('selectedWorkoutStatuses');
+		}
+		goto(newURL);
+	}
 </script>
 
 <H2>Workouts</H2>
 
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
-		<FilterComponent />
+		{#if workouts !== 'loading'}
+			{#await data.filterData}
+				TODO: skeleton
+			{:then filterData}
+				{#if filterData}
+					<FilterComponent {filterData} currentFilters={data.currentFilters} {setFilters} />
+				{:else}
+					<NoWorkoutsFilterComponent />
+				{/if}
+			{/await}
+		{/if}
 		<Button aria-label="create-workout" onclick={createNewWorkout}><AddIcon /></Button>
 	</div>
 	<div class="flex h-px grow flex-col gap-1 overflow-y-auto">

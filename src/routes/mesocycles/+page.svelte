@@ -40,7 +40,7 @@
 		const lastMesocycle = mesocycles.at(-1);
 		if (typeof lastMesocycle === 'string' || lastMesocycle === undefined) return;
 
-		const newMesocycles = await trpc($page).mesocycles.load.query({ cursorId: lastMesocycle.id });
+		const newMesocycles = await trpc().mesocycles.load.query({ cursorId: lastMesocycle.id });
 		if (mesocycles !== 'loading') mesocycles.push(...newMesocycles);
 		if (newMesocycles.length !== 10) loaderState.complete();
 	}

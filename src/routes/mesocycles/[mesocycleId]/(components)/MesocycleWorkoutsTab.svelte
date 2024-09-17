@@ -1,15 +1,10 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { arraySum } from '$lib/utils';
-	import { getLocalTimeZone, isSameDay, parseDate, today } from '@internationalized/date';
+	import { arraySum, dateToCalendarDate } from '$lib/utils';
+	import { getLocalTimeZone, isSameDay, today } from '@internationalized/date';
 	import type { DateRange } from 'bits-ui';
 	import CustomRangeCalendar from './CustomRangeCalendar.svelte';
 	import type { RouterOutputs } from '$lib/trpc/router';
-
-	function dateToCalendarDate(date: Date | undefined) {
-		if (!date) date = new Date();
-		return parseDate(date.toISOString().slice(0, 10));
-	}
 
 	let { mesocycle }: { mesocycle: NonNullable<RouterOutputs['mesocycles']['findById']> } = $props();
 

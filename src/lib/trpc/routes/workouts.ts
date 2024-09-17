@@ -89,10 +89,62 @@ const createWorkoutSchema = z.strictObject({
 	workoutExercisesMiniSets: z.array(z.array(z.array(WorkoutExerciseMiniSetCreateWithoutParentSetInputSchema)))
 });
 
+const loadWorkoutsSchema = z.strictObject({
+	cursorId: z.string().cuid().optional(),
+	filters: z
+		.object({
+			startDate: z.date().optional(),
+			endDate: z.date().optional(),
+			selectedWorkoutStatuses: z.array(z.union([z.literal('RestDay'), z.literal('Skipped'), z.null()])).optional(),
+			selectedMesocycles: z.array(z.union([z.string(), z.null()])).optional()
+		})
+		.optional()
+});
+
 export const workouts = t.router({
-	load: t.procedure.input(z.strictObject({ cursorId: z.string().cuid().optional() })).query(async ({ input, ctx }) => {
+	load: t.procedure.input(loadWorkoutsSchema).query(async ({ input, ctx }) => {
+		let whereClause: Prisma.WorkoutWhereInput = { userId: ctx.userId };
+		const andConditions: Prisma.WorkoutWhereInput['AND'] = [];
+		const { filters } = input;
+
+		if (filters?.startDate) {
+			whereClause = { ...whereClause, startedAt: { gte: filters.startDate } };
+		}
+
+		if (filters?.endDate) {
+			const endDate = new Date(Number(filters.endDate) + 1000 * 60 * 60 * 24);
+			whereClause = { ...whereClause, startedAt: { lte: endDate } };
+		}
+
+		if (filters?.selectedWorkoutStatuses) {
+			const orClause: Prisma.WorkoutWhereInput['OR'] = [
+				{ workoutOfMesocycle: { workoutStatus: { in: filters.selectedWorkoutStatuses.filter((m) => m !== null) } } }
+			];
+
+			if (filters.selectedWorkoutStatuses.includes(null)) {
+				orClause.push({ workoutOfMesocycle: { workoutStatus: { equals: null } } });
+				orClause.push({ workoutOfMesocycle: null });
+			}
+
+			andConditions.push({ OR: orClause });
+		}
+
+		if (filters?.selectedMesocycles) {
+			const orClause: Prisma.WorkoutWhereInput['OR'] = [
+				{ workoutOfMesocycle: { mesocycle: { name: { in: filters.selectedMesocycles.filter((m) => m !== null) } } } }
+			];
+
+			if (filters.selectedMesocycles.includes(null)) {
+				orClause.push({ workoutOfMesocycle: null });
+			}
+
+			andConditions.push({ OR: orClause });
+		}
+
+		whereClause = { ...whereClause, AND: andConditions };
+
 		return prisma.workout.findMany({
-			where: { userId: ctx.userId },
+			where: whereClause,
 			orderBy: { startedAt: 'desc' },
 			include: {
 				workoutOfMesocycle: {
@@ -114,6 +166,33 @@ export const workouts = t.router({
 			skip: input.cursorId !== undefined ? 1 : 0,
 			take: 10
 		});
+	}),
+
+	getFilterData: t.procedure.query(async ({ ctx }) => {
+		const firstWorkout = await prisma.workout.findFirst({
+			where: { userId: ctx.userId },
+			select: { startedAt: true },
+			orderBy: { startedAt: 'asc' }
+		});
+
+		if (!firstWorkout) {
+			return null;
+		}
+		const firstWorkoutDate = firstWorkout.startedAt;
+
+		const lastWorkout = await prisma.workout.findFirst({
+			where: { userId: ctx.userId },
+			select: { startedAt: true },
+			orderBy: { startedAt: 'desc' }
+		});
+		const lastWorkoutDate = lastWorkout!.startedAt;
+
+		const allMesocycles = await prisma.mesocycle.findMany({
+			where: { userId: ctx.userId },
+			select: { name: true, startDate: true, endDate: true }
+		});
+
+		return { firstWorkoutDate, lastWorkoutDate, allMesocycles };
 	}),
 
 	findById: t.procedure.input(z.string().cuid()).query(({ input, ctx }) =>
