@@ -30,7 +30,8 @@
 		if (typeof lastWorkout === 'string' || lastWorkout === undefined) return;
 
 		const newWorkouts = await trpc().workouts.load.query({
-			cursorId: lastWorkout.id
+			cursorId: lastWorkout.id,
+			filters: data.currentFilters
 		});
 		if (workouts !== 'loading') workouts.push(...newWorkouts);
 		if (newWorkouts.length !== 10) loaderState.complete();
