@@ -256,7 +256,12 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 
 	const newSets = ex.sets.map((set) => {
 		if (set.reps === undefined || set.load === undefined || set.RIR === undefined) return set;
-		const newLoad = set.load + (ex.minimumWeightChange ?? 5);
+
+		let newLoad = set.load;
+		if ((['Straight', 'Myorep'].includes(ex.setType) && needLoadIncrease) || set.reps > ex.repRangeStart) {
+			newLoad += ex.minimumWeightChange ?? 5;
+		}
+
 		const newReps = solveBergerFormula({
 			variableToSolve: 'NewReps',
 			knownValues: {
@@ -272,9 +277,10 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 		return newSet;
 	});
 
-	const goingBelowLowerRepRange = newSets.some((set) => set.reps! < ex.repRangeStart);
-	if (goingBelowLowerRepRange) return ex.sets;
-	return newSets;
+	return newSets.map((newSet, setIdx) => {
+		if (newSet.reps! < ex.repRangeStart) return ex.sets[setIdx];
+		return newSet;
+	});
 }
 
 function increaseSets(
