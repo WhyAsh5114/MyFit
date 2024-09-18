@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { solveBrzyckiFormula, type WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
+	import { solveBergerFormula, type WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
 	import * as Popover from '$lib/components/ui/popover';
 	import { workoutRunes } from '../../workoutRunes.svelte';
 	import TrendUpIcon from 'virtual:icons/lucide/trending-up';
@@ -23,7 +23,7 @@
 		let { reps, load, RIR } = exercise.sets[setIdx];
 		if (reps === undefined || load === undefined || RIR === undefined) return;
 
-		const actualOverload = solveBrzyckiFormula({
+		const actualOverload = solveBergerFormula({
 			variableToSolve: 'OverloadPercentage',
 			knownValues: {
 				oldSet: prevSet,

@@ -25,7 +25,7 @@ type SetDetails = {
 	RIR: number;
 };
 
-type CommonBrzyckiType = {
+type CommonBergerType = {
 	bodyweightFraction: number | null;
 	oldUserBodyweight?: number;
 	newUserBodyweight?: number;
@@ -33,24 +33,23 @@ type CommonBrzyckiType = {
 	oldSet: SetDetails;
 };
 
-type BrzyckiNewReps = {
+type BergerNewReps = {
 	variableToSolve: 'NewReps';
-	knownValues: CommonBrzyckiType & {
+	knownValues: CommonBergerType & {
 		newSet: Omit<SetDetails, 'reps'> & { reps?: number };
 	};
 };
 
-type BrzyckiOverloadPercentage = {
+type BergerOverloadPercentage = {
 	variableToSolve: 'OverloadPercentage';
-	knownValues: CommonBrzyckiType & {
+	knownValues: CommonBergerType & {
 		newSet: SetDetails;
 	};
 };
 
-type BrzyckiInput = BrzyckiNewReps | BrzyckiOverloadPercentage;
+type BergerInput = BergerNewReps | BergerOverloadPercentage;
 
-export function solveBrzyckiFormula(input: BrzyckiInput) {
-	// #84
+export function solveBergerFormula(input: BergerInput) {
 	const { variableToSolve, knownValues } = input;
 	const {
 		oldSet,
@@ -63,22 +62,55 @@ export function solveBrzyckiFormula(input: BrzyckiInput) {
 
 	const oldLoad = oldSet.load + (bodyweightFraction ?? 0) * oldUserBodyweight;
 	const newLoad = newSet.load + (bodyweightFraction ?? 0) * newUserBodyweight;
-	const RHSConstants = 37 - newSet.RIR;
+
+	const exponentialMultiplier = Math.pow(Math.E, (131 * (oldSet.reps + oldSet.RIR)) / 5000);
 
 	switch (variableToSolve) {
 		case 'NewReps': {
-			const numerator = newLoad * (oldSet.reps + oldSet.RIR - 37);
-			const denominator = (1 + overloadPercentage / 100) * oldLoad;
-			return numerator / denominator + RHSConstants;
+			const numerator = overloadPercentage * (9745640 * oldLoad - 423641) * exponentialMultiplier;
+			const denominator = 9745640 * newLoad - 423641;
+			return 38.1679 * Math.log(numerator / denominator) - newSet.RIR;
 		}
 
 		case 'OverloadPercentage': {
-			const numerator = newLoad * (oldSet.reps + oldSet.RIR - 37);
-			const denominator = oldLoad * (knownValues.newSet.reps + newSet.RIR - 37);
+			const numeratorMultiplier = Math.pow(Math.E, (knownValues.newSet.reps + newSet.RIR) / 38.1679);
+			const numerator = numeratorMultiplier * (9745640 * newLoad - 423641);
+			const denominator = exponentialMultiplier * (9745640 * oldLoad - 423641);
 			return (numerator / denominator - 1) * 100;
 		}
 	}
 }
+
+// export function solveBryzckiFormula(input: BrzyckiInput) {
+// 	// #84
+// 	const { variableToSolve, knownValues } = input;
+// 	const {
+// 		oldSet,
+// 		newSet,
+// 		bodyweightFraction = null,
+// 		oldUserBodyweight = 0,
+// 		newUserBodyweight = 0,
+// 		overloadPercentage = 0
+// 	} = knownValues;
+
+// 	const oldLoad = oldSet.load + (bodyweightFraction ?? 0) * oldUserBodyweight;
+// 	const newLoad = newSet.load + (bodyweightFraction ?? 0) * newUserBodyweight;
+// 	const RHSConstants = 37 - newSet.RIR;
+
+// 	switch (variableToSolve) {
+// 		case 'NewReps': {
+// 			const numerator = newLoad * (oldSet.reps + oldSet.RIR - 37);
+// 			const denominator = (1 + overloadPercentage / 100) * oldLoad;
+// 			return numerator / denominator + RHSConstants;
+// 		}
+
+// 		case 'OverloadPercentage': {
+// 			const numerator = newLoad * (oldSet.reps + oldSet.RIR - 37);
+// 			const denominator = oldLoad * (knownValues.newSet.reps + newSet.RIR - 37);
+// 			return (numerator / denominator - 1) * 100;
+// 		}
+// 	}
+// }
 
 export function getWorkoutVolume(workout: Workout) {
 	return arraySum(workout.workoutExercises.map((exercise) => getExerciseVolume(exercise, workout.userBodyweight)));
@@ -203,7 +235,7 @@ function getPerformanceChanges(performances: { exercise: WorkoutExercise; oldUse
 			if (!oldSet || !newSet) break;
 
 			setPerformanceChanges.push(
-				solveBrzyckiFormula({
+				solveBergerFormula({
 					variableToSolve: 'OverloadPercentage',
 					knownValues: {
 						oldSet,
@@ -255,7 +287,7 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 	return ex.sets.map((set) => {
 		if (set.reps === undefined || set.load === undefined || set.RIR === undefined) return set;
 		const newLoad = set.load + (ex.minimumWeightChange ?? 5);
-		const newReps = solveBrzyckiFormula({
+		const newReps = solveBergerFormula({
 			variableToSolve: 'NewReps',
 			knownValues: {
 				oldSet: { reps: set.reps, load: set.load, RIR: set.RIR },
@@ -370,7 +402,7 @@ export function progressiveOverloadMagic(
 				if (!oldSet) continue;
 
 				const newSet = { ...oldSet, reps: oldSet.reps + 1 };
-				const overloadAchieved = solveBrzyckiFormula({
+				const overloadAchieved = solveBergerFormula({
 					variableToSolve: 'OverloadPercentage',
 					knownValues: {
 						oldSet,
