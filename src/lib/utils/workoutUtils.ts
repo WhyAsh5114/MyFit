@@ -254,7 +254,7 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 	});
 	if (!needLoadIncrease) return ex.sets;
 
-	return ex.sets.map((set) => {
+	const newSets = ex.sets.map((set) => {
 		if (set.reps === undefined || set.load === undefined || set.RIR === undefined) return set;
 		const newLoad = set.load + (ex.minimumWeightChange ?? 5);
 		const newReps = solveBergerFormula({
@@ -268,10 +268,13 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 				overloadPercentage: 0
 			}
 		});
-		set.reps = Math.round(newReps);
-		set.load = newLoad;
-		return set;
+		const newSet = { ...set, reps: Math.round(newReps), load: newLoad };
+		return newSet;
 	});
+
+	const goingBelowLowerRepRange = newSets.some((set) => set.reps! < ex.repRangeStart);
+	if (goingBelowLowerRepRange) return ex.sets;
+	return newSets;
 }
 
 function increaseSets(
@@ -408,6 +411,8 @@ export function progressiveOverloadMagic(
 		ex.sets.forEach((set, idx) => {
 			const oldRIR = set.RIR ?? currentCycleRIR;
 			set.RIR = currentCycleRIR;
+
+			// Last set to failure
 			if (idx === ex.sets.length - 1)
 				if (typeof ex.lastSetToFailure === 'boolean') set.RIR = ex.lastSetToFailure ? 0 : set.RIR;
 				else if (mesocycle.lastSetToFailure === true) set.RIR = 0;
