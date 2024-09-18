@@ -81,37 +81,6 @@ export function solveBergerFormula(input: BergerInput) {
 	}
 }
 
-// export function solveBryzckiFormula(input: BrzyckiInput) {
-// 	// #84
-// 	const { variableToSolve, knownValues } = input;
-// 	const {
-// 		oldSet,
-// 		newSet,
-// 		bodyweightFraction = null,
-// 		oldUserBodyweight = 0,
-// 		newUserBodyweight = 0,
-// 		overloadPercentage = 0
-// 	} = knownValues;
-
-// 	const oldLoad = oldSet.load + (bodyweightFraction ?? 0) * oldUserBodyweight;
-// 	const newLoad = newSet.load + (bodyweightFraction ?? 0) * newUserBodyweight;
-// 	const RHSConstants = 37 - newSet.RIR;
-
-// 	switch (variableToSolve) {
-// 		case 'NewReps': {
-// 			const numerator = newLoad * (oldSet.reps + oldSet.RIR - 37);
-// 			const denominator = (1 + overloadPercentage / 100) * oldLoad;
-// 			return numerator / denominator + RHSConstants;
-// 		}
-
-// 		case 'OverloadPercentage': {
-// 			const numerator = newLoad * (oldSet.reps + oldSet.RIR - 37);
-// 			const denominator = oldLoad * (knownValues.newSet.reps + newSet.RIR - 37);
-// 			return (numerator / denominator - 1) * 100;
-// 		}
-// 	}
-// }
-
 export function getWorkoutVolume(workout: Workout) {
 	return arraySum(workout.workoutExercises.map((exercise) => getExerciseVolume(exercise, workout.userBodyweight)));
 }
