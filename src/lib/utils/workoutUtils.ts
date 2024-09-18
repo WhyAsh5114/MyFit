@@ -421,6 +421,12 @@ export function progressiveOverloadMagic(
 			const RIRDifference = set.RIR - oldRIR;
 			if (set.reps === undefined) return;
 			if (RIRDifference > 0 && !(ex.forceRIRMatching ?? mesocycle.forceRIRMatching)) return;
+			if (set.reps - RIRDifference < ex.repRangeStart) {
+				const maxRIR = ex.repRangeStart - set.reps;
+				set.RIR = maxRIR;
+				set.reps -= maxRIR - oldRIR;
+				return;
+			}
 			set.reps -= RIRDifference;
 		});
 	});
