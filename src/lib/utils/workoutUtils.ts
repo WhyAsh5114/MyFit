@@ -67,7 +67,7 @@ export function solveBergerFormula(input: BergerInput) {
 
 	switch (variableToSolve) {
 		case 'NewReps': {
-			const numerator = overloadPercentage * (9745640 * oldLoad - 423641) * exponentialMultiplier;
+			const numerator = (1 + overloadPercentage / 100) * (9745640 * oldLoad - 423641) * exponentialMultiplier;
 			const denominator = 9745640 * newLoad - 423641;
 			return 38.1679 * Math.log(numerator / denominator) - newSet.RIR;
 		}
@@ -253,6 +253,7 @@ function getPerformanceChanges(performances: { exercise: WorkoutExercise; oldUse
 }
 
 function adjustIdealPerformance(actualPerformances: number[], idealPerformance: number) {
+	if (actualPerformances.length < 2) return idealPerformance;
 	const weights = actualPerformances.map((_, index) => index + 1);
 	const weightedSum = actualPerformances.reduce((acc, performance, index) => {
 		return acc + performance * weights[index];
