@@ -428,7 +428,7 @@ export function progressiveOverloadMagic(
 			if (set.reps === undefined) return;
 			if (RIRDifference > 0 && !(ex.forceRIRMatching ?? mesocycle.forceRIRMatching)) return;
 			if (set.reps - RIRDifference < ex.repRangeStart) {
-				const maxRIR = ex.repRangeStart - set.reps;
+				const maxRIR = Math.max(ex.repRangeStart - set.reps, 0);
 				set.RIR = maxRIR;
 				set.reps -= maxRIR - oldRIR;
 				return;
