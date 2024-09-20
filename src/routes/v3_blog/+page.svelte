@@ -1,3 +1,33 @@
+<article class="prose" id="v3_beta_released">
+  <h2>20th September, 2024</h2>
+  <h3>V3 beta release!</h3>
+  <p>
+    I said I'd try to write a blog post every month, but I got busy with college admissions and
+    stuff. And honestly, I got a Deadlock invite (the game), and it was way too enticing to miss out
+    on. Met up with friends as we hadn't seen each other for quite some time. So basically, I
+    procrastinated working on the app for the better part of August.
+  </p>
+  <p>
+    After finishing up the admissions process, I had a bit of breathing room before the start of the
+    academic year. I got the motivation to start working on the app again and learned a lot about
+    GitHub guidelines and issue tracking from a friend. A beta version of V3 was released for
+    testing and feedback, and people started opening issues like bug reports and feature requests.
+    After seeing positive comments when I resolved the GitHub issues and discussed the app with
+    others, I WANTED to work on the app. Closing issues one by one while interacting with the
+    community has a different kind of satisfaction to it.
+  </p>
+  <p>
+    Unfortunately, there were a LOT more things remaining to finish off before I could release the
+    V3-stable version. And I couldn't finish them before college, and now I'm buried under
+    assignments, practicals, and lectures. So I will be slowing down work on the app for now, and
+    when a new holiday season arrives, giving me some free time, I'll catch up on the issues. Here's
+    the V3-beta link for anyone who missed it on GitHub:
+    <a href="https://my-fit-v3.vercel.app/">https://my-fit-v3.vercel.app</a> (this version is in beta
+    and user data might be deleted without notice, use at your own discretion)
+  </p>
+</article>
+
+<br /><br />
 <article class="prose" id="being_fine_with_suboptimal">
   <h2>7th July, 2024</h2>
   <h3>Being fine with "sub-optimal" <i>and v3 updates</i></h3>
