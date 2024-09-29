@@ -103,7 +103,7 @@
 		You'll lose exercise data from the following days:
 		<span class="font-semibold text-yellow-500">
 			{dataLossDays.map((day) => `Day ${day + 1}`).join(', ')}
-		</span>. Continue?
+		</span>.
 	{/snippet}
 	<Button onclick={() => submitStructure(true)} variant="destructive">Continue</Button>
 </ResponsiveDialog>

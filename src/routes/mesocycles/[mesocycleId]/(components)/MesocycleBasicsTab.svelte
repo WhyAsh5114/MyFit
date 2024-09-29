@@ -258,10 +258,8 @@
 	{/if}
 </Card.Root>
 
-<ResponsiveDialog title="Are you sure?" bind:open={deleteConfirmDrawerOpen}>
-	<p>
-		Delete mesocycle <span class="font-semibold">{mesocycle.name}</span>? This action cannot be undone.
-	</p>
+<ResponsiveDialog title="Delete mesocycle?" bind:open={deleteConfirmDrawerOpen}>
+	<p>This action cannot be undone.</p>
 	<Button class="gap-2" disabled={callingDeleteEndpoint} onclick={deleteMesocycle} variant="destructive">
 		{#if callingDeleteEndpoint}
 			<LoaderCircle class="animate-spin" />
@@ -271,7 +269,7 @@
 	</Button>
 </ResponsiveDialog>
 
-<ResponsiveDialog title="Extract split" bind:open={extractSplitConfirmDrawerOpen}>
+<ResponsiveDialog title="Extract split?" bind:open={extractSplitConfirmDrawerOpen}>
 	{#snippet description()}
 		Extract the mesocycle's exercise split into an independent exercise split
 	{/snippet}
