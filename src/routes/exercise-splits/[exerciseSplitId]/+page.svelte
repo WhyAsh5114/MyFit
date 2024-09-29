@@ -89,7 +89,6 @@
 {#if exerciseSplit === 'loading'}
 	<ExerciseSplitSkeleton />
 {:else}
-	{@const exerciseSplitName = exerciseSplit.name}
 	<Tabs.Root class="flex w-full grow flex-col" bind:value={selectedTabValue}>
 		<Tabs.List class="grid w-full grid-cols-2">
 			<Tabs.Trigger value="info">Info</Tabs.Trigger>
@@ -148,9 +147,9 @@
 			{/if}
 		</Tabs.Content>
 	</Tabs.Root>
-	<ResponsiveDialog title="Are you sure?" bind:open={deleteConfirmDrawerOpen}>
+	<ResponsiveDialog title="Delete split?" bind:open={deleteConfirmDrawerOpen}>
 		{#snippet description()}
-			Delete split <span class="font-semibold">{exerciseSplitName}</span>? This action cannot be undone.
+			This action cannot be undone.
 		{/snippet}
 		<Button disabled={callingDeleteEndpoint} onclick={deleteExerciseSplit} variant="destructive">
 			{#if callingDeleteEndpoint}
