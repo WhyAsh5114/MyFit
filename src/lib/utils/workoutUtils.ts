@@ -201,7 +201,7 @@ function getPerformanceChanges(performances: { exercise: WorkoutExercise; oldUse
 			const oldSet = oldPerformance.exercise.sets[j];
 			const newSet = newPerformance.exercise.sets[j];
 			if (!oldSet || !newSet) break;
-			if (oldSet.skipped || newSet.skipped) break;
+			if (oldSet.skipped || newSet.skipped) continue;
 
 			setPerformanceChanges.push(
 				solveBergerFormula({
