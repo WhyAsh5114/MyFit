@@ -19,6 +19,7 @@
 		const prevSet = prevExercise?.sets[setIdx];
 		if (!prevSet) return;
 		if (!exercise.sets[setIdx]) return;
+		if (exercise.sets[setIdx].skipped || prevSet.skipped) return;
 
 		let { reps, load, RIR } = exercise.sets[setIdx];
 		if (reps === undefined || load === undefined || RIR === undefined) return;
@@ -78,27 +79,28 @@
 			{/if}
 		</span>
 		{#each exercise.sets as set, idx}
-			{#if prevExercise.sets[idx] && !set.skipped}
+			{@const prevSet = prevExercise.sets[idx]}
+			{#if prevSet && !prevSet.skipped && !set.skipped}
 				{@const volumeChange = getTheoreticalVolumeChange(idx)}
 				<p>
-					{#if prevExercise.sets[idx].reps !== set.reps}
-						<span class="text-muted-foreground">{prevExercise.sets[idx].reps} -&gt;</span>
+					{#if prevSet.reps !== set.reps}
+						<span class="text-muted-foreground">{prevSet.reps} -&gt;</span>
 						{set.reps}
 					{:else}
 						{set.reps}
 					{/if}
 				</p>
 				<p>
-					{#if prevExercise.sets[idx].load !== set.load}
-						<span class="text-muted-foreground">{prevExercise.sets[idx].load} -&gt;</span>
+					{#if prevSet.load !== set.load}
+						<span class="text-muted-foreground">{prevSet.load} -&gt;</span>
 						{set.load}
 					{:else}
 						{set.load}
 					{/if}
 				</p>
 				<p>
-					{#if prevExercise.sets[idx].RIR !== set.RIR}
-						<span class="text-muted-foreground">{prevExercise.sets[idx].RIR} -&gt;</span>
+					{#if prevSet.RIR !== set.RIR}
+						<span class="text-muted-foreground">{prevSet.RIR} -&gt;</span>
 						{set.RIR}
 					{:else}
 						{set.RIR}
@@ -119,9 +121,11 @@
 				<!-- #85 -->
 			{:else}
 				<Separator />
-				<span class="text-sm text-muted-foreground">
+				<span class="text-center text-sm text-muted-foreground">
 					{#if set.skipped}
 						skipped
+					{:else if prevSet?.skipped}
+						skipped last time
 					{:else}
 						new set
 					{/if}
