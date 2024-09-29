@@ -300,7 +300,7 @@ function increaseSets(
 
 	const muscleGroup = exercise.customMuscleGroup ?? exercise.targetMuscleGroup;
 	const cyclicSetsForMuscleGroup = cyclicSetsPerMuscleGroup.get(muscleGroup) ?? 0;
-	if (cyclicSetsForMuscleGroup > cyclicSetChange.maxVolume) return exercise.sets;
+	if (cyclicSetsForMuscleGroup >= cyclicSetChange.maxVolume) return exercise.sets;
 
 	let setsToIncrease = 1;
 	if (performanceChanges.length > 0) {
@@ -313,7 +313,7 @@ function increaseSets(
 
 	return [
 		...exercise.sets,
-		...Array.from({ length: setsToIncrease }).map((_) => ({
+		...Array.from({ length: setsToIncrease }).map(() => ({
 			reps: undefined,
 			load: undefined,
 			RIR: undefined,
@@ -403,12 +403,14 @@ export function progressiveOverloadMagic(
 			}
 
 			ex.sets = increaseLoadOfSets(ex, userBodyweight);
-			ex.sets = increaseSets(
-				mesocycleWithProgressionData,
-				ex,
-				performanceChanges,
-				adjustedTotalOverloadPercentagePerSet
-			);
+			if (workoutsOfMesocycle.length >= 2) {
+				ex.sets = increaseSets(
+					mesocycleWithProgressionData,
+					ex,
+					performanceChanges,
+					adjustedTotalOverloadPercentagePerSet
+				);
+			}
 		});
 	}
 
