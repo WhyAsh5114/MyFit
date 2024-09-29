@@ -413,8 +413,6 @@ export function progressiveOverloadMagic(
 				setsToIncrease = Math.min(setsToIncrease, cyclicSetChange.setIncreaseAmount);
 			}
 
-			console.log(muscleGroup, averageMuscleGroupPerformanceChanges);
-
 			for (let i = 0; i < setsToIncrease; i++) {
 				const exercisesSortedBySets = exercises.sort((a, b) => a.sets.length - b.sets.length);
 				exercisesSortedBySets[0].sets.push({
