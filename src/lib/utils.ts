@@ -119,3 +119,17 @@ export function convertCamelCaseToNormal(text?: string | null): string {
 export function floorToNearestMultiple(number: number, multiple: number) {
 	return Math.floor(number / multiple) * multiple;
 }
+
+export function groupBy<T, K extends string | number | symbol>(array: T[], keyGetter: (item: T) => K): Record<K, T[]> {
+	return array.reduce(
+		(result: Record<K, T[]>, currentItem) => {
+			const key = keyGetter(currentItem);
+			if (!result[key]) {
+				result[key] = [];
+			}
+			result[key].push(currentItem);
+			return result;
+		},
+		{} as Record<K, T[]>
+	);
+}
