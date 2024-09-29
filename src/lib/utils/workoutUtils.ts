@@ -1,6 +1,6 @@
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
 import type { ActiveMesocycleWithProgressionData } from '$lib/trpc/routes/workouts';
-import { arrayAverage, arraySum } from '$lib/utils';
+import { arrayAverage, arraySum, groupBy } from '$lib/utils';
 import type { Workout, WorkoutExercise } from './types';
 import { type Prisma } from '@prisma/client';
 
@@ -9,7 +9,6 @@ export function getSetVolume(
 	userBodyweight: number,
 	bodyweightFraction: number | null
 ) {
-	// #55
 	return (set.reps + set.RIR) * set.load + (bodyweightFraction ?? 0) * userBodyweight;
 }
 
@@ -202,6 +201,7 @@ function getPerformanceChanges(performances: { exercise: WorkoutExercise; oldUse
 			const oldSet = oldPerformance.exercise.sets[j];
 			const newSet = newPerformance.exercise.sets[j];
 			if (!oldSet || !newSet) break;
+			if (oldSet.skipped || newSet.skipped) break;
 
 			setPerformanceChanges.push(
 				solveBergerFormula({
@@ -283,47 +283,6 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 	});
 }
 
-function increaseSets(
-	mesocycleWithData: ActiveMesocycleWithProgressionData,
-	exercise: WorkoutExerciseInProgress,
-	performanceChanges: number[],
-	adjustedTotalOverloadPercentagePerSet: number
-) {
-	const cyclicSetsPerMuscleGroup = getTotalCyclicSetsPerMuscleGroup(mesocycleWithData.mesocycleExerciseSplitDays);
-	const cyclicSetChange = mesocycleWithData.mesocycleCyclicSetChanges.find((setChange) => {
-		if (setChange.muscleGroup === 'Custom') {
-			return setChange.customMuscleGroup === exercise.customMuscleGroup;
-		}
-		return setChange.muscleGroup === exercise.targetMuscleGroup;
-	});
-	if (!cyclicSetChange) return exercise.sets;
-
-	const muscleGroup = exercise.customMuscleGroup ?? exercise.targetMuscleGroup;
-	const cyclicSetsForMuscleGroup = cyclicSetsPerMuscleGroup.get(muscleGroup) ?? 0;
-	if (cyclicSetsForMuscleGroup >= cyclicSetChange.maxVolume) return exercise.sets;
-
-	let setsToIncrease = 1;
-	if (performanceChanges.length > 0) {
-		setsToIncrease = Math.floor(
-			(performanceChanges.at(-1)! - 0.8 * adjustedTotalOverloadPercentagePerSet) /
-				(0.1 * adjustedTotalOverloadPercentagePerSet)
-		);
-		setsToIncrease = Math.min(setsToIncrease, cyclicSetChange.setIncreaseAmount);
-	}
-
-	return [
-		...exercise.sets,
-		...Array.from({ length: setsToIncrease }).map(() => ({
-			reps: undefined,
-			load: undefined,
-			RIR: undefined,
-			skipped: false,
-			completed: false,
-			miniSets: []
-		}))
-	];
-}
-
 export function progressiveOverloadMagic(
 	mesocycleWithProgressionData: ActiveMesocycleWithProgressionData,
 	cycleNumber: number,
@@ -403,13 +362,69 @@ export function progressiveOverloadMagic(
 			}
 
 			ex.sets = increaseLoadOfSets(ex, userBodyweight);
-			if (workoutsOfMesocycle.length >= 2) {
-				ex.sets = increaseSets(
-					mesocycleWithProgressionData,
-					ex,
-					performanceChanges,
-					adjustedTotalOverloadPercentagePerSet
+		});
+	}
+
+	// Increase sets
+	if (workoutsOfMesocycle.length >= 2) {
+		const exercisesGroupedByMuscleGroups = Object.entries(
+			groupBy(workoutExercises, (exercise) => exercise.customMuscleGroup ?? exercise.targetMuscleGroup)
+		).map(([muscleGroup, exercises]) => ({
+			muscleGroup,
+			exercises: exercises as WorkoutExerciseInProgress[]
+		}));
+
+		exercisesGroupedByMuscleGroups.forEach(({ muscleGroup, exercises }) => {
+			const averageMuscleGroupPerformanceChanges = exercises
+				.map((ex) => {
+					const mappedPerformances = workoutsOfMesocycle.map((wm) => ({
+						exercise: wm.workout.workoutExercises.find((exercise) => ex.name === exercise.name),
+						oldUserBodyweight: wm.workout.userBodyweight
+					}));
+					const allPreviousPerformances = mappedPerformances.filter(
+						(item): item is PreviousPerformance => item.exercise !== undefined
+					);
+					return arrayAverage(getPerformanceChanges(allPreviousPerformances));
+				})
+				.filter((n) => !isNaN(n));
+
+			const cyclicSetsPerMuscleGroup = getTotalCyclicSetsPerMuscleGroup(mesocycleExerciseSplitDays);
+			const cyclicSetChange = mesocycleCyclicSetChanges.find((setChange) => {
+				if (setChange.muscleGroup === 'Custom') {
+					return setChange.customMuscleGroup === muscleGroup;
+				}
+				return setChange.muscleGroup === muscleGroup;
+			});
+			if (!cyclicSetChange) return;
+
+			const cyclicSetsForMuscleGroup = cyclicSetsPerMuscleGroup.get(muscleGroup) ?? 0;
+			if (cyclicSetsForMuscleGroup >= cyclicSetChange.maxVolume) return;
+
+			const adjustedTotalOverloadPercentage = adjustIdealPerformance(
+				averageMuscleGroupPerformanceChanges,
+				mesocycle.startOverloadPercentage
+			);
+			let setsToIncrease = 1;
+			if (averageMuscleGroupPerformanceChanges.length > 0) {
+				setsToIncrease = Math.floor(
+					(averageMuscleGroupPerformanceChanges.at(-1)! - 0.8 * adjustedTotalOverloadPercentage) /
+						(0.1 * adjustedTotalOverloadPercentage)
 				);
+				setsToIncrease = Math.min(setsToIncrease, cyclicSetChange.setIncreaseAmount);
+			}
+
+			console.log(muscleGroup, averageMuscleGroupPerformanceChanges);
+
+			for (let i = 0; i < setsToIncrease; i++) {
+				const exercisesSortedBySets = exercises.sort((a, b) => a.sets.length - b.sets.length);
+				exercisesSortedBySets[0].sets.push({
+					reps: undefined,
+					load: undefined,
+					RIR: undefined,
+					skipped: false,
+					completed: false,
+					miniSets: []
+				});
 			}
 		});
 	}
@@ -439,7 +454,7 @@ export function progressiveOverloadMagic(
 		});
 	});
 
-	// Remove miniSet IDs
+	// Remove miniSet IDs and un-skip all sets
 	workoutExercises.forEach((ex) => {
 		ex.sets.forEach((set) => {
 			set.miniSets = set.miniSets.map((miniSet) => {
@@ -447,6 +462,14 @@ export function progressiveOverloadMagic(
 				return rest;
 			});
 		});
+		ex.sets
+			.filter((set) => set.skipped)
+			.forEach((set) => {
+				set.skipped = false;
+				set.reps = undefined;
+				set.load = undefined;
+				set.RIR = currentCycleRIR;
+			});
 	});
 
 	return workoutExercises;
