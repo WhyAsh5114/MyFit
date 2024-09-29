@@ -101,7 +101,7 @@ export function averagePercentageChange(arr: number[]): number {
 	const totalPercentageChange = arr.slice(1).reduce((sum, current, index) => {
 		const previous = arr[index];
 		const percentageChange = ((current - previous) / previous) * 100;
-		return sum + percentageChange;
+		return sum + (isNaN(percentageChange) ? 0 : percentageChange);
 	}, 0);
 
 	const numberOfIncrements = arr.length - 1;
