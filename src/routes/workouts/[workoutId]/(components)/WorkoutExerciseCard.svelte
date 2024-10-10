@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge';
-	import MiniSetIcon from 'virtual:icons/lucide/arrow-down-right';
-	import { convertCamelCaseToNormal } from '$lib/utils';
 	import * as Table from '$lib/components/ui/table';
+	import { convertCamelCaseToNormal } from '$lib/utils';
 	import type { Prisma } from '@prisma/client';
+	import MiniSetIcon from 'virtual:icons/lucide/arrow-down-right';
 
 	type PropsType = {
 		exercise: Prisma.WorkoutExerciseGetPayload<{
@@ -50,9 +50,15 @@
 			{#each exercise.sets as set}
 				<Table.Row class="border-none">
 					<Table.Cell class="px-1 py-1.5 font-medium">{set.setIndex + 1}</Table.Cell>
-					<Table.Cell class="px-1 py-1.5 text-center font-light">{set.reps}</Table.Cell>
-					<Table.Cell class="px-1 py-1.5 text-center font-light">{set.load}</Table.Cell>
-					<Table.Cell class="px-1 py-1.5 text-center font-light">{set.RIR}</Table.Cell>
+					{#if !set.skipped}
+						<Table.Cell class="px-1 py-1.5 text-center font-light">{set.reps}</Table.Cell>
+						<Table.Cell class="px-1 py-1.5 text-center font-light">{set.load}</Table.Cell>
+						<Table.Cell class="px-1 py-1.5 text-center font-light">{set.RIR}</Table.Cell>
+					{:else}
+						<Table.Cell colspan={3} class="px-1 py-1.5 text-center italic text-muted-foreground">
+							<span>skipped</span>
+						</Table.Cell>
+					{/if}
 				</Table.Row>
 				{#each set.miniSets as miniSet}
 					<Table.Row class="border-none bg-muted/50">
