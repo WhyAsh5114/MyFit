@@ -107,7 +107,7 @@
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
 		{#await data.filterData}
-			<Skeleton class="w-full h-10" />
+			<Skeleton class="h-10 w-full" />
 		{:then filterData}
 			{#if filterData}
 				<FilterComponent {filterData} {currentFilters} {setFilters} />
