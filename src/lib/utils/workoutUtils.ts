@@ -272,17 +272,15 @@ function getTotalCyclicSetsPerMuscleGroup(
 }
 
 function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: number) {
-	const needLoadIncrease = ex.sets.some((set) => {
-		const reps = set.reps as number;
-		return reps >= ex.repRangeEnd;
-	});
-	if (!needLoadIncrease) return ex.sets;
-
 	const newSets = ex.sets.map((set) => {
 		if (set.reps === undefined || set.load === undefined || set.RIR === undefined) return set;
 
 		let newLoad = set.load;
-		if ((['Straight', 'Myorep'].includes(ex.setType) && needLoadIncrease) || set.reps > ex.repRangeStart) {
+
+		// TODO: can re-introduce load-first or rep-first option
+		// if rep-first, keep as is
+		// else if load-first, try this increased load regardless of current reps
+		if (set.reps > ex.repRangeEnd) {
 			newLoad += ex.minimumWeightChange ?? 5;
 		}
 
@@ -297,9 +295,15 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 				overloadPercentage: 0
 			}
 		});
+
 		const newSet = { ...set, reps: Math.round(newReps), load: newLoad };
 		return newSet;
 	});
+
+	if (['Straight', 'Myorep'].includes(ex.setType)) {
+		const belowRepRangeStart = newSets.some((set) => set.reps! < ex.repRangeStart);
+		if (belowRepRangeStart) return ex.sets;
+	}
 
 	return newSets.map((newSet, setIdx) => {
 		if (newSet.reps! < ex.repRangeStart) return ex.sets[setIdx];
