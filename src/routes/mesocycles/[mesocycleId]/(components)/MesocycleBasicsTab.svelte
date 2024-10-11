@@ -259,7 +259,9 @@
 </Card.Root>
 
 <ResponsiveDialog title="Delete mesocycle?" bind:open={deleteConfirmDrawerOpen}>
-	<p>This action cannot be undone.</p>
+	{#snippet description()}
+		This action cannot be undone.
+	{/snippet}
 	<Button class="gap-2" disabled={callingDeleteEndpoint} onclick={deleteMesocycle} variant="destructive">
 		{#if callingDeleteEndpoint}
 			<LoaderCircle class="animate-spin" />

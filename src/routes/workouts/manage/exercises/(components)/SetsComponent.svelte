@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Separator } from '$lib/components/ui/separator';
-	import { solveBrzyckiFormula, type WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
+	import { solveBergerFormula, type WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import RemoveIcon from 'virtual:icons/lucide/minus';
 	import EditIcon from 'virtual:icons/lucide/pencil';
@@ -108,7 +108,7 @@
 		if (!isSameLoadExercise) {
 			if (exerciseSet.reps === undefined || exerciseSet.RIR === undefined) return;
 			const newReps = Math.round(
-				solveBrzyckiFormula({
+				solveBergerFormula({
 					variableToSolve: 'NewReps',
 					knownValues: {
 						oldSet: { reps: exerciseSet.reps, load: oldLoad, RIR: exerciseSet.RIR },
@@ -128,7 +128,7 @@
 			if (set.reps === undefined || set.RIR === undefined) return;
 
 			const newReps = Math.round(
-				solveBrzyckiFormula({
+				solveBergerFormula({
 					variableToSolve: 'NewReps',
 					knownValues: {
 						oldSet: { reps: set.reps, load: oldLoad, RIR: set.RIR },
@@ -141,7 +141,7 @@
 				})
 			);
 
-			extraOverloadAchieved += solveBrzyckiFormula({
+			extraOverloadAchieved += solveBergerFormula({
 				variableToSolve: 'OverloadPercentage',
 				knownValues: {
 					oldSet: { reps: set.reps, load: oldLoad, RIR: set.RIR },
@@ -183,7 +183,7 @@
 					<Input
 						id="{exercise.name}-set-{idx + 1}-load"
 						disabled={set.completed || set.skipped}
-						min={exercise.bodyweightFraction ? undefined : 0}
+						min={exercise.bodyweightFraction ? undefined : 0.25}
 						placeholder={getNextLoad(idx)}
 						required
 						step={0.25}

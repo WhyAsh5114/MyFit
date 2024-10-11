@@ -1,6 +1,6 @@
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
 import type { ActiveMesocycleWithProgressionData } from '$lib/trpc/routes/workouts';
-import { arrayAverage, arraySum } from '$lib/utils';
+import { arrayAverage, arraySum, groupBy } from '$lib/utils';
 import type { Workout, WorkoutExercise } from './types';
 import { type Prisma } from '@prisma/client';
 
@@ -9,8 +9,12 @@ export function getSetVolume(
 	userBodyweight: number,
 	bodyweightFraction: number | null
 ) {
-	// #55
-	return (set.reps + set.RIR) * set.load + (bodyweightFraction ?? 0) * userBodyweight;
+	const setVolume = (set.reps + set.RIR) * set.load + (bodyweightFraction ?? 0) * userBodyweight;
+	const miniSetsVolume = set.miniSets.reduce((totalMiniSetVolume, miniSet) => {
+		const miniSetVolume = (miniSet.reps + miniSet.RIR) * miniSet.load + (bodyweightFraction ?? 0) * userBodyweight;
+		return miniSetVolume + totalMiniSetVolume;
+	}, 0);
+	return setVolume + miniSetsVolume;
 }
 
 export function getExerciseVolume(workoutExercise: WorkoutExercise, userBodyweight: number) {
@@ -25,7 +29,7 @@ type SetDetails = {
 	RIR: number;
 };
 
-type CommonBrzyckiType = {
+type CommonBergerType = {
 	bodyweightFraction: number | null;
 	oldUserBodyweight?: number;
 	newUserBodyweight?: number;
@@ -33,24 +37,23 @@ type CommonBrzyckiType = {
 	oldSet: SetDetails;
 };
 
-type BrzyckiNewReps = {
+type BergerNewReps = {
 	variableToSolve: 'NewReps';
-	knownValues: CommonBrzyckiType & {
+	knownValues: CommonBergerType & {
 		newSet: Omit<SetDetails, 'reps'> & { reps?: number };
 	};
 };
 
-type BrzyckiOverloadPercentage = {
+type BergerOverloadPercentage = {
 	variableToSolve: 'OverloadPercentage';
-	knownValues: CommonBrzyckiType & {
+	knownValues: CommonBergerType & {
 		newSet: SetDetails;
 	};
 };
 
-type BrzyckiInput = BrzyckiNewReps | BrzyckiOverloadPercentage;
+type BergerInput = BergerNewReps | BergerOverloadPercentage;
 
-export function solveBrzyckiFormula(input: BrzyckiInput) {
-	// #84
+export function solveBergerFormula(input: BergerInput) {
 	const { variableToSolve, knownValues } = input;
 	const {
 		oldSet,
@@ -63,18 +66,20 @@ export function solveBrzyckiFormula(input: BrzyckiInput) {
 
 	const oldLoad = oldSet.load + (bodyweightFraction ?? 0) * oldUserBodyweight;
 	const newLoad = newSet.load + (bodyweightFraction ?? 0) * newUserBodyweight;
-	const RHSConstants = 37 - newSet.RIR;
+
+	const exponentialMultiplier = Math.pow(Math.E, (131 * (oldSet.reps + oldSet.RIR)) / 5000);
 
 	switch (variableToSolve) {
 		case 'NewReps': {
-			const numerator = newLoad * (oldSet.reps + oldSet.RIR - 37);
-			const denominator = (1 + overloadPercentage / 100) * oldLoad;
-			return numerator / denominator + RHSConstants;
+			const numerator = (1 + overloadPercentage / 100) * (9745640 * oldLoad - 423641) * exponentialMultiplier;
+			const denominator = 9745640 * newLoad - 423641;
+			return 38.1679 * Math.log(numerator / denominator) - newSet.RIR;
 		}
 
 		case 'OverloadPercentage': {
-			const numerator = newLoad * (oldSet.reps + oldSet.RIR - 37);
-			const denominator = oldLoad * (knownValues.newSet.reps + newSet.RIR - 37);
+			const numeratorMultiplier = Math.pow(Math.E, (knownValues.newSet.reps + newSet.RIR) / 38.1679);
+			const numerator = numeratorMultiplier * (9745640 * newLoad - 423641);
+			const denominator = exponentialMultiplier * (9745640 * oldLoad - 423641);
 			return (numerator / denominator - 1) * 100;
 		}
 	}
@@ -152,17 +157,36 @@ export function getRIRForWeek(rirArray: number[], cycle: number): number {
 	throw new Error('Cycle number is out of range.');
 }
 
-function generateAverageRepDropOffs(repsPerSetPerPerformance: number[][]) {
+function generateAveragePerformanceDropOffs(performances: PreviousPerformance[]) {
 	const rateOfChangeSums: number[] = [];
+	let invalidDropOffs = false;
 
-	for (const arr of repsPerSetPerPerformance) {
-		for (let i = 0; i < arr.length - 1; i++) {
-			const rateOfChange = arr[i] - arr[i + 1];
+	for (const performance of performances) {
+		for (let i = 0; i < performance.exercise.sets.length - 1; i++) {
+			const rateOfChange =
+				getSetVolume(
+					performance.exercise.sets[i],
+					performance.oldUserBodyweight,
+					performance.exercise.bodyweightFraction
+				) -
+				getSetVolume(
+					performance.exercise.sets[i + 1],
+					performance.oldUserBodyweight,
+					performance.exercise.bodyweightFraction
+				);
 			rateOfChangeSums[i] = (rateOfChangeSums[i] || 0) + rateOfChange;
+			if (rateOfChange < 0) {
+				invalidDropOffs = true;
+			}
 		}
 	}
 
-	const averageRatesOfChange = rateOfChangeSums.map((sum) => sum / repsPerSetPerPerformance.length);
+	// Incorrect RIR estimates causing an increase in set performance over time
+	if (invalidDropOffs) {
+		return new Array(rateOfChangeSums.length).fill(0);
+	}
+
+	const averageRatesOfChange = rateOfChangeSums.map((sum) => sum / performances.length);
 	return averageRatesOfChange;
 }
 
@@ -201,9 +225,10 @@ function getPerformanceChanges(performances: { exercise: WorkoutExercise; oldUse
 			const oldSet = oldPerformance.exercise.sets[j];
 			const newSet = newPerformance.exercise.sets[j];
 			if (!oldSet || !newSet) break;
+			if (oldSet.skipped || newSet.skipped) continue;
 
 			setPerformanceChanges.push(
-				solveBrzyckiFormula({
+				solveBergerFormula({
 					variableToSolve: 'OverloadPercentage',
 					knownValues: {
 						oldSet,
@@ -221,6 +246,7 @@ function getPerformanceChanges(performances: { exercise: WorkoutExercise; oldUse
 }
 
 function adjustIdealPerformance(actualPerformances: number[], idealPerformance: number) {
+	if (actualPerformances.length < 2) return idealPerformance;
 	const weights = actualPerformances.map((_, index) => index + 1);
 	const weightedSum = actualPerformances.reduce((acc, performance, index) => {
 		return acc + performance * weights[index];
@@ -252,10 +278,15 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 	});
 	if (!needLoadIncrease) return ex.sets;
 
-	return ex.sets.map((set) => {
+	const newSets = ex.sets.map((set) => {
 		if (set.reps === undefined || set.load === undefined || set.RIR === undefined) return set;
-		const newLoad = set.load + (ex.minimumWeightChange ?? 5);
-		const newReps = solveBrzyckiFormula({
+
+		let newLoad = set.load;
+		if ((['Straight', 'Myorep'].includes(ex.setType) && needLoadIncrease) || set.reps > ex.repRangeStart) {
+			newLoad += ex.minimumWeightChange ?? 5;
+		}
+
+		const newReps = solveBergerFormula({
 			variableToSolve: 'NewReps',
 			knownValues: {
 				oldSet: { reps: set.reps, load: set.load, RIR: set.RIR },
@@ -266,51 +297,14 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 				overloadPercentage: 0
 			}
 		});
-		set.reps = Math.round(newReps);
-		set.load = newLoad;
-		return set;
+		const newSet = { ...set, reps: Math.round(newReps), load: newLoad };
+		return newSet;
 	});
-}
 
-function increaseSets(
-	mesocycleWithData: ActiveMesocycleWithProgressionData,
-	exercise: WorkoutExerciseInProgress,
-	performanceChanges: number[],
-	adjustedTotalOverloadPercentagePerSet: number
-) {
-	const cyclicSetsPerMuscleGroup = getTotalCyclicSetsPerMuscleGroup(mesocycleWithData.mesocycleExerciseSplitDays);
-	const cyclicSetChange = mesocycleWithData.mesocycleCyclicSetChanges.find((setChange) => {
-		if (setChange.muscleGroup === 'Custom') {
-			return setChange.customMuscleGroup === exercise.customMuscleGroup;
-		}
-		return setChange.muscleGroup === exercise.targetMuscleGroup;
+	return newSets.map((newSet, setIdx) => {
+		if (newSet.reps! < ex.repRangeStart) return ex.sets[setIdx];
+		return newSet;
 	});
-	if (!cyclicSetChange) return exercise.sets;
-
-	const muscleGroup = exercise.customMuscleGroup ?? exercise.targetMuscleGroup;
-	const cyclicSetsForMuscleGroup = cyclicSetsPerMuscleGroup.get(muscleGroup) ?? 0;
-	if (cyclicSetsForMuscleGroup > cyclicSetChange.maxVolume) return exercise.sets;
-
-	let setsToIncrease = 1;
-	if (performanceChanges.length > 0) {
-		setsToIncrease = Math.floor(
-			(performanceChanges.at(-1)! - 0.8 * adjustedTotalOverloadPercentagePerSet) /
-				(0.1 * adjustedTotalOverloadPercentagePerSet)
-		);
-		setsToIncrease = Math.min(setsToIncrease, cyclicSetChange.setIncreaseAmount);
-	}
-
-	return [
-		...exercise.sets,
-		...Array.from({ length: setsToIncrease }).map((_) => ({
-			reps: undefined,
-			load: undefined,
-			RIR: undefined,
-			skipped: false,
-			completed: false,
-			miniSets: []
-		}))
-	];
 }
 
 export function progressiveOverloadMagic(
@@ -343,11 +337,9 @@ export function progressiveOverloadMagic(
 			const lastPerformance = allPreviousPerformances.at(-1);
 			if (!lastPerformance?.exercise) return;
 
-			const averageDropOffs = generateAverageRepDropOffs(
-				allPreviousPerformances.map(({ exercise }) => exercise.sets.map((s) => s.reps + s.RIR))
-			);
-			const lastDropOffs = generateAverageRepDropOffs([
-				allPreviousPerformances[allPreviousPerformances.length - 1].exercise.sets.map((s) => s.reps + s.RIR)
+			const averageDropOffs = generateAveragePerformanceDropOffs(allPreviousPerformances);
+			const lastDropOffs = generateAveragePerformanceDropOffs([
+				allPreviousPerformances[allPreviousPerformances.length - 1]
 			]);
 
 			let dropOffDifferences = averageDropOffs.map((averageDropOff, idx) => lastDropOffs[idx] - averageDropOff);
@@ -370,7 +362,7 @@ export function progressiveOverloadMagic(
 				if (!oldSet) continue;
 
 				const newSet = { ...oldSet, reps: oldSet.reps + 1 };
-				const overloadAchieved = solveBrzyckiFormula({
+				const overloadAchieved = solveBergerFormula({
 					variableToSolve: 'OverloadPercentage',
 					knownValues: {
 						oldSet,
@@ -392,12 +384,68 @@ export function progressiveOverloadMagic(
 			}
 
 			ex.sets = increaseLoadOfSets(ex, userBodyweight);
-			ex.sets = increaseSets(
-				mesocycleWithProgressionData,
-				ex,
-				performanceChanges,
-				adjustedTotalOverloadPercentagePerSet
+		});
+	}
+
+	// Increase sets
+	if (workoutsOfMesocycle.length >= 2) {
+		const exercisesGroupedByMuscleGroups = Object.entries(
+			groupBy(workoutExercises, (exercise) => exercise.customMuscleGroup ?? exercise.targetMuscleGroup)
+		).map(([muscleGroup, exercises]) => ({
+			muscleGroup,
+			exercises: exercises as WorkoutExerciseInProgress[]
+		}));
+
+		exercisesGroupedByMuscleGroups.forEach(({ muscleGroup, exercises }) => {
+			const averageMuscleGroupPerformanceChanges = exercises
+				.map((ex) => {
+					const mappedPerformances = workoutsOfMesocycle.map((wm) => ({
+						exercise: wm.workout.workoutExercises.find((exercise) => ex.name === exercise.name),
+						oldUserBodyweight: wm.workout.userBodyweight
+					}));
+					const allPreviousPerformances = mappedPerformances.filter(
+						(item): item is PreviousPerformance => item.exercise !== undefined
+					);
+					return arrayAverage(getPerformanceChanges(allPreviousPerformances));
+				})
+				.filter((n) => !isNaN(n));
+
+			const cyclicSetsPerMuscleGroup = getTotalCyclicSetsPerMuscleGroup(mesocycleExerciseSplitDays);
+			const cyclicSetChange = mesocycleCyclicSetChanges.find((setChange) => {
+				if (setChange.muscleGroup === 'Custom') {
+					return setChange.customMuscleGroup === muscleGroup;
+				}
+				return setChange.muscleGroup === muscleGroup;
+			});
+			if (!cyclicSetChange) return;
+
+			const cyclicSetsForMuscleGroup = cyclicSetsPerMuscleGroup.get(muscleGroup) ?? 0;
+			if (cyclicSetsForMuscleGroup >= cyclicSetChange.maxVolume) return;
+
+			const adjustedTotalOverloadPercentage = adjustIdealPerformance(
+				averageMuscleGroupPerformanceChanges,
+				mesocycle.startOverloadPercentage
 			);
+			let setsToIncrease = 1;
+			if (averageMuscleGroupPerformanceChanges.length > 0) {
+				setsToIncrease = Math.floor(
+					(averageMuscleGroupPerformanceChanges.at(-1)! - 0.8 * adjustedTotalOverloadPercentage) /
+						(0.1 * adjustedTotalOverloadPercentage)
+				);
+				setsToIncrease = Math.min(setsToIncrease, cyclicSetChange.setIncreaseAmount);
+			}
+
+			for (let i = 0; i < setsToIncrease; i++) {
+				const exercisesSortedBySets = exercises.sort((a, b) => a.sets.length - b.sets.length);
+				exercisesSortedBySets[0].sets.push({
+					reps: undefined,
+					load: undefined,
+					RIR: undefined,
+					skipped: false,
+					completed: false,
+					miniSets: []
+				});
+			}
 		});
 	}
 
@@ -406,6 +454,8 @@ export function progressiveOverloadMagic(
 		ex.sets.forEach((set, idx) => {
 			const oldRIR = set.RIR ?? currentCycleRIR;
 			set.RIR = currentCycleRIR;
+
+			// Last set to failure
 			if (idx === ex.sets.length - 1)
 				if (typeof ex.lastSetToFailure === 'boolean') set.RIR = ex.lastSetToFailure ? 0 : set.RIR;
 				else if (mesocycle.lastSetToFailure === true) set.RIR = 0;
@@ -414,11 +464,17 @@ export function progressiveOverloadMagic(
 			const RIRDifference = set.RIR - oldRIR;
 			if (set.reps === undefined) return;
 			if (RIRDifference > 0 && !(ex.forceRIRMatching ?? mesocycle.forceRIRMatching)) return;
+			if (set.reps - RIRDifference < ex.repRangeStart) {
+				const maxRIR = Math.max(ex.repRangeStart - set.reps, 0);
+				set.RIR = maxRIR;
+				set.reps -= maxRIR - oldRIR;
+				return;
+			}
 			set.reps -= RIRDifference;
 		});
 	});
 
-	// Remove miniSet IDs
+	// Remove miniSet IDs and un-skip all sets
 	workoutExercises.forEach((ex) => {
 		ex.sets.forEach((set) => {
 			set.miniSets = set.miniSets.map((miniSet) => {
@@ -426,6 +482,14 @@ export function progressiveOverloadMagic(
 				return rest;
 			});
 		});
+		ex.sets
+			.filter((set) => set.skipped)
+			.forEach((set) => {
+				set.skipped = false;
+				set.reps = undefined;
+				set.load = undefined;
+				set.RIR = currentCycleRIR;
+			});
 	});
 
 	return workoutExercises;
