@@ -192,7 +192,7 @@ export const mesocycles = t.router({
 		}),
 
 	updateExerciseSplit: t.procedure.input(zodUpdateExerciseSplitInput).mutation(async ({ input, ctx }) => {
-		// #87
+		// TODO: #87
 		const mesocycle = await prisma.mesocycle.findUniqueOrThrow({
 			where: { id: input.mesocycleId, userId: ctx.userId },
 			select: { id: true }

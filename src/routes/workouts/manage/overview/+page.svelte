@@ -118,7 +118,8 @@
 		<Tabs.Trigger value="progression">Progression</Tabs.Trigger>
 		<Tabs.Trigger value="basic">Basic</Tabs.Trigger>
 	</Tabs.List>
-	<Tabs.Content value="progression">TODO: what to even put here? do we even need this?</Tabs.Content>
+	<!-- TODO: #86 -->
+	<Tabs.Content value="progression">TBD: Workout progression charts from previous workout</Tabs.Content>
 	<Tabs.Content class="rounded-md border bg-card p-4" value="basic">
 		<ExerciseSplitExercisesCharts exercises={workoutExercises} />
 	</Tabs.Content>

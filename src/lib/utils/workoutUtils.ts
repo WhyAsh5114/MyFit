@@ -277,9 +277,7 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 
 		let newLoad = set.load;
 
-		// TODO: can re-introduce load-first or rep-first option
-		// if rep-first, keep as is
-		// else if load-first, try this increased load regardless of current reps
+		// TODO: #107
 		if (set.reps > ex.repRangeEnd) {
 			newLoad += ex.minimumWeightChange ?? 5;
 		}
