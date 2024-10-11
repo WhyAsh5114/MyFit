@@ -91,9 +91,7 @@
 			}
 			toast.success(message);
 			await invalidate('workouts:all');
-			await goto('/workouts');
 			workoutRunes.resetStores();
-
 			// Reset meso editing store as it won't change if workout affects meso split days and same mesocycle gets edited
 			// 1. User attempts active meso edit but doesn't complete it (stores save meso data)
 			// 2. User performs workouts affecting the meso split structure
@@ -103,6 +101,8 @@
 
 			if (mesocycleCompleted) {
 				await goto(`/mesocycles/${workoutRunes.workoutData.workoutOfMesocycle?.mesocycle.id}?completion`);
+			} else {
+				await goto('/workouts');
 			}
 		} catch (error) {
 			if (error instanceof TRPCClientError) toast.error(error.message);
