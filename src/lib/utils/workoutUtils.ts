@@ -154,6 +154,7 @@ export function getRIRForWeek(rirArray: number[], cycle: number): number {
 
 function generateAveragePerformanceDropOffs(performances: PreviousPerformance[]) {
 	const rateOfChangeSums: number[] = [];
+	let invalidDropOffs = false;
 
 	for (const performance of performances) {
 		for (let i = 0; i < performance.exercise.sets.length - 1; i++) {
@@ -169,7 +170,15 @@ function generateAveragePerformanceDropOffs(performances: PreviousPerformance[])
 					performance.exercise.bodyweightFraction
 				);
 			rateOfChangeSums[i] = (rateOfChangeSums[i] || 0) + rateOfChange;
+			if (rateOfChange < 0) {
+				invalidDropOffs = true;
+			}
 		}
+	}
+
+	// Incorrect RIR estimates causing an increase in set performance over time
+	if (invalidDropOffs) {
+		return new Array(rateOfChangeSums.length).fill(0);
 	}
 
 	const averageRatesOfChange = rateOfChangeSums.map((sum) => sum / performances.length);
