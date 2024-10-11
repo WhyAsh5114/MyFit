@@ -13,6 +13,7 @@
 	import FilterComponent from './(components)/FilterComponent.svelte';
 	import NoWorkoutsFilterComponent from './(components)/NoWorkoutsFilterComponent.svelte';
 	import { workoutRunes } from './manage/workoutRunes.svelte.js';
+	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 
 	let { data } = $props();
 	let workouts: RouterOutputs['workouts']['load'] = $state([]);
@@ -106,7 +107,7 @@
 <div class="flex grow flex-col gap-2">
 	<div class="flex gap-1">
 		{#await data.filterData}
-			TODO: skeleton
+			<Skeleton class="w-full h-10" />
 		{:then filterData}
 			{#if filterData}
 				<FilterComponent {filterData} {currentFilters} {setFilters} />
