@@ -152,17 +152,27 @@ export function getRIRForWeek(rirArray: number[], cycle: number): number {
 	throw new Error('Cycle number is out of range.');
 }
 
-function generateAverageRepDropOffs(repsPerSetPerPerformance: number[][]) {
+function generateAveragePerformanceDropOffs(performances: PreviousPerformance[]) {
 	const rateOfChangeSums: number[] = [];
 
-	for (const arr of repsPerSetPerPerformance) {
-		for (let i = 0; i < arr.length - 1; i++) {
-			const rateOfChange = arr[i] - arr[i + 1];
+	for (const performance of performances) {
+		for (let i = 0; i < performance.exercise.sets.length - 1; i++) {
+			const rateOfChange =
+				getSetVolume(
+					performance.exercise.sets[i],
+					performance.oldUserBodyweight,
+					performance.exercise.bodyweightFraction
+				) -
+				getSetVolume(
+					performance.exercise.sets[i + 1],
+					performance.oldUserBodyweight,
+					performance.exercise.bodyweightFraction
+				);
 			rateOfChangeSums[i] = (rateOfChangeSums[i] || 0) + rateOfChange;
 		}
 	}
 
-	const averageRatesOfChange = rateOfChangeSums.map((sum) => sum / repsPerSetPerPerformance.length);
+	const averageRatesOfChange = rateOfChangeSums.map((sum) => sum / performances.length);
 	return averageRatesOfChange;
 }
 
@@ -313,11 +323,9 @@ export function progressiveOverloadMagic(
 			const lastPerformance = allPreviousPerformances.at(-1);
 			if (!lastPerformance?.exercise) return;
 
-			const averageDropOffs = generateAverageRepDropOffs(
-				allPreviousPerformances.map(({ exercise }) => exercise.sets.map((s) => s.reps + s.RIR))
-			);
-			const lastDropOffs = generateAverageRepDropOffs([
-				allPreviousPerformances[allPreviousPerformances.length - 1].exercise.sets.map((s) => s.reps + s.RIR)
+			const averageDropOffs = generateAveragePerformanceDropOffs(allPreviousPerformances);
+			const lastDropOffs = generateAveragePerformanceDropOffs([
+				allPreviousPerformances[allPreviousPerformances.length - 1]
 			]);
 
 			let dropOffDifferences = averageDropOffs.map((averageDropOff, idx) => lastDropOffs[idx] - averageDropOff);
