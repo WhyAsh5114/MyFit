@@ -9,7 +9,12 @@ export function getSetVolume(
 	userBodyweight: number,
 	bodyweightFraction: number | null
 ) {
-	return (set.reps + set.RIR) * set.load + (bodyweightFraction ?? 0) * userBodyweight;
+	const setVolume = (set.reps + set.RIR) * set.load + (bodyweightFraction ?? 0) * userBodyweight;
+	const miniSetsVolume = set.miniSets.reduce((totalMiniSetVolume, miniSet) => {
+		const miniSetVolume = (miniSet.reps + miniSet.RIR) * miniSet.load + (bodyweightFraction ?? 0) * userBodyweight;
+		return miniSetVolume + totalMiniSetVolume;
+	}, 0);
+	return setVolume + miniSetsVolume;
 }
 
 export function getExerciseVolume(workoutExercise: WorkoutExercise, userBodyweight: number) {
