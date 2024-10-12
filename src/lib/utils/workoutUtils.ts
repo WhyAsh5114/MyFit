@@ -4,17 +4,13 @@ import { arrayAverage, arraySum, groupBy } from '$lib/utils';
 import type { Workout, WorkoutExercise } from './types';
 import { type Prisma } from '@prisma/client';
 
-export function getSetVolume(
-	set: WorkoutExercise['sets'][number],
-	userBodyweight: number,
-	bodyweightFraction: number | null
-) {
+export function getSetVolume(set: SetDetails, userBodyweight: number, bodyweightFraction: number | null) {
 	const setVolume = (set.reps + set.RIR) * set.load + (bodyweightFraction ?? 0) * userBodyweight;
-	const miniSetsVolume = set.miniSets.reduce((totalMiniSetVolume, miniSet) => {
+	const miniSetsVolume = set.miniSets?.reduce((totalMiniSetVolume, miniSet) => {
 		const miniSetVolume = (miniSet.reps + miniSet.RIR) * miniSet.load + (bodyweightFraction ?? 0) * userBodyweight;
 		return miniSetVolume + totalMiniSetVolume;
 	}, 0);
-	return setVolume + miniSetsVolume;
+	return setVolume + (miniSetsVolume ?? 0);
 }
 
 export function getExerciseVolume(workoutExercise: WorkoutExercise, userBodyweight: number) {
@@ -23,10 +19,15 @@ export function getExerciseVolume(workoutExercise: WorkoutExercise, userBodyweig
 	);
 }
 
-type SetDetails = {
+export type SetDetails = {
 	reps: number;
 	load: number;
 	RIR: number;
+	miniSets?: {
+		reps: number;
+		load: number;
+		RIR: number;
+	}[];
 };
 
 type CommonBergerType = {

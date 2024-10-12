@@ -3,11 +3,12 @@
 	export let sheetOpen: boolean | undefined = undefined;
 
 	const linkItems: { text: string; href: string }[] = [
-		{ text: 'Workouts', href: '/workouts' },
-		{ text: 'Mesocycles', href: '/mesocycles' },
+		{ text: 'Dashboard', href: '/dashboard' },
 		{ text: 'Exercise splits', href: '/exercise-splits' },
-		{ text: 'Privacy policy', href: '/privacy-policy' },
-		{ text: 'Donations', href: '/donations' }
+		{ text: 'Mesocycles', href: '/mesocycles' },
+		{ text: 'Workouts', href: '/workouts' },
+		{ text: 'Donations', href: '/donations' },
+		{ text: 'Privacy policy', href: '/privacy-policy' }
 	];
 </script>
 

@@ -7,7 +7,9 @@
 	import GitHub from 'virtual:icons/lucide/github';
 	import Star from 'virtual:icons/lucide/star';
 	import LoginProviderMenu from '../layout/LoginProviderMenu.svelte';
+	import type { Session } from '@auth/sveltekit';
 
+	let { session }: { session: Session | null } = $props();
 	let stars: number | undefined = $state();
 
 	onMount(async () => {
@@ -30,10 +32,12 @@
 			</Badge>
 		{/if}
 	</Button>
-	<DropdownMenu.Root>
-		<DropdownMenu.Trigger asChild let:builder>
-			<Button builders={[builder]} class="w-fit">Login</Button>
-		</DropdownMenu.Trigger>
-		<LoginProviderMenu />
-	</DropdownMenu.Root>
+	{#if session === null}
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger asChild let:builder>
+				<Button builders={[builder]} class="w-fit">Login</Button>
+			</DropdownMenu.Trigger>
+			<LoginProviderMenu />
+		</DropdownMenu.Root>
+	{/if}
 </div>

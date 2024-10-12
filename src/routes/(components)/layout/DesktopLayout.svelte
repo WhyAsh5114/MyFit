@@ -17,7 +17,7 @@
 </script>
 
 <header class="flex h-screen w-96 flex-col bg-muted p-10">
-	<Button class="justify-start gap-2 text-foreground" href="/" variant="link">
+	<Button class="justify-start gap-2 text-foreground" href="/?forceView" variant="link">
 		{#if $navigating}
 			<div class="flex h-[72px] w-[72px] items-center justify-center">
 				<LoaderCircle class="animate-spin text-primary" height={48} width={48} />

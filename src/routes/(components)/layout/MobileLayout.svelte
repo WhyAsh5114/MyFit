@@ -27,15 +27,13 @@
 		</Sheet.Trigger>
 		<Sheet.Content side="left">
 			<Sheet.Header class="items-start">
-				<Sheet.Title>
-					<Button
-						class="justify-start gap-2 text-foreground"
-						onclick={async () => {
-							await goto('/');
-							sheetOpen = false;
-						}}
-						variant="link"
-					>
+				<Sheet.Title
+					onclick={async () => {
+						await goto('/?forceView');
+						sheetOpen = false;
+					}}
+				>
+					<Button class="pointer-events-none justify-start gap-2 text-foreground" variant="link">
 						<img alt="MyFit logo" height={52} src="/favicon.webp" width={52} />
 						<h1 class="text-2xl font-bold">MyFit</h1>
 					</Button>

@@ -63,7 +63,6 @@
 		"clsx": "^2.1.1",
 		"cmdk-sv": "^0.0.18",
 		"embla-carousel-svelte": "^8.3.0",
-		"lucide-svelte": "^0.452.0",
 		"mode-watcher": "^0.4.0",
 		"paneforge": "^0.0.6",
 		"posthog-js": "^1.160.3",
