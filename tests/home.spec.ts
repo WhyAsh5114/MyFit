@@ -13,7 +13,7 @@ test('has title', async ({ page }) => {
 });
 
 test('login button opens provider list', async ({ page }) => {
-	await page.getByRole('button', { name: 'Login' }).click();
+	await page.getByRole('button', { name: 'Login' }).first().click();
 	await expect(page.getByRole('menuitem', { name: 'google' })).toBeVisible();
 	await expect(page.getByRole('menuitem', { name: 'github' })).toBeVisible();
 });
