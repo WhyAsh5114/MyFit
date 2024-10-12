@@ -1,19 +1,6 @@
-import { createContext } from '$lib/trpc/context';
-import { createCaller } from '$lib/trpc/router';
+import { redirect } from '@sveltejs/kit';
 
-export const load = async (event) => {
-	event.depends('workouts:all');
-	const session = await event.locals.auth();
-
-	if (session === null) {
-		return { todaysWorkoutData: null };
-	}
-
-	const trpc = createCaller(await createContext(event));
-
-	return {
-		todaysWorkoutData: trpc.workouts.getTodaysWorkoutData(),
-		pastWorkouts: trpc.mesocycles.getWorkouts('nextSplitDay'),
-		entityCounts: trpc.users.getEntityCounts()
-	};
+export const load = async ({ parent }) => {
+	const { session } = await parent();
+	if (session) redirect(302, '/dashboard');
 };

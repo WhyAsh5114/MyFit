@@ -2,7 +2,7 @@
 	import * as Select from '$lib/components/ui/select';
 	import * as Card from '$lib/components/ui/card';
 	import type { Selected } from 'bits-ui';
-	import WorkoutProgressionChart from '../../../(components)/page/WorkoutProgressionChart.svelte';
+	import WorkoutProgressionChart from '../../../dashboard/(components)/WorkoutProgressionChart.svelte';
 	import type { RouterOutputs } from '$lib/trpc/router';
 
 	let { mesocycle }: { mesocycle: NonNullable<RouterOutputs['mesocycles']['findById']> } = $props();
