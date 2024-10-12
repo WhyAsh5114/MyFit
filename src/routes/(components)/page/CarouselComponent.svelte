@@ -7,7 +7,7 @@
 	<Carousel.Content class="items-center">
 		<Carousel.Item>
 			<img
-				class="border"
+				class="mx-auto border"
 				src="/screenshots/{$mode}/SplitDayChart.webp"
 				alt="SplitDayChart"
 				width={240}
@@ -16,7 +16,7 @@
 		</Carousel.Item>
 		<Carousel.Item>
 			<img
-				class="border"
+				class="mx-auto border"
 				src="/screenshots/{$mode}/MicrocycleVolumeDistributionChart.webp"
 				alt="MicrocycleVolumeDistributionChart"
 				width={240}
@@ -25,7 +25,7 @@
 		</Carousel.Item>
 		<Carousel.Item>
 			<img
-				class="border"
+				class="mx-auto border"
 				src="/screenshots/{$mode}/MuscleGroupVolumeDistributionChart.webp"
 				alt="MuscleGroupVolumeDistributionChart"
 				width={240}
