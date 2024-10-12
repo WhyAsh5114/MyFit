@@ -6,7 +6,8 @@
 		{ text: 'Workouts', href: '/workouts' },
 		{ text: 'Mesocycles', href: '/mesocycles' },
 		{ text: 'Exercise splits', href: '/exercise-splits' },
-		{ text: 'Privacy policy', href: '/privacy-policy' }
+		{ text: 'Privacy policy', href: '/privacy-policy' },
+		{ text: 'Donations', href: '/donations' }
 	];
 </script>
 
