@@ -3,10 +3,23 @@
 	import type { HomePageCounts } from '../../+page.server';
 	import * as Card from '$lib/components/ui/card';
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { mode } from 'mode-watcher';
+	import LoginProviderMenu from '../layout/LoginProviderMenu.svelte';
+	import GitHub from 'virtual:icons/lucide/github';
+	import Star from 'virtual:icons/lucide/star';
+	import { Badge } from '$lib/components/ui/badge';
+	import { onMount } from 'svelte';
 
 	let counts: HomePageCounts = $props();
+	let stars: number | undefined = $state();
+
+	onMount(async () => {
+		const response = await fetch('https://api.github.com/repos/WhyAsh5114/MyFit');
+		const body = await response.json();
+		stars = body.stargazers_count;
+	});
 </script>
 
 <div class="flex h-px grow flex-col justify-evenly gap-2 px-4">
@@ -80,5 +93,25 @@
 		</div>
 		<span class="mt-1 text-center italic text-muted-foreground">have been logged already!</span>
 	</div>
-	<Button class="mx-auto w-fit">Login</Button>
+
+	<div class="mx-auto flex gap-1">
+		<Button class="gap-2" variant="secondary" href="https://github.com/WhyAsh5114/MyFit">
+			<GitHub />
+			GitHub
+			{#if stars === undefined}
+				<Skeleton class="badge-skeleton !w-14" />
+			{:else}
+				<Badge class="w-14 gap-1 border border-primary" variant="outline">
+					{stars}
+					<Star />
+				</Badge>
+			{/if}
+		</Button>
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger asChild let:builder>
+				<Button builders={[builder]} class="w-fit">Login</Button>
+			</DropdownMenu.Trigger>
+			<LoginProviderMenu />
+		</DropdownMenu.Root>
+	</div>
 </div>
