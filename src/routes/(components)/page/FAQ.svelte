@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
+	import CircleHelp from 'virtual:icons/lucide/message-circle-question';
 	import { cn } from '$lib/utils';
 
 	let className: string | undefined = undefined;
@@ -7,7 +8,10 @@
 </script>
 
 <div class={cn('flex w-full flex-col', className)}>
-	<span class="text-center text-xl font-bold">FAQ</span>
+	<span class="mx-auto flex items-center gap-4 text-xl font-bold">
+		FAQ
+		<CircleHelp />
+	</span>
 	<Accordion.Root class="w-full">
 		<Accordion.Item value="item-1">
 			<Accordion.Trigger>Is it really free?</Accordion.Trigger>
