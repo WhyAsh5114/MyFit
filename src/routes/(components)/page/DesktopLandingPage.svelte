@@ -17,7 +17,7 @@
 				Free <span class="text-primary">science-based</span> workout tracking
 			</span>
 			<span class="text-md leading-tight text-muted-foreground">
-				With automatic progression, detailed statistics, and highly customizable
+				With automatic progression, detailed statistics, and highly customizable features
 			</span>
 		</div>
 		<CarouselComponent />
