@@ -2,12 +2,13 @@
 	import type { HomePageCounts } from '../../+page.server';
 	import ActionButtons from './ActionButtons.svelte';
 	import CarouselComponent from './CarouselComponent.svelte';
+	import Faq from './FAQ.svelte';
 	import StatsComponent from './StatsComponent.svelte';
 
 	let counts: HomePageCounts = $props();
 </script>
 
-<div class="grid h-fit grid-cols-2 place-items-center gap-2">
+<div class="my-12 grid h-fit grid-cols-2 place-items-center gap-x-2 gap-y-12 overflow-x-hidden">
 	<div class="my-auto flex flex-col gap-6">
 		<span class="text-3xl font-bold">
 			Free <span class="text-primary">science-based</span> workout tracking
@@ -19,4 +20,5 @@
 	<CarouselComponent />
 	<StatsComponent {...counts} />
 	<ActionButtons />
+	<Faq class="col-span-2" />
 </div>
