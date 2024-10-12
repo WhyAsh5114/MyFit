@@ -8,7 +8,7 @@
 
 <div class="flex flex-col">
 	<div class="grid grid-cols-3 gap-1">
-		<Card.Root class="">
+		<Card.Root class="bg-background">
 			<Card.Header class="flex p-4">
 				<Card.Title class="text-center text-sm font-medium">Workouts</Card.Title>
 			</Card.Header>
@@ -20,7 +20,7 @@
 				{/await}
 			</Card.Content>
 		</Card.Root>
-		<Card.Root class="">
+		<Card.Root class="bg-background">
 			<Card.Header class="flex p-4">
 				<Card.Title class="text-center text-sm font-medium">Exercises</Card.Title>
 			</Card.Header>
@@ -32,7 +32,7 @@
 				{/await}
 			</Card.Content>
 		</Card.Root>
-		<Card.Root class="">
+		<Card.Root class="bg-background">
 			<Card.Header class="flex p-4">
 				<Card.Title class="text-center text-sm font-medium">Sets</Card.Title>
 			</Card.Header>

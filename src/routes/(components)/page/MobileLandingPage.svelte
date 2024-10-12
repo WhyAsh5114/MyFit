@@ -3,6 +3,7 @@
 	import ActionButtons from './ActionButtons.svelte';
 	import CarouselComponent from './CarouselComponent.svelte';
 	import Faq from './FAQ.svelte';
+	import Features from './Features.svelte';
 	import StatsComponent from './StatsComponent.svelte';
 
 	let counts: HomePageCounts = $props();
@@ -18,5 +19,6 @@
 	<CarouselComponent />
 	<StatsComponent {...counts} />
 	<ActionButtons />
+	<Features />
 	<Faq />
 </div>
