@@ -17,5 +17,5 @@
 {#if isMobile === true}
 	<MobileLandingPage {...data} />
 {:else if isMobile === false}
-	<DesktopLandingPage />
+	<DesktopLandingPage {...data} />
 {/if}
