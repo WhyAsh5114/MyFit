@@ -11,7 +11,7 @@
 </script>
 
 <ScrollArea>
-	<div class="my-12 grid h-fit grid-cols-2 place-items-center gap-x-2 gap-y-12 overflow-x-hidden">
+	<div class="my-12 mr-2.5 grid h-fit grid-cols-2 place-items-center gap-x-2 gap-y-12 overflow-x-hidden">
 		<div class="my-auto flex flex-col gap-6">
 			<span class="text-3xl font-bold">
 				Free <span class="text-primary">science-based</span> workout tracking
