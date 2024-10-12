@@ -7,7 +7,8 @@ import {
 	createWorkoutExerciseInProgressFromMesocycleExerciseTemplate
 } from '$lib/utils/workoutUtils';
 
-type PreviousWorkoutData = RouterOutputs['workouts']['getWorkoutExercisesWithPreviousData']['previousWorkoutData'];
+export type PreviousWorkoutData =
+	RouterOutputs['workouts']['getWorkoutExercisesWithPreviousData']['previousWorkoutData'];
 
 function createWorkoutRunes() {
 	let workoutData: RouterOutputs['workouts']['getTodaysWorkoutData'] | null = $state(null);

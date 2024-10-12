@@ -12,6 +12,7 @@
 	import ExerciseSplitExercisesCharts from '../../../exercise-splits/(components)/ExerciseSplitExercisesCharts.svelte';
 	import { TRPCClientError } from '@trpc/client';
 	import { mesocycleExerciseSplitRunes } from '../../../mesocycles/[mesocycleId]/edit-split/mesocycleExerciseSplitRunes.svelte';
+	import WorkoutComparisonChart from './(components)/WorkoutComparisonChart.svelte';
 
 	let savingWorkout = $state(false);
 	let workoutExercises = $derived(workoutRunes.workoutExercises ?? []);
@@ -118,8 +119,19 @@
 		<Tabs.Trigger value="progression">Progression</Tabs.Trigger>
 		<Tabs.Trigger value="basic">Basic</Tabs.Trigger>
 	</Tabs.List>
-	<!-- TODO: #86 -->
-	<Tabs.Content value="progression">TBD: Workout progression charts from previous workout</Tabs.Content>
+	<Tabs.Content value="progression">
+		{#if workoutRunes.previousWorkoutData && workoutRunes.workoutExercises && workoutRunes.workoutData?.userBodyweight}
+			<WorkoutComparisonChart
+				previousWorkoutData={workoutRunes.previousWorkoutData}
+				currentWorkoutData={{
+					exercises: workoutRunes.workoutExercises,
+					userBodyweight: workoutRunes.workoutData.userBodyweight
+				}}
+			/>
+		{:else}
+			<span class="muted-textbox">No previous workout available to compare</span>
+		{/if}
+	</Tabs.Content>
 	<Tabs.Content class="rounded-md border bg-card p-4" value="basic">
 		<ExerciseSplitExercisesCharts exercises={workoutExercises} />
 	</Tabs.Content>
