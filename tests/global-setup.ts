@@ -1,7 +1,7 @@
 import { prisma } from '$lib/prisma';
 import type { FullConfig } from '@playwright/test';
 import { randomUUID } from 'crypto';
-import cuid from 'cuid';
+import { createId } from '@paralleldrive/cuid2';
 
 export type UserData = {
 	userId: string;
@@ -10,7 +10,7 @@ export type UserData = {
 
 async function globalSetup(config: FullConfig) {
 	const testUsersData: UserData[] = Array.from({ length: config.workers }).map(() => ({
-		userId: cuid(),
+		userId: createId(),
 		sessionToken: randomUUID()
 	}));
 
