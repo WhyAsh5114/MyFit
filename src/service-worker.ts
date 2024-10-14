@@ -1,26 +1,24 @@
 /// <reference lib="WebWorker" />
-import { PrecacheFallbackPlugin, precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
+import { PrecacheFallbackPlugin, cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { NetworkFirst, CacheFirst, NetworkOnly } from 'workbox-strategies';
-import { BackgroundSyncPlugin } from 'workbox-background-sync';
+import { CacheFirst, NetworkOnly } from 'workbox-strategies';
 declare let self: ServiceWorkerGlobalScope;
 
-const cacheFirstDestinations: RequestDestination[] = ['style', 'manifest', 'image'];
+const cacheFirstDestinations: RequestDestination[] = ['style', 'manifest', 'image', 'font'];
 const fallbackPlugin = new PrecacheFallbackPlugin({ fallbackURL: '/offline' });
-const backgroundSyncPlugin = new BackgroundSyncPlugin('pendingRequests');
 
-function routingStrategyFunction(mode: 'networkFirst' | 'cacheFirst', request: Request, url: URL) {
-	// Ignore all tRPC functions
-	if (url.pathname.match(/__data\.json/)) return false;
+function routingStrategyFunction(mode: 'networkOnly' | 'cacheFirst', request: Request, url: URL) {
 	// Ignore /auth requests
 	if (url.pathname.startsWith('/auth')) return false;
+
 	// Decide whether or not asset should be cached (cacheFirstDestinations, and unplugin-icons)
 	let toCache = false;
 	if (cacheFirstDestinations.includes(request.destination) || url.pathname.includes('~icons')) {
 		toCache = true;
 	}
+
 	// If function used in cacheFirst strategy, return toCache value
-	// otherwise being used in networkFirst, which is naturally the assets which shouldn't be cached
+	// otherwise being used in networkOnly, which is naturally the assets which shouldn't be cached
 	return mode === 'cacheFirst' ? toCache : !toCache;
 }
 
@@ -32,20 +30,10 @@ self.addEventListener('message', (event) => {
 });
 
 registerRoute(
-	({ url }) => url.pathname.match(/__data\.json/),
-	new NetworkOnly({
-		plugins: [backgroundSyncPlugin],
-		networkTimeoutSeconds: 5
-	})
+	({ request, url }) => routingStrategyFunction('networkOnly', request, url),
+	new NetworkOnly({ plugins: [fallbackPlugin], networkTimeoutSeconds: 5 })
 );
 
-// Network first for everything except static assets and /auth
-registerRoute(
-	({ request, url }) => routingStrategyFunction('networkFirst', request, url),
-	new NetworkFirst({ plugins: [fallbackPlugin], networkTimeoutSeconds: 5 })
-);
-
-// Cache first for images, css
 registerRoute(
 	({ request, url }) => routingStrategyFunction('cacheFirst', request, url),
 	new CacheFirst({ plugins: [fallbackPlugin] })
