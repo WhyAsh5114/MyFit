@@ -95,7 +95,7 @@
 					<a class="font-semibold underline" href="/mesocycles/{wm.mesocycle.id}">
 						{wm.mesocycle.name}
 					</a>
-					<Badge variant={wm.workoutStatus === null ? 'secondary' : 'outline'}>
+					<Badge class="whitespace-nowrap" variant={wm.workoutStatus === null ? 'secondary' : 'outline'}>
 						{wm.workoutStatus === null ? splitDay.name : convertCamelCaseToNormal(wm.workoutStatus)}
 					</Badge>
 				</div>
