@@ -53,11 +53,11 @@
 	}
 
 	type InProgressSet = { reps?: number; load?: number; RIR?: number; completed: boolean };
-	type CompletedSet = { reps: number; load: number; RIR: number; completed: true };
+	type CompletedSet = { reps: number; load: number; RIR: number; completed: boolean };
 
 	function isSetCompleted(miniSet: InProgressSet): miniSet is CompletedSet {
-		const { reps, load, RIR, completed } = miniSet;
-		return reps !== undefined && load !== undefined && RIR !== undefined && completed;
+		const { reps, load, RIR } = miniSet;
+		return reps !== undefined && load !== undefined && RIR !== undefined;
 	}
 
 	function getTheoreticalVolumeChangeOfMiniSet(prev: Omit<CompletedSet, 'completed'>, current: InProgressSet) {
@@ -98,7 +98,7 @@
 		</span>
 		<span class="text-sm font-medium">RIR</span>
 		<span class="flex w-full items-center justify-end gap-1 text-sm font-semibold">
-			{#if totalVolumeChange !== undefined}
+			{#if !isNaN(Number(totalVolumeChange)) && totalVolumeChange !== undefined}
 				{totalVolumeChange.toFixed(2)}%
 				{#if totalVolumeChange < 0}
 					<TrendDownIcon class="justify-self-end" />
