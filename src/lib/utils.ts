@@ -87,6 +87,11 @@ export function generateShadesAndTints(count: number): string[] {
 	return colors;
 }
 
+export function getShortDateFromTimestamp(timestamp?: number) {
+	const date = new Date(timestamp ?? 0);
+	return date.toLocaleDateString(undefined, { day: '2-digit', month: 'short' });
+}
+
 export function arraySum(arr: number[]) {
 	return arr.reduce((sum, num) => sum + num, 0);
 }
