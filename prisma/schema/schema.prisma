@@ -14,7 +14,7 @@ generator zod {
 }
 
 model User {
-  id             String          @id @default(cuid())
+  id             String          @id @default(cuid()) /// @zod.string.cuid2()
   name           String?
   email          String          @unique
   emailVerified  DateTime?
@@ -24,8 +24,8 @@ model User {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   exerciseSplits ExerciseSplit[]
-  mesocycles      Mesocycle[]
-  workouts        Workout[]
+  mesocycles     Mesocycle[]
+  workouts       Workout[]
 }
 
 model Account {

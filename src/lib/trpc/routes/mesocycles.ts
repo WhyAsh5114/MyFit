@@ -11,7 +11,7 @@ import {
 	MesocycleUpdateInputSchema
 } from '$lib/zodSchemas';
 import { Prisma } from '@prisma/client';
-import cuid from 'cuid';
+import { createId } from '@paralleldrive/cuid2';
 import { TRPCError } from '@trpc/server';
 
 const zodMesocycleCreateInput = z.strictObject({
@@ -36,7 +36,7 @@ const zodUpdateExerciseSplitInput = z.strictObject({
 	mesocycleExerciseTemplates: z.array(
 		z.array(MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInputSchema)
 	),
-	mesocycleId: z.string().cuid()
+	mesocycleId: z.string().cuid2()
 });
 
 const getActiveMesocycle = async (userId: string) => {
@@ -47,7 +47,7 @@ const getActiveMesocycle = async (userId: string) => {
 };
 
 export const mesocycles = t.router({
-	findById: t.procedure.input(z.string().cuid()).query(
+	findById: t.procedure.input(z.string().cuid2()).query(
 		async ({ input, ctx }) =>
 			await prisma.mesocycle.findUnique({
 				where: { id: input, userId: ctx.userId },
@@ -77,7 +77,7 @@ export const mesocycles = t.router({
 	}),
 
 	load: t.procedure
-		.input(z.object({ cursorId: z.string().cuid().optional(), searchString: z.string().optional() }))
+		.input(z.object({ cursorId: z.string().cuid2().optional(), searchString: z.string().optional() }))
 		.query(async ({ input, ctx }) => {
 			return prisma.mesocycle.findMany({
 				where: { userId: ctx.userId, name: { contains: input.searchString, mode: 'insensitive' } },
@@ -90,7 +90,7 @@ export const mesocycles = t.router({
 
 	create: t.procedure.input(zodMesocycleCreateInput).mutation(async ({ input, ctx }) => {
 		const mesocycle: Prisma.MesocycleUncheckedCreateInput = {
-			id: cuid(),
+			id: createId(),
 			userId: ctx.userId,
 			...input.mesocycle
 		};
@@ -111,7 +111,7 @@ export const mesocycles = t.router({
 			input.exerciseSplit.exerciseSplitDays.map((splitDay) => ({
 				...splitDay,
 				mesocycleId: mesocycle.id as string,
-				id: cuid()
+				id: createId()
 			}));
 
 		const mesocycleExerciseTemplates: Prisma.MesocycleExerciseTemplateUncheckedCreateInput[] =
@@ -134,7 +134,7 @@ export const mesocycles = t.router({
 	}),
 
 	editById: t.procedure
-		.input(z.strictObject({ id: z.string().cuid(), mesocycleData: zodMesocycleEditInput }))
+		.input(z.strictObject({ id: z.string().cuid2(), mesocycleData: zodMesocycleEditInput }))
 		.mutation(async ({ input, ctx }) => {
 			await prisma.$transaction(async () => {
 				const mesocycle = await prisma.mesocycle.update({
@@ -153,7 +153,7 @@ export const mesocycles = t.router({
 			return { message: 'Mesocycle edited successfully' };
 		}),
 
-	deleteById: t.procedure.input(z.string().cuid()).mutation(async ({ input, ctx }) => {
+	deleteById: t.procedure.input(z.string().cuid2()).mutation(async ({ input, ctx }) => {
 		await prisma.mesocycle.delete({ where: { userId: ctx.userId, id: input } });
 		return { message: 'Mesocycle deleted successfully' };
 	}),
@@ -161,7 +161,7 @@ export const mesocycles = t.router({
 	progressToNextStage: t.procedure
 		.input(
 			z.strictObject({
-				id: z.string().cuid(),
+				id: z.string().cuid2(),
 				startDate: z.date().nullable(),
 				endDate: z.date().nullable()
 			})
@@ -201,7 +201,7 @@ export const mesocycles = t.router({
 			where: { mesocycleId: mesocycle.id }
 		});
 
-		const newSplitDaysIds = Array.from({ length: input.mesocycleExerciseSplitDays.length }).map(() => cuid());
+		const newSplitDaysIds = Array.from({ length: input.mesocycleExerciseSplitDays.length }).map(() => createId());
 		const createSplitDaysQuery = prisma.mesocycleExerciseSplitDay.createMany({
 			data: input.mesocycleExerciseSplitDays.map((splitDay, idx) => ({
 				...splitDay,
