@@ -2,7 +2,11 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Separator } from '$lib/components/ui/separator';
-	import { solveBergerFormula, type WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
+	import {
+		cleanupInProgressMiniSets,
+		solveBergerFormula,
+		type WorkoutExerciseInProgress
+	} from '$lib/utils/workoutUtils';
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import RemoveIcon from 'virtual:icons/lucide/minus';
 	import EditIcon from 'virtual:icons/lucide/pencil';
@@ -111,11 +115,17 @@
 				solveBergerFormula({
 					variableToSolve: 'NewReps',
 					knownValues: {
-						oldSet: { reps: exerciseSet.reps, load: oldLoad, RIR: exerciseSet.RIR },
-						newSet: { load: newLoad, RIR: exerciseSet.RIR },
+						oldSet: {
+							reps: exerciseSet.reps,
+							load: oldLoad,
+							RIR: exerciseSet.RIR,
+							miniSets: cleanupInProgressMiniSets(exerciseSet.miniSets)
+						},
+						newSet: { load: newLoad, RIR: exerciseSet.RIR, miniSets: cleanupInProgressMiniSets(exerciseSet.miniSets) },
 						oldUserBodyweight: workoutRunes.previousWorkoutData?.userBodyweight,
 						newUserBodyweight: workoutRunes.workoutData?.userBodyweight as number,
-						bodyweightFraction: exercise.bodyweightFraction ?? null
+						bodyweightFraction: exercise.bodyweightFraction ?? null,
+						overloadPercentage: 0
 					}
 				})
 			);
@@ -131,8 +141,8 @@
 				solveBergerFormula({
 					variableToSolve: 'NewReps',
 					knownValues: {
-						oldSet: { reps: set.reps, load: oldLoad, RIR: set.RIR },
-						newSet: { load: newLoad, RIR: set.RIR },
+						oldSet: { reps: set.reps, load: oldLoad, RIR: set.RIR, miniSets: cleanupInProgressMiniSets(set.miniSets) },
+						newSet: { load: newLoad, RIR: set.RIR, miniSets: cleanupInProgressMiniSets(set.miniSets) },
 						oldUserBodyweight: workoutRunes.previousWorkoutData?.userBodyweight,
 						newUserBodyweight: workoutRunes.workoutData?.userBodyweight as number,
 						bodyweightFraction: exercise.bodyweightFraction ?? null,
@@ -144,8 +154,8 @@
 			extraOverloadAchieved += solveBergerFormula({
 				variableToSolve: 'OverloadPercentage',
 				knownValues: {
-					oldSet: { reps: set.reps, load: oldLoad, RIR: set.RIR },
-					newSet: { reps: newReps, load: newLoad, RIR: set.RIR },
+					oldSet: { reps: set.reps, load: oldLoad, RIR: set.RIR, miniSets: cleanupInProgressMiniSets(set.miniSets) },
+					newSet: { reps: newReps, load: newLoad, RIR: set.RIR, miniSets: cleanupInProgressMiniSets(set.miniSets) },
 					oldUserBodyweight: workoutRunes.previousWorkoutData?.userBodyweight,
 					newUserBodyweight: workoutRunes.workoutData?.userBodyweight as number,
 					bodyweightFraction: exercise.bodyweightFraction ?? null
