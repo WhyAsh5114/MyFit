@@ -1,7 +1,6 @@
 // This approach is taken from https://github.com/vercel/next.js/tree/canary/examples/with-mongodb
 import { MongoClient } from 'mongodb';
-import dotenv from 'dotenv';
-dotenv.config();
+import 'dotenv/config';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 if (!MONGODB_URI) {
