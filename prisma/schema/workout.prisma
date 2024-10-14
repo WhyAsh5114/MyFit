@@ -1,5 +1,5 @@
 model WorkoutOfMesocycle {
-  id            String         @id @default(cuid())
+  id            String         @id @default(cuid()) /// @zod.string.cuid2()
   workoutId     String         @unique
   mesocycleId   String
   splitDayIndex Int
@@ -9,7 +9,7 @@ model WorkoutOfMesocycle {
 }
 
 model Workout {
-  id                 String              @id @default(cuid())
+  id                 String              @id @default(cuid()) /// @zod.string.cuid2()
   user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   workoutOfMesocycle WorkoutOfMesocycle?
   userBodyweight     Int
@@ -20,29 +20,29 @@ model Workout {
 }
 
 model WorkoutExercise {
-  id                           String               @id @default(cuid())
-  exerciseIndex                Int
-  name                         String
-  workout                      Workout              @relation(fields: [workoutId], references: [id], onDelete: Cascade)
-  workoutId                    String
-  targetMuscleGroup            MuscleGroup
-  customMuscleGroup            String?
-  bodyweightFraction           Float?
-  sets                         WorkoutExerciseSet[]
-  setType                      SetType
-  changeType                   ChangeType?
-  changeAmount                 Float?
-  repRangeStart                Int
-  repRangeEnd                  Int
-  note                         String?
-  overloadPercentage           Float?
-  lastSetToFailure             Boolean?
-  forceRIRMatching             Boolean?
-  minimumWeightChange          Float?
+  id                  String               @id @default(cuid()) /// @zod.string.cuid2()
+  exerciseIndex       Int
+  name                String
+  workout             Workout              @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  workoutId           String
+  targetMuscleGroup   MuscleGroup
+  customMuscleGroup   String?
+  bodyweightFraction  Float?
+  sets                WorkoutExerciseSet[]
+  setType             SetType
+  changeType          ChangeType?
+  changeAmount        Float?
+  repRangeStart       Int
+  repRangeEnd         Int
+  note                String?
+  overloadPercentage  Float?
+  lastSetToFailure    Boolean?
+  forceRIRMatching    Boolean?
+  minimumWeightChange Float?
 }
 
 model WorkoutExerciseSet {
-  id                String                   @id @default(cuid())
+  id                String                   @id @default(cuid()) /// @zod.string.cuid2()
   setIndex          Int
   workoutExercise   WorkoutExercise          @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
   workoutExerciseId String
@@ -54,7 +54,7 @@ model WorkoutExerciseSet {
 }
 
 model WorkoutExerciseMiniSet {
-  id                   String             @id @default(cuid())
+  id                   String             @id @default(cuid()) /// @zod.string.cuid2()
   miniSetIndex         Int
   reps                 Int
   load                 Float

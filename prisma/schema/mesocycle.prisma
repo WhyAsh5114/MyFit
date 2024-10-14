@@ -1,23 +1,23 @@
 model Mesocycle {
-  id                           String                      @id @default(cuid())
-  name                         String
-  user                         User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                       String
-  exerciseSplit                ExerciseSplit?              @relation(fields: [exerciseSplitId], references: [id])
-  exerciseSplitId              String?
-  RIRProgression               Int[]
-  startDate                    DateTime?
-  endDate                      DateTime?
-  startOverloadPercentage      Float
-  lastSetToFailure             Boolean
-  forceRIRMatching             Boolean
-  mesocycleExerciseSplitDays   MesocycleExerciseSplitDay[]
-  mesocycleCyclicSetChanges    MesocycleCyclicSetChange[]
-  workoutsOfMesocycle          WorkoutOfMesocycle[]
+  id                         String                      @id @default(cuid()) /// @zod.string.cuid2()
+  name                       String
+  user                       User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                     String
+  exerciseSplit              ExerciseSplit?              @relation(fields: [exerciseSplitId], references: [id])
+  exerciseSplitId            String?
+  RIRProgression             Int[]
+  startDate                  DateTime?
+  endDate                    DateTime?
+  startOverloadPercentage    Float
+  lastSetToFailure           Boolean
+  forceRIRMatching           Boolean
+  mesocycleExerciseSplitDays MesocycleExerciseSplitDay[]
+  mesocycleCyclicSetChanges  MesocycleCyclicSetChange[]
+  workoutsOfMesocycle        WorkoutOfMesocycle[]
 }
 
 model MesocycleCyclicSetChange {
-  id                   String      @id @default(cuid())
+  id                   String      @id @default(cuid()) /// @zod.string.cuid2()
   mesocycle            Mesocycle   @relation(fields: [mesocycleId], references: [id], onDelete: Cascade)
   mesocycleId          String
   muscleGroup          MuscleGroup
@@ -28,7 +28,7 @@ model MesocycleCyclicSetChange {
 }
 
 model MesocycleExerciseSplitDay {
-  id                         String                      @id @default(cuid())
+  id                         String                      @id @default(cuid()) /// @zod.string.cuid2()
   name                       String
   dayIndex                   Int
   isRestDay                  Boolean
@@ -38,23 +38,23 @@ model MesocycleExerciseSplitDay {
 }
 
 model MesocycleExerciseTemplate {
-  id                           String                    @id @default(cuid())
-  name                         String
-  exerciseIndex                Int
-  targetMuscleGroup            MuscleGroup
-  customMuscleGroup            String?
-  bodyweightFraction           Float?
-  sets                         Int
-  setType                      SetType
-  repRangeStart                Int
-  repRangeEnd                  Int
-  changeType                   ChangeType?
-  changeAmount                 Float?
-  note                         String?
-  mesocycleExerciseSplitDay    MesocycleExerciseSplitDay @relation(fields: [mesocycleExerciseSplitDayId], references: [id], onDelete: Cascade)
-  mesocycleExerciseSplitDayId  String
-  overloadPercentage           Float?
-  lastSetToFailure             Boolean?
-  forceRIRMatching             Boolean?
-  minimumWeightChange          Float?
+  id                          String                    @id @default(cuid()) /// @zod.string.cuid2()
+  name                        String
+  exerciseIndex               Int
+  targetMuscleGroup           MuscleGroup
+  customMuscleGroup           String?
+  bodyweightFraction          Float?
+  sets                        Int
+  setType                     SetType
+  repRangeStart               Int
+  repRangeEnd                 Int
+  changeType                  ChangeType?
+  changeAmount                Float?
+  note                        String?
+  mesocycleExerciseSplitDay   MesocycleExerciseSplitDay @relation(fields: [mesocycleExerciseSplitDayId], references: [id], onDelete: Cascade)
+  mesocycleExerciseSplitDayId String
+  overloadPercentage          Float?
+  lastSetToFailure            Boolean?
+  forceRIRMatching            Boolean?
+  minimumWeightChange         Float?
 }
