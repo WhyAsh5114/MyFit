@@ -5,6 +5,7 @@ import { CacheFirst, NetworkOnly } from 'workbox-strategies';
 declare let self: ServiceWorkerGlobalScope;
 
 const cacheFirstDestinations: RequestDestination[] = ['style', 'manifest', 'image', 'font'];
+const prerenderedPages = ['/privacy-policy', '/offline', '/donations'];
 const fallbackPlugin = new PrecacheFallbackPlugin({ fallbackURL: '/offline' });
 
 function routingStrategyFunction(mode: 'networkOnly' | 'cacheFirst', request: Request, url: URL) {
@@ -12,10 +13,10 @@ function routingStrategyFunction(mode: 'networkOnly' | 'cacheFirst', request: Re
 	if (url.pathname.startsWith('/auth')) return false;
 
 	// Decide whether or not asset should be cached (cacheFirstDestinations, and unplugin-icons)
-	let toCache = false;
-	if (cacheFirstDestinations.includes(request.destination) || url.pathname.includes('~icons')) {
-		toCache = true;
-	}
+	const toCache =
+		cacheFirstDestinations.includes(request.destination) ||
+		prerenderedPages.includes(url.pathname) ||
+		url.pathname.includes('~icons');
 
 	// If function used in cacheFirst strategy, return toCache value
 	// otherwise being used in networkOnly, which is naturally the assets which shouldn't be cached
