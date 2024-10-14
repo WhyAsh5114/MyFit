@@ -2,22 +2,25 @@ import clientPromise from '$lib/mongo/mongodb';
 import { prisma } from '$lib/prisma';
 import { t } from '$lib/trpc/t';
 import { getShortDateFromTimestamp } from '$lib/utils';
-import type {
-	MesocycleDocument,
-	MesocycleTemplateDocument,
-	MuscleGroup as V2MuscleGroup,
-	WorkoutDocument
+import {
+	type MesocycleDocument,
+	type MesocycleTemplateDocument,
+	type UserPreferencesDocument,
+	type MuscleGroup as V2MuscleGroup,
+	type WorkoutDocument
 } from '$lib/V2/types';
-import type { MuscleGroup } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
 import { createId } from '@paralleldrive/cuid2';
+import type { MuscleGroup, Workout, WorkoutExercise, WorkoutOfMesocycle } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
 
 function toPascalCase(text: V2MuscleGroup) {
-	return text
+	const output = text
 		.toLowerCase()
 		.split(' ')
 		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-		.join('') as MuscleGroup;
+		.join('');
+	if (output === 'Back') return 'Lats';
+	return output as MuscleGroup;
 }
 
 async function getPrismaAndMongoUser(userId: string) {
@@ -132,6 +135,11 @@ export const users = t.router({
 			.find({ userId: mongoUser._id })
 			.toArray();
 
+		const userData = await client
+			.db()
+			.collection<UserPreferencesDocument>('userPreferences')
+			.findOne({ userId: mongoUser._id });
+
 		const mesocycleTemplateIds = Array.from({ length: mesocycleTemplates.length }).map(() => createId());
 		const exerciseSplitCreate = prisma.exerciseSplit.createMany({
 			data: mesocycleTemplates.map((mesocycleTemplate, idx) => ({
@@ -191,18 +199,15 @@ export const users = t.router({
 			data: mesocycles.map((mesocycle, mesocycleIndex) => {
 				const durationString = `(${getShortDateFromTimestamp(mesocycle.startTimestamp)} - ${getShortDateFromTimestamp(mesocycle.endTimestamp)})`;
 
-				const templateIdx = mesocycleTemplates.findIndex(
-					(mesocycleTemplate) => mesocycle.templateMesoId === mesocycleTemplate._id
+				const templateIdx = mesocycleTemplates.findIndex((mesocycleTemplate) =>
+					mesocycle.templateMesoId.equals(mesocycleTemplate._id)
 				);
 
 				return {
 					id: mesocycleIds[mesocycleIndex],
 					forceRIRMatching: false,
 					lastSetToFailure: false,
-					name:
-						templateIdx !== -1
-							? `${mesocycleTemplates[templateIdx].name} ${durationString}`
-							: `(Deleted) ${durationString}`,
+					name: templateIdx !== -1 ? `${mesocycleTemplates[templateIdx].name}` : `(Deleted) ${durationString}`,
 					startOverloadPercentage: 0,
 					userId: ctx.userId,
 					exerciseSplitId: templateIdx ? mesocycleTemplateIds[templateIdx] : null,
@@ -212,13 +217,13 @@ export const users = t.router({
 		});
 
 		const mesocycleExerciseSplitDayIds = Array.from({ length: mesocycles.length }).map((_, mesocycleIdx) => {
-			const template = mesocycleTemplates.find(({ _id }) => mesocycles[mesocycleIdx].templateMesoId === _id);
+			const template = mesocycleTemplates.find(({ _id }) => mesocycles[mesocycleIdx].templateMesoId.equals(_id));
 			if (!template) return [];
 			return Array.from({ length: template.exerciseSplit.length }).map((_) => createId());
 		});
 		const mesocycleExerciseSplitDayCreate = prisma.mesocycleExerciseSplitDay.createMany({
 			data: mesocycles.flatMap((mesocycle, mesocycleIdx) => {
-				const template = mesocycleTemplates.find(({ _id }) => mesocycle.templateMesoId === _id);
+				const template = mesocycleTemplates.find(({ _id }) => mesocycle.templateMesoId.equals(_id));
 				if (!template) return [];
 
 				return template.exerciseSplit.map((splitDay, dayIndex) => {
@@ -234,7 +239,7 @@ export const users = t.router({
 		});
 
 		const mesocycleExerciseTemplateIds = Array.from({ length: mesocycles.length }).map((_, mesocycleIdx) => {
-			const template = mesocycleTemplates.find(({ _id }) => mesocycles[mesocycleIdx].templateMesoId === _id);
+			const template = mesocycleTemplates.find(({ _id }) => mesocycles[mesocycleIdx].templateMesoId.equals(_id));
 			if (!template) return [];
 			return Array.from({ length: template.exerciseSplit.length }).map((_, dayIndex) => {
 				const splitDay = template.exerciseSplit[dayIndex];
@@ -244,7 +249,7 @@ export const users = t.router({
 		});
 		const mesocycleExerciseTemplateCreate = prisma.mesocycleExerciseTemplate.createMany({
 			data: mesocycles.flatMap((_, mesocycleIdx) => {
-				const template = mesocycleTemplates.find(({ _id }) => mesocycles[mesocycleIdx].templateMesoId === _id);
+				const template = mesocycleTemplates.find(({ _id }) => mesocycles[mesocycleIdx].templateMesoId.equals(_id));
 				if (!template) return [];
 
 				return template.exerciseSplit.flatMap((splitDay, dayIndex) => {
@@ -268,6 +273,97 @@ export const users = t.router({
 		});
 
 		const workoutIds = Array.from({ length: workouts.length }).map(() => createId());
+		const workoutCreate = prisma.workout.createMany({
+			data: workouts.map((workout, workoutIdx) => {
+				const prismaWorkout: Workout = {
+					id: workoutIds[workoutIdx],
+					userId: ctx.userId,
+					startedAt: new Date(workout.startTimestamp),
+					endedAt: new Date(workout.startTimestamp + 1000 * 60 * 60), // Assumption (1 hour workouts)
+					userBodyweight: userData?.bodyweight ?? 100 // Assumption (same bodyweight applied to all workouts)
+				};
+				return prismaWorkout;
+			})
+		});
+
+		const workoutExerciseIds = Array.from({ length: workouts.length }).map((_, workoutIdx) =>
+			Array.from({ length: workouts[workoutIdx].exercisesPerformed.length }).map(() => createId())
+		);
+		const workoutExerciseCreate = prisma.workoutExercise.createMany({
+			data: workouts.flatMap((workout, workoutIdx) =>
+				workout.exercisesPerformed.map((exercise, exerciseIdx) => {
+					const prismaWorkoutExercise: WorkoutExercise = {
+						id: workoutExerciseIds[workoutIdx][exerciseIdx],
+						bodyweightFraction: typeof exercise.bodyweight === 'number' ? 1 : null, // Assumption (full bodyweight)
+						changeAmount: null,
+						changeType: null,
+						targetMuscleGroup: toPascalCase(exercise.targetMuscleGroup),
+						name: exercise.name,
+						repRangeStart: exercise.repRangeStart,
+						repRangeEnd: exercise.repRangeEnd,
+						exerciseIndex: exerciseIdx,
+						workoutId: workoutIds[workoutIdx],
+						customMuscleGroup: null,
+						setType: 'V2',
+						note: exercise.note ?? '',
+						lastSetToFailure: null,
+						forceRIRMatching: null,
+						minimumWeightChange: 5,
+						overloadPercentage: 0 // Assumption (concept didn't exist in V2)
+					};
+					return prismaWorkoutExercise;
+				})
+			)
+		});
+
+		const workoutExerciseSetIds = Array.from({ length: workouts.length }).map((_, workoutIdx) =>
+			Array.from({ length: workouts[workoutIdx].exercisesPerformed.length }).map((_, exerciseIdx) =>
+				Array.from({ length: workouts[workoutIdx].exercisesPerformed[exerciseIdx].sets.length }).map(() => createId())
+			)
+		);
+		const workoutExerciseSetCreate = prisma.workoutExerciseSet.createMany({
+			data: workouts.flatMap((workout, workoutIdx) =>
+				workout.exercisesPerformed.flatMap((exercise, exerciseIdx) =>
+					exercise.sets.map((set, setIdx) => {
+						return {
+							...set,
+							id: workoutExerciseSetIds[workoutIdx][exerciseIdx][setIdx],
+							setIndex: setIdx,
+							skipped: false,
+							workoutExerciseId: workoutExerciseIds[workoutIdx][exerciseIdx]
+						};
+					})
+				)
+			)
+		});
+
+		const workoutOfMesocycleCreate = prisma.workoutOfMesocycle.createMany({
+			data: mesocycles
+				.flatMap((mesocycle, mesocycleIdx) => {
+					const templateMesocycle = mesocycleTemplates.find((template) =>
+						template._id.equals(mesocycle.templateMesoId)
+					);
+					if (!templateMesocycle) return null;
+
+					return mesocycle.workouts.map((workoutId, workoutIdx) => {
+						const splitDayIndex = workoutIdx % templateMesocycle.exerciseSplit.length;
+						if (!workoutId) return null; // Data loss: rest days are not recorded
+
+						const workout = workouts.find((workout) => workout._id.equals(workoutId));
+						if (!workout) return null;
+
+						const workoutOfMesocycle: WorkoutOfMesocycle = {
+							id: createId(),
+							mesocycleId: mesocycleIds[mesocycleIdx],
+							workoutId: workoutIds[workouts.findIndex((workout) => workout._id.equals(workoutId))],
+							splitDayIndex,
+							workoutStatus: workout.exercisesPerformed.length > 0 ? null : 'Skipped'
+						};
+						return workoutOfMesocycle;
+					});
+				})
+				.filter((v) => v !== null)
+		});
 
 		await prisma.$transaction([
 			exerciseSplitCreate,
@@ -275,7 +371,11 @@ export const users = t.router({
 			exerciseSplitDayTemplateCreate,
 			mesocycleCreate,
 			mesocycleExerciseSplitDayCreate,
-			mesocycleExerciseTemplateCreate
+			mesocycleExerciseTemplateCreate,
+			workoutCreate,
+			workoutExerciseCreate,
+			workoutExerciseSetCreate,
+			workoutOfMesocycleCreate
 		]);
 	})
 });
