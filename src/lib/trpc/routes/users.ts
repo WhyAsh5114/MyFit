@@ -10,7 +10,7 @@ import type {
 } from '$lib/V2/types';
 import type { MuscleGroup } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import cuid from 'cuid';
+import { createId } from '@paralleldrive/cuid2';
 
 function toPascalCase(text: V2MuscleGroup) {
 	return text
@@ -132,7 +132,7 @@ export const users = t.router({
 			.find({ userId: mongoUser._id })
 			.toArray();
 
-		const mesocycleTemplateIds = Array.from({ length: mesocycleTemplates.length }).map(() => cuid());
+		const mesocycleTemplateIds = Array.from({ length: mesocycleTemplates.length }).map(() => createId());
 		const exerciseSplitCreate = prisma.exerciseSplit.createMany({
 			data: mesocycleTemplates.map((mesocycleTemplate, idx) => ({
 				name: mesocycleTemplate.name,
@@ -142,7 +142,7 @@ export const users = t.router({
 		});
 
 		const exerciseSplitDayIds = Array.from({ length: mesocycleTemplates.length }).map((_, templateIdx) =>
-			Array.from({ length: mesocycleTemplates[templateIdx].exerciseSplit.length }).map(() => cuid())
+			Array.from({ length: mesocycleTemplates[templateIdx].exerciseSplit.length }).map(() => createId())
 		);
 		const exerciseSplitDayCreate = prisma.exerciseSplitDay.createMany({
 			data: mesocycleTemplates.flatMap((mesocycleTemplate, templateIdx) =>
@@ -162,7 +162,7 @@ export const users = t.router({
 			Array.from({ length: mesocycleTemplates[templateIdx].exerciseSplit.length }).map((_, dayIndex) => {
 				if (mesocycleTemplates[templateIdx].exerciseSplit[dayIndex] === null) return [];
 				return Array.from({ length: mesocycleTemplates[templateIdx].exerciseSplit[dayIndex].exercises.length }).map(
-					() => cuid()
+					() => createId()
 				);
 			})
 		);
@@ -186,7 +186,7 @@ export const users = t.router({
 			)
 		});
 
-		const mesocycleIds = Array.from({ length: mesocycles.length }).map(() => cuid());
+		const mesocycleIds = Array.from({ length: mesocycles.length }).map(() => createId());
 		const mesocycleCreate = prisma.mesocycle.createMany({
 			data: mesocycles.map((mesocycle, mesocycleIndex) => {
 				const durationString = `(${getShortDateFromTimestamp(mesocycle.startTimestamp)} - ${getShortDateFromTimestamp(mesocycle.endTimestamp)})`;
@@ -214,7 +214,7 @@ export const users = t.router({
 		const mesocycleExerciseSplitDayIds = Array.from({ length: mesocycles.length }).map((_, mesocycleIdx) => {
 			const template = mesocycleTemplates.find(({ _id }) => mesocycles[mesocycleIdx].templateMesoId === _id);
 			if (!template) return [];
-			return Array.from({ length: template.exerciseSplit.length }).map((_) => cuid());
+			return Array.from({ length: template.exerciseSplit.length }).map((_) => createId());
 		});
 		const mesocycleExerciseSplitDayCreate = prisma.mesocycleExerciseSplitDay.createMany({
 			data: mesocycles.flatMap((mesocycle, mesocycleIdx) => {
@@ -239,7 +239,7 @@ export const users = t.router({
 			return Array.from({ length: template.exerciseSplit.length }).map((_, dayIndex) => {
 				const splitDay = template.exerciseSplit[dayIndex];
 				if (!splitDay) return [];
-				return Array.from({ length: splitDay.exercises.length }).map(() => cuid());
+				return Array.from({ length: splitDay.exercises.length }).map(() => createId());
 			});
 		});
 		const mesocycleExerciseTemplateCreate = prisma.mesocycleExerciseTemplate.createMany({
@@ -267,8 +267,7 @@ export const users = t.router({
 			})
 		});
 
-		const workoutIds = Array.from({ length: workouts.length }).map(() => cuid());
-		
+		const workoutIds = Array.from({ length: workouts.length }).map(() => createId());
 
 		await prisma.$transaction([
 			exerciseSplitCreate,
