@@ -23,7 +23,7 @@ export type SetDetails = {
 	reps: number;
 	load: number;
 	RIR: number;
-	miniSets?: {
+	miniSets: {
 		reps: number;
 		load: number;
 		RIR: number;
@@ -35,20 +35,20 @@ type CommonBergerType = {
 	oldUserBodyweight?: number;
 	newUserBodyweight?: number;
 	overloadPercentage?: number;
-	oldSet: SetDetails;
+	oldSet: Omit<SetDetails, 'miniSets'>;
 };
 
 type BergerNewReps = {
 	variableToSolve: 'NewReps';
 	knownValues: CommonBergerType & {
-		newSet: Omit<SetDetails, 'reps'> & { reps?: number };
+		newSet: Omit<SetDetails, 'reps' | 'miniSets'> & { reps?: number };
 	};
 };
 
 type BergerOverloadPercentage = {
 	variableToSolve: 'OverloadPercentage';
 	knownValues: CommonBergerType & {
-		newSet: SetDetails;
+		newSet: Omit<SetDetails, 'miniSets'>;
 	};
 };
 
