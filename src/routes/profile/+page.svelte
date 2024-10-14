@@ -16,7 +16,7 @@
 		try {
 			migratingToV2 = true;
 			toast.warning("Don't close this window or reload the page");
-			const response = await trpc().users.checkV2MigrationAvailability.query();
+			await trpc().users.checkV2MigrationAvailability.query();
 			migratingToV2 = false;
 		} catch (error) {
 			if (error instanceof TRPCClientError) {
