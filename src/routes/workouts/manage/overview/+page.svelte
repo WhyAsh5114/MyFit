@@ -129,7 +129,7 @@
 				}}
 			/>
 		{:else}
-			<span class="muted-textbox">No previous workout available to compare</span>
+			<div class="muted-text-box">No previous workout available to compare</div>
 		{/if}
 	</Tabs.Content>
 	<Tabs.Content class="rounded-md border bg-card p-4" value="basic">
