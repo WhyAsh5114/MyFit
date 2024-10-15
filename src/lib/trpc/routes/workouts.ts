@@ -250,7 +250,7 @@ export const workouts = t.router({
 				}
 			}
 		});
-		const lastBodyweight = data?.workoutsOfMesocycle.map((v) => v.workout.userBodyweight).filter((b) => b !== null)[0];
+		const lastBodyweight = data?.workoutsOfMesocycle.map((wm) => wm.workout.userBodyweight)[0];
 		const userBodyweight = lastBodyweight ?? null;
 
 		const todaysWorkoutData: TodaysWorkoutData = {

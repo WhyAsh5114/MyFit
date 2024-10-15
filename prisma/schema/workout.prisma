@@ -12,7 +12,7 @@ model Workout {
   id                 String              @id @default(cuid()) /// @zod.string.cuid2()
   user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   workoutOfMesocycle WorkoutOfMesocycle?
-  userBodyweight     Int
+  userBodyweight     Float
   startedAt          DateTime
   endedAt            DateTime
   workoutExercises   WorkoutExercise[]
