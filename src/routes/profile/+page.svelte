@@ -62,11 +62,7 @@
 			</p>
 		</Card.Content>
 		<Card.Footer class="justify-between">
-			<Button
-				class="ml-auto gap-2"
-				onclick={migrateToV2}
-				disabled={typeof V2Counts === 'string' || migratingToV2}
-			>
+			<Button class="ml-auto gap-2" onclick={migrateToV2} disabled={typeof V2Counts === 'string' || migratingToV2}>
 				{#if migratingToV2}
 					Migrating, please wait <LoaderCircle class="animate-spin" />
 				{:else}
