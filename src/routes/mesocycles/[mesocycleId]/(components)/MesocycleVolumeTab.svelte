@@ -39,7 +39,7 @@
 				<Table.Row>
 					<Table.Cell class="font-medium" colspan={4}>
 						<div class="text-box">
-							No cyclic set changes found for this mesocycle, normal for migrated mesocycles from V2
+							No cyclic set changes found for this mesocycle, normal for mesocycles migrated from V2
 						</div>
 					</Table.Cell>
 				</Table.Row>
