@@ -26,6 +26,7 @@ model User {
   exerciseSplits ExerciseSplit[]
   mesocycles     Mesocycle[]
   workouts       Workout[]
+  migratedFromV2 Boolean?
 }
 
 model Account {

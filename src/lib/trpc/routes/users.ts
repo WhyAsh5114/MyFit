@@ -26,10 +26,14 @@ function toPascalCase(text: V2MuscleGroup) {
 async function getPrismaAndMongoUser(userId: string) {
 	const prismaUser = await prisma.user.findUnique({
 		where: { id: userId },
-		select: { email: true, accounts: { select: { providerAccountId: true } } }
+		select: { email: true, accounts: { select: { providerAccountId: true } }, migratedFromV2: true }
 	});
 	if (!prismaUser) {
 		throw new TRPCError({ message: 'User not found in current database', code: 'BAD_REQUEST' });
+	}
+
+	if (prismaUser.migratedFromV2) {
+		throw new TRPCError({ message: 'Migration has already been performed', code: 'CONFLICT' });
 	}
 
 	const client = await clientPromise;
@@ -451,6 +455,8 @@ export const users = t.router({
 				})
 			});
 
+			const updateUser = prisma.user.update({ where: { id: ctx.userId }, data: { migratedFromV2: true } });
+
 			await prisma.$transaction([
 				exerciseSplitCreate,
 				exerciseSplitDayCreate,
@@ -463,7 +469,8 @@ export const users = t.router({
 				workoutExerciseSetCreate,
 				workoutOfMesocycleCreate,
 				restDaysCreate,
-				restWorkoutsOfMesocycle
+				restWorkoutsOfMesocycle,
+				updateUser
 			]);
 		})
 });
