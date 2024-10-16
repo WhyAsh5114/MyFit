@@ -10,7 +10,7 @@ import {
 	type WorkoutDocument
 } from '$lib/V2/types';
 import { createId } from '@paralleldrive/cuid2';
-import type { MuscleGroup, Workout, WorkoutExercise, WorkoutOfMesocycle } from '@prisma/client';
+import type { MuscleGroup, Prisma, Workout, WorkoutExercise, WorkoutOfMesocycle } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 
 function toPascalCase(text: V2MuscleGroup) {
@@ -203,7 +203,10 @@ export const users = t.router({
 					mesocycle.templateMesoId.equals(mesocycleTemplate._id)
 				);
 
-				return {
+				const firstWorkout = workouts.find((workout) => workout.performedMesocycleId.equals(mesocycle._id));
+				const lastWorkout = workouts.toReversed().find((workout) => workout.performedMesocycleId.equals(mesocycle._id));
+
+				const prismaMesocycle: Prisma.MesocycleUncheckedCreateInput = {
 					id: mesocycleIds[mesocycleIndex],
 					forceRIRMatching: false,
 					lastSetToFailure: false,
@@ -213,6 +216,16 @@ export const users = t.router({
 					exerciseSplitId: templateIdx ? mesocycleTemplateIds[templateIdx] : null,
 					RIRProgression: mesocycleTemplates[templateIdx].RIRProgression.map(({ cycles }) => cycles)
 				};
+
+				if (firstWorkout) {
+					prismaMesocycle.startDate = new Date(firstWorkout.startTimestamp);
+					prismaMesocycle.endDate = new Date(lastWorkout!.startTimestamp);
+				} else {
+					prismaMesocycle.startDate = new Date();
+					prismaMesocycle.endDate = new Date();
+				}
+
+				return prismaMesocycle;
 			})
 		});
 
