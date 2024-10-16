@@ -360,7 +360,7 @@ export const users = t.router({
 
 					return mesocycle.workouts.map((workoutId, workoutIdx) => {
 						const splitDayIndex = workoutIdx % templateMesocycle.exerciseSplit.length;
-						if (!workoutId) return null; // Data loss: rest days are not recorded
+						if (!workoutId) return null;
 
 						const workout = workouts.find((workout) => workout._id.equals(workoutId));
 						if (!workout) return null;
@@ -378,6 +378,74 @@ export const users = t.router({
 				.filter((v) => v !== null)
 		});
 
+		const restDayIds: string[] = [];
+		const restDaysCreate = prisma.workout.createMany({
+			data: mesocycles.flatMap((mesocycle) => {
+				const templateMesocycle = mesocycleTemplates.find((template) => template._id.equals(mesocycle.templateMesoId));
+				if (!templateMesocycle) return [];
+
+				return mesocycle.workouts.flatMap((workoutId, workoutIdx) => {
+					if (workoutId) return [];
+
+					let leftIndex = workoutIdx - 1;
+					while (leftIndex >= 0 && mesocycle.workouts[leftIndex] === null) {
+						leftIndex--;
+					}
+
+					let rightIndex = workoutIdx + 1;
+					while (rightIndex < mesocycle.workouts.length && mesocycle.workouts[rightIndex] === null) {
+						rightIndex++;
+					}
+
+					const leftValue = leftIndex >= 0 ? mesocycle.workouts[leftIndex] : null;
+					const rightValue = rightIndex < mesocycle.workouts.length ? mesocycle.workouts[rightIndex] : null;
+
+					const leftDistance = leftIndex >= 0 ? workoutIdx - leftIndex : Infinity;
+					const rightDistance = rightIndex < mesocycle.workouts.length ? rightIndex - workoutIdx : Infinity;
+
+					const nearestWorkoutId = leftDistance < rightDistance ? leftValue : rightValue;
+					if (!nearestWorkoutId) return [];
+
+					const nearestWorkout = workouts.find((w) => w._id.equals(nearestWorkoutId));
+					if (!nearestWorkout) return [];
+
+					const id = createId();
+					restDayIds.push(id);
+					const restDayWorkout: Prisma.WorkoutUncheckedCreateInput = {
+						id,
+						startedAt: new Date(nearestWorkout.startTimestamp),
+						endedAt: new Date(nearestWorkout.startTimestamp),
+						userBodyweight: 100, // Assumption of 100 bodyweight
+						userId: ctx.userId
+					};
+					return restDayWorkout;
+				});
+			})
+		});
+
+		let restWorkoutsOfMesocycleCreated = 0;
+		const restWorkoutsOfMesocycle = prisma.workoutOfMesocycle.createMany({
+			data: mesocycles.flatMap((mesocycle, mesocycleIdx) => {
+				const templateMesocycle = mesocycleTemplates.find((template) => template._id.equals(mesocycle.templateMesoId));
+				if (!templateMesocycle) return [];
+
+				return mesocycle.workouts.flatMap((workoutId, workoutIdx) => {
+					if (workoutId) return [];
+
+					const prismaWorkoutId = restDayIds[restWorkoutsOfMesocycleCreated];
+					restWorkoutsOfMesocycleCreated++;
+
+					return {
+						splitDayIndex: workoutIdx % templateMesocycle.exerciseSplit.length,
+						id: createId(),
+						mesocycleId: mesocycleIds[mesocycleIdx],
+						workoutId: prismaWorkoutId,
+						workoutStatus: 'RestDay'
+					};
+				});
+			})
+		});
+
 		await prisma.$transaction([
 			exerciseSplitCreate,
 			exerciseSplitDayCreate,
@@ -388,7 +456,9 @@ export const users = t.router({
 			workoutCreate,
 			workoutExerciseCreate,
 			workoutExerciseSetCreate,
-			workoutOfMesocycleCreate
+			workoutOfMesocycleCreate,
+			restDaysCreate,
+			restWorkoutsOfMesocycle
 		]);
 	})
 });
