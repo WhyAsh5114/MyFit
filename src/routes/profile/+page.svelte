@@ -8,15 +8,23 @@
 	import { TRPCClientError } from '@trpc/client';
 	import { toast } from 'svelte-sonner';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 
 	let { data } = $props();
 	let migratingToV2 = $state(false);
 
-	async function migrateToV2() {
+	let bodyweight: number | undefined = $state();
+	let duration: number | undefined = $state();
+
+	async function migrateToV2(e: SubmitEvent) {
+		e.preventDefault();
+		if (!bodyweight || !duration) return;
 		try {
 			migratingToV2 = true;
 			toast.warning("Don't close this window or reload the page");
-			await trpc().users.migrateFromV2.mutate();
+			await trpc().users.migrateFromV2.mutate({ bodyweight, duration });
 			migratingToV2 = false;
 			toast.success('Migration completed successfully');
 		} catch (error) {
@@ -49,7 +57,7 @@
 			<Card.Title>V2 migration</Card.Title>
 			<Card.Description>Get all your data from V2 into V3</Card.Description>
 		</Card.Header>
-		<Card.Content>
+		<Card.Content class="space-y-4">
 			<p class="text-sm font-light">
 				{#if typeof V2Counts === 'string'}
 					{V2Counts}
@@ -60,9 +68,34 @@
 					Workouts: <span class="font-semibold">{V2Counts.workoutsCount}</span>
 				{/if}
 			</p>
+
+			<Separator />
+
+			<form class="space-y-2" id="backfill-form" onsubmit={migrateToV2}>
+				<p class="font-semibold">Enter averages to fill-in new V3 data</p>
+				<div class="flex w-full max-w-sm flex-col gap-1.5">
+					<Label for="bodyweight">Bodyweight</Label>
+					<Input id="bodyweight" type="number" required placeholder="Type here" bind:value={bodyweight} />
+				</div>
+				<div class="flex w-full max-w-sm flex-col gap-1.5">
+					<Label for="workout-duration">Workout duration</Label>
+					<Input
+						id="workout-duration"
+						type="number"
+						required
+						placeholder="Type here (in minutes)"
+						bind:value={duration}
+					/>
+				</div>
+			</form>
 		</Card.Content>
 		<Card.Footer class="justify-between">
-			<Button class="ml-auto gap-2" onclick={migrateToV2} disabled={typeof V2Counts === 'string' || migratingToV2}>
+			<Button
+				class="ml-auto gap-2"
+				type="submit"
+				form="backfill-form"
+				disabled={typeof V2Counts === 'string' || migratingToV2}
+			>
 				{#if migratingToV2}
 					Migrating, please wait <LoaderCircle class="animate-spin" />
 				{:else}
