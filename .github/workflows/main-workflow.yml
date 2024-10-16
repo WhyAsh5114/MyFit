@@ -26,6 +26,8 @@ jobs:
         run: npm run check
 
   playwright_tests:
+    env:
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
     runs-on: ubuntu-latest
     services:
       cockroach_db:

@@ -121,7 +121,7 @@
 		{#each workouts as workout}
 			{@const { workoutOfMesocycle } = workout}
 			<Button
-				class="flex h-12 items-center justify-between rounded-md border bg-card p-2"
+				class="flex h-12 items-center justify-between gap-6 rounded-md border bg-card p-2"
 				href="/workouts/{workout.id}"
 				variant="outline"
 			>
@@ -134,7 +134,7 @@
 				{#if workoutOfMesocycle}
 					{@const splitDayName =
 						workoutOfMesocycle.mesocycle.mesocycleExerciseSplitDays[workoutOfMesocycle.splitDayIndex].name}
-					<span class="truncate text-muted-foreground">
+					<span class="truncate text-right text-muted-foreground">
 						{splitDayName === '' ? 'Rest' : splitDayName}
 						{workoutOfMesocycle.workoutStatus === 'Skipped' ? '(skipped)' : ''}
 					</span>
