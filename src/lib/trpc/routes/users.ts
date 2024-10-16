@@ -187,7 +187,8 @@ export const users = t.router({
 							repRangeStart: exercise.repRangeStart,
 							repRangeEnd: exercise.repRangeEnd,
 							setType: 'V2',
-							exerciseSplitDayId: exerciseSplitDayIds[templateIdx][dayIndex]
+							exerciseSplitDayId: exerciseSplitDayIds[templateIdx][dayIndex],
+							bodyweightFraction: exercise.weightType === 'Bodyweight' ? 1 : null // Assumption: full bodyweight
 						};
 					});
 				})
@@ -278,7 +279,8 @@ export const users = t.router({
 							repRangeEnd: exercise.repRangeEnd,
 							setType: 'V2',
 							sets: exercise.sets,
-							mesocycleExerciseSplitDayId: mesocycleExerciseSplitDayIds[mesocycleIdx][dayIndex]
+							mesocycleExerciseSplitDayId: mesocycleExerciseSplitDayIds[mesocycleIdx][dayIndex],
+							bodyweightFraction: exercise.weightType === 'Bodyweight' ? 1 : null // Assumption: full bodyweight
 						};
 					});
 				});
