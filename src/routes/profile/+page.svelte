@@ -12,12 +12,13 @@
 	let { data } = $props();
 	let migratingToV2 = $state(false);
 
-	async function checkV2Availability() {
+	async function migrateToV2() {
 		try {
 			migratingToV2 = true;
 			toast.warning("Don't close this window or reload the page");
-			await trpc().users.checkV2MigrationAvailability.query();
+			await trpc().users.migrateFromV2.mutate();
 			migratingToV2 = false;
+			toast.success('Migration completed successfully');
 		} catch (error) {
 			if (error instanceof TRPCClientError) {
 				toast.error(error.message);
@@ -63,7 +64,7 @@
 		<Card.Footer class="justify-between">
 			<Button
 				class="ml-auto gap-2"
-				onclick={checkV2Availability}
+				onclick={migrateToV2}
 				disabled={typeof V2Counts === 'string' || migratingToV2}
 			>
 				{#if migratingToV2}
