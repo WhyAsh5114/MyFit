@@ -1,6 +1,6 @@
 import { prisma } from '$lib/prisma';
 import { randomUUID } from 'crypto';
-import cuid from 'cuid';
+import { createId } from '@paralleldrive/cuid2';
 
 export type UserData = {
 	userId: string;
@@ -8,7 +8,7 @@ export type UserData = {
 };
 
 async function createUser() {
-	const userId = cuid();
+	const userId = createId();
 	const sessionToken = randomUUID();
 
 	await prisma.session.create({
