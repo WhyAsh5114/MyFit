@@ -1,5 +1,5 @@
 model ExerciseSplit {
-  id                String             @id @default(cuid())
+  id                String             @id @default(cuid()) /// @zod.string.cuid2()
   name              String
   user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            String
@@ -8,7 +8,7 @@ model ExerciseSplit {
 }
 
 model ExerciseSplitDay {
-  id              String             @id @default(cuid())
+  id              String             @id @default(cuid()) /// @zod.string.cuid2()
   name            String
   dayIndex        Int
   isRestDay       Boolean
@@ -18,7 +18,7 @@ model ExerciseSplitDay {
 }
 
 model ExerciseTemplate {
-  id                 String           @id @default(cuid())
+  id                 String           @id @default(cuid()) /// @zod.string.cuid2()
   name               String
   exerciseIndex      Int
   targetMuscleGroup  MuscleGroup

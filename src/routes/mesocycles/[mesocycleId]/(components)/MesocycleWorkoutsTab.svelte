@@ -18,7 +18,7 @@
 	const totalMesocycleWorkouts = mesocycle.mesocycleExerciseSplitDays.length * arraySum(mesocycle.RIRProgression);
 	const remainingMesocycleWorkouts = totalMesocycleWorkouts - completedMesocycleWorkouts;
 	const endDate = mesocycle.endDate
-		? workoutStartDates.at(-1)!.date
+		? workoutStartDates.at(-1)?.date
 		: today(getLocalTimeZone()).add({ days: remainingMesocycleWorkouts });
 
 	let dateRange: DateRange = $state({ start: startDate, end: endDate });

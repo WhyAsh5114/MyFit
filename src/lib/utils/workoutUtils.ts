@@ -4,17 +4,13 @@ import { arrayAverage, arraySum, groupBy } from '$lib/utils';
 import type { Workout, WorkoutExercise } from './types';
 import { type Prisma } from '@prisma/client';
 
-export function getSetVolume(
-	set: WorkoutExercise['sets'][number],
-	userBodyweight: number,
-	bodyweightFraction: number | null
-) {
+export function getSetVolume(set: SetDetails, userBodyweight: number, bodyweightFraction: number | null) {
 	const setVolume = (set.reps + set.RIR) * set.load + (bodyweightFraction ?? 0) * userBodyweight;
-	const miniSetsVolume = set.miniSets.reduce((totalMiniSetVolume, miniSet) => {
+	const miniSetsVolume = set.miniSets?.reduce((totalMiniSetVolume, miniSet) => {
 		const miniSetVolume = (miniSet.reps + miniSet.RIR) * miniSet.load + (bodyweightFraction ?? 0) * userBodyweight;
 		return miniSetVolume + totalMiniSetVolume;
 	}, 0);
-	return setVolume + miniSetsVolume;
+	return setVolume + (miniSetsVolume ?? 0);
 }
 
 export function getExerciseVolume(workoutExercise: WorkoutExercise, userBodyweight: number) {
@@ -23,23 +19,38 @@ export function getExerciseVolume(workoutExercise: WorkoutExercise, userBodyweig
 	);
 }
 
-type SetDetails = {
+export function cleanupInProgressMiniSets(miniSets: WorkoutExerciseInProgress['sets'][number]['miniSets']) {
+	return miniSets.map((miniSet) => {
+		return {
+			reps: miniSet.reps ?? 0,
+			load: miniSet.load ?? 0,
+			RIR: miniSet.RIR ?? 0
+		};
+	});
+}
+
+export type SetDetails = {
 	reps: number;
 	load: number;
 	RIR: number;
+	miniSets: {
+		reps: number;
+		load: number;
+		RIR: number;
+	}[];
 };
 
 type CommonBergerType = {
 	bodyweightFraction: number | null;
 	oldUserBodyweight?: number;
 	newUserBodyweight?: number;
-	overloadPercentage?: number;
 	oldSet: SetDetails;
 };
 
 type BergerNewReps = {
 	variableToSolve: 'NewReps';
 	knownValues: CommonBergerType & {
+		overloadPercentage: number;
 		newSet: Omit<SetDetails, 'reps'> & { reps?: number };
 	};
 };
@@ -55,14 +66,7 @@ type BergerInput = BergerNewReps | BergerOverloadPercentage;
 
 export function solveBergerFormula(input: BergerInput) {
 	const { variableToSolve, knownValues } = input;
-	const {
-		oldSet,
-		newSet,
-		bodyweightFraction = null,
-		oldUserBodyweight = 0,
-		newUserBodyweight = 0,
-		overloadPercentage = 0
-	} = knownValues;
+	const { oldSet, newSet, bodyweightFraction = null, oldUserBodyweight = 0, newUserBodyweight = 0 } = knownValues;
 
 	const oldLoad = oldSet.load + (bodyweightFraction ?? 0) * oldUserBodyweight;
 	const newLoad = newSet.load + (bodyweightFraction ?? 0) * newUserBodyweight;
@@ -71,7 +75,8 @@ export function solveBergerFormula(input: BergerInput) {
 
 	switch (variableToSolve) {
 		case 'NewReps': {
-			const numerator = (1 + overloadPercentage / 100) * (9745640 * oldLoad - 423641) * exponentialMultiplier;
+			const numerator =
+				(1 + knownValues.overloadPercentage / 100) * (9745640 * oldLoad - 423641) * exponentialMultiplier;
 			const denominator = 9745640 * newLoad - 423641;
 			return 38.1679 * Math.log(numerator / denominator) - newSet.RIR;
 		}
@@ -80,7 +85,33 @@ export function solveBergerFormula(input: BergerInput) {
 			const numeratorMultiplier = Math.pow(Math.E, (knownValues.newSet.reps + newSet.RIR) / 38.1679);
 			const numerator = numeratorMultiplier * (9745640 * newLoad - 423641);
 			const denominator = exponentialMultiplier * (9745640 * oldLoad - 423641);
-			return (numerator / denominator - 1) * 100;
+			const overloadPercentage = (numerator / denominator - 1) * 100;
+
+			let miniSetsCompared = 0;
+			let totalMiniSetsOverload = 0;
+			for (let i = 0; i < Math.max(newSet.miniSets.length, oldSet.miniSets.length); i++) {
+				const prevMiniSet = oldSet.miniSets[i];
+				const newMiniSet = newSet.miniSets[i];
+				if (!prevMiniSet || !newMiniSet) break;
+
+				totalMiniSetsOverload += solveBergerFormula({
+					variableToSolve: 'OverloadPercentage',
+					knownValues: {
+						newSet: { ...newMiniSet, miniSets: [] },
+						oldSet: { ...prevMiniSet, miniSets: [] },
+						bodyweightFraction,
+						newUserBodyweight,
+						oldUserBodyweight
+					}
+				});
+				miniSetsCompared++;
+			}
+
+			if (miniSetsCompared === 0) {
+				return overloadPercentage;
+			}
+
+			return (overloadPercentage + totalMiniSetsOverload) / (miniSetsCompared + 1);
 		}
 	}
 }
@@ -282,11 +313,12 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 			newLoad += ex.minimumWeightChange ?? 5;
 		}
 
+		const cleanedMiniSets = cleanupInProgressMiniSets(set.miniSets);
 		const newReps = solveBergerFormula({
 			variableToSolve: 'NewReps',
 			knownValues: {
-				oldSet: { reps: set.reps, load: set.load, RIR: set.RIR },
-				newSet: { load: newLoad, RIR: set.RIR },
+				oldSet: { reps: set.reps, load: set.load, RIR: set.RIR, miniSets: cleanedMiniSets },
+				newSet: { load: newLoad, RIR: set.RIR, miniSets: cleanedMiniSets },
 				bodyweightFraction: ex.bodyweightFraction ?? null,
 				newUserBodyweight: userBodyweight,
 				oldUserBodyweight: userBodyweight,

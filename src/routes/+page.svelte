@@ -1,27 +1,21 @@
 <script lang="ts">
-	import H2 from '$lib/components/ui/typography/H2.svelte';
-	import H3 from '$lib/components/ui/typography/H3.svelte';
-	import type { RouterOutputs } from '$lib/trpc/router';
 	import { onMount } from 'svelte';
-	import GetStartedComponent from './(components)/page/GetStartedComponent.svelte';
-	import TodaysWorkoutCard from './(components)/page/TodaysWorkoutCard.svelte';
+	import MobileLandingPage from './(components)/page/MobileLandingPage.svelte';
+	import DesktopLandingPage from './(components)/page/DesktopLandingPage.svelte';
 
+	let isMobile: undefined | boolean = $state(undefined);
 	let { data } = $props();
-	let entityCounts: RouterOutputs['users']['getEntityCounts'] | undefined = $state(undefined);
 
-	onMount(async () => {
-		if (data.entityCounts === undefined) {
-			entityCounts = null;
-			return;
-		}
-		entityCounts = await data.entityCounts;
+	onMount(() => {
+		isMobile = window.innerWidth < 1024;
+		window.addEventListener('resize', () => {
+			isMobile = window.innerWidth < 1024;
+		});
 	});
 </script>
 
-<H2>Home</H2>
-<GetStartedComponent {entityCounts} />
-
-{#if data.todaysWorkoutData}
-	<H3>Today's workout</H3>
-	<TodaysWorkoutCard {...data} />
+{#if isMobile === true}
+	<MobileLandingPage {...data} />
+{:else if isMobile === false}
+	<DesktopLandingPage {...data} />
 {/if}

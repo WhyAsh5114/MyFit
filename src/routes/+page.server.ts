@@ -1,19 +1,22 @@
-import { createContext } from '$lib/trpc/context';
-import { createCaller } from '$lib/trpc/router';
+import { prisma } from '$lib/prisma.js';
+import type { Session } from '@auth/sveltekit';
+import { redirect } from '@sveltejs/kit';
 
-export const load = async (event) => {
-	event.depends('workouts:all');
-	const session = await event.locals.auth();
-
-	if (session === null) {
-		return { todaysWorkoutData: null };
-	}
-
-	const trpc = createCaller(await createContext(event));
+export const load = async ({ parent, url }) => {
+	const { session } = await parent();
+	if (session && !url.searchParams.has('forceView')) redirect(302, '/dashboard');
 
 	return {
-		todaysWorkoutData: trpc.workouts.getTodaysWorkoutData(),
-		pastWorkouts: trpc.mesocycles.getWorkouts('nextSplitDay'),
-		entityCounts: trpc.users.getEntityCounts()
+		session,
+		workoutCount: prisma.workout.count(),
+		exerciseCount: prisma.workoutExercise.count(),
+		setsCount: prisma.workoutExerciseSet.count()
 	};
+};
+
+export type HomePageCounts = {
+	session: Session | null;
+	workoutCount: Promise<number>;
+	exerciseCount: Promise<number>;
+	setsCount: Promise<number>;
 };
