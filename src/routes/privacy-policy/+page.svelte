@@ -89,9 +89,7 @@
 		<li>
 			<p>
 				<strong>Website</strong> refers to MyFit, accessible from
-				<a href="https://my-fit-whyash5114.vercel.app" rel="external nofollow noopener"
-					>https://my-fit-whyash5114.vercel.app</a
-				>
+				<a href="https://my-fit-v3.vercel.app" rel="external nofollow noopener">https://my-fit-v3.vercel.app</a>
 			</p>
 		</li>
 		<li>
