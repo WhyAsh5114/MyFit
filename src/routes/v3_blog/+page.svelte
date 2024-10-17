@@ -1,38 +1,36 @@
 <article class="prose">
   <h2>17th October, 2024</h2>
-  <h3>V3 stable release!</h3>
+  <h3>V3 Stable Release!</h3>
   <p>
-    After almost an year of waiting, I am proud to announce that <a
+    After almost a year of waiting, I'm proud to announce that <a
       href="https://my-fit-v3.vercel.app">MyFit V3</a
     > is now officially released 🎉🎉🎉! Here's a glimpse of the new features:
   </p>
   <ul>
-    <li>Brand new, clean UI with dark and light mode</li>
+    <li>Brand new, clean UI with dark and light modes</li>
     <li>Detailed statistics for all kinds of metrics</li>
     <li>Adjust mesocycle split during its active phase</li>
     <li>Drag and drop exercises to change their order</li>
     <li>Volume progression customizations per muscle group</li>
-    <li>Better bodyweight exercise handling</li>
+    <li>Better handling of bodyweight exercises</li>
   </ul>
   <p>
-    And you can migrate all your data from V2 into V3! To migrate, just go to your <a
+    You can also migrate all your data from V2 to V3! To migrate, just go to your <a
       href="https://my-fit-v3.vercel.app/profile">profile page in V3</a
-    > from the top navbar, and hit start migration. Some limitations due to schema mismatch:
+    > from the top navbar and hit “Start migration.” There are some limitations due to schema mismatches:
   </p>
   <ul>
     <li>
-      Should <b>NOT</b> have an active mesocycle right now in V2, if you do, you can finish it in your
-      own time and migrate later, no rush
+      You <b>should NOT</b> have an active mesocycle in V2. If you do, you can finish it at your own
+      pace and migrate later, no rush.
     </li>
-    <li>Need one single <b>average bodyweight</b> to back-fill for all workouts</li>
-    <li>Need one single <b>average workout duration</b> to back-fill for all workouts</li>
+    <li>You'll need a single <b>average bodyweight</b> to back-fill all workouts.</li>
+    <li>You'll need a single <b>average workout duration</b> to back-fill all workouts.</li>
   </ul>
   <p>
-    Although I have tested the app thoroughly and been using it as well for quite some time, there
-    might still be some small bugs. Feel free to <a
-      href="https://github.com/WhyAsh5114/MyFit/issues"
-    >
-      open an issue,
+    Although I've thoroughly tested the app and have been using it for quite some time, there might
+    still be small bugs. Feel free to <a href="https://github.com/WhyAsh5114/MyFit/issues">
+      open an issue
     </a> if you encounter any. Thank you all for your patience!
   </p>
 </article>
