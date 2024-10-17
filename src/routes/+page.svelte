@@ -22,7 +22,7 @@
   <a class="btn btn-accent mt-1" href="/mesocycles">Go to mesocycles</a>
 {/if}
 
-<a class="flex p-4 rounded-lg gap-4 items-center bg-primary mt-auto" href="/v3">
+<a class="flex p-4 rounded-lg gap-4 items-center bg-primary mt-auto" href="/v3_blog">
   <PartyPopper class="text-accent basis-8 shrink-0" />
   <span>MyFit V3 is out! Click here to learn more and migrate.</span>
 </a>

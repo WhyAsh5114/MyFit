@@ -1,4 +1,44 @@
-<article class="prose" id="v3_beta_released">
+<article class="prose">
+  <h2>17th October, 2024</h2>
+  <h3>V3 stable release!</h3>
+  <p>
+    After almost an year of waiting, I am proud to announce that <a
+      href="https://my-fit-v3.vercel.app">MyFit V3</a
+    > is now officially released 🎉🎉🎉! Here's a glimpse of the new features:
+  </p>
+  <ul>
+    <li>Brand new, clean UI with dark and light mode</li>
+    <li>Detailed statistics for all kinds of metrics</li>
+    <li>Adjust mesocycle split during its active phase</li>
+    <li>Drag and drop exercises to change their order</li>
+    <li>Volume progression customizations per muscle group</li>
+    <li>Better bodyweight exercise handling</li>
+  </ul>
+  <p>
+    And you can migrate all your data from V2 into V3! To migrate, just go to your <a
+      href="https://my-fit-v3.vercel.app/profile">profile page in V3</a
+    > from the top navbar, and hit start migration. Some limitations due to schema mismatch:
+  </p>
+  <ul>
+    <li>
+      Should <b>NOT</b> have an active mesocycle right now in V2, if you do, you can finish it in your
+      own time and migrate later, no rush
+    </li>
+    <li>Need one single <b>average bodyweight</b> to back-fill for all workouts</li>
+    <li>Need one single <b>average workout duration</b> to back-fill for all workouts</li>
+  </ul>
+  <p>
+    Although I have tested the app thoroughly and been using it as well for quite some time, there
+    might still be some small bugs. Feel free to <a
+      href="https://github.com/WhyAsh5114/MyFit/issues"
+    >
+      open an issue,
+    </a> if you encounter any. Thank you all for your patience!
+  </p>
+</article>
+
+<br /><br />
+<article id="v3_beta_released" class="prose">
   <h2>20th September, 2024</h2>
   <h3>V3 beta release!</h3>
   <p>
@@ -28,7 +68,7 @@
 </article>
 
 <br /><br />
-<article class="prose" id="being_fine_with_suboptimal">
+<article id="being_fine_with_suboptimal" class="prose">
   <h2>7th July, 2024</h2>
   <h3>Being fine with "sub-optimal" <i>and v3 updates</i></h3>
   <p>
@@ -66,7 +106,7 @@
 </article>
 
 <br /><br />
-<article class="prose" id="update_on_the_progress_of_v3">
+<article id="update_on_the_progress_of_v3" class="prose">
   <h2>16th June, 2024</h2>
   <h3>Update on the progress of v3</h3>
   <p>The app now gets 4000+ views every week 🥳. Thanks, all!</p>
@@ -78,7 +118,7 @@
     rewrite anything for at least the next few months.
   </p>
   <figure>
-    <img src="/v3_sneakPeek_1.jpg" alt="v3 sneak peek" />
+    <img alt="v3 sneak peek" src="/v3_sneakPeek_1.jpg" />
     <figcaption>v3 sneak peek</figcaption>
   </figure>
   <p>Some of the new and requested features that I've implemented are:</p>
@@ -107,7 +147,7 @@
 </article>
 
 <br /><br />
-<article class="prose" id="about_v3">
+<article id="about_v3" class="prose">
   <h2>3rd May 2024</h2>
   <h3>About v3</h3>
   <p>
@@ -163,7 +203,7 @@
 </article>
 
 <br /><br />
-<article class="prose" id="v3_notice">
+<article id="v3_notice" class="prose">
   <h2>27th December, 2023</h2>
   <h3>v3 Notice!</h3>
   <p>I have received quite the traffic in v2, <i>I am super happy about that</i></p>
