@@ -119,7 +119,6 @@ export function averagePercentageChange(arr: number[]): number {
 	return numberOfIncrements > 0 ? totalPercentageChange / numberOfIncrements : 0;
 }
 
-
 export function convertCamelCaseToNormal(text?: string | null): string {
 	if (!text) return '';
 	return text
