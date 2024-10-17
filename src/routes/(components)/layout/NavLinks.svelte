@@ -34,7 +34,7 @@
 				</Button>
 			</li>
 		{:else}
-			<Separator class="bg-foreground opacity-25" />
+			<Separator class="my-2.5 bg-foreground opacity-25" />
 		{/if}
 	{/each}
 </ul>
