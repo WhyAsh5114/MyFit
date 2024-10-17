@@ -22,6 +22,30 @@ export const commonExercisePerMuscleGroup: {
 				note: null
 			},
 			{
+				name: 'Dumbbell bench press',
+				targetMuscleGroup: 'Chest',
+				customMuscleGroup: null,
+				bodyweightFraction: null,
+				setType: 'Down',
+				repRangeStart: 5,
+				repRangeEnd: 10,
+				changeType: null,
+				changeAmount: null,
+				note: null
+			},
+			{
+				name: 'Incline barbell press',
+				targetMuscleGroup: 'Chest',
+				customMuscleGroup: null,
+				bodyweightFraction: null,
+				setType: 'Down',
+				repRangeStart: 5,
+				repRangeEnd: 10,
+				changeType: 'AbsoluteLoad',
+				changeAmount: 5,
+				note: null
+			},
+			{
 				name: 'Incline dumbbell press',
 				targetMuscleGroup: 'Chest',
 				customMuscleGroup: null,
@@ -55,6 +79,66 @@ export const commonExercisePerMuscleGroup: {
 				repRangeEnd: 20,
 				changeType: null,
 				changeAmount: null,
+				note: null
+			},
+			{
+				name: 'Machine flyes',
+				targetMuscleGroup: 'Chest',
+				customMuscleGroup: null,
+				bodyweightFraction: 0,
+				setType: 'Straight',
+				repRangeStart: 10,
+				repRangeEnd: 20,
+				changeType: null,
+				changeAmount: null,
+				note: null
+			},
+			{
+				name: 'Dumbbell flyes',
+				targetMuscleGroup: 'Chest',
+				customMuscleGroup: null,
+				bodyweightFraction: 0,
+				setType: 'Straight',
+				repRangeStart: 10,
+				repRangeEnd: 20,
+				changeType: null,
+				changeAmount: null,
+				note: null
+			},
+			{
+				name: 'Machine chest press',
+				targetMuscleGroup: 'Chest',
+				customMuscleGroup: null,
+				bodyweightFraction: 0,
+				setType: 'Straight',
+				repRangeStart: 10,
+				repRangeEnd: 20,
+				changeType: null,
+				changeAmount: null,
+				note: null
+			},
+			{
+				name: 'Smith machine bench press',
+				targetMuscleGroup: 'Chest',
+				customMuscleGroup: null,
+				bodyweightFraction: 0,
+				setType: 'Straight',
+				repRangeStart: 5,
+				repRangeEnd: 10,
+				changeType: 'AbsoluteLoad',
+				changeAmount: 5,
+				note: null
+			},
+			{
+				name: 'Smith machine incline press',
+				targetMuscleGroup: 'Chest',
+				customMuscleGroup: null,
+				bodyweightFraction: 0,
+				setType: 'Straight',
+				repRangeStart: 10,
+				repRangeEnd: 20,
+				changeType: 'AbsoluteLoad',
+				changeAmount: 5,
 				note: null
 			}
 		]
