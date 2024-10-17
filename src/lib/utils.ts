@@ -103,15 +103,22 @@ export function arrayAverage(arr: number[]): number {
 export function averagePercentageChange(arr: number[]): number {
 	if (arr.length < 2) return 0;
 
-	const totalPercentageChange = arr.slice(1).reduce((sum, current, index) => {
-		const previous = arr[index];
-		const percentageChange = ((current - previous) / previous) * 100;
-		return sum + (isNaN(percentageChange) ? 0 : percentageChange);
-	}, 0);
+	let totalPercentageChange = 0;
+	let numberOfIncrements = 0;
 
-	const numberOfIncrements = arr.length - 1;
-	return totalPercentageChange / numberOfIncrements;
+	for (let i = 1; i < arr.length; i++) {
+		const previous = arr[i - 1];
+		const current = arr[i];
+		if (previous === 0 || current === 0) continue;
+
+		const percentageChange = ((current - previous) / previous) * 100;
+		totalPercentageChange += isNaN(percentageChange) ? 0 : percentageChange;
+		numberOfIncrements++;
+	}
+
+	return numberOfIncrements > 0 ? totalPercentageChange / numberOfIncrements : 0;
 }
+
 
 export function convertCamelCaseToNormal(text?: string | null): string {
 	if (!text) return '';
