@@ -218,7 +218,8 @@ export const users = t.router({
 						startOverloadPercentage: 0,
 						userId: ctx.userId,
 						exerciseSplitId: templateIdx ? mesocycleTemplateIds[templateIdx] : null,
-						RIRProgression: mesocycleTemplates[templateIdx].RIRProgression.map(({ cycles }) => cycles)
+						RIRProgression:
+							templateIdx === -1 ? [1] : mesocycleTemplates[templateIdx].RIRProgression.map(({ cycles }) => cycles)
 					};
 
 					if (firstWorkout) {
