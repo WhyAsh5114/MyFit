@@ -549,7 +549,7 @@ export const workouts = t.router({
 							}
 						}
 					},
-					sets: { include: { miniSets: true } }
+					sets: { include: { miniSets: true }, orderBy: { setIndex: 'asc' } }
 				},
 				cursor: input.cursorId !== undefined ? { id: input.cursorId } : undefined,
 				skip: input.cursorId !== undefined ? 1 : 0,
