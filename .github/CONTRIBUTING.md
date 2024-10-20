@@ -23,7 +23,7 @@ Make sure you have the following tools installed:
    ```
 3. Install dependencies:
    ```bash
-   npm ci --force
+   npm ci
    ```
 4. Set up your environment variables. Copy `.env.example` to `.env` and configure the necessary values.
 

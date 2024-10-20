@@ -37,7 +37,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 2. Install dependencies:
 
    ```bash
-   npm ci --force
+   npm ci
    ```
 
 3. Set up environment variables:

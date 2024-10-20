@@ -1,5 +1,5 @@
 name: 'Setup Node.js and Install Dependencies'
-description: 'Checks out the code, sets up Node.js, and installs dependencies using npm ci --force'
+description: 'Checks out the code, sets up Node.js, and installs dependencies using npm ci'
 runs:
   using: 'composite'
   steps:
@@ -11,4 +11,4 @@ runs:
 
     - name: Install dependencies
       shell: bash
-      run: npm ci --force
+      run: npm ci
