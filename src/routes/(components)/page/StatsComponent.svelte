@@ -4,6 +4,15 @@
 	import type { HomePageCounts } from '../../+page.server';
 
 	let counts: HomePageCounts = $props();
+
+	function formatNumber(num: number) {
+		if (num >= 100000) {
+			return (num / 1000).toFixed(0) + 'k';
+		} else if (num >= 10000) {
+			return (num / 1000).toFixed(1) + 'k';
+		}
+		return num.toString();
+	}
 </script>
 
 <div class="flex flex-col">
@@ -16,7 +25,7 @@
 				{#await counts.workoutCount}
 					<Skeleton class="h-8 w-full"></Skeleton>
 				{:then workoutCount}
-					<div class="text-center text-2xl font-bold">{workoutCount}</div>
+					<div class="text-center text-2xl font-bold">{formatNumber(workoutCount)}</div>
 				{/await}
 			</Card.Content>
 		</Card.Root>
@@ -28,7 +37,7 @@
 				{#await counts.exerciseCount}
 					<Skeleton class="h-8 w-full"></Skeleton>
 				{:then exerciseCount}
-					<div class="text-center text-2xl font-bold">{exerciseCount}</div>
+					<div class="text-center text-2xl font-bold">{formatNumber(exerciseCount)}</div>
 				{/await}
 			</Card.Content>
 		</Card.Root>
@@ -40,7 +49,7 @@
 				{#await counts.setsCount}
 					<Skeleton class="h-8 w-full"></Skeleton>
 				{:then setsCount}
-					<div class="text-center text-2xl font-bold">{setsCount}</div>
+					<div class="text-center text-2xl font-bold">{formatNumber(setsCount)}</div>
 				{/await}
 			</Card.Content>
 		</Card.Root>
