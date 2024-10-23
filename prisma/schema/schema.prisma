@@ -13,6 +13,11 @@ generator zod {
   output   = "../../src/lib/zodSchemas"
 }
 
+generator prismaIDB {
+  provider = "prisma-idb-generator"
+  output = "../../src/lib/prisma-idb"
+}
+
 model User {
   id             String          @id @default(cuid()) /// @zod.string.cuid2()
   name           String?

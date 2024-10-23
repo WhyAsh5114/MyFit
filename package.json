@@ -55,6 +55,7 @@
 		"@auth/prisma-adapter": "^2.4.1",
 		"@auth/sveltekit": "^1.4.1",
 		"@internationalized/date": "^3.5.4",
+		"@prisma-idb/prisma-idb-generator": "file:prisma-idb-prisma-idb-generator-0.0.3.tgz",
 		"@prisma/client": "^5.16.2",
 		"@sveltejs/adapter-vercel": "^5.4.1",
 		"@trpc/client": "^10.45.2",
