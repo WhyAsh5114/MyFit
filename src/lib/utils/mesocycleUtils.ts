@@ -42,7 +42,9 @@ export function getAveragePercentageChangeOfExercisePerformances(
 }
 
 export function generatePerformanceChangesPerMuscleGroup(workoutsOfMesocycle: WorkoutsOfMesocycle) {
-	const allExercises = workoutsOfMesocycle.flatMap((wm) => wm.workout.workoutExercises);
+	const allExercises = workoutsOfMesocycle.flatMap((wm) =>
+		wm.workout.workoutExercises.map((exercise) => ({ ...exercise, name: exercise.name + wm.splitDayIndex.toString() }))
+	);
 	const groupedExercisesByMuscleGroup = groupExercisesByMuscleGroup(allExercises);
 
 	const fullyGroupedExercises = groupedExercisesByMuscleGroup.map(({ muscleGroup, exercises }) => ({
