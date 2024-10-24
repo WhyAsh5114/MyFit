@@ -490,15 +490,15 @@ export function progressiveOverloadMagic(
 			set.RIR = currentCycleRIR;
 
 			// Last set to failure
-			if (idx === ex.sets.length - 1)
-				if (typeof ex.lastSetToFailure === 'boolean') set.RIR = ex.lastSetToFailure ? 0 : set.RIR;
-				else if (mesocycle.lastSetToFailure === true) set.RIR = 0;
+			const lastSetToFailure = ex.lastSetToFailure ?? mesocycle.lastSetToFailure;
+			if (idx === ex.sets.length - 1 && lastSetToFailure) set.RIR = 0;
 
 			// Adjust reps when RIR changed
 			const RIRDifference = set.RIR - oldRIR;
 			if (set.reps === undefined) return;
+
 			if (RIRDifference > 0 && !(ex.forceRIRMatching ?? mesocycle.forceRIRMatching)) return;
-			if (set.reps - RIRDifference < ex.repRangeStart) {
+			if (set.reps - RIRDifference < ex.repRangeStart && !lastSetToFailure) {
 				const maxRIR = Math.max(ex.repRangeStart - set.reps, 0);
 				set.RIR = maxRIR;
 				set.reps -= maxRIR - oldRIR;
