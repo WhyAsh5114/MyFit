@@ -303,14 +303,20 @@ function getTotalCyclicSetsPerMuscleGroup(
 }
 
 function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: number) {
+	const sameLoadSetType = ex.setType === 'Straight' || ex.setType === 'Myorep';
+	let loadIncreasedForOneOfSameLoadSets = false;
+
 	const newSets = ex.sets.map((set) => {
 		if (set.reps === undefined || set.load === undefined || set.RIR === undefined) return set;
 
 		let newLoad = set.load;
 
 		// TODO: #107
-		if (set.reps > ex.repRangeEnd) {
+		if (set.reps > ex.repRangeEnd || loadIncreasedForOneOfSameLoadSets) {
 			newLoad += ex.minimumWeightChange ?? 5;
+		}
+		if (sameLoadSetType && newLoad > set.load) {
+			loadIncreasedForOneOfSameLoadSets = true;
 		}
 
 		const cleanedMiniSets = cleanupInProgressMiniSets(set.miniSets);
@@ -330,7 +336,7 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 		return newSet;
 	});
 
-	if (['Straight', 'Myorep'].includes(ex.setType)) {
+	if (sameLoadSetType) {
 		const belowRepRangeStart = newSets.some((set) => set.reps! < ex.repRangeStart);
 		if (belowRepRangeStart) return ex.sets;
 	}
@@ -498,8 +504,11 @@ export function progressiveOverloadMagic(
 			if (set.reps === undefined) return;
 
 			if (RIRDifference > 0 && !(ex.forceRIRMatching ?? mesocycle.forceRIRMatching)) return;
-			if (set.reps - RIRDifference < ex.repRangeStart && !lastSetToFailure) {
-				const maxRIR = Math.max(ex.repRangeStart - set.reps, 0);
+
+			// If the RIR adjustment we are about to make causes reps to fall outside of lower rep range
+			const adjustedReps = set.reps - RIRDifference;
+			if (adjustedReps < ex.repRangeStart && !(lastSetToFailure && idx === ex.sets.length - 1)) {
+				const maxRIR = Math.max(set.reps - ex.repRangeStart, 0);
 				set.RIR = maxRIR;
 				set.reps -= maxRIR - oldRIR;
 				return;
