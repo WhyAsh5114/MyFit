@@ -50,7 +50,7 @@ const createActiveMesocycleWithProgressionDataInclude = (splitDayIndex?: number)
 
 	return Prisma.validator<Prisma.MesocycleInclude>()({
 		mesocycleExerciseSplitDays: {
-			include: { mesocycleSplitDayExercises: true },
+			include: { mesocycleSplitDayExercises: { orderBy: { exerciseIndex: 'asc' } } },
 			orderBy: { dayIndex: 'asc' }
 		},
 		mesocycleCyclicSetChanges: true,
