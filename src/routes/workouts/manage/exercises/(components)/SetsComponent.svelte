@@ -53,7 +53,7 @@
 		exercise.sets[setIndex].miniSets.push({
 			completed: false,
 			reps: undefined,
-			load: exercise.setType === 'MyorepMatch' ? exercise.sets[setIndex].load : undefined,
+			load: exercise.setType === 'MyorepMatch' ? exercise.sets[0].load : undefined,
 			RIR: undefined
 		});
 	}
