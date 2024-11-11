@@ -17,7 +17,7 @@
 	let savingWorkout = $state(false);
 	let workoutExercises = $derived(workoutRunes.workoutExercises ?? []);
 
-	async function saveWorkout() {
+	function preProcessSetData() {
 		if (workoutRunes.workoutData === null || workoutRunes.workoutExercises === null) return;
 		savingWorkout = true;
 		const workoutExercisesSets = workoutRunes.workoutExercises.map((ex) => {
@@ -76,6 +76,21 @@
 				)
 			)
 		};
+		return createData;
+	}
+
+	async function saveWorkout() {
+		let createData;
+		try {
+			createData = preProcessSetData();
+		} catch (error) {
+			if (error instanceof Error) {
+				toast.error('Failed to preprocess set data', { description: error.message });
+				console.log(workoutRunes.workoutExercises);
+			}
+		}
+
+		if (createData === undefined) return;
 
 		try {
 			let message, mesocycleCompleted;
@@ -85,7 +100,7 @@
 				message = (
 					await trpc().workouts.editById.mutate({
 						id: workoutRunes.editingWorkoutId,
-						endedAt: workoutRunes.workoutData.endedAt as Date | string,
+						endedAt: workoutRunes.workoutData?.endedAt as Date | string,
 						data: createData
 					})
 				).message;
@@ -101,7 +116,7 @@
 			mesocycleExerciseSplitRunes.resetStores();
 
 			if (mesocycleCompleted) {
-				await goto(`/mesocycles/${workoutRunes.workoutData.workoutOfMesocycle?.mesocycle.id}?completion`);
+				await goto(`/mesocycles/${workoutRunes.workoutData?.workoutOfMesocycle?.mesocycle.id}?completion`);
 			} else {
 				await goto('/workouts');
 			}
