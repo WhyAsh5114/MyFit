@@ -118,26 +118,6 @@
 				</Card.Title>
 			</Card.Header>
 			<Card.Content class="grid grid-cols-1 gap-5 md:grid-cols-2">
-				{#if mesocycleRunes.editingMesocycleId === null}
-					<div class="flex w-full max-w-sm flex-col gap-1.5">
-						<Label class="flex items-center justify-between" for="distribution-min-sets-per-exercise">
-							Minimum sets per exercise
-							<InfoPopover ariaLabel="distribution-min-sets-per-exercise-info">
-								To avoid excessive exercise variation at the start of the mesocycle
-							</InfoPopover>
-						</Label>
-						<Input
-							id="distribution-min-sets-per-exercise"
-							max={maxMinSetsValue}
-							min={0}
-							placeholder="Type here"
-							required
-							step={1}
-							type="number"
-							bind:value={mesocycleRunes.minSets}
-						/>
-					</div>
-				{/if}
 				<div class="relative flex items-center justify-between rounded-md border p-2">
 					<Label
 						class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -176,6 +156,26 @@
 						Whether or not to reduce reps/load to match planned RIR
 					</InfoPopover>
 				</div>
+				{#if mesocycleRunes.editingMesocycleId === null}
+					<div class="flex w-full max-w-sm flex-col gap-1.5">
+						<Label class="flex items-center justify-between" for="distribution-min-sets-per-exercise">
+							Minimum sets per exercise
+							<InfoPopover ariaLabel="distribution-min-sets-per-exercise-info">
+								To avoid excessive exercise variation at the start of the mesocycle
+							</InfoPopover>
+						</Label>
+						<Input
+							id="distribution-min-sets-per-exercise"
+							max={maxMinSetsValue}
+							min={0}
+							placeholder="Type here"
+							required
+							step={1}
+							type="number"
+							bind:value={mesocycleRunes.minSets}
+						/>
+					</div>
+				{/if}
 				<div class="flex flex-col gap-2 md:col-span-2">
 					<div class="flex items-center justify-between text-sm font-medium">
 						<span>Start overload percentage</span>
