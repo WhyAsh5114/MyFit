@@ -26,6 +26,7 @@ enum SetType {
   Down
   Myorep
   MyorepMatch
+  MyorepMatchDown
 }
 
 enum ChangeType {

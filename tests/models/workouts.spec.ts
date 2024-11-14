@@ -69,7 +69,7 @@ test('create workout with all set types', async ({ page }) => {
 	await page.getByRole('option', { name: 'Dumbbell bicep curls' }).click();
 	await page.getByLabel('Sets').fill('2');
 	await page.locator('button').filter({ hasText: 'Straight' }).click();
-	await page.getByRole('option', { name: 'Myorep match' }).click();
+	await page.getByRole('option', { name: 'Myorep match' }).first().click();
 	await page.getByRole('button', { name: 'Add exercise' }).click();
 
 	await page.locator('[id="Dumbbell\\ bicep\\ curls-set-1-reps"]').fill('12');
