@@ -273,7 +273,7 @@
 					<Select.Root
 						name="exercise-set-change-type"
 						onSelectedChange={(v) => {
-							if (currentExercise.setType === 'Drop' || currentExercise.setType === 'Down')
+							if (currentExercise.setType === 'Drop' || currentExercise.setType === 'Down' || currentExercise.setType === 'MyorepMatchDown')
 								currentExercise.changeType = v?.value ?? 'Percentage';
 						}}
 						required
