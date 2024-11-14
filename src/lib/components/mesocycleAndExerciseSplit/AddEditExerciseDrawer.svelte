@@ -268,7 +268,7 @@
 					</Select.Content>
 				</Select.Root>
 			</div>
-			{#if currentExercise.setType === 'Drop' || currentExercise.setType === 'Down'}
+			{#if currentExercise.setType === 'Drop' || currentExercise.setType === 'Down' || currentExercise.setType === 'MyorepMatchDown'}
 				<div class="flex w-full flex-col gap-1.5">
 					<Select.Root
 						name="exercise-set-change-type"
