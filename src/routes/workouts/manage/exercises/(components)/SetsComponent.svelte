@@ -50,16 +50,20 @@
 	}
 
 	function addMiniSet(setIndex: number) {
+		let load: undefined | number;
+		if (exercise.setType === 'MyorepMatch') load = exercise.sets[0].load;
+		if (exercise.setType === 'MyorepMatchDown') load = exercise.sets[setIndex].load;
 		exercise.sets[setIndex].miniSets.push({
 			completed: false,
 			reps: undefined,
-			load: exercise.setType === 'MyorepMatch' ? exercise.sets[0].load : undefined,
+			load,
 			RIR: undefined
 		});
 	}
 
 	function completeMiniSet(e: SubmitEvent, set: WorkoutExerciseSet, miniSetIndex: number) {
 		e.preventDefault();
+		if (exercise.setType === 'MyorepMatchDown') set.miniSets[miniSetIndex].load = set.load;
 		set.miniSets[miniSetIndex].completed = !set.miniSets[miniSetIndex].completed;
 		workoutRunes.workoutExercises = workoutRunes.workoutExercises;
 	}
@@ -250,7 +254,7 @@
 				</Button>
 			</div>
 		</form>
-		{#if (idx > 0 && exercise.setType === 'MyorepMatch') || exercise.setType === 'Drop'}
+		{#if (idx > 0 && (exercise.setType === 'MyorepMatch' || exercise.setType === 'MyorepMatchDown')) || exercise.setType === 'Drop'}
 			{#each set.miniSets as miniSet, miniIdx}
 				{@const miniSetButtonDisabled = shouldMiniSetBeDisabled(idx, miniIdx)}
 				{#if set.skipped}
@@ -272,7 +276,7 @@
 							type="number"
 							bind:value={miniSet.reps}
 						/>
-						{#if exercise.setType === 'MyorepMatch'}
+						{#if exercise.setType === 'MyorepMatch' || exercise.setType === 'MyorepMatchDown'}
 							<span></span>
 						{:else}
 							{@const expectedLoad = getMiniSetLoad(idx, miniIdx)}
@@ -327,7 +331,7 @@
 			>
 				<RemoveIcon />
 			</Button>
-			{#if exercise.setType === 'MyorepMatch'}
+			{#if exercise.setType === 'MyorepMatch' || exercise.setType === 'MyorepMatchDown'}
 				{@const repsLeft = getRemainingMyorepMatchReps(idx)}
 				<span class="grid place-items-center text-sm font-medium text-primary">
 					{#if repsLeft && repsLeft > 0}
