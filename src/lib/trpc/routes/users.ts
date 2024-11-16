@@ -36,6 +36,10 @@ async function getPrismaAndMongoUser(userId: string) {
 		throw new TRPCError({ message: 'Migration has already been performed', code: 'CONFLICT' });
 	}
 
+	if (!clientPromise) {
+		throw new TRPCError({ message: "Couldn't connect V2's Mongo database", code: 'INTERNAL_SERVER_ERROR' });
+	}
+
 	const client = await clientPromise;
 	const mongoUser = await client.db().collection('users').findOne({ email: prismaUser?.email });
 	if (!mongoUser) {
@@ -91,6 +95,9 @@ export const users = t.router({
 	checkV2MigrationAvailability: t.procedure.query(async ({ ctx }) => {
 		try {
 			const { mongoUser } = await getPrismaAndMongoUser(ctx.userId);
+			if (!clientPromise) {
+				throw new TRPCError({ message: "Couldn't connect V2's Mongo database", code: 'INTERNAL_SERVER_ERROR' });
+			}
 			const client = await clientPromise;
 
 			const mesocycleTemplatesCount = await client
@@ -121,6 +128,9 @@ export const users = t.router({
 		.input(z.strictObject({ bodyweight: z.number(), duration: z.number() }))
 		.mutation(async ({ ctx, input }) => {
 			const { mongoUser } = await getPrismaAndMongoUser(ctx.userId);
+			if (!clientPromise) {
+				throw new TRPCError({ message: "Couldn't connect V2's Mongo database", code: 'INTERNAL_SERVER_ERROR' });
+			}
 
 			const client = await clientPromise;
 			const mesocycleTemplates = await client
