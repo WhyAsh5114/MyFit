@@ -17,7 +17,8 @@ const config: PlaywrightTestConfig = {
 	use: {
 		baseURL: 'http://localhost:4173',
 		trace: 'on-first-retry',
-		video: 'retain-on-failure'
+		video: 'retain-on-failure',
+		locale: 'en-US'
 	},
 	timeout: 60000,
 	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }]

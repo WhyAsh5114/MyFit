@@ -358,12 +358,12 @@ export const ExerciseSplitIncludeSchema: z.ZodType<Prisma.ExerciseSplitInclude> 
   _count: z.union([z.boolean(),z.lazy(() => ExerciseSplitCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-export const ExerciseSplitArgsSchema: z.ZodType<Prisma.ExerciseSplitDefaultArgs> = z.object({
+export const ExerciseSplitArgsSchema: z.ZodType<Prisma.ExerciseSplitArgs> = z.object({
   select: z.lazy(() => ExerciseSplitSelectSchema).optional(),
   include: z.lazy(() => ExerciseSplitIncludeSchema).optional(),
 }).strict();
 
-export const ExerciseSplitCountOutputTypeArgsSchema: z.ZodType<Prisma.ExerciseSplitCountOutputTypeDefaultArgs> = z.object({
+export const ExerciseSplitCountOutputTypeArgsSchema: z.ZodType<Prisma.ExerciseSplitCountOutputTypeArgs> = z.object({
   select: z.lazy(() => ExerciseSplitCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -391,12 +391,12 @@ export const ExerciseSplitDayIncludeSchema: z.ZodType<Prisma.ExerciseSplitDayInc
   _count: z.union([z.boolean(),z.lazy(() => ExerciseSplitDayCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-export const ExerciseSplitDayArgsSchema: z.ZodType<Prisma.ExerciseSplitDayDefaultArgs> = z.object({
+export const ExerciseSplitDayArgsSchema: z.ZodType<Prisma.ExerciseSplitDayArgs> = z.object({
   select: z.lazy(() => ExerciseSplitDaySelectSchema).optional(),
   include: z.lazy(() => ExerciseSplitDayIncludeSchema).optional(),
 }).strict();
 
-export const ExerciseSplitDayCountOutputTypeArgsSchema: z.ZodType<Prisma.ExerciseSplitDayCountOutputTypeDefaultArgs> = z.object({
+export const ExerciseSplitDayCountOutputTypeArgsSchema: z.ZodType<Prisma.ExerciseSplitDayCountOutputTypeArgs> = z.object({
   select: z.lazy(() => ExerciseSplitDayCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -422,7 +422,7 @@ export const ExerciseTemplateIncludeSchema: z.ZodType<Prisma.ExerciseTemplateInc
   exerciseSplitDay: z.union([z.boolean(),z.lazy(() => ExerciseSplitDayArgsSchema)]).optional(),
 }).strict()
 
-export const ExerciseTemplateArgsSchema: z.ZodType<Prisma.ExerciseTemplateDefaultArgs> = z.object({
+export const ExerciseTemplateArgsSchema: z.ZodType<Prisma.ExerciseTemplateArgs> = z.object({
   select: z.lazy(() => ExerciseTemplateSelectSchema).optional(),
   include: z.lazy(() => ExerciseTemplateIncludeSchema).optional(),
 }).strict();
@@ -456,12 +456,12 @@ export const MesocycleIncludeSchema: z.ZodType<Prisma.MesocycleInclude> = z.obje
   _count: z.union([z.boolean(),z.lazy(() => MesocycleCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-export const MesocycleArgsSchema: z.ZodType<Prisma.MesocycleDefaultArgs> = z.object({
+export const MesocycleArgsSchema: z.ZodType<Prisma.MesocycleArgs> = z.object({
   select: z.lazy(() => MesocycleSelectSchema).optional(),
   include: z.lazy(() => MesocycleIncludeSchema).optional(),
 }).strict();
 
-export const MesocycleCountOutputTypeArgsSchema: z.ZodType<Prisma.MesocycleCountOutputTypeDefaultArgs> = z.object({
+export const MesocycleCountOutputTypeArgsSchema: z.ZodType<Prisma.MesocycleCountOutputTypeArgs> = z.object({
   select: z.lazy(() => MesocycleCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -497,7 +497,7 @@ export const MesocycleCyclicSetChangeIncludeSchema: z.ZodType<Prisma.MesocycleCy
   mesocycle: z.union([z.boolean(),z.lazy(() => MesocycleArgsSchema)]).optional(),
 }).strict()
 
-export const MesocycleCyclicSetChangeArgsSchema: z.ZodType<Prisma.MesocycleCyclicSetChangeDefaultArgs> = z.object({
+export const MesocycleCyclicSetChangeArgsSchema: z.ZodType<Prisma.MesocycleCyclicSetChangeArgs> = z.object({
   select: z.lazy(() => MesocycleCyclicSetChangeSelectSchema).optional(),
   include: z.lazy(() => MesocycleCyclicSetChangeIncludeSchema).optional(),
 }).strict();
@@ -522,12 +522,12 @@ export const MesocycleExerciseSplitDayIncludeSchema: z.ZodType<Prisma.MesocycleE
   _count: z.union([z.boolean(),z.lazy(() => MesocycleExerciseSplitDayCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-export const MesocycleExerciseSplitDayArgsSchema: z.ZodType<Prisma.MesocycleExerciseSplitDayDefaultArgs> = z.object({
+export const MesocycleExerciseSplitDayArgsSchema: z.ZodType<Prisma.MesocycleExerciseSplitDayArgs> = z.object({
   select: z.lazy(() => MesocycleExerciseSplitDaySelectSchema).optional(),
   include: z.lazy(() => MesocycleExerciseSplitDayIncludeSchema).optional(),
 }).strict();
 
-export const MesocycleExerciseSplitDayCountOutputTypeArgsSchema: z.ZodType<Prisma.MesocycleExerciseSplitDayCountOutputTypeDefaultArgs> = z.object({
+export const MesocycleExerciseSplitDayCountOutputTypeArgsSchema: z.ZodType<Prisma.MesocycleExerciseSplitDayCountOutputTypeArgs> = z.object({
   select: z.lazy(() => MesocycleExerciseSplitDayCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -553,7 +553,7 @@ export const MesocycleExerciseTemplateIncludeSchema: z.ZodType<Prisma.MesocycleE
   mesocycleExerciseSplitDay: z.union([z.boolean(),z.lazy(() => MesocycleExerciseSplitDayArgsSchema)]).optional(),
 }).strict()
 
-export const MesocycleExerciseTemplateArgsSchema: z.ZodType<Prisma.MesocycleExerciseTemplateDefaultArgs> = z.object({
+export const MesocycleExerciseTemplateArgsSchema: z.ZodType<Prisma.MesocycleExerciseTemplateArgs> = z.object({
   select: z.lazy(() => MesocycleExerciseTemplateSelectSchema).optional(),
   include: z.lazy(() => MesocycleExerciseTemplateIncludeSchema).optional(),
 }).strict();
@@ -592,12 +592,12 @@ export const UserIncludeSchema: z.ZodType<Prisma.UserInclude> = z.object({
   _count: z.union([z.boolean(),z.lazy(() => UserCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-export const UserArgsSchema: z.ZodType<Prisma.UserDefaultArgs> = z.object({
+export const UserArgsSchema: z.ZodType<Prisma.UserArgs> = z.object({
   select: z.lazy(() => UserSelectSchema).optional(),
   include: z.lazy(() => UserIncludeSchema).optional(),
 }).strict();
 
-export const UserCountOutputTypeArgsSchema: z.ZodType<Prisma.UserCountOutputTypeDefaultArgs> = z.object({
+export const UserCountOutputTypeArgsSchema: z.ZodType<Prisma.UserCountOutputTypeArgs> = z.object({
   select: z.lazy(() => UserCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -633,7 +633,7 @@ export const AccountIncludeSchema: z.ZodType<Prisma.AccountInclude> = z.object({
   user: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
 }).strict()
 
-export const AccountArgsSchema: z.ZodType<Prisma.AccountDefaultArgs> = z.object({
+export const AccountArgsSchema: z.ZodType<Prisma.AccountArgs> = z.object({
   select: z.lazy(() => AccountSelectSchema).optional(),
   include: z.lazy(() => AccountIncludeSchema).optional(),
 }).strict();
@@ -662,7 +662,7 @@ export const SessionIncludeSchema: z.ZodType<Prisma.SessionInclude> = z.object({
   user: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
 }).strict()
 
-export const SessionArgsSchema: z.ZodType<Prisma.SessionDefaultArgs> = z.object({
+export const SessionArgsSchema: z.ZodType<Prisma.SessionArgs> = z.object({
   select: z.lazy(() => SessionSelectSchema).optional(),
   include: z.lazy(() => SessionIncludeSchema).optional(),
 }).strict();
@@ -693,7 +693,7 @@ export const WorkoutOfMesocycleIncludeSchema: z.ZodType<Prisma.WorkoutOfMesocycl
   mesocycle: z.union([z.boolean(),z.lazy(() => MesocycleArgsSchema)]).optional(),
 }).strict()
 
-export const WorkoutOfMesocycleArgsSchema: z.ZodType<Prisma.WorkoutOfMesocycleDefaultArgs> = z.object({
+export const WorkoutOfMesocycleArgsSchema: z.ZodType<Prisma.WorkoutOfMesocycleArgs> = z.object({
   select: z.lazy(() => WorkoutOfMesocycleSelectSchema).optional(),
   include: z.lazy(() => WorkoutOfMesocycleIncludeSchema).optional(),
 }).strict();
@@ -718,12 +718,12 @@ export const WorkoutIncludeSchema: z.ZodType<Prisma.WorkoutInclude> = z.object({
   _count: z.union([z.boolean(),z.lazy(() => WorkoutCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-export const WorkoutArgsSchema: z.ZodType<Prisma.WorkoutDefaultArgs> = z.object({
+export const WorkoutArgsSchema: z.ZodType<Prisma.WorkoutArgs> = z.object({
   select: z.lazy(() => WorkoutSelectSchema).optional(),
   include: z.lazy(() => WorkoutIncludeSchema).optional(),
 }).strict();
 
-export const WorkoutCountOutputTypeArgsSchema: z.ZodType<Prisma.WorkoutCountOutputTypeDefaultArgs> = z.object({
+export const WorkoutCountOutputTypeArgsSchema: z.ZodType<Prisma.WorkoutCountOutputTypeArgs> = z.object({
   select: z.lazy(() => WorkoutCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -752,12 +752,12 @@ export const WorkoutExerciseIncludeSchema: z.ZodType<Prisma.WorkoutExerciseInclu
   _count: z.union([z.boolean(),z.lazy(() => WorkoutExerciseCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-export const WorkoutExerciseArgsSchema: z.ZodType<Prisma.WorkoutExerciseDefaultArgs> = z.object({
+export const WorkoutExerciseArgsSchema: z.ZodType<Prisma.WorkoutExerciseArgs> = z.object({
   select: z.lazy(() => WorkoutExerciseSelectSchema).optional(),
   include: z.lazy(() => WorkoutExerciseIncludeSchema).optional(),
 }).strict();
 
-export const WorkoutExerciseCountOutputTypeArgsSchema: z.ZodType<Prisma.WorkoutExerciseCountOutputTypeDefaultArgs> = z.object({
+export const WorkoutExerciseCountOutputTypeArgsSchema: z.ZodType<Prisma.WorkoutExerciseCountOutputTypeArgs> = z.object({
   select: z.lazy(() => WorkoutExerciseCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -797,12 +797,12 @@ export const WorkoutExerciseSetIncludeSchema: z.ZodType<Prisma.WorkoutExerciseSe
   _count: z.union([z.boolean(),z.lazy(() => WorkoutExerciseSetCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-export const WorkoutExerciseSetArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetDefaultArgs> = z.object({
+export const WorkoutExerciseSetArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetArgs> = z.object({
   select: z.lazy(() => WorkoutExerciseSetSelectSchema).optional(),
   include: z.lazy(() => WorkoutExerciseSetIncludeSchema).optional(),
 }).strict();
 
-export const WorkoutExerciseSetCountOutputTypeArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetCountOutputTypeDefaultArgs> = z.object({
+export const WorkoutExerciseSetCountOutputTypeArgsSchema: z.ZodType<Prisma.WorkoutExerciseSetCountOutputTypeArgs> = z.object({
   select: z.lazy(() => WorkoutExerciseSetCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
@@ -830,7 +830,7 @@ export const WorkoutExerciseMiniSetIncludeSchema: z.ZodType<Prisma.WorkoutExerci
   parentSet: z.union([z.boolean(),z.lazy(() => WorkoutExerciseSetArgsSchema)]).optional(),
 }).strict()
 
-export const WorkoutExerciseMiniSetArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetDefaultArgs> = z.object({
+export const WorkoutExerciseMiniSetArgsSchema: z.ZodType<Prisma.WorkoutExerciseMiniSetArgs> = z.object({
   select: z.lazy(() => WorkoutExerciseMiniSetSelectSchema).optional(),
   include: z.lazy(() => WorkoutExerciseMiniSetIncludeSchema).optional(),
 }).strict();

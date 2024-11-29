@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto, invalidate } from '$app/navigation';
-	import { navigating } from '$app/stores';
+	import { navigating, page } from '$app/stores';
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -11,14 +11,15 @@
 	import { Switch } from '$lib/components/ui/switch';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import { trpc } from '$lib/trpc/client.js';
+	import type { RouterOutputs } from '$lib/trpc/router.js';
 	import { cn, convertCamelCaseToNormal } from '$lib/utils.js';
+	import type { WorkoutStatus } from '@prisma/client';
 	import { toast } from 'svelte-sonner';
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-	import { workoutRunes } from '../workoutRunes.svelte.js';
-	import type { WorkoutStatus } from '@prisma/client';
 	import SkipIcon from 'virtual:icons/lucide/skip-forward';
-	import type { RouterOutputs } from '$lib/trpc/router.js';
+	import RedoIcon from 'virtual:icons/lucide/rotate-cw';
+	import { workoutRunes } from '../workoutRunes.svelte.js';
 
 	let { data } = $props();
 
@@ -37,6 +38,7 @@
 	let overwriteWorkoutDialogOpen = $state(false);
 	let completingWorkout = $state(false);
 	let skipWorkoutWithWorkoutExercisesDialogOpen = $state(false);
+	let skippedWorkoutsOfCycle = $state<RouterOutputs['workouts']['getSkippedWorkoutsOfCurrentCycle']>();
 
 	$effect(() => {
 		data.workoutData.then((data) => {
@@ -46,6 +48,11 @@
 			userBodyweight = userBodyweight ?? workoutData.userBodyweight;
 			if (workoutData.workoutOfMesocycle !== undefined) useActiveMesocycle = true;
 		});
+
+		data.skippedWorkouts?.then((skippedWorkouts) => {
+			skippedWorkoutsOfCycle = skippedWorkouts;
+		});
+		if (data.skippedWorkouts === undefined) skippedWorkoutsOfCycle = undefined;
 	});
 
 	async function startWorkout(fromDialog = false, mode: 'keepCurrent' | 'overwrite' = 'overwrite') {
@@ -148,6 +155,26 @@
 			<Input id="user-bodyweight" placeholder="Type here" type="number" bind:value={userBodyweight} />
 		</div>
 	{/if}
+	{#if skippedWorkoutsOfCycle && skippedWorkoutsOfCycle.length > 0}
+		<Card.Root class="mb-1">
+			<Card.Header>
+				<Card.Title>Skipped days</Card.Title>
+				<Card.Description>for this cycle</Card.Description>
+			</Card.Header>
+			<Card.Content class="flex flex-wrap gap-1">
+				{#each skippedWorkoutsOfCycle as skippedWorkout}
+					<Button
+						variant="secondary"
+						class="gap-2"
+						href="/workouts/manage/start?repeatSkipped={skippedWorkout.splitDayIndex}"
+					>
+						{skippedWorkout.splitDayName}
+						<RedoIcon />
+					</Button>
+				{/each}
+			</Card.Content>
+		</Card.Root>
+	{/if}
 	{#if useActiveMesocycle && workoutData.workoutOfMesocycle}
 		{@const workoutStatus = workoutData.workoutOfMesocycle.workoutStatus}
 		{@const splitDayName = workoutData.workoutOfMesocycle.splitDayName}
@@ -158,6 +185,9 @@
 				</Card.Title>
 				<Card.Description class="pb-1">
 					Day {workoutData.workoutOfMesocycle.splitDayIndex + 1}, Cycle {workoutData.workoutOfMesocycle.cycleNumber}
+					{#if $page.url.searchParams.get('repeatSkipped')}
+						(Repeating skipped)
+					{/if}
 				</Card.Description>
 				<div class="flex flex-wrap gap-1">
 					{#each targetedMuscleGroups as muscleGroup}
