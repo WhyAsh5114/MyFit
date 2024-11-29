@@ -109,6 +109,7 @@ test('edit a mesocycle', async ({ page }) => {
 });
 
 test('start and stop a mesocycle', async ({ page }) => {
+	
 	await page.getByLabel('create-new-mesocycle').click();
 	await page.getByLabel('Mesocycle name').fill('MesoName');
 	await page.getByRole('button', { name: 'Next' }).click();
@@ -124,7 +125,7 @@ test('start and stop a mesocycle', async ({ page }) => {
 	await expect(page.getByRole('status').filter({ hasText: 'Mesocycle started successfully' })).toBeVisible({
 		timeout: 10000
 	});
-	await expect(page.getByRole('tabpanel')).toContainText(`MesoName ${new Date().toLocaleDateString()} Active`);
+	await expect(page.getByRole('tabpanel')).toContainText(`MesoName ${new Date().toLocaleDateString("en-US")} Active`);
 	await page.getByRole('link', { name: 'Mesocycles' }).click();
 	await expect(page.getByRole('main')).toContainText("Active MesoName Active All MesoName Active That's all");
 	await page.getByRole('link', { name: 'MesoName Active' }).first().click();
@@ -133,7 +134,7 @@ test('start and stop a mesocycle', async ({ page }) => {
 		timeout: 10000
 	});
 	await expect(page.getByRole('tabpanel')).toContainText(
-		`MesoName ${new Date().toLocaleDateString()} to ${new Date().toLocaleDateString()} Completed`
+		`MesoName ${new Date().toLocaleDateString("en-US")} to ${new Date().toLocaleDateString("en-US")} Completed`
 	);
 	await page.getByRole('link', { name: 'Mesocycles' }).click();
 	await expect(page.getByRole('main')).toContainText("Active No active mesocycle All MesoName Completed That's all");
@@ -198,7 +199,7 @@ test('disallow exercise split editing after workout added', async ({ page }) => 
 		"Cannot change the length or rest days of the mesocycle's exercise split after workouts have been added";
 	await page.getByRole('link', { name: 'Mesocycles' }).click();
 	await page.getByRole('link', { name: 'MyMeso Active' }).first().click();
-	await expect(page.getByRole('main')).toContainText(new Date().toLocaleDateString());
+	await expect(page.getByRole('main')).toContainText(new Date().toLocaleDateString("en-US"));
 	await page.getByRole('tab', { name: 'Split' }).click();
 	await page.getByRole('button', { name: 'Edit' }).click();
 	await page.getByLabel('mesocycle-exercise-split-edit').click();
@@ -210,7 +211,7 @@ test('disallow exercise split editing after workout added', async ({ page }) => 
 test('extract exercise split from mesocycle', async ({ page }) => {
 	await createMesocycle(page, { exerciseSplitCreated: true });
 	await page.getByRole('link', { name: 'MyMeso' }).first().click();
-	await expect(page.getByRole('main')).toContainText(new Date().toLocaleDateString());
+	await expect(page.getByRole('main')).toContainText(new Date().toLocaleDateString("en-US"));
 	await page.getByRole('tab', { name: 'Split' }).click();
 	await page.getByRole('button', { name: 'Edit' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();

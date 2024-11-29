@@ -2,7 +2,7 @@ import { test, expect, type Page } from '../fixtures';
 import { createMesocycle } from './commonFunctions';
 
 function getTodaysDateString() {
-	return new Date().toLocaleDateString(undefined, { month: 'long', day: '2-digit' });
+	return new Date().toLocaleDateString("en-US", { month: 'long', day: '2-digit' });
 }
 
 async function createSplitAndMesoForTest(page: Page) {
