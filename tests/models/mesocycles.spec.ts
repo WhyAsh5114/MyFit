@@ -254,15 +254,15 @@ test('complete a mesocycle', async ({ page }) => {
 	await page.getByLabel('create-workout').click();
 	await page.getByPlaceholder('Type here').fill('70');
 	await page.getByRole('button', { name: 'Skip' }).click();
-	await expect(page.getByRole('paragraph')).toContainText('Day 2, Cycle 1');
+	await expect(page.getByRole('paragraph').last()).toContainText('Day 2, Cycle 1');
 	await page.getByRole('button', { name: 'Skip' }).click();
-	await expect(page.getByRole('paragraph')).toContainText('Day 3, Cycle 1');
+	await expect(page.getByRole('paragraph').last()).toContainText('Day 3, Cycle 1');
 	await page.getByRole('button', { name: 'Skip' }).click();
-	await expect(page.getByRole('paragraph')).toContainText('Day 4, Cycle 1');
+	await expect(page.getByRole('paragraph').last()).toContainText('Day 4, Cycle 1');
 	await page.getByRole('button', { name: 'Skip' }).click();
-	await expect(page.getByRole('paragraph')).toContainText('Day 5, Cycle 1');
+	await expect(page.getByRole('paragraph').last()).toContainText('Day 5, Cycle 1');
 	await page.getByRole('button', { name: 'Skip' }).click();
-	await expect(page.getByRole('paragraph')).toContainText('Day 6, Cycle 1');
+	await expect(page.getByRole('paragraph').last()).toContainText('Day 6, Cycle 1');
 	await page.getByRole('button', { name: 'Skip' }).click();
 	await page.getByRole('button', { name: 'Complete' }).click();
 
