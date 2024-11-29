@@ -35,7 +35,7 @@ export default defineConfig({
 			'vaul-svelte',
 			'cmdk-sv',
 			'embla-carousel-svelte',
-			'embla-carousel-reactive-utils',
+			'embla-carousel-reactive-utils'
 		]
 	},
 	define: {
