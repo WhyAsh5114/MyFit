@@ -159,6 +159,7 @@
 		<Card.Root class="mb-1">
 			<Card.Header>
 				<Card.Title>Skipped days</Card.Title>
+				<Card.Description>for this cycle</Card.Description>
 			</Card.Header>
 			<Card.Content class="flex flex-wrap gap-1">
 				{#each skippedWorkoutsOfCycle as skippedWorkout}
