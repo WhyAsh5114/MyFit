@@ -48,7 +48,6 @@
 	onMount(async () => {
 		if (workoutRunes.workoutData === null) goto('./start');
 		const serverData = await data.serverData;
-		console.log(serverData);
 		if (workoutRunes.workoutExercises === null) {
 			workoutRunes.workoutExercises = serverData?.todaysWorkoutExercises ?? [];
 		}

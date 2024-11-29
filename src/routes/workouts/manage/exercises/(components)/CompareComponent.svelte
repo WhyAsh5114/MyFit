@@ -40,7 +40,6 @@
 				bodyweightFraction: exercise.bodyweightFraction ?? null
 			}
 		});
-		console.log(actualOverload);
 
 		return actualOverload;
 	}

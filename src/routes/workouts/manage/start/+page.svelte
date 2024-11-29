@@ -42,7 +42,6 @@
 
 	$effect(() => {
 		data.workoutData.then((data) => {
-			console.log(data);
 			if (workoutRunes.editingWorkoutId === null) workoutData = data;
 			else workoutData = workoutRunes.workoutData as RouterOutputs['workouts']['getTodaysWorkoutData'];
 
