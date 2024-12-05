@@ -90,7 +90,7 @@ If you discover a security vulnerability, please follow our [SECURITY.md](./SECU
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more details.
+This project is licensed under the GNU Affero General Public License v3.0. See the [LICENSE](./LICENSE) file for more details.
 
 ## Acknowledgements
 
