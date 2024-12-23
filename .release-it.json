@@ -8,9 +8,7 @@
 			"preset": "angular"
 		}
 	},
-	"npm": {
-		"publish": false
-	},
+	"npm": false,
 	"git": {
 		"commit": false,
 		"push": false
