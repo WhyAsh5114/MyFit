@@ -645,6 +645,7 @@ export const workouts = t.router({
 					workout: {
 						select: {
 							startedAt: true,
+							userBodyweight: true,
 							workoutOfMesocycle: {
 								select: {
 									splitDayIndex: true,
