@@ -8,6 +8,7 @@
 	import { onMount } from 'svelte';
 
 	import { overrideItemIdKeyNameBeforeInitialisingDndZones } from 'svelte-dnd-action';
+	import ChangelogDialog from './(components)/layout/ChangelogDialog.svelte';
 	overrideItemIdKeyNameBeforeInitialisingDndZones('name');
 
 	const { children } = $props();
@@ -29,6 +30,8 @@
 
 <ModeWatcher />
 <Toaster />
+<ChangelogDialog />
+
 {#if isMobile === true}
 	<MobileLayout>{@render children()}</MobileLayout>
 {:else if isMobile === false}

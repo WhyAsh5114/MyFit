@@ -35,7 +35,20 @@ export default defineConfig({
 			'vaul-svelte',
 			'cmdk-sv',
 			'embla-carousel-svelte',
-			'embla-carousel-reactive-utils'
+			'embla-carousel-reactive-utils',
+			'@auth/prisma-adapter',
+			'@auth/core/providers/github',
+			'@auth/core/providers/google',
+			'mongodb',
+			'dotenv/config',
+			'zod',
+			'@paralleldrive/cuid2',
+			'@trpc/server',
+			'@auth/core',
+			'@auth/core/errors',
+			'set-cookie-parser',
+			'marked',
+			'dompurify'
 		]
 	},
 	define: {
