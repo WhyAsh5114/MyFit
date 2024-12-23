@@ -53,8 +53,8 @@
 
 	function updateApplication() {
 		reloading = true;
-		updateServiceWorker(true);
 		localStorage.clear();
+		updateServiceWorker(true);
 	}
 </script>
 
