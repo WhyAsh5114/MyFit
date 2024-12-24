@@ -1,5 +1,7 @@
 # [MyFit](https://my-fit-v3.vercel.app/)
 
+![overview](https://github.com/user-attachments/assets/5290df63-ba02-49b1-93c8-9706046bd176)
+
 A web-based workout tracking application designed to help users track their workouts, monitor progression, and optimize their training. The app supports detailed logging of reps, load, and RIR (Reps in Reserve) across weeks, with complex progression formulas built in to help users progressively overload their exercises.
 
 ## Direct link
