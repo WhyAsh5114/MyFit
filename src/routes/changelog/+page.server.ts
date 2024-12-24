@@ -12,6 +12,3 @@ export const load = async () => {
 	})) as ReleaseData[];
 	return { releases };
 };
-
-// * fix changelogShownOf to be release version instead of a boolean
-// * compare it with the release version of the latest release and show dialog if needed

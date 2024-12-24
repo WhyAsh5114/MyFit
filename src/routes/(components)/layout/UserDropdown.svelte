@@ -8,7 +8,6 @@
 	function logOut() {
 		signOut();
 		localStorage.clear();
-		localStorage.setItem('changelogShown', 'true');
 	}
 </script>
 
