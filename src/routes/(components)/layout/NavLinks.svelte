@@ -14,6 +14,7 @@
 		{ text: 'Workouts', href: '/workouts' },
 		null,
 		{ text: 'Docs', href: '/docs' },
+		{ text: 'Changelog', href: '/changelog' },
 		{ text: 'Donations', href: '/donations' },
 		{ text: 'Privacy policy', href: '/privacy-policy' }
 	];
