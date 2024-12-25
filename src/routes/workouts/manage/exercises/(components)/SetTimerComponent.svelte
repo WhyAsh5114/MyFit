@@ -3,6 +3,7 @@
 	import * as Popover from '$lib/components/ui/popover';
 	import { cn } from '$lib/utils';
 	import TimerIcon from 'virtual:icons/lucide/timer';
+	import MinusIcon from 'virtual:icons/lucide/minus';
 	import { workoutRunes } from '../../workoutRunes.svelte';
 
 	let lastCompletedSet = $derived(
@@ -42,6 +43,8 @@
 	<Popover.Content class="w-20 text-center font-semibold">
 		{#if lastCompletedSet}
 			{secondsToMS(secondsSinceLastSet)}
+		{:else}
+			<MinusIcon class="mx-auto" />
 		{/if}
 	</Popover.Content>
 </Popover.Root>

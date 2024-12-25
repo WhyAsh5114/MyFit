@@ -11,6 +11,7 @@
 	import SkipIcon from 'virtual:icons/lucide/skip-forward';
 	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import HistoryIcon from 'virtual:icons/lucide/history';
+	import ChartIcon from 'virtual:icons/lucide/chart-no-axes-column-increasing';
 	import { workoutRunes } from '../../workoutRunes.svelte';
 	import CompareComponent from './CompareComponent.svelte';
 	import SetsComponent from './SetsComponent.svelte';
@@ -57,6 +58,9 @@
 						<DropdownMenu.Group>
 							<DropdownMenu.Item class="gap-2" onclick={() => workoutRunes.setEditingExercise(exercise)}>
 								<EditIcon /> Edit
+							</DropdownMenu.Item>
+							<DropdownMenu.Item class="gap-2" onclick={() => workoutRunes.openExerciseWarmupDialog(exercise)}>
+								<ChartIcon /> Warm up
 							</DropdownMenu.Item>
 							<DropdownMenu.Item class="gap-2" onclick={skipSetsLeft}>
 								<SkipIcon /> Skip sets left

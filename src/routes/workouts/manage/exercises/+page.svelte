@@ -17,6 +17,7 @@
 	import DndComponent from './(components)/DndComponent.svelte';
 	import ExerciseHistorySheet from './(components)/ExerciseHistorySheet.svelte';
 	import SetTimerComponent from './(components)/SetTimerComponent.svelte';
+	import WarmUpDialog from './(components)/WarmUpDialog.svelte';
 
 	let { data } = $props();
 	let reordering = $state(false);
@@ -169,3 +170,4 @@
 </div>
 
 <ExerciseHistorySheet />
+<WarmUpDialog />
