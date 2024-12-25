@@ -93,7 +93,7 @@
 					Day {workoutData.workoutOfMesocycle?.splitDayIndex + 1}, Cycle {workoutData.workoutOfMesocycle?.cycleNumber}
 					<InfoPopover align="center" ariaLabel="mesocycle-info">
 						<span class="text-sm text-foreground">
-							{workoutData.workoutOfMesocycle.mesocycle.name}:
+							<p class="font-semibold">{workoutData.workoutOfMesocycle.mesocycle.name}</p>
 							{getFormattedDate(workoutData.startedAt)}
 						</span>
 					</InfoPopover>
