@@ -1,11 +1,11 @@
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
-import type { Prisma } from '@prisma/client';
-import type { FullWorkoutWithMesoData } from '../[workoutId]/+page.server';
 import type { RouterOutputs } from '$lib/trpc/router';
 import {
 	type WorkoutExerciseInProgress,
 	createWorkoutExerciseInProgressFromMesocycleExerciseTemplate
 } from '$lib/utils/workoutUtils';
+import type { Prisma } from '@prisma/client';
+import type { FullWorkoutWithMesoData } from '../[workoutId]/+page.server';
 
 export type PreviousWorkoutData =
 	RouterOutputs['workouts']['getWorkoutExercisesWithPreviousData']['previousWorkoutData'];
@@ -21,6 +21,8 @@ function createWorkoutRunes() {
 
 	let exerciseHistorySheetOpen = $state(false);
 	let exerciseHistorySheetName: string | undefined = $state();
+	let exerciseWarmUpDialogOpen = $state(false);
+	let exerciseWarmUpDialogExercise: WorkoutExerciseInProgress | undefined = $state();
 
 	if (globalThis.localStorage) {
 		const savedState = localStorage.getItem('workoutRunes');
@@ -86,6 +88,12 @@ function createWorkoutRunes() {
 	function openExerciseHistorySheet(exerciseName: string) {
 		exerciseHistorySheetName = exerciseName;
 		exerciseHistorySheetOpen = true;
+	}
+
+	function openExerciseWarmupDialog(exercise: WorkoutExerciseInProgress) {
+		if (workoutExercises === null) return;
+		exerciseWarmUpDialogOpen = true;
+		exerciseWarmUpDialogExercise = exercise;
 	}
 
 	function copyExerciseSetNumbersFromHistory(
@@ -185,6 +193,18 @@ function createWorkoutRunes() {
 		set exerciseHistorySheetOpen(value) {
 			exerciseHistorySheetOpen = value;
 		},
+		get exerciseWarmUpDialogOpen() {
+			return exerciseWarmUpDialogOpen;
+		},
+		set exerciseWarmUpDialogOpen(value) {
+			exerciseWarmUpDialogOpen = value;
+		},
+		get exerciseWarmUpDialogExercise() {
+			return exerciseWarmUpDialogExercise;
+		},
+		set exerciseWarmUpDialogExercise(value) {
+			exerciseWarmUpDialogExercise = value;
+		},
 		saveStoresToLocalStorage,
 		resetStores,
 		addExercise,
@@ -193,6 +213,7 @@ function createWorkoutRunes() {
 		deleteExercise,
 		loadWorkout,
 		openExerciseHistorySheet,
+		openExerciseWarmupDialog,
 		copyExerciseSetNumbersFromHistory
 	};
 }
