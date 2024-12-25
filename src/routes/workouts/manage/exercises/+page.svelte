@@ -16,6 +16,7 @@
 	import { workoutRunes } from '../workoutRunes.svelte.js';
 	import DndComponent from './(components)/DndComponent.svelte';
 	import ExerciseHistorySheet from './(components)/ExerciseHistorySheet.svelte';
+	import SetTimerComponent from './(components)/SetTimerComponent.svelte';
 
 	let { data } = $props();
 	let reordering = $state(false);
@@ -106,7 +107,7 @@
 				</p>
 			{/if}
 		</div>
-		<div class="grid grid-cols-3 gap-x-2 gap-y-1">
+		<div class="grid grid-cols-4 gap-1">
 			<Button
 				aria-label="reorder-toggle"
 				disabled={comparing}
@@ -133,6 +134,7 @@
 					<EditIcon />
 				{/if}
 			</Button>
+			<SetTimerComponent />
 			<AddEditExerciseDrawer
 				addExercise={workoutRunes.addExercise}
 				context="workout"
@@ -142,7 +144,7 @@
 				setEditingExercise={workoutRunes.setEditingExercise}
 			/>
 			{#if totalSets !== null && completedSets !== null}
-				<Progress class="col-span-3 h-1.5" max={totalSets} value={completedSets} />
+				<Progress class="col-span-full h-1.5" max={totalSets} value={completedSets} />
 			{:else}
 				<Skeleton class="col-span-3 h-1.5 w-full" />
 			{/if}
