@@ -9,13 +9,19 @@
 		exercise: Prisma.WorkoutExerciseGetPayload<{
 			include: { sets: { include: { miniSets: true } } };
 		}>;
+		date?: Date;
 	};
-	let { exercise }: PropsType = $props();
+	let { exercise, date }: PropsType = $props();
 </script>
 
 <div class="flex flex-col gap-0.5 rounded-md border bg-card/50 p-2 backdrop-blur-sm">
-	<div class="flex items-start justify-between">
+	<div class="flex items-center justify-between">
 		<span class="truncate">{exercise.name}</span>
+		{#if date}
+			<span class="text-sm text-muted-foreground">
+				{new Date(date).toLocaleDateString()}
+			</span>
+		{/if}
 	</div>
 	<div class="flex items-center gap-0.5">
 		<span class="mr-auto text-sm lowercase text-muted-foreground">

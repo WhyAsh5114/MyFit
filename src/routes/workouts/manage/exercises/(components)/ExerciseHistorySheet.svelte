@@ -68,7 +68,7 @@
 						})}
 					</span>
 				</div>
-				<WorkoutExerciseCard {exercise} />
+				<WorkoutExerciseCard {exercise} date={new Date(exercise.workout.startedAt)} />
 			{/each}
 			<DefaultInfiniteLoader {loadMore} identifier={workoutRunes.exerciseHistorySheetName} entityPlural="exercises" />
 		</div>
