@@ -17,6 +17,7 @@ model Workout {
   endedAt            DateTime
   workoutExercises   WorkoutExercise[]
   userId             String
+  note               String?
 }
 
 model WorkoutExercise {

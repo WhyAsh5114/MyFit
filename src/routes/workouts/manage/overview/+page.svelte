@@ -1,21 +1,24 @@
 <script lang="ts">
+	import { goto, invalidate } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import * as Tabs from '$lib/components/ui/tabs';
+	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
 	import { trpc } from '$lib/trpc/client';
+	import type { RouterInputs } from '$lib/trpc/router';
+	import type { WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
+	import { TRPCClientError } from '@trpc/client';
 	import { toast } from 'svelte-sonner';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-	import { workoutRunes } from '../workoutRunes.svelte';
-	import type { WorkoutExerciseInProgress } from '$lib/utils/workoutUtils';
-	import { goto, invalidate } from '$app/navigation';
-	import type { RouterInputs } from '$lib/trpc/router';
-	import * as Tabs from '$lib/components/ui/tabs';
 	import ExerciseSplitExercisesCharts from '../../../exercise-splits/(components)/ExerciseSplitExercisesCharts.svelte';
-	import { TRPCClientError } from '@trpc/client';
 	import { mesocycleExerciseSplitRunes } from '../../../mesocycles/[mesocycleId]/edit-split/mesocycleExerciseSplitRunes.svelte';
+	import { workoutRunes } from '../workoutRunes.svelte';
 	import WorkoutComparisonChart from './(components)/WorkoutComparisonChart.svelte';
 
 	let savingWorkout = $state(false);
 	let workoutExercises = $derived(workoutRunes.workoutExercises ?? []);
+	let workoutNote = $state<string>();
 
 	function preProcessSetData() {
 		if (workoutRunes.workoutData === null || workoutRunes.workoutExercises === null) return;
@@ -36,7 +39,7 @@
 		const userBodyweight = workoutRunes.workoutData.userBodyweight;
 
 		const createData: RouterInputs['workouts']['create'] = {
-			workoutData: { ...workoutRunes.workoutData, userBodyweight },
+			workoutData: { ...workoutRunes.workoutData, userBodyweight, note: workoutNote },
 			workoutExercises: workoutRunes.workoutExercises.map((ex, idx) => {
 				const { sets, ...exercise } = ex;
 				return { ...exercise, exerciseIndex: idx };
@@ -151,6 +154,11 @@
 		<ExerciseSplitExercisesCharts exercises={workoutExercises} />
 	</Tabs.Content>
 </Tabs.Root>
+
+<div class="mt-4 flex w-full max-w-sm flex-col gap-1.5">
+	<Label for="workout-note">Workout note</Label>
+	<Textarea id="workout-note" placeholder="Type here (optional)" bind:value={workoutNote}></Textarea>
+</div>
 
 <div class="mt-auto grid grid-cols-2 gap-1">
 	<Button onclick={() => window.history.back()} variant="secondary">Previous</Button>

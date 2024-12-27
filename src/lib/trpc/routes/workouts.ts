@@ -86,7 +86,8 @@ const workoutInputDataSchema = z.object({
 			splitDayIndex: z.number().int(),
 			workoutStatus: z.nativeEnum(WorkoutStatus).nullable()
 		})
-		.optional()
+		.optional(),
+	note: z.string().optional()
 });
 
 const createWorkoutSchema = z.strictObject({
@@ -433,7 +434,8 @@ export const workouts = t.router({
 			userId: ctx.userId,
 			startedAt: input.workoutData.startedAt ?? new Date(),
 			endedAt: new Date(),
-			userBodyweight: input.workoutData.userBodyweight
+			userBodyweight: input.workoutData.userBodyweight,
+			note: input.workoutData.note
 		};
 
 		const { workoutOfMesocycle } = input.workoutData;

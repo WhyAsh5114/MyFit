@@ -107,6 +107,12 @@
 			<span class="text-sm text-muted-foreground">User bodyweight</span>
 			<span class="font-semibold">{workout.userBodyweight}</span>
 		</div>
+		{#if workout.note}
+			<div class="flex flex-col">
+				<span class="text-sm text-muted-foreground">Workout note</span>
+				<span class="font-semibold">{workout.note}</span>
+			</div>
+		{/if}
 		{#if workout.workoutOfMesocycle?.workoutStatus === null}
 			<div class="flex flex-col gap-1">
 				<span class="text-sm text-muted-foreground">Targeted muscle groups</span>
