@@ -27,7 +27,10 @@
 		) {
 			open = true;
 			checkingForUpdate = true;
-			await checkForUpdates!();
+			while (checkForUpdates === null) {
+				await new Promise((resolve) => setTimeout(resolve, 500));
+			}
+			await checkForUpdates();
 			checkingForUpdate = false;
 			loadChangelog(changelogShownOf);
 		}
