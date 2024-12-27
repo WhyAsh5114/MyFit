@@ -22,6 +22,15 @@
 	let selectedExercise = $state<string>();
 	let exerciseInstances = $state<WorkoutExercise[]>();
 
+	let filteredExercisesByMuscleGroup = $derived(
+		exercisesByMuscleGroup
+			?.filter((g) => g.exercises.some((ex) => ex.name.toLowerCase().includes(searchText)))
+			.map(({ group, exercises }) => ({
+				group,
+				exercises: exercises.filter((ex) => ex.name.toLowerCase().includes(searchText))
+			})) ?? []
+	);
+
 	onMount(async () => {
 		const exerciseList = await data.exerciseList;
 		exercisesByMuscleGroup = Object.entries(
@@ -50,7 +59,7 @@
 		</Button>
 	</Popover.Trigger>
 	<Popover.Content sameWidth>
-		<Command.Root class="mb-6 h-fit">
+		<Command.Root class="mb-6 h-fit" shouldFilter={false}>
 			<Command.Input placeholder="Type here" bind:value={searchText} />
 			<Command.List>
 				{#if exercisesByMuscleGroup === undefined}
@@ -64,7 +73,7 @@
 					</Command.Loading>
 				{:else}
 					<Command.Empty>No results found.</Command.Empty>
-					{#each exercisesByMuscleGroup as { exercises, group }}
+					{#each filteredExercisesByMuscleGroup as { group, exercises }}
 						<Command.Group heading={group}>
 							{#each exercises as ex}
 								<Command.Item onclick={() => selectExercise(ex.name)}>{ex.name}</Command.Item>
@@ -82,7 +91,7 @@
 		<ExerciseStatsChart {selectedExercise} exercises={exerciseInstances} />
 		{#if exerciseInstances}
 			{#each exerciseInstances as instance}
-				<WorkoutExerciseCard exercise={instance} />
+				<WorkoutExerciseCard exercise={instance} date={new Date(instance.workout.startedAt)} />
 			{/each}
 		{/if}
 	{/if}
