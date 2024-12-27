@@ -1,14 +1,13 @@
 <script lang="ts">
-	import type { RouterOutputs } from '$lib/trpc/router';
 	import * as Card from '$lib/components/ui/card';
-	import * as Popover from '$lib/components/ui/popover';
 	import { Label } from '$lib/components/ui/label';
+	import * as Popover from '$lib/components/ui/popover';
 	import * as RadioGroup from '$lib/components/ui/radio-group';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group';
+	import type { RouterOutputs } from '$lib/trpc/router';
 	import { generateShadesAndTints } from '$lib/utils';
 	import { solveBergerFormula } from '$lib/utils/workoutUtils';
-	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-	import MenuIcon from 'virtual:icons/lucide/menu';
 	import {
 		CategoryScale,
 		Chart,
@@ -17,11 +16,24 @@
 		LineController,
 		LineElement,
 		PointElement,
+		TimeScale,
 		Title,
 		Tooltip
 	} from 'chart.js';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
-	Chart.register(Tooltip, CategoryScale, LineController, LineElement, PointElement, Filler, LinearScale, Title);
+	import 'chartjs-adapter-date-fns';
+	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
+	import MenuIcon from 'virtual:icons/lucide/menu';
+	Chart.register(
+		Tooltip,
+		CategoryScale,
+		LineController,
+		LineElement,
+		PointElement,
+		Filler,
+		TimeScale,
+		Title,
+		LinearScale
+	);
 
 	type WorkoutExercise = RouterOutputs['workouts']['getExerciseHistory'][number];
 	type PropsType = { exercises: WorkoutExercise[] | undefined; selectedExercise: string };
@@ -79,9 +91,7 @@
 		chart = new Chart(chartCanvas, {
 			type: 'line',
 			data: {
-				labels: exercises.map((ex) =>
-					new Date(ex.workout.startedAt).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit' })
-				),
+				labels: exercises.map((ex) => new Date(ex.workout.startedAt)),
 				datasets: dataValues.map((data, idx) => ({
 					label: `Set ${idx + 1}`,
 					data,
@@ -91,6 +101,14 @@
 				}))
 			},
 			options: {
+				scales: {
+					x: {
+						type: 'time',
+						time: {
+							unit: 'day',
+						}
+					}
+				},
 				plugins: {
 					legend: {
 						display: false
