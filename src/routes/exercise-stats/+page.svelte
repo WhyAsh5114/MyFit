@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Command from '$lib/components/ui/command/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -7,7 +8,6 @@
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { trpc } from '$lib/trpc/client.js';
 	import type { RouterOutputs } from '$lib/trpc/router';
-	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import ChevronsUpDown from 'virtual:icons/lucide/chevrons-up-down';
 	import RenameIcon from 'virtual:icons/lucide/folder-pen';
@@ -21,6 +21,7 @@
 	let { data } = $props();
 	let exercisesByMuscleGroup = $state<{ group: string; exercises: BasicExerciseData[] }[]>();
 
+	let renameExerciseOpen = $state(false);
 	let newExerciseName = $state<string>();
 	let renamingExercise = $state(false);
 
@@ -38,7 +39,17 @@
 			})) ?? []
 	);
 
-	onMount(async () => {
+	$effect(() => {
+		selectedExercise = undefined;
+		exercisesByMuscleGroup = undefined;
+		searchText = '';
+		searchOpen = true;
+		exerciseInstances = [];
+		renameExerciseOpen = false;
+		loadExercises();
+	});
+
+	async function loadExercises() {
 		const exerciseList = await data.exerciseList;
 		exercisesByMuscleGroup = Object.entries(
 			Object.groupBy(exerciseList, (ex) => ex.customMuscleGroup ?? ex.targetMuscleGroup)
@@ -46,7 +57,7 @@
 			group,
 			exercises: exercises!.filter((ex) => ex !== undefined)
 		}));
-	});
+	}
 
 	async function selectExercise(name: string) {
 		searchText = name;
@@ -62,7 +73,8 @@
 			oldName: selectedExercise!,
 			newName: newExerciseName!
 		});
-		toast.success(`Renamed ${count} exercises`, { description: 'Reload the page to see the changes' });
+		toast.success(`Renamed ${count} exercises`);
+		await invalidateAll();
 		renamingExercise = false;
 	}
 </script>
@@ -104,7 +116,7 @@
 			</Command.Root>
 		</Popover.Content>
 	</Popover.Root>
-	<Popover.Root>
+	<Popover.Root bind:open={renameExerciseOpen}>
 		<Popover.Trigger asChild let:builder>
 			<Button
 				builders={[builder]}
