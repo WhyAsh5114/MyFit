@@ -15,6 +15,7 @@
 	let releases = $state<{ tag_name: string; body: string }[]>([]);
 
 	onMount(async () => {
+		checkingForUpdate = true;
 		const response = await fetch('https://api.github.com/repos/WhyAsh5114/MyFit/releases');
 		releases = await response.json();
 		const latestRelease = releases[0];
@@ -26,15 +27,14 @@
 			changelogShownOf.localeCompare(latestRelease!.tag_name, undefined, { numeric: true }) === -1
 		) {
 			open = true;
-			checkingForUpdate = true;
 			while (checkForUpdates === null) {
 				await new Promise((resolve) => setTimeout(resolve, 500));
 			}
 			await checkForUpdates();
-			checkingForUpdate = false;
 			loadChangelog(changelogShownOf);
 		}
 		ls.setItem('changelogShownOf', latestRelease!.tag_name);
+		checkingForUpdate = false;
 	});
 
 	async function loadChangelog(lastRelease: string) {
@@ -43,9 +43,9 @@
 		);
 
 		dialogText = '';
-		for (const release of notShownReleases) {
-			dialogText += DOMPurify.sanitize(await marked.parse(release.body));
-			dialogText += '<hr>';
+		for (let i = 0; i < notShownReleases.length; i++) {
+			dialogText += DOMPurify.sanitize(await marked.parse(releases[i].body));
+			if (i !== notShownReleases.length - 1) dialogText += '<hr>';
 		}
 	}
 </script>
