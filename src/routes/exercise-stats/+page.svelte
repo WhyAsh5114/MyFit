@@ -1,15 +1,23 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Command from '$lib/components/ui/command/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
+	import * as Select from '$lib/components/ui/select';
+	import { RangeCalendar } from '$lib/components/ui/range-calendar/index.js';
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import { trpc } from '$lib/trpc/client.js';
 	import type { RouterOutputs } from '$lib/trpc/router';
-	import { onMount } from 'svelte';
+	import { dateToCalendarDate } from '$lib/utils';
+	import { cn } from '$lib/utils.js';
+	import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
+	import type { DateRange, Selected } from 'bits-ui';
 	import { toast } from 'svelte-sonner';
+	import CalendarIcon from 'virtual:icons/lucide/calendar';
 	import ChevronsUpDown from 'virtual:icons/lucide/chevrons-up-down';
+	import FilterIcon from 'virtual:icons/lucide/filter';
 	import RenameIcon from 'virtual:icons/lucide/folder-pen';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
 	import WorkoutExerciseCard from '../workouts/[workoutId]/(components)/WorkoutExerciseCard.svelte';
@@ -18,9 +26,14 @@
 	type WorkoutExercise = RouterOutputs['workouts']['getExerciseHistory'][number];
 	type BasicExerciseData = Pick<WorkoutExercise, 'name' | 'targetMuscleGroup' | 'customMuscleGroup'>;
 
+	const df = new DateFormatter('en-US', {
+		dateStyle: 'medium'
+	});
+
 	let { data } = $props();
 	let exercisesByMuscleGroup = $state<{ group: string; exercises: BasicExerciseData[] }[]>();
 
+	let renameExerciseOpen = $state(false);
 	let newExerciseName = $state<string>();
 	let renamingExercise = $state(false);
 
@@ -38,7 +51,42 @@
 			})) ?? []
 	);
 
-	onMount(async () => {
+	let dateRange: DateRange = $state({
+		start: dateToCalendarDate(new Date()),
+		end: dateToCalendarDate(new Date())
+	});
+	let mesocycleNames = $derived.by(() => {
+		if (!exerciseInstances) return [];
+		return Array.from(new Set(exerciseInstances.map((ex) => ex.workout.workoutOfMesocycle?.mesocycle.name ?? null)));
+	});
+	let selectedMesocycleNames: Selected<string | null>[] = $state([]);
+
+	let filteredExerciseInstances = $derived.by(() => {
+		if (!exerciseInstances) return [];
+		return exerciseInstances.filter((ex) => {
+			const date = dateToCalendarDate(ex.workout.startedAt);
+			if (dateRange.start && dateRange.start > date) return false;
+			if (dateRange.end && dateRange.end < date) return false;
+			if (
+				selectedMesocycleNames.length > 0 &&
+				!selectedMesocycleNames.some((s) => s.value === (ex.workout.workoutOfMesocycle?.mesocycle.name ?? null))
+			)
+				return false;
+			return true;
+		});
+	});
+
+	$effect(() => {
+		selectedExercise = undefined;
+		exercisesByMuscleGroup = undefined;
+		searchText = '';
+		searchOpen = true;
+		exerciseInstances = [];
+		renameExerciseOpen = false;
+		loadExercises();
+	});
+
+	async function loadExercises() {
 		const exerciseList = await data.exerciseList;
 		exercisesByMuscleGroup = Object.entries(
 			Object.groupBy(exerciseList, (ex) => ex.customMuscleGroup ?? ex.targetMuscleGroup)
@@ -46,13 +94,15 @@
 			group,
 			exercises: exercises!.filter((ex) => ex !== undefined)
 		}));
-	});
+	}
 
 	async function selectExercise(name: string) {
 		searchText = name;
 		searchOpen = false;
 		selectedExercise = name;
 		exerciseInstances = await trpc().workouts.getExerciseHistory.query({ exerciseName: name });
+		dateRange.start = dateToCalendarDate(exerciseInstances[exerciseInstances.length - 1].workout.startedAt);
+		dateRange.end = dateToCalendarDate(exerciseInstances[0].workout.startedAt);
 	}
 
 	async function renameExercise(e: SubmitEvent) {
@@ -62,7 +112,8 @@
 			oldName: selectedExercise!,
 			newName: newExerciseName!
 		});
-		toast.success(`Renamed ${count} exercises`, { description: 'Reload the page to see the changes' });
+		toast.success(`Renamed ${count} exercises`);
+		await invalidateAll();
 		renamingExercise = false;
 	}
 </script>
@@ -72,8 +123,8 @@
 <div class="flex gap-1">
 	<Popover.Root bind:open={searchOpen}>
 		<Popover.Trigger asChild let:builder>
-			<Button builders={[builder]} variant="outline" role="combobox" class="mb-2 w-full justify-between">
-				{selectedExercise ?? 'Search for an exercise'}
+			<Button builders={[builder]} variant="outline" role="combobox" class="mb-2 grow justify-between truncate">
+				<span class="truncate">{selectedExercise ?? 'Search for an exercise'}</span>
 				<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
 			</Button>
 		</Popover.Trigger>
@@ -104,7 +155,7 @@
 			</Command.Root>
 		</Popover.Content>
 	</Popover.Root>
-	<Popover.Root>
+	<Popover.Root bind:open={renameExerciseOpen}>
 		<Popover.Trigger asChild let:builder>
 			<Button
 				builders={[builder]}
@@ -132,13 +183,71 @@
 			</form>
 		</Popover.Content>
 	</Popover.Root>
+	<Popover.Root>
+		<Popover.Trigger asChild let:builder>
+			<Button
+				builders={[builder]}
+				size="icon"
+				aria-label="Filter exercises"
+				class="shrink-0"
+				disabled={(exerciseInstances?.length ?? 0) === 0}
+			>
+				<FilterIcon />
+			</Button>
+		</Popover.Trigger>
+		<Popover.Content class="w-fit">
+			<span class="font-semibold">Filter by date</span>
+			<div class="my-2 flex w-full max-w-sm flex-col gap-1.5">
+				<Popover.Root openFocus>
+					<Popover.Trigger asChild let:builder>
+						<Button
+							variant="outline"
+							class={cn('w-[300px] justify-start text-left font-normal', !dateRange && 'text-muted-foreground')}
+							builders={[builder]}
+						>
+							<CalendarIcon class="mr-2 h-4 w-4" />
+							{#if dateRange && dateRange.start}
+								{#if dateRange.end}
+									{df.format(dateRange.start.toDate(getLocalTimeZone()))} - {df.format(
+										dateRange.end.toDate(getLocalTimeZone())
+									)}
+								{:else}
+									{df.format(dateRange.start.toDate(getLocalTimeZone()))}
+								{/if}
+							{:else if dateRange.start}
+								{df.format(dateRange.start.toDate(getLocalTimeZone()))}
+							{:else}
+								Pick a date
+							{/if}
+						</Button>
+					</Popover.Trigger>
+					<Popover.Content class="w-auto p-0" align="start">
+						<RangeCalendar bind:value={dateRange} initialFocus placeholder={dateRange?.start} />
+					</Popover.Content>
+				</Popover.Root>
+				<span class="font-semibold">Filter by mesocycles</span>
+				<Select.Root multiple bind:selected={selectedMesocycleNames}>
+					<Select.Trigger class="w-[300px]">
+						<Select.Value placeholder="All mesocycles" />
+					</Select.Trigger>
+					<Select.Content>
+						{#each mesocycleNames as mesocycleName}
+							<Select.Item class={cn({ italic: mesocycleName === null })} value={mesocycleName}>
+								{mesocycleName === null ? 'Non-mesocycle' : mesocycleName}
+							</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
+			</div>
+		</Popover.Content>
+	</Popover.Root>
 </div>
 
 <div class="flex flex-col gap-2">
 	{#if selectedExercise}
-		<ExerciseStatsChart {selectedExercise} exercises={exerciseInstances} />
+		<ExerciseStatsChart {selectedExercise} exercises={filteredExerciseInstances} />
 		{#if exerciseInstances}
-			{#each exerciseInstances as instance}
+			{#each filteredExerciseInstances as instance}
 				<WorkoutExerciseCard exercise={instance} date={new Date(instance.workout.startedAt)} />
 			{/each}
 		{/if}
