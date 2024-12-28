@@ -245,7 +245,8 @@ export const mesocycles = t.router({
 
 		return await prisma.workout.findMany({
 			where: { workoutOfMesocycle: { mesocycleId: activeMesocycle.id, splitDayIndex }, userId: ctx.userId },
-			include: includeClause
+			include: includeClause,
+			orderBy: { startedAt: 'asc' }
 		});
 	})
 });
