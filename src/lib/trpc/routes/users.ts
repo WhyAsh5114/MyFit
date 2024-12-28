@@ -484,5 +484,15 @@ export const users = t.router({
 				restWorkoutsOfMesocycle,
 				updateUser
 			]);
+		}),
+
+	renameExercises: t.procedure
+		.input(z.object({ oldName: z.string(), newName: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const { count } = await prisma.workoutExercise.updateMany({
+				where: { workout: { userId: ctx.userId }, name: input.oldName },
+				data: { name: input.newName }
+			});
+			return { count };
 		})
 });

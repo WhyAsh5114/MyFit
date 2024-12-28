@@ -48,7 +48,8 @@ export default defineConfig({
 			'@auth/core/errors',
 			'set-cookie-parser',
 			'marked',
-			'dompurify'
+			'dompurify',
+			'chartjs-adapter-date-fns'
 		]
 	},
 	define: {
