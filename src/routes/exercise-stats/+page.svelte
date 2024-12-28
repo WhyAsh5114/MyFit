@@ -24,10 +24,10 @@
 
 	let filteredExercisesByMuscleGroup = $derived(
 		exercisesByMuscleGroup
-			?.filter((g) => g.exercises.some((ex) => ex.name.toLowerCase().includes(searchText)))
+			?.filter((g) => g.exercises.some((ex) => ex.name.toLowerCase().includes(searchText.toLowerCase())))
 			.map(({ group, exercises }) => ({
 				group,
-				exercises: exercises.filter((ex) => ex.name.toLowerCase().includes(searchText))
+				exercises: exercises.filter((ex) => ex.name.toLowerCase().includes(searchText.toLowerCase()))
 			})) ?? []
 	);
 
