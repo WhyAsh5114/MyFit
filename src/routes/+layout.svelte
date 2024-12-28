@@ -4,7 +4,6 @@
 	import { onMount } from 'svelte';
 	import { pwaInfo } from 'virtual:pwa-info';
 	import '../app.pcss';
-	import ChangelogDialog from './(components)/layout/ChangelogDialog.svelte';
 	import DesktopLayout from './(components)/layout/DesktopLayout.svelte';
 	import MobileLayout from './(components)/layout/MobileLayout.svelte';
 	import UpdateDataLossDialog from './(components)/layout/UpdateDataLossDialog.svelte';
@@ -32,7 +31,6 @@
 <ModeWatcher />
 <Toaster />
 
-<ChangelogDialog />
 <UpdateDataLossDialog />
 
 {#if isMobile === true}

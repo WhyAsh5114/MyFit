@@ -188,7 +188,7 @@
 				<Input
 					id="{exercise.name}-set-{idx + 1}-reps"
 					disabled={set.completed || set.skipped}
-					min={0}
+					min={1}
 					required
 					type="number"
 					bind:value={set.reps}
@@ -210,7 +210,6 @@
 				<Input
 					id="{exercise.name}-set-{idx + 1}-RIR"
 					disabled={set.completed || set.skipped}
-					min={0}
 					required
 					type="number"
 					bind:value={set.RIR}
@@ -271,7 +270,7 @@
 						<Input
 							id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-reps"
 							disabled={miniSet.completed}
-							min={0}
+							min={1}
 							required
 							type="number"
 							bind:value={miniSet.reps}
@@ -294,7 +293,6 @@
 						<Input
 							id="{exercise.name}-set-{idx + 1}-mini-set-{miniIdx + 1}-RIR"
 							disabled={miniSet.completed}
-							min={0}
 							required
 							type="number"
 							bind:value={miniSet.RIR}
