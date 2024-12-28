@@ -590,7 +590,8 @@ export const workouts = t.router({
 				userId: ctx.userId,
 				startedAt: input.data.workoutData.startedAt!,
 				endedAt: input.endedAt,
-				userBodyweight: input.data.workoutData.userBodyweight
+				userBodyweight: input.data.workoutData.userBodyweight,
+				note: input.data.workoutData.note
 			};
 
 			const workoutOfMesocycle = await prisma.workoutOfMesocycle.findFirst({

@@ -10,12 +10,11 @@
 	import { checkForUpdates, needRefresh, updateDataLossDialog } from './PWAFunctions.svelte';
 
 	let open = $state(false);
-	let checkingForUpdate = $state(false);
+	let checkedForUpdate = $state(false);
 	let dialogText = $state<string>();
 	let releases = $state<{ tag_name: string; body: string }[]>([]);
 
 	onMount(async () => {
-		checkingForUpdate = true;
 		const response = await fetch('https://api.github.com/repos/WhyAsh5114/MyFit/releases');
 		releases = await response.json();
 		const latestRelease = releases[0];
@@ -27,14 +26,14 @@
 			changelogShownOf.localeCompare(latestRelease!.tag_name, undefined, { numeric: true }) === -1
 		) {
 			open = true;
-			loadChangelog(changelogShownOf);
+			await loadChangelog(changelogShownOf);
 			while (checkForUpdates === null) {
 				await new Promise((resolve) => setTimeout(resolve, 500));
 			}
 			await checkForUpdates();
 		}
 		ls.setItem('changelogShownOf', latestRelease!.tag_name);
-		checkingForUpdate = false;
+		checkedForUpdate = true;
 	});
 
 	async function loadChangelog(lastRelease: string) {
@@ -42,11 +41,12 @@
 			(release) => release.tag_name.localeCompare(lastRelease, undefined, { numeric: true }) === 1
 		);
 
-		dialogText = '';
+		let text = '';
 		for (let i = 0; i < notShownReleases.length; i++) {
-			dialogText += DOMPurify.sanitize(await marked.parse(releases[i].body));
+			text += DOMPurify.sanitize(await marked.parse(releases[i].body));
 			if (i !== notShownReleases.length - 1) dialogText += '<hr>';
 		}
+		dialogText = text;
 	}
 </script>
 
@@ -58,14 +58,14 @@
 			</article>
 		</ScrollArea>
 		<Button
-			disabled={checkingForUpdate}
+			disabled={!checkedForUpdate}
 			class="gap-2"
 			onclick={() => {
 				if ($needRefresh) updateDataLossDialog.open = true;
 				else open = false;
 			}}
 		>
-			{#if checkingForUpdate}
+			{#if !checkedForUpdate}
 				Fetching update <LoaderCircle class="animate-spin" />
 			{:else if $needRefresh}
 				Update & reload <ReloadIcon />

@@ -155,7 +155,7 @@
 	</Tabs.Content>
 </Tabs.Root>
 
-<div class="mt-4 flex w-full max-w-sm flex-col gap-1.5">
+<div class="mt-4 flex w-full flex-col gap-1.5">
 	<Label for="workout-note">Workout note</Label>
 	<Textarea id="workout-note" placeholder="Type here (optional)" bind:value={workoutNote}></Textarea>
 </div>
