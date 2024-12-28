@@ -5,6 +5,7 @@
 	import DownloadIcon from 'virtual:icons/lucide/download';
 	import UpdateIcon from 'virtual:icons/lucide/refresh-cw';
 	import { needRefresh, updateDataLossDialog } from './PWAFunctions.svelte';
+	import ChangelogDialog from './ChangelogDialog.svelte';
 
 	let { isMobile }: { isMobile: boolean } = $props();
 
@@ -78,3 +79,5 @@
 		{/if}
 	</div>
 {/if}
+
+<ChangelogDialog />

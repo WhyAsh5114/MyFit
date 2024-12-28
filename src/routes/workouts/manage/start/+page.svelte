@@ -150,10 +150,25 @@
 		</div>
 	{/if}
 	{#if !(useActiveMesocycle && workoutData.workoutOfMesocycle?.workoutStatus === 'RestDay')}
-		<div class="mb-1 flex w-full flex-col gap-1.5 rounded-lg border bg-card p-4">
+		<form
+			class="mb-1 flex w-full flex-col gap-1.5 rounded-lg border bg-card p-4"
+			name="user-bodyweight-form"
+			id="user-bodyweight-form"
+			onsubmit={(e) => {
+				e.preventDefault();
+				startWorkout();
+			}}
+		>
 			<Label for="user-bodyweight">Bodyweight</Label>
-			<Input id="user-bodyweight" placeholder="Type here" type="number" bind:value={userBodyweight} />
-		</div>
+			<Input
+				id="user-bodyweight"
+				placeholder="Type here"
+				type="number"
+				min={1}
+				step={0.01}
+				bind:value={userBodyweight}
+			/>
+		</form>
 	{/if}
 	{#if skippedWorkoutsOfCycle && skippedWorkoutsOfCycle.length > 0}
 		<Card.Root class="mb-1">
@@ -217,7 +232,12 @@
 		</Card.Root>
 	{/if}
 	{#if workoutData.workoutOfMesocycle?.workoutStatus !== 'RestDay'}
-		<Button class="mt-auto" disabled={userBodyweight === null || $navigating !== null} onclick={() => startWorkout()}>
+		<Button
+			class="mt-auto"
+			type="submit"
+			form="user-bodyweight-form"
+			disabled={userBodyweight === null || $navigating !== null}
+		>
 			{#if $navigating}
 				<LoaderCircle class="animate-spin" />
 			{:else}
