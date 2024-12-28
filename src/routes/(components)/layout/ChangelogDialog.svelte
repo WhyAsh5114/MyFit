@@ -27,11 +27,11 @@
 			changelogShownOf.localeCompare(latestRelease!.tag_name, undefined, { numeric: true }) === -1
 		) {
 			open = true;
+			loadChangelog(changelogShownOf);
 			while (checkForUpdates === null) {
 				await new Promise((resolve) => setTimeout(resolve, 500));
 			}
 			await checkForUpdates();
-			loadChangelog(changelogShownOf);
 		}
 		ls.setItem('changelogShownOf', latestRelease!.tag_name);
 		checkingForUpdate = false;
