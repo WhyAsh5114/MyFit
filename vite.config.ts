@@ -34,6 +34,7 @@ export default defineConfig({
 			'@trpc/client',
 			'vaul-svelte',
 			'cmdk-sv',
+			'embla-carousel',
 			'embla-carousel-svelte',
 			'embla-carousel-reactive-utils',
 			'@auth/prisma-adapter',
