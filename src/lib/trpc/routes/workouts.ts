@@ -672,7 +672,19 @@ export const workouts = t.router({
 				take: 10,
 				orderBy: { workout: { startedAt: 'desc' } }
 			});
-		})
+		}),
+
+	getUserExercises: t.procedure.input(z.enum(['minimal', 'extensive'])).query(async ({ ctx, input }) => {
+		const selectQuery: Prisma.WorkoutExerciseSelect | undefined =
+			input === 'minimal' ? { name: true, targetMuscleGroup: true, customMuscleGroup: true } : undefined;
+
+		return prisma.workoutExercise.findMany({
+			where: { workout: { userId: ctx.userId } },
+			distinct: ['name'],
+			orderBy: { workout: { startedAt: 'desc' } },
+			select: selectQuery
+		});
+	})
 });
 
 function getBasicDayInfo(

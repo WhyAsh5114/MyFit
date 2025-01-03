@@ -1,20 +1,22 @@
 <script lang="ts">
-	import * as Sheet from '$lib/components/ui/sheet';
+	import { commonExercisePerMuscleGroup } from '$lib/common/commonExercises';
 	import { Button } from '$lib/components/ui/button';
-	import AddIcon from 'virtual:icons/lucide/plus';
-	import ChevronRight from 'virtual:icons/lucide/chevron-right';
-	import ChevronLeft from 'virtual:icons/lucide/chevron-left';
+	import { Checkbox } from '$lib/components/ui/checkbox';
+	import * as Command from '$lib/components/ui/command';
+	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
-	import * as Command from '$lib/components/ui/command';
-	import { Checkbox } from '$lib/components/ui/checkbox';
+	import * as Sheet from '$lib/components/ui/sheet';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import { Input } from '$lib/components/ui/input';
-	import { toast } from 'svelte-sonner';
-	import { ChangeType, MuscleGroup, SetType, type Mesocycle } from '@prisma/client';
+	import { trpc } from '$lib/trpc/client';
 	import { convertCamelCaseToNormal } from '$lib/utils';
-	import { commonExercisePerMuscleGroup } from '$lib/common/commonExercises';
+	import { ChangeType, MuscleGroup, SetType, type Mesocycle } from '@prisma/client';
+	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
+	import ChevronLeft from 'virtual:icons/lucide/chevron-left';
+	import ChevronRight from 'virtual:icons/lucide/chevron-right';
+	import AddIcon from 'virtual:icons/lucide/plus';
 	import type {
 		ExerciseTemplateWithoutIdsOrIndex,
 		MesocycleExerciseTemplateWithoutIdsOrIndex,
@@ -43,6 +45,19 @@
 	type FullExerciseTemplate = NonUndefined<typeof props.editingExercise>;
 
 	let { ...props }: PropsType = $props();
+	let allGroupedExercises = $state(commonExercisePerMuscleGroup);
+
+	onMount(async () => {
+		const userExercises = await trpc().workouts.getUserExercises.query('minimal');
+		const groupedUserExercises = Object.entries(
+			Object.groupBy(userExercises, (exercise) => exercise.customMuscleGroup ?? exercise.targetMuscleGroup)
+		).map(([muscleGroup, exercises]) => ({
+			muscleGroup: muscleGroup as MuscleGroup,
+			exercises: exercises!.map(({ workoutId, ...rest }) => ({ ...rest })) ?? []
+		}));
+
+		allGroupedExercises = [...allGroupedExercises, ...groupedUserExercises];
+	});
 
 	const extraMesocycleProps: Partial<MesocycleExerciseTemplateWithoutIdsOrIndex> = {
 		sets: undefined,
