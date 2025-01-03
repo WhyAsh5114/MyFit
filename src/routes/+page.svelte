@@ -2,7 +2,7 @@
   export let data;
   import TodaysWorkoutCard from "./TodaysWorkoutCard.svelte";
   import ActiveMesocycleCard from "./mesocycles/ActiveMesocycleCard.svelte";
-  import PartyPopper from "virtual:icons/lucide/party-popper";
+  import InfoIcon from "virtual:icons/lucide/info";
 
   $: ({ activeMesocycle, activeMesocycleTemplate } = data);
 </script>
@@ -23,6 +23,6 @@
 {/if}
 
 <a class="flex p-4 rounded-lg gap-4 items-center bg-primary mt-auto" href="/v3_blog">
-  <PartyPopper class="text-accent basis-8 shrink-0" />
-  <span>MyFit V3 is out! Click here to learn more and migrate.</span>
+  <InfoIcon class="text-accent basis-4 shrink-0" />
+  <span>Domain update soon. Read more &gt;</span>
 </a>

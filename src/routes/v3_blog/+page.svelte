@@ -1,4 +1,19 @@
 <article class="prose">
+  <h2>3rd January, 2024</h2>
+  <h3>V3 domain change notice</h3>
+  <p>Not really a blog post, just a notice for the few active v2 users.</p>
+  <p>
+    The domain <br><a href="https://my-fit-whyash5114.vercel.app/">https://my-fit-whyash5114.vercel.app/</a><br>
+    will soon redirect to V3 instead of V2, similar to the current domain <br>
+    <a href="https://my-fit-v3.vercel.app">https://my-fit-v3.vercel.app</a>
+  </p>
+  <p>
+    For users who still wish to use V2, it will be available on <a href="https://my-fit-v2.vercel.app">https://my-fit-v2.vercel.app</a>
+  </p>
+</article>
+<br><br>
+
+<article class="prose">
   <h2>17th October, 2024</h2>
   <h3>V3 Stable Release!</h3>
   <p>
