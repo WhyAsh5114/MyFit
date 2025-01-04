@@ -1,5 +1,6 @@
 import { LinkBreadcrumbs } from "@/components/link-breadcrumbs";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import SwEventsHandler from "@/components/sw-events-handler";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Separator } from "@/components/ui/separator";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -26,7 +27,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
+      <head>
+        <link rel="apple-touch-icon" href="/icons/ios/192.png" />
+      </head>
       <body
         className={cn(
           inter.className,
@@ -50,6 +53,7 @@ export default function RootLayout({
               {children}
             </main>
           </SidebarProvider>
+          <SwEventsHandler />
           <Toaster />
         </ThemeProvider>
       </body>

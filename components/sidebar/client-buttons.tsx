@@ -9,7 +9,7 @@ export function HomeButton() {
   return (
     <h1 className="text-xl font-semibold w-full p-2">
       <Link href="/" onClick={() => setOpenMobile(false)}>
-        App name
+        MyFit
       </Link>
     </h1>
   );

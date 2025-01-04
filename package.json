@@ -2,11 +2,13 @@
   "name": "my-fit",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev": "next dev",
+    "build": "next build && npm run build:sw",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:sw": "esbuild --outfile=out/sw.js --bundle app/sw.ts && npx @serwist/cli inject-manifest serwist.config.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -64,13 +66,18 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@prisma/client": "^6.1.0",
+    "@serwist/build": "^9.0.11",
+    "@serwist/cli": "^9.0.11",
+    "@serwist/window": "^9.0.11",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild": "^0.24.2",
     "eslint": "^9",
     "eslint-config-next": "15.1.3",
     "postcss": "^8",
     "prisma": "^6.1.0",
+    "serwist": "^9.0.11",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
