@@ -16,6 +16,7 @@ import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { HomeButton } from "./client-buttons";
 import { SwInstallButton } from "./sw-install-button";
+import { ModeToggle } from "../mode-toggle";
 
 export async function AppSidebar() {
   return (
@@ -38,6 +39,7 @@ export async function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        <ModeToggle />
         <SwInstallButton />
         <Suspense fallback={<Skeleton className="h-14 w-full" />}>
           <Button variant="outline">Auth soon!</Button>

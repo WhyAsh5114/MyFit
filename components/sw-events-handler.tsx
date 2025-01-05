@@ -1,15 +1,16 @@
 "use client";
 
 import type { Serwist } from "@serwist/window";
+import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 import ResponsiveDialog from "./responsive-dialog";
 import { Button } from "./ui/button";
 
 export default function SwEventsHandler() {
   const router = useRouter();
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const serwistRef = useRef<Serwist>(null);
 
   useEffect(() => {
@@ -36,18 +37,9 @@ export default function SwEventsHandler() {
           setUpdateDialogOpen(true);
         });
 
-        serwist.addEventListener("activating", (event) => {
-          if (!event.isExternal && !event.isUpdate) return;
-          toast.promise(new Promise(() => {}), {
-            loading: "Updating...",
-          });
-        });
-
         serwist.addEventListener("activated", () => {
-          new Promise((resolve) => setTimeout(resolve, 1000)).then(() => {
-            localStorage.clear();
-            router.refresh();
-          });
+          localStorage.clear();
+          router.refresh();
         });
       });
     }
@@ -55,19 +47,26 @@ export default function SwEventsHandler() {
 
   return (
     <ResponsiveDialog
-      title="Update app?"
-      description="Any unsaved data, like a workout in progress, will be lost."
+      title="Update available 🎉"
+      description="Any unsaved data, like a workout in progress, will be lost. Are you sure you want to update?"
       open={updateDialogOpen}
       setOpen={setUpdateDialogOpen}
     >
       <Button
         className="w-full"
+        disabled={updating}
         onClick={() => {
-          setUpdateDialogOpen(false);
+          setUpdating(true);
           serwistRef.current!.messageSkipWaiting();
         }}
       >
-        Update
+        {updating ? (
+          <>
+            Updating <LoaderCircle className="animate-spin" />
+          </>
+        ) : (
+          "Update"
+        )}
       </Button>
     </ResponsiveDialog>
   );

@@ -10,20 +10,7 @@ import { Button } from "../ui/button";
 // TODO: hides in mobile and doesn't load prompt in background as expected
 // maybe add event listeners in the layout and pass the prompt to the button via zustand state
 
-// TODO: cleanup commit history
-// squash commits
-
-// TODO: remove fake promises
-// in sw-events-handler.tsx
-
-// TODO: instead of toast promise, use a loading spinner in the responsive dialog itself
-
-// TODO: metadata
-// add metadata to the pages, like title, description, head tags, meta tags, etc.
-
-// TODO: theming
-
-// TODO: changelog management
+// TODO: changelog management, CI/CD
 // fetch the changelog from the github releases and display it in the app
 
 // TODO: data backup mechanism

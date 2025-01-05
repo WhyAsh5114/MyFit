@@ -11,8 +11,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Create Next App",
-  description: "Created by create-next-app",
+  title: "MyFit",
+  description: "Open source workout tracker inspired by the RP Hypertrophy App",
 };
 
 const inter = Inter({
@@ -29,6 +29,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/icons/ios/192.png" />
+        <meta name="theme-color" content="#3079ca" />
       </head>
       <body
         className={cn(
