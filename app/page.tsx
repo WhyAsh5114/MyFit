@@ -1,41 +1,13 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
-  const currentDate = new Date().toLocaleString(undefined, {
-    timeStyle: "medium",
-    dateStyle: "medium",
-    timeZone: "UTC",
-  });
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          MyFit <span className="text-primary">v4</span>
-        </CardTitle>
-        <CardDescription>
-          Preview deployment at:{" "}
-          <span className="font-semibold">{currentDate} UTC</span>
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p>
-          If you are a user stumbling across this link, damn you are curious and
-          just can&apos;t wait huh
-        </p>
-      </CardContent>
-      <CardFooter>
-        <p className="text-sm text-destructive">
-          Not ready for use AT ALL! And not releasing anytime soon...
-        </p>
-      </CardFooter>
-    </Card>
+    <main className="grid gap-4 place-items-center">
+      <h2>TODO: Landing page</h2>
+      <Button asChild>
+        <Link href="/dashboard">Open app</Link>
+      </Button>
+    </main>
   );
 }

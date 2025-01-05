@@ -16,7 +16,6 @@ type Item = { label: string; href?: string };
 function pathnameToItems(pathname: string): Item[] {
   const parts = pathname.split("/").filter((part) => part !== "");
   const items = [
-    { label: "Home", href: "/" },
     ...parts.map((part, index) => {
       if (index === parts.length - 1) {
         part = part.split("?")[0];
@@ -35,7 +34,9 @@ function pathnameToItems(pathname: string): Item[] {
 
 export function LinkBreadcrumbs() {
   const pathname = usePathname();
-  const items = pathnameToItems(pathname);
+  const allItems = pathnameToItems(pathname);
+  const items =
+    allItems.length > 1 ? allItems.slice(1, allItems.length) : allItems;
 
   return (
     <ScrollArea>

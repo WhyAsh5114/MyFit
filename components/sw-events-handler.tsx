@@ -15,7 +15,7 @@ import { ResponsiveDialog } from "./responsive-dialog";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 
-export default function SwEventsHandler() {
+export function SwEventsHandler() {
   const router = useRouter();
   const [serwist, setSerwist] = useState<Serwist>();
   const [updating, setUpdating] = useState(false);
