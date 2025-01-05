@@ -30,7 +30,7 @@ type PropsType = {
   description: React.ReactNode;
 };
 
-export default function ResponsiveDialog({
+export function ResponsiveDialog({
   children,
   open = false,
   setOpen,

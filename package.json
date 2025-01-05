@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && npm run build:sw",
+    "build": "next build && npm run build:sw && npm run build:precache",
     "start": "next start",
     "lint": "next lint",
-    "build:sw": "esbuild --outfile=out/sw.js --bundle app/sw.ts && npx @serwist/cli inject-manifest serwist.config.js"
+    "build:sw": "esbuild --outfile=out/sw.js --bundle app/sw.ts && npx @serwist/cli inject-manifest serwist/serwist.config.js",
+    "build:precache": "npx tsx serwist/jsonSerwist.config.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

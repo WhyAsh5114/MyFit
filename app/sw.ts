@@ -20,23 +20,23 @@ const serwist = new Serwist({
     cleanupOutdatedCaches: true,
     ignoreURLParametersMatching: [/.*/],
     cleanURLs: true,
+    cacheName: "serwist-precache",
   },
   runtimeCaching: [
     {
       matcher: ({ request }) => request.destination === "image",
-      handler: new CacheFirst({ cacheName: "runtime-images" }),
+      handler: new CacheFirst({ cacheName: "pwa-runtime-images" }),
     },
   ],
 });
 
 self.addEventListener("message", async (event) => {
+  const skipWaitAndClaimClients = async () => {
+    await self.skipWaiting();
+    await self.clients.claim();
+  };
   if (event.data.type === "SKIP_WAITING") {
-    event.waitUntil(
-      (async () => {
-        await self.skipWaiting();
-        await self.clients.claim();
-      })()
-    );
+    event.waitUntil(skipWaitAndClaimClients());
   }
 });
 
