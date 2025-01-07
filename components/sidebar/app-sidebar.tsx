@@ -7,9 +7,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { ModeToggle } from "../mode-toggle";
-import { HomeButton, SidebarNavigation } from "./client-buttons";
-import { SwInstallButton, SwUpdateButton } from "./sw-buttons";
+import { ChevronUp, User2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import {
+  HomeButton,
+  SidebarNavigation,
+  UserDropdownButtons,
+} from "./client-buttons";
+import { SwInstallOrUpdateButton } from "./sw-buttons";
 
 export async function AppSidebar() {
   return (
@@ -27,11 +36,25 @@ export async function AppSidebar() {
         <SidebarNavigation />
       </SidebarContent>
       <SidebarFooter>
-        <div className="flex gap-2">
-          <ModeToggle />
-          <SwUpdateButton />
-          <SwInstallButton />
-        </div>
+        <SidebarMenu className="flex flex-row w-full">
+          <SwInstallOrUpdateButton />
+          <SidebarMenuItem className="w-full">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton variant="outline">
+                  <User2 /> Username
+                  <ChevronUp className="ml-auto" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="top"
+                className="w-[--radix-popper-anchor-width]"
+              >
+                <UserDropdownButtons />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );

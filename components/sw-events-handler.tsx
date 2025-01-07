@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  useDownloadProgressStore,
   useInstallationPromptStore,
+  useLastCheckedForUpdateStore,
   useUpdateAvailableStore,
 } from "@/hooks/use-sw-state";
 import { Serwist } from "@serwist/window";
@@ -19,13 +19,13 @@ export function SwEventsHandler() {
   const router = useRouter();
   const [serwist, setSerwist] = useState<Serwist>();
   const [updating, setUpdating] = useState(false);
-  const [progress, setProgress] = useDownloadProgressStore(
-    useShallow((state) => [state.progress, state.setProgress])
-  );
-  const progressRef = useRef(progress);
+  const [progress, setProgress] = useState<number>();
 
   const setDeferredPrompt = useInstallationPromptStore(
     (state) => state.setDeferredPrompt
+  );
+  const setLastChecked = useLastCheckedForUpdateStore(
+    (state) => state.setLastChecked
   );
   const [updateDialogOpen, setUpdateDialogOpen, skipWaiting, setSkipWaiting] =
     useUpdateAvailableStore(
@@ -38,10 +38,6 @@ export function SwEventsHandler() {
     );
 
   useEffect(() => {
-    progressRef.current = progress;
-  }, [progress]);
-
-  useEffect(() => {
     if (process.env.NODE_ENV === "development") return;
     if (!("serviceWorker" in navigator)) return;
 
@@ -52,13 +48,14 @@ export function SwEventsHandler() {
 
       const checkForUpdate = () => {
         try {
+          setLastChecked(new Date());
           sw.update();
         } catch (error) {
           console.error(error);
         }
       };
       checkForUpdate();
-      const updateInterval = setInterval(checkForUpdate, 1000 * 20);
+      const updateInterval = setInterval(checkForUpdate, 1000 * 60 * 60);
 
       sw.addEventListener("waiting", () => {
         setSkipWaiting(() => sw.messageSkipWaiting());
@@ -73,7 +70,7 @@ export function SwEventsHandler() {
         clearInterval(updateInterval);
       };
     });
-  }, [router, setSkipWaiting]);
+  }, [router, setSkipWaiting, setLastChecked]);
 
   useEffect(() => {
     if (!serwist) return;
@@ -147,38 +144,30 @@ export function SwEventsHandler() {
           )}
         </Button>
       </ResponsiveDialog>
-      <DownloadProgressToast />
+      <DownloadProgressToast progress={progress} />
     </>
   );
 }
 
-function DownloadProgressToast() {
-  const installationProgressToast = useRef<unknown>(undefined);
-  const progress = useDownloadProgressStore((state) => state.progress);
-  const progressRef = useRef(progress);
-
-  useEffect(() => {
-    progressRef.current = progress;
-  }, [progress]);
+function DownloadProgressToast({ progress }: { progress: number | undefined }) {
+  const installationProgressToast = useRef<string | number>(undefined);
 
   useEffect(() => {
     if (progress === undefined) return;
-    if (installationProgressToast.current) return;
 
-    const installationProgressPromise = new Promise<void>((resolve) => {
-      const checkProgress = () => {
-        console.log("checking progress", progressRef.current);
-        if (progressRef.current === 1) resolve();
-        else requestAnimationFrame(checkProgress);
-      };
-      checkProgress();
-    });
+    if (!installationProgressToast.current) {
+      installationProgressToast.current = toast.loading(
+        "Starting asset download"
+      );
+    }
 
-    console.log("creating toast");
-    installationProgressToast.current = toast.promise(
-      installationProgressPromise,
+    toast.promise(
+      new Promise<void>((resolve) => {
+        if (progress === 1) resolve();
+      }),
       {
-        loading: <DownloadProgressToastBody />,
+        id: installationProgressToast.current,
+        loading: <DownloadProgressToastBody progress={progress} />,
         success: "App ready for offline use",
       }
     );
@@ -187,9 +176,7 @@ function DownloadProgressToast() {
   return null;
 }
 
-function DownloadProgressToastBody() {
-  const progress = useDownloadProgressStore((state) => state.progress);
-
+function DownloadProgressToastBody({ progress }: { progress: number }) {
   return (
     <div className="grid w-full gap-2">
       <div className="flex justify-between">

@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function Page() {
+export default function DashboardPage() {
   const currentDate = new Date().toLocaleString(undefined, {
     timeStyle: "medium",
     dateStyle: "medium",

@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type InstallationPromptState = {
   deferredPrompt: (Event & { prompt: () => void }) | null;
@@ -40,4 +41,22 @@ export const useDownloadProgressStore = create<DownloadProgressState>(
     progress: undefined,
     setProgress: (progress) => set({ progress }),
   })
+);
+
+type LastCheckedForUpdateState = {
+  lastChecked: Date | null;
+  setLastChecked: (value: Date) => void;
+};
+
+export const useLastCheckedForUpdateStore = create<LastCheckedForUpdateState>()(
+  persist(
+    (set) => ({
+      lastChecked: null,
+      setLastChecked: (value) => set({ lastChecked: value }),
+    }),
+    {
+      name: "last-checked-for-update-store",
+      partialize: (state) => ({ lastChecked: state.lastChecked }),
+    }
+  )
 );

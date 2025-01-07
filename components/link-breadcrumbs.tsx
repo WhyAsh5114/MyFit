@@ -23,7 +23,9 @@ function pathnameToItems(pathname: string): Item[] {
       return {
         label: part
           .split("-")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .map((word, idx) =>
+            idx === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word
+          )
           .join(" "),
         href: `/${parts.slice(0, index + 1).join("/")}`,
       };

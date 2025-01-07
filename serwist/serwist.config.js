@@ -5,6 +5,7 @@ const options = {
   globIgnores: ["404.html", "pwa/**"],
   swSrc: "out/sw.js",
   swDest: "out/sw.js",
+  additionalPrecacheEntries: ["/pwa/ios/144.png"],
 };
 
 export default options;

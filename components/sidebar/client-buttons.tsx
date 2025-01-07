@@ -17,6 +17,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
+import { DropdownMenuItem } from "../ui/dropdown-menu";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -122,4 +123,23 @@ export function SidebarNavigation() {
       </SidebarGroupContent>
     </SidebarGroup>
   ));
+}
+
+export function UserDropdownButtons() {
+  const { setOpenMobile } = useSidebar();
+
+  return (
+    <>
+      <DropdownMenuItem asChild>
+        <Link href="/settings" onClick={() => setOpenMobile(false)}>
+          Settings
+        </Link>
+      </DropdownMenuItem>
+      <DropdownMenuItem asChild>
+        <Link href="/profile" onClick={() => setOpenMobile(false)}>
+          Profile
+        </Link>
+      </DropdownMenuItem>
+    </>
+  );
 }
