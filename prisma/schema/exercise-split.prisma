@@ -1,0 +1,59 @@
+model ExerciseSplit {
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  name   String
+
+  description String?
+  splitDays   ExerciseSplitDay[]
+
+  @@id([name, userId])
+}
+
+model ExerciseSplitDay {
+  exerciseSplit     ExerciseSplit @relation(fields: [exerciseSplitName, userId], references: [name, userId])
+  exerciseSplitName String
+  userId            String
+  dayIndex          Int
+
+  sessions ExerciseSplitDaySession[]
+
+  @@id([exerciseSplitName, dayIndex, userId])
+}
+
+model ExerciseSplitDaySession {
+  exerciseSplitDay  ExerciseSplitDay @relation(fields: [exerciseSplitName, dayIndex, userId], references: [exerciseSplitName, dayIndex, userId])
+  exerciseSplitName String
+  dayIndex          Int
+  userId            String
+  sessionIndex      Int
+
+  name     String
+  Exercise Exercise[]
+
+  @@id([exerciseSplitName, dayIndex, sessionIndex, userId])
+}
+
+model Exercise {
+  sessionIndex  Int
+  splitDayIndex Int
+  splitName     String
+  userId        String
+  exerciseIndex Int
+  session       ExerciseSplitDaySession @relation(fields: [splitName, splitDayIndex, sessionIndex, userId], references: [exerciseSplitName, dayIndex, sessionIndex, userId])
+
+  name                  String
+  primaryMuscleGroup    String
+  secondaryMuscleGroups String[]
+  bodyweightFraction    Decimal
+  repRangeStart         Int
+  repRangeEnd           Int
+  setType               SetType
+  notes                 String[]
+
+  preferredOverloadPercentage Decimal?
+  forceRIRMatching            Boolean?
+  lastSetToFailure            Boolean?
+  minimumWeightChange         Decimal?
+
+  @@id([splitName, splitDayIndex, sessionIndex, exerciseIndex, userId])
+}

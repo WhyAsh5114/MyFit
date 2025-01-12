@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
+import { PIDBComponent } from "./pidb-component";
 
 export default function AppLayout({
   children,
@@ -13,6 +14,7 @@ export default function AppLayout({
 }>) {
   return (
     <>
+      <PIDBComponent />
       <SidebarProvider>
         <AppSidebar />
         <ScrollArea className="h-screen w-full max-w-xl mx-auto">

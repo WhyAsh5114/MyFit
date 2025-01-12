@@ -61,9 +61,11 @@ export function SwEventsHandler() {
         setSkipWaiting(() => sw.messageSkipWaiting());
       });
 
-      sw.addEventListener("activated", () => {
-        localStorage.clear();
-        router.refresh();
+      sw.addEventListener("controlling", (event) => {
+        if (event.isUpdate || event.isExternal) {
+          localStorage.clear();
+          router.refresh();
+        }
       });
 
       return () => {

@@ -1,0 +1,9 @@
+enum SetType {
+  Default
+  Straight
+  Drop
+  Down
+  Myorep
+  MyorepMatch
+  MyorepMatchDown
+}

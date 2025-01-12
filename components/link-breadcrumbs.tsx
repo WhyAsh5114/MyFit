@@ -36,9 +36,7 @@ function pathnameToItems(pathname: string): Item[] {
 
 export function LinkBreadcrumbs() {
   const pathname = usePathname();
-  const allItems = pathnameToItems(pathname);
-  const items =
-    allItems.length > 1 ? allItems.slice(1, allItems.length) : allItems;
+  const items = pathnameToItems(pathname);
 
   return (
     <ScrollArea>
