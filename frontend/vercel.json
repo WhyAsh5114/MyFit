@@ -1,0 +1,6 @@
+{
+  "framework": "nextjs",
+  "trailingSlash": false,
+  "installCommand": "npm ci --force",
+  "cleanUrls": true
+}

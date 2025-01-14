@@ -1,0 +1,21 @@
+{
+  "name": "backend",
+  "scripts": {
+    "start": "vercel dev",
+    "deploy": "vercel",
+    "postinstall": "npx prisma generate --generator client --no-engine",
+    "dev": "tsx api/index.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.2.1",
+    "better-auth": "^1.1.13",
+    "dotenv": "^16.4.7",
+    "hono": "^4.6.16"
+  },
+  "devDependencies": {
+    "@hono/node-server": "^1.13.7",
+    "@types/node": "18.11.18",
+    "typescript": "^5",
+    "vercel": "^32.3.0"
+  }
+}
