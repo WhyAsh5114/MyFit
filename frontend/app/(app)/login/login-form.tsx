@@ -6,6 +6,7 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { GithubIcon, UserRoundIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import GoogleIcon from "~icons/mdi/google.jsx";
 
@@ -13,6 +14,14 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackURL = searchParams.get("callbackURL") ?? "/dashboard";
+
+  const session = authClient.useSession();
+  useEffect(() => {
+    if (session.data) {
+      toast.error("You are already signed in");
+      router.push(callbackURL);
+    }
+  }, [session, callbackURL, router]);
 
   return (
     <div className={cn("flex flex-col gap-6")}>
@@ -22,14 +31,19 @@ export function LoginForm() {
             variant="outline"
             className="w-full"
             onClick={async () => {
-              const { unwrap } = toast.promise(authClient.signIn.anonymous(), {
+              const signInAndGetSession = async () => {
+                const { error } = await authClient.signIn.anonymous();
+                if (error) throw error;
+                return await authClient.getSession();
+              };
+
+              const { unwrap } = toast.promise(signInAndGetSession(), {
                 loading: "Signing in",
                 success: "Signed in successfully",
                 error: "Failed to sign in",
               });
-              await unwrap();
+              const session = await unwrap();
 
-              const session = await authClient.getSession();
               if (session.error) {
                 toast.error(session.error.message);
                 return;

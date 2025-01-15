@@ -20,7 +20,7 @@ export default function AppLayout({
       <SidebarProvider>
         <AppSidebar />
         <ScrollArea className="h-screen w-full max-w-xl mx-auto">
-          <div className="flex items-center min-h-12 gap-2 sticky top-0 bg-background/80 backdrop-blur-sm px-4">
+          <div className="flex items-center min-h-12 gap-2 sticky top-0 bg-background/80 backdrop-blur-sm px-4 z-50">
             <SidebarTrigger />
             <Separator orientation="vertical" className="h-6 mr-2" />
             <LinkBreadcrumbs />

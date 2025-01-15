@@ -5,44 +5,42 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth-client";
-import { ChevronRight, PlusIcon } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import { ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useExerciseSplitState } from "../use-exercise-split-state";
+import { useRouter } from "next/navigation";
 
 export function ExerciseSplitBasicsForm() {
+  const router = useRouter();
   const session = authClient.useSession();
 
   const [exerciseSplit, setExerciseSplit] = useExerciseSplitState(
     useShallow((state) => [state.exerciseSplit, state.setExerciseSplit])
   );
 
-  const [exerciseSplitName, setExerciseSplitName] = useState(
-    exerciseSplit?.name ?? ""
-  );
-  const [exerciseSplitDescription, setExerciseSplitDescription] = useState(
-    exerciseSplit?.description ?? ""
-  );
+  const [exerciseSplitName, setExerciseSplitName] = useState("");
+  const [exerciseSplitDescription, setExerciseSplitDescription] = useState("");
+
+  useEffect(() => {
+    if (exerciseSplit) {
+      setExerciseSplitName(exerciseSplit.name);
+      setExerciseSplitDescription(exerciseSplit.description || "");
+    }
+  }, [exerciseSplit]);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!session.data?.user.id) {
-      toast.error("You must be logged in to create an exercise split");
-      return;
-    }
-
     setExerciseSplit({
       name: exerciseSplitName,
-      userId: session.data.user.id,
+      userId: session.data!.user.id,
       description: exerciseSplitDescription,
     });
+    router.push("/exercise-splits/create/days");
   }
 
-  function addDay() {}
-
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2 grow">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 grow">
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="exercise-split-name">Exercise split name</Label>
         <Input
@@ -62,17 +60,7 @@ export function ExerciseSplitBasicsForm() {
           onChange={(e) => setExerciseSplitDescription(e.target.value)}
         />
       </div>
-      <div className="flex flex-col grow">
-        <Button
-          variant="secondary"
-          className="w-fit ml-auto"
-          type="button"
-          onClick={addDay}
-        >
-          <PlusIcon /> Add day
-        </Button>
-      </div>
-      <Button type="submit">
+      <Button type="submit" className="mt-auto">
         Next <ChevronRight />
       </Button>
     </form>

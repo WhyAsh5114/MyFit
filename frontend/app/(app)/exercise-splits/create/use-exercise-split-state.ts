@@ -1,4 +1,8 @@
-import { ExerciseSplit, ExerciseSplitDay } from "@prisma/client";
+import {
+  ExerciseSplit,
+  ExerciseSplitDay,
+  ExerciseSplitDaySession,
+} from "@prisma/client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -21,12 +25,38 @@ export const useExerciseSplitState = create<ExerciseSplitState>()(
 
 type ExerciseSplitDaysState = {
   exerciseSplitDays: ExerciseSplitDay[];
-  setExerciseSplitDays: (days: ExerciseSplitDay[]) => void;
+  setExerciseSplitDays: (exerciseSplitDays: ExerciseSplitDay[]) => void;
 };
 
-export const useExerciseSplitDaysState = create<ExerciseSplitDaysState>(
-  (set) => ({
-    exerciseSplitDays: [],
-    setExerciseSplitDays: (days) => set({ exerciseSplitDays: days }),
-  })
+export const useExerciseSplitDaysState = create<ExerciseSplitDaysState>()(
+  persist(
+    (set) => ({
+      exerciseSplitDays: [],
+      setExerciseSplitDays: (exerciseSplitDays) => set({ exerciseSplitDays }),
+    }),
+    {
+      name: "exercise-split-days",
+    }
+  )
 );
+
+type ExerciseSplitDaySessionsState = {
+  exerciseSplitDaySessions: ExerciseSplitDaySession[];
+  setExerciseSplitDaySessions: (
+    exerciseSplitDaySessions: ExerciseSplitDaySession[]
+  ) => void;
+};
+
+export const useExerciseSplitDaySessionsState =
+  create<ExerciseSplitDaySessionsState>()(
+    persist(
+      (set) => ({
+        exerciseSplitDaySessions: [],
+        setExerciseSplitDaySessions: (exerciseSplitDaySessions) =>
+          set({ exerciseSplitDaySessions }),
+      }),
+      {
+        name: "exercise-split-day-sessions",
+      }
+    )
+  );

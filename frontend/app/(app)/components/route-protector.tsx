@@ -17,7 +17,7 @@ export function RouteProtector() {
     if (error || isPending) return;
 
     if (!data?.session && !unprotectedRoutes.includes(pathname)) {
-      toast.error("You must be logged in to view that.");
+      toast.error("You must be logged in to view that");
       router.push("/login?callbackURL=" + encodeURIComponent(pathname));
       return;
     }

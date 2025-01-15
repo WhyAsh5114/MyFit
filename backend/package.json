@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@hono/node-server": "^1.13.7",
-    "@types/node": "18.11.18",
+    "@types/node": "^22.10.7",
     "typescript": "^5",
     "vercel": "^32.3.0"
   }

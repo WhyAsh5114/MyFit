@@ -5,6 +5,10 @@ import { anonymous } from "better-auth/plugins";
 import dotenv from "dotenv";
 dotenv.config();
 
+if (!process.env.FRONTEND_URL) {
+  throw new Error("FRONTEND_URL env var not set!");
+}
+
 const prisma = new PrismaClient();
 
 export const auth = betterAuth({
