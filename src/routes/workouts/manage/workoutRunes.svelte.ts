@@ -126,7 +126,8 @@ function createWorkoutRunes() {
 			startedAt: workout.startedAt,
 			endedAt: workout.endedAt,
 			userBodyweight: workout.userBodyweight,
-			workoutExercises: []
+			workoutExercises: [],
+			note: workout.note
 		};
 		workoutExercises = workout.workoutExercises.map((ex) => {
 			const { id, workoutId, ...exercise } = ex;

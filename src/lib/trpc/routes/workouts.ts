@@ -35,6 +35,7 @@ type TodaysWorkoutData = {
 		cycleNumber: number;
 		splitDayName: string;
 	};
+	note: string | null;
 };
 
 type WorkoutExercisesWithPreviousData = {
@@ -258,7 +259,8 @@ export const workouts = t.router({
 			workoutExercises: [],
 			userBodyweight,
 			startedAt: new Date(),
-			endedAt: null
+			endedAt: null,
+			note: null
 		};
 
 		if (data === null) {
@@ -319,7 +321,8 @@ export const workouts = t.router({
 			workoutExercises: [],
 			userBodyweight,
 			startedAt: new Date(),
-			endedAt: null
+			endedAt: null,
+			note: null
 		};
 
 		if (data === null) {

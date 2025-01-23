@@ -3,6 +3,7 @@
 <script lang="ts">
 	import H2 from '$lib/components/ui/typography/H2.svelte';
 	import H3 from '$lib/components/ui/typography/H3.svelte';
+	import ExternalLink from 'virtual:icons/lucide/external-link';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import { exerciseSplitTemplates } from '$lib/common/exerciseSplitTemplates';
@@ -33,3 +34,7 @@
 		</span>
 	</Button>
 {/each}
+
+<Button variant="secondary" class="gap-2" href="https://github.com/WhyAsh5114/MyFit/discussions/173" target="_blank">
+	Community-made splits <ExternalLink />
+</Button>

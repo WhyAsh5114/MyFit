@@ -1,4 +1,4 @@
-import type { ActiveMesocycleWithProgressionData } from '$lib/trpc/routes/workouts';
+import type { ActiveMesocycleWithProgressionData } from '../../src/lib/trpc/routes/workouts';
 
 export const testMesocycle: ActiveMesocycleWithProgressionData = {
 	id: 'cm25sw3zk000w14ycgmmnfk8o',

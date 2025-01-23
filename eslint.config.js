@@ -5,7 +5,7 @@ import prettier from 'eslint-config-prettier';
 import globals from 'globals';
 
 export default [
-	{ ignores: ['.vercel/', '.svelte-kit/', 'postcss.config.cjs'] },
+	{ ignores: ['.vercel/', '.svelte-kit/', 'postcss.config.cjs', 'playwright-report/'] },
 	js.configs.recommended,
 	prettier,
 	...ts.configs.recommended,

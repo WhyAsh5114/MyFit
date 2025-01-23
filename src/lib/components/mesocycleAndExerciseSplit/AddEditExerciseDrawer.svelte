@@ -42,7 +42,7 @@
 		  } & CommonProps<MesocycleExerciseTemplateWithoutIdsOrIndex>);
 
 	type NonUndefined<T> = T extends undefined ? never : T;
-	type FullExerciseTemplate = NonUndefined<typeof props.editingExercise>;
+	type FullExerciseTemplate = NonUndefined<PropsType['editingExercise']>;
 
 	let { ...props }: PropsType = $props();
 	let allGroupedExercises = $state(commonExercisePerMuscleGroup);
