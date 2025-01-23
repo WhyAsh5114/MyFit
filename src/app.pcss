@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--background: 0 0% 100%;
+		--foreground: 0 0% 3.9%;
+
+		--primary: 211.56 61.6% 45.02%;
+		--primary-foreground: 0 0% 100%;
+
+		--card: 0 0% 100%;
+		--card-foreground: 212 60% 4.9%;
+
+		--popover: 0 0% 100%;
+		--popover-foreground: 212 60% 4.9%;
+
+		--secondary: 211.3 58.97% 92.35%;
+		--secondary-foreground: 0 0% 0%;
+
+		--muted: 210 61.54% 94.9%;
+		--muted-foreground: 0 0% 40%;
+
+		--accent: 210 61.54% 94.9%;
+		--accent-foreground: 211.56 61.6% 49.02%;
+
+		--destructive: 0 84.2% 60.2%;
+		--destructive-foreground: 210 40% 98%;
+
+		--border: 0 0% 90.2%;
+		--input: 0 0% 90.2%;
+		--ring: 211.56 61.6% 49.02%;
+
+		--radius: 0.5rem;
+	}
+
+	.dark {
+		--background: 0 0% 3.9%;
+		--foreground: 0 0% 98%;
+
+		--primary: 211.56 61.6% 45.02%;
+		--primary-foreground: 0 0% 100%;
+
+		--card: 0 0% 0%;
+		--card-foreground: 211.3 58.97% 92.35%;
+
+		--popover: 0 0% 0%;
+		--popover-foreground: 211.3 58.97% 92.35%;
+
+		--secondary: 212.22 61.36% 17.25%;
+		--secondary-foreground: 0 0% 100%;
+
+		--muted: 240 12.28% 11.18%;
+		--muted-foreground: 240 1.2% 60.78%;
+
+		--accent: 212.22 61.36% 17.25%;
+		--accent-foreground: 211.3 58.97% 92.35%;
+
+		--destructive: 0 84.2% 60.2%;
+		--destructive-foreground: 210 40% 98%;
+
+		--border: 0 0% 14.9%;
+		--input: 0 0% 14.9%;
+		--ring: 211.56 61.6% 49.02%;
+
+		--radius: 0.5rem;
+	}
+}
+
+@layer base {
+	* {
+		@apply border-border;
+		font-family: 'Inter', sans-serif;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+}
+
+@font-face {
+	font-family: 'Inter';
+	src: url('/Inter-VariableFont_slnt,wght.ttf') format('truetype');
+	font-style: normal;
+	font-display: swap;
+}
+
+body {
+	@apply flex !h-screen w-screen flex-col lg:flex-row;
+}
+
+.text-lg-skeleton {
+	@apply h-7 w-28;
+}
+
+.text-base-skeleton {
+	@apply h-6 w-28;
+}
+
+.card-title-skeleton {
+	@apply h-[18px] w-28;
+}
+
+.card-description-skeleton {
+	@apply h-5 w-28;
+}
+
+.badge-skeleton {
+	@apply h-[22px] w-16 rounded-full;
+}
+
+.button-skeleton {
+	@apply h-10 w-32 rounded-md;
+}
+
+.switch-skeleton {
+	@apply h-6 w-12 rounded-full;
+}
+
+.muted-text-box {
+	@apply rounded-md border p-2 text-muted-foreground;
+}
+
+.text-box {
+	@apply rounded-md border p-2;
+}
