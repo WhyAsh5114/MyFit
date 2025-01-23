@@ -1,4 +1,4 @@
-import { getRIRForWeek, progressiveOverloadMagic } from '$lib/utils/workoutUtils';
+import { getRIRForWeek, progressiveOverloadMagic } from '../../src/lib/utils/workoutUtils';
 import { test, expect } from '../fixtures';
 import { testMesocycle } from './data';
 

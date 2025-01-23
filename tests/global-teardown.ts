@@ -1,4 +1,4 @@
-import { prisma } from '$lib/prisma';
+import { prisma } from '../src/lib/prisma';
 import type { UserData } from './global-setup';
 
 export default async function globalTeardown() {

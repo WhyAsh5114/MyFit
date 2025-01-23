@@ -18,7 +18,6 @@
 
 	let savingWorkout = $state(false);
 	let workoutExercises = $derived(workoutRunes.workoutExercises ?? []);
-	let workoutNote = $state<string>();
 
 	function preProcessSetData() {
 		if (workoutRunes.workoutData === null || workoutRunes.workoutExercises === null) return;
@@ -39,7 +38,7 @@
 		const userBodyweight = workoutRunes.workoutData.userBodyweight;
 
 		const createData: RouterInputs['workouts']['create'] = {
-			workoutData: { ...workoutRunes.workoutData, userBodyweight, note: workoutNote },
+			workoutData: { ...workoutRunes.workoutData, userBodyweight, note: workoutRunes.workoutData.note ?? undefined },
 			workoutExercises: workoutRunes.workoutExercises.map((ex, idx) => {
 				const { sets, ...exercise } = ex;
 				return { ...exercise, exerciseIndex: idx };
@@ -157,7 +156,7 @@
 
 <div class="mt-4 flex w-full flex-col gap-1.5">
 	<Label for="workout-note">Workout note</Label>
-	<Textarea id="workout-note" placeholder="Type here (optional)" bind:value={workoutNote}></Textarea>
+	<Textarea id="workout-note" placeholder="Type here (optional)" bind:value={workoutRunes.workoutData!.note}></Textarea>
 </div>
 
 <div class="mt-auto grid grid-cols-2 gap-1">
