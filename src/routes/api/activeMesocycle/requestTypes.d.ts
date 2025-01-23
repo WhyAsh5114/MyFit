@@ -1,0 +1,3 @@
+type APIActiveMesocycleCreate = {
+	activeMesocycle: ActiveMesocycle;
+};
