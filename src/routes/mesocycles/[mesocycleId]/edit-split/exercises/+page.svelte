@@ -126,9 +126,11 @@
 					deleteExercise={mesocycleExerciseSplitRunes.deleteExercise}
 					{reordering}
 					setEditingExercise={mesocycleExerciseSplitRunes.setEditingExercise}
-					bind:itemList={mesocycleExerciseSplitRunes.splitExercises[
-						mesocycleExerciseSplitRunes.selectedSplitDayIndex
-					] as MesocycleExerciseTemplateWithoutIdsOrIndex[]}
+					bind:itemList={
+						mesocycleExerciseSplitRunes.splitExercises[
+							mesocycleExerciseSplitRunes.selectedSplitDayIndex
+						] as MesocycleExerciseTemplateWithoutIdsOrIndex[]
+					}
 				/>
 			</div>
 		</div>

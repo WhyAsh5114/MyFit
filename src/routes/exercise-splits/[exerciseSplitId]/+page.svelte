@@ -10,6 +10,7 @@
 	import DeleteIcon from 'virtual:icons/lucide/trash';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
+	import FileUpIcon from 'virtual:icons/lucide/file-up';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import ExerciseSplitSkeleton from './(components)/ExerciseSplitSkeleton.svelte';
@@ -82,6 +83,33 @@
 		exerciseSplitRunes.loadExerciseSplit(getExerciseSplitWithoutIds(exerciseSplit), exerciseSplit.id);
 		goto(`/exercise-splits/manage/structure`);
 	}
+
+	function exportSplit() {
+		if (exerciseSplit === 'loading') return;
+
+		const { userId, id, ...rest } = exerciseSplit;
+		(rest.exerciseSplitDays as unknown) = rest.exerciseSplitDays.map((day) => {
+			const { id, exerciseSplitId, ...rest } = day;
+			(rest.exercises as unknown) = rest.exercises.map((ex) => {
+				const { id, exerciseSplitDayId, ...rest } = ex;
+				return rest;
+			});
+			return rest;
+		});
+
+		const jsonData = JSON.stringify(rest);
+		const blob = new Blob([jsonData], { type: 'application/json' });
+
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = `${exerciseSplit.name}.json`;
+
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		URL.revokeObjectURL(url);
+	}
 </script>
 
 <H2 showChartIcon={selectedTabValue === 'exercises'} bind:chartMode>View exercise split</H2>
@@ -110,6 +138,9 @@
 									</DropdownMenu.Item>
 									<DropdownMenu.Item class="gap-2" onclick={() => loadExerciseSplit('clone')}>
 										<CloneIcon /> Clone
+									</DropdownMenu.Item>
+									<DropdownMenu.Item class="gap-2" onclick={() => exportSplit()}>
+										<FileUpIcon /> Export
 									</DropdownMenu.Item>
 									<DropdownMenu.Item class="gap-2 text-red-500" onclick={() => (deleteConfirmDrawerOpen = true)}>
 										<DeleteIcon /> Delete

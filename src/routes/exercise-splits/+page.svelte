@@ -71,6 +71,7 @@
 				<DropdownMenu.Group>
 					<DropdownMenu.Item onclick={createNewExerciseSplit}>Start from scratch</DropdownMenu.Item>
 					<DropdownMenu.Item href="/exercise-splits/templates">Use template</DropdownMenu.Item>
+					<DropdownMenu.Item href="/exercise-splits/import">Import</DropdownMenu.Item>
 				</DropdownMenu.Group>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
