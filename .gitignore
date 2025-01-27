@@ -12,3 +12,6 @@ vite.config.ts.timestamp-*
 playwright-report
 test-results
 auth.json
+.next
+frontend
+backend

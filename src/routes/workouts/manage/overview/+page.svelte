@@ -88,6 +88,7 @@
 		} catch (error) {
 			if (error instanceof Error) {
 				toast.error('Failed to preprocess set data', { description: error.message });
+				navigator.clipboard.writeText(JSON.stringify(workoutRunes.workoutExercises));
 				console.log(workoutRunes.workoutExercises);
 			}
 		}
