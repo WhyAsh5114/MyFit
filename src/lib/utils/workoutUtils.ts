@@ -178,7 +178,7 @@ export function createWorkoutExerciseInProgressFromMesocycleExerciseTemplate(
 		exercise.changeType = null;
 	}
 
-	if (['Straight', 'MyorepMatch'].includes(exercise.setType)) {
+	if (['Straight', 'MyorepMatch', 'Myorep'].includes(exercise.setType)) {
 		newSets.map((set, setIndex) => {
 			if (setIndex) set.load = newSets[0].load;
 		});
