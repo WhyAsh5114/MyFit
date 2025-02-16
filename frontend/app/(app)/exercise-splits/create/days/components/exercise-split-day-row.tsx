@@ -4,13 +4,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { useSortable } from "@dnd-kit/sortable";
+import { closestCenter, DndContext, DragEndEvent } from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ExerciseSplitDay } from "@prisma/client";
+import { ExerciseSplitDay, ExerciseSplitDaySession } from "@prisma/client";
 import { GripVerticalIcon, TrashIcon, XIcon } from "lucide-react";
+import { useShallow } from "zustand/react/shallow";
 import { useExerciseSplitDaySessionsState } from "../../use-exercise-split-state";
 import { AddSessionPopover } from "./add-session-popover";
-import { useShallow } from "zustand/react/shallow";
 
 type PropsType = {
   splitDay: ExerciseSplitDay;
@@ -85,9 +91,10 @@ function SessionsTableCellBody({ dayIndex }: { dayIndex: number }) {
         state.setExerciseSplitDaySessions,
       ])
     );
-  const daySessions = exerciseSplitDaySessions.filter(
-    ({ dayIndex: _dayIndex }) => _dayIndex === dayIndex
-  );
+  const daySessions = (() =>
+    exerciseSplitDaySessions.filter(
+      ({ dayIndex: _dayIndex }) => _dayIndex === dayIndex
+    ))();
 
   function deleteSession(sessionIndex: number, dayIndex: number) {
     setExerciseSplitDaySessions(
@@ -98,32 +105,88 @@ function SessionsTableCellBody({ dayIndex }: { dayIndex: number }) {
     );
   }
 
-  if (daySessions.length === 0) {
-    return (
-      <span className="text-muted-foreground font-semibold">Rest day</span>
-    );
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    console.log(active.id, over?.id);
+
+    if (active.id !== over?.id) {
+      const oldIndex = daySessions.findIndex(
+        ({ sessionIndex, dayIndex }) =>
+          active.id === `${dayIndex}>${sessionIndex}`
+      );
+      const newIndex = daySessions.findIndex(
+        ({ sessionIndex, dayIndex }) =>
+          over?.id === `${dayIndex}>${sessionIndex}`
+      );
+
+      const newItems = arrayMove(daySessions, oldIndex, newIndex);
+      setExerciseSplitDaySessions(newItems);
+    }
   }
 
   return (
     <ScrollArea className="h-full w-full overflow-x-auto">
       <div className="flex gap-1 h-full items-center">
-        {daySessions.map((session) => (
-          <Badge key={session.sessionIndex} className="gap-1 h-fit">
-            <Button
-              className="w-4 h-4"
-              variant="ghost"
-              size="icon"
-              onClick={() =>
-                deleteSession(session.sessionIndex, session.dayIndex)
-              }
-            >
-              <XIcon />
-            </Button>
-            {session.name}
-          </Badge>
-        ))}
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={daySessions.map(
+              ({ sessionIndex, dayIndex }) => `${dayIndex}>${sessionIndex}`
+            )}
+            strategy={verticalListSortingStrategy}
+          >
+            {daySessions.length ? (
+              daySessions.map((session) => (
+                <SessionBadge
+                  key={session.sessionIndex}
+                  session={session}
+                  deleteSession={deleteSession}
+                />
+              ))
+            ) : (
+              <span className="text-muted-foreground font-semibold">
+                Rest day
+              </span>
+            )}
+          </SortableContext>
+        </DndContext>
       </div>
       <ScrollBar orientation="horizontal" />
     </ScrollArea>
+  );
+}
+
+function SessionBadge({
+  session,
+  deleteSession,
+}: {
+  session: ExerciseSplitDaySession;
+  deleteSession: (sessionIndex: number, dayIndex: number) => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: `${session.dayIndex}>${session.sessionIndex}` });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <Badge className="gap-1 h-fit">
+        <Button
+          className="w-4 h-4"
+          variant="ghost"
+          size="icon"
+          onClick={() => deleteSession(session.sessionIndex, session.dayIndex)}
+        >
+          <XIcon />
+        </Button>
+        {session.name}
+      </Badge>
+    </div>
   );
 }

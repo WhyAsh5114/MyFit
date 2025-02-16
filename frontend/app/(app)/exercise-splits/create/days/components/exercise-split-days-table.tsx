@@ -61,7 +61,7 @@ export function ExerciseSplitDaysTable() {
       {
         dayIndex:
           Math.max(...exerciseSplitDays.map(({ dayIndex }) => dayIndex), -1) +
-          1,
+          1,  // TODO: fix this...
         exerciseSplitName: exerciseSplit!.name,
         userId: session.data!.user.id,
       },
