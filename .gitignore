@@ -1,3 +1,6 @@
 node_modules
 .env
 .svelte-kit
+.vercel
+playwright-report
+test-results
