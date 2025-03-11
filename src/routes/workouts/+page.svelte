@@ -10,6 +10,7 @@
 	import type { DateRange } from 'bits-ui';
 	import { type InfiniteLoadingEvents } from 'svelte-infinite-loading';
 	import AddIcon from 'virtual:icons/lucide/plus';
+	import StickyNoteIcon from 'virtual:icons/lucide/sticky-note';
 	import FilterComponent from './(components)/FilterComponent.svelte';
 	import NoWorkoutsFilterComponent from './(components)/NoWorkoutsFilterComponent.svelte';
 	import { workoutRunes } from './manage/workoutRunes.svelte.js';
@@ -121,16 +122,19 @@
 		{#each workouts as workout}
 			{@const { workoutOfMesocycle } = workout}
 			<Button
-				class="flex h-12 items-center justify-between gap-6 rounded-md border bg-card p-2"
+				class="flex h-12 items-center gap-2 rounded-md border bg-card p-2"
 				href="/workouts/{workout.id}"
 				variant="outline"
 			>
-				<span class="text-lg font-semibold">
+				<span class="mr-auto text-lg font-semibold">
 					{workout.startedAt.toLocaleDateString(undefined, {
 						day: '2-digit',
 						month: 'long'
 					})}
 				</span>
+				{#if workout.note}
+					<StickyNoteIcon class="text-muted-foreground" />
+				{/if}
 				{#if workoutOfMesocycle}
 					{@const splitDayName =
 						workoutOfMesocycle.mesocycle.mesocycleExerciseSplitDays[workoutOfMesocycle.splitDayIndex].name}

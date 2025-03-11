@@ -64,7 +64,7 @@
 	"type": "module",
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.4.1",
-		"@auth/sveltekit": "^1.4.1",
+		"@auth/sveltekit": "^1.7.0",
 		"@prisma/client": "6.0.0",
 		"@trpc/client": "^10.45.2",
 		"@trpc/server": "^10.45.2",

@@ -58,11 +58,15 @@
 		const colors = generateShadesAndTints(maxSets);
 		let dataValues: (number | null)[][];
 
+		const nonSkippedExercises = exercises
+			.map((ex) => ({ ...ex, sets: ex.sets.filter((set) => !set.skipped) }))
+			.filter((ex) => ex.sets.length > 0);
+
 		if (chartType === 'relative-overload') {
 			dataValues = Array.from({ length: maxSets }, (_, setIdx) =>
-				exercises.map((ex, idx) => {
+				nonSkippedExercises.map((ex, idx) => {
 					if (idx === 0) return 0;
-					const oldestSet = exercises.find((ex) => ex.sets[setIdx] && !ex.sets[setIdx].skipped)!.sets[setIdx];
+					const oldestSet = nonSkippedExercises.find((ex) => ex.sets[setIdx] && !ex.sets[setIdx].skipped)!.sets[setIdx];
 					if (!selectedSets.includes(setIdx.toString())) return null;
 					if (!ex.sets[setIdx]) return null;
 
@@ -80,7 +84,7 @@
 			);
 		} else {
 			dataValues = Array.from({ length: maxSets }, (_, setIdx) =>
-				exercises.map((ex) => {
+				nonSkippedExercises.map((ex) => {
 					if (!selectedSets.includes(setIdx.toString())) return null;
 					if (!ex.sets[setIdx]) return null;
 					return ex.sets[setIdx].load;
@@ -91,7 +95,7 @@
 		chart = new Chart(chartCanvas, {
 			type: 'line',
 			data: {
-				labels: exercises.map((ex) => new Date(ex.workout.startedAt)),
+				labels: nonSkippedExercises.map((ex) => new Date(ex.workout.startedAt)),
 				datasets: dataValues.map((data, idx) => ({
 					label: `Set ${idx + 1}`,
 					data,
