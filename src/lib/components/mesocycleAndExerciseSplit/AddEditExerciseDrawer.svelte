@@ -56,7 +56,20 @@
 			exercises: exercises!.map(({ workoutId, ...rest }) => ({ ...rest })) ?? []
 		}));
 
-		allGroupedExercises = [...allGroupedExercises, ...groupedUserExercises];
+		allGroupedExercises = groupedUserExercises.reduce(
+			(acc, userGroup) => {
+				const existingGroupIndex = acc.findIndex((group) => group.muscleGroup === userGroup.muscleGroup);
+
+				if (existingGroupIndex !== -1) {
+					acc[existingGroupIndex].exercises = [...acc[existingGroupIndex].exercises, ...userGroup.exercises];
+				} else {
+					acc.push(userGroup);
+				}
+
+				return acc;
+			},
+			[...allGroupedExercises]
+		);
 	});
 
 	const extraMesocycleProps: Partial<MesocycleExerciseTemplateWithoutIdsOrIndex> = {
@@ -80,7 +93,7 @@
 	let searching = $state(false);
 	let currentExercise: Partial<FullExerciseTemplate> = $state(structuredClone(defaultExercise));
 	let filteredExercises = $derived(
-		commonExercisePerMuscleGroup.map((exercisesForMuscleGroup) => {
+		allGroupedExercises.map((exercisesForMuscleGroup) => {
 			const { muscleGroup, exercises } = exercisesForMuscleGroup;
 			return {
 				muscleGroup,
