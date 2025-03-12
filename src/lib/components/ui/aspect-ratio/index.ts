@@ -1,4 +1,4 @@
-import { AspectRatio as AspectRatioPrimitive } from "bits-ui";
+import { AspectRatio as AspectRatioPrimitive } from 'bits-ui';
 
 const Root = AspectRatioPrimitive.Root;
 

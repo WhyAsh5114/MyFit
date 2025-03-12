@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { Calendar as CalendarPrimitive, type WithoutChildrenOrChild } from "bits-ui";
-	import * as Calendar from "./index.js";
-	import { cn } from "$lib/utils.js";
+	import { Calendar as CalendarPrimitive, type WithoutChildrenOrChild } from 'bits-ui';
+	import * as Calendar from './index.js';
+	import { cn } from '$lib/utils.js';
 
 	let {
 		ref = $bindable(null),
 		value = $bindable(),
 		placeholder = $bindable(),
 		class: className,
-		weekdayFormat = "short",
+		weekdayFormat = 'short',
 		...restProps
 	}: WithoutChildrenOrChild<CalendarPrimitive.RootProps> = $props();
 </script>
@@ -22,7 +22,7 @@ get along, so we shut typescript up by casting `value` to `never`.
 	bind:ref
 	bind:placeholder
 	{weekdayFormat}
-	class={cn("p-3", className)}
+	class={cn('p-3', className)}
 	{...restProps}
 >
 	{#snippet children({ months, weekdays })}
@@ -32,11 +32,11 @@ get along, so we shut typescript up by casting `value` to `never`.
 			<Calendar.NextButton />
 		</Calendar.Header>
 		<Calendar.Months>
-			{#each months as month}
+			{#each months as month (month.value)}
 				<Calendar.Grid>
 					<Calendar.GridHead>
 						<Calendar.GridRow class="flex">
-							{#each weekdays as weekday}
+							{#each weekdays as weekday (weekday)}
 								<Calendar.HeadCell>
 									{weekday.slice(0, 2)}
 								</Calendar.HeadCell>
@@ -44,9 +44,9 @@ get along, so we shut typescript up by casting `value` to `never`.
 						</Calendar.GridRow>
 					</Calendar.GridHead>
 					<Calendar.GridBody>
-						{#each month.weeks as weekDates}
+						{#each month.weeks as weekDates (weekDates)}
 							<Calendar.GridRow class="mt-2 w-full">
-								{#each weekDates as date}
+								{#each weekDates as date (date)}
 									<Calendar.Cell {date} month={month.value}>
 										<Calendar.Day />
 									</Calendar.Cell>

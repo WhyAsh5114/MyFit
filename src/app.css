@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-
+@plugin "@tailwindcss/typography";
 @config '../tailwind.config.ts';
 
 @layer base {
@@ -89,7 +89,7 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-display: swap;
-	src: url('fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+	src: url('/fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
 }
 
 @layer base {
