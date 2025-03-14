@@ -5,7 +5,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 </script>
 
-<div class="grid h-screen w-screen place-items-center">
+<div class="grid h-screen w-screen place-items-center overflow-hidden">
 	<FlickeringGrid
 		class="col-start-1 row-start-1"
 		squareSize={4}

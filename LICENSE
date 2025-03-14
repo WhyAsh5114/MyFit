@@ -1,0 +1,24 @@
+# Custom Business Source License (Indefinite Version)
+
+## 1. License Terms
+This software (the Licensed Work) is licensed under the Business Source License (Custom Version). You may use, modify, and distribute this software freely, but commercial use requires a separate paid license from Yash Kolekar.
+
+## 2. Commercial Use Restrictions
+You may make production use of the Licensed Work, provided that:
+
+- You do not offer the Licensed Work to third parties on a hosted or embedded basis to compete with the Licensor’s paid version(s).
+- You do not use the Licensed Work internally within an organization for commercial purposes without obtaining a commercial license.
+- You do not embed or package the Licensed Work in a way that requires access to the Licensed Work for your product to function.
+
+## 3. Definitions
+- Competitive Offering: A product or service offered on a paid basis, including via paid support, that significantly overlaps with the capabilities of the Licensor’s paid version(s) of the Licensed Work.
+- Product: Software that is offered to end users to manage in their own environments or offered as a hosted service.
+- Embedded: Packaging the Licensed Work inside a competitive offering, making it necessary for the Licensed Work to be accessed or downloaded for the competitive offering to operate.
+- Internal Use: Hosting or using the Licensed Work within an organization for production purposes. This requires a commercial license.
+
+## 4. No Automatic License Conversion
+This license does not automatically convert to an open-source license after any time period. The terms apply indefinitely unless otherwise specified by the Licensor.
+
+For commercial licensing inquiries, contact: myfit.auth@gmail.com
+
+Trademark Notice: MyFit™ is a trademark of Yash Kolekar. This license does not grant permission to use the trademark.

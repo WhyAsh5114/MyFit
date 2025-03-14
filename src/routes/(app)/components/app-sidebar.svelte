@@ -1,24 +1,34 @@
 <script lang="ts">
+	import { authClient } from '$lib/auth/auth-client';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
 	import {
 		BookOpenTextIcon,
 		CalendarIcon,
 		ChartNoAxesCombinedIcon,
+		ChevronUpIcon,
+		CogIcon,
 		DownloadIcon,
 		DumbbellIcon,
 		GithubIcon,
 		GlobeLockIcon,
 		HandCoinsIcon,
 		LayoutDashboardIcon,
+		LoaderCircleIcon,
+		LogInIcon,
 		NotebookTextIcon,
 		PackagePlusIcon,
 		RefreshCcwIcon,
-		RssIcon
+		RssIcon,
+		UserRoundIcon
 	} from 'lucide-svelte';
 	import { appLayoutState } from './app-layout-state.svelte';
+	import { page } from '$app/state';
 
 	const sidebar = useSidebar();
+	const session = authClient.useSession();
+
 	const linkGroups = [
 		{
 			label: 'Application',
@@ -94,7 +104,10 @@
 					<Sidebar.Menu>
 						{#each linkGroup.items as link (link.label)}
 							<Sidebar.MenuItem>
-								<Sidebar.MenuButton onclick={() => sidebar.setOpenMobile(false)}>
+								<Sidebar.MenuButton
+									onclick={() => sidebar.setOpenMobile(false)}
+									isActive={page.url.pathname.startsWith(link.href)}
+								>
 									{#snippet child({ props })}
 										<a href={link.href} {...props}>
 											<link.icon />
@@ -110,7 +123,58 @@
 		{/each}
 	</Sidebar.Content>
 	<Sidebar.Footer>
-		<Sidebar.Menu>
+		<Sidebar.Menu class="flex w-full flex-row">
+			<Sidebar.MenuItem class="grow">
+				{#if $session.isPending || $session.isRefetching}
+					<Sidebar.MenuButton variant="outline" class="justify-center">
+						<LoaderCircleIcon class="animate-spin" />
+					</Sidebar.MenuButton>
+				{:else if !$session.data}
+					<Sidebar.MenuButton variant="outline">
+						{#snippet child({ props })}
+							<a {...props} href="/login">
+								<LogInIcon /> Login
+							</a>
+						{/snippet}
+					</Sidebar.MenuButton>
+				{:else}
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger>
+							{#snippet child({ props })}
+								<Sidebar.MenuButton variant="outline" {...props}>
+									<UserRoundIcon />
+									{$session.data!.user.name}
+									<ChevronUpIcon class="ml-auto" />
+								</Sidebar.MenuButton>
+							{/snippet}
+						</DropdownMenu.Trigger>
+						<DropdownMenu.Content class="w-[var(--bits-dropdown-menu-anchor-width)]">
+							<DropdownMenu.Group>
+								<DropdownMenu.Item onclick={() => sidebar.setOpenMobile(false)}>
+									{#snippet child({ props })}
+										<a href="/settings" {...props}><CogIcon /> Settings</a>
+									{/snippet}
+								</DropdownMenu.Item>
+								<DropdownMenu.Item onclick={() => sidebar.setOpenMobile(false)}>
+									{#snippet child({ props })}
+										<a href="/profile" {...props}><UserRoundIcon /> Profile</a>
+									{/snippet}
+								</DropdownMenu.Item>
+								<DropdownMenu.Item
+									class="text-destructive"
+									onclick={() => {
+										authClient.signOut();
+										localStorage.clear();
+									}}
+								>
+									<LogInIcon />
+									Logout
+								</DropdownMenu.Item>
+							</DropdownMenu.Group>
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
+				{/if}
+			</Sidebar.MenuItem>
 			<Sidebar.MenuItem>
 				{#if appLayoutState.skipWaitingFunction}
 					<Sidebar.MenuButton

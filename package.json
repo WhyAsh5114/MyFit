@@ -20,6 +20,8 @@
 		"@eslint/js": "^9.18.0",
 		"@internationalized/date": "^3.7.0",
 		"@playwright/test": "^1.49.1",
+		"@prisma/client": "^6.5.0",
+		"@prisma/extension-accelerate": "^1.2.2",
 		"@serwist/build": "^9.0.12",
 		"@serwist/vite": "^9.0.12",
 		"@serwist/window": "^9.0.12",
@@ -44,6 +46,7 @@
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.11",
+		"prisma": "^6.5.0",
 		"serwist": "^9.0.12",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
@@ -61,6 +64,10 @@
 		"zod": "^3.24.2"
 	},
 	"dependencies": {
-		"@tanstack/table-core": "^8.21.2"
+		"@tanstack/table-core": "^8.21.2",
+		"better-auth": "^1.2.4"
+	},
+	"overrides": {
+		"vite": "^6.0.0"
 	}
 }

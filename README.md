@@ -1,38 +1,27 @@
-# sv
+# MyFit
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## 📜 License  
 
-## Creating a project
+This project is licensed under a **Custom Business Source License (Indefinite Version)**.  
 
-If you're seeing this, you've probably already done this step. Congrats!
+### 🔹 **Key License Terms**  
+- ✅ **Open-Source Code** → You can view, modify, and contribute to the code.  
+- 🚫 **Commercial Use Requires a Paid License** → Businesses must obtain a license.  
+- 🚫 **No Internal Organization Use Without a License** → Even internal deployment in a company requires a paid license.  
+- 🚫 **No Hosting or Embedding in Paid Products** → You **cannot** use this to create a competing service or product.  
+- ⏳ **This License Will Not Convert to an Open-Source License** → It remains under these terms indefinitely.  
 
-```bash
-# create a new project in the current directory
-npx sv create
+### 🔖 **Personal vs. Commercial Use**  
+| **Usage**                    | **Allowed?** |
+|------------------------------|-------------|
+| Personal, non-commercial use  | ✅ Yes      |
+| Modifications & contributions | ✅ Yes      |
+| Business use (internal or external) | 🚫 No (requires a paid license) |
+| Offering as a paid service or embedding in another product | 🚫 No |
 
-# create a new project in my-app
-npx sv create my-app
-```
+### 💰 **Need a Commercial License?**  
+If you want to use this software for business, internal deployment, or as part of a commercial product, you need a **paid commercial license**.  
 
-## Developing
+📩 Contact me at **myfit.auth@gmail.com** for licensing details.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+MyFit™ is a trademark of Yash Kolekar. All rights reserved.

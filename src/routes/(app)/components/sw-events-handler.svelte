@@ -23,7 +23,7 @@
 				serwist.addEventListener('installed', () => {
 					console.log('Serwist installed!');
 				});
-				void serwist.register();
+				await serwist.register();
 
 				const checkForUpdate = () => {
 					try {
@@ -34,7 +34,7 @@
 					}
 				};
 				checkForUpdate();
-				updateInterval = setInterval(checkForUpdate, 5000);
+				updateInterval = setInterval(checkForUpdate, 1000 * 60 * 60);
 
 				serwist.addEventListener('waiting', () => {
 					appLayoutState.skipWaitingFunction = () => serwist.messageSkipWaiting();

@@ -15,7 +15,7 @@
 
 <Sidebar.Provider>
 	<AppSidebar />
-	<ScrollArea class="h-screen">
+	<ScrollArea class="h-screen w-full mx-auto max-w-xl">
 		<header
 			class="bg-background/80 sticky top-0 z-50 flex min-h-12 items-center gap-2 px-4 backdrop-blur-sm"
 		>
