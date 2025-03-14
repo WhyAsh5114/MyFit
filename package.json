@@ -20,6 +20,7 @@
 		"@eslint/js": "^9.18.0",
 		"@internationalized/date": "^3.7.0",
 		"@playwright/test": "^1.49.1",
+		"@prisma-idb/idb-client-generator": "^0.14.1",
 		"@prisma/client": "^6.5.0",
 		"@prisma/extension-accelerate": "^1.2.2",
 		"@serwist/build": "^9.0.12",
