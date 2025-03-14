@@ -17,16 +17,18 @@
 
 <Sidebar.Provider>
 	<AppSidebar />
-	<ScrollArea class="mx-auto h-screen w-full max-w-xl">
+	<div class="mx-auto flex h-screen w-full max-w-xl flex-col">
 		<header
-			class="bg-background/80 sticky top-0 z-50 flex min-h-12 items-center gap-2 px-4 backdrop-blur-sm"
+			class="bg-background/80 sticky top-0 z-50 flex min-h-12 items-center gap-2 px-4 py-2 backdrop-blur-sm"
 		>
 			<Sidebar.Trigger />
 			<Separator orientation="vertical" class="mr-2 h-6" />
 			<LinkBreadcrumbs />
 		</header>
-		<main class="flex w-full grow flex-col gap-4 p-4">
-			{@render children?.()}
-		</main>
-	</ScrollArea>
+		<ScrollArea class="h-px w-full grow">
+			<main class="flex w-full grow flex-col gap-4 p-4">
+				{@render children?.()}
+			</main>
+		</ScrollArea>
+	</div>
 </Sidebar.Provider>

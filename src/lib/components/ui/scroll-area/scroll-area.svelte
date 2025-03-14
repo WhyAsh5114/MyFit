@@ -19,7 +19,7 @@
 </script>
 
 <ScrollAreaPrimitive.Root bind:ref {...restProps} class={cn('relative overflow-hidden', className)}>
-	<ScrollAreaPrimitive.Viewport class="h-full w-full rounded-[inherit]">
+	<ScrollAreaPrimitive.Viewport class="h-full w-full rounded-[inherit] [&>*]:flex [&>*]:flex-col">
 		{@render children?.()}
 	</ScrollAreaPrimitive.Viewport>
 	{#if orientation === 'vertical' || orientation === 'both'}

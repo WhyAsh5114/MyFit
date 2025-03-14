@@ -14,7 +14,8 @@
 		const sessionData = $session.data;
 		if (!sessionData) return await client.user.deleteMany();
 
-		if (!(await client.user.findUnique({ where: { id: sessionData.user.id } }))) {
+		const existingUser = await client.user.findUnique({ where: { id: sessionData.user.id } });
+		if (!existingUser) {
 			await client.user.create({ data: sessionData.user });
 		}
 	}
