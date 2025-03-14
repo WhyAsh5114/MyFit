@@ -3,7 +3,9 @@
 	import H1 from '$lib/components/typography/h1.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { LoaderCircleIcon, RefreshCcwIcon } from 'lucide-svelte';
+	import { client } from '$lib/idb-client';
+	import { createMutation } from '@tanstack/svelte-query';
+	import { LoaderCircleIcon, RefreshCcwIcon, RotateCwIcon } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import { getSerwist } from 'virtual:serwist';
 	import { appLayoutState } from '../components/app-layout-state.svelte';
@@ -44,6 +46,14 @@
 			swStatus = undefined;
 		}
 	}
+
+	let resetDatabaseMutation = createMutation({
+		mutationFn: async () => {
+			await client.resetDatabase();
+			toast.success('IndexedDB cleared');
+			location.reload();
+		}
+	});
 </script>
 
 <H1>Settings</H1>
@@ -57,21 +67,55 @@
 			</span>
 		</Card.Description>
 	</Card.Header>
-	<Card.Content>
+	<Card.Content class="flex justify-end">
 		{#if appLayoutState.skipWaitingFunction}
 			<Button onclick={() => (appLayoutState.updateDialogOpen = true)}>
-				<RefreshCcwIcon /> Update and refresh
+				Update and refresh <RefreshCcwIcon />
 			</Button>
 		{:else if swStatus === 'checking'}
 			<Button disabled>
-				<LoaderCircleIcon class="animate-spin" /> Checking for updates
+				Checking for updates <LoaderCircleIcon class="animate-spin" />
 			</Button>
 		{:else if swStatus === undefined}
-			<Button onclick={checkForUpdate}><RefreshCcwIcon /> Check now</Button>
+			<Button onclick={checkForUpdate}>Check now <RefreshCcwIcon /></Button>
 		{:else}
 			<Button disabled>
-				<LoaderCircleIcon class="animate-spin" /> Installing update
+				Installing update <LoaderCircleIcon class="animate-spin" />
 			</Button>
 		{/if}
+	</Card.Content>
+</Card.Root>
+
+<Card.Root>
+	<Card.Header>
+		<Card.Title>Redo getting started</Card.Title>
+		<Card.Description>
+			Redo the questionnaire in case you missed it or want to change your answers
+		</Card.Description>
+	</Card.Header>
+	<Card.Content class="flex justify-end">
+		<Button href="/getting-started">Redo <RotateCwIcon /></Button>
+	</Card.Content>
+</Card.Root>
+
+<Card.Root>
+	<Card.Header>
+		<Card.Title>Clear IndexedDB</Card.Title>
+		<Card.Description>
+			Remove IndexedDB data stored in the app, for development purposes only
+		</Card.Description>
+	</Card.Header>
+	<Card.Content class="flex justify-end">
+		<Button
+			disabled={$resetDatabaseMutation.isPending}
+			onclick={() => $resetDatabaseMutation.mutate()}
+			variant="destructive"
+		>
+			{#if $resetDatabaseMutation.isPending}
+				Clearing <LoaderCircleIcon class="animate-spin" />
+			{:else}
+				Clear <RotateCwIcon />
+			{/if}
+		</Button>
 	</Card.Content>
 </Card.Root>

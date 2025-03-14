@@ -1,5 +1,7 @@
 <script lang="ts">
-	let { children } = $props();
+	import { cn } from '$lib/utils';
+
+	let { children, class: className = '' } = $props();
 </script>
 
-<h1 class="text-4xl font-extrabold">{@render children()}</h1>
+<h1 class={cn('text-3xl font-extrabold md:text-4xl', className)}>{@render children()}</h1>

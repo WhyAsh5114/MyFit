@@ -1,6 +1,44 @@
 model ExerciseSplit {
-  id     String @id @default(uuid())
-  user   User   @relation(fields: [userId], references: [id])
-  name   String
-  userId String
+  id        String             @id @default(uuid())
+  user      User               @relation(fields: [userId], references: [id])
+  name      String
+  userId    String
+  splitDays ExerciseSplitDay[]
+}
+
+model ExerciseSplitDay {
+  id               String                    @id @default(uuid())
+  dayIndex         Int
+  exerciseSplit    ExerciseSplit             @relation(fields: [exerciseSplitId], references: [id])
+  exerciseSplitId  String
+  splitDaySessions ExerciseSplitDaySession[]
+
+  @@unique([exerciseSplitId, dayIndex])
+}
+
+model ExerciseSplitDaySession {
+  id                 String                            @id @default(uuid())
+  name               String
+  sessionIndex       Int
+  exerciseSplitDay   ExerciseSplitDay                  @relation(fields: [exerciseSplitDayId], references: [id])
+  exerciseSplitDayId String
+  exercises          ExerciseSplitDaySessionExercise[]
+
+  @@unique([exerciseSplitDayId, sessionIndex])
+}
+
+model ExerciseSplitDaySessionExercise {
+  id                        String                  @id @default(uuid())
+  exerciseIndex             Int
+  name                      String
+  notes                     String[]
+  primaryMuscleGroup        String
+  secondaryMuscleGroups     String[]
+  repRangeStart             Int
+  repRangeEnd               Int
+  setType                   SetType
+  exerciseSplitDaySession   ExerciseSplitDaySession @relation(fields: [exerciseSplitDaySessionId], references: [id])
+  exerciseSplitDaySessionId String
+
+  @@unique([exerciseSplitDaySessionId, exerciseIndex])
 }

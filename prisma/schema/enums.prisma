@@ -1,0 +1,30 @@
+enum FitnessKnowledge {
+  newbie
+  beginner
+  intermediate
+  advanced
+}
+
+enum MyFitPrimaryUsage {
+  workoutTracking
+  macroTracking
+  socialNetwork
+  mix
+}
+
+enum DashboardItem {
+  workout
+  nutrition
+  social
+  mix
+}
+
+enum SetType {
+  Default
+  Straight
+  Down
+  Myorep
+  MyorepMatch
+  MyorepMatchDown
+  Drop
+}

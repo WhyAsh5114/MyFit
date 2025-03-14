@@ -1,11 +1,12 @@
+import { errors } from '@serwist/build';
+import type { PluginOptions, SerwistViteApi, SerwistViteContext } from '@serwist/vite';
+import { enhancedImages } from '@sveltejs/enhanced-img';
+import { createApi, createContext, dev as devPlugin, main as mainPlugin } from '@serwist/vite';
+import { sveltekit } from '@sveltejs/kit/vite';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { errors } from '@serwist/build';
-import { createApi, createContext, dev as devPlugin, main as mainPlugin } from '@serwist/vite';
-import type { PluginOptions, SerwistViteApi, SerwistViteContext } from '@serwist/vite';
-import { sveltekit } from '@sveltejs/kit/vite';
 import type { Plugin } from 'vite';
 import { defineConfig } from 'vite';
 import config from './svelte.config';
@@ -192,5 +193,5 @@ const serwist = (): Plugin[] => {
 };
 
 export default defineConfig({
-	plugins: [sveltekit(), serwist()]
+	plugins: [enhancedImages(), sveltekit(), serwist()]
 });

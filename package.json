@@ -1,11 +1,11 @@
 {
 	"name": "myfit",
 	"private": true,
-	"version": "0.0.1",
+	"version": "4.0.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build && tsx serwist/precache.ts",
+		"build": "vite build && tsx src/lib/scripts/precache.ts && tsx src/lib/scripts/routes.ts --create-json-file",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -13,20 +13,22 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"test:e2e": "playwright test",
-		"test": "npm run test:e2e"
+		"test": "npm run test:e2e",
+		"postinstall": "prisma generate --no-engine"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
 		"@internationalized/date": "^3.7.0",
 		"@playwright/test": "^1.49.1",
-		"@prisma-idb/idb-client-generator": "^0.14.1",
+		"@prisma-idb/idb-client-generator": "^0.x.0",
 		"@prisma/client": "^6.5.0",
 		"@prisma/extension-accelerate": "^1.2.2",
 		"@serwist/build": "^9.0.12",
 		"@serwist/vite": "^9.0.12",
 		"@serwist/window": "^9.0.12",
-		"@sveltejs/adapter-auto": "^4.0.0",
+		"@sveltejs/adapter-vercel": "^5.6.3",
+		"@sveltejs/enhanced-img": "^0.4.4",
 		"@sveltejs/kit": "^2.16.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/postcss": "^4.0.13",
@@ -40,7 +42,7 @@
 		"eslint-plugin-svelte": "^3.1.0",
 		"formsnap": "^2.0.0",
 		"globals": "^16.0.0",
-		"lucide-svelte": "^0.479.0",
+		"lucide-svelte": "^0.x.x",
 		"mdsvex": "^0.12.3",
 		"mode-watcher": "^0.5.1",
 		"paneforge": "^1.0.0-next.4",
@@ -65,6 +67,7 @@
 		"zod": "^3.24.2"
 	},
 	"dependencies": {
+		"@tanstack/svelte-query": "^5.68.0",
 		"@tanstack/table-core": "^8.21.2",
 		"better-auth": "^1.2.4"
 	},

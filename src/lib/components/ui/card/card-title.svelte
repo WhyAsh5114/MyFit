@@ -18,7 +18,7 @@
 	role="heading"
 	aria-level={level}
 	bind:this={ref}
-	class={cn('text-2xl leading-none font-semibold tracking-tight', className)}
+	class={cn('text-xl leading-none font-semibold tracking-tight md:text-2xl', className)}
 	{...restProps}
 >
 	{@render children?.()}

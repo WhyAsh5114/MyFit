@@ -1,0 +1,75 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - v4-svelte
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-environment
+      - name: Run ESLint and Prettier Check
+        run: npm run lint
+
+  svelte_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-environment
+      - name: Run Svelte Check
+        run: npm run check
+    env:
+      PUBLIC_BETTER_AUTH_URL: ${{ secrets.PUBLIC_BETTER_AUTH_URL }}
+      AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
+      AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
+
+  playwright_tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: defaultdb
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-environment
+
+      - name: Set DATABASE_URL
+        run: echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/defaultdb?sslmode=disable" >> $GITHUB_ENV
+
+      - name: Initialize database schema
+        run: npx prisma db push
+
+      - name: Generate AUTH_SECRET
+        run: echo "AUTH_SECRET=$(openssl rand -base64 33)" >> $GITHUB_ENV
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+    env:
+      PUBLIC_BETTER_AUTH_URL: ${{ secrets.PUBLIC_BETTER_AUTH_URL }}
+      AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
+      AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}

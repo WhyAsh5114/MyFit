@@ -13,8 +13,8 @@
 	<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 	{#each { length: numCircles } as _, i (i)}
 		<div
-			class="animate-ripple bg-foreground/30 absolute top-1/2 bottom-1/2 right-1/2 left-1/2 rounded-full border shadow-xl [--i:{i}]"
-			style="width: {mainCircleSize + i * 70}px;
+			class="animate-ripple bg-foreground/30 absolute top-1/2 right-1/2 bottom-1/2 left-1/2 rounded-full border shadow-xl"
+			style="--i:{i}; width: {mainCircleSize + i * 70}px;
          height: {mainCircleSize + i * 70}px;
          opacity: {mainCircleOpacity - i * 0.03}; 
          animation-delay: {i * 0.08}s;

@@ -194,10 +194,68 @@ export function whereStringFilter<T, R extends Prisma.Result<T, object, 'findFir
 	return true;
 }
 
+export function whereNumberFilter<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
+	record: R,
+	fieldName: keyof R,
+	numberFilter: undefined | number | Prisma.IntFilter<unknown>
+): boolean {
+	if (numberFilter === undefined) return true;
+
+	const value = record[fieldName] as number | null;
+	if (numberFilter === null) return value === null;
+
+	if (typeof numberFilter === 'number') {
+		if (value !== numberFilter) return false;
+	} else {
+		if (numberFilter.equals === null) {
+			if (value !== null) return false;
+		}
+		if (typeof numberFilter.equals === 'number') {
+			if (numberFilter.equals !== value) return false;
+		}
+		if (numberFilter.not === null) {
+			if (value === null) return false;
+		}
+		if (typeof numberFilter.not === 'number') {
+			if (numberFilter.not === value) return false;
+		}
+		if (Array.isArray(numberFilter.in)) {
+			if (value === null) return false;
+			if (!numberFilter.in.includes(value)) return false;
+		}
+		if (Array.isArray(numberFilter.notIn)) {
+			if (value === null) return false;
+			if (numberFilter.notIn.includes(value)) return false;
+		}
+		if (typeof numberFilter.lt === 'number') {
+			if (value === null) return false;
+			if (!(value < numberFilter.lt)) return false;
+		}
+		if (typeof numberFilter.lte === 'number') {
+			if (value === null) return false;
+			if (!(value <= numberFilter.lte)) return false;
+		}
+		if (typeof numberFilter.gt === 'number') {
+			if (value === null) return false;
+			if (!(value > numberFilter.gt)) return false;
+		}
+		if (typeof numberFilter.gte === 'number') {
+			if (value === null) return false;
+			if (!(value >= numberFilter.gte)) return false;
+		}
+	}
+	return true;
+}
+
 export function whereBoolFilter<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
-	boolFilter: undefined | boolean | Prisma.BoolFilter<unknown>
+	boolFilter:
+		| undefined
+		| boolean
+		| Prisma.BoolFilter<unknown>
+		| null
+		| Prisma.BoolNullableFilter<unknown>
 ): boolean {
 	if (boolFilter === undefined) return true;
 
@@ -287,6 +345,34 @@ export function whereDateTimeFilter<T, R extends Prisma.Result<T, object, 'findF
 	return true;
 }
 
+export function whereStringListFilter<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
+	record: R,
+	fieldName: keyof R,
+	scalarListFilter: undefined | Prisma.StringNullableListFilter<unknown>
+): boolean {
+	if (scalarListFilter === undefined) return true;
+
+	const value = record[fieldName] as string[] | undefined;
+	if (value === undefined && Object.keys(scalarListFilter).length) return false;
+	if (Array.isArray(scalarListFilter.equals)) {
+		if (scalarListFilter.equals.length !== value?.length) return false;
+		if (!scalarListFilter.equals.every((val, i) => val === value[i])) return false;
+	}
+	if (typeof scalarListFilter.has === 'string') {
+		if (!value?.includes(scalarListFilter.has)) return false;
+	}
+	if (scalarListFilter.has === null) return false;
+	if (Array.isArray(scalarListFilter.hasSome)) {
+		if (!scalarListFilter.hasSome.some((val) => value?.includes(val))) return false;
+	}
+	if (Array.isArray(scalarListFilter.hasEvery)) {
+		if (!scalarListFilter.hasEvery.every((val) => value?.includes(val))) return false;
+	}
+	if (scalarListFilter.isEmpty === true && value?.length) return false;
+	if (scalarListFilter.isEmpty === false && value?.length === 0) return false;
+	return true;
+}
+
 export function handleStringUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
@@ -308,13 +394,18 @@ export function handleStringUpdateField<T, R extends Prisma.Result<T, object, 'f
 export function handleBooleanUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
-	booleanUpdate: undefined | boolean | Prisma.BoolFieldUpdateOperationsInput
+	booleanUpdate:
+		| undefined
+		| boolean
+		| Prisma.BoolFieldUpdateOperationsInput
+		| null
+		| Prisma.NullableBoolFieldUpdateOperationsInput
 ) {
 	if (booleanUpdate === undefined) return;
-	if (typeof booleanUpdate === 'boolean') {
-		(record[fieldName] as boolean) = booleanUpdate;
+	if (typeof booleanUpdate === 'boolean' || booleanUpdate === null) {
+		(record[fieldName] as boolean | null) = booleanUpdate;
 	} else if (booleanUpdate.set !== undefined) {
-		(record[fieldName] as boolean) = booleanUpdate.set;
+		(record[fieldName] as boolean | null) = booleanUpdate.set;
 	}
 }
 
@@ -342,6 +433,62 @@ export function handleDateTimeUpdateField<
 	} else if (dateTimeUpdate.set !== undefined) {
 		(record[fieldName] as Date | null) =
 			dateTimeUpdate.set === null ? null : new Date(dateTimeUpdate.set);
+	}
+}
+
+export function handleIntUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
+	record: R,
+	fieldName: keyof R,
+	intUpdate: undefined | number | Prisma.IntFieldUpdateOperationsInput
+) {
+	if (intUpdate === undefined) return;
+	if (typeof intUpdate === 'number') {
+		(record[fieldName] as number) = intUpdate;
+	} else if (intUpdate.set !== undefined) {
+		(record[fieldName] as number) = intUpdate.set;
+	} else if (intUpdate.increment !== undefined && record[fieldName] !== null) {
+		(record[fieldName] as number) += intUpdate.increment;
+	} else if (intUpdate.decrement !== undefined && record[fieldName] !== null) {
+		(record[fieldName] as number) -= intUpdate.decrement;
+	} else if (intUpdate.multiply !== undefined && record[fieldName] !== null) {
+		(record[fieldName] as number) *= intUpdate.multiply;
+	} else if (intUpdate.divide !== undefined && record[fieldName] !== null) {
+		(record[fieldName] as number) /= intUpdate.divide;
+	}
+}
+
+export function handleEnumUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
+	record: R,
+	fieldName: keyof R,
+	enumUpdate: undefined | string | { set?: string }
+) {
+	if (enumUpdate === undefined) return;
+	if (typeof enumUpdate === 'string') {
+		(record[fieldName] as string) = enumUpdate;
+	} else if (enumUpdate.set !== undefined) {
+		(record[fieldName] as string) = enumUpdate.set;
+	}
+}
+
+export function handleScalarListUpdateField<
+	T,
+	R extends Prisma.Result<T, object, 'findFirstOrThrow'>
+>(
+	record: R,
+	fieldName: keyof R,
+	listUpdate: undefined | unknown[] | { set?: unknown[]; push?: unknown | unknown[] }
+) {
+	if (listUpdate === undefined) return;
+	if (Array.isArray(listUpdate)) {
+		(record[fieldName] as unknown[] | undefined) = listUpdate;
+	} else if (listUpdate.set !== undefined) {
+		(record[fieldName] as unknown[] | undefined) = listUpdate.set;
+	} else if (listUpdate.push !== undefined) {
+		if (Array.isArray(record[fieldName])) {
+			record[fieldName].push(...convertToArray(listUpdate.push));
+		} else {
+			(record[fieldName] as unknown[]) = convertToArray(listUpdate.push);
+		}
 	}
 }
 

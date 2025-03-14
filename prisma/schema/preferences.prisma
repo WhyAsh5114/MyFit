@@ -1,0 +1,15 @@
+model GettingStartedAnswers {
+  id                String            @id @default(uuid())
+  user              User              @relation(fields: [userId], references: [id])
+  userId            String            @unique
+  fitnessKnowledge  FitnessKnowledge
+  myFitPrimaryUsage MyFitPrimaryUsage
+}
+
+model DashboardItems {
+  id        String          @id @default(uuid())
+  user      User            @relation(fields: [userId], references: [id])
+  userId    String          @unique
+  items     DashboardItem[]
+  createdAt DateTime        @default(now())
+}

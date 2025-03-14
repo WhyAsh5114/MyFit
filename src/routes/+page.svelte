@@ -16,7 +16,7 @@
 		in:fade|global={{ delay: 1000 }}
 	>
 		<p
-			class="z-10 text-center text-5xl font-medium tracking-tighter whitespace-pre-wrap text-white"
+			class="text-foreground z-10 text-center text-5xl font-medium tracking-tighter whitespace-pre-wrap"
 		>
 			<Button class="h-24 w-24 rounded-xl p-0" href="/dashboard">
 				<BicepsFlexedIcon class="!h-12 !w-12" />

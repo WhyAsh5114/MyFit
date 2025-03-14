@@ -1,83 +1,24 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { authClient } from '$lib/auth/auth-client';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
+	import { SIDEBAR_LINK_GROUPS } from '$lib/constants';
 	import {
-		BookOpenTextIcon,
-		CalendarIcon,
-		ChartNoAxesCombinedIcon,
 		ChevronUpIcon,
 		CogIcon,
 		DownloadIcon,
-		DumbbellIcon,
-		GithubIcon,
-		GlobeLockIcon,
-		HandCoinsIcon,
-		LayoutDashboardIcon,
 		LoaderCircleIcon,
 		LogInIcon,
-		NotebookTextIcon,
-		PackagePlusIcon,
 		RefreshCcwIcon,
-		RssIcon,
 		UserRoundIcon
 	} from 'lucide-svelte';
 	import { appLayoutState } from './app-layout-state.svelte';
-	import { page } from '$app/state';
+	import { client } from '$lib/idb-client';
 
 	const sidebar = useSidebar();
 	const session = authClient.useSession();
-
-	const linkGroups = [
-		{
-			label: 'Application',
-			items: [
-				{ label: 'Dashboard', href: '/dashboard', icon: LayoutDashboardIcon },
-				{
-					label: 'Progression',
-					href: '/progression',
-					icon: ChartNoAxesCombinedIcon
-				}
-			]
-		},
-		{
-			label: 'Items',
-			items: [
-				{ label: 'Workouts', href: '/workouts', icon: DumbbellIcon },
-				{ label: 'Mesocycles', href: '/mesocycles', icon: NotebookTextIcon },
-				{
-					label: 'Exercise splits',
-					href: '/exercise-splits',
-					icon: CalendarIcon
-				}
-			]
-		},
-		{
-			label: 'Resources',
-			items: [
-				{ label: 'Docs', href: '/docs', icon: BookOpenTextIcon },
-				{ label: 'Changelog', href: '/changelog', icon: PackagePlusIcon },
-				{ label: 'Blog', href: '/blog', icon: RssIcon }
-			]
-		},
-		{
-			label: 'More',
-			items: [
-				{ label: 'Donations', href: '/donations', icon: HandCoinsIcon },
-				{
-					label: 'Github',
-					href: 'https://github.com/WhyAsh5114/MyFit',
-					icon: GithubIcon
-				},
-				{
-					label: 'Privacy policy',
-					href: '/privacy-policy',
-					icon: GlobeLockIcon
-				}
-			]
-		}
-	];
 </script>
 
 <Sidebar.Root>
@@ -97,7 +38,7 @@
 		</Sidebar.Menu>
 	</Sidebar.Header>
 	<Sidebar.Content>
-		{#each linkGroups as linkGroup (linkGroup.label)}
+		{#each SIDEBAR_LINK_GROUPS as linkGroup (linkGroup.label)}
 			<Sidebar.Group>
 				<Sidebar.GroupLabel>{linkGroup.label}</Sidebar.GroupLabel>
 				<Sidebar.GroupContent>
@@ -165,6 +106,7 @@
 									onclick={() => {
 										authClient.signOut();
 										localStorage.clear();
+										client.resetDatabase();
 									}}
 								>
 									<LogInIcon />
