@@ -1,7 +1,21 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { authClient } from '$lib/auth/auth-client';
 	import { Button } from '$lib/components/ui/button';
+
+	$effect(() => {
+		authClient.getSession().then((session) => {
+			if (session.data) goto('/dashboard');
+		});
+	});
+
+	async function login() {
+		await authClient.signIn.social({
+			provider: 'google',
+			callbackURL: page.url.searchParams.get('redirect') ?? '/dashboard'
+		});
+	}
 </script>
 
 <div class="grid h-screen w-full grid-cols-1 md:grid-cols-2">
@@ -26,11 +40,7 @@
 				<Button
 					variant="secondary"
 					class="flex w-full items-center justify-center gap-2"
-					onclick={() =>
-						authClient.signIn.social({
-							provider: 'google',
-							callbackURL: page.url.searchParams.get('redirect') ?? '/dashboard'
-						})}
+					onclick={login}
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
 						<path

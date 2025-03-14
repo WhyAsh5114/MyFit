@@ -5,6 +5,7 @@
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import AppSidebar from './components/app-sidebar.svelte';
 	import LinkBreadcrumbs from './components/link-breadcrumbs.svelte';
+	import SessionCacher from './components/session-cacher.svelte';
 	import SwEventsHandler from './components/sw-events-handler.svelte';
 
 	let { children } = $props();
@@ -12,10 +13,11 @@
 
 <Toaster />
 <SwEventsHandler />
+<SessionCacher />
 
 <Sidebar.Provider>
 	<AppSidebar />
-	<ScrollArea class="h-screen w-full mx-auto max-w-xl">
+	<ScrollArea class="mx-auto h-screen w-full max-w-xl">
 		<header
 			class="bg-background/80 sticky top-0 z-50 flex min-h-12 items-center gap-2 px-4 backdrop-blur-sm"
 		>

@@ -5,7 +5,7 @@ function createAppLayoutState() {
 	let updateDialogOpen = $state(false);
 
 	if (typeof window !== 'undefined' && 'localStorage' in window) {
-		const lastCheckedItem = localStorage.getItem('lastChecked');
+		const lastCheckedItem = localStorage.getItem('last-checked');
 		if (lastCheckedItem) {
 			lastChecked = new Date(lastCheckedItem);
 		}
@@ -18,7 +18,7 @@ function createAppLayoutState() {
 		set lastChecked(value) {
 			lastChecked = value;
 			if (!value) return;
-			localStorage.setItem('lastChecked', value.toISOString());
+			localStorage.setItem('last-checked', value.toISOString());
 		},
 		get skipWaitingFunction() {
 			return skipWaitingFunction;
