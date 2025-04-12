@@ -88,7 +88,8 @@
 			{
 				id: progressToast,
 				loading: `Installing ${Math.round(progress * 100)}%`,
-				success: 'App ready for offline use'
+				success: 'App ready for offline use',
+				cancel: { label: 'Dismiss' }
 			}
 		);
 	});
