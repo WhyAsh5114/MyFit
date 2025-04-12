@@ -1,15 +1,12 @@
 <script lang="ts">
-	import { getSerwist } from 'virtual:serwist';
-	import { appLayoutState } from './app-layout-state.svelte';
-	import { toast } from 'svelte-sonner';
 	import { dev } from '$app/environment';
 	import ResponsiveDialog from '$lib/components/responsive-dialog.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { LoaderCircleIcon } from 'lucide-svelte';
+	import { getSerwist } from 'virtual:serwist';
+	import { appLayoutState } from './app-layout-state.svelte';
 
 	let updateInterval = $state<ReturnType<typeof setInterval>>();
-	let progress = $state<number>();
-	let progressToast = $state<string | number>();
 	let updating = $state(false);
 
 	$effect(() => {
@@ -46,29 +43,6 @@
 						location.reload();
 					}
 				});
-
-				serwist.addEventListener('installing', async (event) => {
-					if (event.isUpdate || event.isExternal) return;
-
-					const response = await fetch('./precache-entries.json');
-					const { count } = (await response.json()) as { count: number };
-					const cache = await caches.open(`serwist-precache`);
-
-					let animationFrameId: number;
-					const updateProgress = async () => {
-						const totalCached = (await cache.keys()).length;
-						progress = totalCached / count;
-
-						if (totalCached < count) {
-							animationFrameId = requestAnimationFrame(updateProgress);
-						}
-					};
-
-					updateProgress();
-					return () => {
-						if (animationFrameId) cancelAnimationFrame(animationFrameId);
-					};
-				});
 			}
 
 			return () => {
@@ -76,22 +50,6 @@
 			};
 		};
 		loadSerwist();
-	});
-
-	$effect(() => {
-		if (!progress) return;
-
-		progressToast = toast.promise(
-			new Promise<void>((resolve) => {
-				if (progress === 1) resolve();
-			}),
-			{
-				id: progressToast,
-				loading: `Installing ${Math.round(progress * 100)}%`,
-				success: 'App ready for offline use',
-				cancel: { label: 'Dismiss' }
-			}
-		);
 	});
 
 	$effect(() => {

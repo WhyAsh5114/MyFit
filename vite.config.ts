@@ -10,6 +10,7 @@ import path from 'node:path';
 import type { Plugin } from 'vite';
 import { defineConfig } from 'vite';
 import config from './svelte.config';
+import dotenv from 'dotenv';
 
 // Source: https://github.com/sveltejs/kit/blob/6419d3eaa7bf1b0a756b28f06a73f71fe042de0a/packages/kit/src/utils/filesystem.js
 // License: MIT
@@ -75,7 +76,7 @@ const buildPlugin = (ctx: SerwistViteContext, api: SerwistViteApi) => {
 export const globPatternsAndIgnores = {
 	globPatterns: [
 		// Static assets.
-		'client/**/*.{js,css,ico,png,svg,webp,json,webmanifest,ttf}',
+		'client/**/*.{js,css,png,svg,webp,json,webmanifest,ttf}',
 		// Note: comment out the following if you don't have prerendered pages.
 		'prerendered/pages/**/*.html',
 		// Note: comment out the following if your prerendered pages do not have any data.
@@ -192,6 +193,17 @@ const serwist = (): Plugin[] => {
 	return [mainPlugin(ctx, api), devPlugin(ctx, api), buildPlugin(ctx, api)];
 };
 
-export default defineConfig({
-	plugins: [enhancedImages(), sveltekit(), serwist()]
+export default defineConfig(({ mode }) => {
+	const envFiles: Record<string, string> = {
+		development: '.env',
+		mobile: '.env.mobile'
+	};
+
+	const envFile = dotenv.config({ path: envFiles[mode] }).parsed;
+	return {
+		plugins: [enhancedImages(), sveltekit(), serwist()],
+		define: {
+			'process.env': JSON.stringify(envFile)
+		}
+	};
 });

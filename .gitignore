@@ -26,3 +26,6 @@ vite.config.ts.timestamp-*
 # Serwist
 public/sw*
 public/swe-worker*
+
+resources/ios/**/*
+resources/android/**/*
