@@ -97,7 +97,7 @@
 			const { muscleGroup, exercises } = exercisesForMuscleGroup;
 			return {
 				muscleGroup,
-				exercises: exercises.filter((ex) => ex.name.toLowerCase().includes(currentExercise.name ?? ''))
+				exercises: exercises.filter((ex) => ex.name.toLowerCase().includes(currentExercise.name?.toLowerCase() ?? ''))
 			};
 		})
 	);
