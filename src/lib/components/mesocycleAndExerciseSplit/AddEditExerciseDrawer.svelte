@@ -97,7 +97,7 @@
 			const { muscleGroup, exercises } = exercisesForMuscleGroup;
 			return {
 				muscleGroup,
-				exercises: exercises.filter((ex) => ex.name.toLowerCase().includes(currentExercise.name ?? ''))
+				exercises: exercises.filter((ex) => ex.name.toLowerCase().includes(currentExercise.name?.toLowerCase() ?? ''))
 			};
 		})
 	);
@@ -169,7 +169,7 @@
 						bind:value={currentExercise.name}
 					/>
 					{#if searching}
-						<Command.List class="max-h-32 bg-muted">
+						<Command.List class="bg-muted max-h-32">
 							{#each filteredExercises as exercisesForMuscleGroup}
 								{#if exercisesForMuscleGroup.exercises.length > 0}
 									<Command.Group heading={exercisesForMuscleGroup.muscleGroup}>
@@ -202,7 +202,7 @@
 						label: convertCamelCaseToNormal(currentExercise.targetMuscleGroup)
 					}}
 				>
-					<Select.Label class="p-0 text-sm font-medium leading-none">Target muscle group</Select.Label>
+					<Select.Label class="p-0 text-sm leading-none font-medium">Target muscle group</Select.Label>
 					<Select.Trigger>
 						<Select.Value placeholder="Pick one" />
 					</Select.Trigger>
@@ -237,7 +237,7 @@
 					/>
 				</div>
 				<div class="flex flex-col gap-1.5">
-					<span class="text-sm font-medium leading-none">Progression</span>
+					<span class="text-sm leading-none font-medium">Progression</span>
 					<Button class="gap-2" onclick={() => (overridesSheetOpen = true)} variant="secondary">
 						<span class="pointer-events-none">Overrides</span>
 						<ChevronRight class="pointer-events-none" />
@@ -285,7 +285,7 @@
 						label: convertCamelCaseToNormal(currentExercise.setType)
 					}}
 				>
-					<Select.Label class="p-0 text-sm font-medium leading-none">Set type</Select.Label>
+					<Select.Label class="p-0 text-sm leading-none font-medium">Set type</Select.Label>
 					<Select.Trigger>
 						<Select.Value placeholder="Pick one" />
 					</Select.Trigger>
@@ -314,7 +314,7 @@
 							label: convertCamelCaseToNormal(currentExercise.changeType)
 						}}
 					>
-						<Select.Label class="p-0 text-sm font-medium leading-none">Load change type</Select.Label>
+						<Select.Label class="p-0 text-sm leading-none font-medium">Load change type</Select.Label>
 						<Select.Trigger>
 							<Select.Value placeholder="Pick one" />
 						</Select.Trigger>
