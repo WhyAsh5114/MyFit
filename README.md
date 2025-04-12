@@ -1,5 +1,107 @@
 # MyFit
 
+A fitness tracking application built with SvelteKit and Capacitor for cross-platform deployment.
+
+## Development Environment Setup
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v16 or later)
+- [npm](https://www.npmjs.com/) or [pnpm](https://pnpm.io/)
+- For Android development:
+  - [Android Studio](https://developer.android.com/studio)
+  - Java Development Kit (JDK) 11+
+- For iOS development:
+  - [Xcode](https://developer.apple.com/xcode/) (macOS only)
+  - [CocoaPods](https://cocoapods.org/)
+
+### Getting Started
+
+1. **Clone the repository**
+
+```bash
+git clone https://github.com/WhyAsh5114/MyFit.git
+cd MyFit
+```
+
+2. **Install dependencies**
+
+```bash
+npm install
+# or
+pnpm install
+```
+
+3. **Start the development server**
+
+```bash
+npm run dev
+# or
+pnpm dev
+```
+
+4. **Build the web app**
+
+```bash
+npm run build
+# or
+pnpm build
+```
+
+### Capacitor Setup
+
+1. **Initialize Capacitor with your app**
+
+```bash
+npx cap init MyFit com.myfit.app
+```
+
+2. **Add platforms**
+
+```bash
+# Add Android platform
+npx cap add android
+
+# Add iOS platform
+npx cap add ios
+```
+
+3. **Sync your web code to your native projects**
+
+```bash
+npx cap sync
+```
+
+4. **Open native IDEs**
+
+```bash
+# Open Android Studio
+npx cap open android
+
+# Open Xcode
+npx cap open ios
+```
+
+5. **Live reload during development**
+
+```bash
+npm run dev
+npx cap run android -l --external
+# or
+npx cap run ios -l --external
+```
+
+## Project Structure
+
+- `/src` - SvelteKit application source code
+- `/static` - Static assets to be copied to the build folder
+- `/android` - Android platform-specific code
+- `/ios` - iOS platform-specific code
+
+## Contributing
+
+Please read our [Contributing Guidelines](.github/CONTRIBUTING.md) before submitting a Pull Request.
+
 ## 📜 License
 
 This project is licensed under a **Custom Business Source License (Indefinite Version)**.

@@ -16,7 +16,11 @@
 		"test": "npm run test:e2e",
 		"postinstall": "prisma generate --no-engine"
 	},
+	"prisma": {
+		"schema": "prisma/schema"
+	},
 	"devDependencies": {
+		"@capacitor/cli": "^7.2.0",
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
 		"@internationalized/date": "^3.7.0",
@@ -67,9 +71,16 @@
 		"zod": "^3.24.2"
 	},
 	"dependencies": {
+		"@awesome-cordova-plugins/core": "^6.16.0",
+		"@awesome-cordova-plugins/health": "^6.16.0",
+		"@capacitor/android": "^7.2.0",
+		"@capacitor/core": "^7.2.0",
+		"@capacitor/ios": "^7.2.0",
+		"@capacitor/status-bar": "^7.0.1",
 		"@tanstack/svelte-query": "^5.68.0",
 		"@tanstack/table-core": "^8.21.2",
-		"better-auth": "^1.2.4"
+		"better-auth": "^1.2.4",
+		"cordova-plugin-health": "^3.2.4"
 	},
 	"overrides": {
 		"vite": "^6.0.0"
