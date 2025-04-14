@@ -1,14 +1,13 @@
 name: 'Setup Node.js and Install Dependencies'
-description: 'Checks out the code, sets up Node.js, and installs dependencies using npm ci'
+description: 'Checks out the code, sets up Node.js, and installs dependencies using bun install --frozen-lockfile'
 runs:
   using: 'composite'
   steps:
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
       with:
-        node-version: 22.x
-        cache: 'npm'
+        bun-version: latest
 
     - name: Install dependencies
       shell: bash
-      run: npm ci
+      run: bun install --frozen-lockfile

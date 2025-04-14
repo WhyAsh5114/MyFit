@@ -1,6 +1,7 @@
 import type { Prisma } from '@prisma/client';
 import type { IDBPDatabase, StoreNames } from 'idb';
 import { openDB } from 'idb';
+import { v4 as uuidv4 } from 'uuid';
 import type { PrismaIDBSchema } from './idb-interface';
 import * as IDBUtils from './idb-utils';
 
@@ -357,7 +358,7 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 	>(data: D, tx?: IDBUtils.ReadwriteTransactionType): Promise<D> {
 		if (data === undefined) data = {} as NonNullable<D>;
 		if (data.id === undefined) {
-			data.id = crypto.randomUUID();
+			data.id = uuidv4();
 		}
 		return data;
 	}
@@ -1430,7 +1431,7 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 	>(data: D, tx?: IDBUtils.ReadwriteTransactionType): Promise<D> {
 		if (data === undefined) data = {} as NonNullable<D>;
 		if (data.id === undefined) {
-			data.id = crypto.randomUUID();
+			data.id = uuidv4();
 		}
 		return data;
 	}
@@ -2606,7 +2607,7 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 	>(data: D, tx?: IDBUtils.ReadwriteTransactionType): Promise<D> {
 		if (data === undefined) data = {} as NonNullable<D>;
 		if (data.id === undefined) {
-			data.id = crypto.randomUUID();
+			data.id = uuidv4();
 		}
 		return data;
 	}
@@ -3839,7 +3840,7 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 	>(data: D, tx?: IDBUtils.ReadwriteTransactionType): Promise<D> {
 		if (data === undefined) data = {} as NonNullable<D>;
 		if (data.id === undefined) {
-			data.id = crypto.randomUUID();
+			data.id = uuidv4();
 		}
 		if (!Array.isArray(data.notes)) {
 			data.notes = data.notes?.set;
@@ -4760,7 +4761,7 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 	>(data: D, tx?: IDBUtils.ReadwriteTransactionType): Promise<D> {
 		if (data === undefined) data = {} as NonNullable<D>;
 		if (data.id === undefined) {
-			data.id = crypto.randomUUID();
+			data.id = uuidv4();
 		}
 		return data;
 	}
@@ -5526,7 +5527,7 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 	>(data: D, tx?: IDBUtils.ReadwriteTransactionType): Promise<D> {
 		if (data === undefined) data = {} as NonNullable<D>;
 		if (data.id === undefined) {
-			data.id = crypto.randomUUID();
+			data.id = uuidv4();
 		}
 		if (data.createdAt === undefined) {
 			data.createdAt = new Date();

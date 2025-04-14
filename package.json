@@ -7,9 +7,10 @@
     "vite": "^6.0.0"
   },
   "scripts": {
-    "dev": "npm run dev --workspace apps/svelte",
-    "lint": "npm run lint --workspace=apps/svelte --workspace=apps/expo",
-    "build:svelte": "npm run build --workspace=apps/svelte",
-    "build:android": "npm run android --workspace=apps/expo"
+    "dev": "bun run --cwd apps/svelte dev",
+    "check": "bun run --cwd apps/svelte check",
+    "lint": "bun run --cwd apps/svelte lint && bun run --cwd apps/expo lint",
+    "build:svelte": "bun run --cwd apps/svelte build",
+    "build:android": "bun run --cwd apps/expo android"
   }
 }

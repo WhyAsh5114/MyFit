@@ -1,7 +1,7 @@
 {
-  "buildCommand": "cd apps/svelte && npm run build",
+  "buildCommand": "cd apps/svelte && bun run build",
   "outputDirectory": "apps/svelte/.vercel",
   "framework": "sveltekit",
-  "devCommand": "cd apps/svelte && npm run dev",
-  "installCommand": "cd apps/svelte && npm install"
+  "devCommand": "cd apps/svelte && bun run dev",
+  "installCommand": "cd apps/svelte && bun install"
 }
