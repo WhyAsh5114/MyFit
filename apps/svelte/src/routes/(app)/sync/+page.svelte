@@ -1,6 +1,7 @@
 <script lang="ts">
 	import H1 from '$lib/components/typography/h1.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import type { BridgeEventRequest, BridgeEventResponse } from 'bridge-types';
 	import { CircleOffIcon, DownloadIcon, LoaderCircle } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
@@ -12,23 +13,23 @@
 
 	function messageHandler(event: Event) {
 		if ('data' in event && typeof event.data === 'string') {
-			const eventData: { eventType: string; payload?: unknown } = JSON.parse(event.data);
-			if (eventData.eventType === 'IS_AVAILABLE') {
-				isAvailable = eventData.payload as boolean;
+			const bridgeResponse = JSON.parse(event.data) as BridgeEventResponse;
+			if (bridgeResponse.type === 'IS_AVAILABLE') {
+				isAvailable = bridgeResponse.payload as boolean;
 			}
-			if (eventData.eventType === 'IS_AUTHORIZED') {
-				isAuthorized = eventData.payload as boolean;
+			if (bridgeResponse.type === 'IS_AUTHORIZED') {
+				isAuthorized = bridgeResponse.payload as boolean;
 			}
-			if (eventData.eventType === 'ASK_FOR_PERMISSIONS') {
-				isAuthorized = eventData.payload as boolean;
+			if (bridgeResponse.type === 'ASK_FOR_PERMISSIONS') {
+				isAuthorized = bridgeResponse.payload as boolean;
 				if (isAuthorized) {
 					toast.success('Permissions granted');
 				} else {
 					toast.error('Permissions denied');
 				}
 			}
-			if (eventData.eventType === 'GET_STEPS') {
-				steps = eventData.payload as typeof steps;
+			if (bridgeResponse.type === 'GET_STEPS') {
+				steps = bridgeResponse.payload;
 			}
 		}
 	}
@@ -45,7 +46,7 @@
 		}
 
 		if (detectedOS && window.ReactNativeWebView) {
-			window.ReactNativeWebView.postMessage('IS_AVAILABLE');
+			sendMessageToNative('IS_AVAILABLE');
 		} else {
 			isAvailable = false;
 			toast.error('Platform syncing not available');
@@ -53,16 +54,18 @@
 	});
 
 	$effect(() => {
-		if (isAvailable) {
-			window.ReactNativeWebView!.postMessage('IS_AUTHORIZED');
-		}
+		if (isAvailable) sendMessageToNative('IS_AUTHORIZED');
 	});
 
 	$effect(() => {
-		if (isAuthorized) {
-			window.ReactNativeWebView!.postMessage('GET_STEPS');
-		}
+		if (isAuthorized) sendMessageToNative('GET_STEPS');
 	});
+
+	function sendMessageToNative(eventType: BridgeEventRequest) {
+		if (detectedOS && window.ReactNativeWebView) {
+			window.ReactNativeWebView.postMessage(eventType);
+		}
+	}
 </script>
 
 <H1>Sync</H1>

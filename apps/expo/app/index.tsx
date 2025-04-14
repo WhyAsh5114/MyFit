@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 import { WebViewMessageEvent } from "react-native-webview/lib/WebViewTypes";
+import type { BridgeEventResponse } from "bridge-types";
 
 export default function Index() {
   const webViewRef = useRef<WebView | null>(null);
@@ -54,18 +55,20 @@ export default function Index() {
     initialize();
   }, []);
 
+  function sendMessageToWebView(eventResponse: BridgeEventResponse) {
+    webViewRef.current?.postMessage(JSON.stringify(eventResponse));
+  }
+
   const onMessage = async (event: WebViewMessageEvent) => {
     const data = event.nativeEvent.data;
     console.log(data);
 
     if (data === "IS_AVAILABLE") {
       const status = await getSdkStatus();
-      webViewRef.current?.postMessage(
-        JSON.stringify({
-          eventType: "IS_AVAILABLE",
-          payload: status === SdkAvailabilityStatus.SDK_AVAILABLE,
-        })
-      );
+      sendMessageToWebView({
+        type: "IS_AVAILABLE",
+        payload: status === SdkAvailabilityStatus.SDK_AVAILABLE,
+      });
     }
 
     if (data === "IS_AUTHORIZED") {
@@ -73,12 +76,10 @@ export default function Index() {
       const activeStepsPermissionGranted = grantedPermissions.some(
         (permission) => permission.recordType === "Steps"
       );
-      webViewRef.current?.postMessage(
-        JSON.stringify({
-          eventType: "IS_AUTHORIZED",
-          payload: activeStepsPermissionGranted,
-        })
-      );
+      sendMessageToWebView({
+        type: "IS_AUTHORIZED",
+        payload: activeStepsPermissionGranted,
+      });
     }
 
     if (data === "ASK_FOR_PERMISSIONS") {
@@ -87,12 +88,10 @@ export default function Index() {
         (permission) => permission.recordType === "Steps"
       );
       if (activeStepsPermissionGranted) {
-        webViewRef.current?.postMessage(
-          JSON.stringify({
-            eventType: "ASK_FOR_PERMISSIONS",
-            payload: true,
-          })
-        );
+        sendMessageToWebView({
+          type: "ASK_FOR_PERMISSIONS",
+          payload: true,
+        });
         return;
       }
 
@@ -102,12 +101,10 @@ export default function Index() {
       activeStepsPermissionGranted = grantedPermissions.some(
         (permission) => permission.recordType === "Steps"
       );
-      webViewRef.current?.postMessage(
-        JSON.stringify({
-          eventType: "ASK_FOR_PERMISSIONS",
-          payload: activeStepsPermissionGranted,
-        })
-      );
+      sendMessageToWebView({
+        type: "ASK_FOR_PERMISSIONS",
+        payload: activeStepsPermissionGranted,
+      });
     }
 
     if (data === "GET_STEPS") {
@@ -120,12 +117,10 @@ export default function Index() {
           endTime: new Date().toISOString(),
         },
       });
-      webViewRef.current?.postMessage(
-        JSON.stringify({
-          eventType: "GET_STEPS",
-          payload: records,
-        })
-      );
+      sendMessageToWebView({
+        type: "GET_STEPS",
+        payload: records,
+      });
     }
   };
 

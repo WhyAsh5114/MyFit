@@ -1,4 +1,4 @@
-export type BridgeEvent =
+export type BridgeEventResponse =
   | {
       type: "THEME_CHANGE";
       payload: "dark" | "light";
@@ -18,8 +18,10 @@ export type BridgeEvent =
   | {
       type: "GET_STEPS";
       payload: {
-        steps: number;
-        startDate: string;
-        endDate: string;
-      };
+        count: number;
+        startTime: string;
+        endTime: string;
+      }[];
     };
+
+export type BridgeEventRequest = BridgeEventResponse["type"];
