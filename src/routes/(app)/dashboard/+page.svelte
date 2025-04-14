@@ -2,7 +2,7 @@
 	import H1 from '$lib/components/typography/h1.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { FastForwardIcon } from 'lucide-svelte';
+	import { FastForwardIcon, SmartphoneIcon } from 'lucide-svelte';
 </script>
 
 <H1>Dashboard</H1>
@@ -17,6 +17,20 @@
 		</div>
 		<Button size="icon" class="shrink-0" href="/quickstart">
 			<FastForwardIcon />
+		</Button>
+	</Card.Content>
+</Card.Root>
+
+<Card.Root>
+	<Card.Content class="flex items-center justify-between gap-2">
+		<div class="flex flex-col">
+			<span class="text-lg font-semibold">Platform sync</span>
+			<p class="text-muted-foreground text-sm">
+				Sync your data with the platform using the Health plugin.
+			</p>
+		</div>
+		<Button size="icon" class="shrink-0" href="/sync">
+			<SmartphoneIcon />
 		</Button>
 	</Card.Content>
 </Card.Root>
