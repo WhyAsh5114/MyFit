@@ -1,11 +1,30 @@
 <script lang="ts">
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
-	import { ModeWatcher } from 'mode-watcher';
+	import { ModeWatcher, setMode } from 'mode-watcher';
 	import '../app.css';
 
 	let { children } = $props();
 	const queryClient = new QueryClient();
+
+	function themeChangeHandler(event: Event) {
+		if ('data' in event && typeof event.data === 'string') {
+			const eventData: { eventType: string; payload: string } = JSON.parse(event.data);
+			if (eventData.eventType === 'THEME_CHANGE') {
+				const { payload } = eventData;
+				if (payload === 'dark') {
+					setMode('dark');
+				} else {
+					setMode('light');
+				}
+			}
+		}
+	}
+
+	$effect(() => {
+		window.addEventListener('message', themeChangeHandler);
+		document.addEventListener('message', themeChangeHandler);
+	});
 </script>
 
 <svelte:head>
