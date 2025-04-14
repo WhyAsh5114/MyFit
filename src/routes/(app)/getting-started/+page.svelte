@@ -47,6 +47,10 @@
 			});
 			toast.success('Your preferences have been saved!');
 			goto('/dashboard');
+		},
+		onError: (error) => {
+			toast.error('An error occurred while saving your preferences.');
+			console.error('Error saving answers:', error);
 		}
 	});
 </script>

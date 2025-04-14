@@ -36,6 +36,10 @@
 				callbackURL: page.url.searchParams.get('redirect') ?? '/dashboard',
 				newUserCallbackURL: '/getting-started'
 			});
+		},
+		onError: (error) => {
+			toast.error('An error occurred while signing in');
+			console.error('Error signing in:', error);
 		}
 	});
 </script>

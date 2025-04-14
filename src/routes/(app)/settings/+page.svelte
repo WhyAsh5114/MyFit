@@ -52,6 +52,10 @@
 			await client.resetDatabase();
 			toast.success('IndexedDB cleared');
 			location.reload();
+		},
+		onError: (error) => {
+			toast.error('Failed to clear IndexedDB');
+			console.error('Error clearing IndexedDB:', error);
 		}
 	});
 </script>
