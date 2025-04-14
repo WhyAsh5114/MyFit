@@ -1,5 +1,3 @@
-// @ts-expect-error: MDSvex is not typed
-import { mdsvex } from 'mdsvex';
 import adapter from '@sveltejs/adapter-vercel';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
@@ -7,10 +5,7 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 const config = {
 	// Consult https://svelte.dev/docs/kit/integrations
 	// for more information about preprocessors
-	preprocess: [
-		vitePreprocess(),
-		mdsvex({ layout: './src/lib/components/markdown-wrapper.svelte' })
-	],
+	preprocess: [vitePreprocess()],
 
 	kit: {
 		// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.

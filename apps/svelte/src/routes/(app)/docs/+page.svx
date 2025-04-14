@@ -1,5 +1,0 @@
-# Docs
-
-Please make good documentation
-
-_(future me, please)_

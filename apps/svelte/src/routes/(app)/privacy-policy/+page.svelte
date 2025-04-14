@@ -1,4 +1,4 @@
-<article class="prose prose-neutral dark:prose-invert max-w-none">
+<article class="prose prose-sm md:prose-base prose-neutral dark:prose-invert max-w-none">
 	<h1>Privacy Policy</h1>
 	<p>Last updated: January 04, 2024</p>
 	<p>

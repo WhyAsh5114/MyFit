@@ -5,5 +5,8 @@
   ],
   "overrides": {
     "vite": "^6.0.0"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace apps/svelte"
   }
 }
