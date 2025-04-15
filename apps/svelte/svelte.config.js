@@ -15,7 +15,7 @@ const config = {
 		serviceWorker: { register: false }
 	},
 
-	extensions: ['.svelte', '.svx']
+	extensions: ['.svelte']
 };
 
 export default config;

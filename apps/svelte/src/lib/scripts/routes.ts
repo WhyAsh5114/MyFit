@@ -116,14 +116,15 @@ function extractMetaTags(content: string): Record<string, string> {
 export async function getStepRoutesMap(props: {
 	dev: boolean;
 	building: boolean;
-	url: string;
+	fetch: typeof globalThis.fetch;
 }): Promise<StepRoutesMap> {
-	const { dev, building, url } = props;
+	const { dev, building, fetch } = props;
 	if (dev || building) return findStepRoutes();
-	return fetch(`${url}/step-routes.json`).then((res) => res.json());
+	return fetch(`step-routes.json`).then((res) => res.json());
 }
 
 if (process.argv.includes('--create-json-file')) {
 	const stepRoutesMap = findStepRoutes();
 	writeFileSync('.vercel/output/static/step-routes.json', JSON.stringify(stepRoutesMap));
+	writeFileSync('.svelte-kit/output/client/step-routes.json', JSON.stringify(stepRoutesMap));
 }

@@ -11,3 +11,4 @@ const { count } = await getManifest(config);
 const data = JSON.stringify({ count });
 
 writeFileSync('.vercel/output/static/precache-entries.json', data);
+writeFileSync('.svelte-kit/output/client/precache-entries.json', data);

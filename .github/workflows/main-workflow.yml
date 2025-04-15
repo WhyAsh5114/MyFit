@@ -26,7 +26,6 @@ jobs:
       - name: Run Svelte Check
         run: cd apps/svelte && bun run check
     env:
-      PUBLIC_BETTER_AUTH_URL: ${{ secrets.PUBLIC_BETTER_AUTH_URL }}
       AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
       AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
 
@@ -70,6 +69,5 @@ jobs:
           retention-days: 30
 
     env:
-      PUBLIC_BETTER_AUTH_URL: ${{ secrets.PUBLIC_BETTER_AUTH_URL }}
       AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
       AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
