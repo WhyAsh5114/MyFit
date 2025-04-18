@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "bun run build",
+  "buildCommand": "pnpm run build",
   "framework": "sveltekit",
-  "devCommand": "bun run dev",
-  "installCommand": "bun install"
+  "devCommand": "pnpm run dev",
+  "installCommand": "pnpm install"
 }

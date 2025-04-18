@@ -1,13 +1,11 @@
 name: 'Setup Node.js and Install Dependencies'
-description: 'Checks out the code, sets up Node.js, and installs dependencies using bun install --frozen-lockfile'
+description: 'Checks out the code, sets up Node.js, and installs dependencies using pnpm'
 runs:
   using: 'composite'
   steps:
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v2
-      with:
-        bun-version: latest
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
 
     - name: Install dependencies
       shell: bash
-      run: bun install --frozen-lockfile
+      run: pnpm install --frozen-lockfile
