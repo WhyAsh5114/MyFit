@@ -2,10 +2,10 @@
 	import CustomScrollArea from '$lib/components/ui/scroll-area/custom-scroll-area.svelte';
 	import { Separator } from '$lib/components/ui/separator';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import AppSidebar from './components/app-sidebar.svelte';
-	import LinkBreadcrumbs from './components/link-breadcrumbs.svelte';
-	import SessionCacher from './components/session-cacher.svelte';
-	import SwEventsHandler from './components/sw-events-handler.svelte';
+	import AppSidebar from './_components/app-sidebar.svelte';
+	import LinkBreadcrumbs from './_components/link-breadcrumbs.svelte';
+	import SessionCacher from './_components/session-cacher.svelte';
+	import SwEventsHandler from './_components/sw-events-handler.svelte';
 
 	let { children } = $props();
 </script>

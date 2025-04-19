@@ -8,7 +8,7 @@
 	import { LoaderCircleIcon, RefreshCcwIcon, RotateCwIcon } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import { getSerwist } from 'virtual:serwist';
-	import { appLayoutState } from '../components/app-layout-state.svelte';
+	import { appLayoutState } from '../_components/app-layout-state.svelte';
 
 	let swStatus = $state<'checking' | 'installing' | 'waiting' | undefined>();
 
