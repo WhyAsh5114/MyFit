@@ -6,24 +6,31 @@ import type {
 	FitnessKnowledge
 } from '@prisma/client';
 import {
-	Apple,
-	Baby,
+	AppleIcon,
+	BabyIcon,
+	BicepsFlexedIcon,
 	BookOpenTextIcon,
 	CalendarIcon,
 	ChartNoAxesCombinedIcon,
-	Dumbbell,
+	ChevronDownIcon,
+	ChevronUpIcon,
 	DumbbellIcon,
+	EqualApproximatelyIcon,
+	EqualIcon,
+	FileClockIcon,
 	GithubIcon,
 	GlobeLockIcon,
 	HandCoinsIcon,
 	LayoutDashboardIcon,
-	Medal,
+	MedalIcon,
 	NotebookTextIcon,
 	PackagePlusIcon,
 	RssIcon,
+	ScaleIcon,
 	SmilePlus,
-	Sparkle,
-	Sprout
+	SparkleIcon,
+	SproutIcon,
+	UserRoundIcon
 } from 'lucide-svelte';
 
 export const MUSCLE_GROUPS = {
@@ -120,25 +127,25 @@ export const GETTING_STARTED_QUESTIONS = [
 				value: 'newbie',
 				label: 'Newbie',
 				description: 'Just getting started with focusing on health',
-				Icon: Baby
+				Icon: BabyIcon
 			},
 			{
 				value: 'beginner',
 				label: 'Beginner',
 				description: 'Know about exercise splits, diet, and recovery',
-				Icon: Sprout
+				Icon: SproutIcon
 			},
 			{
 				value: 'intermediate',
 				label: 'Intermediate',
 				description: 'Have dabbled into techniques like deloads and periodization',
-				Icon: Dumbbell
+				Icon: DumbbellIcon
 			},
 			{
 				value: 'advanced',
 				label: 'Advanced',
 				description: 'Comfortable with high degree of autoregulation and advanced techniques',
-				Icon: Medal
+				Icon: MedalIcon
 			}
 		]
 	},
@@ -150,13 +157,13 @@ export const GETTING_STARTED_QUESTIONS = [
 				value: 'workout-tracking',
 				label: 'Workout tracking',
 				description: 'Scientific approach to tracking workouts and progress',
-				Icon: Dumbbell
+				Icon: DumbbellIcon
 			},
 			{
 				value: 'macro-tracking',
 				label: 'Macro tracking',
 				description: 'Dynamic and personalized nutrition tracking',
-				Icon: Apple
+				Icon: AppleIcon
 			},
 			{
 				value: 'social-network',
@@ -168,7 +175,7 @@ export const GETTING_STARTED_QUESTIONS = [
 				value: 'mix',
 				label: 'A bit of everything',
 				description: 'A mix of all the above, you can customize later',
-				Icon: Sparkle
+				Icon: SparkleIcon
 			}
 		]
 	}
@@ -182,13 +189,13 @@ export const QUICK_SETUP_QUESTION = {
 			value: 'workout-tracking',
 			label: 'Workout tracking',
 			description: 'Scientific approach to tracking workouts and progress',
-			Icon: Dumbbell
+			Icon: DumbbellIcon
 		},
 		{
 			value: 'macro-tracking',
 			label: 'Macro tracking',
 			description: 'Dynamic and personalized nutrition tracking',
-			Icon: Apple
+			Icon: AppleIcon
 		},
 		{
 			value: 'social-network',
@@ -259,5 +266,32 @@ export const EXERCISE_SPLIT_TEMPLATES: ExerciseSplitTemplate[] = [
 			{ dayIndex: 5, splitDaySessions: [{ name: 'Legs B', sessionIndex: 0, exercises: [] }] },
 			{ dayIndex: 6, splitDaySessions: [] }
 		]
+	}
+] as const;
+
+export const QUICKSTART_MACRO_TRACKING_GOAL_OPTIONS = [
+	{
+		label: 'fat-loss',
+		description: 'Lose fat while maximizing muscle retention',
+		Icon1: UserRoundIcon,
+		Icon2: ChevronDownIcon
+	},
+	{
+		label: 'muscle-gain',
+		description: 'Gain muscle while minimizing fat gain',
+		Icon1: BicepsFlexedIcon,
+		Icon2: ChevronUpIcon
+	},
+	{
+		label: 'recomposition',
+		description: 'Gain muscle while losing fat (recommended for beginners)',
+		Icon1: ScaleIcon,
+		Icon2: EqualIcon
+	},
+	{
+		label: 'just-tracking',
+		description: 'Just get into the habit of knowing your intake',
+		Icon1: FileClockIcon,
+		Icon2: EqualApproximatelyIcon
 	}
 ] as const;

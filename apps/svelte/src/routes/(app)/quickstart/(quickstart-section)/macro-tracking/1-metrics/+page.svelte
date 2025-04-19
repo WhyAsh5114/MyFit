@@ -10,6 +10,7 @@
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { selectedStepsState } from '../../selected-steps.svelte';
+	import { macroTrackingQuickstartState } from '../macro-tracking-quickstart-state.svelte';
 	import { macroTrackingMetricsSchema, type MacroTrackingMetricsSchema } from './schema';
 
 	let { data }: { data: { form: SuperValidated<Infer<MacroTrackingMetricsSchema>> } } = $props();
@@ -17,13 +18,21 @@
 	const form = superForm(data.form, {
 		SPA: true,
 		validators: zodClient(macroTrackingMetricsSchema),
-		onUpdate: ({ form }) => {
+		resetForm: false,
+		onUpdate: async ({ form }) => {
 			if (!form.valid) return;
-			console.log(form.data);
+			macroTrackingQuickstartState.macroTrackingMetrics = form.data;
+			await selectedStepsState.navigateToPage(page.url.pathname, 'next');
 		}
 	});
 
-	const { form: formData, enhance } = form;
+	let { form: formData, enhance } = form;
+
+	$effect(() => {
+		if (macroTrackingQuickstartState.macroTrackingMetrics) {
+			$formData = macroTrackingQuickstartState.macroTrackingMetrics;
+		}
+	});
 </script>
 
 <svelte:head>
@@ -34,7 +43,7 @@
 	/>
 </svelte:head>
 
-<form method="POST" use:enhance id="macro-tracking-metrics-form">
+<form use:enhance id="macro-tracking-metrics-form">
 	<Card.Root>
 		<Card.Content class="grid grid-cols-4 gap-2 p-4">
 			<Form.Field {form} name="bodyweight" class="col-span-3">
