@@ -36,6 +36,24 @@ export interface PrismaIDBSchema extends DBSchema {
 			];
 		};
 	};
+	MacroTargets: {
+		key: [id: Prisma.MacroTargets['id']];
+		value: Prisma.MacroTargets;
+		indexes: {
+			userIdIndex: [userId: Prisma.MacroTargets['userId']];
+		};
+	};
+	MacroMetrics: {
+		key: [id: Prisma.MacroMetrics['id']];
+		value: Prisma.MacroMetrics;
+	};
+	MacroActivityTrackingPreferences: {
+		key: [id: Prisma.MacroActivityTrackingPreferences['id']];
+		value: Prisma.MacroActivityTrackingPreferences;
+		indexes: {
+			userIdIndex: [userId: Prisma.MacroActivityTrackingPreferences['userId']];
+		};
+	};
 	GettingStartedAnswers: {
 		key: [id: Prisma.GettingStartedAnswers['id']];
 		value: Prisma.GettingStartedAnswers;

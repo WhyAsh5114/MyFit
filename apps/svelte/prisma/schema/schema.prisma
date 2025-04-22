@@ -14,19 +14,22 @@ datasource db {
 }
 
 model User {
-  id                    String                 @id
-  email                 String                 @unique
-  name                  String?
-  emailVerified         Boolean
-  image                 String?
-  createdAt             DateTime
-  updatedAt             DateTime
-  isAnonymous           Boolean?
-  sessions              Session[]
-  accounts              Account[]
-  exerciseSplits        ExerciseSplit[]
-  gettingStartedAnswers GettingStartedAnswers?
-  dashboardItems        DashboardItems?
+  id                          String                            @id
+  email                       String                            @unique
+  name                        String?
+  emailVerified               Boolean
+  image                       String?
+  createdAt                   DateTime
+  updatedAt                   DateTime
+  isAnonymous                 Boolean?
+  sessions                    Session[]
+  accounts                    Account[]
+  exerciseSplits              ExerciseSplit[]
+  gettingStartedAnswers       GettingStartedAnswers?
+  dashboardItems              DashboardItems?
+  metrics                     MacroMetrics[]
+  activityTrackingPreferences MacroActivityTrackingPreferences?
+  macroTargets                MacroTargets?
 
   @@map("user")
 }

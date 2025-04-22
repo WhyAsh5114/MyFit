@@ -7,17 +7,15 @@
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-svelte';
-	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { defaults, superForm } from 'sveltekit-superforms';
+	import { zod } from 'sveltekit-superforms/adapters';
 	import { selectedStepsState } from '../../selected-steps.svelte';
 	import { macroTrackingQuickstartState } from '../macro-tracking-quickstart-state.svelte';
-	import { macroTrackingMetricsSchema, type MacroTrackingMetricsSchema } from './schema';
+	import { macroTrackingMetricsSchema } from './schema';
 
-	let { data }: { data: { form: SuperValidated<Infer<MacroTrackingMetricsSchema>> } } = $props();
-
-	const form = superForm(data.form, {
+	const form = superForm(defaults(zod(macroTrackingMetricsSchema)), {
 		SPA: true,
-		validators: zodClient(macroTrackingMetricsSchema),
+		validators: zod(macroTrackingMetricsSchema),
 		resetForm: false,
 		onUpdate: async ({ form }) => {
 			if (!form.valid) return;
@@ -98,11 +96,20 @@
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
-			<Form.Field {form} name="age" class="col-span-full">
+			<Form.Field {form} name="age" class="col-span-2">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Age</Form.Label>
 						<Input {...props} bind:value={$formData.age} type="number" />
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+			<Form.Field {form} name="bodyFatPercentage" class="col-span-2">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Body fat %</Form.Label>
+						<Input {...props} bind:value={$formData.bodyFatPercentage} type="number" />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />

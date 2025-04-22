@@ -8,16 +8,10 @@ import type {
 import {
 	AppleIcon,
 	BabyIcon,
-	BicepsFlexedIcon,
 	BookOpenTextIcon,
 	CalendarIcon,
 	ChartNoAxesCombinedIcon,
-	ChevronDownIcon,
-	ChevronUpIcon,
 	DumbbellIcon,
-	EqualApproximatelyIcon,
-	EqualIcon,
-	FileClockIcon,
 	GithubIcon,
 	GlobeLockIcon,
 	HandCoinsIcon,
@@ -26,11 +20,9 @@ import {
 	NotebookTextIcon,
 	PackagePlusIcon,
 	RssIcon,
-	ScaleIcon,
 	SmilePlus,
 	SparkleIcon,
-	SproutIcon,
-	UserRoundIcon
+	SproutIcon
 } from 'lucide-svelte';
 
 export const MUSCLE_GROUPS = {
@@ -269,29 +261,26 @@ export const EXERCISE_SPLIT_TEMPLATES: ExerciseSplitTemplate[] = [
 	}
 ] as const;
 
-export const QUICKSTART_MACRO_TRACKING_GOAL_OPTIONS = [
+export const STATIC_ACTIVITY_LEVELS = [
+	{ value: 'sedentary', description: 'Little To No Exercise', extraCalories: 0 },
 	{
-		label: 'fat-loss',
-		description: 'Lose fat while maximizing muscle retention',
-		Icon1: UserRoundIcon,
-		Icon2: ChevronDownIcon
+		value: 'lightly-active',
+		description: 'Light Exercise/Sports 1-3 Days/Week',
+		extraCalories: 150
 	},
 	{
-		label: 'muscle-gain',
-		description: 'Gain muscle while minimizing fat gain',
-		Icon1: BicepsFlexedIcon,
-		Icon2: ChevronUpIcon
+		value: 'moderately-active',
+		description: 'Moderate Exercise/Sports 3-5 Days/Week',
+		extraCalories: 300
 	},
 	{
-		label: 'recomposition',
-		description: 'Gain muscle while losing fat (recommended for beginners)',
-		Icon1: ScaleIcon,
-		Icon2: EqualIcon
+		value: 'very-active',
+		description: 'Hard Exercise/Sports 6-7 Days A Week',
+		extraCalories: 450
 	},
 	{
-		label: 'just-tracking',
-		description: 'Just get into the habit of knowing your intake',
-		Icon1: FileClockIcon,
-		Icon2: EqualApproximatelyIcon
+		value: 'extra-active',
+		description: 'Very Hard Exercise/Sports & Physical Job Or Training Twice A Day',
+		extraCalories: 600
 	}
-] as const;
+];

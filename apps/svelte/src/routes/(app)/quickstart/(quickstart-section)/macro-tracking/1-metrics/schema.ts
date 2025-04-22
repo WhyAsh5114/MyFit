@@ -15,6 +15,11 @@ export const macroTrackingMetricsSchema = z.object({
 	age: z
 		.number()
 		.min(0, 'Age must be a positive number')
+		.default('' as unknown as number),
+	bodyFatPercentage: z
+		.number()
+		.min(0, 'Body fat percentage must be a positive number')
+		.max(100, 'Body fat percentage must be less than 100%')
 		.default('' as unknown as number)
 });
 

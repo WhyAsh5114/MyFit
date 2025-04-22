@@ -197,7 +197,14 @@ export function whereStringFilter<T, R extends Prisma.Result<T, object, 'findFir
 export function whereNumberFilter<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
-	numberFilter: undefined | number | Prisma.IntFilter<unknown>
+	numberFilter:
+		| undefined
+		| number
+		| Prisma.IntFilter<unknown>
+		| Prisma.FloatFilter<unknown>
+		| Prisma.IntNullableFilter<unknown>
+		| Prisma.FloatNullableFilter<unknown>
+		| null
 ): boolean {
 	if (numberFilter === undefined) return true;
 
@@ -439,13 +446,18 @@ export function handleDateTimeUpdateField<
 export function handleIntUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
-	intUpdate: undefined | number | Prisma.IntFieldUpdateOperationsInput
+	intUpdate:
+		| undefined
+		| number
+		| Prisma.IntFieldUpdateOperationsInput
+		| null
+		| Prisma.NullableIntFieldUpdateOperationsInput
 ) {
 	if (intUpdate === undefined) return;
-	if (typeof intUpdate === 'number') {
-		(record[fieldName] as number) = intUpdate;
+	if (typeof intUpdate === 'number' || intUpdate === null) {
+		(record[fieldName] as number | null) = intUpdate;
 	} else if (intUpdate.set !== undefined) {
-		(record[fieldName] as number) = intUpdate.set;
+		(record[fieldName] as number | null) = intUpdate.set;
 	} else if (intUpdate.increment !== undefined && record[fieldName] !== null) {
 		(record[fieldName] as number) += intUpdate.increment;
 	} else if (intUpdate.decrement !== undefined && record[fieldName] !== null) {
@@ -454,6 +466,32 @@ export function handleIntUpdateField<T, R extends Prisma.Result<T, object, 'find
 		(record[fieldName] as number) *= intUpdate.multiply;
 	} else if (intUpdate.divide !== undefined && record[fieldName] !== null) {
 		(record[fieldName] as number) /= intUpdate.divide;
+	}
+}
+
+export function handleFloatUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
+	record: R,
+	fieldName: keyof R,
+	floatUpdate:
+		| undefined
+		| number
+		| Prisma.FloatFieldUpdateOperationsInput
+		| null
+		| Prisma.NullableFloatFieldUpdateOperationsInput
+) {
+	if (floatUpdate === undefined) return;
+	if (typeof floatUpdate === 'number' || floatUpdate === null) {
+		(record[fieldName] as number | null) = floatUpdate;
+	} else if (floatUpdate.set !== undefined) {
+		(record[fieldName] as number | null) = floatUpdate.set;
+	} else if (floatUpdate.increment !== undefined && record[fieldName] !== null) {
+		(record[fieldName] as number) += floatUpdate.increment;
+	} else if (floatUpdate.decrement !== undefined && record[fieldName] !== null) {
+		(record[fieldName] as number) -= floatUpdate.decrement;
+	} else if (floatUpdate.multiply !== undefined && record[fieldName] !== null) {
+		(record[fieldName] as number) *= floatUpdate.multiply;
+	} else if (floatUpdate.divide !== undefined && record[fieldName] !== null) {
+		(record[fieldName] as number) /= floatUpdate.divide;
 	}
 }
 

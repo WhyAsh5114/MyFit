@@ -18,6 +18,9 @@ export class PrismaIDBClient {
 	exerciseSplitDay!: ExerciseSplitDayIDBClass;
 	exerciseSplitDaySession!: ExerciseSplitDaySessionIDBClass;
 	exerciseSplitDaySessionExercise!: ExerciseSplitDaySessionExerciseIDBClass;
+	macroTargets!: MacroTargetsIDBClass;
+	macroMetrics!: MacroMetricsIDBClass;
+	macroActivityTrackingPreferences!: MacroActivityTrackingPreferencesIDBClass;
 	gettingStartedAnswers!: GettingStartedAnswersIDBClass;
 	dashboardItems!: DashboardItemsIDBClass;
 	user!: UserIDBClass;
@@ -67,6 +70,16 @@ export class PrismaIDBClient {
 					['exerciseSplitDaySessionId', 'exerciseIndex'],
 					{ unique: true }
 				);
+				const MacroTargetsStore = db.createObjectStore('MacroTargets', { keyPath: ['id'] });
+				MacroTargetsStore.createIndex('userIdIndex', ['userId'], { unique: true });
+				db.createObjectStore('MacroMetrics', { keyPath: ['id'] });
+				const MacroActivityTrackingPreferencesStore = db.createObjectStore(
+					'MacroActivityTrackingPreferences',
+					{ keyPath: ['id'] }
+				);
+				MacroActivityTrackingPreferencesStore.createIndex('userIdIndex', ['userId'], {
+					unique: true
+				});
 				const GettingStartedAnswersStore = db.createObjectStore('GettingStartedAnswers', {
 					keyPath: ['id']
 				});
@@ -85,6 +98,11 @@ export class PrismaIDBClient {
 		this.exerciseSplitDay = new ExerciseSplitDayIDBClass(this, ['id']);
 		this.exerciseSplitDaySession = new ExerciseSplitDaySessionIDBClass(this, ['id']);
 		this.exerciseSplitDaySessionExercise = new ExerciseSplitDaySessionExerciseIDBClass(this, [
+			'id'
+		]);
+		this.macroTargets = new MacroTargetsIDBClass(this, ['id']);
+		this.macroMetrics = new MacroMetricsIDBClass(this, ['id']);
+		this.macroActivityTrackingPreferences = new MacroActivityTrackingPreferencesIDBClass(this, [
 			'id'
 		]);
 		this.gettingStartedAnswers = new GettingStartedAnswersIDBClass(this, ['id']);
@@ -4591,6 +4609,2609 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 	}
 }
 
+class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
+	private async _applyWhereClause<
+		W extends Prisma.Args<Prisma.MacroTargetsDelegate, 'findFirstOrThrow'>['where'],
+		R extends Prisma.Result<Prisma.MacroTargetsDelegate, object, 'findFirstOrThrow'>
+	>(records: R[], whereClause: W, tx: IDBUtils.TransactionType): Promise<R[]> {
+		if (!whereClause) return records;
+		records = await IDBUtils.applyLogicalFilters<Prisma.MacroTargetsDelegate, R, W>(
+			records,
+			whereClause,
+			tx,
+			this.keyPath,
+			this._applyWhereClause.bind(this)
+		);
+		return (
+			await Promise.all(
+				records.map(async (record) => {
+					const stringFields = ['id', 'userId'] as const;
+					for (const field of stringFields) {
+						if (!IDBUtils.whereStringFilter(record, field, whereClause[field])) return null;
+					}
+					const numberFields = ['proteins', 'carbs', 'fats'] as const;
+					for (const field of numberFields) {
+						if (!IDBUtils.whereNumberFilter(record, field, whereClause[field])) return null;
+					}
+					const dateTimeFields = ['createdAt'] as const;
+					for (const field of dateTimeFields) {
+						if (!IDBUtils.whereDateTimeFilter(record, field, whereClause[field])) return null;
+					}
+					if (whereClause.user) {
+						const { is, isNot, ...rest } = whereClause.user;
+						if (is !== null && is !== undefined) {
+							const relatedRecord = await this.client.user.findFirst(
+								{ where: { ...is, id: record.userId } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+						if (isNot !== null && isNot !== undefined) {
+							const relatedRecord = await this.client.user.findFirst(
+								{ where: { ...isNot, id: record.userId } },
+								tx
+							);
+							if (relatedRecord) return null;
+						}
+						if (Object.keys(rest).length) {
+							const relatedRecord = await this.client.user.findFirst(
+								{ where: { ...whereClause.user, id: record.userId } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+					}
+					return record;
+				})
+			)
+		).filter((result) => result !== null);
+	}
+
+	private _applySelectClause<
+		S extends Prisma.Args<Prisma.MacroTargetsDelegate, 'findMany'>['select']
+	>(
+		records: Prisma.Result<Prisma.MacroTargetsDelegate, object, 'findFirstOrThrow'>[],
+		selectClause: S
+	): Prisma.Result<Prisma.MacroTargetsDelegate, { select: S }, 'findFirstOrThrow'>[] {
+		if (!selectClause) {
+			return records as Prisma.Result<
+				Prisma.MacroTargetsDelegate,
+				{ select: S },
+				'findFirstOrThrow'
+			>[];
+		}
+		return records.map((record) => {
+			const partialRecord: Partial<typeof record> = record;
+			for (const untypedKey of [
+				'id',
+				'createdAt',
+				'user',
+				'userId',
+				'proteins',
+				'carbs',
+				'fats',
+				'quantifier'
+			]) {
+				const key = untypedKey as keyof typeof record & keyof S;
+				if (!selectClause[key]) delete partialRecord[key];
+			}
+			return partialRecord;
+		}) as Prisma.Result<Prisma.MacroTargetsDelegate, { select: S }, 'findFirstOrThrow'>[];
+	}
+
+	private async _applyRelations<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'findMany'>>(
+		records: Prisma.Result<Prisma.MacroTargetsDelegate, object, 'findFirstOrThrow'>[],
+		tx: IDBUtils.TransactionType,
+		query?: Q
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'findFirstOrThrow'>[]> {
+		if (!query)
+			return records as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'findFirstOrThrow'>[];
+		const recordsWithRelations = records.map(async (record) => {
+			const unsafeRecord = record as Record<string, unknown>;
+			const attach_user = query.select?.user || query.include?.user;
+			if (attach_user) {
+				unsafeRecord['user'] = await this.client.user.findUnique(
+					{
+						...(attach_user === true ? {} : attach_user),
+						where: { id: record.userId! }
+					},
+					tx
+				);
+			}
+			return unsafeRecord;
+		});
+		return (await Promise.all(recordsWithRelations)) as Prisma.Result<
+			Prisma.MacroTargetsDelegate,
+			Q,
+			'findFirstOrThrow'
+		>[];
+	}
+
+	async _applyOrderByClause<
+		O extends Prisma.Args<Prisma.MacroTargetsDelegate, 'findMany'>['orderBy'],
+		R extends Prisma.Result<Prisma.MacroTargetsDelegate, object, 'findFirstOrThrow'>
+	>(records: R[], orderByClause: O, tx: IDBUtils.TransactionType): Promise<void> {
+		if (orderByClause === undefined) return;
+		const orderByClauses = IDBUtils.convertToArray(orderByClause);
+		const indexedKeys = await Promise.all(
+			records.map(async (record) => {
+				const keys = await Promise.all(
+					orderByClauses.map(async (clause) => await this._resolveOrderByKey(record, clause, tx))
+				);
+				return { keys, record };
+			})
+		);
+		indexedKeys.sort((a, b) => {
+			for (let i = 0; i < orderByClauses.length; i++) {
+				const clause = orderByClauses[i];
+				const comparison = IDBUtils.genericComparator(
+					a.keys[i],
+					b.keys[i],
+					this._resolveSortOrder(clause)
+				);
+				if (comparison !== 0) return comparison;
+			}
+			return 0;
+		});
+		for (let i = 0; i < records.length; i++) {
+			records[i] = indexedKeys[i].record;
+		}
+	}
+
+	async _resolveOrderByKey(
+		record: Prisma.Result<Prisma.MacroTargetsDelegate, object, 'findFirstOrThrow'>,
+		orderByInput: Prisma.MacroTargetsOrderByWithRelationInput,
+		tx: IDBUtils.TransactionType
+	): Promise<unknown> {
+		const scalarFields = [
+			'id',
+			'createdAt',
+			'userId',
+			'proteins',
+			'carbs',
+			'fats',
+			'quantifier'
+		] as const;
+		for (const field of scalarFields) if (orderByInput[field]) return record[field];
+		if (orderByInput.user) {
+			return await this.client.user._resolveOrderByKey(
+				await this.client.user.findFirstOrThrow({ where: { id: record.userId } }),
+				orderByInput.user,
+				tx
+			);
+		}
+	}
+
+	_resolveSortOrder(
+		orderByInput: Prisma.MacroTargetsOrderByWithRelationInput
+	): Prisma.SortOrder | { sort: Prisma.SortOrder; nulls?: 'first' | 'last' } {
+		const scalarFields = [
+			'id',
+			'createdAt',
+			'userId',
+			'proteins',
+			'carbs',
+			'fats',
+			'quantifier'
+		] as const;
+		for (const field of scalarFields) if (orderByInput[field]) return orderByInput[field];
+		if (orderByInput.user) {
+			return this.client.user._resolveSortOrder(orderByInput.user);
+		}
+		throw new Error('No field in orderBy clause');
+	}
+
+	private async _fillDefaults<D extends Prisma.Args<Prisma.MacroTargetsDelegate, 'create'>['data']>(
+		data: D,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<D> {
+		if (data === undefined) data = {} as NonNullable<D>;
+		if (data.id === undefined) {
+			data.id = uuidv4();
+		}
+		if (data.createdAt === undefined) {
+			data.createdAt = new Date();
+		}
+		if (data.proteins === undefined) {
+			data.proteins = null;
+		}
+		if (data.carbs === undefined) {
+			data.carbs = null;
+		}
+		if (data.fats === undefined) {
+			data.fats = null;
+		}
+		if (typeof data.createdAt === 'string') {
+			data.createdAt = new Date(data.createdAt);
+		}
+		return data;
+	}
+
+	_getNeededStoresForWhere<W extends Prisma.Args<Prisma.MacroTargetsDelegate, 'findMany'>['where']>(
+		whereClause: W,
+		neededStores: Set<StoreNames<PrismaIDBSchema>>
+	) {
+		if (whereClause === undefined) return;
+		for (const param of IDBUtils.LogicalParams) {
+			if (whereClause[param]) {
+				for (const clause of IDBUtils.convertToArray(whereClause[param])) {
+					this._getNeededStoresForWhere(clause, neededStores);
+				}
+			}
+		}
+		if (whereClause.user) {
+			neededStores.add('User');
+			this.client.user._getNeededStoresForWhere(whereClause.user, neededStores);
+		}
+	}
+
+	_getNeededStoresForFind<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'findMany'>>(
+		query?: Q
+	): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
+		neededStores.add('MacroTargets');
+		this._getNeededStoresForWhere(query?.where, neededStores);
+		if (query?.orderBy) {
+			const orderBy = IDBUtils.convertToArray(query.orderBy);
+			const orderBy_user = orderBy.find((clause) => clause.user);
+			if (orderBy_user) {
+				this.client.user
+					._getNeededStoresForFind({ orderBy: orderBy_user.user })
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		if (query?.select?.user || query?.include?.user) {
+			neededStores.add('User');
+			if (typeof query.select?.user === 'object') {
+				this.client.user
+					._getNeededStoresForFind(query.select.user)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.user === 'object') {
+				this.client.user
+					._getNeededStoresForFind(query.include.user)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForCreate<
+		D extends Partial<Prisma.Args<Prisma.MacroTargetsDelegate, 'create'>['data']>
+	>(data: D): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
+		neededStores.add('MacroTargets');
+		if (data?.user) {
+			neededStores.add('User');
+			if (data.user.create) {
+				const createData = Array.isArray(data.user.create) ? data.user.create : [data.user.create];
+				createData.forEach((record) =>
+					this.client.user
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.user.connectOrCreate) {
+				IDBUtils.convertToArray(data.user.connectOrCreate).forEach((record) =>
+					this.client.user
+						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+		}
+		if (data.userId !== undefined) {
+			neededStores.add('User');
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForUpdate<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'update'>>(
+		query: Partial<Q>
+	): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores = this._getNeededStoresForFind(query).union(
+			this._getNeededStoresForCreate(
+				query.data as Prisma.Args<Prisma.MacroTargetsDelegate, 'create'>['data']
+			)
+		);
+		if (query.data?.user?.connect) {
+			neededStores.add('User');
+			IDBUtils.convertToArray(query.data.user.connect).forEach((connect) => {
+				this.client.user._getNeededStoresForWhere(connect, neededStores);
+			});
+		}
+		if (query.data?.user?.update) {
+			neededStores.add('User');
+			IDBUtils.convertToArray(query.data.user.update).forEach((update) => {
+				this.client.user
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.UserDelegate, 'update'>)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.user?.upsert) {
+			neededStores.add('User');
+			IDBUtils.convertToArray(query.data.user.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<Prisma.UserDelegate, 'update'>;
+				this.client.user
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForNestedDelete(neededStores: Set<StoreNames<PrismaIDBSchema>>): void {
+		neededStores.add('MacroTargets');
+	}
+
+	private _removeNestedCreateData<
+		D extends Prisma.Args<Prisma.MacroTargetsDelegate, 'create'>['data']
+	>(data: D): Prisma.Result<Prisma.MacroTargetsDelegate, object, 'findFirstOrThrow'> {
+		const recordWithoutNestedCreate = structuredClone(data);
+		delete recordWithoutNestedCreate?.user;
+		return recordWithoutNestedCreate as Prisma.Result<
+			Prisma.MacroTargetsDelegate,
+			object,
+			'findFirstOrThrow'
+		>;
+	}
+
+	private _preprocessListFields(
+		records: Prisma.Result<Prisma.MacroTargetsDelegate, object, 'findMany'>
+	): void {}
+
+	async findMany<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'findMany'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'findMany'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const records = await this._applyWhereClause(
+			await tx.objectStore('MacroTargets').getAll(),
+			query?.where,
+			tx
+		);
+		await this._applyOrderByClause(records, query?.orderBy, tx);
+		const relationAppliedRecords = (await this._applyRelations(
+			records,
+			tx,
+			query
+		)) as Prisma.Result<Prisma.MacroTargetsDelegate, object, 'findFirstOrThrow'>[];
+		const selectClause = query?.select;
+		let selectAppliedRecords = this._applySelectClause(relationAppliedRecords, selectClause);
+		if (query?.distinct) {
+			const distinctFields = IDBUtils.convertToArray(query.distinct);
+			const seen = new Set<string>();
+			selectAppliedRecords = selectAppliedRecords.filter((record) => {
+				const key = distinctFields.map((field) => record[field]).join('|');
+				if (seen.has(key)) return false;
+				seen.add(key);
+				return true;
+			});
+		}
+		this._preprocessListFields(selectAppliedRecords);
+		return selectAppliedRecords as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'findMany'>;
+	}
+
+	async findFirst<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'findFirst'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'findFirst'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		return (await this.findMany(query, tx))[0] ?? null;
+	}
+
+	async findFirstOrThrow<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'findFirstOrThrow'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'findFirstOrThrow'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const record = await this.findFirst(query, tx);
+		if (!record) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		return record;
+	}
+
+	async findUnique<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'findUnique'>>(
+		query: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'findUnique'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		let record;
+		if (query.where.id !== undefined) {
+			record = await tx.objectStore('MacroTargets').get([query.where.id]);
+		} else if (query.where.userId !== undefined) {
+			record = await tx.objectStore('MacroTargets').index('userIdIndex').get([query.where.userId]);
+		}
+		if (!record) return null;
+
+		const recordWithRelations = this._applySelectClause(
+			await this._applyRelations(
+				await this._applyWhereClause([record], query.where, tx),
+				tx,
+				query
+			),
+			query.select
+		)[0];
+		this._preprocessListFields([recordWithRelations]);
+		return recordWithRelations as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'findUnique'>;
+	}
+
+	async findUniqueOrThrow<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'findUniqueOrThrow'>>(
+		query: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'findUniqueOrThrow'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const record = await this.findUnique(query, tx);
+		if (!record) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		return record;
+	}
+
+	async count<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'count'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'count'>> {
+		tx = tx ?? this.client._db.transaction(['MacroTargets'], 'readonly');
+		if (!query?.select || query.select === true) {
+			const records = await this.findMany({ where: query?.where }, tx);
+			return records.length as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'count'>;
+		}
+		const result: Partial<Record<keyof Prisma.MacroTargetsCountAggregateInputType, number>> = {};
+		for (const key of Object.keys(query.select)) {
+			const typedKey = key as keyof typeof query.select;
+			if (typedKey === '_all') {
+				result[typedKey] = (await this.findMany({ where: query.where }, tx)).length;
+				continue;
+			}
+			result[typedKey] = (
+				await this.findMany({ where: { [`${typedKey}`]: { not: null } } }, tx)
+			).length;
+		}
+		return result as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'count'>;
+	}
+
+	async create<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'create'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'create'>> {
+		const storesNeeded = this._getNeededStoresForCreate(query.data);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		if (query.data.user) {
+			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
+			if (query.data.user?.create) {
+				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				fk[0] = record.id;
+			}
+			if (query.data.user?.connect) {
+				const record = await this.client.user.findUniqueOrThrow(
+					{ where: query.data.user.connect },
+					tx
+				);
+				delete query.data.user.connect;
+				fk[0] = record.id;
+			}
+			if (query.data.user?.connectOrCreate) {
+				const record = await this.client.user.upsert(
+					{
+						where: query.data.user.connectOrCreate.where,
+						create: query.data.user.connectOrCreate.create,
+						update: {}
+					},
+					tx
+				);
+				fk[0] = record.id;
+			}
+			const unsafeData = query.data as Record<string, unknown>;
+			unsafeData.userId = fk[0];
+			delete unsafeData.user;
+		} else if (query.data?.userId !== undefined && query.data.userId !== null) {
+			await this.client.user.findUniqueOrThrow(
+				{
+					where: { id: query.data.userId }
+				},
+				tx
+			);
+		}
+		const record = this._removeNestedCreateData(await this._fillDefaults(query.data, tx));
+		const keyPath = await tx.objectStore('MacroTargets').add(record);
+		const data = (await tx.objectStore('MacroTargets').get(keyPath))!;
+		const recordsWithRelations = this._applySelectClause(
+			await this._applyRelations<object>([data], tx, query),
+			query.select
+		)[0];
+		this._preprocessListFields([recordsWithRelations]);
+		this.emit('create', keyPath);
+		return recordsWithRelations as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'create'>;
+	}
+
+	async createMany<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'createMany'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'createMany'>> {
+		const createManyData = IDBUtils.convertToArray(query.data);
+		tx = tx ?? this.client._db.transaction(['MacroTargets'], 'readwrite');
+		for (const createData of createManyData) {
+			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
+			const keyPath = await tx.objectStore('MacroTargets').add(record);
+			this.emit('create', keyPath);
+		}
+		return { count: createManyData.length };
+	}
+
+	async createManyAndReturn<
+		Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'createManyAndReturn'>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'createManyAndReturn'>> {
+		const createManyData = IDBUtils.convertToArray(query.data);
+		const records: Prisma.Result<Prisma.MacroTargetsDelegate, object, 'findMany'> = [];
+		tx = tx ?? this.client._db.transaction(['MacroTargets'], 'readwrite');
+		for (const createData of createManyData) {
+			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
+			const keyPath = await tx.objectStore('MacroTargets').add(record);
+			this.emit('create', keyPath);
+			records.push(this._applySelectClause([record], query.select)[0]);
+		}
+		this._preprocessListFields(records);
+		return records as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'createManyAndReturn'>;
+	}
+
+	async delete<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'delete'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'delete'>> {
+		const storesNeeded = this._getNeededStoresForFind(query);
+		this._getNeededStoresForNestedDelete(storesNeeded);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		const record = await this.findUnique(query, tx);
+		if (!record) throw new Error('Record not found');
+		await tx.objectStore('MacroTargets').delete([record.id]);
+		this.emit('delete', [record.id]);
+		return record;
+	}
+
+	async deleteMany<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'deleteMany'>>(
+		query?: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'deleteMany'>> {
+		const storesNeeded = this._getNeededStoresForFind(query);
+		this._getNeededStoresForNestedDelete(storesNeeded);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		const records = await this.findMany(query, tx);
+		for (const record of records) {
+			await this.delete({ where: { id: record.id } }, tx);
+		}
+		return { count: records.length };
+	}
+
+	async update<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'update'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'update'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForUpdate(query)), 'readwrite');
+		const record = await this.findUnique({ where: query.where }, tx);
+		if (record === null) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		const startKeyPath: PrismaIDBSchema['MacroTargets']['key'] = [record.id];
+		const stringFields = ['id', 'userId'] as const;
+		for (const field of stringFields) {
+			IDBUtils.handleStringUpdateField(record, field, query.data[field]);
+		}
+		const dateTimeFields = ['createdAt'] as const;
+		for (const field of dateTimeFields) {
+			IDBUtils.handleDateTimeUpdateField(record, field, query.data[field]);
+		}
+		const floatFields = ['proteins', 'carbs', 'fats'] as const;
+		for (const field of floatFields) {
+			IDBUtils.handleFloatUpdateField(record, field, query.data[field]);
+		}
+		const enumFields = ['quantifier'] as const;
+		for (const field of enumFields) {
+			IDBUtils.handleEnumUpdateField(record, field, query.data[field]);
+		}
+		if (query.data.user) {
+			if (query.data.user.connect) {
+				const other = await this.client.user.findUniqueOrThrow(
+					{ where: query.data.user.connect },
+					tx
+				);
+				record.userId = other.id;
+			}
+			if (query.data.user.create) {
+				const other = await this.client.user.create({ data: query.data.user.create }, tx);
+				record.userId = other.id;
+			}
+			if (query.data.user.update) {
+				const updateData = query.data.user.update.data ?? query.data.user.update;
+				await this.client.user.update(
+					{
+						where: {
+							...query.data.user.update.where,
+							id: record.userId!
+						} as Prisma.UserWhereUniqueInput,
+						data: updateData
+					},
+					tx
+				);
+			}
+			if (query.data.user.upsert) {
+				await this.client.user.upsert(
+					{
+						where: {
+							...query.data.user.upsert.where,
+							id: record.userId!
+						} as Prisma.UserWhereUniqueInput,
+						create: { ...query.data.user.upsert.create, id: record.userId! } as Prisma.Args<
+							Prisma.UserDelegate,
+							'upsert'
+						>['create'],
+						update: query.data.user.upsert.update
+					},
+					tx
+				);
+			}
+			if (query.data.user.connectOrCreate) {
+				await this.client.user.upsert(
+					{
+						where: { ...query.data.user.connectOrCreate.where, id: record.userId! },
+						create: {
+							...query.data.user.connectOrCreate.create,
+							id: record.userId!
+						} as Prisma.Args<Prisma.UserDelegate, 'upsert'>['create'],
+						update: { id: record.userId! }
+					},
+					tx
+				);
+			}
+		}
+		if (query.data.userId !== undefined) {
+			const related = await this.client.user.findUnique({ where: { id: record.userId } }, tx);
+			if (!related) throw new Error('Related record not found');
+		}
+		const endKeyPath: PrismaIDBSchema['MacroTargets']['key'] = [record.id];
+		for (let i = 0; i < startKeyPath.length; i++) {
+			if (startKeyPath[i] !== endKeyPath[i]) {
+				if ((await tx.objectStore('MacroTargets').get(endKeyPath)) !== undefined) {
+					throw new Error('Record with the same keyPath already exists');
+				}
+				await tx.objectStore('MacroTargets').delete(startKeyPath);
+				break;
+			}
+		}
+		const keyPath = await tx.objectStore('MacroTargets').put(record);
+		this.emit('update', keyPath, startKeyPath);
+		for (let i = 0; i < startKeyPath.length; i++) {
+			if (startKeyPath[i] !== endKeyPath[i]) {
+				break;
+			}
+		}
+		const recordWithRelations = (await this.findUnique(
+			{
+				where: { id: keyPath[0] }
+			},
+			tx
+		))!;
+		return recordWithRelations as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'update'>;
+	}
+
+	async updateMany<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'updateMany'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'updateMany'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readwrite');
+		const records = await this.findMany({ where: query.where }, tx);
+		await Promise.all(
+			records.map(async (record) => {
+				await this.update({ where: { id: record.id }, data: query.data }, tx);
+			})
+		);
+		return { count: records.length };
+	}
+
+	async upsert<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'upsert'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'upsert'>> {
+		const neededStores = this._getNeededStoresForUpdate({
+			...query,
+			data: { ...query.update, ...query.create } as Prisma.Args<
+				Prisma.MacroTargetsDelegate,
+				'update'
+			>['data']
+		});
+		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
+		let record = await this.findUnique({ where: query.where }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx);
+		else record = await this.update({ where: query.where, data: query.update }, tx);
+		record = await this.findUniqueOrThrow(
+			{ where: { id: record.id }, select: query.select, include: query.include },
+			tx
+		);
+		return record as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'upsert'>;
+	}
+
+	async aggregate<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'aggregate'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'aggregate'>> {
+		tx = tx ?? this.client._db.transaction(['MacroTargets'], 'readonly');
+		const records = await this.findMany({ where: query?.where }, tx);
+		const result: Partial<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'aggregate'>> = {};
+		if (query?._count) {
+			if (query._count === true) {
+				(result._count as number) = records.length;
+			} else {
+				for (const key of Object.keys(query._count)) {
+					const typedKey = key as keyof typeof query._count;
+					if (typedKey === '_all') {
+						(result._count as Record<string, number>)[typedKey] = records.length;
+						continue;
+					}
+					(result._count as Record<string, number>)[typedKey] = (
+						await this.findMany({ where: { [`${typedKey}`]: { not: null } } }, tx)
+					).length;
+				}
+			}
+		}
+		if (query?._min) {
+			const minResult = {} as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'aggregate'>['_min'];
+			const numericFields = ['proteins', 'carbs', 'fats'] as const;
+			for (const field of numericFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field] as number)
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as number) = Math.min(...values);
+			}
+			const dateTimeFields = ['createdAt'] as const;
+			for (const field of dateTimeFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field]?.getTime())
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as Date) = new Date(Math.min(...values));
+			}
+			const stringFields = ['id', 'userId'] as const;
+			for (const field of stringFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field] as string)
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as string) = values.sort()[0];
+			}
+			result._min = minResult;
+		}
+		if (query?._max) {
+			const maxResult = {} as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'aggregate'>['_max'];
+			const numericFields = ['proteins', 'carbs', 'fats'] as const;
+			for (const field of numericFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field] as number)
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as number) = Math.max(...values);
+			}
+			const dateTimeFields = ['createdAt'] as const;
+			for (const field of dateTimeFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field]?.getTime())
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as Date) = new Date(Math.max(...values));
+			}
+			const stringFields = ['id', 'userId'] as const;
+			for (const field of stringFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field] as string)
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as string) = values.sort().reverse()[0];
+			}
+			result._max = maxResult;
+		}
+		if (query?._avg) {
+			const avgResult = {} as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'aggregate'>['_avg'];
+			for (const untypedField of Object.keys(query._avg)) {
+				const field = untypedField as keyof (typeof records)[number];
+				const values = records.map((record) => record[field] as number);
+				(avgResult[field as keyof typeof avgResult] as number) =
+					values.reduce((a, b) => a + b, 0) / values.length;
+			}
+			result._avg = avgResult;
+		}
+		if (query?._sum) {
+			const sumResult = {} as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'aggregate'>['_sum'];
+			for (const untypedField of Object.keys(query._sum)) {
+				const field = untypedField as keyof (typeof records)[number];
+				const values = records.map((record) => record[field] as number);
+				(sumResult[field as keyof typeof sumResult] as number) = values.reduce((a, b) => a + b, 0);
+			}
+			result._sum = sumResult;
+		}
+		return result as unknown as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'aggregate'>;
+	}
+}
+
+class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
+	private async _applyWhereClause<
+		W extends Prisma.Args<Prisma.MacroMetricsDelegate, 'findFirstOrThrow'>['where'],
+		R extends Prisma.Result<Prisma.MacroMetricsDelegate, object, 'findFirstOrThrow'>
+	>(records: R[], whereClause: W, tx: IDBUtils.TransactionType): Promise<R[]> {
+		if (!whereClause) return records;
+		records = await IDBUtils.applyLogicalFilters<Prisma.MacroMetricsDelegate, R, W>(
+			records,
+			whereClause,
+			tx,
+			this.keyPath,
+			this._applyWhereClause.bind(this)
+		);
+		return (
+			await Promise.all(
+				records.map(async (record) => {
+					const stringFields = ['id', 'userId'] as const;
+					for (const field of stringFields) {
+						if (!IDBUtils.whereStringFilter(record, field, whereClause[field])) return null;
+					}
+					const numberFields = ['bodyweight', 'height', 'bodyFatPercentage', 'age'] as const;
+					for (const field of numberFields) {
+						if (!IDBUtils.whereNumberFilter(record, field, whereClause[field])) return null;
+					}
+					const dateTimeFields = ['createdAt'] as const;
+					for (const field of dateTimeFields) {
+						if (!IDBUtils.whereDateTimeFilter(record, field, whereClause[field])) return null;
+					}
+					if (whereClause.user) {
+						const { is, isNot, ...rest } = whereClause.user;
+						if (is !== null && is !== undefined) {
+							const relatedRecord = await this.client.user.findFirst(
+								{ where: { ...is, id: record.userId } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+						if (isNot !== null && isNot !== undefined) {
+							const relatedRecord = await this.client.user.findFirst(
+								{ where: { ...isNot, id: record.userId } },
+								tx
+							);
+							if (relatedRecord) return null;
+						}
+						if (Object.keys(rest).length) {
+							const relatedRecord = await this.client.user.findFirst(
+								{ where: { ...whereClause.user, id: record.userId } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+					}
+					return record;
+				})
+			)
+		).filter((result) => result !== null);
+	}
+
+	private _applySelectClause<
+		S extends Prisma.Args<Prisma.MacroMetricsDelegate, 'findMany'>['select']
+	>(
+		records: Prisma.Result<Prisma.MacroMetricsDelegate, object, 'findFirstOrThrow'>[],
+		selectClause: S
+	): Prisma.Result<Prisma.MacroMetricsDelegate, { select: S }, 'findFirstOrThrow'>[] {
+		if (!selectClause) {
+			return records as Prisma.Result<
+				Prisma.MacroMetricsDelegate,
+				{ select: S },
+				'findFirstOrThrow'
+			>[];
+		}
+		return records.map((record) => {
+			const partialRecord: Partial<typeof record> = record;
+			for (const untypedKey of [
+				'id',
+				'user',
+				'userId',
+				'createdAt',
+				'bodyweight',
+				'bodyweightUnit',
+				'height',
+				'heightUnit',
+				'bodyFatPercentage',
+				'age',
+				'gender'
+			]) {
+				const key = untypedKey as keyof typeof record & keyof S;
+				if (!selectClause[key]) delete partialRecord[key];
+			}
+			return partialRecord;
+		}) as Prisma.Result<Prisma.MacroMetricsDelegate, { select: S }, 'findFirstOrThrow'>[];
+	}
+
+	private async _applyRelations<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'findMany'>>(
+		records: Prisma.Result<Prisma.MacroMetricsDelegate, object, 'findFirstOrThrow'>[],
+		tx: IDBUtils.TransactionType,
+		query?: Q
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'findFirstOrThrow'>[]> {
+		if (!query)
+			return records as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'findFirstOrThrow'>[];
+		const recordsWithRelations = records.map(async (record) => {
+			const unsafeRecord = record as Record<string, unknown>;
+			const attach_user = query.select?.user || query.include?.user;
+			if (attach_user) {
+				unsafeRecord['user'] = await this.client.user.findUnique(
+					{
+						...(attach_user === true ? {} : attach_user),
+						where: { id: record.userId! }
+					},
+					tx
+				);
+			}
+			return unsafeRecord;
+		});
+		return (await Promise.all(recordsWithRelations)) as Prisma.Result<
+			Prisma.MacroMetricsDelegate,
+			Q,
+			'findFirstOrThrow'
+		>[];
+	}
+
+	async _applyOrderByClause<
+		O extends Prisma.Args<Prisma.MacroMetricsDelegate, 'findMany'>['orderBy'],
+		R extends Prisma.Result<Prisma.MacroMetricsDelegate, object, 'findFirstOrThrow'>
+	>(records: R[], orderByClause: O, tx: IDBUtils.TransactionType): Promise<void> {
+		if (orderByClause === undefined) return;
+		const orderByClauses = IDBUtils.convertToArray(orderByClause);
+		const indexedKeys = await Promise.all(
+			records.map(async (record) => {
+				const keys = await Promise.all(
+					orderByClauses.map(async (clause) => await this._resolveOrderByKey(record, clause, tx))
+				);
+				return { keys, record };
+			})
+		);
+		indexedKeys.sort((a, b) => {
+			for (let i = 0; i < orderByClauses.length; i++) {
+				const clause = orderByClauses[i];
+				const comparison = IDBUtils.genericComparator(
+					a.keys[i],
+					b.keys[i],
+					this._resolveSortOrder(clause)
+				);
+				if (comparison !== 0) return comparison;
+			}
+			return 0;
+		});
+		for (let i = 0; i < records.length; i++) {
+			records[i] = indexedKeys[i].record;
+		}
+	}
+
+	async _resolveOrderByKey(
+		record: Prisma.Result<Prisma.MacroMetricsDelegate, object, 'findFirstOrThrow'>,
+		orderByInput: Prisma.MacroMetricsOrderByWithRelationInput,
+		tx: IDBUtils.TransactionType
+	): Promise<unknown> {
+		const scalarFields = [
+			'id',
+			'userId',
+			'createdAt',
+			'bodyweight',
+			'bodyweightUnit',
+			'height',
+			'heightUnit',
+			'bodyFatPercentage',
+			'age',
+			'gender'
+		] as const;
+		for (const field of scalarFields) if (orderByInput[field]) return record[field];
+		if (orderByInput.user) {
+			return await this.client.user._resolveOrderByKey(
+				await this.client.user.findFirstOrThrow({ where: { id: record.userId } }),
+				orderByInput.user,
+				tx
+			);
+		}
+	}
+
+	_resolveSortOrder(
+		orderByInput: Prisma.MacroMetricsOrderByWithRelationInput
+	): Prisma.SortOrder | { sort: Prisma.SortOrder; nulls?: 'first' | 'last' } {
+		const scalarFields = [
+			'id',
+			'userId',
+			'createdAt',
+			'bodyweight',
+			'bodyweightUnit',
+			'height',
+			'heightUnit',
+			'bodyFatPercentage',
+			'age',
+			'gender'
+		] as const;
+		for (const field of scalarFields) if (orderByInput[field]) return orderByInput[field];
+		if (orderByInput.user) {
+			return this.client.user._resolveSortOrder(orderByInput.user);
+		}
+		throw new Error('No field in orderBy clause');
+	}
+
+	private async _fillDefaults<D extends Prisma.Args<Prisma.MacroMetricsDelegate, 'create'>['data']>(
+		data: D,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<D> {
+		if (data === undefined) data = {} as NonNullable<D>;
+		if (data.id === undefined) {
+			data.id = uuidv4();
+		}
+		if (data.createdAt === undefined) {
+			data.createdAt = new Date();
+		}
+		if (typeof data.createdAt === 'string') {
+			data.createdAt = new Date(data.createdAt);
+		}
+		return data;
+	}
+
+	_getNeededStoresForWhere<W extends Prisma.Args<Prisma.MacroMetricsDelegate, 'findMany'>['where']>(
+		whereClause: W,
+		neededStores: Set<StoreNames<PrismaIDBSchema>>
+	) {
+		if (whereClause === undefined) return;
+		for (const param of IDBUtils.LogicalParams) {
+			if (whereClause[param]) {
+				for (const clause of IDBUtils.convertToArray(whereClause[param])) {
+					this._getNeededStoresForWhere(clause, neededStores);
+				}
+			}
+		}
+		if (whereClause.user) {
+			neededStores.add('User');
+			this.client.user._getNeededStoresForWhere(whereClause.user, neededStores);
+		}
+	}
+
+	_getNeededStoresForFind<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'findMany'>>(
+		query?: Q
+	): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
+		neededStores.add('MacroMetrics');
+		this._getNeededStoresForWhere(query?.where, neededStores);
+		if (query?.orderBy) {
+			const orderBy = IDBUtils.convertToArray(query.orderBy);
+			const orderBy_user = orderBy.find((clause) => clause.user);
+			if (orderBy_user) {
+				this.client.user
+					._getNeededStoresForFind({ orderBy: orderBy_user.user })
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		if (query?.select?.user || query?.include?.user) {
+			neededStores.add('User');
+			if (typeof query.select?.user === 'object') {
+				this.client.user
+					._getNeededStoresForFind(query.select.user)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.user === 'object') {
+				this.client.user
+					._getNeededStoresForFind(query.include.user)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForCreate<
+		D extends Partial<Prisma.Args<Prisma.MacroMetricsDelegate, 'create'>['data']>
+	>(data: D): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
+		neededStores.add('MacroMetrics');
+		if (data?.user) {
+			neededStores.add('User');
+			if (data.user.create) {
+				const createData = Array.isArray(data.user.create) ? data.user.create : [data.user.create];
+				createData.forEach((record) =>
+					this.client.user
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.user.connectOrCreate) {
+				IDBUtils.convertToArray(data.user.connectOrCreate).forEach((record) =>
+					this.client.user
+						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+		}
+		if (data.userId !== undefined) {
+			neededStores.add('User');
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForUpdate<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'update'>>(
+		query: Partial<Q>
+	): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores = this._getNeededStoresForFind(query).union(
+			this._getNeededStoresForCreate(
+				query.data as Prisma.Args<Prisma.MacroMetricsDelegate, 'create'>['data']
+			)
+		);
+		if (query.data?.user?.connect) {
+			neededStores.add('User');
+			IDBUtils.convertToArray(query.data.user.connect).forEach((connect) => {
+				this.client.user._getNeededStoresForWhere(connect, neededStores);
+			});
+		}
+		if (query.data?.user?.update) {
+			neededStores.add('User');
+			IDBUtils.convertToArray(query.data.user.update).forEach((update) => {
+				this.client.user
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.UserDelegate, 'update'>)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.user?.upsert) {
+			neededStores.add('User');
+			IDBUtils.convertToArray(query.data.user.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<Prisma.UserDelegate, 'update'>;
+				this.client.user
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForNestedDelete(neededStores: Set<StoreNames<PrismaIDBSchema>>): void {
+		neededStores.add('MacroMetrics');
+	}
+
+	private _removeNestedCreateData<
+		D extends Prisma.Args<Prisma.MacroMetricsDelegate, 'create'>['data']
+	>(data: D): Prisma.Result<Prisma.MacroMetricsDelegate, object, 'findFirstOrThrow'> {
+		const recordWithoutNestedCreate = structuredClone(data);
+		delete recordWithoutNestedCreate?.user;
+		return recordWithoutNestedCreate as Prisma.Result<
+			Prisma.MacroMetricsDelegate,
+			object,
+			'findFirstOrThrow'
+		>;
+	}
+
+	private _preprocessListFields(
+		records: Prisma.Result<Prisma.MacroMetricsDelegate, object, 'findMany'>
+	): void {}
+
+	async findMany<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'findMany'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'findMany'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const records = await this._applyWhereClause(
+			await tx.objectStore('MacroMetrics').getAll(),
+			query?.where,
+			tx
+		);
+		await this._applyOrderByClause(records, query?.orderBy, tx);
+		const relationAppliedRecords = (await this._applyRelations(
+			records,
+			tx,
+			query
+		)) as Prisma.Result<Prisma.MacroMetricsDelegate, object, 'findFirstOrThrow'>[];
+		const selectClause = query?.select;
+		let selectAppliedRecords = this._applySelectClause(relationAppliedRecords, selectClause);
+		if (query?.distinct) {
+			const distinctFields = IDBUtils.convertToArray(query.distinct);
+			const seen = new Set<string>();
+			selectAppliedRecords = selectAppliedRecords.filter((record) => {
+				const key = distinctFields.map((field) => record[field]).join('|');
+				if (seen.has(key)) return false;
+				seen.add(key);
+				return true;
+			});
+		}
+		this._preprocessListFields(selectAppliedRecords);
+		return selectAppliedRecords as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'findMany'>;
+	}
+
+	async findFirst<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'findFirst'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'findFirst'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		return (await this.findMany(query, tx))[0] ?? null;
+	}
+
+	async findFirstOrThrow<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'findFirstOrThrow'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'findFirstOrThrow'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const record = await this.findFirst(query, tx);
+		if (!record) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		return record;
+	}
+
+	async findUnique<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'findUnique'>>(
+		query: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'findUnique'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		let record;
+		if (query.where.id !== undefined) {
+			record = await tx.objectStore('MacroMetrics').get([query.where.id]);
+		}
+		if (!record) return null;
+
+		const recordWithRelations = this._applySelectClause(
+			await this._applyRelations(
+				await this._applyWhereClause([record], query.where, tx),
+				tx,
+				query
+			),
+			query.select
+		)[0];
+		this._preprocessListFields([recordWithRelations]);
+		return recordWithRelations as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'findUnique'>;
+	}
+
+	async findUniqueOrThrow<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'findUniqueOrThrow'>>(
+		query: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'findUniqueOrThrow'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const record = await this.findUnique(query, tx);
+		if (!record) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		return record;
+	}
+
+	async count<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'count'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'count'>> {
+		tx = tx ?? this.client._db.transaction(['MacroMetrics'], 'readonly');
+		if (!query?.select || query.select === true) {
+			const records = await this.findMany({ where: query?.where }, tx);
+			return records.length as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'count'>;
+		}
+		const result: Partial<Record<keyof Prisma.MacroMetricsCountAggregateInputType, number>> = {};
+		for (const key of Object.keys(query.select)) {
+			const typedKey = key as keyof typeof query.select;
+			if (typedKey === '_all') {
+				result[typedKey] = (await this.findMany({ where: query.where }, tx)).length;
+				continue;
+			}
+			result[typedKey] = (
+				await this.findMany({ where: { [`${typedKey}`]: { not: null } } }, tx)
+			).length;
+		}
+		return result as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'count'>;
+	}
+
+	async create<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'create'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'create'>> {
+		const storesNeeded = this._getNeededStoresForCreate(query.data);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		if (query.data.user) {
+			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
+			if (query.data.user?.create) {
+				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				fk[0] = record.id;
+			}
+			if (query.data.user?.connect) {
+				const record = await this.client.user.findUniqueOrThrow(
+					{ where: query.data.user.connect },
+					tx
+				);
+				delete query.data.user.connect;
+				fk[0] = record.id;
+			}
+			if (query.data.user?.connectOrCreate) {
+				const record = await this.client.user.upsert(
+					{
+						where: query.data.user.connectOrCreate.where,
+						create: query.data.user.connectOrCreate.create,
+						update: {}
+					},
+					tx
+				);
+				fk[0] = record.id;
+			}
+			const unsafeData = query.data as Record<string, unknown>;
+			unsafeData.userId = fk[0];
+			delete unsafeData.user;
+		} else if (query.data?.userId !== undefined && query.data.userId !== null) {
+			await this.client.user.findUniqueOrThrow(
+				{
+					where: { id: query.data.userId }
+				},
+				tx
+			);
+		}
+		const record = this._removeNestedCreateData(await this._fillDefaults(query.data, tx));
+		const keyPath = await tx.objectStore('MacroMetrics').add(record);
+		const data = (await tx.objectStore('MacroMetrics').get(keyPath))!;
+		const recordsWithRelations = this._applySelectClause(
+			await this._applyRelations<object>([data], tx, query),
+			query.select
+		)[0];
+		this._preprocessListFields([recordsWithRelations]);
+		this.emit('create', keyPath);
+		return recordsWithRelations as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'create'>;
+	}
+
+	async createMany<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'createMany'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'createMany'>> {
+		const createManyData = IDBUtils.convertToArray(query.data);
+		tx = tx ?? this.client._db.transaction(['MacroMetrics'], 'readwrite');
+		for (const createData of createManyData) {
+			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
+			const keyPath = await tx.objectStore('MacroMetrics').add(record);
+			this.emit('create', keyPath);
+		}
+		return { count: createManyData.length };
+	}
+
+	async createManyAndReturn<
+		Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'createManyAndReturn'>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'createManyAndReturn'>> {
+		const createManyData = IDBUtils.convertToArray(query.data);
+		const records: Prisma.Result<Prisma.MacroMetricsDelegate, object, 'findMany'> = [];
+		tx = tx ?? this.client._db.transaction(['MacroMetrics'], 'readwrite');
+		for (const createData of createManyData) {
+			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
+			const keyPath = await tx.objectStore('MacroMetrics').add(record);
+			this.emit('create', keyPath);
+			records.push(this._applySelectClause([record], query.select)[0]);
+		}
+		this._preprocessListFields(records);
+		return records as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'createManyAndReturn'>;
+	}
+
+	async delete<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'delete'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'delete'>> {
+		const storesNeeded = this._getNeededStoresForFind(query);
+		this._getNeededStoresForNestedDelete(storesNeeded);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		const record = await this.findUnique(query, tx);
+		if (!record) throw new Error('Record not found');
+		await tx.objectStore('MacroMetrics').delete([record.id]);
+		this.emit('delete', [record.id]);
+		return record;
+	}
+
+	async deleteMany<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'deleteMany'>>(
+		query?: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'deleteMany'>> {
+		const storesNeeded = this._getNeededStoresForFind(query);
+		this._getNeededStoresForNestedDelete(storesNeeded);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		const records = await this.findMany(query, tx);
+		for (const record of records) {
+			await this.delete({ where: { id: record.id } }, tx);
+		}
+		return { count: records.length };
+	}
+
+	async update<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'update'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'update'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForUpdate(query)), 'readwrite');
+		const record = await this.findUnique({ where: query.where }, tx);
+		if (record === null) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		const startKeyPath: PrismaIDBSchema['MacroMetrics']['key'] = [record.id];
+		const stringFields = ['id', 'userId'] as const;
+		for (const field of stringFields) {
+			IDBUtils.handleStringUpdateField(record, field, query.data[field]);
+		}
+		const dateTimeFields = ['createdAt'] as const;
+		for (const field of dateTimeFields) {
+			IDBUtils.handleDateTimeUpdateField(record, field, query.data[field]);
+		}
+		const intFields = ['age'] as const;
+		for (const field of intFields) {
+			IDBUtils.handleIntUpdateField(record, field, query.data[field]);
+		}
+		const floatFields = ['bodyweight', 'height', 'bodyFatPercentage'] as const;
+		for (const field of floatFields) {
+			IDBUtils.handleFloatUpdateField(record, field, query.data[field]);
+		}
+		const enumFields = ['bodyweightUnit', 'heightUnit', 'gender'] as const;
+		for (const field of enumFields) {
+			IDBUtils.handleEnumUpdateField(record, field, query.data[field]);
+		}
+		if (query.data.user) {
+			if (query.data.user.connect) {
+				const other = await this.client.user.findUniqueOrThrow(
+					{ where: query.data.user.connect },
+					tx
+				);
+				record.userId = other.id;
+			}
+			if (query.data.user.create) {
+				const other = await this.client.user.create({ data: query.data.user.create }, tx);
+				record.userId = other.id;
+			}
+			if (query.data.user.update) {
+				const updateData = query.data.user.update.data ?? query.data.user.update;
+				await this.client.user.update(
+					{
+						where: {
+							...query.data.user.update.where,
+							id: record.userId!
+						} as Prisma.UserWhereUniqueInput,
+						data: updateData
+					},
+					tx
+				);
+			}
+			if (query.data.user.upsert) {
+				await this.client.user.upsert(
+					{
+						where: {
+							...query.data.user.upsert.where,
+							id: record.userId!
+						} as Prisma.UserWhereUniqueInput,
+						create: { ...query.data.user.upsert.create, id: record.userId! } as Prisma.Args<
+							Prisma.UserDelegate,
+							'upsert'
+						>['create'],
+						update: query.data.user.upsert.update
+					},
+					tx
+				);
+			}
+			if (query.data.user.connectOrCreate) {
+				await this.client.user.upsert(
+					{
+						where: { ...query.data.user.connectOrCreate.where, id: record.userId! },
+						create: {
+							...query.data.user.connectOrCreate.create,
+							id: record.userId!
+						} as Prisma.Args<Prisma.UserDelegate, 'upsert'>['create'],
+						update: { id: record.userId! }
+					},
+					tx
+				);
+			}
+		}
+		if (query.data.userId !== undefined) {
+			const related = await this.client.user.findUnique({ where: { id: record.userId } }, tx);
+			if (!related) throw new Error('Related record not found');
+		}
+		const endKeyPath: PrismaIDBSchema['MacroMetrics']['key'] = [record.id];
+		for (let i = 0; i < startKeyPath.length; i++) {
+			if (startKeyPath[i] !== endKeyPath[i]) {
+				if ((await tx.objectStore('MacroMetrics').get(endKeyPath)) !== undefined) {
+					throw new Error('Record with the same keyPath already exists');
+				}
+				await tx.objectStore('MacroMetrics').delete(startKeyPath);
+				break;
+			}
+		}
+		const keyPath = await tx.objectStore('MacroMetrics').put(record);
+		this.emit('update', keyPath, startKeyPath);
+		for (let i = 0; i < startKeyPath.length; i++) {
+			if (startKeyPath[i] !== endKeyPath[i]) {
+				break;
+			}
+		}
+		const recordWithRelations = (await this.findUnique(
+			{
+				where: { id: keyPath[0] }
+			},
+			tx
+		))!;
+		return recordWithRelations as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'update'>;
+	}
+
+	async updateMany<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'updateMany'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'updateMany'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readwrite');
+		const records = await this.findMany({ where: query.where }, tx);
+		await Promise.all(
+			records.map(async (record) => {
+				await this.update({ where: { id: record.id }, data: query.data }, tx);
+			})
+		);
+		return { count: records.length };
+	}
+
+	async upsert<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'upsert'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'upsert'>> {
+		const neededStores = this._getNeededStoresForUpdate({
+			...query,
+			data: { ...query.update, ...query.create } as Prisma.Args<
+				Prisma.MacroMetricsDelegate,
+				'update'
+			>['data']
+		});
+		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
+		let record = await this.findUnique({ where: query.where }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx);
+		else record = await this.update({ where: query.where, data: query.update }, tx);
+		record = await this.findUniqueOrThrow(
+			{ where: { id: record.id }, select: query.select, include: query.include },
+			tx
+		);
+		return record as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'upsert'>;
+	}
+
+	async aggregate<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'aggregate'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'aggregate'>> {
+		tx = tx ?? this.client._db.transaction(['MacroMetrics'], 'readonly');
+		const records = await this.findMany({ where: query?.where }, tx);
+		const result: Partial<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'aggregate'>> = {};
+		if (query?._count) {
+			if (query._count === true) {
+				(result._count as number) = records.length;
+			} else {
+				for (const key of Object.keys(query._count)) {
+					const typedKey = key as keyof typeof query._count;
+					if (typedKey === '_all') {
+						(result._count as Record<string, number>)[typedKey] = records.length;
+						continue;
+					}
+					(result._count as Record<string, number>)[typedKey] = (
+						await this.findMany({ where: { [`${typedKey}`]: { not: null } } }, tx)
+					).length;
+				}
+			}
+		}
+		if (query?._min) {
+			const minResult = {} as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'aggregate'>['_min'];
+			const numericFields = ['bodyweight', 'height', 'bodyFatPercentage', 'age'] as const;
+			for (const field of numericFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field] as number)
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as number) = Math.min(...values);
+			}
+			const dateTimeFields = ['createdAt'] as const;
+			for (const field of dateTimeFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field]?.getTime())
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as Date) = new Date(Math.min(...values));
+			}
+			const stringFields = ['id', 'userId'] as const;
+			for (const field of stringFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field] as string)
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as string) = values.sort()[0];
+			}
+			result._min = minResult;
+		}
+		if (query?._max) {
+			const maxResult = {} as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'aggregate'>['_max'];
+			const numericFields = ['bodyweight', 'height', 'bodyFatPercentage', 'age'] as const;
+			for (const field of numericFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field] as number)
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as number) = Math.max(...values);
+			}
+			const dateTimeFields = ['createdAt'] as const;
+			for (const field of dateTimeFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field]?.getTime())
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as Date) = new Date(Math.max(...values));
+			}
+			const stringFields = ['id', 'userId'] as const;
+			for (const field of stringFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field] as string)
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as string) = values.sort().reverse()[0];
+			}
+			result._max = maxResult;
+		}
+		if (query?._avg) {
+			const avgResult = {} as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'aggregate'>['_avg'];
+			for (const untypedField of Object.keys(query._avg)) {
+				const field = untypedField as keyof (typeof records)[number];
+				const values = records.map((record) => record[field] as number);
+				(avgResult[field as keyof typeof avgResult] as number) =
+					values.reduce((a, b) => a + b, 0) / values.length;
+			}
+			result._avg = avgResult;
+		}
+		if (query?._sum) {
+			const sumResult = {} as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'aggregate'>['_sum'];
+			for (const untypedField of Object.keys(query._sum)) {
+				const field = untypedField as keyof (typeof records)[number];
+				const values = records.map((record) => record[field] as number);
+				(sumResult[field as keyof typeof sumResult] as number) = values.reduce((a, b) => a + b, 0);
+			}
+			result._sum = sumResult;
+		}
+		return result as unknown as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'aggregate'>;
+	}
+}
+
+class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroActivityTrackingPreferences'> {
+	private async _applyWhereClause<
+		W extends Prisma.Args<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			'findFirstOrThrow'
+		>['where'],
+		R extends Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			object,
+			'findFirstOrThrow'
+		>
+	>(records: R[], whereClause: W, tx: IDBUtils.TransactionType): Promise<R[]> {
+		if (!whereClause) return records;
+		records = await IDBUtils.applyLogicalFilters<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			R,
+			W
+		>(records, whereClause, tx, this.keyPath, this._applyWhereClause.bind(this));
+		return (
+			await Promise.all(
+				records.map(async (record) => {
+					const stringFields = ['id', 'userId'] as const;
+					for (const field of stringFields) {
+						if (!IDBUtils.whereStringFilter(record, field, whereClause[field])) return null;
+					}
+					const numberFields = ['staticCalories'] as const;
+					for (const field of numberFields) {
+						if (!IDBUtils.whereNumberFilter(record, field, whereClause[field])) return null;
+					}
+					if (whereClause.user) {
+						const { is, isNot, ...rest } = whereClause.user;
+						if (is !== null && is !== undefined) {
+							const relatedRecord = await this.client.user.findFirst(
+								{ where: { ...is, id: record.userId } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+						if (isNot !== null && isNot !== undefined) {
+							const relatedRecord = await this.client.user.findFirst(
+								{ where: { ...isNot, id: record.userId } },
+								tx
+							);
+							if (relatedRecord) return null;
+						}
+						if (Object.keys(rest).length) {
+							const relatedRecord = await this.client.user.findFirst(
+								{ where: { ...whereClause.user, id: record.userId } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+					}
+					return record;
+				})
+			)
+		).filter((result) => result !== null);
+	}
+
+	private _applySelectClause<
+		S extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'findMany'>['select']
+	>(
+		records: Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			object,
+			'findFirstOrThrow'
+		>[],
+		selectClause: S
+	): Prisma.Result<
+		Prisma.MacroActivityTrackingPreferencesDelegate,
+		{ select: S },
+		'findFirstOrThrow'
+	>[] {
+		if (!selectClause) {
+			return records as Prisma.Result<
+				Prisma.MacroActivityTrackingPreferencesDelegate,
+				{ select: S },
+				'findFirstOrThrow'
+			>[];
+		}
+		return records.map((record) => {
+			const partialRecord: Partial<typeof record> = record;
+			for (const untypedKey of ['id', 'user', 'userId', 'adjustmentType', 'staticCalories']) {
+				const key = untypedKey as keyof typeof record & keyof S;
+				if (!selectClause[key]) delete partialRecord[key];
+			}
+			return partialRecord;
+		}) as Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			{ select: S },
+			'findFirstOrThrow'
+		>[];
+	}
+
+	private async _applyRelations<
+		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'findMany'>
+	>(
+		records: Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			object,
+			'findFirstOrThrow'
+		>[],
+		tx: IDBUtils.TransactionType,
+		query?: Q
+	): Promise<
+		Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'findFirstOrThrow'>[]
+	> {
+		if (!query)
+			return records as Prisma.Result<
+				Prisma.MacroActivityTrackingPreferencesDelegate,
+				Q,
+				'findFirstOrThrow'
+			>[];
+		const recordsWithRelations = records.map(async (record) => {
+			const unsafeRecord = record as Record<string, unknown>;
+			const attach_user = query.select?.user || query.include?.user;
+			if (attach_user) {
+				unsafeRecord['user'] = await this.client.user.findUnique(
+					{
+						...(attach_user === true ? {} : attach_user),
+						where: { id: record.userId! }
+					},
+					tx
+				);
+			}
+			return unsafeRecord;
+		});
+		return (await Promise.all(recordsWithRelations)) as Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			Q,
+			'findFirstOrThrow'
+		>[];
+	}
+
+	async _applyOrderByClause<
+		O extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'findMany'>['orderBy'],
+		R extends Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			object,
+			'findFirstOrThrow'
+		>
+	>(records: R[], orderByClause: O, tx: IDBUtils.TransactionType): Promise<void> {
+		if (orderByClause === undefined) return;
+		const orderByClauses = IDBUtils.convertToArray(orderByClause);
+		const indexedKeys = await Promise.all(
+			records.map(async (record) => {
+				const keys = await Promise.all(
+					orderByClauses.map(async (clause) => await this._resolveOrderByKey(record, clause, tx))
+				);
+				return { keys, record };
+			})
+		);
+		indexedKeys.sort((a, b) => {
+			for (let i = 0; i < orderByClauses.length; i++) {
+				const clause = orderByClauses[i];
+				const comparison = IDBUtils.genericComparator(
+					a.keys[i],
+					b.keys[i],
+					this._resolveSortOrder(clause)
+				);
+				if (comparison !== 0) return comparison;
+			}
+			return 0;
+		});
+		for (let i = 0; i < records.length; i++) {
+			records[i] = indexedKeys[i].record;
+		}
+	}
+
+	async _resolveOrderByKey(
+		record: Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			object,
+			'findFirstOrThrow'
+		>,
+		orderByInput: Prisma.MacroActivityTrackingPreferencesOrderByWithRelationInput,
+		tx: IDBUtils.TransactionType
+	): Promise<unknown> {
+		const scalarFields = ['id', 'userId', 'adjustmentType', 'staticCalories'] as const;
+		for (const field of scalarFields) if (orderByInput[field]) return record[field];
+		if (orderByInput.user) {
+			return await this.client.user._resolveOrderByKey(
+				await this.client.user.findFirstOrThrow({ where: { id: record.userId } }),
+				orderByInput.user,
+				tx
+			);
+		}
+	}
+
+	_resolveSortOrder(
+		orderByInput: Prisma.MacroActivityTrackingPreferencesOrderByWithRelationInput
+	): Prisma.SortOrder | { sort: Prisma.SortOrder; nulls?: 'first' | 'last' } {
+		const scalarFields = ['id', 'userId', 'adjustmentType', 'staticCalories'] as const;
+		for (const field of scalarFields) if (orderByInput[field]) return orderByInput[field];
+		if (orderByInput.user) {
+			return this.client.user._resolveSortOrder(orderByInput.user);
+		}
+		throw new Error('No field in orderBy clause');
+	}
+
+	private async _fillDefaults<
+		D extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'create'>['data']
+	>(data: D, tx?: IDBUtils.ReadwriteTransactionType): Promise<D> {
+		if (data === undefined) data = {} as NonNullable<D>;
+		if (data.id === undefined) {
+			data.id = uuidv4();
+		}
+		if (data.staticCalories === undefined) {
+			data.staticCalories = null;
+		}
+		return data;
+	}
+
+	_getNeededStoresForWhere<
+		W extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'findMany'>['where']
+	>(whereClause: W, neededStores: Set<StoreNames<PrismaIDBSchema>>) {
+		if (whereClause === undefined) return;
+		for (const param of IDBUtils.LogicalParams) {
+			if (whereClause[param]) {
+				for (const clause of IDBUtils.convertToArray(whereClause[param])) {
+					this._getNeededStoresForWhere(clause, neededStores);
+				}
+			}
+		}
+		if (whereClause.user) {
+			neededStores.add('User');
+			this.client.user._getNeededStoresForWhere(whereClause.user, neededStores);
+		}
+	}
+
+	_getNeededStoresForFind<
+		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'findMany'>
+	>(query?: Q): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
+		neededStores.add('MacroActivityTrackingPreferences');
+		this._getNeededStoresForWhere(query?.where, neededStores);
+		if (query?.orderBy) {
+			const orderBy = IDBUtils.convertToArray(query.orderBy);
+			const orderBy_user = orderBy.find((clause) => clause.user);
+			if (orderBy_user) {
+				this.client.user
+					._getNeededStoresForFind({ orderBy: orderBy_user.user })
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		if (query?.select?.user || query?.include?.user) {
+			neededStores.add('User');
+			if (typeof query.select?.user === 'object') {
+				this.client.user
+					._getNeededStoresForFind(query.select.user)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.user === 'object') {
+				this.client.user
+					._getNeededStoresForFind(query.include.user)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForCreate<
+		D extends Partial<
+			Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'create'>['data']
+		>
+	>(data: D): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
+		neededStores.add('MacroActivityTrackingPreferences');
+		if (data?.user) {
+			neededStores.add('User');
+			if (data.user.create) {
+				const createData = Array.isArray(data.user.create) ? data.user.create : [data.user.create];
+				createData.forEach((record) =>
+					this.client.user
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.user.connectOrCreate) {
+				IDBUtils.convertToArray(data.user.connectOrCreate).forEach((record) =>
+					this.client.user
+						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+		}
+		if (data.userId !== undefined) {
+			neededStores.add('User');
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForUpdate<
+		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'update'>
+	>(query: Partial<Q>): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores = this._getNeededStoresForFind(query).union(
+			this._getNeededStoresForCreate(
+				query.data as Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'create'>['data']
+			)
+		);
+		if (query.data?.user?.connect) {
+			neededStores.add('User');
+			IDBUtils.convertToArray(query.data.user.connect).forEach((connect) => {
+				this.client.user._getNeededStoresForWhere(connect, neededStores);
+			});
+		}
+		if (query.data?.user?.update) {
+			neededStores.add('User');
+			IDBUtils.convertToArray(query.data.user.update).forEach((update) => {
+				this.client.user
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.UserDelegate, 'update'>)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.user?.upsert) {
+			neededStores.add('User');
+			IDBUtils.convertToArray(query.data.user.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<Prisma.UserDelegate, 'update'>;
+				this.client.user
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForNestedDelete(neededStores: Set<StoreNames<PrismaIDBSchema>>): void {
+		neededStores.add('MacroActivityTrackingPreferences');
+	}
+
+	private _removeNestedCreateData<
+		D extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'create'>['data']
+	>(
+		data: D
+	): Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, object, 'findFirstOrThrow'> {
+		const recordWithoutNestedCreate = structuredClone(data);
+		delete recordWithoutNestedCreate?.user;
+		return recordWithoutNestedCreate as Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			object,
+			'findFirstOrThrow'
+		>;
+	}
+
+	private _preprocessListFields(
+		records: Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, object, 'findMany'>
+	): void {}
+
+	async findMany<
+		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'findMany'>
+	>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'findMany'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const records = await this._applyWhereClause(
+			await tx.objectStore('MacroActivityTrackingPreferences').getAll(),
+			query?.where,
+			tx
+		);
+		await this._applyOrderByClause(records, query?.orderBy, tx);
+		const relationAppliedRecords = (await this._applyRelations(
+			records,
+			tx,
+			query
+		)) as Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			object,
+			'findFirstOrThrow'
+		>[];
+		const selectClause = query?.select;
+		let selectAppliedRecords = this._applySelectClause(relationAppliedRecords, selectClause);
+		if (query?.distinct) {
+			const distinctFields = IDBUtils.convertToArray(query.distinct);
+			const seen = new Set<string>();
+			selectAppliedRecords = selectAppliedRecords.filter((record) => {
+				const key = distinctFields.map((field) => record[field]).join('|');
+				if (seen.has(key)) return false;
+				seen.add(key);
+				return true;
+			});
+		}
+		this._preprocessListFields(selectAppliedRecords);
+		return selectAppliedRecords as Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			Q,
+			'findMany'
+		>;
+	}
+
+	async findFirst<
+		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'findFirst'>
+	>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'findFirst'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		return (await this.findMany(query, tx))[0] ?? null;
+	}
+
+	async findFirstOrThrow<
+		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'findFirstOrThrow'>
+	>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<
+		Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'findFirstOrThrow'>
+	> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const record = await this.findFirst(query, tx);
+		if (!record) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		return record;
+	}
+
+	async findUnique<
+		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'findUnique'>
+	>(
+		query: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'findUnique'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		let record;
+		if (query.where.id !== undefined) {
+			record = await tx.objectStore('MacroActivityTrackingPreferences').get([query.where.id]);
+		} else if (query.where.userId !== undefined) {
+			record = await tx
+				.objectStore('MacroActivityTrackingPreferences')
+				.index('userIdIndex')
+				.get([query.where.userId]);
+		}
+		if (!record) return null;
+
+		const recordWithRelations = this._applySelectClause(
+			await this._applyRelations(
+				await this._applyWhereClause([record], query.where, tx),
+				tx,
+				query
+			),
+			query.select
+		)[0];
+		this._preprocessListFields([recordWithRelations]);
+		return recordWithRelations as Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			Q,
+			'findUnique'
+		>;
+	}
+
+	async findUniqueOrThrow<
+		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'findUniqueOrThrow'>
+	>(
+		query: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<
+		Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'findUniqueOrThrow'>
+	> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const record = await this.findUnique(query, tx);
+		if (!record) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		return record;
+	}
+
+	async count<Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'count'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'count'>> {
+		tx = tx ?? this.client._db.transaction(['MacroActivityTrackingPreferences'], 'readonly');
+		if (!query?.select || query.select === true) {
+			const records = await this.findMany({ where: query?.where }, tx);
+			return records.length as Prisma.Result<
+				Prisma.MacroActivityTrackingPreferencesDelegate,
+				Q,
+				'count'
+			>;
+		}
+		const result: Partial<
+			Record<keyof Prisma.MacroActivityTrackingPreferencesCountAggregateInputType, number>
+		> = {};
+		for (const key of Object.keys(query.select)) {
+			const typedKey = key as keyof typeof query.select;
+			if (typedKey === '_all') {
+				result[typedKey] = (await this.findMany({ where: query.where }, tx)).length;
+				continue;
+			}
+			result[typedKey] = (
+				await this.findMany({ where: { [`${typedKey}`]: { not: null } } }, tx)
+			).length;
+		}
+		return result as Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'count'>;
+	}
+
+	async create<Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'create'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'create'>> {
+		const storesNeeded = this._getNeededStoresForCreate(query.data);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		if (query.data.user) {
+			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
+			if (query.data.user?.create) {
+				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				fk[0] = record.id;
+			}
+			if (query.data.user?.connect) {
+				const record = await this.client.user.findUniqueOrThrow(
+					{ where: query.data.user.connect },
+					tx
+				);
+				delete query.data.user.connect;
+				fk[0] = record.id;
+			}
+			if (query.data.user?.connectOrCreate) {
+				const record = await this.client.user.upsert(
+					{
+						where: query.data.user.connectOrCreate.where,
+						create: query.data.user.connectOrCreate.create,
+						update: {}
+					},
+					tx
+				);
+				fk[0] = record.id;
+			}
+			const unsafeData = query.data as Record<string, unknown>;
+			unsafeData.userId = fk[0];
+			delete unsafeData.user;
+		} else if (query.data?.userId !== undefined && query.data.userId !== null) {
+			await this.client.user.findUniqueOrThrow(
+				{
+					where: { id: query.data.userId }
+				},
+				tx
+			);
+		}
+		const record = this._removeNestedCreateData(await this._fillDefaults(query.data, tx));
+		const keyPath = await tx.objectStore('MacroActivityTrackingPreferences').add(record);
+		const data = (await tx.objectStore('MacroActivityTrackingPreferences').get(keyPath))!;
+		const recordsWithRelations = this._applySelectClause(
+			await this._applyRelations<object>([data], tx, query),
+			query.select
+		)[0];
+		this._preprocessListFields([recordsWithRelations]);
+		this.emit('create', keyPath);
+		return recordsWithRelations as Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			Q,
+			'create'
+		>;
+	}
+
+	async createMany<
+		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'createMany'>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'createMany'>> {
+		const createManyData = IDBUtils.convertToArray(query.data);
+		tx = tx ?? this.client._db.transaction(['MacroActivityTrackingPreferences'], 'readwrite');
+		for (const createData of createManyData) {
+			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
+			const keyPath = await tx.objectStore('MacroActivityTrackingPreferences').add(record);
+			this.emit('create', keyPath);
+		}
+		return { count: createManyData.length };
+	}
+
+	async createManyAndReturn<
+		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'createManyAndReturn'>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<
+		Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'createManyAndReturn'>
+	> {
+		const createManyData = IDBUtils.convertToArray(query.data);
+		const records: Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			object,
+			'findMany'
+		> = [];
+		tx = tx ?? this.client._db.transaction(['MacroActivityTrackingPreferences'], 'readwrite');
+		for (const createData of createManyData) {
+			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
+			const keyPath = await tx.objectStore('MacroActivityTrackingPreferences').add(record);
+			this.emit('create', keyPath);
+			records.push(this._applySelectClause([record], query.select)[0]);
+		}
+		this._preprocessListFields(records);
+		return records as Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			Q,
+			'createManyAndReturn'
+		>;
+	}
+
+	async delete<Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'delete'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'delete'>> {
+		const storesNeeded = this._getNeededStoresForFind(query);
+		this._getNeededStoresForNestedDelete(storesNeeded);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		const record = await this.findUnique(query, tx);
+		if (!record) throw new Error('Record not found');
+		await tx.objectStore('MacroActivityTrackingPreferences').delete([record.id]);
+		this.emit('delete', [record.id]);
+		return record;
+	}
+
+	async deleteMany<
+		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'deleteMany'>
+	>(
+		query?: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'deleteMany'>> {
+		const storesNeeded = this._getNeededStoresForFind(query);
+		this._getNeededStoresForNestedDelete(storesNeeded);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		const records = await this.findMany(query, tx);
+		for (const record of records) {
+			await this.delete({ where: { id: record.id } }, tx);
+		}
+		return { count: records.length };
+	}
+
+	async update<Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'update'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'update'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForUpdate(query)), 'readwrite');
+		const record = await this.findUnique({ where: query.where }, tx);
+		if (record === null) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		const startKeyPath: PrismaIDBSchema['MacroActivityTrackingPreferences']['key'] = [record.id];
+		const stringFields = ['id', 'userId'] as const;
+		for (const field of stringFields) {
+			IDBUtils.handleStringUpdateField(record, field, query.data[field]);
+		}
+		const intFields = ['staticCalories'] as const;
+		for (const field of intFields) {
+			IDBUtils.handleIntUpdateField(record, field, query.data[field]);
+		}
+		const enumFields = ['adjustmentType'] as const;
+		for (const field of enumFields) {
+			IDBUtils.handleEnumUpdateField(record, field, query.data[field]);
+		}
+		if (query.data.user) {
+			if (query.data.user.connect) {
+				const other = await this.client.user.findUniqueOrThrow(
+					{ where: query.data.user.connect },
+					tx
+				);
+				record.userId = other.id;
+			}
+			if (query.data.user.create) {
+				const other = await this.client.user.create({ data: query.data.user.create }, tx);
+				record.userId = other.id;
+			}
+			if (query.data.user.update) {
+				const updateData = query.data.user.update.data ?? query.data.user.update;
+				await this.client.user.update(
+					{
+						where: {
+							...query.data.user.update.where,
+							id: record.userId!
+						} as Prisma.UserWhereUniqueInput,
+						data: updateData
+					},
+					tx
+				);
+			}
+			if (query.data.user.upsert) {
+				await this.client.user.upsert(
+					{
+						where: {
+							...query.data.user.upsert.where,
+							id: record.userId!
+						} as Prisma.UserWhereUniqueInput,
+						create: { ...query.data.user.upsert.create, id: record.userId! } as Prisma.Args<
+							Prisma.UserDelegate,
+							'upsert'
+						>['create'],
+						update: query.data.user.upsert.update
+					},
+					tx
+				);
+			}
+			if (query.data.user.connectOrCreate) {
+				await this.client.user.upsert(
+					{
+						where: { ...query.data.user.connectOrCreate.where, id: record.userId! },
+						create: {
+							...query.data.user.connectOrCreate.create,
+							id: record.userId!
+						} as Prisma.Args<Prisma.UserDelegate, 'upsert'>['create'],
+						update: { id: record.userId! }
+					},
+					tx
+				);
+			}
+		}
+		if (query.data.userId !== undefined) {
+			const related = await this.client.user.findUnique({ where: { id: record.userId } }, tx);
+			if (!related) throw new Error('Related record not found');
+		}
+		const endKeyPath: PrismaIDBSchema['MacroActivityTrackingPreferences']['key'] = [record.id];
+		for (let i = 0; i < startKeyPath.length; i++) {
+			if (startKeyPath[i] !== endKeyPath[i]) {
+				if (
+					(await tx.objectStore('MacroActivityTrackingPreferences').get(endKeyPath)) !== undefined
+				) {
+					throw new Error('Record with the same keyPath already exists');
+				}
+				await tx.objectStore('MacroActivityTrackingPreferences').delete(startKeyPath);
+				break;
+			}
+		}
+		const keyPath = await tx.objectStore('MacroActivityTrackingPreferences').put(record);
+		this.emit('update', keyPath, startKeyPath);
+		for (let i = 0; i < startKeyPath.length; i++) {
+			if (startKeyPath[i] !== endKeyPath[i]) {
+				break;
+			}
+		}
+		const recordWithRelations = (await this.findUnique(
+			{
+				where: { id: keyPath[0] }
+			},
+			tx
+		))!;
+		return recordWithRelations as Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			Q,
+			'update'
+		>;
+	}
+
+	async updateMany<
+		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'updateMany'>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'updateMany'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readwrite');
+		const records = await this.findMany({ where: query.where }, tx);
+		await Promise.all(
+			records.map(async (record) => {
+				await this.update({ where: { id: record.id }, data: query.data }, tx);
+			})
+		);
+		return { count: records.length };
+	}
+
+	async upsert<Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'upsert'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'upsert'>> {
+		const neededStores = this._getNeededStoresForUpdate({
+			...query,
+			data: { ...query.update, ...query.create } as Prisma.Args<
+				Prisma.MacroActivityTrackingPreferencesDelegate,
+				'update'
+			>['data']
+		});
+		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
+		let record = await this.findUnique({ where: query.where }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx);
+		else record = await this.update({ where: query.where, data: query.update }, tx);
+		record = await this.findUniqueOrThrow(
+			{ where: { id: record.id }, select: query.select, include: query.include },
+			tx
+		);
+		return record as Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'upsert'>;
+	}
+
+	async aggregate<
+		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'aggregate'>
+	>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'aggregate'>> {
+		tx = tx ?? this.client._db.transaction(['MacroActivityTrackingPreferences'], 'readonly');
+		const records = await this.findMany({ where: query?.where }, tx);
+		const result: Partial<
+			Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'aggregate'>
+		> = {};
+		if (query?._count) {
+			if (query._count === true) {
+				(result._count as number) = records.length;
+			} else {
+				for (const key of Object.keys(query._count)) {
+					const typedKey = key as keyof typeof query._count;
+					if (typedKey === '_all') {
+						(result._count as Record<string, number>)[typedKey] = records.length;
+						continue;
+					}
+					(result._count as Record<string, number>)[typedKey] = (
+						await this.findMany({ where: { [`${typedKey}`]: { not: null } } }, tx)
+					).length;
+				}
+			}
+		}
+		if (query?._min) {
+			const minResult = {} as Prisma.Result<
+				Prisma.MacroActivityTrackingPreferencesDelegate,
+				Q,
+				'aggregate'
+			>['_min'];
+			const numericFields = ['staticCalories'] as const;
+			for (const field of numericFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field] as number)
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as number) = Math.min(...values);
+			}
+			const stringFields = ['id', 'userId'] as const;
+			for (const field of stringFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field] as string)
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as string) = values.sort()[0];
+			}
+			result._min = minResult;
+		}
+		if (query?._max) {
+			const maxResult = {} as Prisma.Result<
+				Prisma.MacroActivityTrackingPreferencesDelegate,
+				Q,
+				'aggregate'
+			>['_max'];
+			const numericFields = ['staticCalories'] as const;
+			for (const field of numericFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field] as number)
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as number) = Math.max(...values);
+			}
+			const stringFields = ['id', 'userId'] as const;
+			for (const field of stringFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field] as string)
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as string) = values.sort().reverse()[0];
+			}
+			result._max = maxResult;
+		}
+		if (query?._avg) {
+			const avgResult = {} as Prisma.Result<
+				Prisma.MacroActivityTrackingPreferencesDelegate,
+				Q,
+				'aggregate'
+			>['_avg'];
+			for (const untypedField of Object.keys(query._avg)) {
+				const field = untypedField as keyof (typeof records)[number];
+				const values = records.map((record) => record[field] as number);
+				(avgResult[field as keyof typeof avgResult] as number) =
+					values.reduce((a, b) => a + b, 0) / values.length;
+			}
+			result._avg = avgResult;
+		}
+		if (query?._sum) {
+			const sumResult = {} as Prisma.Result<
+				Prisma.MacroActivityTrackingPreferencesDelegate,
+				Q,
+				'aggregate'
+			>['_sum'];
+			for (const untypedField of Object.keys(query._sum)) {
+				const field = untypedField as keyof (typeof records)[number];
+				const values = records.map((record) => record[field] as number);
+				(sumResult[field as keyof typeof sumResult] as number) = values.reduce((a, b) => a + b, 0);
+			}
+			result._sum = sumResult;
+		}
+		return result as unknown as Prisma.Result<
+			Prisma.MacroActivityTrackingPreferencesDelegate,
+			Q,
+			'aggregate'
+		>;
+	}
+}
+
 class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAnswers'> {
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.GettingStartedAnswersDelegate, 'findFirstOrThrow'>['where'],
@@ -6327,6 +8948,121 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 							if (!relatedRecord) return null;
 						}
 					}
+					if (whereClause.metrics) {
+						if (whereClause.metrics.every) {
+							const violatingRecord = await this.client.macroMetrics.findFirst({
+								where: { NOT: { ...whereClause.metrics.every }, userId: record.id },
+								tx
+							});
+							if (violatingRecord !== null) return null;
+						}
+						if (whereClause.metrics.some) {
+							const relatedRecords = await this.client.macroMetrics.findMany({
+								where: { ...whereClause.metrics.some, userId: record.id },
+								tx
+							});
+							if (relatedRecords.length === 0) return null;
+						}
+						if (whereClause.metrics.none) {
+							const violatingRecord = await this.client.macroMetrics.findFirst({
+								where: { ...whereClause.metrics.none, userId: record.id },
+								tx
+							});
+							if (violatingRecord !== null) return null;
+						}
+					}
+					if (whereClause.activityTrackingPreferences === null) {
+						const relatedRecord = await this.client.macroActivityTrackingPreferences.findFirst(
+							{ where: { userId: record.id } },
+							tx
+						);
+						if (relatedRecord) return null;
+					}
+					if (whereClause.activityTrackingPreferences) {
+						const { is, isNot, ...rest } = whereClause.activityTrackingPreferences;
+						if (is === null) {
+							const relatedRecord = await this.client.macroActivityTrackingPreferences.findFirst(
+								{ where: { userId: record.id } },
+								tx
+							);
+							if (relatedRecord) return null;
+						}
+						if (is !== null && is !== undefined) {
+							const relatedRecord = await this.client.macroActivityTrackingPreferences.findFirst(
+								{ where: { ...is, userId: record.id } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+						if (isNot === null) {
+							const relatedRecord = await this.client.macroActivityTrackingPreferences.findFirst(
+								{ where: { userId: record.id } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+						if (isNot !== null && isNot !== undefined) {
+							const relatedRecord = await this.client.macroActivityTrackingPreferences.findFirst(
+								{ where: { ...isNot, userId: record.id } },
+								tx
+							);
+							if (relatedRecord) return null;
+						}
+						if (Object.keys(rest).length) {
+							if (record.id === null) return null;
+							const relatedRecord = await this.client.macroActivityTrackingPreferences.findFirst(
+								{ where: { ...whereClause.activityTrackingPreferences, userId: record.id } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+					}
+					if (whereClause.macroTargets === null) {
+						const relatedRecord = await this.client.macroTargets.findFirst(
+							{ where: { userId: record.id } },
+							tx
+						);
+						if (relatedRecord) return null;
+					}
+					if (whereClause.macroTargets) {
+						const { is, isNot, ...rest } = whereClause.macroTargets;
+						if (is === null) {
+							const relatedRecord = await this.client.macroTargets.findFirst(
+								{ where: { userId: record.id } },
+								tx
+							);
+							if (relatedRecord) return null;
+						}
+						if (is !== null && is !== undefined) {
+							const relatedRecord = await this.client.macroTargets.findFirst(
+								{ where: { ...is, userId: record.id } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+						if (isNot === null) {
+							const relatedRecord = await this.client.macroTargets.findFirst(
+								{ where: { userId: record.id } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+						if (isNot !== null && isNot !== undefined) {
+							const relatedRecord = await this.client.macroTargets.findFirst(
+								{ where: { ...isNot, userId: record.id } },
+								tx
+							);
+							if (relatedRecord) return null;
+						}
+						if (Object.keys(rest).length) {
+							if (record.id === null) return null;
+							const relatedRecord = await this.client.macroTargets.findFirst(
+								{ where: { ...whereClause.macroTargets, userId: record.id } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+					}
 					return record;
 				})
 			)
@@ -6355,7 +9091,10 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				'accounts',
 				'exerciseSplits',
 				'gettingStartedAnswers',
-				'dashboardItems'
+				'dashboardItems',
+				'metrics',
+				'activityTrackingPreferences',
+				'macroTargets'
 			]) {
 				const key = untypedKey as keyof typeof record & keyof S;
 				if (!selectClause[key]) delete partialRecord[key];
@@ -6418,6 +9157,40 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				unsafeRecord['dashboardItems'] = await this.client.dashboardItems.findUnique(
 					{
 						...(attach_dashboardItems === true ? {} : attach_dashboardItems),
+						where: { userId: record.id }
+					},
+					tx
+				);
+			}
+			const attach_metrics = query.select?.metrics || query.include?.metrics;
+			if (attach_metrics) {
+				unsafeRecord['metrics'] = await this.client.macroMetrics.findMany(
+					{
+						...(attach_metrics === true ? {} : attach_metrics),
+						where: { userId: record.id! }
+					},
+					tx
+				);
+			}
+			const attach_activityTrackingPreferences =
+				query.select?.activityTrackingPreferences || query.include?.activityTrackingPreferences;
+			if (attach_activityTrackingPreferences) {
+				unsafeRecord['activityTrackingPreferences'] =
+					await this.client.macroActivityTrackingPreferences.findUnique(
+						{
+							...(attach_activityTrackingPreferences === true
+								? {}
+								: attach_activityTrackingPreferences),
+							where: { userId: record.id }
+						},
+						tx
+					);
+			}
+			const attach_macroTargets = query.select?.macroTargets || query.include?.macroTargets;
+			if (attach_macroTargets) {
+				unsafeRecord['macroTargets'] = await this.client.macroTargets.findUnique(
+					{
+						...(attach_macroTargets === true ? {} : attach_macroTargets),
 						where: { userId: record.id }
 					},
 					tx
@@ -6499,6 +9272,26 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						tx
 					);
 		}
+		if (orderByInput.activityTrackingPreferences) {
+			return record.id === null
+				? null
+				: await this.client.macroActivityTrackingPreferences._resolveOrderByKey(
+						await this.client.macroActivityTrackingPreferences.findFirstOrThrow({
+							where: { userId: record.id }
+						}),
+						orderByInput.activityTrackingPreferences,
+						tx
+					);
+		}
+		if (orderByInput.macroTargets) {
+			return record.id === null
+				? null
+				: await this.client.macroTargets._resolveOrderByKey(
+						await this.client.macroTargets.findFirstOrThrow({ where: { userId: record.id } }),
+						orderByInput.macroTargets,
+						tx
+					);
+		}
 		if (orderByInput.sessions) {
 			return await this.client.session.count({ where: { userId: record.id } }, tx);
 		}
@@ -6507,6 +9300,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		}
 		if (orderByInput.exerciseSplits) {
 			return await this.client.exerciseSplit.count({ where: { userId: record.id } }, tx);
+		}
+		if (orderByInput.metrics) {
+			return await this.client.macroMetrics.count({ where: { userId: record.id } }, tx);
 		}
 	}
 
@@ -6532,6 +9328,14 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		if (orderByInput.dashboardItems) {
 			return this.client.dashboardItems._resolveSortOrder(orderByInput.dashboardItems);
 		}
+		if (orderByInput.activityTrackingPreferences) {
+			return this.client.macroActivityTrackingPreferences._resolveSortOrder(
+				orderByInput.activityTrackingPreferences
+			);
+		}
+		if (orderByInput.macroTargets) {
+			return this.client.macroTargets._resolveSortOrder(orderByInput.macroTargets);
+		}
 		if (orderByInput.sessions?._count) {
 			return orderByInput.sessions._count;
 		}
@@ -6540,6 +9344,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		}
 		if (orderByInput.exerciseSplits?._count) {
 			return orderByInput.exerciseSplits._count;
+		}
+		if (orderByInput.metrics?._count) {
+			return orderByInput.metrics._count;
 		}
 		throw new Error('No field in orderBy clause');
 	}
@@ -6617,6 +9424,23 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			neededStores.add('DashboardItems');
 			this.client.dashboardItems._getNeededStoresForWhere(whereClause.dashboardItems, neededStores);
 		}
+		if (whereClause.metrics) {
+			neededStores.add('MacroMetrics');
+			this.client.macroMetrics._getNeededStoresForWhere(whereClause.metrics.every, neededStores);
+			this.client.macroMetrics._getNeededStoresForWhere(whereClause.metrics.some, neededStores);
+			this.client.macroMetrics._getNeededStoresForWhere(whereClause.metrics.none, neededStores);
+		}
+		if (whereClause.activityTrackingPreferences) {
+			neededStores.add('MacroActivityTrackingPreferences');
+			this.client.macroActivityTrackingPreferences._getNeededStoresForWhere(
+				whereClause.activityTrackingPreferences,
+				neededStores
+			);
+		}
+		if (whereClause.macroTargets) {
+			neededStores.add('MacroTargets');
+			this.client.macroTargets._getNeededStoresForWhere(whereClause.macroTargets, neededStores);
+		}
 	}
 
 	_getNeededStoresForFind<Q extends Prisma.Args<Prisma.UserDelegate, 'findMany'>>(
@@ -6649,6 +9473,26 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			if (orderBy_dashboardItems) {
 				this.client.dashboardItems
 					._getNeededStoresForFind({ orderBy: orderBy_dashboardItems.dashboardItems })
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			const orderBy_metrics = orderBy.find((clause) => clause.metrics);
+			if (orderBy_metrics) {
+				neededStores.add('MacroMetrics');
+			}
+			const orderBy_activityTrackingPreferences = orderBy.find(
+				(clause) => clause.activityTrackingPreferences
+			);
+			if (orderBy_activityTrackingPreferences) {
+				this.client.macroActivityTrackingPreferences
+					._getNeededStoresForFind({
+						orderBy: orderBy_activityTrackingPreferences.activityTrackingPreferences
+					})
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			const orderBy_macroTargets = orderBy.find((clause) => clause.macroTargets);
+			if (orderBy_macroTargets) {
+				this.client.macroTargets
+					._getNeededStoresForFind({ orderBy: orderBy_macroTargets.macroTargets })
 					.forEach((storeName) => neededStores.add(storeName));
 			}
 		}
@@ -6714,6 +9558,45 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			if (typeof query.include?.dashboardItems === 'object') {
 				this.client.dashboardItems
 					._getNeededStoresForFind(query.include.dashboardItems)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		if (query?.select?.metrics || query?.include?.metrics) {
+			neededStores.add('MacroMetrics');
+			if (typeof query.select?.metrics === 'object') {
+				this.client.macroMetrics
+					._getNeededStoresForFind(query.select.metrics)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.metrics === 'object') {
+				this.client.macroMetrics
+					._getNeededStoresForFind(query.include.metrics)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		if (query?.select?.activityTrackingPreferences || query?.include?.activityTrackingPreferences) {
+			neededStores.add('MacroActivityTrackingPreferences');
+			if (typeof query.select?.activityTrackingPreferences === 'object') {
+				this.client.macroActivityTrackingPreferences
+					._getNeededStoresForFind(query.select.activityTrackingPreferences)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.activityTrackingPreferences === 'object') {
+				this.client.macroActivityTrackingPreferences
+					._getNeededStoresForFind(query.include.activityTrackingPreferences)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		if (query?.select?.macroTargets || query?.include?.macroTargets) {
+			neededStores.add('MacroTargets');
+			if (typeof query.select?.macroTargets === 'object') {
+				this.client.macroTargets
+					._getNeededStoresForFind(query.select.macroTargets)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.macroTargets === 'object') {
+				this.client.macroTargets
+					._getNeededStoresForFind(query.include.macroTargets)
 					.forEach((storeName) => neededStores.add(storeName));
 			}
 		}
@@ -6841,6 +9724,74 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			if (data.dashboardItems.connectOrCreate) {
 				IDBUtils.convertToArray(data.dashboardItems.connectOrCreate).forEach((record) =>
 					this.client.dashboardItems
+						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+		}
+		if (data?.metrics) {
+			neededStores.add('MacroMetrics');
+			if (data.metrics.create) {
+				const createData = Array.isArray(data.metrics.create)
+					? data.metrics.create
+					: [data.metrics.create];
+				createData.forEach((record) =>
+					this.client.macroMetrics
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.metrics.connectOrCreate) {
+				IDBUtils.convertToArray(data.metrics.connectOrCreate).forEach((record) =>
+					this.client.macroMetrics
+						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.metrics.createMany) {
+				IDBUtils.convertToArray(data.metrics.createMany.data).forEach((record) =>
+					this.client.macroMetrics
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+		}
+		if (data?.activityTrackingPreferences) {
+			neededStores.add('MacroActivityTrackingPreferences');
+			if (data.activityTrackingPreferences.create) {
+				const createData = Array.isArray(data.activityTrackingPreferences.create)
+					? data.activityTrackingPreferences.create
+					: [data.activityTrackingPreferences.create];
+				createData.forEach((record) =>
+					this.client.macroActivityTrackingPreferences
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.activityTrackingPreferences.connectOrCreate) {
+				IDBUtils.convertToArray(data.activityTrackingPreferences.connectOrCreate).forEach(
+					(record) =>
+						this.client.macroActivityTrackingPreferences
+							._getNeededStoresForCreate(record.create)
+							.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+		}
+		if (data?.macroTargets) {
+			neededStores.add('MacroTargets');
+			if (data.macroTargets.create) {
+				const createData = Array.isArray(data.macroTargets.create)
+					? data.macroTargets.create
+					: [data.macroTargets.create];
+				createData.forEach((record) =>
+					this.client.macroTargets
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.macroTargets.connectOrCreate) {
+				IDBUtils.convertToArray(data.macroTargets.connectOrCreate).forEach((record) =>
+					this.client.macroTargets
 						._getNeededStoresForCreate(record.create)
 						.forEach((storeName) => neededStores.add(storeName))
 				);
@@ -7049,6 +10000,124 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 					.forEach((store) => neededStores.add(store));
 			});
 		}
+		if (query.data?.metrics?.connect) {
+			neededStores.add('MacroMetrics');
+			IDBUtils.convertToArray(query.data.metrics.connect).forEach((connect) => {
+				this.client.macroMetrics._getNeededStoresForWhere(connect, neededStores);
+			});
+		}
+		if (query.data?.metrics?.set) {
+			neededStores.add('MacroMetrics');
+			IDBUtils.convertToArray(query.data.metrics.set).forEach((setWhere) => {
+				this.client.macroMetrics._getNeededStoresForWhere(setWhere, neededStores);
+			});
+		}
+		if (query.data?.metrics?.updateMany) {
+			neededStores.add('MacroMetrics');
+			IDBUtils.convertToArray(query.data.metrics.updateMany).forEach((update) => {
+				this.client.macroMetrics
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.MacroMetricsDelegate, 'update'>)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.metrics?.update) {
+			neededStores.add('MacroMetrics');
+			IDBUtils.convertToArray(query.data.metrics.update).forEach((update) => {
+				this.client.macroMetrics
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.MacroMetricsDelegate, 'update'>)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.metrics?.upsert) {
+			neededStores.add('MacroMetrics');
+			IDBUtils.convertToArray(query.data.metrics.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<Prisma.MacroMetricsDelegate, 'update'>;
+				this.client.macroMetrics
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.activityTrackingPreferences?.connect) {
+			neededStores.add('MacroActivityTrackingPreferences');
+			IDBUtils.convertToArray(query.data.activityTrackingPreferences.connect).forEach((connect) => {
+				this.client.macroActivityTrackingPreferences._getNeededStoresForWhere(
+					connect,
+					neededStores
+				);
+			});
+		}
+		if (query.data?.activityTrackingPreferences?.disconnect) {
+			neededStores.add('MacroActivityTrackingPreferences');
+			if (query.data?.activityTrackingPreferences?.disconnect !== true) {
+				IDBUtils.convertToArray(query.data.activityTrackingPreferences.disconnect).forEach(
+					(disconnect) => {
+						this.client.macroActivityTrackingPreferences._getNeededStoresForWhere(
+							disconnect,
+							neededStores
+						);
+					}
+				);
+			}
+		}
+		if (query.data?.activityTrackingPreferences?.update) {
+			neededStores.add('MacroActivityTrackingPreferences');
+			IDBUtils.convertToArray(query.data.activityTrackingPreferences.update).forEach((update) => {
+				this.client.macroActivityTrackingPreferences
+					._getNeededStoresForUpdate(
+						update as Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'update'>
+					)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.activityTrackingPreferences?.upsert) {
+			neededStores.add('MacroActivityTrackingPreferences');
+			IDBUtils.convertToArray(query.data.activityTrackingPreferences.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'update'>;
+				this.client.macroActivityTrackingPreferences
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.macroTargets?.connect) {
+			neededStores.add('MacroTargets');
+			IDBUtils.convertToArray(query.data.macroTargets.connect).forEach((connect) => {
+				this.client.macroTargets._getNeededStoresForWhere(connect, neededStores);
+			});
+		}
+		if (query.data?.macroTargets?.disconnect) {
+			neededStores.add('MacroTargets');
+			if (query.data?.macroTargets?.disconnect !== true) {
+				IDBUtils.convertToArray(query.data.macroTargets.disconnect).forEach((disconnect) => {
+					this.client.macroTargets._getNeededStoresForWhere(disconnect, neededStores);
+				});
+			}
+		}
+		if (query.data?.macroTargets?.update) {
+			neededStores.add('MacroTargets');
+			IDBUtils.convertToArray(query.data.macroTargets.update).forEach((update) => {
+				this.client.macroTargets
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.MacroTargetsDelegate, 'update'>)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.macroTargets?.upsert) {
+			neededStores.add('MacroTargets');
+			IDBUtils.convertToArray(query.data.macroTargets.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<Prisma.MacroTargetsDelegate, 'update'>;
+				this.client.macroTargets
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
 		if (query.data?.sessions?.delete || query.data?.sessions?.deleteMany) {
 			this.client.session._getNeededStoresForNestedDelete(neededStores);
 		}
@@ -7064,8 +10133,20 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		if (query.data?.dashboardItems?.delete) {
 			this.client.dashboardItems._getNeededStoresForNestedDelete(neededStores);
 		}
+		if (query.data?.metrics?.delete || query.data?.metrics?.deleteMany) {
+			this.client.macroMetrics._getNeededStoresForNestedDelete(neededStores);
+		}
+		if (query.data?.activityTrackingPreferences?.delete) {
+			this.client.macroActivityTrackingPreferences._getNeededStoresForNestedDelete(neededStores);
+		}
+		if (query.data?.macroTargets?.delete) {
+			this.client.macroTargets._getNeededStoresForNestedDelete(neededStores);
+		}
 		if (query.data?.id !== undefined) {
 			neededStores.add('ExerciseSplit');
+			neededStores.add('MacroTargets');
+			neededStores.add('MacroMetrics');
+			neededStores.add('MacroActivityTrackingPreferences');
 			neededStores.add('GettingStartedAnswers');
 			neededStores.add('DashboardItems');
 			neededStores.add('Session');
@@ -7081,6 +10162,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		this.client.exerciseSplit._getNeededStoresForNestedDelete(neededStores);
 		this.client.gettingStartedAnswers._getNeededStoresForNestedDelete(neededStores);
 		this.client.dashboardItems._getNeededStoresForNestedDelete(neededStores);
+		this.client.macroMetrics._getNeededStoresForNestedDelete(neededStores);
+		this.client.macroActivityTrackingPreferences._getNeededStoresForNestedDelete(neededStores);
+		this.client.macroTargets._getNeededStoresForNestedDelete(neededStores);
 	}
 
 	private _removeNestedCreateData<D extends Prisma.Args<Prisma.UserDelegate, 'create'>['data']>(
@@ -7092,6 +10176,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		delete recordWithoutNestedCreate?.exerciseSplits;
 		delete recordWithoutNestedCreate?.gettingStartedAnswers;
 		delete recordWithoutNestedCreate?.dashboardItems;
+		delete recordWithoutNestedCreate?.metrics;
+		delete recordWithoutNestedCreate?.activityTrackingPreferences;
+		delete recordWithoutNestedCreate?.macroTargets;
 		return recordWithoutNestedCreate as Prisma.Result<
 			Prisma.UserDelegate,
 			object,
@@ -7460,6 +10547,121 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				);
 			}
 		}
+		if (query.data?.metrics?.create) {
+			for (const elem of IDBUtils.convertToArray(query.data.metrics.create)) {
+				await this.client.macroMetrics.create(
+					{
+						data: { ...elem, user: { connect: { id: keyPath[0] } } } as Prisma.Args<
+							Prisma.MacroMetricsDelegate,
+							'create'
+						>['data']
+					},
+					tx
+				);
+			}
+		}
+		if (query.data?.metrics?.connect) {
+			await Promise.all(
+				IDBUtils.convertToArray(query.data.metrics.connect).map(async (connectWhere) => {
+					await this.client.macroMetrics.update(
+						{ where: connectWhere, data: { userId: keyPath[0] } },
+						tx
+					);
+				})
+			);
+		}
+		if (query.data?.metrics?.connectOrCreate) {
+			await Promise.all(
+				IDBUtils.convertToArray(query.data.metrics.connectOrCreate).map(async (connectOrCreate) => {
+					await this.client.macroMetrics.upsert(
+						{
+							where: connectOrCreate.where,
+							create: { ...connectOrCreate.create, userId: keyPath[0] } as Prisma.Args<
+								Prisma.MacroMetricsDelegate,
+								'create'
+							>['data'],
+							update: { userId: keyPath[0] }
+						},
+						tx
+					);
+				})
+			);
+		}
+		if (query.data?.metrics?.createMany) {
+			await this.client.macroMetrics.createMany(
+				{
+					data: IDBUtils.convertToArray(query.data.metrics.createMany.data).map((createData) => ({
+						...createData,
+						userId: keyPath[0]
+					}))
+				},
+				tx
+			);
+		}
+		if (query.data.activityTrackingPreferences?.create) {
+			await this.client.macroActivityTrackingPreferences.create(
+				{
+					data: {
+						...query.data.activityTrackingPreferences.create,
+						userId: keyPath[0]
+					} as Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'create'>['data']
+				},
+				tx
+			);
+		}
+		if (query.data.activityTrackingPreferences?.connect) {
+			await this.client.macroActivityTrackingPreferences.update(
+				{ where: query.data.activityTrackingPreferences.connect, data: { userId: keyPath[0] } },
+				tx
+			);
+		}
+		if (query.data.activityTrackingPreferences?.connectOrCreate) {
+			if (query.data.activityTrackingPreferences?.connectOrCreate) {
+				await this.client.macroActivityTrackingPreferences.upsert(
+					{
+						where: query.data.activityTrackingPreferences.connectOrCreate.where,
+						create: {
+							...query.data.activityTrackingPreferences.connectOrCreate.create,
+							userId: keyPath[0]
+						} as Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'create'>['data'],
+						update: { userId: keyPath[0] }
+					},
+					tx
+				);
+			}
+		}
+		if (query.data.macroTargets?.create) {
+			await this.client.macroTargets.create(
+				{
+					data: { ...query.data.macroTargets.create, userId: keyPath[0] } as Prisma.Args<
+						Prisma.MacroTargetsDelegate,
+						'create'
+					>['data']
+				},
+				tx
+			);
+		}
+		if (query.data.macroTargets?.connect) {
+			await this.client.macroTargets.update(
+				{ where: query.data.macroTargets.connect, data: { userId: keyPath[0] } },
+				tx
+			);
+		}
+		if (query.data.macroTargets?.connectOrCreate) {
+			if (query.data.macroTargets?.connectOrCreate) {
+				await this.client.macroTargets.upsert(
+					{
+						where: query.data.macroTargets.connectOrCreate.where,
+						create: {
+							...query.data.macroTargets.connectOrCreate.create,
+							userId: keyPath[0]
+						} as Prisma.Args<Prisma.MacroTargetsDelegate, 'create'>['data'],
+						update: { userId: keyPath[0] }
+					},
+					tx
+				);
+			}
+		}
 		const data = (await tx.objectStore('User').get(keyPath))!;
 		const recordsWithRelations = this._applySelectClause(
 			await this._applyRelations<object>([data], tx, query),
@@ -7515,6 +10717,25 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			tx
 		);
 		if (relatedExerciseSplit.length)
+			throw new Error('Cannot delete record, other records depend on it');
+		const relatedMacroTargets = await this.client.macroTargets.findMany(
+			{ where: { userId: record.id } },
+			tx
+		);
+		if (relatedMacroTargets.length)
+			throw new Error('Cannot delete record, other records depend on it');
+		const relatedMacroMetrics = await this.client.macroMetrics.findMany(
+			{ where: { userId: record.id } },
+			tx
+		);
+		if (relatedMacroMetrics.length)
+			throw new Error('Cannot delete record, other records depend on it');
+		const relatedMacroActivityTrackingPreferences =
+			await this.client.macroActivityTrackingPreferences.findMany(
+				{ where: { userId: record.id } },
+				tx
+			);
+		if (relatedMacroActivityTrackingPreferences.length)
 			throw new Error('Cannot delete record, other records depend on it');
 		const relatedGettingStartedAnswers = await this.client.gettingStartedAnswers.findMany(
 			{ where: { userId: record.id } },
@@ -8048,6 +11269,274 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				);
 			}
 		}
+		if (query.data.metrics) {
+			if (query.data.metrics.connect) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.metrics.connect).map(async (connectWhere) => {
+						await this.client.macroMetrics.update(
+							{ where: connectWhere, data: { userId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.metrics.disconnect) {
+				throw new Error('Cannot disconnect required relation');
+			}
+			if (query.data.metrics.create) {
+				const createData = Array.isArray(query.data.metrics.create)
+					? query.data.metrics.create
+					: [query.data.metrics.create];
+				for (const elem of createData) {
+					await this.client.macroMetrics.create(
+						{
+							data: { ...elem, userId: record.id } as Prisma.Args<
+								Prisma.MacroMetricsDelegate,
+								'create'
+							>['data']
+						},
+						tx
+					);
+				}
+			}
+			if (query.data.metrics.createMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.metrics.createMany.data).map(async (createData) => {
+						await this.client.macroMetrics.create(
+							{ data: { ...createData, userId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.metrics.update) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.metrics.update).map(async (updateData) => {
+						await this.client.macroMetrics.update(updateData, tx);
+					})
+				);
+			}
+			if (query.data.metrics.updateMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.metrics.updateMany).map(async (updateData) => {
+						await this.client.macroMetrics.updateMany(updateData, tx);
+					})
+				);
+			}
+			if (query.data.metrics.upsert) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.metrics.upsert).map(async (upsertData) => {
+						await this.client.macroMetrics.upsert(
+							{
+								...upsertData,
+								where: { ...upsertData.where, userId: record.id },
+								create: { ...upsertData.create, userId: record.id } as Prisma.Args<
+									Prisma.MacroMetricsDelegate,
+									'upsert'
+								>['create']
+							},
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.metrics.delete) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.metrics.delete).map(async (deleteData) => {
+						await this.client.macroMetrics.delete(
+							{ where: { ...deleteData, userId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.metrics.deleteMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.metrics.deleteMany).map(async (deleteData) => {
+						await this.client.macroMetrics.deleteMany(
+							{ where: { ...deleteData, userId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.metrics.set) {
+				const existing = await this.client.macroMetrics.findMany(
+					{ where: { userId: record.id } },
+					tx
+				);
+				if (existing.length > 0) {
+					throw new Error('Cannot set required relation');
+				}
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.metrics.set).map(async (setData) => {
+						await this.client.macroMetrics.update(
+							{ where: setData, data: { userId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+		}
+		if (query.data.activityTrackingPreferences) {
+			if (query.data.activityTrackingPreferences.connect) {
+				await this.client.macroActivityTrackingPreferences.update(
+					{ where: query.data.activityTrackingPreferences.connect, data: { userId: record.id } },
+					tx
+				);
+			}
+			if (query.data.activityTrackingPreferences.disconnect) {
+				throw new Error('Cannot disconnect required relation');
+			}
+			if (query.data.activityTrackingPreferences.create) {
+				await this.client.macroActivityTrackingPreferences.create(
+					{
+						data: {
+							...query.data.activityTrackingPreferences.create,
+							userId: record.id
+						} as Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'create'>['data']
+					},
+					tx
+				);
+			}
+			if (query.data.activityTrackingPreferences.delete) {
+				const deleteWhere =
+					query.data.activityTrackingPreferences.delete === true
+						? {}
+						: query.data.activityTrackingPreferences.delete;
+				await this.client.macroActivityTrackingPreferences.delete(
+					{
+						where: {
+							...deleteWhere,
+							userId: record.id
+						} as Prisma.MacroActivityTrackingPreferencesWhereUniqueInput
+					},
+					tx
+				);
+			}
+			if (query.data.activityTrackingPreferences.update) {
+				const updateData =
+					query.data.activityTrackingPreferences.update.data ??
+					query.data.activityTrackingPreferences.update;
+				await this.client.macroActivityTrackingPreferences.update(
+					{
+						where: {
+							...query.data.activityTrackingPreferences.update.where,
+							userId: record.id
+						} as Prisma.MacroActivityTrackingPreferencesWhereUniqueInput,
+						data: updateData
+					},
+					tx
+				);
+			}
+			if (query.data.activityTrackingPreferences.upsert) {
+				await this.client.macroActivityTrackingPreferences.upsert(
+					{
+						...query.data.activityTrackingPreferences.upsert,
+						where: {
+							...query.data.activityTrackingPreferences.upsert.where,
+							userId: record.id
+						} as Prisma.MacroActivityTrackingPreferencesWhereUniqueInput,
+						create: {
+							...query.data.activityTrackingPreferences.upsert.create,
+							userId: record.id
+						} as Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'upsert'>['create']
+					},
+					tx
+				);
+			}
+			if (query.data.activityTrackingPreferences.connectOrCreate) {
+				await this.client.macroActivityTrackingPreferences.upsert(
+					{
+						where: {
+							...query.data.activityTrackingPreferences.connectOrCreate.where,
+							userId: record.id
+						} as Prisma.MacroActivityTrackingPreferencesWhereUniqueInput,
+						create: {
+							...query.data.activityTrackingPreferences.connectOrCreate.create,
+							userId: record.id
+						} as Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'upsert'>['create'],
+						update: { userId: record.id }
+					},
+					tx
+				);
+			}
+		}
+		if (query.data.macroTargets) {
+			if (query.data.macroTargets.connect) {
+				await this.client.macroTargets.update(
+					{ where: query.data.macroTargets.connect, data: { userId: record.id } },
+					tx
+				);
+			}
+			if (query.data.macroTargets.disconnect) {
+				throw new Error('Cannot disconnect required relation');
+			}
+			if (query.data.macroTargets.create) {
+				await this.client.macroTargets.create(
+					{
+						data: { ...query.data.macroTargets.create, userId: record.id } as Prisma.Args<
+							Prisma.MacroTargetsDelegate,
+							'create'
+						>['data']
+					},
+					tx
+				);
+			}
+			if (query.data.macroTargets.delete) {
+				const deleteWhere =
+					query.data.macroTargets.delete === true ? {} : query.data.macroTargets.delete;
+				await this.client.macroTargets.delete(
+					{ where: { ...deleteWhere, userId: record.id } as Prisma.MacroTargetsWhereUniqueInput },
+					tx
+				);
+			}
+			if (query.data.macroTargets.update) {
+				const updateData = query.data.macroTargets.update.data ?? query.data.macroTargets.update;
+				await this.client.macroTargets.update(
+					{
+						where: {
+							...query.data.macroTargets.update.where,
+							userId: record.id
+						} as Prisma.MacroTargetsWhereUniqueInput,
+						data: updateData
+					},
+					tx
+				);
+			}
+			if (query.data.macroTargets.upsert) {
+				await this.client.macroTargets.upsert(
+					{
+						...query.data.macroTargets.upsert,
+						where: {
+							...query.data.macroTargets.upsert.where,
+							userId: record.id
+						} as Prisma.MacroTargetsWhereUniqueInput,
+						create: { ...query.data.macroTargets.upsert.create, userId: record.id } as Prisma.Args<
+							Prisma.MacroTargetsDelegate,
+							'upsert'
+						>['create']
+					},
+					tx
+				);
+			}
+			if (query.data.macroTargets.connectOrCreate) {
+				await this.client.macroTargets.upsert(
+					{
+						where: {
+							...query.data.macroTargets.connectOrCreate.where,
+							userId: record.id
+						} as Prisma.MacroTargetsWhereUniqueInput,
+						create: {
+							...query.data.macroTargets.connectOrCreate.create,
+							userId: record.id
+						} as Prisma.Args<Prisma.MacroTargetsDelegate, 'upsert'>['create'],
+						update: { userId: record.id }
+					},
+					tx
+				);
+			}
+		}
 		const endKeyPath: PrismaIDBSchema['User']['key'] = [record.id];
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
@@ -8063,6 +11552,27 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				await this.client.exerciseSplit.updateMany(
+					{
+						where: { userId: startKeyPath[0] },
+						data: { userId: endKeyPath[0] }
+					},
+					tx
+				);
+				await this.client.macroTargets.updateMany(
+					{
+						where: { userId: startKeyPath[0] },
+						data: { userId: endKeyPath[0] }
+					},
+					tx
+				);
+				await this.client.macroMetrics.updateMany(
+					{
+						where: { userId: startKeyPath[0] },
+						data: { userId: endKeyPath[0] }
+					},
+					tx
+				);
+				await this.client.macroActivityTrackingPreferences.updateMany(
 					{
 						where: { userId: startKeyPath[0] },
 						data: { userId: endKeyPath[0] }
