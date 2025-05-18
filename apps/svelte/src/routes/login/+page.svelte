@@ -15,7 +15,7 @@
 			isLoggedIn = !!session.data;
 			if (session.data) {
 				toast.info("You're already signed in");
-				goto('/dashboard');
+				goto(page.url.searchParams.get('redirect') ?? '/dashboard');
 			}
 		});
 	});

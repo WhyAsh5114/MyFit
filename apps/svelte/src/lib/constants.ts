@@ -62,6 +62,11 @@ export const SIDEBAR_LINK_GROUPS = [
 				label: 'Progression',
 				href: '/progression',
 				icon: ChartNoAxesCombinedIcon
+			},
+			{
+				label: 'Food diary',
+				href: '/food-diary',
+				icon: AppleIcon
 			}
 		]
 	},
