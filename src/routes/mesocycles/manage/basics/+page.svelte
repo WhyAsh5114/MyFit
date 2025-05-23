@@ -1,42 +1,52 @@
 <script lang="ts">
-	import H3 from '$lib/components/ui/typography/H3.svelte';
+	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Resizable from '$lib/components/ui/resizable';
 	import * as Select from '$lib/components/ui/select';
-	import { Button } from '$lib/components/ui/button';
+	import H3 from '$lib/components/ui/typography/H3.svelte';
 
-	import { mesocycleRunes } from '../mesocycleRunes.svelte';
-	import type { PaneAPI } from 'paneforge';
-	import { arraySum } from '$lib/utils';
-	import type { Selected } from 'bits-ui';
 	import { goto } from '$app/navigation';
+	import { arraySum } from '$lib/utils';
+	import type { PaneAPI } from 'paneforge';
+	import { mesocycleRunes } from '../mesocycleRunes.svelte';
 
 	let manualDragging = false;
 	let panes: PaneAPI[] = $state([]);
 
 	let RIRProgression = $state(structuredClone($state.snapshot(mesocycleRunes.mesocycle.RIRProgression)));
 	let totalDuration = $state(arraySum(mesocycleRunes.mesocycle.RIRProgression));
-	let selectedRIR: Selected<number> = $derived({
-		value: RIRProgression.length - 1,
-		label: `${RIRProgression.length - 1} RIR`
-	});
+	let selectedRIRs: number[] = $state(
+		mesocycleRunes.mesocycle.RIRProgression.map((_, idx) =>
+			mesocycleRunes.mesocycle.RIRProgression[idx] > 0 ? idx : -1
+		)
+			.filter((idx) => idx !== -1)
+			.toReversed()
+	);
 
-	function generateRIRDistribution(startingRir: number, totalWeeks: number) {
-		if (startingRir === 0) {
+	function generateRIRDistribution(selectedRirValues: number[], totalWeeks: number) {
+		if (selectedRirValues.length === 0) {
 			RIRProgression = [totalWeeks];
 			return;
 		}
-		const rirDistribution: number[] = Array(startingRir + 1).fill(0);
-		rirDistribution[0] = 1;
-		let remainingWeeks = totalWeeks - 1;
-		while (remainingWeeks > 0) {
-			for (let rir = 1; rir <= startingRir; rir++) {
-				if (remainingWeeks > 0) {
-					rirDistribution[rir] += 1;
-					remainingWeeks -= 1;
-				}
-			}
+
+		const sortedRirs = [...selectedRirValues].sort((a, b) => b - a);
+		const maxRir = Math.max(...sortedRirs);
+		const rirDistribution: number[] = Array(maxRir + 1).fill(0);
+
+		let remainingWeeks = totalWeeks;
+		const weeksPerRir = Math.floor(totalWeeks / selectedRirValues.length);
+
+		for (const rir of selectedRirValues) {
+			rirDistribution[rir] = weeksPerRir;
+			remainingWeeks -= weeksPerRir;
+		}
+
+		let rirIndex = 0;
+		while (remainingWeeks > 0 && rirIndex < selectedRirValues.length) {
+			rirDistribution[selectedRirValues[rirIndex]]++;
+			remainingWeeks--;
+			rirIndex++;
 		}
 		RIRProgression = rirDistribution;
 	}
@@ -60,16 +70,17 @@
 	<div class="flex gap-2">
 		<div class="flex basis-1/2 flex-col gap-1.5">
 			<Select.Root
+				multiple
 				onSelectedChange={(s) => {
 					if (!s) return;
-					generateRIRDistribution(s.value, totalDuration);
+					selectedRIRs = s.sort((a, b) => (b.value as number) - (a.value as number)).map((s) => s.value as number);
+					generateRIRDistribution(selectedRIRs, totalDuration);
 				}}
-				required
-				selected={selectedRIR}
+				selected={selectedRIRs.map((rir) => ({ value: rir, label: `${rir} RIR` }))}
 			>
-				<Select.Label class="p-0 text-sm font-medium leading-none">Start RIR</Select.Label>
+				<Select.Label class="p-0 text-sm font-medium leading-none">Select RIRs</Select.Label>
 				<Select.Trigger>
-					<Select.Value placeholder="Pick one" />
+					<Select.Value placeholder="Select RIRs" />
 				</Select.Trigger>
 				<Select.Content>
 					<Select.Group>
@@ -87,10 +98,10 @@
 			<Input
 				id="mesocycle-duration"
 				max={20}
-				min={selectedRIR.value + 1}
+				min={Math.max(1, selectedRIRs.length)}
 				oninput={(e) => {
 					totalDuration = e.currentTarget.valueAsNumber;
-					if (!isNaN(totalDuration)) generateRIRDistribution(selectedRIR.value, totalDuration);
+					if (!isNaN(totalDuration)) generateRIRDistribution(selectedRIRs, totalDuration);
 				}}
 				placeholder="Type here"
 				required
@@ -102,28 +113,28 @@
 
 	<span class="text-sm font-medium leading-none">RIR progression</span>
 	<Resizable.PaneGroup class="rounded-lg border" direction="vertical">
-		{#each RIRProgression.toReversed() as cyclesPerRIR, idx}
-			{#key selectedRIR.value + totalDuration}
+		{#each selectedRIRs as rir, idx}
+			{#key selectedRIRs.join(',') + totalDuration}
 				<Resizable.Pane
-					defaultSize={(100 / totalDuration) * cyclesPerRIR}
+					defaultSize={(100 / totalDuration) * (RIRProgression[rir] || 0)}
 					minSize={100 / totalDuration}
 					onResize={(size) => {
 						if (!manualDragging) return;
-						RIRProgression[selectedRIR.value - idx] = Math.round((size / 100) * totalDuration);
+						RIRProgression[rir] = Math.round((size / 100) * totalDuration);
 					}}
 					bind:pane={panes[idx]}
 				>
 					<div class="flex h-full items-center justify-between px-4">
-						<span class="text-center font-semibold">{selectedRIR.value - idx} RIR</span>
-						<span class="text-center text-sm text-muted-foreground">{cyclesPerRIR} cycles</span>
+						<span class="text-center font-semibold">{rir} RIR</span>
+						<span class="text-center text-sm text-muted-foreground">{RIRProgression[rir] || 0} cycles</span>
 					</div>
 				</Resizable.Pane>
 			{/key}
-			{#if idx !== RIRProgression.length - 1}
+			{#if idx !== selectedRIRs.length - 1}
 				<Resizable.Handle
 					onDraggingChange={(dragging) => {
 						manualDragging = dragging;
-						if (!dragging) panes[idx].resize((100 / totalDuration) * cyclesPerRIR);
+						if (!dragging) panes[idx].resize((100 / totalDuration) * (RIRProgression[rir] || 0));
 					}}
 					withHandle
 				/>
