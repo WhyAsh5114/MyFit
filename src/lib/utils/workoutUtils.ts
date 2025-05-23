@@ -1,6 +1,6 @@
 import type { MesocycleExerciseTemplateWithoutIdsOrIndex } from '$lib/components/mesocycleAndExerciseSplit/commonTypes';
 import type { ActiveMesocycleWithProgressionData } from '$lib/trpc/routes/workouts';
-import { arrayAverage, arraySum, groupBy } from '$lib/utils';
+import { arrayAverage, arraySum, groupBy } from '../utils';
 import type { Workout, WorkoutExercise } from './types';
 import { type Prisma } from '@prisma/client';
 
