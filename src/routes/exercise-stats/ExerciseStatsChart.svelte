@@ -82,12 +82,20 @@
 					});
 				})
 			);
-		} else {
+		} else if (chartType === 'absolute-load') {
 			dataValues = Array.from({ length: maxSets }, (_, setIdx) =>
 				nonSkippedExercises.map((ex) => {
 					if (!selectedSets.includes(setIdx.toString())) return null;
 					if (!ex.sets[setIdx]) return null;
 					return ex.sets[setIdx].load;
+				})
+			);
+		} else {
+			dataValues = Array.from({ length: maxSets }, (_, setIdx) =>
+				nonSkippedExercises.map((ex) => {
+					if (!selectedSets.includes(setIdx.toString())) return null;
+					if (!ex.sets[setIdx]) return null;
+					return ex.sets[setIdx].load + ex.bodyweightFraction! * ex.workout.userBodyweight;
 				})
 			);
 		}
@@ -140,6 +148,12 @@
 							<RadioGroup.Item value="absolute-load" id="absolute-load" />
 							<Label for="absolute-load">Absolute load</Label>
 						</div>
+						{#if typeof exercises.at(0)?.bodyweightFraction === 'number'}
+							<div class="flex items-center space-x-2">
+								<RadioGroup.Item value="load-and-bodyweight" id="load-and-bodyweight" />
+								<Label for="load-and-bodyweight">Load + BW</Label>
+							</div>
+						{/if}
 					</RadioGroup.Root>
 
 					<Separator class="my-2" />
