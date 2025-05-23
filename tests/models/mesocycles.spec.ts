@@ -13,7 +13,7 @@ test('create a mesocycle', async ({ page }) => {
 	await page.getByLabel('Mesocycle name').fill('My Mesocycle');
 	await page.getByLabel('Mesocycle duration').fill('12');
 	await page.getByRole('combobox').click();
-	await page.getByRole('option', { name: '2 RIR' }).click();
+	await page.getByRole('option', { name: '3 RIR' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
 
 	await page.getByText('Pick one').click();
@@ -240,7 +240,9 @@ test('complete a mesocycle', async ({ page }) => {
 	await page.getByLabel('Mesocycle name').fill('MyMeso');
 	await page.getByLabel('Mesocycle duration').fill('1');
 	await page.getByRole('combobox').click();
-	await page.getByRole('option', { name: '0 RIR' }).click();
+	await page.getByRole('option', { name: '3 RIR' }).click();
+	await page.getByRole('option', { name: '2 RIR' }).click();
+	await page.getByRole('option', { name: '1 RIR' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByText('Pick one').click();
 	await page.getByRole('option', { name: 'Pull Push Legs' }).click();
