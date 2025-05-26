@@ -17,6 +17,10 @@
 	import ChevronLeft from 'virtual:icons/lucide/chevron-left';
 	import ChevronRight from 'virtual:icons/lucide/chevron-right';
 	import AddIcon from 'virtual:icons/lucide/plus';
+	import FilterIcon from 'virtual:icons/lucide/filter';
+	import XIcon from 'virtual:icons/lucide/x';
+	import CheckIcon from 'virtual:icons/lucide/check';
+	import * as Popover from '$lib/components/ui/popover';
 	import type {
 		ExerciseTemplateWithoutIdsOrIndex,
 		MesocycleExerciseTemplateWithoutIdsOrIndex,
@@ -92,14 +96,24 @@
 	let mode = $derived(props.editingExercise === undefined ? 'Add' : 'Edit');
 	let searching = $state(false);
 	let currentExercise: Partial<FullExerciseTemplate> = $state(structuredClone(defaultExercise));
+	let selectedMuscleGroups = $state<MuscleGroup[]>([]);
+	let filterOpen = $state(false);
+
 	let filteredExercises = $derived(
-		allGroupedExercises.map((exercisesForMuscleGroup) => {
-			const { muscleGroup, exercises } = exercisesForMuscleGroup;
-			return {
-				muscleGroup,
-				exercises: exercises.filter((ex) => ex.name.toLowerCase().includes(currentExercise.name?.toLowerCase() ?? ''))
-			};
-		})
+		allGroupedExercises
+			.filter(
+				(exercisesForMuscleGroup) =>
+					selectedMuscleGroups.length === 0 || selectedMuscleGroups.includes(exercisesForMuscleGroup.muscleGroup)
+			)
+			.map((exercisesForMuscleGroup) => ({
+				muscleGroup: exercisesForMuscleGroup.muscleGroup,
+				exercises: exercisesForMuscleGroup.exercises.filter((ex) =>
+					(currentExercise.name ?? '').trim() === ''
+						? true
+						: ex.name.toLowerCase().includes(currentExercise.name?.toLowerCase() ?? '')
+				)
+			}))
+			.filter((group) => group.exercises.length > 0)
 	);
 
 	$effect(() => {
@@ -146,6 +160,14 @@
 		e.preventDefault();
 		overridesSheetOpen = false;
 	}
+
+	function toggleMuscleGroup(muscleGroup: MuscleGroup) {
+		if (selectedMuscleGroups.includes(muscleGroup)) {
+			selectedMuscleGroups = selectedMuscleGroups.filter((g) => g !== muscleGroup);
+		} else {
+			selectedMuscleGroups = [...selectedMuscleGroups, muscleGroup];
+		}
+	}
 </script>
 
 <Sheet.Root closeOnOutsideClick={false} onOpenChange={(o) => !o && props.setEditingExercise(undefined)} bind:open>
@@ -161,15 +183,63 @@
 		<form class="mt-8 grid h-fit grid-cols-2 gap-x-2 gap-y-4" onsubmit={submitForm}>
 			<div class="col-span-2 flex w-full flex-col gap-1.5">
 				<span class="text-sm font-medium">Exercise name</span>
-				<Command.Root class="bg-background" shouldFilter={false}>
-					<Command.Input
-						onfocus={() => (searching = true)}
-						placeholder="Type here or search..."
-						required
-						bind:value={currentExercise.name}
-					/>
+				<Command.Root class="flex-1 bg-background" shouldFilter={false}>
+					<div class="flex w-full items-center justify-between">
+						<Command.Input
+							class="w-full pr-10"
+							onfocus={() => (searching = true)}
+							placeholder="Type here or search..."
+							required
+							bind:value={currentExercise.name}
+						/>
+						<Popover.Root bind:open={filterOpen}>
+							<Popover.Trigger>
+								<Button
+									variant={selectedMuscleGroups.length > 0 ? 'default' : 'outline'}
+									size="icon"
+									type="button"
+									class="ml-2 flex h-10 w-10 items-center justify-center p-0"
+								>
+									<FilterIcon class="h-5 w-5" />
+								</Button>
+							</Popover.Trigger>
+							<Popover.Content class="w-80 p-4" side="top" align="start">
+								<div class="flex flex-col gap-4">
+									<h4 class="font-medium leading-none">Filter by muscle group</h4>
+									<div class="grid grid-cols-2 gap-2">
+										{#each allGroupedExercises.filter((g) => g.exercises.length > 0) as group}
+											<Button
+												variant={selectedMuscleGroups.includes(group.muscleGroup) ? 'default' : 'outline'}
+												class="justify-start"
+												onclick={() => toggleMuscleGroup(group.muscleGroup)}
+											>
+												{convertCamelCaseToNormal(group.muscleGroup)}
+											</Button>
+										{/each}
+									</div>
+									<div class="flex justify-between">
+										<Button
+											variant="destructive"
+											class="gap-2"
+											onclick={() => {
+												selectedMuscleGroups = [];
+												filterOpen = false;
+											}}
+										>
+											<XIcon />
+											Clear
+										</Button>
+										<Button class="gap-2" onclick={() => (filterOpen = false)}>
+											Done
+											<CheckIcon />
+										</Button>
+									</div>
+								</div>
+							</Popover.Content>
+						</Popover.Root>
+					</div>
 					{#if searching}
-						<Command.List class="max-h-32 bg-muted">
+						<Command.List class="max-h-32 w-full bg-muted">
 							{#each filteredExercises as exercisesForMuscleGroup}
 								{#if exercisesForMuscleGroup.exercises.length > 0}
 									<Command.Group heading={exercisesForMuscleGroup.muscleGroup}>
