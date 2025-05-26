@@ -18,6 +18,8 @@
 	import ChevronRight from 'virtual:icons/lucide/chevron-right';
 	import AddIcon from 'virtual:icons/lucide/plus';
 	import FilterIcon from 'virtual:icons/lucide/filter';
+	import XIcon from 'virtual:icons/lucide/x';
+	import CheckIcon from 'virtual:icons/lucide/check';
 	import * as Popover from '$lib/components/ui/popover';
 	import type {
 		ExerciseTemplateWithoutIdsOrIndex,
@@ -215,15 +217,21 @@
 											</Button>
 										{/each}
 									</div>
-									<div class="flex justify-end">
+									<div class="flex justify-between">
 										<Button
-											variant="ghost"
+											variant="destructive"
+											class="gap-2"
 											onclick={() => {
 												selectedMuscleGroups = [];
 												filterOpen = false;
 											}}
 										>
-											Clear filters
+											<XIcon />
+											Clear
+										</Button>
+										<Button class="gap-2" onclick={() => (filterOpen = false)}>
+											Done
+											<CheckIcon />
 										</Button>
 									</div>
 								</div>
