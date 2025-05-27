@@ -51,6 +51,7 @@ npx tsx src/lib/utils/userCreation.ts
 
 This will create a user, and output the userId and sessionToken in the console. You can use these credentials to log in to the application.
 To use them, open your browser's developer tools, navigate to the `Application` tab, and create a new cookie with the following details:
+
 ```json
 {
    "name": "authjs.session-token",

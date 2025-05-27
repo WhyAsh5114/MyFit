@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import * as Popover from '$lib/components/ui/popover';
 	import { Separator } from '$lib/components/ui/separator';
+	import { arraySum, floorToNearestMultiple } from '$lib/utils';
 	import {
 		cleanupInProgressMiniSets,
 		solveBergerFormula,
@@ -11,10 +13,9 @@
 	import RemoveIcon from 'virtual:icons/lucide/minus';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import AddIcon from 'virtual:icons/lucide/plus';
-	import UndoIcon from 'virtual:icons/lucide/undo';
 	import TargetIcon from 'virtual:icons/lucide/target';
+	import UndoIcon from 'virtual:icons/lucide/undo';
 	import { workoutRunes } from '../../workoutRunes.svelte';
-	import { arraySum, floorToNearestMultiple } from '$lib/utils';
 
 	type PropsType = { exercise: WorkoutExerciseInProgress; originalSetLoads: (number | undefined)[] };
 	type WorkoutExerciseSet = WorkoutExerciseInProgress['sets'][number];
@@ -177,7 +178,20 @@
 	<span class="text-center text-sm font-medium">
 		Load
 		{#if typeof exercise.bodyweightFraction === 'number'}
-			<span class="text-xs font-semibold text-muted-foreground">(BW)</span>
+			<Popover.Root>
+				<Popover.Trigger>
+					<span class="text-xs font-semibold text-muted-foreground hover:underline">(+BW)</span>
+				</Popover.Trigger>
+				<Popover.Content>
+					<p class="text-sm text-muted-foreground">
+						{exercise.bodyweightFraction * 100}% of your bodyweight is taken into account for this exercise. No need to
+						adjust the load manually.
+						<br /><br />
+						{Math.round(exercise.bodyweightFraction * workoutRunes.workoutData!.userBodyweight! * 100) / 100} kg will be
+						automatically added to the load of each set.
+					</p>
+				</Popover.Content>
+			</Popover.Root>
 		{/if}
 	</span>
 	<span class="text-center text-sm font-medium">RIR</span>
