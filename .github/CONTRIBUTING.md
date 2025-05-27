@@ -41,6 +41,30 @@ Make sure you have the following tools installed:
 
 ## How to Contribute
 
+### Creating an account for testing
+
+If you don't wish to setup Google/GitHub OAuth, you can create a test account by running the following command:
+
+```bash
+npx tsx src/lib/utils/userCreation.ts
+```
+
+This will create a user, and output the userId and sessionToken in the console. You can use these credentials to log in to the application.
+To use them, open your browser's developer tools, navigate to the `Application` tab, and create a new cookie with the following details:
+
+```json
+{
+   "name": "authjs.session-token",
+   "value": {sessionToken},
+   "domain": "localhost",
+   "path": "/",
+   "expires": -1,
+   "httpOnly": true,
+   "secure": false,
+   "sameSite": "Lax"
+}
+```
+
 ### Reporting Issues
 
 If you find a bug or have a feature request, please check the [existing issues](https://github.com/WhyAsh5114/MyFit/issues) first. If your issue is not listed, create a new one and provide as much detail as possible.

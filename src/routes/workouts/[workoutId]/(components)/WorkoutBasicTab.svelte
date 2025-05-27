@@ -63,7 +63,7 @@
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content align="end">
 					<DropdownMenu.Group>
-						{#if workout.workoutOfMesocycle?.workoutStatus === null}
+						{#if workout.workoutOfMesocycle === null || workout.workoutOfMesocycle.workoutStatus === null}
 							<DropdownMenu.Item class="gap-2" onclick={editWorkout}>
 								<EditIcon /> Edit
 							</DropdownMenu.Item>

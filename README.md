@@ -32,8 +32,8 @@ Follow these instructions to get a copy of the project up and running on your lo
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/WhyAsh5114/workout-tracking-app.git
-   cd workout-tracking-app
+   git clone https://github.com/WhyAsh5114/MyFit.git
+   cd MyFit
    ```
 
 2. Install dependencies:
