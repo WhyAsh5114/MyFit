@@ -169,7 +169,7 @@ test('create a workout with active mesocycle', async ({ page }) => {
 	await page.getByPlaceholder('Type here').fill('100');
 	await page.getByRole('button', { name: 'Next' }).click();
 	await expect(page.getByRole('main')).toContainText(
-		'New workout Exercises Pull A Day 1, Cycle 1 Pull-ups 3 Straight sets of 5 to 15 reps BW Lats Reps Load (BW) RIR Barbell rows 3 Straight sets of 10 to 15 reps Traps Reps Load RIR Dumbbell bicep curls 3 Straight sets of 10 to 20 reps Biceps Reps Load RIR Face pulls 3 Straight sets of 15 to 30 reps Rear delts Reps Load RIR Previous Next'
+		'New workout Exercises Pull A Day 1, Cycle 1 Pull-ups 3 Straight sets of 5 to 15 reps BW Lats Reps Load (+BW) RIR Barbell rows 3 Straight sets of 10 to 15 reps Traps Reps Load RIR Dumbbell bicep curls 3 Straight sets of 10 to 20 reps Biceps Reps Load RIR Face pulls 3 Straight sets of 15 to 30 reps Rear delts Reps Load RIR Previous Next'
 	);
 	await page.locator('#Pull-ups-set-1-reps').fill('12');
 	await page.locator('#Pull-ups-set-2-reps').fill('11');
