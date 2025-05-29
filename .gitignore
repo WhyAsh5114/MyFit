@@ -1,1 +1,13 @@
 node_modules
+
+# Folders and files from v3
+.env
+.svelte-kit
+.env.*
+.vscode
+!.env.example
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+.vercel
+test-results
+playwright-report
