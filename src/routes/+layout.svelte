@@ -9,11 +9,19 @@
 	import UpdateDataLossDialog from './(components)/layout/UpdateDataLossDialog.svelte';
 
 	import { overrideItemIdKeyNameBeforeInitialisingDndZones } from 'svelte-dnd-action';
+	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 	overrideItemIdKeyNameBeforeInitialisingDndZones('name');
 
 	const { children } = $props();
 	const webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 	let isMobile: undefined | boolean = $state(undefined);
+
+	$effect(() => {
+		if (page.url.pathname !== '/notice') {
+			goto('/notice');
+		}
+	});
 
 	onMount(() => {
 		isMobile = window.innerWidth < 1024;
