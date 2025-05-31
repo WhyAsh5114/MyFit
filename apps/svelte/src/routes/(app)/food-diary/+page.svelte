@@ -17,6 +17,7 @@
 			if (!isNaN(parsedDate.getTime())) selectedDay = parsedDate;
 		} else {
 			goto(`/food-diary?day=${new Date().toISOString().split('T')[0]}`);
+			selectedDay = new Date();
 		}
 	});
 
