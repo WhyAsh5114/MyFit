@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import { ModeWatcher, setMode } from 'mode-watcher';
 	import '../app.css';
 
 	let { children } = $props();
-	const queryClient = new QueryClient();
+	const queryClient = new QueryClient({ defaultOptions: { queries: { enabled: browser } } });
 
 	function themeChangeHandler(event: Event) {
 		if ('data' in event && typeof event.data === 'string') {

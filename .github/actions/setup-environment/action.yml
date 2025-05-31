@@ -1,11 +1,11 @@
-name: 'Setup Node.js and Install Dependencies'
-description: 'Checks out the code, sets up Node.js, and installs dependencies using pnpm'
+name: "Setup Node.js and Install Dependencies"
+description: "Checks out the code, sets up Node.js, and installs dependencies using npm"
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v4
+    - name: Setup npm
+      uses: npm/action-setup@v4
 
     - name: Install dependencies
       shell: bash
-      run: pnpm install --frozen-lockfile
+      run: npm ci

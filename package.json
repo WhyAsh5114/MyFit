@@ -1,17 +1,7 @@
 {
+  "private": true,
   "workspaces": [
     "apps/*",
     "packages/*"
-  ],
-  "overrides": {
-    "vite": "^6.0.0"
-  },
-  "scripts": {
-    "dev": "pnpm --filter ./apps/svelte dev",
-    "check": "pnpm run --filter ./apps/svelte check",
-    "lint": "pnpm run -r lint",
-    "build:svelte": "pnpm --filter ./apps/svelte build",
-    "build:android": "pnpm --filter ./apps/expo android"
-  },
-  "packageManager": "pnpm@10.8.1+sha512.c50088ba998c67b8ca8c99df8a5e02fd2ae2e2b29aaf238feaa9e124248d3f48f9fb6db2424949ff901cffbb5e0f0cc1ad6aedb602cd29450751d11c35023677"
+  ]
 }
