@@ -257,7 +257,13 @@ export function whereNumberFilter<T, R extends Prisma.Result<T, object, 'findFir
 export function whereBigIntFilter<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
-	bigIntFilter: undefined | number | bigint | Prisma.BigIntFilter<unknown>
+	bigIntFilter:
+		| undefined
+		| number
+		| bigint
+		| Prisma.BigIntFilter<unknown>
+		| null
+		| Prisma.BigIntNullableFilter<unknown>
 ): boolean {
 	if (bigIntFilter === undefined) return true;
 
@@ -525,13 +531,24 @@ export function handleIntUpdateField<T, R extends Prisma.Result<T, object, 'find
 export function handleBigIntUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
-	bigIntUpdate: undefined | bigint | number | Prisma.BigIntFieldUpdateOperationsInput
+	bigIntUpdate:
+		| undefined
+		| bigint
+		| number
+		| Prisma.BigIntFieldUpdateOperationsInput
+		| null
+		| Prisma.NullableBigIntFieldUpdateOperationsInput
 ) {
 	if (bigIntUpdate === undefined) return;
-	if (typeof bigIntUpdate === 'bigint' || typeof bigIntUpdate === 'number') {
-		(record[fieldName] as bigint) = BigInt(bigIntUpdate);
+	if (
+		typeof bigIntUpdate === 'bigint' ||
+		typeof bigIntUpdate === 'number' ||
+		bigIntUpdate === null
+	) {
+		(record[fieldName] as bigint | null) = bigIntUpdate === null ? null : BigInt(bigIntUpdate);
 	} else if (bigIntUpdate.set !== undefined) {
-		(record[fieldName] as bigint) = BigInt(bigIntUpdate.set);
+		(record[fieldName] as bigint | null) =
+			bigIntUpdate.set === null ? null : BigInt(bigIntUpdate.set);
 	} else if (bigIntUpdate.increment !== undefined && record[fieldName] !== null) {
 		(record[fieldName] as bigint) += BigInt(bigIntUpdate.increment);
 	} else if (bigIntUpdate.decrement !== undefined && record[fieldName] !== null) {

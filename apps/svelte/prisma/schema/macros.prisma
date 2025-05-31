@@ -31,11 +31,26 @@ model MacroActivityTrackingPreferences {
   user           User                   @relation(fields: [userId], references: [id])
 }
 
+model FoodEntry {
+  id           String   @id @default(uuid())
+  eatenAt      DateTime
+  quantity     Float
+  quantityUnit String   @default("g")
+
+  nutritionData     NutritionData? @relation(fields: [nutritionDataCode], references: [code])
+  nutritionDataCode BigInt?
+  // TODO: add user-added foods optional relation
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
 model NutritionData {
-  code         BigInt  @id
+  code         BigInt      @id
   product_name String
   brands       String?
   quantity     String?
+  foodEntries  FoodEntry[]
 
   energy_kcal_100g   Decimal @db.Decimal(12, 2)
   proteins_100g      Decimal @db.Decimal(12, 2)
