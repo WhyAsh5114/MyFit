@@ -54,6 +54,10 @@ export interface PrismaIDBSchema extends DBSchema {
 			userIdIndex: [userId: Prisma.MacroActivityTrackingPreferences['userId']];
 		};
 	};
+	NutritionData: {
+		key: [code: Prisma.NutritionData['code']];
+		value: Prisma.NutritionData;
+	};
 	GettingStartedAnswers: {
 		key: [id: Prisma.GettingStartedAnswers['id']];
 		value: Prisma.GettingStartedAnswers;
