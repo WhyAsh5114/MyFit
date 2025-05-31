@@ -254,59 +254,6 @@ export function whereNumberFilter<T, R extends Prisma.Result<T, object, 'findFir
 	return true;
 }
 
-export function whereBigIntFilter<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
-	record: R,
-	fieldName: keyof R,
-	bigIntFilter: undefined | number | bigint | Prisma.BigIntFilter<unknown>
-): boolean {
-	if (bigIntFilter === undefined) return true;
-
-	const value = record[fieldName] as number | null;
-	if (bigIntFilter === null) return value === null;
-
-	if (typeof bigIntFilter === 'number' || typeof bigIntFilter === 'bigint') {
-		if (value !== bigIntFilter) return false;
-	} else {
-		if (bigIntFilter.equals === null) {
-			if (value !== null) return false;
-		}
-		if (typeof bigIntFilter.equals === 'number' || typeof bigIntFilter.equals === 'bigint') {
-			if (bigIntFilter.equals != value) return false;
-		}
-		if (bigIntFilter.not === null) {
-			if (value === null) return false;
-		}
-		if (typeof bigIntFilter.not === 'number' || typeof bigIntFilter.not === 'bigint') {
-			if (bigIntFilter.not == value) return false;
-		}
-		if (Array.isArray(bigIntFilter.in)) {
-			if (value === null) return false;
-			if (!bigIntFilter.in.map((n) => BigInt(n)).includes(BigInt(value))) return false;
-		}
-		if (Array.isArray(bigIntFilter.notIn)) {
-			if (value === null) return false;
-			if (bigIntFilter.notIn.map((n) => BigInt(n)).includes(BigInt(value))) return false;
-		}
-		if (typeof bigIntFilter.lt === 'number' || typeof bigIntFilter.lt === 'bigint') {
-			if (value === null) return false;
-			if (!(value < bigIntFilter.lt)) return false;
-		}
-		if (typeof bigIntFilter.lte === 'number' || typeof bigIntFilter.lte === 'bigint') {
-			if (value === null) return false;
-			if (!(value <= bigIntFilter.lte)) return false;
-		}
-		if (typeof bigIntFilter.gt === 'number' || typeof bigIntFilter.gt === 'bigint') {
-			if (value === null) return false;
-			if (!(value > bigIntFilter.gt)) return false;
-		}
-		if (typeof bigIntFilter.gte === 'number' || typeof bigIntFilter.gte === 'bigint') {
-			if (value === null) return false;
-			if (!(value >= bigIntFilter.gte)) return false;
-		}
-	}
-	return true;
-}
-
 export function whereBoolFilter<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
@@ -519,27 +466,6 @@ export function handleIntUpdateField<T, R extends Prisma.Result<T, object, 'find
 		(record[fieldName] as number) *= intUpdate.multiply;
 	} else if (intUpdate.divide !== undefined && record[fieldName] !== null) {
 		(record[fieldName] as number) /= intUpdate.divide;
-	}
-}
-
-export function handleBigIntUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
-	record: R,
-	fieldName: keyof R,
-	bigIntUpdate: undefined | bigint | number | Prisma.BigIntFieldUpdateOperationsInput
-) {
-	if (bigIntUpdate === undefined) return;
-	if (typeof bigIntUpdate === 'bigint' || typeof bigIntUpdate === 'number') {
-		(record[fieldName] as bigint) = BigInt(bigIntUpdate);
-	} else if (bigIntUpdate.set !== undefined) {
-		(record[fieldName] as bigint) = BigInt(bigIntUpdate.set);
-	} else if (bigIntUpdate.increment !== undefined && record[fieldName] !== null) {
-		(record[fieldName] as bigint) += BigInt(bigIntUpdate.increment);
-	} else if (bigIntUpdate.decrement !== undefined && record[fieldName] !== null) {
-		(record[fieldName] as bigint) -= BigInt(bigIntUpdate.decrement);
-	} else if (bigIntUpdate.multiply !== undefined && record[fieldName] !== null) {
-		(record[fieldName] as bigint) *= BigInt(bigIntUpdate.multiply);
-	} else if (bigIntUpdate.divide !== undefined && record[fieldName] !== null) {
-		(record[fieldName] as bigint) /= BigInt(bigIntUpdate.divide);
 	}
 }
 

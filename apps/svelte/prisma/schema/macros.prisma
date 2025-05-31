@@ -31,47 +31,62 @@ model MacroActivityTrackingPreferences {
   user           User                   @relation(fields: [userId], references: [id])
 }
 
+model FoodEntry {
+  id           String   @id @default(uuid())
+  eatenAt      DateTime
+  quantity     Float
+  quantityUnit String   @default("g")
+
+  nutritionData     NutritionData? @relation(fields: [nutritionDataCode], references: [code])
+  nutritionDataCode String?
+  // TODO: add user-added foods optional relation
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
 model NutritionData {
-  code         BigInt  @id
+  code         String      @id
   product_name String
   brands       String?
   quantity     String?
+  foodEntries  FoodEntry[]
 
-  energy_kcal_100g   Decimal @db.Decimal(12, 2)
-  proteins_100g      Decimal @db.Decimal(12, 2)
-  carbohydrates_100g Decimal @db.Decimal(12, 2)
-  fat_100g           Decimal @db.Decimal(12, 2)
+  energy_kcal_100g   Float
+  proteins_100g      Float
+  fat_100g           Float
+  carbohydrates_100g Float
 
-  saturated_fat_100g       Decimal? @db.Decimal(12, 2)
-  unsaturated_fat_100g     Decimal? @db.Decimal(12, 2)
-  monounsaturated_fat_100g Decimal? @db.Decimal(12, 2)
-  polyunsaturated_fat_100g Decimal? @db.Decimal(12, 2)
-  trans_fat_100g           Decimal? @db.Decimal(12, 2)
-  cholesterol_100g         Decimal? @db.Decimal(12, 2)
-  sugars_100g              Decimal? @db.Decimal(12, 2)
-  polyols_100g             Decimal? @db.Decimal(12, 2)
-  fiber_100g               Decimal? @db.Decimal(12, 2)
-  salt_100g                Decimal? @db.Decimal(12, 2)
-  sodium_100g              Decimal? @db.Decimal(12, 2)
-  alcohol_100g             Decimal? @db.Decimal(12, 2)
-  vitamin_a_100g           Decimal? @db.Decimal(12, 2)
-  vitamin_d_100g           Decimal? @db.Decimal(12, 2)
-  vitamin_e_100g           Decimal? @db.Decimal(12, 2)
-  vitamin_k_100g           Decimal? @db.Decimal(12, 2)
-  vitamin_c_100g           Decimal? @db.Decimal(12, 2)
-  vitamin_b1_100g          Decimal? @db.Decimal(12, 2)
-  vitamin_b2_100g          Decimal? @db.Decimal(12, 2)
-  vitamin_b6_100g          Decimal? @db.Decimal(12, 2)
-  vitamin_b9_100g          Decimal? @db.Decimal(12, 2)
-  folates_100g             Decimal? @db.Decimal(12, 2)
-  vitamin_b12_100g         Decimal? @db.Decimal(12, 2)
-  potassium_100g           Decimal? @db.Decimal(12, 2)
-  calcium_100g             Decimal? @db.Decimal(12, 2)
-  phosphorus_100g          Decimal? @db.Decimal(12, 2)
-  iron_100g                Decimal? @db.Decimal(12, 2)
-  magnesium_100g           Decimal? @db.Decimal(12, 2)
-  zinc_100g                Decimal? @db.Decimal(12, 2)
-  copper_100g              Decimal? @db.Decimal(12, 2)
-  manganese_100g           Decimal? @db.Decimal(12, 2)
-  caffeine_100g            Decimal? @db.Decimal(12, 2)
+  saturated_fat_100g       Float?
+  unsaturated_fat_100g     Float?
+  monounsaturated_fat_100g Float?
+  polyunsaturated_fat_100g Float?
+  trans_fat_100g           Float?
+  cholesterol_100g         Float?
+  sugars_100g              Float?
+  polyols_100g             Float?
+  fiber_100g               Float?
+  salt_100g                Float?
+  sodium_100g              Float?
+  alcohol_100g             Float?
+  vitamin_a_100g           Float?
+  vitamin_d_100g           Float?
+  vitamin_e_100g           Float?
+  vitamin_k_100g           Float?
+  vitamin_c_100g           Float?
+  vitamin_b1_100g          Float?
+  vitamin_b2_100g          Float?
+  vitamin_b6_100g          Float?
+  vitamin_b9_100g          Float?
+  folates_100g             Float?
+  vitamin_b12_100g         Float?
+  potassium_100g           Float?
+  calcium_100g             Float?
+  phosphorus_100g          Float?
+  iron_100g                Float?
+  magnesium_100g           Float?
+  zinc_100g                Float?
+  copper_100g              Float?
+  manganese_100g           Float?
+  caffeine_100g            Float?
 }

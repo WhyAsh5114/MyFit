@@ -21,6 +21,7 @@ export class PrismaIDBClient {
 	macroTargets!: MacroTargetsIDBClass;
 	macroMetrics!: MacroMetricsIDBClass;
 	macroActivityTrackingPreferences!: MacroActivityTrackingPreferencesIDBClass;
+	foodEntry!: FoodEntryIDBClass;
 	nutritionData!: NutritionDataIDBClass;
 	gettingStartedAnswers!: GettingStartedAnswersIDBClass;
 	dashboardItems!: DashboardItemsIDBClass;
@@ -81,6 +82,7 @@ export class PrismaIDBClient {
 				MacroActivityTrackingPreferencesStore.createIndex('userIdIndex', ['userId'], {
 					unique: true
 				});
+				db.createObjectStore('FoodEntry', { keyPath: ['id'] });
 				db.createObjectStore('NutritionData', { keyPath: ['code'] });
 				const GettingStartedAnswersStore = db.createObjectStore('GettingStartedAnswers', {
 					keyPath: ['id']
@@ -107,6 +109,7 @@ export class PrismaIDBClient {
 		this.macroActivityTrackingPreferences = new MacroActivityTrackingPreferencesIDBClass(this, [
 			'id'
 		]);
+		this.foodEntry = new FoodEntryIDBClass(this, ['id']);
 		this.nutritionData = new NutritionDataIDBClass(this, ['code']);
 		this.gettingStartedAnswers = new GettingStartedAnswersIDBClass(this, ['id']);
 		this.dashboardItems = new DashboardItemsIDBClass(this, ['id']);
@@ -7215,6 +7218,1102 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 	}
 }
 
+class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
+	private async _applyWhereClause<
+		W extends Prisma.Args<Prisma.FoodEntryDelegate, 'findFirstOrThrow'>['where'],
+		R extends Prisma.Result<Prisma.FoodEntryDelegate, object, 'findFirstOrThrow'>
+	>(records: R[], whereClause: W, tx: IDBUtils.TransactionType): Promise<R[]> {
+		if (!whereClause) return records;
+		records = await IDBUtils.applyLogicalFilters<Prisma.FoodEntryDelegate, R, W>(
+			records,
+			whereClause,
+			tx,
+			this.keyPath,
+			this._applyWhereClause.bind(this)
+		);
+		return (
+			await Promise.all(
+				records.map(async (record) => {
+					const stringFields = ['id', 'quantityUnit', 'nutritionDataCode', 'userId'] as const;
+					for (const field of stringFields) {
+						if (!IDBUtils.whereStringFilter(record, field, whereClause[field])) return null;
+					}
+					const numberFields = ['quantity'] as const;
+					for (const field of numberFields) {
+						if (!IDBUtils.whereNumberFilter(record, field, whereClause[field])) return null;
+					}
+					const dateTimeFields = ['eatenAt'] as const;
+					for (const field of dateTimeFields) {
+						if (!IDBUtils.whereDateTimeFilter(record, field, whereClause[field])) return null;
+					}
+					if (whereClause.nutritionData === null) {
+						if (record.nutritionDataCode !== null) return null;
+					}
+					if (whereClause.nutritionData) {
+						const { is, isNot, ...rest } = whereClause.nutritionData;
+						if (is === null) {
+							if (record.nutritionDataCode !== null) return null;
+						}
+						if (is !== null && is !== undefined) {
+							if (record.nutritionDataCode === null) return null;
+							const relatedRecord = await this.client.nutritionData.findFirst(
+								{ where: { ...is, code: record.nutritionDataCode } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+						if (isNot === null) {
+							if (record.nutritionDataCode === null) return null;
+						}
+						if (isNot !== null && isNot !== undefined) {
+							if (record.nutritionDataCode === null) return null;
+							const relatedRecord = await this.client.nutritionData.findFirst(
+								{ where: { ...isNot, code: record.nutritionDataCode } },
+								tx
+							);
+							if (relatedRecord) return null;
+						}
+						if (Object.keys(rest).length) {
+							if (record.nutritionDataCode === null) return null;
+							const relatedRecord = await this.client.nutritionData.findFirst(
+								{ where: { ...whereClause.nutritionData, code: record.nutritionDataCode } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+					}
+					if (whereClause.user) {
+						const { is, isNot, ...rest } = whereClause.user;
+						if (is !== null && is !== undefined) {
+							const relatedRecord = await this.client.user.findFirst(
+								{ where: { ...is, id: record.userId } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+						if (isNot !== null && isNot !== undefined) {
+							const relatedRecord = await this.client.user.findFirst(
+								{ where: { ...isNot, id: record.userId } },
+								tx
+							);
+							if (relatedRecord) return null;
+						}
+						if (Object.keys(rest).length) {
+							const relatedRecord = await this.client.user.findFirst(
+								{ where: { ...whereClause.user, id: record.userId } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+					}
+					return record;
+				})
+			)
+		).filter((result) => result !== null);
+	}
+
+	private _applySelectClause<S extends Prisma.Args<Prisma.FoodEntryDelegate, 'findMany'>['select']>(
+		records: Prisma.Result<Prisma.FoodEntryDelegate, object, 'findFirstOrThrow'>[],
+		selectClause: S
+	): Prisma.Result<Prisma.FoodEntryDelegate, { select: S }, 'findFirstOrThrow'>[] {
+		if (!selectClause) {
+			return records as Prisma.Result<
+				Prisma.FoodEntryDelegate,
+				{ select: S },
+				'findFirstOrThrow'
+			>[];
+		}
+		return records.map((record) => {
+			const partialRecord: Partial<typeof record> = record;
+			for (const untypedKey of [
+				'id',
+				'eatenAt',
+				'quantity',
+				'quantityUnit',
+				'nutritionData',
+				'nutritionDataCode',
+				'user',
+				'userId'
+			]) {
+				const key = untypedKey as keyof typeof record & keyof S;
+				if (!selectClause[key]) delete partialRecord[key];
+			}
+			return partialRecord;
+		}) as Prisma.Result<Prisma.FoodEntryDelegate, { select: S }, 'findFirstOrThrow'>[];
+	}
+
+	private async _applyRelations<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'findMany'>>(
+		records: Prisma.Result<Prisma.FoodEntryDelegate, object, 'findFirstOrThrow'>[],
+		tx: IDBUtils.TransactionType,
+		query?: Q
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'findFirstOrThrow'>[]> {
+		if (!query) return records as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'findFirstOrThrow'>[];
+		const recordsWithRelations = records.map(async (record) => {
+			const unsafeRecord = record as Record<string, unknown>;
+			const attach_nutritionData = query.select?.nutritionData || query.include?.nutritionData;
+			if (attach_nutritionData) {
+				unsafeRecord['nutritionData'] =
+					record.nutritionDataCode === null
+						? null
+						: await this.client.nutritionData.findUnique(
+								{
+									...(attach_nutritionData === true ? {} : attach_nutritionData),
+									where: { code: record.nutritionDataCode! }
+								},
+								tx
+							);
+			}
+			const attach_user = query.select?.user || query.include?.user;
+			if (attach_user) {
+				unsafeRecord['user'] = await this.client.user.findUnique(
+					{
+						...(attach_user === true ? {} : attach_user),
+						where: { id: record.userId! }
+					},
+					tx
+				);
+			}
+			return unsafeRecord;
+		});
+		return (await Promise.all(recordsWithRelations)) as Prisma.Result<
+			Prisma.FoodEntryDelegate,
+			Q,
+			'findFirstOrThrow'
+		>[];
+	}
+
+	async _applyOrderByClause<
+		O extends Prisma.Args<Prisma.FoodEntryDelegate, 'findMany'>['orderBy'],
+		R extends Prisma.Result<Prisma.FoodEntryDelegate, object, 'findFirstOrThrow'>
+	>(records: R[], orderByClause: O, tx: IDBUtils.TransactionType): Promise<void> {
+		if (orderByClause === undefined) return;
+		const orderByClauses = IDBUtils.convertToArray(orderByClause);
+		const indexedKeys = await Promise.all(
+			records.map(async (record) => {
+				const keys = await Promise.all(
+					orderByClauses.map(async (clause) => await this._resolveOrderByKey(record, clause, tx))
+				);
+				return { keys, record };
+			})
+		);
+		indexedKeys.sort((a, b) => {
+			for (let i = 0; i < orderByClauses.length; i++) {
+				const clause = orderByClauses[i];
+				const comparison = IDBUtils.genericComparator(
+					a.keys[i],
+					b.keys[i],
+					this._resolveSortOrder(clause)
+				);
+				if (comparison !== 0) return comparison;
+			}
+			return 0;
+		});
+		for (let i = 0; i < records.length; i++) {
+			records[i] = indexedKeys[i].record;
+		}
+	}
+
+	async _resolveOrderByKey(
+		record: Prisma.Result<Prisma.FoodEntryDelegate, object, 'findFirstOrThrow'>,
+		orderByInput: Prisma.FoodEntryOrderByWithRelationInput,
+		tx: IDBUtils.TransactionType
+	): Promise<unknown> {
+		const scalarFields = [
+			'id',
+			'eatenAt',
+			'quantity',
+			'quantityUnit',
+			'nutritionDataCode',
+			'userId'
+		] as const;
+		for (const field of scalarFields) if (orderByInput[field]) return record[field];
+		if (orderByInput.nutritionData) {
+			return record.nutritionDataCode === null
+				? null
+				: await this.client.nutritionData._resolveOrderByKey(
+						await this.client.nutritionData.findFirstOrThrow({
+							where: { code: record.nutritionDataCode }
+						}),
+						orderByInput.nutritionData,
+						tx
+					);
+		}
+		if (orderByInput.user) {
+			return await this.client.user._resolveOrderByKey(
+				await this.client.user.findFirstOrThrow({ where: { id: record.userId } }),
+				orderByInput.user,
+				tx
+			);
+		}
+	}
+
+	_resolveSortOrder(
+		orderByInput: Prisma.FoodEntryOrderByWithRelationInput
+	): Prisma.SortOrder | { sort: Prisma.SortOrder; nulls?: 'first' | 'last' } {
+		const scalarFields = [
+			'id',
+			'eatenAt',
+			'quantity',
+			'quantityUnit',
+			'nutritionDataCode',
+			'userId'
+		] as const;
+		for (const field of scalarFields) if (orderByInput[field]) return orderByInput[field];
+		if (orderByInput.nutritionData) {
+			return this.client.nutritionData._resolveSortOrder(orderByInput.nutritionData);
+		}
+		if (orderByInput.user) {
+			return this.client.user._resolveSortOrder(orderByInput.user);
+		}
+		throw new Error('No field in orderBy clause');
+	}
+
+	private async _fillDefaults<D extends Prisma.Args<Prisma.FoodEntryDelegate, 'create'>['data']>(
+		data: D,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<D> {
+		if (data === undefined) data = {} as NonNullable<D>;
+		if (data.id === undefined) {
+			data.id = uuidv4();
+		}
+		if (data.quantityUnit === undefined) {
+			data.quantityUnit = 'g';
+		}
+		if (data.nutritionDataCode === undefined) {
+			data.nutritionDataCode = null;
+		}
+		if (typeof data.eatenAt === 'string') {
+			data.eatenAt = new Date(data.eatenAt);
+		}
+		return data;
+	}
+
+	_getNeededStoresForWhere<W extends Prisma.Args<Prisma.FoodEntryDelegate, 'findMany'>['where']>(
+		whereClause: W,
+		neededStores: Set<StoreNames<PrismaIDBSchema>>
+	) {
+		if (whereClause === undefined) return;
+		for (const param of IDBUtils.LogicalParams) {
+			if (whereClause[param]) {
+				for (const clause of IDBUtils.convertToArray(whereClause[param])) {
+					this._getNeededStoresForWhere(clause, neededStores);
+				}
+			}
+		}
+		if (whereClause.nutritionData) {
+			neededStores.add('NutritionData');
+			this.client.nutritionData._getNeededStoresForWhere(whereClause.nutritionData, neededStores);
+		}
+		if (whereClause.user) {
+			neededStores.add('User');
+			this.client.user._getNeededStoresForWhere(whereClause.user, neededStores);
+		}
+	}
+
+	_getNeededStoresForFind<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'findMany'>>(
+		query?: Q
+	): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
+		neededStores.add('FoodEntry');
+		this._getNeededStoresForWhere(query?.where, neededStores);
+		if (query?.orderBy) {
+			const orderBy = IDBUtils.convertToArray(query.orderBy);
+			const orderBy_nutritionData = orderBy.find((clause) => clause.nutritionData);
+			if (orderBy_nutritionData) {
+				this.client.nutritionData
+					._getNeededStoresForFind({ orderBy: orderBy_nutritionData.nutritionData })
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			const orderBy_user = orderBy.find((clause) => clause.user);
+			if (orderBy_user) {
+				this.client.user
+					._getNeededStoresForFind({ orderBy: orderBy_user.user })
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		if (query?.select?.nutritionData || query?.include?.nutritionData) {
+			neededStores.add('NutritionData');
+			if (typeof query.select?.nutritionData === 'object') {
+				this.client.nutritionData
+					._getNeededStoresForFind(query.select.nutritionData)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.nutritionData === 'object') {
+				this.client.nutritionData
+					._getNeededStoresForFind(query.include.nutritionData)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		if (query?.select?.user || query?.include?.user) {
+			neededStores.add('User');
+			if (typeof query.select?.user === 'object') {
+				this.client.user
+					._getNeededStoresForFind(query.select.user)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.user === 'object') {
+				this.client.user
+					._getNeededStoresForFind(query.include.user)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForCreate<
+		D extends Partial<Prisma.Args<Prisma.FoodEntryDelegate, 'create'>['data']>
+	>(data: D): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
+		neededStores.add('FoodEntry');
+		if (data?.nutritionData) {
+			neededStores.add('NutritionData');
+			if (data.nutritionData.create) {
+				const createData = Array.isArray(data.nutritionData.create)
+					? data.nutritionData.create
+					: [data.nutritionData.create];
+				createData.forEach((record) =>
+					this.client.nutritionData
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.nutritionData.connectOrCreate) {
+				IDBUtils.convertToArray(data.nutritionData.connectOrCreate).forEach((record) =>
+					this.client.nutritionData
+						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+		}
+		if (data.nutritionDataCode !== undefined) {
+			neededStores.add('NutritionData');
+		}
+		if (data?.user) {
+			neededStores.add('User');
+			if (data.user.create) {
+				const createData = Array.isArray(data.user.create) ? data.user.create : [data.user.create];
+				createData.forEach((record) =>
+					this.client.user
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.user.connectOrCreate) {
+				IDBUtils.convertToArray(data.user.connectOrCreate).forEach((record) =>
+					this.client.user
+						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+		}
+		if (data.userId !== undefined) {
+			neededStores.add('User');
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForUpdate<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'update'>>(
+		query: Partial<Q>
+	): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores = this._getNeededStoresForFind(query).union(
+			this._getNeededStoresForCreate(
+				query.data as Prisma.Args<Prisma.FoodEntryDelegate, 'create'>['data']
+			)
+		);
+		if (query.data?.nutritionData?.connect) {
+			neededStores.add('NutritionData');
+			IDBUtils.convertToArray(query.data.nutritionData.connect).forEach((connect) => {
+				this.client.nutritionData._getNeededStoresForWhere(connect, neededStores);
+			});
+		}
+		if (query.data?.nutritionData?.disconnect) {
+			neededStores.add('NutritionData');
+			if (query.data?.nutritionData?.disconnect !== true) {
+				IDBUtils.convertToArray(query.data.nutritionData.disconnect).forEach((disconnect) => {
+					this.client.nutritionData._getNeededStoresForWhere(disconnect, neededStores);
+				});
+			}
+		}
+		if (query.data?.nutritionData?.update) {
+			neededStores.add('NutritionData');
+			IDBUtils.convertToArray(query.data.nutritionData.update).forEach((update) => {
+				this.client.nutritionData
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.NutritionDataDelegate, 'update'>)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.nutritionData?.upsert) {
+			neededStores.add('NutritionData');
+			IDBUtils.convertToArray(query.data.nutritionData.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<Prisma.NutritionDataDelegate, 'update'>;
+				this.client.nutritionData
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.user?.connect) {
+			neededStores.add('User');
+			IDBUtils.convertToArray(query.data.user.connect).forEach((connect) => {
+				this.client.user._getNeededStoresForWhere(connect, neededStores);
+			});
+		}
+		if (query.data?.user?.update) {
+			neededStores.add('User');
+			IDBUtils.convertToArray(query.data.user.update).forEach((update) => {
+				this.client.user
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.UserDelegate, 'update'>)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.user?.upsert) {
+			neededStores.add('User');
+			IDBUtils.convertToArray(query.data.user.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<Prisma.UserDelegate, 'update'>;
+				this.client.user
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.nutritionData?.delete) {
+			this.client.nutritionData._getNeededStoresForNestedDelete(neededStores);
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForNestedDelete(neededStores: Set<StoreNames<PrismaIDBSchema>>): void {
+		neededStores.add('FoodEntry');
+	}
+
+	private _removeNestedCreateData<
+		D extends Prisma.Args<Prisma.FoodEntryDelegate, 'create'>['data']
+	>(data: D): Prisma.Result<Prisma.FoodEntryDelegate, object, 'findFirstOrThrow'> {
+		const recordWithoutNestedCreate = structuredClone(data);
+		delete recordWithoutNestedCreate?.nutritionData;
+		delete recordWithoutNestedCreate?.user;
+		return recordWithoutNestedCreate as Prisma.Result<
+			Prisma.FoodEntryDelegate,
+			object,
+			'findFirstOrThrow'
+		>;
+	}
+
+	private _preprocessListFields(
+		records: Prisma.Result<Prisma.FoodEntryDelegate, object, 'findMany'>
+	): void {}
+
+	async findMany<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'findMany'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'findMany'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const records = await this._applyWhereClause(
+			await tx.objectStore('FoodEntry').getAll(),
+			query?.where,
+			tx
+		);
+		await this._applyOrderByClause(records, query?.orderBy, tx);
+		const relationAppliedRecords = (await this._applyRelations(
+			records,
+			tx,
+			query
+		)) as Prisma.Result<Prisma.FoodEntryDelegate, object, 'findFirstOrThrow'>[];
+		const selectClause = query?.select;
+		let selectAppliedRecords = this._applySelectClause(relationAppliedRecords, selectClause);
+		if (query?.distinct) {
+			const distinctFields = IDBUtils.convertToArray(query.distinct);
+			const seen = new Set<string>();
+			selectAppliedRecords = selectAppliedRecords.filter((record) => {
+				const key = distinctFields.map((field) => record[field]).join('|');
+				if (seen.has(key)) return false;
+				seen.add(key);
+				return true;
+			});
+		}
+		this._preprocessListFields(selectAppliedRecords);
+		return selectAppliedRecords as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'findMany'>;
+	}
+
+	async findFirst<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'findFirst'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'findFirst'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		return (await this.findMany(query, tx))[0] ?? null;
+	}
+
+	async findFirstOrThrow<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'findFirstOrThrow'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'findFirstOrThrow'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const record = await this.findFirst(query, tx);
+		if (!record) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		return record;
+	}
+
+	async findUnique<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'findUnique'>>(
+		query: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'findUnique'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		let record;
+		if (query.where.id !== undefined) {
+			record = await tx.objectStore('FoodEntry').get([query.where.id]);
+		}
+		if (!record) return null;
+
+		const recordWithRelations = this._applySelectClause(
+			await this._applyRelations(
+				await this._applyWhereClause([record], query.where, tx),
+				tx,
+				query
+			),
+			query.select
+		)[0];
+		this._preprocessListFields([recordWithRelations]);
+		return recordWithRelations as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'findUnique'>;
+	}
+
+	async findUniqueOrThrow<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'findUniqueOrThrow'>>(
+		query: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'findUniqueOrThrow'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const record = await this.findUnique(query, tx);
+		if (!record) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		return record;
+	}
+
+	async count<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'count'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'count'>> {
+		tx = tx ?? this.client._db.transaction(['FoodEntry'], 'readonly');
+		if (!query?.select || query.select === true) {
+			const records = await this.findMany({ where: query?.where }, tx);
+			return records.length as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'count'>;
+		}
+		const result: Partial<Record<keyof Prisma.FoodEntryCountAggregateInputType, number>> = {};
+		for (const key of Object.keys(query.select)) {
+			const typedKey = key as keyof typeof query.select;
+			if (typedKey === '_all') {
+				result[typedKey] = (await this.findMany({ where: query.where }, tx)).length;
+				continue;
+			}
+			result[typedKey] = (
+				await this.findMany({ where: { [`${typedKey}`]: { not: null } } }, tx)
+			).length;
+		}
+		return result as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'count'>;
+	}
+
+	async create<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'create'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'create'>> {
+		const storesNeeded = this._getNeededStoresForCreate(query.data);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		if (query.data.nutritionData) {
+			const fk: Partial<PrismaIDBSchema['NutritionData']['key']> = [];
+			if (query.data.nutritionData?.create) {
+				const record = await this.client.nutritionData.create(
+					{ data: query.data.nutritionData.create },
+					tx
+				);
+				fk[0] = record.code;
+			}
+			if (query.data.nutritionData?.connect) {
+				const record = await this.client.nutritionData.findUniqueOrThrow(
+					{ where: query.data.nutritionData.connect },
+					tx
+				);
+				delete query.data.nutritionData.connect;
+				fk[0] = record.code;
+			}
+			if (query.data.nutritionData?.connectOrCreate) {
+				const record = await this.client.nutritionData.upsert(
+					{
+						where: query.data.nutritionData.connectOrCreate.where,
+						create: query.data.nutritionData.connectOrCreate.create,
+						update: {}
+					},
+					tx
+				);
+				fk[0] = record.code;
+			}
+			const unsafeData = query.data as Record<string, unknown>;
+			unsafeData.nutritionDataCode = fk[0];
+			delete unsafeData.nutritionData;
+		} else if (
+			query.data?.nutritionDataCode !== undefined &&
+			query.data.nutritionDataCode !== null
+		) {
+			await this.client.nutritionData.findUniqueOrThrow(
+				{
+					where: { code: query.data.nutritionDataCode }
+				},
+				tx
+			);
+		}
+		if (query.data.user) {
+			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
+			if (query.data.user?.create) {
+				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				fk[0] = record.id;
+			}
+			if (query.data.user?.connect) {
+				const record = await this.client.user.findUniqueOrThrow(
+					{ where: query.data.user.connect },
+					tx
+				);
+				delete query.data.user.connect;
+				fk[0] = record.id;
+			}
+			if (query.data.user?.connectOrCreate) {
+				const record = await this.client.user.upsert(
+					{
+						where: query.data.user.connectOrCreate.where,
+						create: query.data.user.connectOrCreate.create,
+						update: {}
+					},
+					tx
+				);
+				fk[0] = record.id;
+			}
+			const unsafeData = query.data as Record<string, unknown>;
+			unsafeData.userId = fk[0];
+			delete unsafeData.user;
+		} else if (query.data?.userId !== undefined && query.data.userId !== null) {
+			await this.client.user.findUniqueOrThrow(
+				{
+					where: { id: query.data.userId }
+				},
+				tx
+			);
+		}
+		const record = this._removeNestedCreateData(await this._fillDefaults(query.data, tx));
+		const keyPath = await tx.objectStore('FoodEntry').add(record);
+		const data = (await tx.objectStore('FoodEntry').get(keyPath))!;
+		const recordsWithRelations = this._applySelectClause(
+			await this._applyRelations<object>([data], tx, query),
+			query.select
+		)[0];
+		this._preprocessListFields([recordsWithRelations]);
+		this.emit('create', keyPath);
+		return recordsWithRelations as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'create'>;
+	}
+
+	async createMany<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'createMany'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'createMany'>> {
+		const createManyData = IDBUtils.convertToArray(query.data);
+		tx = tx ?? this.client._db.transaction(['FoodEntry'], 'readwrite');
+		for (const createData of createManyData) {
+			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
+			const keyPath = await tx.objectStore('FoodEntry').add(record);
+			this.emit('create', keyPath);
+		}
+		return { count: createManyData.length };
+	}
+
+	async createManyAndReturn<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'createManyAndReturn'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'createManyAndReturn'>> {
+		const createManyData = IDBUtils.convertToArray(query.data);
+		const records: Prisma.Result<Prisma.FoodEntryDelegate, object, 'findMany'> = [];
+		tx = tx ?? this.client._db.transaction(['FoodEntry'], 'readwrite');
+		for (const createData of createManyData) {
+			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
+			const keyPath = await tx.objectStore('FoodEntry').add(record);
+			this.emit('create', keyPath);
+			records.push(this._applySelectClause([record], query.select)[0]);
+		}
+		this._preprocessListFields(records);
+		return records as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'createManyAndReturn'>;
+	}
+
+	async delete<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'delete'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'delete'>> {
+		const storesNeeded = this._getNeededStoresForFind(query);
+		this._getNeededStoresForNestedDelete(storesNeeded);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		const record = await this.findUnique(query, tx);
+		if (!record) throw new Error('Record not found');
+		await tx.objectStore('FoodEntry').delete([record.id]);
+		this.emit('delete', [record.id]);
+		return record;
+	}
+
+	async deleteMany<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'deleteMany'>>(
+		query?: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'deleteMany'>> {
+		const storesNeeded = this._getNeededStoresForFind(query);
+		this._getNeededStoresForNestedDelete(storesNeeded);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		const records = await this.findMany(query, tx);
+		for (const record of records) {
+			await this.delete({ where: { id: record.id } }, tx);
+		}
+		return { count: records.length };
+	}
+
+	async update<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'update'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'update'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForUpdate(query)), 'readwrite');
+		const record = await this.findUnique({ where: query.where }, tx);
+		if (record === null) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		const startKeyPath: PrismaIDBSchema['FoodEntry']['key'] = [record.id];
+		const stringFields = ['id', 'quantityUnit', 'nutritionDataCode', 'userId'] as const;
+		for (const field of stringFields) {
+			IDBUtils.handleStringUpdateField(record, field, query.data[field]);
+		}
+		const dateTimeFields = ['eatenAt'] as const;
+		for (const field of dateTimeFields) {
+			IDBUtils.handleDateTimeUpdateField(record, field, query.data[field]);
+		}
+		const floatFields = ['quantity'] as const;
+		for (const field of floatFields) {
+			IDBUtils.handleFloatUpdateField(record, field, query.data[field]);
+		}
+		if (query.data.nutritionData) {
+			if (query.data.nutritionData.connect) {
+				const other = await this.client.nutritionData.findUniqueOrThrow(
+					{ where: query.data.nutritionData.connect },
+					tx
+				);
+				record.nutritionDataCode = other.code;
+			}
+			if (query.data.nutritionData.create) {
+				const other = await this.client.nutritionData.create(
+					{ data: query.data.nutritionData.create },
+					tx
+				);
+				record.nutritionDataCode = other.code;
+			}
+			if (query.data.nutritionData.update) {
+				const updateData = query.data.nutritionData.update.data ?? query.data.nutritionData.update;
+				await this.client.nutritionData.update(
+					{
+						where: {
+							...query.data.nutritionData.update.where,
+							code: record.nutritionDataCode!
+						} as Prisma.NutritionDataWhereUniqueInput,
+						data: updateData
+					},
+					tx
+				);
+			}
+			if (query.data.nutritionData.upsert) {
+				await this.client.nutritionData.upsert(
+					{
+						where: {
+							...query.data.nutritionData.upsert.where,
+							code: record.nutritionDataCode!
+						} as Prisma.NutritionDataWhereUniqueInput,
+						create: {
+							...query.data.nutritionData.upsert.create,
+							code: record.nutritionDataCode!
+						} as Prisma.Args<Prisma.NutritionDataDelegate, 'upsert'>['create'],
+						update: query.data.nutritionData.upsert.update
+					},
+					tx
+				);
+			}
+			if (query.data.nutritionData.connectOrCreate) {
+				await this.client.nutritionData.upsert(
+					{
+						where: {
+							...query.data.nutritionData.connectOrCreate.where,
+							code: record.nutritionDataCode!
+						},
+						create: {
+							...query.data.nutritionData.connectOrCreate.create,
+							code: record.nutritionDataCode!
+						} as Prisma.Args<Prisma.NutritionDataDelegate, 'upsert'>['create'],
+						update: { code: record.nutritionDataCode! }
+					},
+					tx
+				);
+			}
+			if (query.data.nutritionData.disconnect) {
+				record.nutritionDataCode = null;
+			}
+			if (query.data.nutritionData.delete) {
+				const deleteWhere =
+					query.data.nutritionData.delete === true ? {} : query.data.nutritionData.delete;
+				await this.client.nutritionData.delete(
+					{ where: { ...deleteWhere, code: record.nutritionDataCode! } },
+					tx
+				);
+				record.nutritionDataCode = null;
+			}
+		}
+		if (query.data.user) {
+			if (query.data.user.connect) {
+				const other = await this.client.user.findUniqueOrThrow(
+					{ where: query.data.user.connect },
+					tx
+				);
+				record.userId = other.id;
+			}
+			if (query.data.user.create) {
+				const other = await this.client.user.create({ data: query.data.user.create }, tx);
+				record.userId = other.id;
+			}
+			if (query.data.user.update) {
+				const updateData = query.data.user.update.data ?? query.data.user.update;
+				await this.client.user.update(
+					{
+						where: {
+							...query.data.user.update.where,
+							id: record.userId!
+						} as Prisma.UserWhereUniqueInput,
+						data: updateData
+					},
+					tx
+				);
+			}
+			if (query.data.user.upsert) {
+				await this.client.user.upsert(
+					{
+						where: {
+							...query.data.user.upsert.where,
+							id: record.userId!
+						} as Prisma.UserWhereUniqueInput,
+						create: { ...query.data.user.upsert.create, id: record.userId! } as Prisma.Args<
+							Prisma.UserDelegate,
+							'upsert'
+						>['create'],
+						update: query.data.user.upsert.update
+					},
+					tx
+				);
+			}
+			if (query.data.user.connectOrCreate) {
+				await this.client.user.upsert(
+					{
+						where: { ...query.data.user.connectOrCreate.where, id: record.userId! },
+						create: {
+							...query.data.user.connectOrCreate.create,
+							id: record.userId!
+						} as Prisma.Args<Prisma.UserDelegate, 'upsert'>['create'],
+						update: { id: record.userId! }
+					},
+					tx
+				);
+			}
+		}
+		if (query.data.nutritionDataCode !== undefined && record.nutritionDataCode !== null) {
+			const related = await this.client.nutritionData.findUnique(
+				{ where: { code: record.nutritionDataCode } },
+				tx
+			);
+			if (!related) throw new Error('Related record not found');
+		}
+		if (query.data.userId !== undefined) {
+			const related = await this.client.user.findUnique({ where: { id: record.userId } }, tx);
+			if (!related) throw new Error('Related record not found');
+		}
+		const endKeyPath: PrismaIDBSchema['FoodEntry']['key'] = [record.id];
+		for (let i = 0; i < startKeyPath.length; i++) {
+			if (startKeyPath[i] !== endKeyPath[i]) {
+				if ((await tx.objectStore('FoodEntry').get(endKeyPath)) !== undefined) {
+					throw new Error('Record with the same keyPath already exists');
+				}
+				await tx.objectStore('FoodEntry').delete(startKeyPath);
+				break;
+			}
+		}
+		const keyPath = await tx.objectStore('FoodEntry').put(record);
+		this.emit('update', keyPath, startKeyPath);
+		for (let i = 0; i < startKeyPath.length; i++) {
+			if (startKeyPath[i] !== endKeyPath[i]) {
+				break;
+			}
+		}
+		const recordWithRelations = (await this.findUnique(
+			{
+				where: { id: keyPath[0] }
+			},
+			tx
+		))!;
+		return recordWithRelations as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'update'>;
+	}
+
+	async updateMany<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'updateMany'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'updateMany'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readwrite');
+		const records = await this.findMany({ where: query.where }, tx);
+		await Promise.all(
+			records.map(async (record) => {
+				await this.update({ where: { id: record.id }, data: query.data }, tx);
+			})
+		);
+		return { count: records.length };
+	}
+
+	async upsert<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'upsert'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'upsert'>> {
+		const neededStores = this._getNeededStoresForUpdate({
+			...query,
+			data: { ...query.update, ...query.create } as Prisma.Args<
+				Prisma.FoodEntryDelegate,
+				'update'
+			>['data']
+		});
+		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
+		let record = await this.findUnique({ where: query.where }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx);
+		else record = await this.update({ where: query.where, data: query.update }, tx);
+		record = await this.findUniqueOrThrow(
+			{ where: { id: record.id }, select: query.select, include: query.include },
+			tx
+		);
+		return record as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'upsert'>;
+	}
+
+	async aggregate<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'aggregate'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'aggregate'>> {
+		tx = tx ?? this.client._db.transaction(['FoodEntry'], 'readonly');
+		const records = await this.findMany({ where: query?.where }, tx);
+		const result: Partial<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'aggregate'>> = {};
+		if (query?._count) {
+			if (query._count === true) {
+				(result._count as number) = records.length;
+			} else {
+				for (const key of Object.keys(query._count)) {
+					const typedKey = key as keyof typeof query._count;
+					if (typedKey === '_all') {
+						(result._count as Record<string, number>)[typedKey] = records.length;
+						continue;
+					}
+					(result._count as Record<string, number>)[typedKey] = (
+						await this.findMany({ where: { [`${typedKey}`]: { not: null } } }, tx)
+					).length;
+				}
+			}
+		}
+		if (query?._min) {
+			const minResult = {} as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'aggregate'>['_min'];
+			const numericFields = ['quantity'] as const;
+			for (const field of numericFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field] as number)
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as number) = Math.min(...values);
+			}
+			const dateTimeFields = ['eatenAt'] as const;
+			for (const field of dateTimeFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field]?.getTime())
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as Date) = new Date(Math.min(...values));
+			}
+			const stringFields = ['id', 'quantityUnit', 'nutritionDataCode', 'userId'] as const;
+			for (const field of stringFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field] as string)
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as string) = values.sort()[0];
+			}
+			result._min = minResult;
+		}
+		if (query?._max) {
+			const maxResult = {} as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'aggregate'>['_max'];
+			const numericFields = ['quantity'] as const;
+			for (const field of numericFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field] as number)
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as number) = Math.max(...values);
+			}
+			const dateTimeFields = ['eatenAt'] as const;
+			for (const field of dateTimeFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field]?.getTime())
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as Date) = new Date(Math.max(...values));
+			}
+			const stringFields = ['id', 'quantityUnit', 'nutritionDataCode', 'userId'] as const;
+			for (const field of stringFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field] as string)
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as string) = values.sort().reverse()[0];
+			}
+			result._max = maxResult;
+		}
+		if (query?._avg) {
+			const avgResult = {} as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'aggregate'>['_avg'];
+			for (const untypedField of Object.keys(query._avg)) {
+				const field = untypedField as keyof (typeof records)[number];
+				const values = records.map((record) => record[field] as number);
+				(avgResult[field as keyof typeof avgResult] as number) =
+					values.reduce((a, b) => a + b, 0) / values.length;
+			}
+			result._avg = avgResult;
+		}
+		if (query?._sum) {
+			const sumResult = {} as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'aggregate'>['_sum'];
+			for (const untypedField of Object.keys(query._sum)) {
+				const field = untypedField as keyof (typeof records)[number];
+				const values = records.map((record) => record[field] as number);
+				(sumResult[field as keyof typeof sumResult] as number) = values.reduce((a, b) => a + b, 0);
+			}
+			result._sum = sumResult;
+		}
+		return result as unknown as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'aggregate'>;
+	}
+}
+
 class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.NutritionDataDelegate, 'findFirstOrThrow'>['where'],
@@ -7231,9 +8330,76 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		return (
 			await Promise.all(
 				records.map(async (record) => {
-					const stringFields = ['product_name', 'brands', 'quantity'] as const;
+					const stringFields = ['code', 'product_name', 'brands', 'quantity'] as const;
 					for (const field of stringFields) {
 						if (!IDBUtils.whereStringFilter(record, field, whereClause[field])) return null;
+					}
+					const numberFields = [
+						'energy_kcal_100g',
+						'proteins_100g',
+						'fat_100g',
+						'carbohydrates_100g',
+						'saturated_fat_100g',
+						'unsaturated_fat_100g',
+						'monounsaturated_fat_100g',
+						'polyunsaturated_fat_100g',
+						'trans_fat_100g',
+						'cholesterol_100g',
+						'sugars_100g',
+						'polyols_100g',
+						'fiber_100g',
+						'salt_100g',
+						'sodium_100g',
+						'alcohol_100g',
+						'vitamin_a_100g',
+						'vitamin_d_100g',
+						'vitamin_e_100g',
+						'vitamin_k_100g',
+						'vitamin_c_100g',
+						'vitamin_b1_100g',
+						'vitamin_b2_100g',
+						'vitamin_b6_100g',
+						'vitamin_b9_100g',
+						'folates_100g',
+						'vitamin_b12_100g',
+						'potassium_100g',
+						'calcium_100g',
+						'phosphorus_100g',
+						'iron_100g',
+						'magnesium_100g',
+						'zinc_100g',
+						'copper_100g',
+						'manganese_100g',
+						'caffeine_100g'
+					] as const;
+					for (const field of numberFields) {
+						if (!IDBUtils.whereNumberFilter(record, field, whereClause[field])) return null;
+					}
+					if (whereClause.foodEntries) {
+						if (whereClause.foodEntries.every) {
+							const violatingRecord = await this.client.foodEntry.findFirst({
+								where: {
+									NOT: { ...whereClause.foodEntries.every },
+									nutritionDataCode: record.code
+								},
+								tx
+							});
+							if (violatingRecord !== null) return null;
+						}
+						if (whereClause.foodEntries.some) {
+							const relatedRecords = await this.client.foodEntry.findMany({
+								where: { ...whereClause.foodEntries.some, nutritionDataCode: record.code },
+								tx
+							});
+							if (relatedRecords.length === 0) return null;
+						}
+						if (whereClause.foodEntries.none) {
+							const violatingRecord = await this.client.foodEntry.findFirst({
+								where: { ...whereClause.foodEntries.none, nutritionDataCode: record.code },
+								tx
+							});
+							if (violatingRecord !== null) return null;
+						}
 					}
 					return record;
 				})
@@ -7261,10 +8427,11 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 				'product_name',
 				'brands',
 				'quantity',
+				'foodEntries',
 				'energy_kcal_100g',
 				'proteins_100g',
-				'carbohydrates_100g',
 				'fat_100g',
+				'carbohydrates_100g',
 				'saturated_fat_100g',
 				'unsaturated_fat_100g',
 				'monounsaturated_fat_100g',
@@ -7314,6 +8481,16 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			return records as Prisma.Result<Prisma.NutritionDataDelegate, Q, 'findFirstOrThrow'>[];
 		const recordsWithRelations = records.map(async (record) => {
 			const unsafeRecord = record as Record<string, unknown>;
+			const attach_foodEntries = query.select?.foodEntries || query.include?.foodEntries;
+			if (attach_foodEntries) {
+				unsafeRecord['foodEntries'] = await this.client.foodEntry.findMany(
+					{
+						...(attach_foodEntries === true ? {} : attach_foodEntries),
+						where: { nutritionDataCode: record.code! }
+					},
+					tx
+				);
+			}
 			return unsafeRecord;
 		});
 		return (await Promise.all(recordsWithRelations)) as Prisma.Result<
@@ -7366,8 +8543,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			'quantity',
 			'energy_kcal_100g',
 			'proteins_100g',
-			'carbohydrates_100g',
 			'fat_100g',
+			'carbohydrates_100g',
 			'saturated_fat_100g',
 			'unsaturated_fat_100g',
 			'monounsaturated_fat_100g',
@@ -7402,6 +8579,9 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			'caffeine_100g'
 		] as const;
 		for (const field of scalarFields) if (orderByInput[field]) return record[field];
+		if (orderByInput.foodEntries) {
+			return await this.client.foodEntry.count({ where: { nutritionDataCode: record.code } }, tx);
+		}
 	}
 
 	_resolveSortOrder(
@@ -7414,8 +8594,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			'quantity',
 			'energy_kcal_100g',
 			'proteins_100g',
-			'carbohydrates_100g',
 			'fat_100g',
+			'carbohydrates_100g',
 			'saturated_fat_100g',
 			'unsaturated_fat_100g',
 			'monounsaturated_fat_100g',
@@ -7450,6 +8630,9 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			'caffeine_100g'
 		] as const;
 		for (const field of scalarFields) if (orderByInput[field]) return orderByInput[field];
+		if (orderByInput.foodEntries?._count) {
+			return orderByInput.foodEntries._count;
+		}
 		throw new Error('No field in orderBy clause');
 	}
 
@@ -7559,9 +8742,6 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		if (data.caffeine_100g === undefined) {
 			data.caffeine_100g = null;
 		}
-		if (typeof data.code === 'number') {
-			data.code = BigInt(data.code);
-		}
 		return data;
 	}
 
@@ -7576,6 +8756,12 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 				}
 			}
 		}
+		if (whereClause.foodEntries) {
+			neededStores.add('FoodEntry');
+			this.client.foodEntry._getNeededStoresForWhere(whereClause.foodEntries.every, neededStores);
+			this.client.foodEntry._getNeededStoresForWhere(whereClause.foodEntries.some, neededStores);
+			this.client.foodEntry._getNeededStoresForWhere(whereClause.foodEntries.none, neededStores);
+		}
 	}
 
 	_getNeededStoresForFind<Q extends Prisma.Args<Prisma.NutritionDataDelegate, 'findMany'>>(
@@ -7586,6 +8772,23 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		this._getNeededStoresForWhere(query?.where, neededStores);
 		if (query?.orderBy) {
 			const orderBy = IDBUtils.convertToArray(query.orderBy);
+			const orderBy_foodEntries = orderBy.find((clause) => clause.foodEntries);
+			if (orderBy_foodEntries) {
+				neededStores.add('FoodEntry');
+			}
+		}
+		if (query?.select?.foodEntries || query?.include?.foodEntries) {
+			neededStores.add('FoodEntry');
+			if (typeof query.select?.foodEntries === 'object') {
+				this.client.foodEntry
+					._getNeededStoresForFind(query.select.foodEntries)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.foodEntries === 'object') {
+				this.client.foodEntry
+					._getNeededStoresForFind(query.include.foodEntries)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
 		}
 		return neededStores;
 	}
@@ -7595,6 +8798,33 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 	>(data: D): Set<StoreNames<PrismaIDBSchema>> {
 		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
 		neededStores.add('NutritionData');
+		if (data?.foodEntries) {
+			neededStores.add('FoodEntry');
+			if (data.foodEntries.create) {
+				const createData = Array.isArray(data.foodEntries.create)
+					? data.foodEntries.create
+					: [data.foodEntries.create];
+				createData.forEach((record) =>
+					this.client.foodEntry
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.foodEntries.connectOrCreate) {
+				IDBUtils.convertToArray(data.foodEntries.connectOrCreate).forEach((record) =>
+					this.client.foodEntry
+						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.foodEntries.createMany) {
+				IDBUtils.convertToArray(data.foodEntries.createMany.data).forEach((record) =>
+					this.client.foodEntry
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+		}
 		return neededStores;
 	}
 
@@ -7606,17 +8836,65 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 				query.data as Prisma.Args<Prisma.NutritionDataDelegate, 'create'>['data']
 			)
 		);
+		if (query.data?.foodEntries?.connect) {
+			neededStores.add('FoodEntry');
+			IDBUtils.convertToArray(query.data.foodEntries.connect).forEach((connect) => {
+				this.client.foodEntry._getNeededStoresForWhere(connect, neededStores);
+			});
+		}
+		if (query.data?.foodEntries?.set) {
+			neededStores.add('FoodEntry');
+			IDBUtils.convertToArray(query.data.foodEntries.set).forEach((setWhere) => {
+				this.client.foodEntry._getNeededStoresForWhere(setWhere, neededStores);
+			});
+		}
+		if (query.data?.foodEntries?.updateMany) {
+			neededStores.add('FoodEntry');
+			IDBUtils.convertToArray(query.data.foodEntries.updateMany).forEach((update) => {
+				this.client.foodEntry
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.FoodEntryDelegate, 'update'>)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.foodEntries?.update) {
+			neededStores.add('FoodEntry');
+			IDBUtils.convertToArray(query.data.foodEntries.update).forEach((update) => {
+				this.client.foodEntry
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.FoodEntryDelegate, 'update'>)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.foodEntries?.upsert) {
+			neededStores.add('FoodEntry');
+			IDBUtils.convertToArray(query.data.foodEntries.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<Prisma.FoodEntryDelegate, 'update'>;
+				this.client.foodEntry
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.foodEntries?.delete || query.data?.foodEntries?.deleteMany) {
+			this.client.foodEntry._getNeededStoresForNestedDelete(neededStores);
+		}
+		if (query.data?.code !== undefined) {
+			neededStores.add('FoodEntry');
+		}
 		return neededStores;
 	}
 
 	_getNeededStoresForNestedDelete(neededStores: Set<StoreNames<PrismaIDBSchema>>): void {
 		neededStores.add('NutritionData');
+		this.client.foodEntry._getNeededStoresForNestedDelete(neededStores);
 	}
 
 	private _removeNestedCreateData<
 		D extends Prisma.Args<Prisma.NutritionDataDelegate, 'create'>['data']
 	>(data: D): Prisma.Result<Prisma.NutritionDataDelegate, object, 'findFirstOrThrow'> {
 		const recordWithoutNestedCreate = structuredClone(data);
+		delete recordWithoutNestedCreate?.foodEntries;
 		return recordWithoutNestedCreate as Prisma.Result<
 			Prisma.NutritionDataDelegate,
 			object,
@@ -7758,6 +9036,64 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const record = this._removeNestedCreateData(await this._fillDefaults(query.data, tx));
 		const keyPath = await tx.objectStore('NutritionData').add(record);
+		if (query.data?.foodEntries?.create) {
+			const createData = Array.isArray(query.data.foodEntries.create)
+				? query.data.foodEntries.create
+				: [query.data.foodEntries.create];
+			for (const elem of createData) {
+				await this.client.foodEntry.create(
+					{
+						data: { ...elem, nutritionData: { connect: { code: keyPath[0] } } } as Prisma.Args<
+							Prisma.FoodEntryDelegate,
+							'create'
+						>['data']
+					},
+					tx
+				);
+			}
+		}
+		if (query.data?.foodEntries?.connect) {
+			await Promise.all(
+				IDBUtils.convertToArray(query.data.foodEntries.connect).map(async (connectWhere) => {
+					await this.client.foodEntry.update(
+						{ where: connectWhere, data: { nutritionDataCode: keyPath[0] } },
+						tx
+					);
+				})
+			);
+		}
+		if (query.data?.foodEntries?.connectOrCreate) {
+			await Promise.all(
+				IDBUtils.convertToArray(query.data.foodEntries.connectOrCreate).map(
+					async (connectOrCreate) => {
+						await this.client.foodEntry.upsert(
+							{
+								where: connectOrCreate.where,
+								create: { ...connectOrCreate.create, nutritionDataCode: keyPath[0] } as Prisma.Args<
+									Prisma.FoodEntryDelegate,
+									'create'
+								>['data'],
+								update: { nutritionDataCode: keyPath[0] }
+							},
+							tx
+						);
+					}
+				)
+			);
+		}
+		if (query.data?.foodEntries?.createMany) {
+			await this.client.foodEntry.createMany(
+				{
+					data: IDBUtils.convertToArray(query.data.foodEntries.createMany.data).map(
+						(createData) => ({
+							...createData,
+							nutritionDataCode: keyPath[0]
+						})
+					)
+				},
+				tx
+			);
+		}
 		const data = (await tx.objectStore('NutritionData').get(keyPath))!;
 		const recordsWithRelations = this._applySelectClause(
 			await this._applyRelations<object>([data], tx, query),
@@ -7810,6 +9146,13 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
+		await this.client.foodEntry.updateMany(
+			{
+				where: { nutritionDataCode: record.code },
+				data: { nutritionDataCode: null }
+			},
+			tx
+		);
 		await tx.objectStore('NutritionData').delete([record.code]);
 		this.emit('delete', [record.code]);
 		return record;
@@ -7842,13 +9185,171 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			throw new Error('Record not found');
 		}
 		const startKeyPath: PrismaIDBSchema['NutritionData']['key'] = [record.code];
-		const stringFields = ['product_name', 'brands', 'quantity'] as const;
+		const stringFields = ['code', 'product_name', 'brands', 'quantity'] as const;
 		for (const field of stringFields) {
 			IDBUtils.handleStringUpdateField(record, field, query.data[field]);
 		}
-		const bigIntFields = ['code'] as const;
-		for (const field of bigIntFields) {
-			IDBUtils.handleBigIntUpdateField(record, field, query.data[field]);
+		const floatFields = [
+			'energy_kcal_100g',
+			'proteins_100g',
+			'fat_100g',
+			'carbohydrates_100g',
+			'saturated_fat_100g',
+			'unsaturated_fat_100g',
+			'monounsaturated_fat_100g',
+			'polyunsaturated_fat_100g',
+			'trans_fat_100g',
+			'cholesterol_100g',
+			'sugars_100g',
+			'polyols_100g',
+			'fiber_100g',
+			'salt_100g',
+			'sodium_100g',
+			'alcohol_100g',
+			'vitamin_a_100g',
+			'vitamin_d_100g',
+			'vitamin_e_100g',
+			'vitamin_k_100g',
+			'vitamin_c_100g',
+			'vitamin_b1_100g',
+			'vitamin_b2_100g',
+			'vitamin_b6_100g',
+			'vitamin_b9_100g',
+			'folates_100g',
+			'vitamin_b12_100g',
+			'potassium_100g',
+			'calcium_100g',
+			'phosphorus_100g',
+			'iron_100g',
+			'magnesium_100g',
+			'zinc_100g',
+			'copper_100g',
+			'manganese_100g',
+			'caffeine_100g'
+		] as const;
+		for (const field of floatFields) {
+			IDBUtils.handleFloatUpdateField(record, field, query.data[field]);
+		}
+		if (query.data.foodEntries) {
+			if (query.data.foodEntries.connect) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.connect).map(async (connectWhere) => {
+						await this.client.foodEntry.update(
+							{ where: connectWhere, data: { nutritionDataCode: record.code } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.foodEntries.disconnect) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.disconnect).map(async (connectWhere) => {
+						await this.client.foodEntry.update(
+							{ where: connectWhere, data: { nutritionDataCode: null } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.foodEntries.create) {
+				const createData = Array.isArray(query.data.foodEntries.create)
+					? query.data.foodEntries.create
+					: [query.data.foodEntries.create];
+				for (const elem of createData) {
+					await this.client.foodEntry.create(
+						{
+							data: { ...elem, nutritionDataCode: record.code } as Prisma.Args<
+								Prisma.FoodEntryDelegate,
+								'create'
+							>['data']
+						},
+						tx
+					);
+				}
+			}
+			if (query.data.foodEntries.createMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.createMany.data).map(
+						async (createData) => {
+							await this.client.foodEntry.create(
+								{ data: { ...createData, nutritionDataCode: record.code } },
+								tx
+							);
+						}
+					)
+				);
+			}
+			if (query.data.foodEntries.update) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.update).map(async (updateData) => {
+						await this.client.foodEntry.update(updateData, tx);
+					})
+				);
+			}
+			if (query.data.foodEntries.updateMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.updateMany).map(async (updateData) => {
+						await this.client.foodEntry.updateMany(updateData, tx);
+					})
+				);
+			}
+			if (query.data.foodEntries.upsert) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.upsert).map(async (upsertData) => {
+						await this.client.foodEntry.upsert(
+							{
+								...upsertData,
+								where: { ...upsertData.where, nutritionDataCode: record.code },
+								create: { ...upsertData.create, nutritionDataCode: record.code } as Prisma.Args<
+									Prisma.FoodEntryDelegate,
+									'upsert'
+								>['create']
+							},
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.foodEntries.delete) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.delete).map(async (deleteData) => {
+						await this.client.foodEntry.delete(
+							{ where: { ...deleteData, nutritionDataCode: record.code } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.foodEntries.deleteMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.deleteMany).map(async (deleteData) => {
+						await this.client.foodEntry.deleteMany(
+							{ where: { ...deleteData, nutritionDataCode: record.code } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.foodEntries.set) {
+				const existing = await this.client.foodEntry.findMany(
+					{ where: { nutritionDataCode: record.code } },
+					tx
+				);
+				if (existing.length > 0) {
+					await this.client.foodEntry.updateMany(
+						{ where: { nutritionDataCode: record.code }, data: { nutritionDataCode: null } },
+						tx
+					);
+				}
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.set).map(async (setData) => {
+						await this.client.foodEntry.update(
+							{ where: setData, data: { nutritionDataCode: record.code } },
+							tx
+						);
+					})
+				);
+			}
 		}
 		const endKeyPath: PrismaIDBSchema['NutritionData']['key'] = [record.code];
 		for (let i = 0; i < startKeyPath.length; i++) {
@@ -7864,6 +9365,13 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		this.emit('update', keyPath, startKeyPath);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
+				await this.client.foodEntry.updateMany(
+					{
+						where: { nutritionDataCode: startKeyPath[0] },
+						data: { nutritionDataCode: endKeyPath[0] }
+					},
+					tx
+				);
 				break;
 			}
 		}
@@ -7908,7 +9416,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		if (!record) record = await this.create({ data: query.create }, tx);
 		else record = await this.update({ where: query.where, data: query.update }, tx);
 		record = await this.findUniqueOrThrow(
-			{ where: { code: record.code }, select: query.select },
+			{ where: { code: record.code }, select: query.select, include: query.include },
 			tx
 		);
 		return record as Prisma.Result<Prisma.NutritionDataDelegate, Q, 'upsert'>;
@@ -7942,8 +9450,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			const numericFields = [
 				'energy_kcal_100g',
 				'proteins_100g',
-				'carbohydrates_100g',
 				'fat_100g',
+				'carbohydrates_100g',
 				'saturated_fat_100g',
 				'unsaturated_fat_100g',
 				'monounsaturated_fat_100g',
@@ -7984,7 +9492,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 					.filter((value) => value !== undefined);
 				(minResult[field as keyof typeof minResult] as number) = Math.min(...values);
 			}
-			const stringFields = ['product_name', 'brands', 'quantity'] as const;
+			const stringFields = ['code', 'product_name', 'brands', 'quantity'] as const;
 			for (const field of stringFields) {
 				if (!query._min[field]) continue;
 				const values = records
@@ -7999,8 +9507,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			const numericFields = [
 				'energy_kcal_100g',
 				'proteins_100g',
-				'carbohydrates_100g',
 				'fat_100g',
+				'carbohydrates_100g',
 				'saturated_fat_100g',
 				'unsaturated_fat_100g',
 				'monounsaturated_fat_100g',
@@ -8041,7 +9549,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 					.filter((value) => value !== undefined);
 				(maxResult[field as keyof typeof maxResult] as number) = Math.max(...values);
 			}
-			const stringFields = ['product_name', 'brands', 'quantity'] as const;
+			const stringFields = ['code', 'product_name', 'brands', 'quantity'] as const;
 			for (const field of stringFields) {
 				if (!query._max[field]) continue;
 				const values = records
@@ -9925,6 +11433,29 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 							if (!relatedRecord) return null;
 						}
 					}
+					if (whereClause.foodEntries) {
+						if (whereClause.foodEntries.every) {
+							const violatingRecord = await this.client.foodEntry.findFirst({
+								where: { NOT: { ...whereClause.foodEntries.every }, userId: record.id },
+								tx
+							});
+							if (violatingRecord !== null) return null;
+						}
+						if (whereClause.foodEntries.some) {
+							const relatedRecords = await this.client.foodEntry.findMany({
+								where: { ...whereClause.foodEntries.some, userId: record.id },
+								tx
+							});
+							if (relatedRecords.length === 0) return null;
+						}
+						if (whereClause.foodEntries.none) {
+							const violatingRecord = await this.client.foodEntry.findFirst({
+								where: { ...whereClause.foodEntries.none, userId: record.id },
+								tx
+							});
+							if (violatingRecord !== null) return null;
+						}
+					}
 					return record;
 				})
 			)
@@ -9956,7 +11487,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				'dashboardItems',
 				'metrics',
 				'activityTrackingPreferences',
-				'macroTargets'
+				'macroTargets',
+				'foodEntries'
 			]) {
 				const key = untypedKey as keyof typeof record & keyof S;
 				if (!selectClause[key]) delete partialRecord[key];
@@ -10054,6 +11586,16 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 					{
 						...(attach_macroTargets === true ? {} : attach_macroTargets),
 						where: { userId: record.id }
+					},
+					tx
+				);
+			}
+			const attach_foodEntries = query.select?.foodEntries || query.include?.foodEntries;
+			if (attach_foodEntries) {
+				unsafeRecord['foodEntries'] = await this.client.foodEntry.findMany(
+					{
+						...(attach_foodEntries === true ? {} : attach_foodEntries),
+						where: { userId: record.id! }
 					},
 					tx
 				);
@@ -10166,6 +11708,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		if (orderByInput.metrics) {
 			return await this.client.macroMetrics.count({ where: { userId: record.id } }, tx);
 		}
+		if (orderByInput.foodEntries) {
+			return await this.client.foodEntry.count({ where: { userId: record.id } }, tx);
+		}
 	}
 
 	_resolveSortOrder(
@@ -10209,6 +11754,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		}
 		if (orderByInput.metrics?._count) {
 			return orderByInput.metrics._count;
+		}
+		if (orderByInput.foodEntries?._count) {
+			return orderByInput.foodEntries._count;
 		}
 		throw new Error('No field in orderBy clause');
 	}
@@ -10303,6 +11851,12 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			neededStores.add('MacroTargets');
 			this.client.macroTargets._getNeededStoresForWhere(whereClause.macroTargets, neededStores);
 		}
+		if (whereClause.foodEntries) {
+			neededStores.add('FoodEntry');
+			this.client.foodEntry._getNeededStoresForWhere(whereClause.foodEntries.every, neededStores);
+			this.client.foodEntry._getNeededStoresForWhere(whereClause.foodEntries.some, neededStores);
+			this.client.foodEntry._getNeededStoresForWhere(whereClause.foodEntries.none, neededStores);
+		}
 	}
 
 	_getNeededStoresForFind<Q extends Prisma.Args<Prisma.UserDelegate, 'findMany'>>(
@@ -10356,6 +11910,10 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				this.client.macroTargets
 					._getNeededStoresForFind({ orderBy: orderBy_macroTargets.macroTargets })
 					.forEach((storeName) => neededStores.add(storeName));
+			}
+			const orderBy_foodEntries = orderBy.find((clause) => clause.foodEntries);
+			if (orderBy_foodEntries) {
+				neededStores.add('FoodEntry');
 			}
 		}
 		if (query?.select?.sessions || query?.include?.sessions) {
@@ -10459,6 +12017,19 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			if (typeof query.include?.macroTargets === 'object') {
 				this.client.macroTargets
 					._getNeededStoresForFind(query.include.macroTargets)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		if (query?.select?.foodEntries || query?.include?.foodEntries) {
+			neededStores.add('FoodEntry');
+			if (typeof query.select?.foodEntries === 'object') {
+				this.client.foodEntry
+					._getNeededStoresForFind(query.select.foodEntries)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.foodEntries === 'object') {
+				this.client.foodEntry
+					._getNeededStoresForFind(query.include.foodEntries)
 					.forEach((storeName) => neededStores.add(storeName));
 			}
 		}
@@ -10655,6 +12226,33 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				IDBUtils.convertToArray(data.macroTargets.connectOrCreate).forEach((record) =>
 					this.client.macroTargets
 						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+		}
+		if (data?.foodEntries) {
+			neededStores.add('FoodEntry');
+			if (data.foodEntries.create) {
+				const createData = Array.isArray(data.foodEntries.create)
+					? data.foodEntries.create
+					: [data.foodEntries.create];
+				createData.forEach((record) =>
+					this.client.foodEntry
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.foodEntries.connectOrCreate) {
+				IDBUtils.convertToArray(data.foodEntries.connectOrCreate).forEach((record) =>
+					this.client.foodEntry
+						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.foodEntries.createMany) {
+				IDBUtils.convertToArray(data.foodEntries.createMany.data).forEach((record) =>
+					this.client.foodEntry
+						._getNeededStoresForCreate(record)
 						.forEach((storeName) => neededStores.add(storeName))
 				);
 			}
@@ -10980,6 +12578,46 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 					.forEach((store) => neededStores.add(store));
 			});
 		}
+		if (query.data?.foodEntries?.connect) {
+			neededStores.add('FoodEntry');
+			IDBUtils.convertToArray(query.data.foodEntries.connect).forEach((connect) => {
+				this.client.foodEntry._getNeededStoresForWhere(connect, neededStores);
+			});
+		}
+		if (query.data?.foodEntries?.set) {
+			neededStores.add('FoodEntry');
+			IDBUtils.convertToArray(query.data.foodEntries.set).forEach((setWhere) => {
+				this.client.foodEntry._getNeededStoresForWhere(setWhere, neededStores);
+			});
+		}
+		if (query.data?.foodEntries?.updateMany) {
+			neededStores.add('FoodEntry');
+			IDBUtils.convertToArray(query.data.foodEntries.updateMany).forEach((update) => {
+				this.client.foodEntry
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.FoodEntryDelegate, 'update'>)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.foodEntries?.update) {
+			neededStores.add('FoodEntry');
+			IDBUtils.convertToArray(query.data.foodEntries.update).forEach((update) => {
+				this.client.foodEntry
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.FoodEntryDelegate, 'update'>)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.foodEntries?.upsert) {
+			neededStores.add('FoodEntry');
+			IDBUtils.convertToArray(query.data.foodEntries.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<Prisma.FoodEntryDelegate, 'update'>;
+				this.client.foodEntry
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
 		if (query.data?.sessions?.delete || query.data?.sessions?.deleteMany) {
 			this.client.session._getNeededStoresForNestedDelete(neededStores);
 		}
@@ -11004,11 +12642,15 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		if (query.data?.macroTargets?.delete) {
 			this.client.macroTargets._getNeededStoresForNestedDelete(neededStores);
 		}
+		if (query.data?.foodEntries?.delete || query.data?.foodEntries?.deleteMany) {
+			this.client.foodEntry._getNeededStoresForNestedDelete(neededStores);
+		}
 		if (query.data?.id !== undefined) {
 			neededStores.add('ExerciseSplit');
 			neededStores.add('MacroTargets');
 			neededStores.add('MacroMetrics');
 			neededStores.add('MacroActivityTrackingPreferences');
+			neededStores.add('FoodEntry');
 			neededStores.add('GettingStartedAnswers');
 			neededStores.add('DashboardItems');
 			neededStores.add('Session');
@@ -11027,6 +12669,7 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		this.client.macroMetrics._getNeededStoresForNestedDelete(neededStores);
 		this.client.macroActivityTrackingPreferences._getNeededStoresForNestedDelete(neededStores);
 		this.client.macroTargets._getNeededStoresForNestedDelete(neededStores);
+		this.client.foodEntry._getNeededStoresForNestedDelete(neededStores);
 	}
 
 	private _removeNestedCreateData<D extends Prisma.Args<Prisma.UserDelegate, 'create'>['data']>(
@@ -11041,6 +12684,7 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		delete recordWithoutNestedCreate?.metrics;
 		delete recordWithoutNestedCreate?.activityTrackingPreferences;
 		delete recordWithoutNestedCreate?.macroTargets;
+		delete recordWithoutNestedCreate?.foodEntries;
 		return recordWithoutNestedCreate as Prisma.Result<
 			Prisma.UserDelegate,
 			object,
@@ -11524,6 +13168,64 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				);
 			}
 		}
+		if (query.data?.foodEntries?.create) {
+			const createData = Array.isArray(query.data.foodEntries.create)
+				? query.data.foodEntries.create
+				: [query.data.foodEntries.create];
+			for (const elem of createData) {
+				await this.client.foodEntry.create(
+					{
+						data: { ...elem, user: { connect: { id: keyPath[0] } } } as Prisma.Args<
+							Prisma.FoodEntryDelegate,
+							'create'
+						>['data']
+					},
+					tx
+				);
+			}
+		}
+		if (query.data?.foodEntries?.connect) {
+			await Promise.all(
+				IDBUtils.convertToArray(query.data.foodEntries.connect).map(async (connectWhere) => {
+					await this.client.foodEntry.update(
+						{ where: connectWhere, data: { userId: keyPath[0] } },
+						tx
+					);
+				})
+			);
+		}
+		if (query.data?.foodEntries?.connectOrCreate) {
+			await Promise.all(
+				IDBUtils.convertToArray(query.data.foodEntries.connectOrCreate).map(
+					async (connectOrCreate) => {
+						await this.client.foodEntry.upsert(
+							{
+								where: connectOrCreate.where,
+								create: { ...connectOrCreate.create, userId: keyPath[0] } as Prisma.Args<
+									Prisma.FoodEntryDelegate,
+									'create'
+								>['data'],
+								update: { userId: keyPath[0] }
+							},
+							tx
+						);
+					}
+				)
+			);
+		}
+		if (query.data?.foodEntries?.createMany) {
+			await this.client.foodEntry.createMany(
+				{
+					data: IDBUtils.convertToArray(query.data.foodEntries.createMany.data).map(
+						(createData) => ({
+							...createData,
+							userId: keyPath[0]
+						})
+					)
+				},
+				tx
+			);
+		}
 		const data = (await tx.objectStore('User').get(keyPath))!;
 		const recordsWithRelations = this._applySelectClause(
 			await this._applyRelations<object>([data], tx, query),
@@ -11598,6 +13300,12 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				tx
 			);
 		if (relatedMacroActivityTrackingPreferences.length)
+			throw new Error('Cannot delete record, other records depend on it');
+		const relatedFoodEntry = await this.client.foodEntry.findMany(
+			{ where: { userId: record.id } },
+			tx
+		);
+		if (relatedFoodEntry.length)
 			throw new Error('Cannot delete record, other records depend on it');
 		const relatedGettingStartedAnswers = await this.client.gettingStartedAnswers.findMany(
 			{ where: { userId: record.id } },
@@ -12399,6 +14107,108 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				);
 			}
 		}
+		if (query.data.foodEntries) {
+			if (query.data.foodEntries.connect) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.connect).map(async (connectWhere) => {
+						await this.client.foodEntry.update(
+							{ where: connectWhere, data: { userId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.foodEntries.disconnect) {
+				throw new Error('Cannot disconnect required relation');
+			}
+			if (query.data.foodEntries.create) {
+				const createData = Array.isArray(query.data.foodEntries.create)
+					? query.data.foodEntries.create
+					: [query.data.foodEntries.create];
+				for (const elem of createData) {
+					await this.client.foodEntry.create(
+						{
+							data: { ...elem, userId: record.id } as Prisma.Args<
+								Prisma.FoodEntryDelegate,
+								'create'
+							>['data']
+						},
+						tx
+					);
+				}
+			}
+			if (query.data.foodEntries.createMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.createMany.data).map(
+						async (createData) => {
+							await this.client.foodEntry.create(
+								{ data: { ...createData, userId: record.id } },
+								tx
+							);
+						}
+					)
+				);
+			}
+			if (query.data.foodEntries.update) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.update).map(async (updateData) => {
+						await this.client.foodEntry.update(updateData, tx);
+					})
+				);
+			}
+			if (query.data.foodEntries.updateMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.updateMany).map(async (updateData) => {
+						await this.client.foodEntry.updateMany(updateData, tx);
+					})
+				);
+			}
+			if (query.data.foodEntries.upsert) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.upsert).map(async (upsertData) => {
+						await this.client.foodEntry.upsert(
+							{
+								...upsertData,
+								where: { ...upsertData.where, userId: record.id },
+								create: { ...upsertData.create, userId: record.id } as Prisma.Args<
+									Prisma.FoodEntryDelegate,
+									'upsert'
+								>['create']
+							},
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.foodEntries.delete) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.delete).map(async (deleteData) => {
+						await this.client.foodEntry.delete({ where: { ...deleteData, userId: record.id } }, tx);
+					})
+				);
+			}
+			if (query.data.foodEntries.deleteMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.deleteMany).map(async (deleteData) => {
+						await this.client.foodEntry.deleteMany(
+							{ where: { ...deleteData, userId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.foodEntries.set) {
+				const existing = await this.client.foodEntry.findMany({ where: { userId: record.id } }, tx);
+				if (existing.length > 0) {
+					throw new Error('Cannot set required relation');
+				}
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.foodEntries.set).map(async (setData) => {
+						await this.client.foodEntry.update({ where: setData, data: { userId: record.id } }, tx);
+					})
+				);
+			}
+		}
 		const endKeyPath: PrismaIDBSchema['User']['key'] = [record.id];
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
@@ -12435,6 +14245,13 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 					tx
 				);
 				await this.client.macroActivityTrackingPreferences.updateMany(
+					{
+						where: { userId: startKeyPath[0] },
+						data: { userId: endKeyPath[0] }
+					},
+					tx
+				);
+				await this.client.foodEntry.updateMany(
 					{
 						where: { userId: startKeyPath[0] },
 						data: { userId: endKeyPath[0] }
