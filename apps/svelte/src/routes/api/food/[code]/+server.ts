@@ -3,9 +3,7 @@ import { prisma } from '$lib/prisma.js';
 export async function GET({ params }) {
 	const { code } = params;
 
-	const queryResult = await prisma.nutritionData.findUnique({
-		where: { code: BigInt(code) }
-	});
+	const queryResult = await prisma.nutritionData.findUnique({ where: { code } });
 
 	if (!queryResult) {
 		return new Response('Food not found', { status: 404 });

@@ -20,6 +20,7 @@ function createMacroTrackingQuickstartState() {
 		if (!macroTrackingMetrics) throw new Error('Macro tracking metrics not found');
 		if (!selectedMacroTargetQuantifier) throw new Error('Macro target quantifier not found');
 		if (!activityAdjustmentType) throw new Error('Activity adjustment type not found');
+		if (selectedWeightChange === undefined) throw new Error('Selected weight change not found');
 
 		await client.macroMetrics.create({ data: { userId: user.id, ...macroTrackingMetrics } });
 		await client.macroActivityTrackingPreferences.create({
@@ -35,7 +36,8 @@ function createMacroTrackingQuickstartState() {
 				quantifier: selectedMacroTargetQuantifier,
 				carbs: macroDistribution?.find((v) => v.macro === 'carbs')?.value,
 				proteins: macroDistribution?.find((v) => v.macro === 'protein')?.value,
-				fats: macroDistribution?.find((v) => v.macro === 'fats')?.value
+				fats: macroDistribution?.find((v) => v.macro === 'fats')?.value,
+				caloricChange: selectedWeightChange * 7700
 			}
 		});
 	}

@@ -4635,7 +4635,7 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 					for (const field of stringFields) {
 						if (!IDBUtils.whereStringFilter(record, field, whereClause[field])) return null;
 					}
-					const numberFields = ['proteins', 'carbs', 'fats'] as const;
+					const numberFields = ['proteins', 'carbs', 'fats', 'caloricChange'] as const;
 					for (const field of numberFields) {
 						if (!IDBUtils.whereNumberFilter(record, field, whereClause[field])) return null;
 					}
@@ -4696,6 +4696,7 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 				'carbs',
 				'fats',
 				'quantifier',
+				'caloricChange',
 				'user'
 			]) {
 				const key = untypedKey as keyof typeof record & keyof S;
@@ -4776,7 +4777,8 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 			'proteins',
 			'carbs',
 			'fats',
-			'quantifier'
+			'quantifier',
+			'caloricChange'
 		] as const;
 		for (const field of scalarFields) if (orderByInput[field]) return record[field];
 		if (orderByInput.user) {
@@ -4798,7 +4800,8 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 			'proteins',
 			'carbs',
 			'fats',
-			'quantifier'
+			'quantifier',
+			'caloricChange'
 		] as const;
 		for (const field of scalarFields) if (orderByInput[field]) return orderByInput[field];
 		if (orderByInput.user) {
@@ -5228,6 +5231,10 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 		for (const field of dateTimeFields) {
 			IDBUtils.handleDateTimeUpdateField(record, field, query.data[field]);
 		}
+		const intFields = ['caloricChange'] as const;
+		for (const field of intFields) {
+			IDBUtils.handleIntUpdateField(record, field, query.data[field]);
+		}
 		const floatFields = ['proteins', 'carbs', 'fats'] as const;
 		for (const field of floatFields) {
 			IDBUtils.handleFloatUpdateField(record, field, query.data[field]);
@@ -5384,7 +5391,7 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 		}
 		if (query?._min) {
 			const minResult = {} as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'aggregate'>['_min'];
-			const numericFields = ['proteins', 'carbs', 'fats'] as const;
+			const numericFields = ['proteins', 'carbs', 'fats', 'caloricChange'] as const;
 			for (const field of numericFields) {
 				if (!query._min[field]) continue;
 				const values = records
@@ -5412,7 +5419,7 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 		}
 		if (query?._max) {
 			const maxResult = {} as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'aggregate'>['_max'];
-			const numericFields = ['proteins', 'carbs', 'fats'] as const;
+			const numericFields = ['proteins', 'carbs', 'fats', 'caloricChange'] as const;
 			for (const field of numericFields) {
 				if (!query._max[field]) continue;
 				const values = records

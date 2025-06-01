@@ -73,7 +73,7 @@
 					<p class="truncate">{result.product_name}</p>
 					<p class="text-muted-foreground text-sm">
 						{result.energy_kcal_100g} kcal,
-						{result.brands ?? 'Unknown'}, {result.quantity ?? '1 serving'}
+						{result.brands ?? 'Unknown'}
 					</p>
 				</div>
 				<Button
