@@ -159,7 +159,9 @@
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content align="end">
 				<DropdownMenu.Group>
-					<DropdownMenu.Item><PencilIcon /> Edit</DropdownMenu.Item>
+					<DropdownMenu.Item onclick={() => goto(`/food-diary/add/${entry.nutritionDataCode}?edit=${entry.id}`)}>
+						<PencilIcon /> Edit
+					</DropdownMenu.Item>
 					<DropdownMenu.Item class="text-red-500" onclick={() => deleteEntry(entry.id)}>
 						<TrashIcon /> Delete
 					</DropdownMenu.Item>

@@ -29,7 +29,7 @@
 		"@serwist/vite": "^9.0.14",
 		"@serwist/window": "^9.0.14",
 		"@sveltejs/adapter-vercel": "^5.7.0",
-		"@sveltejs/enhanced-img": "^0.4.4",
+		"@sveltejs/enhanced-img": "^0.6.0",
 		"@sveltejs/kit": "^2.20.7",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@tailwindcss/postcss": "^4.1.4",

@@ -17,19 +17,42 @@
 	} from '@internationalized/date';
 	import type { NutritionData } from '@prisma/client';
 	import { createQuery } from '@tanstack/svelte-query';
-	import { CalendarIcon, PlusIcon } from 'lucide-svelte';
+	import { CalendarIcon, PencilIcon, PlusIcon } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import FoodDataCard from './_components/food-data-card.svelte';
 	import { client } from '$lib/idb-client';
 	import { goto } from '$app/navigation';
 
 	const df = new DateFormatter('en-US', { dateStyle: 'long' });
+	const editingFoodEntryId = $derived(page.url.searchParams.get('edit'));
 
-	let dateValue = $state<DateValue>(parseDate(page.url.searchParams.get('day') ?? ''));
+	let dateValue = $state<DateValue>(
+		parseDate(page.url.searchParams.get('day') ?? new Date().toISOString().split('T')[0])
+	);
 	let timeValue = $state(
 		new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
 	);
 	let userQuantity = $state(100);
+
+	$effect(() => {
+		if (!editingFoodEntryId) return;
+		loadEditEntry(editingFoodEntryId);
+	});
+
+	async function loadEditEntry(entryId: string) {
+		const entry = await client.foodEntry.findUnique({
+			where: { id: entryId }
+		});
+		if (!entry) return;
+
+		dateValue = parseDate(entry.eatenAt.toISOString().split('T')[0]);
+		timeValue = entry.eatenAt.toLocaleTimeString('en-US', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		});
+		userQuantity = entry.quantity;
+	}
 
 	const foodQuery = createQuery({
 		queryKey: ['food', page.params.code],
@@ -67,15 +90,28 @@
 				});
 			}
 
-			await client.foodEntry.create({
-				data: {
-					eatenAt,
-					quantity: userQuantity,
-					userId: user.id,
-					nutritionDataCode: page.params.code
-				}
-			});
-			toast.success('Food entry logged successfully!');
+			if (editingFoodEntryId) {
+				await client.foodEntry.update({
+					where: { id: editingFoodEntryId },
+					data: {
+						eatenAt,
+						quantity: userQuantity,
+						userId: user.id,
+						nutritionDataCode: page.params.code
+					}
+				});
+				toast.success('Food entry updated successfully!');
+			} else {
+				await client.foodEntry.create({
+					data: {
+						eatenAt,
+						quantity: userQuantity,
+						userId: user.id,
+						nutritionDataCode: page.params.code
+					}
+				});
+				toast.success('Food entry logged successfully!');
+			}
 			goto(`/food-diary?day=${eatenAt.toISOString().split('T')[0]}`);
 		} catch (error) {
 			console.error('Error logging food entry:', error);
@@ -153,5 +189,9 @@
 </form>
 
 <Button class="mt-auto" type="submit" form="food-entry-form">
-	<PlusIcon /> Add food
+	{#if editingFoodEntryId}
+		<PencilIcon /> Edit food
+	{:else}
+		<PlusIcon /> Add food
+	{/if}
 </Button>
