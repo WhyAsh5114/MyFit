@@ -76,9 +76,7 @@
 			return toast.error('Please fill in all fields correctly.');
 		}
 
-		const localDateTime = new Date(`${dateValue.toString()}T${timeValue}:00`);
-		const eatenAt = new Date(localDateTime.getTime() - localDateTime.getTimezoneOffset() * 60000);
-
+		const eatenAt = new Date(`${dateValue.toString()}T${timeValue}:00`);
 		try {
 			const user = await client.user.findFirstOrThrow();
 			const existingData = await client.nutritionData.findUnique({
@@ -128,7 +126,7 @@
 </H2>
 
 {#if $foodQuery.isLoading}
-	<Skeleton class="h-[270px] w-full" />
+	<Skeleton class="h-[184px] w-full" />
 {:else if $foodQuery.isError}
 	<div class="text-muted-foreground flex h-full flex-col items-center justify-center gap-2">
 		<span>Error loading food data</span>

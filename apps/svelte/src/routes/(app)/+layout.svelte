@@ -24,7 +24,7 @@
 			<LinkBreadcrumbs />
 		</header>
 		<CustomScrollArea class="h-px w-full grow">
-			<main class="flex w-full grow flex-col gap-2 p-4 pt-2 md:gap-4">
+			<main class="flex w-full grow flex-col gap-2 p-4 pt-2">
 				{@render children?.()}
 			</main>
 		</CustomScrollArea>

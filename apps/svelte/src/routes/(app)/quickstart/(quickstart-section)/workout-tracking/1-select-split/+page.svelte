@@ -99,10 +99,7 @@
 	</Popover.Root>
 </div>
 
-<RadioGroup.Root
-	bind:value={selectedSplitTemplateName}
-	class="grid grow items-start gap-2 md:-mt-2"
->
+<RadioGroup.Root bind:value={selectedSplitTemplateName} class="grid grow items-start gap-2">
 	{#each filteredWorkoutSplits as split (split.name)}
 		<Label
 			for={split.name}
