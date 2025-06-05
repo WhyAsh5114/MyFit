@@ -3,8 +3,11 @@ description: "Checks out the code, sets up Node.js, and installs dependencies us
 runs:
   using: "composite"
   steps:
-    - name: Setup npm
-      uses: npm/action-setup@v4
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+        cache: 'npm'
 
     - name: Install dependencies
       shell: bash
