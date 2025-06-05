@@ -17,26 +17,27 @@
 	} from '@internationalized/date';
 	import type { NutritionData } from '@prisma/client';
 	import { createQuery } from '@tanstack/svelte-query';
-	import { CalendarIcon, PencilIcon, PlusIcon } from 'lucide-svelte';
+	import { CalendarIcon, LoaderCircleIcon, PencilIcon, PlusIcon } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import FoodDataCard from './_components/food-data-card.svelte';
 	import { client } from '$lib/idb-client';
 	import { goto } from '$app/navigation';
 
 	const df = new DateFormatter('en-US', { dateStyle: 'long' });
-	const editingFoodEntryId = $derived(page.url.searchParams.get('edit'));
 
-	let dateValue = $state<DateValue>(
-		parseDate(page.url.searchParams.get('day') ?? new Date().toISOString().split('T')[0])
-	);
+	let editingFoodEntryId = $state<string | null>();
+	let dateValue = $state<DateValue>(parseDate(new Date().toISOString().split('T')[0]));
 	let timeValue = $state(
 		new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
 	);
 	let userQuantity = $state(100);
 
 	$effect(() => {
-		if (!editingFoodEntryId) return;
-		loadEditEntry(editingFoodEntryId);
+		editingFoodEntryId = page.url.searchParams.get('edit');
+		if (editingFoodEntryId) loadEditEntry(editingFoodEntryId);
+
+		const selectedDay = page.url.searchParams.get('day');
+		if (selectedDay) dateValue = parseDate(selectedDay);
 	});
 
 	async function loadEditEntry(entryId: string) {
@@ -188,10 +189,12 @@
 	</Label>
 </form>
 
-<Button class="mt-auto" type="submit" form="food-entry-form">
+<Button class="mt-auto" type="submit" form="food-entry-form" disabled={$foodQuery.isLoading}>
 	{#if editingFoodEntryId}
 		<PencilIcon /> Edit food
-	{:else}
+	{:else if editingFoodEntryId === null}
 		<PlusIcon /> Add food
+	{:else}
+		<LoaderCircleIcon class="animate-spin" />
 	{/if}
 </Button>
