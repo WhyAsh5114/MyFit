@@ -22,10 +22,13 @@
 	import FoodDataCard from './_components/food-data-card.svelte';
 	import { client } from '$lib/idb-client';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	const df = new DateFormatter('en-US', { dateStyle: 'long' });
 
+	let itemCode = $state<string | null>();
 	let editingFoodEntryId = $state<string | null>();
+
 	let dateValue = $state<DateValue>(parseDate(new Date().toISOString().split('T')[0]));
 	let timeValue = $state(
 		new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
@@ -33,6 +36,12 @@
 	let userQuantity = $state(100);
 
 	$effect(() => {
+		itemCode = page.url.searchParams.get('code');
+		if (itemCode === null) {
+			toast.error('Food code is required.');
+			return;
+		}
+
 		editingFoodEntryId = page.url.searchParams.get('edit');
 		if (editingFoodEntryId) loadEditEntry(editingFoodEntryId);
 
@@ -55,24 +64,27 @@
 		userQuantity = entry.quantity;
 	}
 
-	const foodQuery = createQuery({
-		queryKey: ['food', page.params.code],
-		queryFn: async () => {
-			try {
-				const response = await fetch(`/api/food/${page.params.code}`);
-				if (!response.ok) throw new Error('Error occurred while fetching food data');
-				return (await response.json()) as Omit<NutritionData, 'code'> & { code: string };
-			} catch (error) {
-				toast.error('Error fetching food data');
-				console.error('Error fetching food data:', error);
-				throw error;
+	let foodQuery = $state<ReturnType<typeof createQuery<NutritionData>>>();
+	onMount(() => {
+		foodQuery = createQuery({
+			queryKey: ['food', page.url.searchParams.get('code')],
+			queryFn: async () => {
+				try {
+					const response = await fetch(`/api/food/${page.url.searchParams.get('code')}`);
+					if (!response.ok) throw new Error('Error occurred while fetching food data');
+					return (await response.json()) as NutritionData;
+				} catch (error) {
+					toast.error('Error fetching food data');
+					console.error('Error fetching food data:', error);
+					throw error;
+				}
 			}
-		}
+		});
 	});
 
 	async function logFoodEntry(e: SubmitEvent) {
 		e.preventDefault();
-		if (!dateValue || !timeValue || userQuantity <= 0 || !$foodQuery.data) {
+		if (!itemCode || !dateValue || !timeValue || userQuantity <= 0 || !$foodQuery?.data) {
 			return toast.error('Please fill in all fields correctly.');
 		}
 
@@ -80,12 +92,12 @@
 		try {
 			const user = await client.user.findFirstOrThrow();
 			const existingData = await client.nutritionData.findUnique({
-				where: { code: page.params.code },
+				where: { code: itemCode },
 				select: { code: true }
 			});
 			if (!existingData) {
 				await client.nutritionData.create({
-					data: { ...$foodQuery.data, code: page.params.code }
+					data: { ...$foodQuery.data, code: itemCode }
 				});
 			}
 
@@ -96,7 +108,7 @@
 						eatenAt,
 						quantity: userQuantity,
 						userId: user.id,
-						nutritionDataCode: page.params.code
+						nutritionDataCode: itemCode
 					}
 				});
 				toast.success('Food entry updated successfully!');
@@ -106,7 +118,7 @@
 						eatenAt,
 						quantity: userQuantity,
 						userId: user.id,
-						nutritionDataCode: page.params.code
+						nutritionDataCode: itemCode
 					}
 				});
 				toast.success('Food entry logged successfully!');
@@ -121,18 +133,18 @@
 <H2 class="flex items-center justify-between">
 	Add food
 	<Badge variant="secondary">
-		Code: {page.params.code}
+		Code: {itemCode}
 	</Badge>
 </H2>
 
-{#if $foodQuery.isLoading}
-	<Skeleton class="h-[184px] w-full" />
+{#if $foodQuery === undefined || $foodQuery.isLoading}
+	<Skeleton class="h-48 w-full" />
 {:else if $foodQuery.isError}
-	<div class="text-muted-foreground flex h-full flex-col items-center justify-center gap-2">
+	<div class="text-muted-foreground flex h-48 flex-col items-center justify-center gap-2">
 		<span>Error loading food data</span>
 	</div>
 {:else if $foodQuery.data}
-	<div class="flex flex-col gap-4">
+	<div class="flex h-48 w-full flex-col items-center gap-4">
 		<FoodDataCard {...$foodQuery.data} {userQuantity} />
 	</div>
 {/if}
@@ -187,7 +199,12 @@
 	</Label>
 </form>
 
-<Button class="mt-auto" type="submit" form="food-entry-form" disabled={$foodQuery.isLoading}>
+<Button
+	class="mt-auto"
+	type="submit"
+	form="food-entry-form"
+	disabled={$foodQuery === undefined || $foodQuery.isLoading}
+>
 	{#if editingFoodEntryId}
 		<PencilIcon /> Edit food
 	{:else if editingFoodEntryId === null}

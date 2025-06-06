@@ -52,7 +52,7 @@
 	}
 </script>
 
-<Card.Root class="flex flex-col">
+<Card.Root class="flex h-full w-full flex-col">
 	<Card.Header>
 		<Card.Title>
 			{product_name}

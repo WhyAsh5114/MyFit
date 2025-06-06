@@ -120,7 +120,7 @@ export async function getStepRoutesMap(props: {
 }): Promise<StepRoutesMap> {
 	const { dev, building, fetch } = props;
 	if (dev || building) return findStepRoutes();
-	return fetch(`step-routes.json`).then((res) => res.json());
+	return fetch(`/step-routes.json`).then((res) => res.json());
 }
 
 if (process.argv.includes('--create-json-file')) {

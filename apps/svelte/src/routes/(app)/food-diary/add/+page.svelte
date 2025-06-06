@@ -80,7 +80,7 @@
 					size="icon"
 					class="rounded-full"
 					variant="outline"
-					href={`${page.url.pathname}/${result.code}?day=${page.url.searchParams.get('day')}`}
+					href={`${page.url.pathname}/item?code=${result.code}&day=${page.url.searchParams.get('day')}`}
 				>
 					<PlusIcon />
 				</Button>

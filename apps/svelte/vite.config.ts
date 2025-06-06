@@ -97,6 +97,7 @@ const serwist = (): Plugin[] => {
 	// This part is your Serwist configuration.
 	const options: PluginOptions = {
 		// We will set these later in `configureOptions`.
+		base: '/',
 		swSrc: null!,
 		swDest: null!,
 		swUrl: '/service-worker.js',
