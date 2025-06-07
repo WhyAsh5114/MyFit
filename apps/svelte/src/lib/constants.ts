@@ -11,6 +11,7 @@ import {
 	BookOpenTextIcon,
 	CalendarIcon,
 	ChartNoAxesCombinedIcon,
+	CogIcon,
 	DumbbellIcon,
 	GithubIcon,
 	GlobeLockIcon,
@@ -67,6 +68,11 @@ export const SIDEBAR_LINK_GROUPS = [
 				label: 'Food diary',
 				href: '/food-diary',
 				icon: AppleIcon
+			},
+			{
+				label: 'Settings',
+				href: '/settings',
+				icon: CogIcon
 			}
 		]
 	},

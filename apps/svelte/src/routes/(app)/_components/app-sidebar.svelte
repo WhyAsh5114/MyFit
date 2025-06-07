@@ -5,9 +5,9 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
 	import { SIDEBAR_LINK_GROUPS } from '$lib/constants';
+	import { client } from '$lib/idb-client';
 	import {
 		ChevronUpIcon,
-		CogIcon,
 		DownloadIcon,
 		LoaderCircleIcon,
 		LogInIcon,
@@ -15,7 +15,6 @@
 		UserRoundIcon
 	} from 'lucide-svelte';
 	import { appLayoutState } from './app-layout-state.svelte';
-	import { client } from '$lib/idb-client';
 
 	const sidebar = useSidebar();
 	const session = authClient.useSession();
@@ -50,7 +49,11 @@
 									isActive={page.url.pathname.startsWith(link.href)}
 								>
 									{#snippet child({ props })}
-										<a href={link.href} {...props}>
+										<a
+											href={link.href}
+											target={link.label === 'Github' ? '_blank' : '_self'}
+											{...props}
+										>
 											<link.icon />
 											<span>{link.label}</span>
 										</a>
@@ -91,11 +94,6 @@
 						</DropdownMenu.Trigger>
 						<DropdownMenu.Content class="w-[var(--bits-dropdown-menu-anchor-width)]">
 							<DropdownMenu.Group>
-								<DropdownMenu.Item onclick={() => sidebar.setOpenMobile(false)}>
-									{#snippet child({ props })}
-										<a href="/settings" {...props}><CogIcon /> Settings</a>
-									{/snippet}
-								</DropdownMenu.Item>
 								<DropdownMenu.Item onclick={() => sidebar.setOpenMobile(false)}>
 									{#snippet child({ props })}
 										<a href="/profile" {...props}><UserRoundIcon /> Profile</a>
