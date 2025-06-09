@@ -12,6 +12,17 @@ export function pascalToNormal(str: string) {
 	return str.replace(/([A-Z])/g, ' $1').replace(/^\w/, (c) => c.toUpperCase());
 }
 
+export function snakeToNormal(str: string) {
+	return str.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
+}
+
+export function capitalizeWords(str: string) {
+	return str
+		.split(' ')
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
+}
+
 export function calculateBMR(metrics: MacroMetrics) {
 	if (metrics.gender === 'Male') {
 		return (

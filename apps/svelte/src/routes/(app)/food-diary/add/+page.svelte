@@ -7,7 +7,7 @@
 	import { Label } from '$lib/components/ui/label';
 	import type { NutritionData } from '@prisma/client';
 	import { createQuery } from '@tanstack/svelte-query';
-	import { PlusIcon, SearchIcon, SearchXIcon } from 'lucide-svelte';
+	import { PlusCircleIcon, PlusIcon, SearchIcon, SearchXIcon } from 'lucide-svelte';
 	import { Debounced } from 'runed';
 	import { toast } from 'svelte-sonner';
 	import { derived, writable } from 'svelte/store';
@@ -49,6 +49,10 @@
 	<Label for="search-food">Search for foods</Label>
 	<Input type="text" placeholder="Type here" id="search-food" bind:value={searchTerm} />
 </div>
+
+<Button class="ml-auto" href="/food-diary/add/manual">
+	<PlusCircleIcon /> Add manually
+</Button>
 
 {#if $searchQuery.isFetching}
 	<div class="text-muted-foreground flex h-full flex-col items-center justify-center gap-2">

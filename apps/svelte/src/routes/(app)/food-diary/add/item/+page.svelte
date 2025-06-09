@@ -140,7 +140,9 @@
 {#if $foodQuery === undefined || $foodQuery.isLoading}
 	<Skeleton class="h-48 w-full" />
 {:else if $foodQuery.isError}
-	<div class="text-muted-foreground flex h-48 flex-col items-center justify-center gap-2">
+	<div
+		class="text-muted-foreground flex h-48 flex-col items-center justify-center gap-2 rounded-md border"
+	>
 		<span>Error loading food data</span>
 	</div>
 {:else if $foodQuery.data}
@@ -203,7 +205,7 @@
 	class="mt-auto"
 	type="submit"
 	form="food-entry-form"
-	disabled={$foodQuery === undefined || $foodQuery.isLoading}
+	disabled={$foodQuery === undefined || $foodQuery.isLoading || $foodQuery.isError}
 >
 	{#if editingFoodEntryId}
 		<PencilIcon /> Edit food
