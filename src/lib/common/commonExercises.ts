@@ -1435,6 +1435,4 @@ export const commonExercisePerMuscleGroup: {
 			}
 		]
 	}
-		]
-	}
-];
+		];
