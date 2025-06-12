@@ -68,7 +68,7 @@
 				orderBy: { eatenAt: 'asc' }
 			});
 		},
-		enabled: !!selectedDay
+		enabled: Boolean(selectedDay)
 	}));
 
 	let caloricIntake = $derived(
@@ -148,7 +148,7 @@
 	<div
 		class="text-muted-foreground flex h-4 w-full items-center justify-between text-sm font-medium"
 	>
-		{#if macroDataQuery.data?.caloricTarget}
+		{#if macroDataQuery.data}
 			<p>{macroDataQuery.data?.caloricTarget?.toFixed()}</p>
 			<MinusIcon size={16} />
 			<p>{caloricIntake.toFixed()}</p>
@@ -156,7 +156,7 @@
 			<p>TBD</p>
 			<EqualIcon size={16} />
 			<p>{(macroDataQuery.data?.caloricTarget - caloricIntake).toFixed()}</p>
-		{:else if macroDataQuery.data?.caloricTarget === null}
+		{:else if macroDataQuery.data === null}
 			<p>Targets and/or metrics haven't been setup</p>
 		{:else}
 			<p>Fetching data...</p>

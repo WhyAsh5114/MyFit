@@ -4,7 +4,7 @@
 	import type { NutritionData } from '@prisma/client';
 	import { PieChart, Text } from 'layerchart';
 
-	type PropsType = Omit<NutritionData, 'code'> & { code: string; userQuantity: number };
+	type PropsType = NutritionData & { userQuantity: number };
 
 	let {
 		energy_kcal_100g,

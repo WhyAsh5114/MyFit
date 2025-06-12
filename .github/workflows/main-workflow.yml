@@ -49,7 +49,7 @@ jobs:
         run: cd apps/svelte && echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/defaultdb?sslmode=disable" >> $GITHUB_ENV
 
       - name: Initialize database schema
-        run: cd apps/svelte && pnpm exec prisma db push
+        run: cd apps/svelte && pnpm exec prisma db push && pnpm exec prisma db seed
 
       - name: Generate AUTH_SECRET
         run: cd apps/svelte && echo "AUTH_SECRET=$(openssl rand -base64 33)" >> $GITHUB_ENV

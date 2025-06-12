@@ -9,7 +9,7 @@
 	const session = authClient.useSession();
 
 	$effect(() => {
-		syncIdbWithSession();
+		if (page.url) syncIdbWithSession();
 	});
 
 	async function syncIdbWithSession() {

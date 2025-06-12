@@ -4,7 +4,8 @@
 	"version": "4.0.0",
 	"type": "module",
 	"prisma": {
-		"schema": "./prisma/schema"
+		"schema": "./prisma/schema",
+		"seed": "tsx ./prisma/seed.ts"
 	},
 	"scripts": {
 		"dev": "vite dev",
@@ -72,6 +73,7 @@
 	"dependencies": {
 		"@tanstack/svelte-query": "https://pkg.pr.new/@tanstack/svelte-query@746b9c5d83e901deb3a5ca7012a4b4e2b617c5e3",
 		"@tanstack/table-core": "^8.21.3",
+		"barqode": "^0.0.2",
 		"better-auth": "^1.2.8",
 		"d3-scale": "^4.0.2",
 		"idb": "^8.0.3",

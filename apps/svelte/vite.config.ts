@@ -194,5 +194,8 @@ const serwist = (): Plugin[] => {
 };
 
 export default defineConfig({
-	plugins: [enhancedImages(), sveltekit(), serwist()]
+	plugins: [enhancedImages(), sveltekit(), serwist()],
+	server: {
+		allowedHosts: ['.trycloudflare.com']
+	}
 });

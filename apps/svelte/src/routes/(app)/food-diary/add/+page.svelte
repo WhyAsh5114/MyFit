@@ -21,7 +21,7 @@
 			try {
 				const response = await fetch(`/api/food/search?query=${debounced.current}`);
 				if (!response.ok) throw new Error('Error occurred while fetching food data');
-				return (await response.json()) as (Omit<NutritionData, 'code'> & { code: string })[];
+				return (await response.json()) as NutritionData[];
 			} catch (error) {
 				toast.error('Error fetching food data');
 				console.error('Error fetching food data:', error);

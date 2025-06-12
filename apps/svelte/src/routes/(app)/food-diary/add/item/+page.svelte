@@ -55,7 +55,7 @@
 				where: { id: editingFoodEntryId }
 			});
 		},
-		enabled: !!editingFoodEntryId
+		enabled: Boolean(editingFoodEntryId)
 	}));
 
 	$effect(() => {
@@ -78,7 +78,7 @@
 			if (!response.ok) throw new Error('Error occurred while fetching food data');
 			return (await response.json()) as NutritionData;
 		},
-		enabled: !!itemCode,
+		enabled: Boolean(itemCode),
 		throwOnError: (error) => {
 			toast.error('Error fetching food data');
 			console.error('Error fetching food data:', error);
