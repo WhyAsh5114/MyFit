@@ -366,6 +366,18 @@ export const commonExercisePerMuscleGroup: {
 				"note": "Hang from bar, pull chest up to bar, lower under control."
 			},
 			{
+				"name": "Bent-over Dumbbell Row",
+				"targetMuscleGroup": "Lats",
+				"customMuscleGroup": null,
+				"bodyweightFraction": null,
+				"setType": "Straight",
+				"repRangeStart": 8,
+				"repRangeEnd": 12,
+				"changeType": "AbsoluteLoad",
+				"changeAmount": 5,
+				"note": "Keep back flat, pull dumbbell to waist, lower slowly."
+			},
+			{
 				"name": "Lat pulldown (wide grip)",
 				"targetMuscleGroup": "Lats",
 				"customMuscleGroup": null,
