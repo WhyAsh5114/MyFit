@@ -45,7 +45,7 @@
   "devDependencies": {
     "@babel/core": "^7.26.10",
     "@types/react": "~18.3.20",
-    "bridge-types": "1.0.0",
+    "bridge-types": "workspace:*",
     "eslint": "^8.0.0",
     "eslint-config-expo": "~8.0.1",
     "expo-build-properties": "^0.13.2",

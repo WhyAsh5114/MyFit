@@ -5,41 +5,32 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { Label } from '$lib/components/ui/label';
+	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import type { NutritionData } from '@prisma/client';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { PlusCircleIcon, PlusIcon, SearchIcon, SearchXIcon } from 'lucide-svelte';
 	import { Debounced } from 'runed';
 	import { toast } from 'svelte-sonner';
-	import { derived, writable } from 'svelte/store';
 
 	let searchTerm = $state('');
 	const debounced = new Debounced(() => searchTerm, 500);
-	const debouncedValue = writable(debounced.current);
 
-	$effect(() => {
-		$debouncedValue = debounced.current;
-	});
-
-	const searchQuery = createQuery(
-		derived(debouncedValue, ($debouncedValue) => ({
-			queryFn: async () => {
-				if (!$debouncedValue) return [];
-				try {
-					const response = await fetch(`/api/food/search?query=${$debouncedValue}`);
-					if (!response.ok) throw new Error('Error occurred while fetching food data');
-					return (await response.json()) as (Omit<NutritionData, 'code'> & { code: string })[];
-				} catch (error) {
-					toast.error('Error fetching food data');
-					console.error('Error fetching food data:', error);
-				}
-				return null;
-			},
-			// TODO: use this when tanstack-svelte v6 is released and remove the effect, writable store, and derived wrapper function:
-			// queryKey: () => ['food-search', debounced.current],
-			queryKey: ['food-search', $debouncedValue],
-			enabled: Boolean($debouncedValue)
-		}))
-	);
+	const searchQuery = createQuery(() => ({
+		queryFn: async () => {
+			if (!debounced.current) return [];
+			try {
+				const response = await fetch(`/api/food/search?query=${debounced.current}`);
+				if (!response.ok) throw new Error('Error occurred while fetching food data');
+				return (await response.json()) as (Omit<NutritionData, 'code'> & { code: string })[];
+			} catch (error) {
+				toast.error('Error fetching food data');
+				console.error('Error fetching food data:', error);
+			}
+			return null;
+		},
+		queryKey: ['food-search', debounced.current],
+		enabled: Boolean(debounced.current)
+	}));
 </script>
 
 <H1>Food diary</H1>
@@ -50,45 +41,47 @@
 	<Input type="text" placeholder="Type here" id="search-food" bind:value={searchTerm} />
 </div>
 
-<Button class="ml-auto" href="/food-diary/add/manual">
+<Button class="ml-auto shrink-0" href="/food-diary/add/manual">
 	<PlusCircleIcon /> Add manually
 </Button>
 
-{#if $searchQuery.isFetching}
+{#if searchQuery.isFetching}
 	<div class="text-muted-foreground flex h-full flex-col items-center justify-center gap-2">
 		<SearchIcon size={128} strokeWidth={1} />
 		<span>Searching</span>
 	</div>
-{:else if !$searchQuery.data}
+{:else if !searchQuery.data}
 	<div class="text-muted-foreground flex h-full flex-col items-center justify-center gap-2">
 		<SearchIcon size={128} strokeWidth={1} />
 		<span>Search to find food items</span>
 	</div>
-{:else if $searchQuery.data.length === 0}
+{:else if searchQuery.data.length === 0}
 	<div class="text-muted-foreground flex h-full flex-col items-center justify-center gap-2">
 		<SearchXIcon size={128} strokeWidth={1} />
 		<span>No results found</span>
 	</div>
 {:else}
-	<div class="flex flex-col gap-2">
-		{#each $searchQuery.data as result (result.code)}
-			<div class="bg-card flex w-full justify-between gap-2 rounded-md border p-4">
-				<div class="flex w-3/4 flex-col justify-between">
-					<p class="truncate">{result.product_name}</p>
-					<p class="text-muted-foreground text-sm">
-						{result.energy_kcal_100g} kcal,
-						{result.brands ?? 'Unknown'}
-					</p>
+	<ScrollArea class="h-px grow">
+		<div class="flex flex-col gap-2">
+			{#each searchQuery.data as result (result.code)}
+				<div class="bg-card flex w-full justify-between gap-2 rounded-md border p-4">
+					<div class="flex w-3/4 flex-col justify-between">
+						<p class="truncate">{result.product_name}</p>
+						<p class="text-muted-foreground text-sm">
+							{result.energy_kcal_100g} kcal,
+							{result.brands ?? 'Unknown'}
+						</p>
+					</div>
+					<Button
+						size="icon"
+						class="rounded-full"
+						variant="outline"
+						href={`${page.url.pathname}/item?code=${result.code}&day=${page.url.searchParams.get('day')}`}
+					>
+						<PlusIcon />
+					</Button>
 				</div>
-				<Button
-					size="icon"
-					class="rounded-full"
-					variant="outline"
-					href={`${page.url.pathname}/item?code=${result.code}&day=${page.url.searchParams.get('day')}`}
-				>
-					<PlusIcon />
-				</Button>
-			</div>
-		{/each}
-	</div>
+			{/each}
+		</div>
+	</ScrollArea>
 {/if}

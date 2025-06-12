@@ -8,7 +8,6 @@
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { client } from '$lib/idb-client';
 	import { calculateBMR } from '$lib/my-utils';
-	import type { Prisma } from '@prisma/client';
 	import {
 		CalendarIcon,
 		ChevronLeftIcon,
@@ -24,59 +23,77 @@
 		ScissorsIcon,
 		TrashIcon
 	} from 'lucide-svelte';
-	import { onMount } from 'svelte';
+	import { createQuery } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 
 	let selectedDay = $state<Date>();
-	let foodEntries = $state<Prisma.FoodEntryGetPayload<{ include: { nutritionData: true } }>[]>();
-	let caloricIntake = $state<number>(0);
-	let caloricTarget = $state<number | undefined | null>();
 
-	onMount(async () => {
+	const macroDataQuery = createQuery(() => ({
+		queryKey: ['macro-data'],
+		queryFn: async () => {
+			const metrics = await client.macroMetrics.findFirst();
+			const targets = await client.macroTargets.findFirst();
+
+			if (!metrics || !targets) return null;
+
+			const bmr = calculateBMR(metrics);
+			return {
+				caloricTarget: bmr + targets.caloricChange / 7,
+				metrics,
+				targets
+			};
+		}
+	}));
+
+	const foodEntriesQuery = createQuery(() => ({
+		queryKey: ['food-entries', selectedDay?.toISOString().split('T')[0]],
+		queryFn: async () => {
+			if (!selectedDay) return [];
+
+			const startOfDay = new Date(selectedDay);
+			const endOfDay = new Date(
+				selectedDay.getFullYear(),
+				selectedDay.getMonth(),
+				selectedDay.getDate() + 1
+			);
+
+			return await client.foodEntry.findMany({
+				where: {
+					eatenAt: {
+						gte: startOfDay,
+						lt: endOfDay
+					}
+				},
+				include: { nutritionData: true },
+				orderBy: { eatenAt: 'asc' }
+			});
+		},
+		enabled: !!selectedDay
+	}));
+
+	let caloricIntake = $derived(
+		foodEntriesQuery.data?.reduce((sum, entry) => {
+			return sum + (entry.nutritionData?.energy_kcal_100g || 0) * (entry.quantity / 100);
+		}, 0) || 0
+	);
+
+	// Initialize selected day from URL or default to today
+	$effect(() => {
 		const urlDay = page.url.searchParams.get('day');
 		if (urlDay) {
 			const parsedDate = new Date(urlDay);
-			if (!isNaN(parsedDate.getTime())) selectedDay = parsedDate;
-		} else {
-			goto(`/food-diary?day=${new Date().toISOString().split('T')[0]}`);
-			selectedDay = new Date();
+			if (!isNaN(parsedDate.getTime())) {
+				selectedDay = parsedDate;
+				return;
+			}
 		}
 
-		const metrics = await client.macroMetrics.findFirst();
-		const targets = await client.macroTargets.findFirst();
-		if (!metrics || !targets) {
-			caloricTarget = null;
-			return;
+		if (!selectedDay) {
+			const today = new Date();
+			goto(`/food-diary?day=${today.toISOString().split('T')[0]}`);
+			selectedDay = today;
 		}
-
-		const bmr = calculateBMR(metrics);
-		caloricTarget = bmr + targets.caloricChange / 7;
 	});
-
-	$effect(() => {
-		if (selectedDay) loadFoodEntries(selectedDay);
-	});
-
-	async function loadFoodEntries(day: Date) {
-		const startOfDay = new Date(day);
-		const endOfDay = new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1);
-
-		foodEntries = await client.foodEntry.findMany({
-			where: {
-				eatenAt: {
-					gte: startOfDay,
-					lt: endOfDay
-				}
-			},
-			orderBy: { eatenAt: 'asc' },
-			include: { nutritionData: true }
-		});
-		caloricIntake = foodEntries.reduce(
-			(total, entry) =>
-				total + (entry.quantity * (entry.nutritionData?.energy_kcal_100g ?? 0)) / 100,
-			0
-		);
-	}
 
 	function changeDay(direction: 'prev' | 'next') {
 		if (!selectedDay) return;
@@ -96,7 +113,7 @@
 			.delete({ where: { id: entryId } })
 			.then(() => {
 				toast.success('Food entry deleted successfully');
-				loadFoodEntries(selectedDay!);
+				foodEntriesQuery.refetch();
 			})
 			.catch((error) => {
 				console.error('Error deleting food entry:', error);
@@ -123,19 +140,23 @@
 			<ChevronRightIcon />
 		</Button>
 	</div>
-	<Progress value={caloricIntake} max={caloricTarget ?? Infinity} class="h-2" />
+	<Progress
+		value={caloricIntake}
+		max={macroDataQuery.data?.caloricTarget ?? Infinity}
+		class="h-2"
+	/>
 	<div
 		class="text-muted-foreground flex h-4 w-full items-center justify-between text-sm font-medium"
 	>
-		{#if caloricTarget}
-			<p>{caloricTarget?.toFixed()}</p>
+		{#if macroDataQuery.data?.caloricTarget}
+			<p>{macroDataQuery.data?.caloricTarget?.toFixed()}</p>
 			<MinusIcon size={16} />
 			<p>{caloricIntake.toFixed()}</p>
 			<PlusIcon size={16} />
 			<p>TBD</p>
 			<EqualIcon size={16} />
-			<p>{(caloricTarget - caloricIntake).toFixed()}</p>
-		{:else if caloricTarget === null}
+			<p>{(macroDataQuery.data?.caloricTarget - caloricIntake).toFixed()}</p>
+		{:else if macroDataQuery.data?.caloricTarget === null}
 			<p>Targets and/or metrics haven't been setup</p>
 		{:else}
 			<p>Fetching data...</p>
@@ -159,13 +180,13 @@
 	</Button>
 </div>
 
-{#if !foodEntries}
+{#if !foodEntriesQuery.data}
 	<div class="text-muted-foreground flex h-full flex-col items-center justify-center gap-2">
 		<LoaderCircleIcon size={128} strokeWidth={1} class="animate-spin" />
 		<span>Loading</span>
 	</div>
 {:else}
-	{#each foodEntries as entry (entry.id)}
+	{#each foodEntriesQuery.data as entry (entry.id)}
 		<div class="bg-card flex w-full items-start justify-between rounded-md border p-3">
 			<div class="flex flex-col">
 				<p class="max-w-56 truncate font-semibold">{entry.nutritionData?.product_name}</p>
@@ -187,7 +208,8 @@
 				<DropdownMenu.Content align="end">
 					<DropdownMenu.Group>
 						<DropdownMenu.Item
-							onclick={() => goto(`/food-diary/add/${entry.nutritionDataCode}?edit=${entry.id}`)}
+							onclick={() =>
+								goto(`/food-diary/add/item?code=${entry.nutritionDataCode}&edit=${entry.id}`)}
 						>
 							<PencilIcon /> Edit
 						</DropdownMenu.Item>

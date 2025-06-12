@@ -6,7 +6,9 @@
 	import '../app.css';
 
 	let { children } = $props();
-	const queryClient = new QueryClient({ defaultOptions: { queries: { enabled: browser } } });
+	const queryClient = new QueryClient({
+		defaultOptions: { queries: { enabled: browser } }
+	});
 
 	function themeChangeHandler(event: Event) {
 		if ('data' in event && typeof event.data === 'string') {

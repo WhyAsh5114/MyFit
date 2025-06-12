@@ -30,5 +30,15 @@ export default ts.config(
 				parser: ts.parser
 			}
 		}
+	},
+	{
+		rules: {
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{
+					ignoreRestSiblings: true
+				}
+			]
+		}
 	}
 );

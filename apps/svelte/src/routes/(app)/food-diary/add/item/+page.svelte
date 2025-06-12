@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import H2 from '$lib/components/typography/h2.svelte';
 	import { Badge } from '$lib/components/ui/badge';
@@ -8,6 +9,7 @@
 	import Label from '$lib/components/ui/label/label.svelte';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
+	import { client } from '$lib/idb-client';
 	import { cn } from '$lib/utils';
 	import {
 		type DateValue,
@@ -16,13 +18,10 @@
 		parseDate
 	} from '@internationalized/date';
 	import type { NutritionData } from '@prisma/client';
-	import { createQuery } from '@tanstack/svelte-query';
+	import { createMutation, createQuery } from '@tanstack/svelte-query';
 	import { CalendarIcon, LoaderCircleIcon, PencilIcon, PlusIcon } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import FoodDataCard from './_components/food-data-card.svelte';
-	import { client } from '$lib/idb-client';
-	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
 
 	const df = new DateFormatter('en-US', { dateStyle: 'long' });
 
@@ -42,91 +41,118 @@
 			return;
 		}
 
-		editingFoodEntryId = page.url.searchParams.get('edit');
-		if (editingFoodEntryId) loadEditEntry(editingFoodEntryId);
-
 		const selectedDay = page.url.searchParams.get('day');
 		if (selectedDay) dateValue = parseDate(selectedDay);
+
+		editingFoodEntryId = page.url.searchParams.get('edit');
 	});
 
-	async function loadEditEntry(entryId: string) {
-		const entry = await client.foodEntry.findUnique({
-			where: { id: entryId }
-		});
-		if (!entry) return;
+	let editEntryQuery = createQuery(() => ({
+		queryKey: ['foodEntry', editingFoodEntryId],
+		queryFn: async () => {
+			if (!editingFoodEntryId) return null;
+			return await client.foodEntry.findUnique({
+				where: { id: editingFoodEntryId }
+			});
+		},
+		enabled: !!editingFoodEntryId
+	}));
 
-		dateValue = parseDate(entry.eatenAt.toISOString().split('T')[0]);
-		timeValue = entry.eatenAt.toLocaleTimeString('en-US', {
-			hour: '2-digit',
-			minute: '2-digit',
-			hour12: false
-		});
-		userQuantity = entry.quantity;
-	}
-
-	let foodQuery = $state<ReturnType<typeof createQuery<NutritionData>>>();
-	onMount(() => {
-		foodQuery = createQuery({
-			queryKey: ['food', page.url.searchParams.get('code')],
-			queryFn: async () => {
-				try {
-					const response = await fetch(`/api/food/${page.url.searchParams.get('code')}`);
-					if (!response.ok) throw new Error('Error occurred while fetching food data');
-					return (await response.json()) as NutritionData;
-				} catch (error) {
-					toast.error('Error fetching food data');
-					console.error('Error fetching food data:', error);
-					throw error;
-				}
-			}
-		});
-	});
-
-	async function logFoodEntry(e: SubmitEvent) {
-		e.preventDefault();
-		if (!itemCode || !dateValue || !timeValue || userQuantity <= 0 || !$foodQuery?.data) {
-			return toast.error('Please fill in all fields correctly.');
+	$effect(() => {
+		if (editEntryQuery.data) {
+			const entry = editEntryQuery.data;
+			dateValue = parseDate(entry.eatenAt.toISOString().split('T')[0]);
+			timeValue = entry.eatenAt.toLocaleTimeString('en-US', {
+				hour: '2-digit',
+				minute: '2-digit',
+				hour12: false
+			});
+			userQuantity = entry.quantity;
 		}
+	});
 
-		const eatenAt = new Date(`${dateValue.toString()}T${timeValue}:00`);
-		try {
+	let foodQuery = createQuery(() => ({
+		queryKey: ['food', itemCode],
+		queryFn: async () => {
+			const response = await fetch(`/api/food/${itemCode}`);
+			if (!response.ok) throw new Error('Error occurred while fetching food data');
+			return (await response.json()) as NutritionData;
+		},
+		enabled: !!itemCode,
+		throwOnError: (error) => {
+			toast.error('Error fetching food data');
+			console.error('Error fetching food data:', error);
+			return false;
+		}
+	}));
+
+	let foodEntryMutation = createMutation(() => ({
+		mutationFn: async (data: {
+			eatenAt: Date;
+			quantity: number;
+			itemCode: string;
+			nutritionData: NutritionData;
+			editingId?: string;
+		}) => {
 			const user = await client.user.findFirstOrThrow();
+
+			// Ensure nutrition data exists
 			const existingData = await client.nutritionData.findUnique({
-				where: { code: itemCode },
+				where: { code: data.itemCode },
 				select: { code: true }
 			});
 			if (!existingData) {
 				await client.nutritionData.create({
-					data: { ...$foodQuery.data, code: itemCode }
+					data: { ...data.nutritionData, code: data.itemCode }
 				});
 			}
 
-			if (editingFoodEntryId) {
-				await client.foodEntry.update({
-					where: { id: editingFoodEntryId },
-					data: {
-						eatenAt,
-						quantity: userQuantity,
-						userId: user.id,
-						nutritionDataCode: itemCode
-					}
+			const foodEntryData = {
+				eatenAt: data.eatenAt,
+				quantity: data.quantity,
+				userId: user.id,
+				nutritionDataCode: data.itemCode
+			};
+
+			// Create or update food entry
+			if (data.editingId) {
+				return await client.foodEntry.update({
+					where: { id: data.editingId },
+					data: foodEntryData
 				});
-				toast.success('Food entry updated successfully!');
 			} else {
-				await client.foodEntry.create({
-					data: {
-						eatenAt,
-						quantity: userQuantity,
-						userId: user.id,
-						nutritionDataCode: itemCode
-					}
-				});
-				toast.success('Food entry logged successfully!');
+				return await client.foodEntry.create({ data: foodEntryData });
 			}
-			goto(`/food-diary?day=${eatenAt.toISOString().split('T')[0]}`);
-		} catch (error) {
+		},
+		onSuccess: (data, variables) => {
+			const message = variables.editingId
+				? 'Food entry updated successfully!'
+				: 'Food entry logged successfully!';
+			toast.success(message);
+
+			goto(`/food-diary?day=${variables.eatenAt.toISOString().split('T')[0]}`);
+		},
+		onError: (error) => {
 			console.error('Error logging food entry:', error);
+			toast.error('Failed to save food entry. Please try again.');
 		}
+	}));
+
+	async function logFoodEntry(e: SubmitEvent) {
+		e.preventDefault();
+		if (!itemCode || !dateValue || !timeValue || userQuantity <= 0 || !foodQuery.data) {
+			return toast.error('Please fill in all fields correctly.');
+		}
+
+		const eatenAt = new Date(`${dateValue.toString()}T${timeValue}:00`);
+
+		foodEntryMutation.mutate({
+			eatenAt,
+			quantity: userQuantity,
+			itemCode,
+			nutritionData: foodQuery.data,
+			editingId: editingFoodEntryId || undefined
+		});
 	}
 </script>
 
@@ -137,17 +163,18 @@
 	</Badge>
 </H2>
 
-{#if $foodQuery === undefined || $foodQuery.isLoading}
+{#if foodQuery.isLoading}
 	<Skeleton class="h-48 w-full" />
-{:else if $foodQuery.isError}
+{:else if foodQuery.isError}
 	<div
 		class="text-muted-foreground flex h-48 flex-col items-center justify-center gap-2 rounded-md border"
 	>
 		<span>Error loading food data</span>
+		<span class="text-sm">{foodQuery.error?.message}</span>
 	</div>
-{:else if $foodQuery.data}
+{:else if foodQuery.data}
 	<div class="flex h-48 w-full flex-col items-center gap-4">
-		<FoodDataCard {...$foodQuery.data} {userQuantity} />
+		<FoodDataCard {...foodQuery.data} {userQuantity} />
 	</div>
 {/if}
 
@@ -205,13 +232,13 @@
 	class="mt-auto"
 	type="submit"
 	form="food-entry-form"
-	disabled={$foodQuery === undefined || $foodQuery.isLoading || $foodQuery.isError}
+	disabled={foodQuery.isLoading || foodQuery.isError || foodEntryMutation.isPending}
 >
-	{#if editingFoodEntryId}
+	{#if foodEntryMutation.isPending}
+		<LoaderCircleIcon class="animate-spin" /> Saving...
+	{:else if editingFoodEntryId}
 		<PencilIcon /> Edit food
-	{:else if editingFoodEntryId === null}
-		<PlusIcon /> Add food
 	{:else}
-		<LoaderCircleIcon class="animate-spin" />
+		<PlusIcon /> Add food
 	{/if}
 </Button>

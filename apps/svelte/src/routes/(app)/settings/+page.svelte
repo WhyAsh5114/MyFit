@@ -47,7 +47,7 @@
 		}
 	}
 
-	let resetDatabaseMutation = createMutation({
+	let resetDatabaseMutation = createMutation(() => ({
 		mutationFn: async () => {
 			await client.resetDatabase();
 			toast.success('IndexedDB cleared');
@@ -57,7 +57,7 @@
 			toast.error('Failed to clear IndexedDB');
 			console.error('Error clearing IndexedDB:', error);
 		}
-	});
+	}));
 </script>
 
 <H1>Settings</H1>
@@ -111,11 +111,11 @@
 	</Card.Header>
 	<Card.Content class="flex justify-end">
 		<Button
-			disabled={$resetDatabaseMutation.isPending}
-			onclick={() => $resetDatabaseMutation.mutate()}
+			disabled={resetDatabaseMutation.isPending}
+			onclick={() => resetDatabaseMutation.mutate()}
 			variant="destructive"
 		>
-			{#if $resetDatabaseMutation.isPending}
+			{#if resetDatabaseMutation.isPending}
 				Clearing <LoaderCircleIcon class="animate-spin" />
 			{:else}
 				Clear <RotateCwIcon />

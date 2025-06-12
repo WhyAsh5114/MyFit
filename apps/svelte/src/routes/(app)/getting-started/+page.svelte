@@ -32,7 +32,7 @@
 		progressValue.set(currentQuestion);
 	});
 
-	const saveAnswersMutation = createMutation({
+	const saveAnswersMutation = createMutation(() => ({
 		mutationFn: async () => {
 			const user = await client.user.findFirstOrThrow();
 			const data = {
@@ -52,7 +52,7 @@
 			toast.error('An error occurred while saving your preferences.');
 			console.error('Error saving answers:', error);
 		}
-	});
+	}));
 </script>
 
 <H1 class="flex items-center justify-between">
@@ -116,8 +116,8 @@
 			Next <ChevronRightIcon />
 		</Button>
 	{:else}
-		<Button disabled={$saveAnswersMutation.isPending} onclick={() => $saveAnswersMutation.mutate()}>
-			{#if $saveAnswersMutation.isPending}
+		<Button disabled={saveAnswersMutation.isPending} onclick={() => saveAnswersMutation.mutate()}>
+			{#if saveAnswersMutation.isPending}
 				<LoaderCircleIcon class="animate-spin" />
 			{:else}
 				Finish <CheckCircleIcon />

@@ -4,23 +4,24 @@
 	import { authClient } from '$lib/auth/auth-client';
 	import { Button } from '$lib/components/ui/button';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { createMutation } from '@tanstack/svelte-query';
+	import { createMutation, createQuery } from '@tanstack/svelte-query';
 	import { UserIcon } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 
-	let isLoggedIn = $state<boolean>();
-
-	$effect(() => {
-		authClient.getSession().then((session) => {
-			isLoggedIn = !!session.data;
-			if (session.data) {
+	const isLoggedInQuery = createQuery(() => ({
+		queryKey: ['session'],
+		queryFn: async () => {
+			const session = await authClient.getSession();
+			if (session.data?.user) {
 				toast.info("You're already signed in");
 				goto(page.url.searchParams.get('redirect') ?? '/dashboard');
+				return true;
 			}
-		});
-	});
+			return false;
+		}
+	}));
 
-	const loginMutation = createMutation({
+	const loginMutation = createMutation(() => ({
 		mutationFn: async (loginType: 'google' | 'anonymous') => {
 			if (!navigator.onLine)
 				return toast.error('You are offline. Please check your internet connection');
@@ -41,7 +42,7 @@
 			toast.error('An error occurred while signing in');
 			console.error('Error signing in:', error);
 		}
-	});
+	}));
 </script>
 
 <div class="grid h-screen w-full grid-cols-1 md:grid-cols-2">
@@ -63,15 +64,15 @@
 			</div>
 
 			<div class="my-8 space-y-2">
-				{#if isLoggedIn === undefined}
+				{#if isLoggedInQuery.isPending}
 					<Skeleton class="h-10 w-full" />
 					<Skeleton class="h-10 w-full" />
 				{:else}
 					<Button
 						variant="secondary"
-						disabled={isLoggedIn || $loginMutation.isPending}
+						disabled={isLoggedInQuery.data || loginMutation.isPending}
 						class="flex w-full items-center justify-center gap-2"
-						onclick={() => $loginMutation.mutate('google')}
+						onclick={() => loginMutation.mutate('google')}
 					>
 						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
 							<path
@@ -95,9 +96,9 @@
 					</Button>
 					<Button
 						variant="secondary"
-						disabled={isLoggedIn || $loginMutation.isPending}
+						disabled={isLoggedInQuery.data || loginMutation.isPending}
 						class="flex w-full items-center justify-center gap-2"
-						onclick={() => $loginMutation.mutate('anonymous')}
+						onclick={() => loginMutation.mutate('anonymous')}
 					>
 						<UserIcon />
 						Sign in as anonymous
