@@ -8,9 +8,19 @@
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import type { NutritionData } from '@prisma/client';
 	import { createQuery } from '@tanstack/svelte-query';
-	import { PlusCircleIcon, PlusIcon, SearchIcon, SearchXIcon } from 'lucide-svelte';
+	import {
+		PlusCircleIcon,
+		PlusIcon,
+		ScanBarcodeIcon,
+		SearchIcon,
+		SearchXIcon
+	} from 'lucide-svelte';
 	import { Debounced } from 'runed';
+	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+
+	let selectedDay = $state<string>(null!);
+	onMount(() => (selectedDay = page.url.searchParams.get('day')!));
 
 	let searchTerm = $state('');
 	const debounced = new Debounced(() => searchTerm, 500);
@@ -41,9 +51,14 @@
 	<Input type="text" placeholder="Type here" id="search-food" bind:value={searchTerm} />
 </div>
 
-<Button class="ml-auto shrink-0" href="/food-diary/add/manual">
-	<PlusCircleIcon /> Add manually
-</Button>
+<div class="flex justify-between gap-2">
+	<Button href="/food-diary/add/manual?day={selectedDay}" variant="secondary">
+		<PlusCircleIcon /> Add manually
+	</Button>
+	<Button href="/food-diary/add/scan?day={selectedDay}">
+		<ScanBarcodeIcon /> Scan barcode
+	</Button>
+</div>
 
 {#if searchQuery.isFetching}
 	<div class="text-muted-foreground flex h-full flex-col items-center justify-center gap-2">
