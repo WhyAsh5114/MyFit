@@ -38,8 +38,8 @@ model FoodEntry {
   quantity     Float
   quantityUnit String   @default("g")
 
-  nutritionData     NutritionData? @relation(fields: [nutritionDataCode], references: [code])
-  nutritionDataCode String?
+  nutritionData   NutritionData? @relation(fields: [nutritionDataId], references: [id])
+  nutritionDataId Int?
   // TODO: add user-added foods optional relation
 
   user   User   @relation(fields: [userId], references: [id])
@@ -47,7 +47,8 @@ model FoodEntry {
 }
 
 model NutritionData {
-  code         String      @id
+  id           Int         @id @default(autoincrement())
+  code         String
   product_name String
   brands       String?
   quantity     String?

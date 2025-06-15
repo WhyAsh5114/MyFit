@@ -83,7 +83,7 @@ export class PrismaIDBClient {
 					unique: true
 				});
 				db.createObjectStore('FoodEntry', { keyPath: ['id'] });
-				db.createObjectStore('NutritionData', { keyPath: ['code'] });
+				db.createObjectStore('NutritionData', { keyPath: ['id'] });
 				const GettingStartedAnswersStore = db.createObjectStore('GettingStartedAnswers', {
 					keyPath: ['id']
 				});
@@ -110,7 +110,7 @@ export class PrismaIDBClient {
 			'id'
 		]);
 		this.foodEntry = new FoodEntryIDBClass(this, ['id']);
-		this.nutritionData = new NutritionDataIDBClass(this, ['code']);
+		this.nutritionData = new NutritionDataIDBClass(this, ['id']);
 		this.gettingStartedAnswers = new GettingStartedAnswersIDBClass(this, ['id']);
 		this.dashboardItems = new DashboardItemsIDBClass(this, ['id']);
 		this.user = new UserIDBClass(this, ['id']);
@@ -7241,11 +7241,11 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 		return (
 			await Promise.all(
 				records.map(async (record) => {
-					const stringFields = ['id', 'quantityUnit', 'nutritionDataCode', 'userId'] as const;
+					const stringFields = ['id', 'quantityUnit', 'userId'] as const;
 					for (const field of stringFields) {
 						if (!IDBUtils.whereStringFilter(record, field, whereClause[field])) return null;
 					}
-					const numberFields = ['quantity'] as const;
+					const numberFields = ['quantity', 'nutritionDataId'] as const;
 					for (const field of numberFields) {
 						if (!IDBUtils.whereNumberFilter(record, field, whereClause[field])) return null;
 					}
@@ -7254,36 +7254,36 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 						if (!IDBUtils.whereDateTimeFilter(record, field, whereClause[field])) return null;
 					}
 					if (whereClause.nutritionData === null) {
-						if (record.nutritionDataCode !== null) return null;
+						if (record.nutritionDataId !== null) return null;
 					}
 					if (whereClause.nutritionData) {
 						const { is, isNot, ...rest } = whereClause.nutritionData;
 						if (is === null) {
-							if (record.nutritionDataCode !== null) return null;
+							if (record.nutritionDataId !== null) return null;
 						}
 						if (is !== null && is !== undefined) {
-							if (record.nutritionDataCode === null) return null;
+							if (record.nutritionDataId === null) return null;
 							const relatedRecord = await this.client.nutritionData.findFirst(
-								{ where: { ...is, code: record.nutritionDataCode } },
+								{ where: { ...is, id: record.nutritionDataId } },
 								tx
 							);
 							if (!relatedRecord) return null;
 						}
 						if (isNot === null) {
-							if (record.nutritionDataCode === null) return null;
+							if (record.nutritionDataId === null) return null;
 						}
 						if (isNot !== null && isNot !== undefined) {
-							if (record.nutritionDataCode === null) return null;
+							if (record.nutritionDataId === null) return null;
 							const relatedRecord = await this.client.nutritionData.findFirst(
-								{ where: { ...isNot, code: record.nutritionDataCode } },
+								{ where: { ...isNot, id: record.nutritionDataId } },
 								tx
 							);
 							if (relatedRecord) return null;
 						}
 						if (Object.keys(rest).length) {
-							if (record.nutritionDataCode === null) return null;
+							if (record.nutritionDataId === null) return null;
 							const relatedRecord = await this.client.nutritionData.findFirst(
-								{ where: { ...whereClause.nutritionData, code: record.nutritionDataCode } },
+								{ where: { ...whereClause.nutritionData, id: record.nutritionDataId } },
 								tx
 							);
 							if (!relatedRecord) return null;
@@ -7338,7 +7338,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 				'quantity',
 				'quantityUnit',
 				'nutritionData',
-				'nutritionDataCode',
+				'nutritionDataId',
 				'user',
 				'userId'
 			]) {
@@ -7360,12 +7360,12 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 			const attach_nutritionData = query.select?.nutritionData || query.include?.nutritionData;
 			if (attach_nutritionData) {
 				unsafeRecord['nutritionData'] =
-					record.nutritionDataCode === null
+					record.nutritionDataId === null
 						? null
 						: await this.client.nutritionData.findUnique(
 								{
 									...(attach_nutritionData === true ? {} : attach_nutritionData),
-									where: { code: record.nutritionDataCode! }
+									where: { id: record.nutritionDataId! }
 								},
 								tx
 							);
@@ -7430,16 +7430,16 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 			'eatenAt',
 			'quantity',
 			'quantityUnit',
-			'nutritionDataCode',
+			'nutritionDataId',
 			'userId'
 		] as const;
 		for (const field of scalarFields) if (orderByInput[field]) return record[field];
 		if (orderByInput.nutritionData) {
-			return record.nutritionDataCode === null
+			return record.nutritionDataId === null
 				? null
 				: await this.client.nutritionData._resolveOrderByKey(
 						await this.client.nutritionData.findFirstOrThrow({
-							where: { code: record.nutritionDataCode }
+							where: { id: record.nutritionDataId }
 						}),
 						orderByInput.nutritionData,
 						tx
@@ -7462,7 +7462,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 			'eatenAt',
 			'quantity',
 			'quantityUnit',
-			'nutritionDataCode',
+			'nutritionDataId',
 			'userId'
 		] as const;
 		for (const field of scalarFields) if (orderByInput[field]) return orderByInput[field];
@@ -7486,8 +7486,8 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 		if (data.quantityUnit === undefined) {
 			data.quantityUnit = 'g';
 		}
-		if (data.nutritionDataCode === undefined) {
-			data.nutritionDataCode = null;
+		if (data.nutritionDataId === undefined) {
+			data.nutritionDataId = null;
 		}
 		if (typeof data.eatenAt === 'string') {
 			data.eatenAt = new Date(data.eatenAt);
@@ -7592,7 +7592,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 				);
 			}
 		}
-		if (data.nutritionDataCode !== undefined) {
+		if (data.nutritionDataId !== undefined) {
 			neededStores.add('NutritionData');
 		}
 		if (data?.user) {
@@ -7849,7 +7849,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 					{ data: query.data.nutritionData.create },
 					tx
 				);
-				fk[0] = record.code;
+				fk[0] = record.id;
 			}
 			if (query.data.nutritionData?.connect) {
 				const record = await this.client.nutritionData.findUniqueOrThrow(
@@ -7857,7 +7857,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 					tx
 				);
 				delete query.data.nutritionData.connect;
-				fk[0] = record.code;
+				fk[0] = record.id;
 			}
 			if (query.data.nutritionData?.connectOrCreate) {
 				const record = await this.client.nutritionData.upsert(
@@ -7868,18 +7868,15 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 					},
 					tx
 				);
-				fk[0] = record.code;
+				fk[0] = record.id;
 			}
 			const unsafeData = query.data as Record<string, unknown>;
-			unsafeData.nutritionDataCode = fk[0];
+			unsafeData.nutritionDataId = fk[0];
 			delete unsafeData.nutritionData;
-		} else if (
-			query.data?.nutritionDataCode !== undefined &&
-			query.data.nutritionDataCode !== null
-		) {
+		} else if (query.data?.nutritionDataId !== undefined && query.data.nutritionDataId !== null) {
 			await this.client.nutritionData.findUniqueOrThrow(
 				{
-					where: { code: query.data.nutritionDataCode }
+					where: { id: query.data.nutritionDataId }
 				},
 				tx
 			);
@@ -8004,13 +8001,17 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 			throw new Error('Record not found');
 		}
 		const startKeyPath: PrismaIDBSchema['FoodEntry']['key'] = [record.id];
-		const stringFields = ['id', 'quantityUnit', 'nutritionDataCode', 'userId'] as const;
+		const stringFields = ['id', 'quantityUnit', 'userId'] as const;
 		for (const field of stringFields) {
 			IDBUtils.handleStringUpdateField(record, field, query.data[field]);
 		}
 		const dateTimeFields = ['eatenAt'] as const;
 		for (const field of dateTimeFields) {
 			IDBUtils.handleDateTimeUpdateField(record, field, query.data[field]);
+		}
+		const intFields = ['nutritionDataId'] as const;
+		for (const field of intFields) {
+			IDBUtils.handleIntUpdateField(record, field, query.data[field]);
 		}
 		const floatFields = ['quantity'] as const;
 		for (const field of floatFields) {
@@ -8022,14 +8023,14 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 					{ where: query.data.nutritionData.connect },
 					tx
 				);
-				record.nutritionDataCode = other.code;
+				record.nutritionDataId = other.id;
 			}
 			if (query.data.nutritionData.create) {
 				const other = await this.client.nutritionData.create(
 					{ data: query.data.nutritionData.create },
 					tx
 				);
-				record.nutritionDataCode = other.code;
+				record.nutritionDataId = other.id;
 			}
 			if (query.data.nutritionData.update) {
 				const updateData = query.data.nutritionData.update.data ?? query.data.nutritionData.update;
@@ -8037,7 +8038,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 					{
 						where: {
 							...query.data.nutritionData.update.where,
-							code: record.nutritionDataCode!
+							id: record.nutritionDataId!
 						} as Prisma.NutritionDataWhereUniqueInput,
 						data: updateData
 					},
@@ -8049,11 +8050,11 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 					{
 						where: {
 							...query.data.nutritionData.upsert.where,
-							code: record.nutritionDataCode!
+							id: record.nutritionDataId!
 						} as Prisma.NutritionDataWhereUniqueInput,
 						create: {
 							...query.data.nutritionData.upsert.create,
-							code: record.nutritionDataCode!
+							id: record.nutritionDataId!
 						} as Prisma.Args<Prisma.NutritionDataDelegate, 'upsert'>['create'],
 						update: query.data.nutritionData.upsert.update
 					},
@@ -8065,28 +8066,28 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 					{
 						where: {
 							...query.data.nutritionData.connectOrCreate.where,
-							code: record.nutritionDataCode!
+							id: record.nutritionDataId!
 						},
 						create: {
 							...query.data.nutritionData.connectOrCreate.create,
-							code: record.nutritionDataCode!
+							id: record.nutritionDataId!
 						} as Prisma.Args<Prisma.NutritionDataDelegate, 'upsert'>['create'],
-						update: { code: record.nutritionDataCode! }
+						update: { id: record.nutritionDataId! }
 					},
 					tx
 				);
 			}
 			if (query.data.nutritionData.disconnect) {
-				record.nutritionDataCode = null;
+				record.nutritionDataId = null;
 			}
 			if (query.data.nutritionData.delete) {
 				const deleteWhere =
 					query.data.nutritionData.delete === true ? {} : query.data.nutritionData.delete;
 				await this.client.nutritionData.delete(
-					{ where: { ...deleteWhere, code: record.nutritionDataCode! } },
+					{ where: { ...deleteWhere, id: record.nutritionDataId! } },
 					tx
 				);
-				record.nutritionDataCode = null;
+				record.nutritionDataId = null;
 			}
 		}
 		if (query.data.user) {
@@ -8144,9 +8145,9 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 				);
 			}
 		}
-		if (query.data.nutritionDataCode !== undefined && record.nutritionDataCode !== null) {
+		if (query.data.nutritionDataId !== undefined && record.nutritionDataId !== null) {
 			const related = await this.client.nutritionData.findUnique(
-				{ where: { code: record.nutritionDataCode } },
+				{ where: { id: record.nutritionDataId } },
 				tx
 			);
 			if (!related) throw new Error('Related record not found');
@@ -8244,7 +8245,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 		}
 		if (query?._min) {
 			const minResult = {} as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'aggregate'>['_min'];
-			const numericFields = ['quantity'] as const;
+			const numericFields = ['quantity', 'nutritionDataId'] as const;
 			for (const field of numericFields) {
 				if (!query._min[field]) continue;
 				const values = records
@@ -8260,7 +8261,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 					.filter((value) => value !== undefined);
 				(minResult[field as keyof typeof minResult] as Date) = new Date(Math.min(...values));
 			}
-			const stringFields = ['id', 'quantityUnit', 'nutritionDataCode', 'userId'] as const;
+			const stringFields = ['id', 'quantityUnit', 'userId'] as const;
 			for (const field of stringFields) {
 				if (!query._min[field]) continue;
 				const values = records
@@ -8272,7 +8273,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 		}
 		if (query?._max) {
 			const maxResult = {} as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'aggregate'>['_max'];
-			const numericFields = ['quantity'] as const;
+			const numericFields = ['quantity', 'nutritionDataId'] as const;
 			for (const field of numericFields) {
 				if (!query._max[field]) continue;
 				const values = records
@@ -8288,7 +8289,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 					.filter((value) => value !== undefined);
 				(maxResult[field as keyof typeof maxResult] as Date) = new Date(Math.max(...values));
 			}
-			const stringFields = ['id', 'quantityUnit', 'nutritionDataCode', 'userId'] as const;
+			const stringFields = ['id', 'quantityUnit', 'userId'] as const;
 			for (const field of stringFields) {
 				if (!query._max[field]) continue;
 				const values = records
@@ -8342,6 +8343,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 						if (!IDBUtils.whereStringFilter(record, field, whereClause[field])) return null;
 					}
 					const numberFields = [
+						'id',
 						'energy_kcal_100g',
 						'proteins_100g',
 						'fat_100g',
@@ -8385,24 +8387,21 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 					if (whereClause.foodEntries) {
 						if (whereClause.foodEntries.every) {
 							const violatingRecord = await this.client.foodEntry.findFirst({
-								where: {
-									NOT: { ...whereClause.foodEntries.every },
-									nutritionDataCode: record.code
-								},
+								where: { NOT: { ...whereClause.foodEntries.every }, nutritionDataId: record.id },
 								tx
 							});
 							if (violatingRecord !== null) return null;
 						}
 						if (whereClause.foodEntries.some) {
 							const relatedRecords = await this.client.foodEntry.findMany({
-								where: { ...whereClause.foodEntries.some, nutritionDataCode: record.code },
+								where: { ...whereClause.foodEntries.some, nutritionDataId: record.id },
 								tx
 							});
 							if (relatedRecords.length === 0) return null;
 						}
 						if (whereClause.foodEntries.none) {
 							const violatingRecord = await this.client.foodEntry.findFirst({
-								where: { ...whereClause.foodEntries.none, nutritionDataCode: record.code },
+								where: { ...whereClause.foodEntries.none, nutritionDataId: record.id },
 								tx
 							});
 							if (violatingRecord !== null) return null;
@@ -8430,6 +8429,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		return records.map((record) => {
 			const partialRecord: Partial<typeof record> = record;
 			for (const untypedKey of [
+				'id',
 				'code',
 				'product_name',
 				'brands',
@@ -8493,7 +8493,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 				unsafeRecord['foodEntries'] = await this.client.foodEntry.findMany(
 					{
 						...(attach_foodEntries === true ? {} : attach_foodEntries),
-						where: { nutritionDataCode: record.code! }
+						where: { nutritionDataId: record.id! }
 					},
 					tx
 				);
@@ -8544,6 +8544,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		tx: IDBUtils.TransactionType
 	): Promise<unknown> {
 		const scalarFields = [
+			'id',
 			'code',
 			'product_name',
 			'brands',
@@ -8587,7 +8588,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		] as const;
 		for (const field of scalarFields) if (orderByInput[field]) return record[field];
 		if (orderByInput.foodEntries) {
-			return await this.client.foodEntry.count({ where: { nutritionDataCode: record.code } }, tx);
+			return await this.client.foodEntry.count({ where: { nutritionDataId: record.id } }, tx);
 		}
 	}
 
@@ -8595,6 +8596,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		orderByInput: Prisma.NutritionDataOrderByWithRelationInput
 	): Prisma.SortOrder | { sort: Prisma.SortOrder; nulls?: 'first' | 'last' } {
 		const scalarFields = [
+			'id',
 			'code',
 			'product_name',
 			'brands',
@@ -8647,6 +8649,12 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		D extends Prisma.Args<Prisma.NutritionDataDelegate, 'create'>['data']
 	>(data: D, tx?: IDBUtils.ReadwriteTransactionType): Promise<D> {
 		if (data === undefined) data = {} as NonNullable<D>;
+		if (data.id === undefined) {
+			const transaction = tx ?? this.client._db.transaction(['NutritionData'], 'readwrite');
+			const store = transaction.objectStore('NutritionData');
+			const cursor = await store.openCursor(null, 'prev');
+			data.id = cursor ? Number(cursor.key) + 1 : 1;
+		}
 		if (data.brands === undefined) {
 			data.brands = null;
 		}
@@ -8886,7 +8894,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		if (query.data?.foodEntries?.delete || query.data?.foodEntries?.deleteMany) {
 			this.client.foodEntry._getNeededStoresForNestedDelete(neededStores);
 		}
-		if (query.data?.code !== undefined) {
+		if (query.data?.id !== undefined) {
 			neededStores.add('FoodEntry');
 		}
 		return neededStores;
@@ -8980,8 +8988,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			tx ??
 			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
 		let record;
-		if (query.where.code !== undefined) {
-			record = await tx.objectStore('NutritionData').get([query.where.code]);
+		if (query.where.id !== undefined) {
+			record = await tx.objectStore('NutritionData').get([query.where.id]);
 		}
 		if (!record) return null;
 
@@ -9050,7 +9058,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			for (const elem of createData) {
 				await this.client.foodEntry.create(
 					{
-						data: { ...elem, nutritionData: { connect: { code: keyPath[0] } } } as Prisma.Args<
+						data: { ...elem, nutritionData: { connect: { id: keyPath[0] } } } as Prisma.Args<
 							Prisma.FoodEntryDelegate,
 							'create'
 						>['data']
@@ -9063,7 +9071,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			await Promise.all(
 				IDBUtils.convertToArray(query.data.foodEntries.connect).map(async (connectWhere) => {
 					await this.client.foodEntry.update(
-						{ where: connectWhere, data: { nutritionDataCode: keyPath[0] } },
+						{ where: connectWhere, data: { nutritionDataId: keyPath[0] } },
 						tx
 					);
 				})
@@ -9076,11 +9084,11 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 						await this.client.foodEntry.upsert(
 							{
 								where: connectOrCreate.where,
-								create: { ...connectOrCreate.create, nutritionDataCode: keyPath[0] } as Prisma.Args<
+								create: { ...connectOrCreate.create, nutritionDataId: keyPath[0] } as Prisma.Args<
 									Prisma.FoodEntryDelegate,
 									'create'
 								>['data'],
-								update: { nutritionDataCode: keyPath[0] }
+								update: { nutritionDataId: keyPath[0] }
 							},
 							tx
 						);
@@ -9094,7 +9102,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 					data: IDBUtils.convertToArray(query.data.foodEntries.createMany.data).map(
 						(createData) => ({
 							...createData,
-							nutritionDataCode: keyPath[0]
+							nutritionDataId: keyPath[0]
 						})
 					)
 				},
@@ -9155,13 +9163,13 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		if (!record) throw new Error('Record not found');
 		await this.client.foodEntry.updateMany(
 			{
-				where: { nutritionDataCode: record.code },
-				data: { nutritionDataCode: null }
+				where: { nutritionDataId: record.id },
+				data: { nutritionDataId: null }
 			},
 			tx
 		);
-		await tx.objectStore('NutritionData').delete([record.code]);
-		this.emit('delete', [record.code]);
+		await tx.objectStore('NutritionData').delete([record.id]);
+		this.emit('delete', [record.id]);
 		return record;
 	}
 
@@ -9174,7 +9182,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { code: record.code } }, tx);
+			await this.delete({ where: { id: record.id } }, tx);
 		}
 		return { count: records.length };
 	}
@@ -9191,10 +9199,14 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			tx.abort();
 			throw new Error('Record not found');
 		}
-		const startKeyPath: PrismaIDBSchema['NutritionData']['key'] = [record.code];
+		const startKeyPath: PrismaIDBSchema['NutritionData']['key'] = [record.id];
 		const stringFields = ['code', 'product_name', 'brands', 'quantity'] as const;
 		for (const field of stringFields) {
 			IDBUtils.handleStringUpdateField(record, field, query.data[field]);
+		}
+		const intFields = ['id'] as const;
+		for (const field of intFields) {
+			IDBUtils.handleIntUpdateField(record, field, query.data[field]);
 		}
 		const floatFields = [
 			'energy_kcal_100g',
@@ -9242,7 +9254,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 				await Promise.all(
 					IDBUtils.convertToArray(query.data.foodEntries.connect).map(async (connectWhere) => {
 						await this.client.foodEntry.update(
-							{ where: connectWhere, data: { nutritionDataCode: record.code } },
+							{ where: connectWhere, data: { nutritionDataId: record.id } },
 							tx
 						);
 					})
@@ -9252,7 +9264,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 				await Promise.all(
 					IDBUtils.convertToArray(query.data.foodEntries.disconnect).map(async (connectWhere) => {
 						await this.client.foodEntry.update(
-							{ where: connectWhere, data: { nutritionDataCode: null } },
+							{ where: connectWhere, data: { nutritionDataId: null } },
 							tx
 						);
 					})
@@ -9265,7 +9277,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 				for (const elem of createData) {
 					await this.client.foodEntry.create(
 						{
-							data: { ...elem, nutritionDataCode: record.code } as Prisma.Args<
+							data: { ...elem, nutritionDataId: record.id } as Prisma.Args<
 								Prisma.FoodEntryDelegate,
 								'create'
 							>['data']
@@ -9279,7 +9291,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 					IDBUtils.convertToArray(query.data.foodEntries.createMany.data).map(
 						async (createData) => {
 							await this.client.foodEntry.create(
-								{ data: { ...createData, nutritionDataCode: record.code } },
+								{ data: { ...createData, nutritionDataId: record.id } },
 								tx
 							);
 						}
@@ -9306,8 +9318,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 						await this.client.foodEntry.upsert(
 							{
 								...upsertData,
-								where: { ...upsertData.where, nutritionDataCode: record.code },
-								create: { ...upsertData.create, nutritionDataCode: record.code } as Prisma.Args<
+								where: { ...upsertData.where, nutritionDataId: record.id },
+								create: { ...upsertData.create, nutritionDataId: record.id } as Prisma.Args<
 									Prisma.FoodEntryDelegate,
 									'upsert'
 								>['create']
@@ -9321,7 +9333,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 				await Promise.all(
 					IDBUtils.convertToArray(query.data.foodEntries.delete).map(async (deleteData) => {
 						await this.client.foodEntry.delete(
-							{ where: { ...deleteData, nutritionDataCode: record.code } },
+							{ where: { ...deleteData, nutritionDataId: record.id } },
 							tx
 						);
 					})
@@ -9331,7 +9343,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 				await Promise.all(
 					IDBUtils.convertToArray(query.data.foodEntries.deleteMany).map(async (deleteData) => {
 						await this.client.foodEntry.deleteMany(
-							{ where: { ...deleteData, nutritionDataCode: record.code } },
+							{ where: { ...deleteData, nutritionDataId: record.id } },
 							tx
 						);
 					})
@@ -9339,26 +9351,26 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			}
 			if (query.data.foodEntries.set) {
 				const existing = await this.client.foodEntry.findMany(
-					{ where: { nutritionDataCode: record.code } },
+					{ where: { nutritionDataId: record.id } },
 					tx
 				);
 				if (existing.length > 0) {
 					await this.client.foodEntry.updateMany(
-						{ where: { nutritionDataCode: record.code }, data: { nutritionDataCode: null } },
+						{ where: { nutritionDataId: record.id }, data: { nutritionDataId: null } },
 						tx
 					);
 				}
 				await Promise.all(
 					IDBUtils.convertToArray(query.data.foodEntries.set).map(async (setData) => {
 						await this.client.foodEntry.update(
-							{ where: setData, data: { nutritionDataCode: record.code } },
+							{ where: setData, data: { nutritionDataId: record.id } },
 							tx
 						);
 					})
 				);
 			}
 		}
-		const endKeyPath: PrismaIDBSchema['NutritionData']['key'] = [record.code];
+		const endKeyPath: PrismaIDBSchema['NutritionData']['key'] = [record.id];
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				if ((await tx.objectStore('NutritionData').get(endKeyPath)) !== undefined) {
@@ -9374,8 +9386,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				await this.client.foodEntry.updateMany(
 					{
-						where: { nutritionDataCode: startKeyPath[0] },
-						data: { nutritionDataCode: endKeyPath[0] }
+						where: { nutritionDataId: startKeyPath[0] },
+						data: { nutritionDataId: endKeyPath[0] }
 					},
 					tx
 				);
@@ -9384,7 +9396,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		}
 		const recordWithRelations = (await this.findUnique(
 			{
-				where: { code: keyPath[0] }
+				where: { id: keyPath[0] }
 			},
 			tx
 		))!;
@@ -9401,7 +9413,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { code: record.code }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx);
 			})
 		);
 		return { count: records.length };
@@ -9423,7 +9435,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		if (!record) record = await this.create({ data: query.create }, tx);
 		else record = await this.update({ where: query.where, data: query.update }, tx);
 		record = await this.findUniqueOrThrow(
-			{ where: { code: record.code }, select: query.select, include: query.include },
+			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
 		);
 		return record as Prisma.Result<Prisma.NutritionDataDelegate, Q, 'upsert'>;
@@ -9455,6 +9467,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		if (query?._min) {
 			const minResult = {} as Prisma.Result<Prisma.NutritionDataDelegate, Q, 'aggregate'>['_min'];
 			const numericFields = [
+				'id',
 				'energy_kcal_100g',
 				'proteins_100g',
 				'fat_100g',
@@ -9512,6 +9525,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		if (query?._max) {
 			const maxResult = {} as Prisma.Result<Prisma.NutritionDataDelegate, Q, 'aggregate'>['_max'];
 			const numericFields = [
+				'id',
 				'energy_kcal_100g',
 				'proteins_100g',
 				'fat_100g',

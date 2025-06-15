@@ -6,7 +6,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { Label } from '$lib/components/ui/label';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
-	import type { NutritionData } from '@prisma/client';
+	import { useTRPC } from '$lib/trpc/client.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import {
 		PlusCircleIcon,
@@ -24,19 +24,18 @@
 
 	let searchTerm = $state('');
 	const debounced = new Debounced(() => searchTerm, 500);
+	const trpc = useTRPC();
 
 	const searchQuery = createQuery(() => ({
 		queryFn: async () => {
 			if (!debounced.current) return [];
 			try {
-				const response = await fetch(`/api/food/search?query=${debounced.current}`);
-				if (!response.ok) throw new Error('Error occurred while fetching food data');
-				return (await response.json()) as NutritionData[];
+				return await trpc.food.search.query({ query: debounced.current });
 			} catch (error) {
 				toast.error('Error fetching food data');
 				console.error('Error fetching food data:', error);
 			}
-			return null;
+			return [];
 		},
 		queryKey: ['food-search', debounced.current],
 		enabled: Boolean(debounced.current)
@@ -78,12 +77,12 @@
 {:else}
 	<ScrollArea class="h-px grow">
 		<div class="flex flex-col gap-2">
-			{#each searchQuery.data as result (result.code)}
+			{#each searchQuery.data as result (result.id)}
 				<div class="bg-card flex w-full justify-between gap-2 rounded-md border p-4">
 					<div class="flex w-3/4 flex-col justify-between">
 						<p class="truncate">{result.product_name}</p>
 						<p class="text-muted-foreground text-sm">
-							{result.energy_kcal_100g} kcal,
+							{result.energy_kcal_100g.toFixed()} kcal,
 							{result.brands ?? 'Unknown'}
 						</p>
 					</div>
@@ -91,7 +90,7 @@
 						size="icon"
 						class="rounded-full"
 						variant="outline"
-						href={`${page.url.pathname}/item?code=${result.code}&day=${page.url.searchParams.get('day')}`}
+						href={`${page.url.pathname}/item?id=${result.id}&day=${page.url.searchParams.get('day')}`}
 					>
 						<PlusIcon />
 					</Button>

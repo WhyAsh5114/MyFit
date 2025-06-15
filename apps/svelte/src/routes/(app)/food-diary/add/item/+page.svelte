@@ -10,6 +10,7 @@
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { client } from '$lib/idb-client';
+	import { useTRPC } from '$lib/trpc/client.svelte';
 	import { cn } from '$lib/utils';
 	import {
 		type DateValue,
@@ -23,9 +24,10 @@
 	import { toast } from 'svelte-sonner';
 	import FoodDataCard from './_components/food-data-card.svelte';
 
+	const trpc = useTRPC();
 	const df = new DateFormatter('en-US', { dateStyle: 'long' });
 
-	let itemCode = $state<string | null>();
+	let itemId = $state<number | null>();
 	let editingFoodEntryId = $state<string | null>();
 
 	let dateValue = $state<DateValue>(parseDate(new Date().toISOString().split('T')[0]));
@@ -35,11 +37,12 @@
 	let userQuantity = $state(100);
 
 	$effect(() => {
-		itemCode = page.url.searchParams.get('code');
-		if (itemCode === null) {
+		const itemIdValue = page.url.searchParams.get('id');
+		if (itemIdValue === null) {
 			toast.error('Food code is required.');
 			return;
 		}
+		itemId = Number(itemIdValue);
 
 		const selectedDay = page.url.searchParams.get('day');
 		if (selectedDay) dateValue = parseDate(selectedDay);
@@ -72,13 +75,9 @@
 	});
 
 	let foodQuery = createQuery(() => ({
-		queryKey: ['food', itemCode],
-		queryFn: async () => {
-			const response = await fetch(`/api/food/${itemCode}`);
-			if (!response.ok) throw new Error('Error occurred while fetching food data');
-			return (await response.json()) as NutritionData;
-		},
-		enabled: Boolean(itemCode),
+		queryKey: ['food', itemId],
+		queryFn: () => trpc.food.getById.query({ id: itemId! }),
+		enabled: Boolean(itemId),
 		throwOnError: (error) => {
 			toast.error('Error fetching food data');
 			console.error('Error fetching food data:', error);
@@ -90,7 +89,7 @@
 		mutationFn: async (data: {
 			eatenAt: Date;
 			quantity: number;
-			itemCode: string;
+			itemId: number;
 			nutritionData: NutritionData;
 			editingId?: string;
 		}) => {
@@ -98,31 +97,29 @@
 
 			// Ensure nutrition data exists
 			const existingData = await client.nutritionData.findUnique({
-				where: { code: data.itemCode },
-				select: { code: true }
+				where: { id: data.itemId },
+				select: { id: true }
 			});
 			if (!existingData) {
 				await client.nutritionData.create({
-					data: { ...data.nutritionData, code: data.itemCode }
+					data: { ...data.nutritionData, id: data.itemId }
 				});
 			}
 
-			const foodEntryData = {
+			// Common data for both create and update
+			const entryData = {
 				eatenAt: data.eatenAt,
 				quantity: data.quantity,
 				userId: user.id,
-				nutritionDataCode: data.itemCode
+				nutritionDataId: data.itemId
 			};
 
-			// Create or update food entry
-			if (data.editingId) {
-				return await client.foodEntry.update({
-					where: { id: data.editingId },
-					data: foodEntryData
-				});
-			} else {
-				return await client.foodEntry.create({ data: foodEntryData });
-			}
+			// Create or update food entry using upsert
+			return await client.foodEntry.upsert({
+				where: { id: data.editingId },
+				update: entryData,
+				create: entryData
+			});
 		},
 		onSuccess: (data, variables) => {
 			const message = variables.editingId
@@ -140,7 +137,7 @@
 
 	async function logFoodEntry(e: SubmitEvent) {
 		e.preventDefault();
-		if (!itemCode || !dateValue || !timeValue || userQuantity <= 0 || !foodQuery.data) {
+		if (!itemId || !dateValue || !timeValue || userQuantity <= 0 || !foodQuery.data) {
 			return toast.error('Please fill in all fields correctly.');
 		}
 
@@ -149,7 +146,7 @@
 		foodEntryMutation.mutate({
 			eatenAt,
 			quantity: userQuantity,
-			itemCode,
+			itemId,
 			nutritionData: foodQuery.data,
 			editingId: editingFoodEntryId || undefined
 		});
@@ -159,7 +156,7 @@
 <H2 class="flex items-center justify-between">
 	Add food
 	<Badge variant="secondary">
-		Code: {itemCode}
+		Code: {foodQuery.data?.code || 'N/A'}
 	</Badge>
 </H2>
 

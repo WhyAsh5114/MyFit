@@ -2,6 +2,7 @@ import type { NutritionData } from '@prisma/client';
 
 export async function load() {
 	const sampleNutritionData = {
+		id: 1,
 		code: '2',
 		product_name: 'Filets de poulet blanc x2',
 		brands: 'SoLo',

@@ -209,7 +209,7 @@
 					<DropdownMenu.Group>
 						<DropdownMenu.Item
 							onclick={() =>
-								goto(`/food-diary/add/item?code=${entry.nutritionDataCode}&edit=${entry.id}`)}
+								goto(`/food-diary/add/item?id=${entry.nutritionDataId}&edit=${entry.id}`)}
 						>
 							<PencilIcon /> Edit
 						</DropdownMenu.Item>
