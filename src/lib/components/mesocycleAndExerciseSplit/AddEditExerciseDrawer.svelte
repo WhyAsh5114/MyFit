@@ -142,6 +142,9 @@
 	function submitForm(e: SubmitEvent) {
 		e.preventDefault();
 		let result = false;
+		if ('isUserExercise' in currentExercise) {
+			delete currentExercise.isUserExercise;
+		}
 		const finishedExercise = currentExercise as NonUndefined<typeof props.editingExercise>;
 		if ('sets' in finishedExercise) {
 			if (mode === 'Add') result = props.addExercise(finishedExercise);
