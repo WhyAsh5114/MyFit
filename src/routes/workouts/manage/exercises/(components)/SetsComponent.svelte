@@ -180,7 +180,7 @@
 		{#if typeof exercise.bodyweightFraction === 'number'}
 			<Popover.Root>
 				<Popover.Trigger>
-					<span class="text-xs font-semibold text-muted-foreground hover:underline">(+BW)</span>
+					<span class="text-xs font-semibold text-muted-foreground underline">(+BW)</span>
 				</Popover.Trigger>
 				<Popover.Content>
 					<p class="text-sm text-muted-foreground">

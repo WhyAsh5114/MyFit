@@ -39,11 +39,11 @@
 		| ({
 				context: 'mesocycle';
 				mesocycle: Mesocycle;
-		  } & CommonProps<MesocycleExerciseTemplateWithoutIdsOrIndex>)
+		  } & CommonProps<MesocycleExerciseTemplateWithoutIdsOrIndex & { isUserExercise?: boolean }>)
 		| ({
 				context: 'workout';
 				mesocycle?: Mesocycle;
-		  } & CommonProps<MesocycleExerciseTemplateWithoutIdsOrIndex>);
+		  } & CommonProps<MesocycleExerciseTemplateWithoutIdsOrIndex & { isUserExercise?: boolean }>);
 
 	type NonUndefined<T> = T extends undefined ? never : T;
 	type FullExerciseTemplate = NonUndefined<PropsType['editingExercise']>;
@@ -52,7 +52,10 @@
 	let allGroupedExercises = $state(commonExercisePerMuscleGroup);
 
 	onMount(async () => {
-		const userExercises = await trpc().workouts.getUserExercises.query('minimal');
+		const userExercises = (await trpc().workouts.getUserExercises.query('minimal')).map((ex) => ({
+			...ex,
+			isUserExercise: true
+		}));
 		const groupedUserExercises = Object.entries(
 			Object.groupBy(userExercises, (exercise) => exercise.customMuscleGroup ?? exercise.targetMuscleGroup)
 		).map(([muscleGroup, exercises]) => ({
@@ -139,6 +142,9 @@
 	function submitForm(e: SubmitEvent) {
 		e.preventDefault();
 		let result = false;
+		if ('isUserExercise' in currentExercise) {
+			delete currentExercise.isUserExercise;
+		}
 		const finishedExercise = currentExercise as NonUndefined<typeof props.editingExercise>;
 		if ('sets' in finishedExercise) {
 			if (mode === 'Add') result = props.addExercise(finishedExercise);
@@ -246,6 +252,9 @@
 										{#each exercisesForMuscleGroup.exercises as exercise}
 											<Command.Item onSelect={() => selectExercise(exercise)}>
 												{exercise.name}
+												{#if 'isUserExercise' in exercise && exercise.isUserExercise}
+													<span class="text-xs italic text-muted-foreground">&nbsp;(user)</span>
+												{/if}
 											</Command.Item>
 										{/each}
 									</Command.Group>
