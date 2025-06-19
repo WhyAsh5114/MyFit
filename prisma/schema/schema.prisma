@@ -27,6 +27,7 @@ model User {
   mesocycles     Mesocycle[]
   workouts       Workout[]
   migratedFromV2 Boolean?
+  settings       UserSettings?
 }
 
 model Account {
@@ -66,4 +67,17 @@ model VerificationToken {
   expires    DateTime
 
   @@id([identifier, token])
+}
+
+model UserSettings {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  motivationalQuotesEnabled Boolean           @default(false)
+  quotesDisplayMode         QuotesDisplayMode @default(PRE_WORKOUT)
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
