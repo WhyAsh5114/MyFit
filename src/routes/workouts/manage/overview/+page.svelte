@@ -15,6 +15,12 @@
 	import { mesocycleExerciseSplitRunes } from '../../../mesocycles/[mesocycleId]/edit-split/mesocycleExerciseSplitRunes.svelte';
 	import { workoutRunes } from '../workoutRunes.svelte';
 	import WorkoutComparisonChart from './(components)/WorkoutComparisonChart.svelte';
+	import Quotes from '$lib/components/settings/Quotes.svelte';
+
+	let { data } = $props();
+
+	const shouldShowQuote =
+		data.userSettings.motivationalQuotesEnabled && data.userSettings.quotesDisplayModes.includes("POST_WORKOUT");
 
 	let savingWorkout = $state(false);
 	let workoutExercises = $derived(workoutRunes.workoutExercises ?? []);
@@ -131,6 +137,10 @@
 </script>
 
 <H3>Overview</H3>
+
+{#if shouldShowQuote}
+	<Quotes mode="POST_WORKOUT" class="mb-6" />
+{/if}
 
 <Tabs.Root class="w-full" value="progression">
 	<Tabs.List class="grid grid-cols-2">
