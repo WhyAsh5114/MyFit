@@ -1,7 +1,10 @@
+import { z } from 'zod';
 import type { PageServerLoad } from './$types';
 import { createCaller } from '$lib/trpc/router';
 import { createContext } from '$lib/trpc/context';
 import { QuotesDisplayModeSchema } from '$lib/zodSchemas';
+
+const QuotesDisplayModesArraySchema = z.array(QuotesDisplayModeSchema).min(1);
 
 export const load: PageServerLoad = async (event) => {
 	event.depends('settings:userSettings');
@@ -15,19 +18,19 @@ export const load: PageServerLoad = async (event) => {
 				hasError: false,
 				userSettings: {
 					motivationalQuotesEnabled: false,
-					quotesDisplayMode: QuotesDisplayModeSchema.Values.PRE_WORKOUT
+					quotesDisplayModes: [QuotesDisplayModeSchema.Values.PRE_WORKOUT]
 				}
 			};
 		}
 
-		const validatedQuotesDisplayMode = QuotesDisplayModeSchema.safeParse(userSettings.quotesDisplayMode);
+		const validatedQuotesDisplayModes = QuotesDisplayModesArraySchema.safeParse(userSettings.quotesDisplayModes);
 
 		return {
 			hasError: false,
 			userSettings: {
-				quotesDisplayMode: validatedQuotesDisplayMode.success
-					? validatedQuotesDisplayMode.data
-					: QuotesDisplayModeSchema.Values.PRE_WORKOUT,
+				quotesDisplayModes: validatedQuotesDisplayModes.success
+					? validatedQuotesDisplayModes.data
+					: [QuotesDisplayModeSchema.Values.PRE_WORKOUT],
 				motivationalQuotesEnabled: Boolean(userSettings.motivationalQuotesEnabled)
 			}
 		};
@@ -38,7 +41,7 @@ export const load: PageServerLoad = async (event) => {
 			hasError: true,
 			userSettings: {
 				motivationalQuotesEnabled: false,
-				quotesDisplayMode: QuotesDisplayModeSchema.Values.PRE_WORKOUT
+				quotesDisplayModes: [QuotesDisplayModeSchema.Values.PRE_WORKOUT]
 			},
 			errorMessage: error instanceof Error ? error.message : 'Failed to load settings:'
 		};
