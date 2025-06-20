@@ -16,13 +16,13 @@
 
 	let hasError = $state(false);
 	let quotesEnabled = $state(false);
-	let quotesDisplayMode = $state<QuotesDisplayMode>(QuotesDisplayMode.PRE_WORKOUT);
+	let quotesDisplayModes = $state<QuotesDisplayMode[]>([QuotesDisplayMode.PRE_WORKOUT]);
 
 	$effect(() => {
 		const userSettings = $page.data.userSettings;
 
 		if (userSettings) {
-			quotesDisplayMode = userSettings.quotesDisplayMode;
+			quotesDisplayModes = userSettings.quotesDisplayModes;
 			quotesEnabled = userSettings.motivationalQuotesEnabled;
 
 			hasError = false;
@@ -57,15 +57,15 @@
 		}
 	}
 
-	const onUpdateSettings = async (enabled: boolean, mode?: QuotesDisplayMode) => {
+	const onUpdateSettings = async (enabled: boolean, modes?: QuotesDisplayMode[]) => {
 		try {
 			await trpc().users.updateUserSettings.mutate({
 				motivationalQuotesEnabled: enabled,
-				...(mode && { quotesDisplayMode: mode })
+				...(modes && { quotesDisplayModes: modes })
 			});
 
 			quotesEnabled = enabled;
-			if (mode) quotesDisplayMode = mode;
+			if (modes) quotesDisplayModes = modes;
 		} catch (error) {
 			console.error('Failed to update settings:', error);
 			toast.error('Failed to update settings');
@@ -159,6 +159,6 @@
 			</Card.Content>
 		</Card.Root>
 	{:else}
-		<MotivationalQuotes {quotesEnabled} {quotesDisplayMode} {onUpdateSettings} />
+		<MotivationalQuotes {quotesEnabled} {quotesDisplayModes} {onUpdateSettings} />
 	{/if}
 </div>
