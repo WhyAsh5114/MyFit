@@ -20,7 +20,7 @@
 	let { data } = $props();
 
 	const shouldShowQuote =
-		data.userSettings.motivationalQuotesEnabled && data.userSettings.quotesDisplayModes.includes("POST_WORKOUT");
+		data.userSettings.motivationalQuotesEnabled && data.userSettings.quotesDisplayModes.includes('POST_WORKOUT');
 
 	let savingWorkout = $state(false);
 	let workoutExercises = $derived(workoutRunes.workoutExercises ?? []);
