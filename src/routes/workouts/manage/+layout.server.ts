@@ -4,6 +4,7 @@ import type { LayoutServerLoad } from './$types';
 import { createContext } from '$lib/trpc/context';
 import { QuotesDisplayModeSchema } from '$lib/zodSchemas';
 
+type QuotesDisplayMode = z.infer<typeof QuotesDisplayModeSchema>;
 const QuotesDisplayModesArraySchema = z.array(QuotesDisplayModeSchema).min(1);
 
 export const load: LayoutServerLoad = async (event) => {
@@ -30,7 +31,7 @@ export const load: LayoutServerLoad = async (event) => {
 			userSettings: {
 				quotesDisplayModes: validatedQuotesDisplayModes.success
 					? validatedQuotesDisplayModes.data
-					: [QuotesDisplayModeSchema.Values.PRE_WORKOUT],
+					: [QuotesDisplayModeSchema.Values.PRE_WORKOUT as QuotesDisplayMode],
 				motivationalQuotesEnabled: Boolean(userSettings.motivationalQuotesEnabled)
 			}
 		};
@@ -41,7 +42,7 @@ export const load: LayoutServerLoad = async (event) => {
 			hasError: true,
 			userSettings: {
 				motivationalQuotesEnabled: false,
-				quotesDisplayModes: [QuotesDisplayModeSchema.Values.PRE_WORKOUT]
+				quotesDisplayModes: [QuotesDisplayModeSchema.Values.PRE_WORKOUT as QuotesDisplayMode]
 			},
 			errorMessage: error instanceof Error ? error.message : 'Failed to load settings'
 		};
