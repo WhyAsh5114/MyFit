@@ -38,3 +38,9 @@ enum WorkoutStatus {
   Skipped
   RestDay
 }
+
+enum QuotesDisplayMode {
+  PRE_WORKOUT
+  POST_WORKOUT
+  BETWEEN_SETS
+}
