@@ -34,7 +34,7 @@ export const SessionScalarFieldEnumSchema = z.enum(['sessionToken','userId','exp
 
 export const VerificationTokenScalarFieldEnumSchema = z.enum(['identifier','token','expires']);
 
-export const UserSettingsScalarFieldEnumSchema = z.enum(['id','userId','motivationalQuotesEnabled','quotesDisplayMode','updatedAt','createdAt']);
+export const UserSettingsScalarFieldEnumSchema = z.enum(['id','userId','motivationalQuotesEnabled','quotesDisplayModes','updatedAt','createdAt']);
 
 export const WorkoutOfMesocycleScalarFieldEnumSchema = z.enum(['id','workoutId','mesocycleId','splitDayIndex','workoutStatus']);
 
@@ -270,7 +270,7 @@ export type VerificationToken = z.infer<typeof VerificationTokenSchema>
 /////////////////////////////////////////
 
 export const UserSettingsSchema = z.object({
-  quotesDisplayMode: QuotesDisplayModeSchema,
+  quotesDisplayModes: QuotesDisplayModeSchema.array(),
   id: z.string().cuid(),
   userId: z.string(),
   motivationalQuotesEnabled: z.boolean(),
@@ -725,7 +725,7 @@ export const UserSettingsSelectSchema: z.ZodType<Prisma.UserSettingsSelect> = z.
   id: z.boolean().optional(),
   userId: z.boolean().optional(),
   motivationalQuotesEnabled: z.boolean().optional(),
-  quotesDisplayMode: z.boolean().optional(),
+  quotesDisplayModes: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   user: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
@@ -1778,7 +1778,7 @@ export const UserSettingsWhereInputSchema: z.ZodType<Prisma.UserSettingsWhereInp
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   userId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   motivationalQuotesEnabled: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  quotesDisplayMode: z.union([ z.lazy(() => EnumQuotesDisplayModeFilterSchema),z.lazy(() => QuotesDisplayModeSchema) ]).optional(),
+  quotesDisplayModes: z.lazy(() => EnumQuotesDisplayModeNullableListFilterSchema).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   user: z.union([ z.lazy(() => UserScalarRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
@@ -1788,7 +1788,7 @@ export const UserSettingsOrderByWithRelationInputSchema: z.ZodType<Prisma.UserSe
   id: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   motivationalQuotesEnabled: z.lazy(() => SortOrderSchema).optional(),
-  quotesDisplayMode: z.lazy(() => SortOrderSchema).optional(),
+  quotesDisplayModes: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   user: z.lazy(() => UserOrderByWithRelationInputSchema).optional()
@@ -1813,7 +1813,7 @@ export const UserSettingsWhereUniqueInputSchema: z.ZodType<Prisma.UserSettingsWh
   OR: z.lazy(() => UserSettingsWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => UserSettingsWhereInputSchema),z.lazy(() => UserSettingsWhereInputSchema).array() ]).optional(),
   motivationalQuotesEnabled: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  quotesDisplayMode: z.union([ z.lazy(() => EnumQuotesDisplayModeFilterSchema),z.lazy(() => QuotesDisplayModeSchema) ]).optional(),
+  quotesDisplayModes: z.lazy(() => EnumQuotesDisplayModeNullableListFilterSchema).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   user: z.union([ z.lazy(() => UserScalarRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
@@ -1823,7 +1823,7 @@ export const UserSettingsOrderByWithAggregationInputSchema: z.ZodType<Prisma.Use
   id: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   motivationalQuotesEnabled: z.lazy(() => SortOrderSchema).optional(),
-  quotesDisplayMode: z.lazy(() => SortOrderSchema).optional(),
+  quotesDisplayModes: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => UserSettingsCountOrderByAggregateInputSchema).optional(),
@@ -1838,7 +1838,7 @@ export const UserSettingsScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   userId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   motivationalQuotesEnabled: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
-  quotesDisplayMode: z.union([ z.lazy(() => EnumQuotesDisplayModeWithAggregatesFilterSchema),z.lazy(() => QuotesDisplayModeSchema) ]).optional(),
+  quotesDisplayModes: z.lazy(() => EnumQuotesDisplayModeNullableListFilterSchema).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
@@ -3153,7 +3153,7 @@ export const VerificationTokenUncheckedUpdateManyInputSchema: z.ZodType<Prisma.V
 export const UserSettingsCreateInputSchema: z.ZodType<Prisma.UserSettingsCreateInput> = z.object({
   id: z.string().cuid().optional(),
   motivationalQuotesEnabled: z.boolean().optional(),
-  quotesDisplayMode: z.lazy(() => QuotesDisplayModeSchema).optional(),
+  quotesDisplayModes: z.union([ z.lazy(() => UserSettingsCreatequotesDisplayModesInputSchema),z.lazy(() => QuotesDisplayModeSchema).array() ]).optional(),
   updatedAt: z.coerce.date().optional(),
   createdAt: z.coerce.date().optional(),
   user: z.lazy(() => UserCreateNestedOneWithoutSettingsInputSchema)
@@ -3163,7 +3163,7 @@ export const UserSettingsUncheckedCreateInputSchema: z.ZodType<Prisma.UserSettin
   id: z.string().cuid().optional(),
   userId: z.string(),
   motivationalQuotesEnabled: z.boolean().optional(),
-  quotesDisplayMode: z.lazy(() => QuotesDisplayModeSchema).optional(),
+  quotesDisplayModes: z.union([ z.lazy(() => UserSettingsCreatequotesDisplayModesInputSchema),z.lazy(() => QuotesDisplayModeSchema).array() ]).optional(),
   updatedAt: z.coerce.date().optional(),
   createdAt: z.coerce.date().optional()
 }).strict();
@@ -3171,7 +3171,7 @@ export const UserSettingsUncheckedCreateInputSchema: z.ZodType<Prisma.UserSettin
 export const UserSettingsUpdateInputSchema: z.ZodType<Prisma.UserSettingsUpdateInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   motivationalQuotesEnabled: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  quotesDisplayMode: z.union([ z.lazy(() => QuotesDisplayModeSchema),z.lazy(() => EnumQuotesDisplayModeFieldUpdateOperationsInputSchema) ]).optional(),
+  quotesDisplayModes: z.union([ z.lazy(() => UserSettingsUpdatequotesDisplayModesInputSchema),z.lazy(() => QuotesDisplayModeSchema).array() ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   user: z.lazy(() => UserUpdateOneRequiredWithoutSettingsNestedInputSchema).optional()
@@ -3181,7 +3181,7 @@ export const UserSettingsUncheckedUpdateInputSchema: z.ZodType<Prisma.UserSettin
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   motivationalQuotesEnabled: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  quotesDisplayMode: z.union([ z.lazy(() => QuotesDisplayModeSchema),z.lazy(() => EnumQuotesDisplayModeFieldUpdateOperationsInputSchema) ]).optional(),
+  quotesDisplayModes: z.union([ z.lazy(() => UserSettingsUpdatequotesDisplayModesInputSchema),z.lazy(() => QuotesDisplayModeSchema).array() ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -3190,7 +3190,7 @@ export const UserSettingsCreateManyInputSchema: z.ZodType<Prisma.UserSettingsCre
   id: z.string().cuid().optional(),
   userId: z.string(),
   motivationalQuotesEnabled: z.boolean().optional(),
-  quotesDisplayMode: z.lazy(() => QuotesDisplayModeSchema).optional(),
+  quotesDisplayModes: z.union([ z.lazy(() => UserSettingsCreatequotesDisplayModesInputSchema),z.lazy(() => QuotesDisplayModeSchema).array() ]).optional(),
   updatedAt: z.coerce.date().optional(),
   createdAt: z.coerce.date().optional()
 }).strict();
@@ -3198,7 +3198,7 @@ export const UserSettingsCreateManyInputSchema: z.ZodType<Prisma.UserSettingsCre
 export const UserSettingsUpdateManyMutationInputSchema: z.ZodType<Prisma.UserSettingsUpdateManyMutationInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   motivationalQuotesEnabled: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  quotesDisplayMode: z.union([ z.lazy(() => QuotesDisplayModeSchema),z.lazy(() => EnumQuotesDisplayModeFieldUpdateOperationsInputSchema) ]).optional(),
+  quotesDisplayModes: z.union([ z.lazy(() => UserSettingsUpdatequotesDisplayModesInputSchema),z.lazy(() => QuotesDisplayModeSchema).array() ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -3207,7 +3207,7 @@ export const UserSettingsUncheckedUpdateManyInputSchema: z.ZodType<Prisma.UserSe
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   motivationalQuotesEnabled: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  quotesDisplayMode: z.union([ z.lazy(() => QuotesDisplayModeSchema),z.lazy(() => EnumQuotesDisplayModeFieldUpdateOperationsInputSchema) ]).optional(),
+  quotesDisplayModes: z.union([ z.lazy(() => UserSettingsUpdatequotesDisplayModesInputSchema),z.lazy(() => QuotesDisplayModeSchema).array() ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -4532,18 +4532,19 @@ export const VerificationTokenMinOrderByAggregateInputSchema: z.ZodType<Prisma.V
   expires: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const EnumQuotesDisplayModeFilterSchema: z.ZodType<Prisma.EnumQuotesDisplayModeFilter> = z.object({
-  equals: z.lazy(() => QuotesDisplayModeSchema).optional(),
-  in: z.lazy(() => QuotesDisplayModeSchema).array().optional(),
-  notIn: z.lazy(() => QuotesDisplayModeSchema).array().optional(),
-  not: z.union([ z.lazy(() => QuotesDisplayModeSchema),z.lazy(() => NestedEnumQuotesDisplayModeFilterSchema) ]).optional(),
+export const EnumQuotesDisplayModeNullableListFilterSchema: z.ZodType<Prisma.EnumQuotesDisplayModeNullableListFilter> = z.object({
+  equals: z.lazy(() => QuotesDisplayModeSchema).array().optional().nullable(),
+  has: z.lazy(() => QuotesDisplayModeSchema).optional().nullable(),
+  hasEvery: z.lazy(() => QuotesDisplayModeSchema).array().optional(),
+  hasSome: z.lazy(() => QuotesDisplayModeSchema).array().optional(),
+  isEmpty: z.boolean().optional()
 }).strict();
 
 export const UserSettingsCountOrderByAggregateInputSchema: z.ZodType<Prisma.UserSettingsCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   motivationalQuotesEnabled: z.lazy(() => SortOrderSchema).optional(),
-  quotesDisplayMode: z.lazy(() => SortOrderSchema).optional(),
+  quotesDisplayModes: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -4552,7 +4553,6 @@ export const UserSettingsMaxOrderByAggregateInputSchema: z.ZodType<Prisma.UserSe
   id: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   motivationalQuotesEnabled: z.lazy(() => SortOrderSchema).optional(),
-  quotesDisplayMode: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -4561,19 +4561,8 @@ export const UserSettingsMinOrderByAggregateInputSchema: z.ZodType<Prisma.UserSe
   id: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   motivationalQuotesEnabled: z.lazy(() => SortOrderSchema).optional(),
-  quotesDisplayMode: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const EnumQuotesDisplayModeWithAggregatesFilterSchema: z.ZodType<Prisma.EnumQuotesDisplayModeWithAggregatesFilter> = z.object({
-  equals: z.lazy(() => QuotesDisplayModeSchema).optional(),
-  in: z.lazy(() => QuotesDisplayModeSchema).array().optional(),
-  notIn: z.lazy(() => QuotesDisplayModeSchema).array().optional(),
-  not: z.union([ z.lazy(() => QuotesDisplayModeSchema),z.lazy(() => NestedEnumQuotesDisplayModeWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedEnumQuotesDisplayModeFilterSchema).optional(),
-  _max: z.lazy(() => NestedEnumQuotesDisplayModeFilterSchema).optional()
 }).strict();
 
 export const EnumWorkoutStatusNullableFilterSchema: z.ZodType<Prisma.EnumWorkoutStatusNullableFilter> = z.object({
@@ -5630,14 +5619,19 @@ export const UserUpdateOneRequiredWithoutSessionsNestedInputSchema: z.ZodType<Pr
   update: z.union([ z.lazy(() => UserUpdateToOneWithWhereWithoutSessionsInputSchema),z.lazy(() => UserUpdateWithoutSessionsInputSchema),z.lazy(() => UserUncheckedUpdateWithoutSessionsInputSchema) ]).optional(),
 }).strict();
 
+export const UserSettingsCreatequotesDisplayModesInputSchema: z.ZodType<Prisma.UserSettingsCreatequotesDisplayModesInput> = z.object({
+  set: z.lazy(() => QuotesDisplayModeSchema).array()
+}).strict();
+
 export const UserCreateNestedOneWithoutSettingsInputSchema: z.ZodType<Prisma.UserCreateNestedOneWithoutSettingsInput> = z.object({
   create: z.union([ z.lazy(() => UserCreateWithoutSettingsInputSchema),z.lazy(() => UserUncheckedCreateWithoutSettingsInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => UserCreateOrConnectWithoutSettingsInputSchema).optional(),
   connect: z.lazy(() => UserWhereUniqueInputSchema).optional()
 }).strict();
 
-export const EnumQuotesDisplayModeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumQuotesDisplayModeFieldUpdateOperationsInput> = z.object({
-  set: z.lazy(() => QuotesDisplayModeSchema).optional()
+export const UserSettingsUpdatequotesDisplayModesInputSchema: z.ZodType<Prisma.UserSettingsUpdatequotesDisplayModesInput> = z.object({
+  set: z.lazy(() => QuotesDisplayModeSchema).array().optional(),
+  push: z.union([ z.lazy(() => QuotesDisplayModeSchema),z.lazy(() => QuotesDisplayModeSchema).array() ]).optional(),
 }).strict();
 
 export const UserUpdateOneRequiredWithoutSettingsNestedInputSchema: z.ZodType<Prisma.UserUpdateOneRequiredWithoutSettingsNestedInput> = z.object({
@@ -6189,23 +6183,6 @@ export const NestedIntNullableWithAggregatesFilterSchema: z.ZodType<Prisma.Neste
   _sum: z.lazy(() => NestedIntNullableFilterSchema).optional(),
   _min: z.lazy(() => NestedIntNullableFilterSchema).optional(),
   _max: z.lazy(() => NestedIntNullableFilterSchema).optional()
-}).strict();
-
-export const NestedEnumQuotesDisplayModeFilterSchema: z.ZodType<Prisma.NestedEnumQuotesDisplayModeFilter> = z.object({
-  equals: z.lazy(() => QuotesDisplayModeSchema).optional(),
-  in: z.lazy(() => QuotesDisplayModeSchema).array().optional(),
-  notIn: z.lazy(() => QuotesDisplayModeSchema).array().optional(),
-  not: z.union([ z.lazy(() => QuotesDisplayModeSchema),z.lazy(() => NestedEnumQuotesDisplayModeFilterSchema) ]).optional(),
-}).strict();
-
-export const NestedEnumQuotesDisplayModeWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumQuotesDisplayModeWithAggregatesFilter> = z.object({
-  equals: z.lazy(() => QuotesDisplayModeSchema).optional(),
-  in: z.lazy(() => QuotesDisplayModeSchema).array().optional(),
-  notIn: z.lazy(() => QuotesDisplayModeSchema).array().optional(),
-  not: z.union([ z.lazy(() => QuotesDisplayModeSchema),z.lazy(() => NestedEnumQuotesDisplayModeWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedEnumQuotesDisplayModeFilterSchema).optional(),
-  _max: z.lazy(() => NestedEnumQuotesDisplayModeFilterSchema).optional()
 }).strict();
 
 export const NestedEnumWorkoutStatusNullableFilterSchema: z.ZodType<Prisma.NestedEnumWorkoutStatusNullableFilter> = z.object({
@@ -7333,7 +7310,7 @@ export const WorkoutCreateManyUserInputEnvelopeSchema: z.ZodType<Prisma.WorkoutC
 export const UserSettingsCreateWithoutUserInputSchema: z.ZodType<Prisma.UserSettingsCreateWithoutUserInput> = z.object({
   id: z.string().cuid().optional(),
   motivationalQuotesEnabled: z.boolean().optional(),
-  quotesDisplayMode: z.lazy(() => QuotesDisplayModeSchema).optional(),
+  quotesDisplayModes: z.union([ z.lazy(() => UserSettingsCreatequotesDisplayModesInputSchema),z.lazy(() => QuotesDisplayModeSchema).array() ]).optional(),
   updatedAt: z.coerce.date().optional(),
   createdAt: z.coerce.date().optional()
 }).strict();
@@ -7341,7 +7318,7 @@ export const UserSettingsCreateWithoutUserInputSchema: z.ZodType<Prisma.UserSett
 export const UserSettingsUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.UserSettingsUncheckedCreateWithoutUserInput> = z.object({
   id: z.string().cuid().optional(),
   motivationalQuotesEnabled: z.boolean().optional(),
-  quotesDisplayMode: z.lazy(() => QuotesDisplayModeSchema).optional(),
+  quotesDisplayModes: z.union([ z.lazy(() => UserSettingsCreatequotesDisplayModesInputSchema),z.lazy(() => QuotesDisplayModeSchema).array() ]).optional(),
   updatedAt: z.coerce.date().optional(),
   createdAt: z.coerce.date().optional()
 }).strict();
@@ -7496,7 +7473,7 @@ export const UserSettingsUpdateToOneWithWhereWithoutUserInputSchema: z.ZodType<P
 export const UserSettingsUpdateWithoutUserInputSchema: z.ZodType<Prisma.UserSettingsUpdateWithoutUserInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   motivationalQuotesEnabled: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  quotesDisplayMode: z.union([ z.lazy(() => QuotesDisplayModeSchema),z.lazy(() => EnumQuotesDisplayModeFieldUpdateOperationsInputSchema) ]).optional(),
+  quotesDisplayModes: z.union([ z.lazy(() => UserSettingsUpdatequotesDisplayModesInputSchema),z.lazy(() => QuotesDisplayModeSchema).array() ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -7504,7 +7481,7 @@ export const UserSettingsUpdateWithoutUserInputSchema: z.ZodType<Prisma.UserSett
 export const UserSettingsUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.UserSettingsUncheckedUpdateWithoutUserInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   motivationalQuotesEnabled: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  quotesDisplayMode: z.union([ z.lazy(() => QuotesDisplayModeSchema),z.lazy(() => EnumQuotesDisplayModeFieldUpdateOperationsInputSchema) ]).optional(),
+  quotesDisplayModes: z.union([ z.lazy(() => UserSettingsUpdatequotesDisplayModesInputSchema),z.lazy(() => QuotesDisplayModeSchema).array() ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
