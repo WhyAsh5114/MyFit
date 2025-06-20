@@ -73,8 +73,8 @@ model UserSettings {
   id     String @id @default(cuid())
   userId String @unique
 
-  motivationalQuotesEnabled Boolean           @default(false)
-  quotesDisplayMode         QuotesDisplayMode @default(PRE_WORKOUT)
+  motivationalQuotesEnabled Boolean             @default(false)
+  quotesDisplayModes        QuotesDisplayMode[] @default([PRE_WORKOUT])
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
