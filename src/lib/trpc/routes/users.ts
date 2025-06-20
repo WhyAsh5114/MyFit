@@ -1,17 +1,24 @@
-import clientPromise from '$lib/mongo/mongodb';
-import { prisma } from '$lib/prisma';
-import { t } from '$lib/trpc/t';
-import { getShortDateFromTimestamp } from '$lib/utils';
 import {
+	type Prisma,
+	type Workout,
+	type MuscleGroup,
+	type WorkoutExercise,
+	type WorkoutOfMesocycle
+} from '@prisma/client';
+import {
+	type WorkoutDocument,
 	type MesocycleDocument,
 	type MesocycleTemplateDocument,
-	type MuscleGroup as V2MuscleGroup,
-	type WorkoutDocument
+	type MuscleGroup as V2MuscleGroup
 } from '$lib/V2/types';
-import { createId } from '@paralleldrive/cuid2';
-import type { MuscleGroup, Prisma, Workout, WorkoutExercise, WorkoutOfMesocycle } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
+import { t } from '$lib/trpc/t';
+import { prisma } from '$lib/prisma';
+import { TRPCError } from '@trpc/server';
+import clientPromise from '$lib/mongo/mongodb';
+import { createId } from '@paralleldrive/cuid2';
+import { getShortDateFromTimestamp } from '$lib/utils';
+import { QuotesDisplayModeSchema } from '$lib/zodSchemas';
 
 function toPascalCase(text: V2MuscleGroup) {
 	const output = text
@@ -494,5 +501,45 @@ export const users = t.router({
 				data: { name: input.newName }
 			});
 			return { count };
+		}),
+
+	getUserSettings: t.procedure.query(async ({ ctx }) => {
+		const userSettings = await prisma.userSettings.findUnique({
+			where: { userId: ctx.userId },
+			select: { id: true, quotesDisplayMode: true, motivationalQuotesEnabled: true }
+		});
+
+		if (!userSettings) {
+			return null;
+		}
+
+		return userSettings;
+	}),
+
+	updateUserSettings: t.procedure
+		.input(
+			z.object({
+				motivationalQuotesEnabled: z.boolean().optional(),
+				quotesDisplayMode: QuotesDisplayModeSchema.optional()
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const userSettings = await prisma.userSettings.upsert({
+				where: { userId: ctx.userId },
+				create: {
+					userId: ctx.userId,
+					quotesDisplayMode: input.quotesDisplayMode ?? 'PRE_WORKOUT',
+					motivationalQuotesEnabled: input.motivationalQuotesEnabled ?? false
+				},
+				update: {
+					...(input.motivationalQuotesEnabled !== undefined && {
+						motivationalQuotesEnabled: input.motivationalQuotesEnabled
+					}),
+					...(input.quotesDisplayMode !== undefined && { quotesDisplayMode: input.quotesDisplayMode })
+				},
+				select: { id: true, quotesDisplayMode: true, motivationalQuotesEnabled: true }
+			});
+
+			return userSettings;
 		})
 });
