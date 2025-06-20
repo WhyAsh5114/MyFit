@@ -506,7 +506,7 @@ export const users = t.router({
 	getUserSettings: t.procedure.query(async ({ ctx }) => {
 		const userSettings = await prisma.userSettings.findUnique({
 			where: { userId: ctx.userId },
-			select: { id: true, quotesDisplayMode: true, motivationalQuotesEnabled: true }
+			select: { id: true, quotesDisplayModes: true, motivationalQuotesEnabled: true }
 		});
 
 		if (!userSettings) {
@@ -520,7 +520,7 @@ export const users = t.router({
 		.input(
 			z.object({
 				motivationalQuotesEnabled: z.boolean().optional(),
-				quotesDisplayMode: QuotesDisplayModeSchema.optional()
+				quotesDisplayModes: z.array(QuotesDisplayModeSchema).min(1).optional()
 			})
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -528,16 +528,16 @@ export const users = t.router({
 				where: { userId: ctx.userId },
 				create: {
 					userId: ctx.userId,
-					quotesDisplayMode: input.quotesDisplayMode ?? 'PRE_WORKOUT',
+					quotesDisplayModes: input.quotesDisplayModes ?? ['PRE_WORKOUT'],
 					motivationalQuotesEnabled: input.motivationalQuotesEnabled ?? false
 				},
 				update: {
 					...(input.motivationalQuotesEnabled !== undefined && {
 						motivationalQuotesEnabled: input.motivationalQuotesEnabled
 					}),
-					...(input.quotesDisplayMode !== undefined && { quotesDisplayMode: input.quotesDisplayMode })
+					...(input.quotesDisplayModes !== undefined && { quotesDisplayModes: input.quotesDisplayModes })
 				},
-				select: { id: true, quotesDisplayMode: true, motivationalQuotesEnabled: true }
+				select: { id: true, quotesDisplayModes: true, motivationalQuotesEnabled: true }
 			});
 
 			return userSettings;
