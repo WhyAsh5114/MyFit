@@ -2,27 +2,27 @@
 	import { toast } from 'svelte-sonner';
 	import Quote from 'virtual:icons/lucide/quote';
 	import * as Card from '$lib/components/ui/card';
-	import { Badge } from '$lib/components/ui/badge';
 	import Loader from 'virtual:icons/lucide/loader';
 	import { Switch } from '$lib/components/ui/switch';
+	import { Button } from '$lib/components/ui/button';
 	import { QuotesDisplayMode } from '@prisma/client';
-	import * as Select from '$lib/components/ui/select';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 
 	interface Props {
 		quotesEnabled: boolean;
-		quotesDisplayMode: QuotesDisplayMode;
-		onUpdateSettings: (enabled: boolean, mode?: QuotesDisplayMode) => Promise<void>;
+		quotesDisplayModes: QuotesDisplayMode[];
+		onUpdateSettings: (enabled: boolean, modes?: QuotesDisplayMode[]) => Promise<void>;
 	}
 
-	let { quotesEnabled, quotesDisplayMode, onUpdateSettings }: Props = $props();
+	let { quotesEnabled, quotesDisplayModes, onUpdateSettings }: Props = $props();
 
 	let isUpdating = $state(false);
 	let localEnabled = $state(quotesEnabled);
-	let localDisplayMode = $state(quotesDisplayMode);
+	let localDisplayModes = $state([...quotesDisplayModes]);
 
 	$effect(() => {
 		localEnabled = quotesEnabled;
-		localDisplayMode = quotesDisplayMode;
+		localDisplayModes = [...quotesDisplayModes];
 	});
 
 	const displayModeOptions = [
@@ -62,33 +62,83 @@
 		}
 	};
 
-	const updateDisplayMode = async (newMode: QuotesDisplayMode) => {
+	const toggleDisplayMode = async (mode: QuotesDisplayMode, checked: boolean) => {
 		if (isUpdating || !localEnabled) return;
 
+		const newModes = checked ? [...localDisplayModes, mode] : localDisplayModes.filter((m) => m !== mode);
+
+		if (newModes.length === 0) {
+			toast.error('At least one display mode must be selected');
+			return;
+		}
+
 		isUpdating = true;
-		const previousMode = localDisplayMode;
-		localDisplayMode = newMode;
+		const previousModes = [...localDisplayModes];
+		localDisplayModes = newModes;
 
 		try {
-			await onUpdateSettings(localEnabled, newMode);
+			await onUpdateSettings(localEnabled, newModes);
 
-			const option = displayModeOptions.find((opt) => opt.value === newMode);
-			toast.success(`Display mode changed to ${option?.label}`);
+			const option = displayModeOptions.find((opt) => opt.value === mode);
+			const action = checked ? 'enabled' : 'disabled';
+			toast.success(`${option?.label} ${action}`);
 		} catch (error) {
-			localDisplayMode = previousMode;
-			console.error('Failed to update display mode:', error);
+			localDisplayModes = previousModes;
+			console.error('Failed to update display modes:', error);
 
 			if (error instanceof Error && error.message.includes('validation')) {
-				toast.error('Invalid display mode selected');
+				toast.error('Invalid display mode selection');
 			} else {
-				toast.error('Failed to update display mode');
+				toast.error('Failed to update display modes');
 			}
 		} finally {
 			isUpdating = false;
 		}
 	};
 
-	const selectedDisplayMode = $derived(displayModeOptions.find((opt) => opt.value === localDisplayMode));
+	const selectAllModes = async () => {
+		if (isUpdating || !localEnabled) return;
+
+		const allModes = displayModeOptions.map((opt) => opt.value);
+		if (localDisplayModes.length === allModes.length) return;
+
+		isUpdating = true;
+		const previousModes = [...localDisplayModes];
+		localDisplayModes = allModes;
+
+		try {
+			await onUpdateSettings(localEnabled, allModes);
+			toast.success('All display modes enabled');
+		} catch (error) {
+			localDisplayModes = previousModes;
+			console.error('Failed to select all modes:', error);
+			toast.error('Failed to enable all modes');
+		} finally {
+			isUpdating = false;
+		}
+	};
+
+	const clearAllModes = async () => {
+		if (isUpdating || !localEnabled || localDisplayModes.length <= 1) return;
+
+		isUpdating = true;
+		const previousModes = [...localDisplayModes];
+		localDisplayModes = [QuotesDisplayMode.PRE_WORKOUT];
+
+		try {
+			await onUpdateSettings(localEnabled, [QuotesDisplayMode.PRE_WORKOUT]);
+			toast.success('Reset to Pre-Workout only');
+		} catch (error) {
+			localDisplayModes = previousModes;
+			console.error('Failed to clear modes:', error);
+			toast.error('Failed to reset modes');
+		} finally {
+			isUpdating = false;
+		}
+	};
+
+	const isAllSelected = $derived(localDisplayModes.length === displayModeOptions.length);
+	const selectedCount = $derived(localDisplayModes.length);
 </script>
 
 <Card.Root class="w-full">
@@ -116,45 +166,64 @@
 		</div>
 
 		{#if localEnabled}
-			<div class="animate-in slide-in-from-top-2 space-y-3 duration-300">
-				<h4 class="text-sm font-medium">Display Mode</h4>
+			<div class="animate-in slide-in-from-top-2 space-y-4 duration-300">
+				<div class="flex items-center justify-between">
+					<div class="space-y-1">
+						<h4 class="text-sm font-medium">Display Modes</h4>
+						<p class="text-xs text-muted-foreground">
+							Choose when to show quotes ({selectedCount} selected)
+						</p>
+					</div>
 
-				<Select.Root
-					disabled={isUpdating}
-					selected={{ value: localDisplayMode, label: selectedDisplayMode?.label || '' }}
-					onSelectedChange={(selected) => {
-						if (selected?.value && !isUpdating) {
-							updateDisplayMode(selected.value);
-						}
-					}}
-				>
-					<Select.Trigger class="w-full">
-						{#if selectedDisplayMode}
-							<span class="font-medium"
-								>{selectedDisplayMode.label}
+					<div class="flex gap-2">
+						<Button
+							size="sm"
+							class="text-xs"
+							variant="outline"
+							onclick={selectAllModes}
+							disabled={isUpdating || isAllSelected}
+						>
+							Select All
+						</Button>
+						<Button
+							variant="destructive"
+							size="sm"
+							onclick={clearAllModes}
+							disabled={isUpdating || selectedCount <= 1}
+							class="text-xs"
+						>
+							Reset
+						</Button>
+					</div>
+				</div>
 
-								<span class="text-xs text-muted-foreground"> ({selectedDisplayMode.description})</span>
-							</span>
-						{:else}
-							<span class="text-muted-foreground">Select when to show quotes</span>
-						{/if}
-					</Select.Trigger>
+				<div class="space-y-3">
+					{#each displayModeOptions as option}
+						{@const isSelected = localDisplayModes.includes(option.value)}
+						<div class="flex items-start space-x-3 rounded-lg border p-3 transition-colors hover:bg-muted/30">
+							<Checkbox
+								checked={isSelected}
+								id={`mode-${option.value}`}
+								onCheckedChange={(checked) => {
+									if (typeof checked === 'boolean') {
+										toggleDisplayMode(option.value, checked);
+									}
+								}}
+								disabled={isUpdating}
+								class="mt-1"
+							/>
 
-					<Select.Content>
-						<Select.Group>
-							{#each displayModeOptions as option}
-								<Select.Item value={option.value} class="space-y-1">
-									<div class="flex flex-col items-start">
-										<span class="font-medium">{option.label}</span>
-										<span class="text-xs text-muted-foreground">
-											{option.description}
-										</span>
-									</div>
-								</Select.Item>
-							{/each}
-						</Select.Group>
-					</Select.Content>
-				</Select.Root>
+							<div class="flex-1 space-y-1">
+								<label for={`mode-${option.value}`} class="cursor-pointer text-sm font-medium leading-none">
+									{option.label}
+								</label>
+								<p class="text-xs text-muted-foreground">
+									{option.description}
+								</p>
+							</div>
+						</div>
+					{/each}
+				</div>
 			</div>
 		{/if}
 	</Card.Content>
