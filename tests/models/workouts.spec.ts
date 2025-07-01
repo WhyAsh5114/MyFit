@@ -18,7 +18,7 @@ test('create workout', async ({ page }) => {
 	await page.getByRole('button', { name: 'Next' }).click();
 
 	await page.getByLabel('add-exercise').click();
-	await page.getByRole('option', { name: 'Barbell bench press' }).click();
+	await page.getByRole('option', { name: 'Barbell bench press', exact: true }).click();
 	await page.getByLabel('Sets').fill('2');
 	await page.getByRole('button', { name: 'Add exercise' }).click();
 
@@ -38,7 +38,7 @@ test('create workout', async ({ page }) => {
 	await expect(page.getByRole('tabpanel')).toContainText('Mesocycle No mesocycle User bodyweight 100');
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
-		'Barbell bench press 2 Down sets of 5 to 10 reps Chest Reps Load RIR 1 9 100 2 2 8 95 1'
+		'Barbell bench press 2 Down sets of 5 to 10 reps Chest Feet flat, back arched, grip just outside shoulders. Lower bar to mid-chest, press up explosively. Reps Load RIR 1 9 100 2 2 8 95 1'
 	);
 });
 
@@ -50,7 +50,7 @@ test('create workout with all set types', async ({ page }) => {
 
 	await page.getByLabel('add-exercise').click();
 	await page.getByPlaceholder('Type here or search...').click();
-	await page.getByRole('option', { name: 'Barbell bench press' }).click();
+	await page.getByRole('option', { name: 'Barbell bench press', exact: true }).click();
 	await page.getByRole('button', { name: 'Add exercise' }).click();
 	await page.getByLabel('Sets').fill('2');
 	await page.getByRole('button', { name: 'Add exercise' }).click();
@@ -157,7 +157,7 @@ test('create workout with all set types', async ({ page }) => {
 	await expect(page.getByRole('tabpanel')).toContainText('Mesocycle No mesocycle User bodyweight 100');
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('main')).toContainText(
-		'Barbell bench press 2 Down sets of 5 to 10 reps Chest Reps Load RIR 1 9 50 1 2 8 45 1 Dumbbell bicep curls 2 Myorep match sets of 10 to 20 reps Biceps Reps Load RIR 1 12 10 2 2 10 10 0 1 2 10 0Leaning dumbbell lateral raises 2 Drop sets of 10 to 20 reps Side delts Reps Load RIR 1 18 10 2 1 12 5 22 16 10 2 1 10 5 2Incline dumbbell press 2 V2 sets of 10 to 15 reps Chest Reps Load RIR 1 14 20 2 2 12 15 1 Leg press 2 Myorep sets of 10 to 20 reps BW Quads Reps Load RIR 1 18 180 2 2 12 180 0'
+		'Barbell bench press 2 Down sets of 5 to 10 reps Chest Feet flat, back arched, grip just outside shoulders. Lower bar to mid-chest, press up explosively. Reps Load RIR 1 9 50 1 2 8 45 1 Dumbbell bicep curls 2 Myorep match sets of 10 to 20 reps Biceps Hold dumbbells at sides, curl up, squeeze biceps, lower slow. Reps Load RIR 1 12 10 2 2 10 10 0 1 2 10 0Leaning dumbbell lateral raises 2 Drop sets of 10 to 20 reps Side delts Lean slightly, raise dumbbells to shoulder height. Control descent. Reps Load RIR 1 18 10 2 1 12 5 22 16 10 2 1 10 5 2Incline dumbbell press 2 V2 sets of 10 to 15 reps Chest Bench at 30-45 degrees, elbows tucked. Press dumbbells up, control descent. Reps Load RIR 1 14 20 2 2 12 15 1 Leg press 2 Myorep sets of 10 to 20 reps BW Quads Feet high for quad focus, push up, control return. Reps Load RIR 1 18 180 2 2 12 180 0'
 	);
 });
 
@@ -226,7 +226,7 @@ test('create workout without using active mesocycle', async ({ page }) => {
 	await page.getByRole('button', { name: 'Next' }).click();
 
 	await page.getByLabel('add-exercise').click();
-	await page.getByRole('option', { name: 'Barbell bench press' }).click();
+	await page.getByRole('option', { name: 'Barbell bench press', exact: true }).click();
 	await page.getByLabel('Sets').fill('2');
 	await page.getByRole('button', { name: 'Add exercise' }).click();
 
@@ -246,7 +246,7 @@ test('create workout without using active mesocycle', async ({ page }) => {
 	await expect(page.getByRole('tabpanel')).toContainText('Mesocycle No mesocycle User bodyweight 100');
 	await page.getByRole('tab', { name: 'Exercises' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
-		'Barbell bench press 2 Down sets of 5 to 10 reps Chest Reps Load RIR 1 9 100 2 2 8 95 1'
+		'Barbell bench press 2 Down sets of 5 to 10 reps Chest Feet flat, back arched, grip just outside shoulders. Lower bar to mid-chest, press up explosively. Reps Load RIR 1 9 100 2 2 8 95 1'
 	);
 });
 
