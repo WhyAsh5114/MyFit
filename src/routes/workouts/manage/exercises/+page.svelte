@@ -18,10 +18,14 @@
 	import ExerciseHistorySheet from './(components)/ExerciseHistorySheet.svelte';
 	import SetTimerComponent from './(components)/SetTimerComponent.svelte';
 	import WarmUpDialog from './(components)/WarmUpDialog.svelte';
+	import Quotes from '$lib/components/settings/Quotes.svelte';
 
 	let { data } = $props();
 	let reordering = $state(false);
 	let comparing = $state(false);
+
+	const shouldShowQuote =
+		data.userSettings.motivationalQuotesEnabled && data.userSettings.quotesDisplayModes.includes('BETWEEN_SETS');
 
 	let workoutData = $derived(workoutRunes.workoutData);
 	let workoutExercises = $derived(workoutRunes.workoutExercises);
@@ -82,6 +86,10 @@
 </script>
 
 <H3>Exercises</H3>
+
+{#if shouldShowQuote}
+	<Quotes mode="BETWEEN_SETS" class="mb-6" />
+{/if}
 
 {#if workoutData !== null}
 	<div class="flex items-end">
