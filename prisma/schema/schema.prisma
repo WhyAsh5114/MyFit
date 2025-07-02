@@ -76,8 +76,5 @@ model UserSettings {
   motivationalQuotesEnabled Boolean             @default(false)
   quotesDisplayModes        QuotesDisplayMode[] @default([PRE_WORKOUT])
 
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
-
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
