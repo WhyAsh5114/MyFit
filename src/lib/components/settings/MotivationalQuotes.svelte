@@ -25,20 +25,20 @@
 		localDisplayModes = [...quotesDisplayModes];
 	});
 
-	const displayModeOptions = [
+	const displayModeOptions: { label: string; value: QuotesDisplayMode; description: string }[] = [
 		{
 			label: 'Pre-Workout',
-			value: QuotesDisplayMode.PRE_WORKOUT,
+			value: 'PRE_WORKOUT',
 			description: 'Show quotes before starting your workout'
 		},
 		{
 			label: 'Post-Workout',
-			value: QuotesDisplayMode.POST_WORKOUT,
+			value: 'POST_WORKOUT',
 			description: 'Show quotes after completing your workout'
 		},
 		{
 			label: 'Between Sets',
-			value: QuotesDisplayMode.BETWEEN_SETS,
+			value: 'BETWEEN_SETS',
 			description: 'Show quotes during rest periods between sets'
 		}
 	];

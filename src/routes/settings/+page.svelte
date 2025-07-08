@@ -16,7 +16,7 @@
 
 	let hasError = $state(false);
 	let quotesEnabled = $state(false);
-	let quotesDisplayModes = $state<QuotesDisplayMode[]>([QuotesDisplayMode.PRE_WORKOUT]);
+	let quotesDisplayModes = $state<QuotesDisplayMode[]>(["PRE_WORKOUT"]);
 
 	$effect(() => {
 		const userSettings = $page.data.userSettings;
