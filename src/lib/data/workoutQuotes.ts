@@ -134,6 +134,146 @@ export const workoutQuotes: WorkoutQuote[] = [
 		author: 'Unknown',
 		category: 'BETWEEN_SETS',
 		quote: 'Focus on form, not just numbers.'
+	},
+	// Dr. Mike Israetel / Renaissance Periodization quotes
+	{
+		id: '22',
+		author: 'Dr. Mike Israetel',
+		category: 'PRE_WORKOUT',
+		quote: 'Progressive overload is the fundamental principle of growth. Make every session count.'
+	},
+	{
+		id: '23',
+		author: 'Dr. Mike Israetel',
+		category: 'PRE_WORKOUT',
+		quote: 'The best program is the one you can consistently execute with proper form and progression.'
+	},
+	{
+		id: '24',
+		author: 'Dr. Mike Israetel',
+		category: 'PRE_WORKOUT',
+		quote: 'Volume, intensity, and frequency - master these variables and you master growth.'
+	},
+	{
+		id: '25',
+		author: 'Dr. Mike Israetel',
+		category: 'PRE_WORKOUT',
+		quote: "Training is not about suffering - it's about intelligent progression toward your goals."
+	},
+	{
+		id: '26',
+		author: 'Dr. Mike Israetel',
+		category: 'PRE_WORKOUT',
+		quote: 'Your genetics load the gun, but your training and diet pull the trigger.'
+	},
+	{
+		id: '27',
+		author: 'Dr. Mike Israetel',
+		category: 'BETWEEN_SETS',
+		quote: 'Rest enough to perform your next set with quality. Rushing leads to junk volume.'
+	},
+	{
+		id: '28',
+		author: 'Dr. Mike Israetel',
+		category: 'BETWEEN_SETS',
+		quote: 'Each set should take you closer to failure, but not into form breakdown.'
+	},
+	{
+		id: '29',
+		author: 'Dr. Mike Israetel',
+		category: 'BETWEEN_SETS',
+		quote: 'The pump is temporary, but the adaptation is permanent. Focus on the process.'
+	},
+	{
+		id: '30',
+		author: 'Dr. Mike Israetel',
+		category: 'BETWEEN_SETS',
+		quote: 'Small progressions consistently applied lead to massive changes over time.'
+	},
+	{
+		id: '31',
+		author: 'Dr. Mike Israetel',
+		category: 'BETWEEN_SETS',
+		quote: 'Technique first, load second. Always.'
+	},
+	{
+		id: '32',
+		author: 'Dr. Mike Israetel',
+		category: 'BETWEEN_SETS',
+		quote: "Every rep is a chance to get better. Don't waste it on ego lifting."
+	},
+	{
+		id: '33',
+		author: 'Dr. Mike Israetel',
+		category: 'POST_WORKOUT',
+		quote: 'Recovery is where the magic happens. Train hard, but recover harder.'
+	},
+	{
+		id: '34',
+		author: 'Dr. Mike Israetel',
+		category: 'POST_WORKOUT',
+		quote: 'You just invested in your future self. The compound interest starts now.'
+	},
+	{
+		id: '35',
+		author: 'Dr. Mike Israetel',
+		category: 'POST_WORKOUT',
+		quote: 'Muscle grows during recovery, not during training. Respect the process.'
+	},
+	{
+		id: '36',
+		author: 'Dr. Mike Israetel',
+		category: 'POST_WORKOUT',
+		quote: 'Consistency beats perfection. Another quality session in the books.'
+	},
+	{
+		id: '37',
+		author: 'Dr. Mike Israetel',
+		category: 'POST_WORKOUT',
+		quote: 'Fatigue masks fitness. Rest well and let your true strength emerge.'
+	},
+	{
+		id: '38',
+		author: 'Dr. Mike Israetel',
+		category: 'POST_WORKOUT',
+		quote: 'The work you did today will compound into the results you see tomorrow.'
+	},
+	// Additional RP-inspired quotes based on training principles
+	{
+		id: '39',
+		author: 'Dr. Mike Israetel',
+		category: 'PRE_WORKOUT',
+		quote: 'Minimum effective dose means maximum sustainable progress.'
+	},
+	{
+		id: '40',
+		author: 'Dr. Mike Israetel',
+		category: 'PRE_WORKOUT',
+		quote: "Science-based training isn't about complexity - it's about effectiveness."
+	},
+	{
+		id: '41',
+		author: 'Dr. Mike Israetel',
+		category: 'BETWEEN_SETS',
+		quote: 'Your maximum recoverable volume is your pathway to maximum gains.'
+	},
+	{
+		id: '42',
+		author: 'Dr. Mike Israetel',
+		category: 'BETWEEN_SETS',
+		quote: 'Effort without intelligence is just suffering. Train smart.'
+	},
+	{
+		id: '43',
+		author: 'Dr. Mike Israetel',
+		category: 'POST_WORKOUT',
+		quote: "Deloads aren't steps backward - they're strategic resets for greater progress."
+	},
+	{
+		id: '44',
+		author: 'Dr. Mike Israetel',
+		category: 'POST_WORKOUT',
+		quote: 'Your next workout starts with how well you recover from this one.'
 	}
 ];
 

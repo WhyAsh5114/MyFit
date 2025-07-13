@@ -177,5 +177,5 @@
 <WarmUpDialog />
 
 {#if shouldShowQuote && completedSets}
-	<QuotesDialog completedSets={completedSets} />
+	<QuotesDialog {completedSets} />
 {/if}
