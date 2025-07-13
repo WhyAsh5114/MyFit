@@ -136,7 +136,7 @@
 <H3>Start</H3>
 
 {#if shouldShowQuote}
-	<Quotes mode="PRE_WORKOUT" class="mb-6" />
+	<Quotes mode="PRE_WORKOUT" class="mb-1" />
 {/if}
 
 {#if workoutData === 'loading'}

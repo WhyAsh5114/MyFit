@@ -37,7 +37,7 @@
 					"{currentQuote.quote}"
 				</blockquote>
 
-				<cite class="mt-2 block text-sm font-normal text-muted-foreground">
+				<cite class="mt-2 block justify-self-end text-sm font-normal text-muted-foreground">
 					— {currentQuote.author}
 				</cite>
 			</div>
