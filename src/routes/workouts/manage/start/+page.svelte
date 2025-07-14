@@ -20,8 +20,12 @@
 	import SkipIcon from 'virtual:icons/lucide/skip-forward';
 	import RedoIcon from 'virtual:icons/lucide/rotate-cw';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
+	import Quotes from '$lib/components/settings/Quotes.svelte';
 
 	let { data } = $props();
+
+	const shouldShowQuote =
+		data.userSettings.motivationalQuotesEnabled && data.userSettings.quotesDisplayModes.includes('PRE_WORKOUT');
 
 	let useActiveMesocycle = $state(false);
 	let workoutData: RouterOutputs['workouts']['getTodaysWorkoutData'] | 'loading' = $state('loading');
@@ -130,6 +134,10 @@
 </script>
 
 <H3>Start</H3>
+
+{#if shouldShowQuote}
+	<Quotes mode="PRE_WORKOUT" class="mb-1" />
+{/if}
 
 {#if workoutData === 'loading'}
 	<Skeleton class="mb-1 h-14 w-full rounded-lg border border-opacity-0" />
