@@ -228,7 +228,49 @@ export const workouts = t.router({
 	),
 
 	deleteById: t.procedure.input(z.string().cuid2()).mutation(async ({ input, ctx }) => {
-		await prisma.workout.delete({ where: { userId: ctx.userId, id: input } });
+		const workoutToDelete = await prisma.workout.findUniqueOrThrow({
+			where: { userId: ctx.userId, id: input },
+			select: {
+				workoutOfMesocycle: {
+					select: {
+						id: true,
+						splitDayIndex: true,
+						mesocycle: {
+							select: {
+								id: true,
+								startDate: true,
+								endDate: true,
+								mesocycleExerciseSplitDays: { select: { name: true } }
+							}
+						}
+					}
+				}
+			}
+		});
+
+		const mesocycle = workoutToDelete.workoutOfMesocycle?.mesocycle;
+		if (mesocycle && mesocycle.startDate && mesocycle.endDate === null) {
+			const wom = workoutToDelete.workoutOfMesocycle!;
+			const workoutsOfMeso = await prisma.workout.findMany({
+				where: { workoutOfMesocycle: { mesocycleId: mesocycle.id } },
+				select: { workoutOfMesocycle: { select: { splitDayIndex: true } } }
+			});
+
+			const workoutsPerSplitDay: number[] = Array(mesocycle.mesocycleExerciseSplitDays.length).fill(0);
+			workoutsOfMeso.forEach((w) => workoutsPerSplitDay[w.workoutOfMesocycle!.splitDayIndex]++);
+
+			const maxSplitDayWorkouts = Math.max(...workoutsPerSplitDay);
+			const lastSplitDayPerformed = workoutsPerSplitDay.findLastIndex((count) => count === maxSplitDayWorkouts);
+
+			if (lastSplitDayPerformed !== wom.splitDayIndex) {
+				throw new TRPCError({
+					code: 'BAD_REQUEST',
+					message: `You can only delete the latest workout of the active mesocycle: ${mesocycle.mesocycleExerciseSplitDays[lastSplitDayPerformed].name} (Day ${lastSplitDayPerformed + 1})`
+				});
+			}
+		}
+
+		await prisma.workout.delete({ where: { id: input, userId: ctx.userId } });
 		return { message: 'Workout deleted successfully' };
 	}),
 
