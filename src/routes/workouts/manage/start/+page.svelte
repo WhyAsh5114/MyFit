@@ -2,6 +2,7 @@
 	import { goto, invalidate } from '$app/navigation';
 	import { navigating, page } from '$app/stores';
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
+	import Quotes from '$lib/components/settings/Quotes.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card';
@@ -17,12 +18,20 @@
 	import { toast } from 'svelte-sonner';
 	import CheckIcon from 'virtual:icons/lucide/check';
 	import LoaderCircle from 'virtual:icons/lucide/loader-circle';
-	import SkipIcon from 'virtual:icons/lucide/skip-forward';
 	import RedoIcon from 'virtual:icons/lucide/rotate-cw';
+	import SkipIcon from 'virtual:icons/lucide/skip-forward';
 	import { workoutRunes } from '../workoutRunes.svelte.js';
-	import Quotes from '$lib/components/settings/Quotes.svelte';
 
 	let { data } = $props();
+
+	function dateToLocalISOString(date: Date): string {
+		return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+	}
+
+	function localISOStringToDate(isoString: string): Date {
+		const localDate = new Date(isoString);
+		return new Date(localDate.getTime());
+	}
 
 	const shouldShowQuote =
 		data.userSettings.motivationalQuotesEnabled && data.userSettings.quotesDisplayModes.includes('PRE_WORKOUT');
@@ -176,6 +185,32 @@
 				step={0.01}
 				bind:value={userBodyweight}
 			/>
+			{#if workoutRunes.editingWorkoutId !== null && workoutRunes.workoutData}
+				{@const a = console.log(workoutRunes.workoutData)}
+				<div class="grid grid-cols-2 gap-x-2 gap-y-1.5">
+					<Label for="start-date">Start date</Label>
+					<Label for="end-date">End date</Label>
+					<Input
+						id="start-date"
+						type="datetime-local"
+						value={dateToLocalISOString(workoutRunes.workoutData.startedAt as Date)}
+						onchange={(e) => {
+							workoutRunes.workoutData!.startedAt = localISOStringToDate(e.currentTarget.value);
+						}}
+						required
+					/>
+					<Input
+						id="end-date"
+						type="datetime-local"
+						min={dateToLocalISOString(workoutRunes.workoutData.startedAt as Date)}
+						value={dateToLocalISOString(workoutRunes.workoutData.endedAt! as Date)}
+						onchange={(e) => {
+							workoutRunes.workoutData!.endedAt = localISOStringToDate(e.currentTarget.value);
+						}}
+						required
+					/>
+				</div>
+			{/if}
 		</form>
 	{/if}
 	{#if skippedWorkoutsOfCycle && skippedWorkoutsOfCycle.length > 0}
