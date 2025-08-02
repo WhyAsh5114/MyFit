@@ -8,14 +8,14 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-svelte';
 	import { defaults, superForm } from 'sveltekit-superforms';
-	import { zod } from 'sveltekit-superforms/adapters';
+	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { selectedStepsState } from '../../selected-steps.svelte';
 	import { macroTrackingQuickstartState } from '../macro-tracking-quickstart-state.svelte';
 	import { macroTrackingMetricsSchema } from './schema';
 
-	const form = superForm(defaults(zod(macroTrackingMetricsSchema)), {
+	const form = superForm(defaults(zod4(macroTrackingMetricsSchema)), {
 		SPA: true,
-		validators: zod(macroTrackingMetricsSchema),
+		validators: zod4(macroTrackingMetricsSchema),
 		resetForm: false,
 		onUpdate: async ({ form }) => {
 			if (!form.valid) return;
