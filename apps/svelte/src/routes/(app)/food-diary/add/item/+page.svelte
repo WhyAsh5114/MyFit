@@ -10,7 +10,6 @@
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { client } from '$lib/idb-client';
-	import { useTRPC } from '$lib/trpc/client.svelte';
 	import { cn } from '$lib/utils';
 	import {
 		type DateValue,
@@ -23,8 +22,8 @@
 	import { CalendarIcon, LoaderCircleIcon, PencilIcon, PlusIcon } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import FoodDataCard from './_components/food-data-card.svelte';
+	import { getFoodById } from '../../food.remote';
 
-	const trpc = useTRPC();
 	const df = new DateFormatter('en-US', { dateStyle: 'long' });
 
 	let itemId = $state<number | null>();
@@ -76,7 +75,7 @@
 
 	let foodQuery = createQuery(() => ({
 		queryKey: ['food', itemId],
-		queryFn: () => trpc.food.getById.query({ id: itemId! }),
+		queryFn: () => getFoodById({ id: itemId! }),
 		enabled: Boolean(itemId),
 		throwOnError: (error) => {
 			toast.error('Error fetching food data');

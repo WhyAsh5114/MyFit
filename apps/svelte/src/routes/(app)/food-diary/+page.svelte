@@ -25,8 +25,9 @@
 	} from 'lucide-svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
+	import { SvelteDate } from 'svelte/reactivity';
 
-	let selectedDay = $state<Date>();
+	let selectedDay = $state<SvelteDate>();
 
 	const macroDataQuery = createQuery(() => ({
 		queryKey: ['macro-data'],
@@ -83,13 +84,13 @@
 		if (urlDay) {
 			const parsedDate = new Date(urlDay);
 			if (!isNaN(parsedDate.getTime())) {
-				selectedDay = parsedDate;
+				selectedDay = new SvelteDate(parsedDate);
 				return;
 			}
 		}
 
 		if (!selectedDay) {
-			const today = new Date();
+			const today = new SvelteDate();
 			goto(`/food-diary?day=${today.toISOString().split('T')[0]}`);
 			selectedDay = today;
 		}
@@ -98,7 +99,7 @@
 	function changeDay(direction: 'prev' | 'next') {
 		if (!selectedDay) return;
 
-		const newDate = new Date(selectedDay);
+		const newDate = new SvelteDate(selectedDay);
 		if (direction === 'prev') {
 			newDate.setDate(newDate.getDate() - 1);
 		} else {

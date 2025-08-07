@@ -1,21 +1,12 @@
 import { z } from 'zod';
 
 export const macroTrackingMetricsSchema = z.object({
-	bodyweight: z
-		.number()
-		.min(0, 'Bodyweight must be a positive number')
-		.default(0),
+	bodyweight: z.number().min(0, 'Bodyweight must be a positive number').default(0),
 	bodyweightUnit: z.enum(['kg', 'lb']),
-	height: z
-		.number()
-		.min(0, 'Height must be a positive number')
-		.default(0),
+	height: z.number().min(0, 'Height must be a positive number').default(0),
 	heightUnit: z.enum(['cm', 'in']),
 	gender: z.enum(['Male', 'Female']),
-	age: z
-		.number()
-		.min(0, 'Age must be a positive number')
-		.default(0),
+	age: z.number().min(0, 'Age must be a positive number').default(0),
 	bodyFatPercentage: z
 		.number()
 		.min(0, 'Body fat percentage must be a positive number')

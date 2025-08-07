@@ -352,34 +352,6 @@ export function whereDateTimeFilter<T, R extends Prisma.Result<T, object, 'findF
 	return true;
 }
 
-export function whereStringListFilter<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
-	record: R,
-	fieldName: keyof R,
-	scalarListFilter: undefined | Prisma.StringNullableListFilter<unknown>
-): boolean {
-	if (scalarListFilter === undefined) return true;
-
-	const value = record[fieldName] as string[] | undefined;
-	if (value === undefined && Object.keys(scalarListFilter).length) return false;
-	if (Array.isArray(scalarListFilter.equals)) {
-		if (scalarListFilter.equals.length !== value?.length) return false;
-		if (!scalarListFilter.equals.every((val, i) => val === value[i])) return false;
-	}
-	if (typeof scalarListFilter.has === 'string') {
-		if (!value?.includes(scalarListFilter.has)) return false;
-	}
-	if (scalarListFilter.has === null) return false;
-	if (Array.isArray(scalarListFilter.hasSome)) {
-		if (!scalarListFilter.hasSome.some((val) => value?.includes(val))) return false;
-	}
-	if (Array.isArray(scalarListFilter.hasEvery)) {
-		if (!scalarListFilter.hasEvery.every((val) => value?.includes(val))) return false;
-	}
-	if (scalarListFilter.isEmpty === true && value?.length) return false;
-	if (scalarListFilter.isEmpty === false && value?.length === 0) return false;
-	return true;
-}
-
 export function handleStringUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
@@ -505,28 +477,6 @@ export function handleEnumUpdateField<T, R extends Prisma.Result<T, object, 'fin
 		(record[fieldName] as string) = enumUpdate;
 	} else if (enumUpdate.set !== undefined) {
 		(record[fieldName] as string) = enumUpdate.set;
-	}
-}
-
-export function handleScalarListUpdateField<
-	T,
-	R extends Prisma.Result<T, object, 'findFirstOrThrow'>
->(
-	record: R,
-	fieldName: keyof R,
-	listUpdate: undefined | unknown[] | { set?: unknown[]; push?: unknown | unknown[] }
-) {
-	if (listUpdate === undefined) return;
-	if (Array.isArray(listUpdate)) {
-		(record[fieldName] as unknown[] | undefined) = listUpdate;
-	} else if (listUpdate.set !== undefined) {
-		(record[fieldName] as unknown[] | undefined) = listUpdate.set;
-	} else if (listUpdate.push !== undefined) {
-		if (Array.isArray(record[fieldName])) {
-			record[fieldName].push(...convertToArray(listUpdate.push));
-		} else {
-			(record[fieldName] as unknown[]) = convertToArray(listUpdate.push);
-		}
 	}
 }
 

@@ -12,7 +12,7 @@ enum MyFitPrimaryUsage {
   mix
 }
 
-enum DashboardItem {
+enum DashboardWidgetType {
   workout
   nutrition
   social

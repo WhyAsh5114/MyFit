@@ -6,7 +6,6 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { Label } from '$lib/components/ui/label';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
-	import { useTRPC } from '$lib/trpc/client.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import {
 		PlusCircleIcon,
@@ -18,19 +17,19 @@
 	import { Debounced } from 'runed';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import { searchFoods } from '../food.remote';
 
 	let selectedDay = $state<string>(null!);
 	onMount(() => (selectedDay = page.url.searchParams.get('day')!));
 
 	let searchTerm = $state('');
 	const debounced = new Debounced(() => searchTerm, 500);
-	const trpc = useTRPC();
 
 	const searchQuery = createQuery(() => ({
 		queryFn: async () => {
 			if (!debounced.current) return [];
 			try {
-				return await trpc.food.search.query({ query: debounced.current });
+				return await searchFoods({ query: debounced.current });
 			} catch (error) {
 				toast.error('Error fetching food data');
 				console.error('Error fetching food data:', error);

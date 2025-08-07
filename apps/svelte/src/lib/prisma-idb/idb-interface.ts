@@ -36,6 +36,20 @@ export interface PrismaIDBSchema extends DBSchema {
 			];
 		};
 	};
+	ExerciseSplitDaySessionExerciseNote: {
+		key: [id: Prisma.ExerciseSplitDaySessionExerciseNote['id']];
+		value: Prisma.ExerciseSplitDaySessionExerciseNote;
+	};
+	ExerciseSplitDaySessionExerciseSecondaryMuscleGroup: {
+		key: [id: Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroup['id']];
+		value: Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroup;
+		indexes: {
+			exerciseId_muscleGroupIndex: [
+				exerciseId: Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroup['exerciseId'],
+				muscleGroup: Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroup['muscleGroup']
+			];
+		};
+	};
 	MacroTargets: {
 		key: [id: Prisma.MacroTargets['id']];
 		value: Prisma.MacroTargets;
@@ -69,11 +83,15 @@ export interface PrismaIDBSchema extends DBSchema {
 			userIdIndex: [userId: Prisma.GettingStartedAnswers['userId']];
 		};
 	};
-	DashboardItems: {
-		key: [id: Prisma.DashboardItems['id']];
-		value: Prisma.DashboardItems;
+	DashboardItem: {
+		key: [id: Prisma.DashboardItem['id']];
+		value: Prisma.DashboardItem;
 		indexes: {
-			userIdIndex: [userId: Prisma.DashboardItems['userId']];
+			userIdIndex: [userId: Prisma.DashboardItem['userId']];
+			userId_typeIndex: [
+				userId: Prisma.DashboardItem['userId'],
+				type: Prisma.DashboardItem['type']
+			];
 		};
 	};
 	User: {

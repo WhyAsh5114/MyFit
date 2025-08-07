@@ -18,13 +18,15 @@ export class PrismaIDBClient {
 	exerciseSplitDay!: ExerciseSplitDayIDBClass;
 	exerciseSplitDaySession!: ExerciseSplitDaySessionIDBClass;
 	exerciseSplitDaySessionExercise!: ExerciseSplitDaySessionExerciseIDBClass;
+	exerciseSplitDaySessionExerciseNote!: ExerciseSplitDaySessionExerciseNoteIDBClass;
+	exerciseSplitDaySessionExerciseSecondaryMuscleGroup!: ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass;
 	macroTargets!: MacroTargetsIDBClass;
 	macroMetrics!: MacroMetricsIDBClass;
 	macroActivityTrackingPreferences!: MacroActivityTrackingPreferencesIDBClass;
 	foodEntry!: FoodEntryIDBClass;
 	nutritionData!: NutritionDataIDBClass;
 	gettingStartedAnswers!: GettingStartedAnswersIDBClass;
-	dashboardItems!: DashboardItemsIDBClass;
+	dashboardItem!: DashboardItemIDBClass;
 	user!: UserIDBClass;
 	session!: SessionIDBClass;
 	account!: AccountIDBClass;
@@ -72,6 +74,16 @@ export class PrismaIDBClient {
 					['exerciseSplitDaySessionId', 'exerciseIndex'],
 					{ unique: true }
 				);
+				db.createObjectStore('ExerciseSplitDaySessionExerciseNote', { keyPath: ['id'] });
+				const ExerciseSplitDaySessionExerciseSecondaryMuscleGroupStore = db.createObjectStore(
+					'ExerciseSplitDaySessionExerciseSecondaryMuscleGroup',
+					{ keyPath: ['id'] }
+				);
+				ExerciseSplitDaySessionExerciseSecondaryMuscleGroupStore.createIndex(
+					'exerciseId_muscleGroupIndex',
+					['exerciseId', 'muscleGroup'],
+					{ unique: true }
+				);
 				const MacroTargetsStore = db.createObjectStore('MacroTargets', { keyPath: ['id'] });
 				MacroTargetsStore.createIndex('userIdIndex', ['userId'], { unique: true });
 				db.createObjectStore('MacroMetrics', { keyPath: ['id'] });
@@ -88,8 +100,9 @@ export class PrismaIDBClient {
 					keyPath: ['id']
 				});
 				GettingStartedAnswersStore.createIndex('userIdIndex', ['userId'], { unique: true });
-				const DashboardItemsStore = db.createObjectStore('DashboardItems', { keyPath: ['id'] });
-				DashboardItemsStore.createIndex('userIdIndex', ['userId'], { unique: true });
+				const DashboardItemStore = db.createObjectStore('DashboardItem', { keyPath: ['id'] });
+				DashboardItemStore.createIndex('userIdIndex', ['userId'], { unique: true });
+				DashboardItemStore.createIndex('userId_typeIndex', ['userId', 'type'], { unique: true });
 				const UserStore = db.createObjectStore('User', { keyPath: ['id'] });
 				UserStore.createIndex('emailIndex', ['email'], { unique: true });
 				const SessionStore = db.createObjectStore('Session', { keyPath: ['id'] });
@@ -104,6 +117,12 @@ export class PrismaIDBClient {
 		this.exerciseSplitDaySessionExercise = new ExerciseSplitDaySessionExerciseIDBClass(this, [
 			'id'
 		]);
+		this.exerciseSplitDaySessionExerciseNote = new ExerciseSplitDaySessionExerciseNoteIDBClass(
+			this,
+			['id']
+		);
+		this.exerciseSplitDaySessionExerciseSecondaryMuscleGroup =
+			new ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass(this, ['id']);
 		this.macroTargets = new MacroTargetsIDBClass(this, ['id']);
 		this.macroMetrics = new MacroMetricsIDBClass(this, ['id']);
 		this.macroActivityTrackingPreferences = new MacroActivityTrackingPreferencesIDBClass(this, [
@@ -112,7 +131,7 @@ export class PrismaIDBClient {
 		this.foodEntry = new FoodEntryIDBClass(this, ['id']);
 		this.nutritionData = new NutritionDataIDBClass(this, ['id']);
 		this.gettingStartedAnswers = new GettingStartedAnswersIDBClass(this, ['id']);
-		this.dashboardItems = new DashboardItemsIDBClass(this, ['id']);
+		this.dashboardItem = new DashboardItemIDBClass(this, ['id']);
 		this.user = new UserIDBClass(this, ['id']);
 		this.session = new SessionIDBClass(this, ['id']);
 		this.account = new AccountIDBClass(this, ['id']);
@@ -3635,10 +3654,6 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 					for (const field of stringFields) {
 						if (!IDBUtils.whereStringFilter(record, field, whereClause[field])) return null;
 					}
-					const stringListFields = ['notes', 'secondaryMuscleGroups'] as const;
-					for (const field of stringListFields) {
-						if (!IDBUtils.whereStringListFilter(record, field, whereClause[field])) return null;
-					}
 					const numberFields = ['exerciseIndex', 'repRangeStart', 'repRangeEnd'] as const;
 					for (const field of numberFields) {
 						if (!IDBUtils.whereNumberFilter(record, field, whereClause[field])) return null;
@@ -3670,6 +3685,62 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 								tx
 							);
 							if (!relatedRecord) return null;
+						}
+					}
+					if (whereClause.notes) {
+						if (whereClause.notes.every) {
+							const violatingRecord =
+								await this.client.exerciseSplitDaySessionExerciseNote.findFirst({
+									where: { NOT: { ...whereClause.notes.every }, exerciseId: record.id },
+									tx
+								});
+							if (violatingRecord !== null) return null;
+						}
+						if (whereClause.notes.some) {
+							const relatedRecords = await this.client.exerciseSplitDaySessionExerciseNote.findMany(
+								{
+									where: { ...whereClause.notes.some, exerciseId: record.id },
+									tx
+								}
+							);
+							if (relatedRecords.length === 0) return null;
+						}
+						if (whereClause.notes.none) {
+							const violatingRecord =
+								await this.client.exerciseSplitDaySessionExerciseNote.findFirst({
+									where: { ...whereClause.notes.none, exerciseId: record.id },
+									tx
+								});
+							if (violatingRecord !== null) return null;
+						}
+					}
+					if (whereClause.secondaryMuscleGroups) {
+						if (whereClause.secondaryMuscleGroups.every) {
+							const violatingRecord =
+								await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.findFirst({
+									where: {
+										NOT: { ...whereClause.secondaryMuscleGroups.every },
+										exerciseId: record.id
+									},
+									tx
+								});
+							if (violatingRecord !== null) return null;
+						}
+						if (whereClause.secondaryMuscleGroups.some) {
+							const relatedRecords =
+								await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.findMany({
+									where: { ...whereClause.secondaryMuscleGroups.some, exerciseId: record.id },
+									tx
+								});
+							if (relatedRecords.length === 0) return null;
+						}
+						if (whereClause.secondaryMuscleGroups.none) {
+							const violatingRecord =
+								await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.findFirst({
+									where: { ...whereClause.secondaryMuscleGroups.none, exerciseId: record.id },
+									tx
+								});
+							if (violatingRecord !== null) return null;
 						}
 					}
 					return record;
@@ -3705,14 +3776,14 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 				'id',
 				'exerciseIndex',
 				'name',
-				'notes',
 				'primaryMuscleGroup',
-				'secondaryMuscleGroups',
 				'repRangeStart',
 				'repRangeEnd',
 				'setType',
 				'exerciseSplitDaySession',
-				'exerciseSplitDaySessionId'
+				'exerciseSplitDaySessionId',
+				'notes',
+				'secondaryMuscleGroups'
 			]) {
 				const key = untypedKey as keyof typeof record & keyof S;
 				if (!selectClause[key]) delete partialRecord[key];
@@ -3754,6 +3825,28 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 						{
 							...(attach_exerciseSplitDaySession === true ? {} : attach_exerciseSplitDaySession),
 							where: { id: record.exerciseSplitDaySessionId! }
+						},
+						tx
+					);
+			}
+			const attach_notes = query.select?.notes || query.include?.notes;
+			if (attach_notes) {
+				unsafeRecord['notes'] = await this.client.exerciseSplitDaySessionExerciseNote.findMany(
+					{
+						...(attach_notes === true ? {} : attach_notes),
+						where: { exerciseId: record.id! }
+					},
+					tx
+				);
+			}
+			const attach_secondaryMuscleGroups =
+				query.select?.secondaryMuscleGroups || query.include?.secondaryMuscleGroups;
+			if (attach_secondaryMuscleGroups) {
+				unsafeRecord['secondaryMuscleGroups'] =
+					await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.findMany(
+						{
+							...(attach_secondaryMuscleGroups === true ? {} : attach_secondaryMuscleGroups),
+							where: { exerciseId: record.id! }
 						},
 						tx
 					);
@@ -3815,9 +3908,7 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 			'id',
 			'exerciseIndex',
 			'name',
-			'notes',
 			'primaryMuscleGroup',
-			'secondaryMuscleGroups',
 			'repRangeStart',
 			'repRangeEnd',
 			'setType',
@@ -3833,6 +3924,18 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 				tx
 			);
 		}
+		if (orderByInput.notes) {
+			return await this.client.exerciseSplitDaySessionExerciseNote.count(
+				{ where: { exerciseId: record.id } },
+				tx
+			);
+		}
+		if (orderByInput.secondaryMuscleGroups) {
+			return await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.count(
+				{ where: { exerciseId: record.id } },
+				tx
+			);
+		}
 	}
 
 	_resolveSortOrder(
@@ -3842,9 +3945,7 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 			'id',
 			'exerciseIndex',
 			'name',
-			'notes',
 			'primaryMuscleGroup',
-			'secondaryMuscleGroups',
 			'repRangeStart',
 			'repRangeEnd',
 			'setType',
@@ -3856,6 +3957,12 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 				orderByInput.exerciseSplitDaySession
 			);
 		}
+		if (orderByInput.notes?._count) {
+			return orderByInput.notes._count;
+		}
+		if (orderByInput.secondaryMuscleGroups?._count) {
+			return orderByInput.secondaryMuscleGroups._count;
+		}
 		throw new Error('No field in orderBy clause');
 	}
 
@@ -3865,12 +3972,6 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 		if (data === undefined) data = {} as NonNullable<D>;
 		if (data.id === undefined) {
 			data.id = uuidv4();
-		}
-		if (!Array.isArray(data.notes)) {
-			data.notes = data.notes?.set;
-		}
-		if (!Array.isArray(data.secondaryMuscleGroups)) {
-			data.secondaryMuscleGroups = data.secondaryMuscleGroups?.set;
 		}
 		return data;
 	}
@@ -3890,6 +3991,36 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 			neededStores.add('ExerciseSplitDaySession');
 			this.client.exerciseSplitDaySession._getNeededStoresForWhere(
 				whereClause.exerciseSplitDaySession,
+				neededStores
+			);
+		}
+		if (whereClause.notes) {
+			neededStores.add('ExerciseSplitDaySessionExerciseNote');
+			this.client.exerciseSplitDaySessionExerciseNote._getNeededStoresForWhere(
+				whereClause.notes.every,
+				neededStores
+			);
+			this.client.exerciseSplitDaySessionExerciseNote._getNeededStoresForWhere(
+				whereClause.notes.some,
+				neededStores
+			);
+			this.client.exerciseSplitDaySessionExerciseNote._getNeededStoresForWhere(
+				whereClause.notes.none,
+				neededStores
+			);
+		}
+		if (whereClause.secondaryMuscleGroups) {
+			neededStores.add('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+			this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup._getNeededStoresForWhere(
+				whereClause.secondaryMuscleGroups.every,
+				neededStores
+			);
+			this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup._getNeededStoresForWhere(
+				whereClause.secondaryMuscleGroups.some,
+				neededStores
+			);
+			this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup._getNeededStoresForWhere(
+				whereClause.secondaryMuscleGroups.none,
 				neededStores
 			);
 		}
@@ -3913,6 +4044,14 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 					})
 					.forEach((storeName) => neededStores.add(storeName));
 			}
+			const orderBy_notes = orderBy.find((clause) => clause.notes);
+			if (orderBy_notes) {
+				neededStores.add('ExerciseSplitDaySessionExerciseNote');
+			}
+			const orderBy_secondaryMuscleGroups = orderBy.find((clause) => clause.secondaryMuscleGroups);
+			if (orderBy_secondaryMuscleGroups) {
+				neededStores.add('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+			}
 		}
 		if (query?.select?.exerciseSplitDaySession || query?.include?.exerciseSplitDaySession) {
 			neededStores.add('ExerciseSplitDaySession');
@@ -3924,6 +4063,32 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 			if (typeof query.include?.exerciseSplitDaySession === 'object') {
 				this.client.exerciseSplitDaySession
 					._getNeededStoresForFind(query.include.exerciseSplitDaySession)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		if (query?.select?.notes || query?.include?.notes) {
+			neededStores.add('ExerciseSplitDaySessionExerciseNote');
+			if (typeof query.select?.notes === 'object') {
+				this.client.exerciseSplitDaySessionExerciseNote
+					._getNeededStoresForFind(query.select.notes)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.notes === 'object') {
+				this.client.exerciseSplitDaySessionExerciseNote
+					._getNeededStoresForFind(query.include.notes)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		if (query?.select?.secondaryMuscleGroups || query?.include?.secondaryMuscleGroups) {
+			neededStores.add('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+			if (typeof query.select?.secondaryMuscleGroups === 'object') {
+				this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup
+					._getNeededStoresForFind(query.select.secondaryMuscleGroups)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.secondaryMuscleGroups === 'object') {
+				this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup
+					._getNeededStoresForFind(query.include.secondaryMuscleGroups)
 					.forEach((storeName) => neededStores.add(storeName));
 			}
 		}
@@ -3957,6 +4122,60 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 		}
 		if (data.exerciseSplitDaySessionId !== undefined) {
 			neededStores.add('ExerciseSplitDaySession');
+		}
+		if (data?.notes) {
+			neededStores.add('ExerciseSplitDaySessionExerciseNote');
+			if (data.notes.create) {
+				const createData = Array.isArray(data.notes.create)
+					? data.notes.create
+					: [data.notes.create];
+				createData.forEach((record) =>
+					this.client.exerciseSplitDaySessionExerciseNote
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.notes.connectOrCreate) {
+				IDBUtils.convertToArray(data.notes.connectOrCreate).forEach((record) =>
+					this.client.exerciseSplitDaySessionExerciseNote
+						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.notes.createMany) {
+				IDBUtils.convertToArray(data.notes.createMany.data).forEach((record) =>
+					this.client.exerciseSplitDaySessionExerciseNote
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+		}
+		if (data?.secondaryMuscleGroups) {
+			neededStores.add('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+			if (data.secondaryMuscleGroups.create) {
+				const createData = Array.isArray(data.secondaryMuscleGroups.create)
+					? data.secondaryMuscleGroups.create
+					: [data.secondaryMuscleGroups.create];
+				createData.forEach((record) =>
+					this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.secondaryMuscleGroups.connectOrCreate) {
+				IDBUtils.convertToArray(data.secondaryMuscleGroups.connectOrCreate).forEach((record) =>
+					this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup
+						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.secondaryMuscleGroups.createMany) {
+				IDBUtils.convertToArray(data.secondaryMuscleGroups.createMany.data).forEach((record) =>
+					this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
 		}
 		return neededStores;
 	}
@@ -3997,11 +4216,139 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 					.forEach((store) => neededStores.add(store));
 			});
 		}
+		if (query.data?.notes?.connect) {
+			neededStores.add('ExerciseSplitDaySessionExerciseNote');
+			IDBUtils.convertToArray(query.data.notes.connect).forEach((connect) => {
+				this.client.exerciseSplitDaySessionExerciseNote._getNeededStoresForWhere(
+					connect,
+					neededStores
+				);
+			});
+		}
+		if (query.data?.notes?.set) {
+			neededStores.add('ExerciseSplitDaySessionExerciseNote');
+			IDBUtils.convertToArray(query.data.notes.set).forEach((setWhere) => {
+				this.client.exerciseSplitDaySessionExerciseNote._getNeededStoresForWhere(
+					setWhere,
+					neededStores
+				);
+			});
+		}
+		if (query.data?.notes?.updateMany) {
+			neededStores.add('ExerciseSplitDaySessionExerciseNote');
+			IDBUtils.convertToArray(query.data.notes.updateMany).forEach((update) => {
+				this.client.exerciseSplitDaySessionExerciseNote
+					._getNeededStoresForUpdate(
+						update as Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'update'>
+					)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.notes?.update) {
+			neededStores.add('ExerciseSplitDaySessionExerciseNote');
+			IDBUtils.convertToArray(query.data.notes.update).forEach((update) => {
+				this.client.exerciseSplitDaySessionExerciseNote
+					._getNeededStoresForUpdate(
+						update as Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'update'>
+					)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.notes?.upsert) {
+			neededStores.add('ExerciseSplitDaySessionExerciseNote');
+			IDBUtils.convertToArray(query.data.notes.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'update'>;
+				this.client.exerciseSplitDaySessionExerciseNote
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.secondaryMuscleGroups?.connect) {
+			neededStores.add('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+			IDBUtils.convertToArray(query.data.secondaryMuscleGroups.connect).forEach((connect) => {
+				this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup._getNeededStoresForWhere(
+					connect,
+					neededStores
+				);
+			});
+		}
+		if (query.data?.secondaryMuscleGroups?.set) {
+			neededStores.add('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+			IDBUtils.convertToArray(query.data.secondaryMuscleGroups.set).forEach((setWhere) => {
+				this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup._getNeededStoresForWhere(
+					setWhere,
+					neededStores
+				);
+			});
+		}
+		if (query.data?.secondaryMuscleGroups?.updateMany) {
+			neededStores.add('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+			IDBUtils.convertToArray(query.data.secondaryMuscleGroups.updateMany).forEach((update) => {
+				this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup
+					._getNeededStoresForUpdate(
+						update as Prisma.Args<
+							Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+							'update'
+						>
+					)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.secondaryMuscleGroups?.update) {
+			neededStores.add('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+			IDBUtils.convertToArray(query.data.secondaryMuscleGroups.update).forEach((update) => {
+				this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup
+					._getNeededStoresForUpdate(
+						update as Prisma.Args<
+							Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+							'update'
+						>
+					)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.secondaryMuscleGroups?.upsert) {
+			neededStores.add('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+			IDBUtils.convertToArray(query.data.secondaryMuscleGroups.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<
+					Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+					'update'
+				>;
+				this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.notes?.delete || query.data?.notes?.deleteMany) {
+			this.client.exerciseSplitDaySessionExerciseNote._getNeededStoresForNestedDelete(neededStores);
+		}
+		if (
+			query.data?.secondaryMuscleGroups?.delete ||
+			query.data?.secondaryMuscleGroups?.deleteMany
+		) {
+			this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup._getNeededStoresForNestedDelete(
+				neededStores
+			);
+		}
+		if (query.data?.id !== undefined) {
+			neededStores.add('ExerciseSplitDaySessionExerciseNote');
+			neededStores.add('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+		}
 		return neededStores;
 	}
 
 	_getNeededStoresForNestedDelete(neededStores: Set<StoreNames<PrismaIDBSchema>>): void {
 		neededStores.add('ExerciseSplitDaySessionExercise');
+		this.client.exerciseSplitDaySessionExerciseNote._getNeededStoresForNestedDelete(neededStores);
+		this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup._getNeededStoresForNestedDelete(
+			neededStores
+		);
 	}
 
 	private _removeNestedCreateData<
@@ -4011,6 +4358,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 	): Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseDelegate, object, 'findFirstOrThrow'> {
 		const recordWithoutNestedCreate = structuredClone(data);
 		delete recordWithoutNestedCreate?.exerciseSplitDaySession;
+		delete recordWithoutNestedCreate?.notes;
+		delete recordWithoutNestedCreate?.secondaryMuscleGroups;
 		return recordWithoutNestedCreate as Prisma.Result<
 			Prisma.ExerciseSplitDaySessionExerciseDelegate,
 			object,
@@ -4020,12 +4369,7 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 
 	private _preprocessListFields(
 		records: Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseDelegate, object, 'findMany'>
-	): void {
-		for (const record of records) {
-			record.notes = record.notes ?? [];
-			record.secondaryMuscleGroups = record.secondaryMuscleGroups ?? [];
-		}
-	}
+	): void {}
 
 	async findMany<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'findMany'>>(
 		query?: Q,
@@ -4235,6 +4579,114 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 		}
 		const record = this._removeNestedCreateData(await this._fillDefaults(query.data, tx));
 		const keyPath = await tx.objectStore('ExerciseSplitDaySessionExercise').add(record);
+		if (query.data?.notes?.create) {
+			for (const elem of IDBUtils.convertToArray(query.data.notes.create)) {
+				await this.client.exerciseSplitDaySessionExerciseNote.create(
+					{
+						data: { ...elem, exercise: { connect: { id: keyPath[0] } } } as Prisma.Args<
+							Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+							'create'
+						>['data']
+					},
+					tx
+				);
+			}
+		}
+		if (query.data?.notes?.connect) {
+			await Promise.all(
+				IDBUtils.convertToArray(query.data.notes.connect).map(async (connectWhere) => {
+					await this.client.exerciseSplitDaySessionExerciseNote.update(
+						{ where: connectWhere, data: { exerciseId: keyPath[0] } },
+						tx
+					);
+				})
+			);
+		}
+		if (query.data?.notes?.connectOrCreate) {
+			await Promise.all(
+				IDBUtils.convertToArray(query.data.notes.connectOrCreate).map(async (connectOrCreate) => {
+					await this.client.exerciseSplitDaySessionExerciseNote.upsert(
+						{
+							where: connectOrCreate.where,
+							create: { ...connectOrCreate.create, exerciseId: keyPath[0] } as Prisma.Args<
+								Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+								'create'
+							>['data'],
+							update: { exerciseId: keyPath[0] }
+						},
+						tx
+					);
+				})
+			);
+		}
+		if (query.data?.notes?.createMany) {
+			await this.client.exerciseSplitDaySessionExerciseNote.createMany(
+				{
+					data: IDBUtils.convertToArray(query.data.notes.createMany.data).map((createData) => ({
+						...createData,
+						exerciseId: keyPath[0]
+					}))
+				},
+				tx
+			);
+		}
+		if (query.data?.secondaryMuscleGroups?.create) {
+			for (const elem of IDBUtils.convertToArray(query.data.secondaryMuscleGroups.create)) {
+				await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.create(
+					{
+						data: { ...elem, exercise: { connect: { id: keyPath[0] } } } as Prisma.Args<
+							Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+							'create'
+						>['data']
+					},
+					tx
+				);
+			}
+		}
+		if (query.data?.secondaryMuscleGroups?.connect) {
+			await Promise.all(
+				IDBUtils.convertToArray(query.data.secondaryMuscleGroups.connect).map(
+					async (connectWhere) => {
+						await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.update(
+							{ where: connectWhere, data: { exerciseId: keyPath[0] } },
+							tx
+						);
+					}
+				)
+			);
+		}
+		if (query.data?.secondaryMuscleGroups?.connectOrCreate) {
+			await Promise.all(
+				IDBUtils.convertToArray(query.data.secondaryMuscleGroups.connectOrCreate).map(
+					async (connectOrCreate) => {
+						await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.upsert(
+							{
+								where: connectOrCreate.where,
+								create: { ...connectOrCreate.create, exerciseId: keyPath[0] } as Prisma.Args<
+									Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+									'create'
+								>['data'],
+								update: { exerciseId: keyPath[0] }
+							},
+							tx
+						);
+					}
+				)
+			);
+		}
+		if (query.data?.secondaryMuscleGroups?.createMany) {
+			await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.createMany(
+				{
+					data: IDBUtils.convertToArray(query.data.secondaryMuscleGroups.createMany.data).map(
+						(createData) => ({
+							...createData,
+							exerciseId: keyPath[0]
+						})
+					)
+				},
+				tx
+			);
+		}
 		const data = (await tx.objectStore('ExerciseSplitDaySessionExercise').get(keyPath))!;
 		const recordsWithRelations = this._applySelectClause(
 			await this._applyRelations<object>([data], tx, query),
@@ -4303,6 +4755,18 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
+		await this.client.exerciseSplitDaySessionExerciseNote.deleteMany(
+			{
+				where: { exerciseId: record.id }
+			},
+			tx
+		);
+		await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.deleteMany(
+			{
+				where: { exerciseId: record.id }
+			},
+			tx
+		);
 		await tx.objectStore('ExerciseSplitDaySessionExercise').delete([record.id]);
 		this.emit('delete', [record.id]);
 		return record;
@@ -4348,10 +4812,6 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 		const enumFields = ['setType'] as const;
 		for (const field of enumFields) {
 			IDBUtils.handleEnumUpdateField(record, field, query.data[field]);
-		}
-		const listFields = ['notes', 'secondaryMuscleGroups'] as const;
-		for (const field of listFields) {
-			IDBUtils.handleScalarListUpdateField(record, field, query.data[field]);
 		}
 		if (query.data.exerciseSplitDaySession) {
 			if (query.data.exerciseSplitDaySession.connect) {
@@ -4416,6 +4876,245 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 				);
 			}
 		}
+		if (query.data.notes) {
+			if (query.data.notes.connect) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.notes.connect).map(async (connectWhere) => {
+						await this.client.exerciseSplitDaySessionExerciseNote.update(
+							{ where: connectWhere, data: { exerciseId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.notes.disconnect) {
+				throw new Error('Cannot disconnect required relation');
+			}
+			if (query.data.notes.create) {
+				const createData = Array.isArray(query.data.notes.create)
+					? query.data.notes.create
+					: [query.data.notes.create];
+				for (const elem of createData) {
+					await this.client.exerciseSplitDaySessionExerciseNote.create(
+						{
+							data: { ...elem, exerciseId: record.id } as Prisma.Args<
+								Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+								'create'
+							>['data']
+						},
+						tx
+					);
+				}
+			}
+			if (query.data.notes.createMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.notes.createMany.data).map(async (createData) => {
+						await this.client.exerciseSplitDaySessionExerciseNote.create(
+							{ data: { ...createData, exerciseId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.notes.update) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.notes.update).map(async (updateData) => {
+						await this.client.exerciseSplitDaySessionExerciseNote.update(updateData, tx);
+					})
+				);
+			}
+			if (query.data.notes.updateMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.notes.updateMany).map(async (updateData) => {
+						await this.client.exerciseSplitDaySessionExerciseNote.updateMany(updateData, tx);
+					})
+				);
+			}
+			if (query.data.notes.upsert) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.notes.upsert).map(async (upsertData) => {
+						await this.client.exerciseSplitDaySessionExerciseNote.upsert(
+							{
+								...upsertData,
+								where: { ...upsertData.where, exerciseId: record.id },
+								create: { ...upsertData.create, exerciseId: record.id } as Prisma.Args<
+									Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+									'upsert'
+								>['create']
+							},
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.notes.delete) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.notes.delete).map(async (deleteData) => {
+						await this.client.exerciseSplitDaySessionExerciseNote.delete(
+							{ where: { ...deleteData, exerciseId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.notes.deleteMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.notes.deleteMany).map(async (deleteData) => {
+						await this.client.exerciseSplitDaySessionExerciseNote.deleteMany(
+							{ where: { ...deleteData, exerciseId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.notes.set) {
+				const existing = await this.client.exerciseSplitDaySessionExerciseNote.findMany(
+					{ where: { exerciseId: record.id } },
+					tx
+				);
+				if (existing.length > 0) {
+					throw new Error('Cannot set required relation');
+				}
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.notes.set).map(async (setData) => {
+						await this.client.exerciseSplitDaySessionExerciseNote.update(
+							{ where: setData, data: { exerciseId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+		}
+		if (query.data.secondaryMuscleGroups) {
+			if (query.data.secondaryMuscleGroups.connect) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.secondaryMuscleGroups.connect).map(
+						async (connectWhere) => {
+							await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.update(
+								{ where: connectWhere, data: { exerciseId: record.id } },
+								tx
+							);
+						}
+					)
+				);
+			}
+			if (query.data.secondaryMuscleGroups.disconnect) {
+				throw new Error('Cannot disconnect required relation');
+			}
+			if (query.data.secondaryMuscleGroups.create) {
+				const createData = Array.isArray(query.data.secondaryMuscleGroups.create)
+					? query.data.secondaryMuscleGroups.create
+					: [query.data.secondaryMuscleGroups.create];
+				for (const elem of createData) {
+					await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.create(
+						{
+							data: { ...elem, exerciseId: record.id } as Prisma.Args<
+								Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+								'create'
+							>['data']
+						},
+						tx
+					);
+				}
+			}
+			if (query.data.secondaryMuscleGroups.createMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.secondaryMuscleGroups.createMany.data).map(
+						async (createData) => {
+							await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.create(
+								{ data: { ...createData, exerciseId: record.id } },
+								tx
+							);
+						}
+					)
+				);
+			}
+			if (query.data.secondaryMuscleGroups.update) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.secondaryMuscleGroups.update).map(
+						async (updateData) => {
+							await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.update(
+								updateData,
+								tx
+							);
+						}
+					)
+				);
+			}
+			if (query.data.secondaryMuscleGroups.updateMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.secondaryMuscleGroups.updateMany).map(
+						async (updateData) => {
+							await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.updateMany(
+								updateData,
+								tx
+							);
+						}
+					)
+				);
+			}
+			if (query.data.secondaryMuscleGroups.upsert) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.secondaryMuscleGroups.upsert).map(
+						async (upsertData) => {
+							await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.upsert(
+								{
+									...upsertData,
+									where: { ...upsertData.where, exerciseId: record.id },
+									create: { ...upsertData.create, exerciseId: record.id } as Prisma.Args<
+										Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+										'upsert'
+									>['create']
+								},
+								tx
+							);
+						}
+					)
+				);
+			}
+			if (query.data.secondaryMuscleGroups.delete) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.secondaryMuscleGroups.delete).map(
+						async (deleteData) => {
+							await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.delete(
+								{ where: { ...deleteData, exerciseId: record.id } },
+								tx
+							);
+						}
+					)
+				);
+			}
+			if (query.data.secondaryMuscleGroups.deleteMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.secondaryMuscleGroups.deleteMany).map(
+						async (deleteData) => {
+							await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.deleteMany(
+								{ where: { ...deleteData, exerciseId: record.id } },
+								tx
+							);
+						}
+					)
+				);
+			}
+			if (query.data.secondaryMuscleGroups.set) {
+				const existing =
+					await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.findMany(
+						{ where: { exerciseId: record.id } },
+						tx
+					);
+				if (existing.length > 0) {
+					throw new Error('Cannot set required relation');
+				}
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.secondaryMuscleGroups.set).map(async (setData) => {
+						await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.update(
+							{ where: setData, data: { exerciseId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+		}
 		if (query.data.exerciseSplitDaySessionId !== undefined) {
 			const related = await this.client.exerciseSplitDaySession.findUnique(
 				{ where: { id: record.exerciseSplitDaySessionId } },
@@ -4439,6 +5138,20 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 		this.emit('update', keyPath, startKeyPath);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
+				await this.client.exerciseSplitDaySessionExerciseNote.updateMany(
+					{
+						where: { exerciseId: startKeyPath[0] },
+						data: { exerciseId: endKeyPath[0] }
+					},
+					tx
+				);
+				await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.updateMany(
+					{
+						where: { exerciseId: startKeyPath[0] },
+						data: { exerciseId: endKeyPath[0] }
+					},
+					tx
+				);
 				break;
 			}
 		}
@@ -4609,6 +5322,2010 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 		}
 		return result as unknown as Prisma.Result<
 			Prisma.ExerciseSplitDaySessionExerciseDelegate,
+			Q,
+			'aggregate'
+		>;
+	}
+}
+
+class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'ExerciseSplitDaySessionExerciseNote'> {
+	private async _applyWhereClause<
+		W extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			'findFirstOrThrow'
+		>['where'],
+		R extends Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			object,
+			'findFirstOrThrow'
+		>
+	>(records: R[], whereClause: W, tx: IDBUtils.TransactionType): Promise<R[]> {
+		if (!whereClause) return records;
+		records = await IDBUtils.applyLogicalFilters<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			R,
+			W
+		>(records, whereClause, tx, this.keyPath, this._applyWhereClause.bind(this));
+		return (
+			await Promise.all(
+				records.map(async (record) => {
+					const stringFields = ['id', 'exerciseId', 'note'] as const;
+					for (const field of stringFields) {
+						if (!IDBUtils.whereStringFilter(record, field, whereClause[field])) return null;
+					}
+					const numberFields = ['noteIndex'] as const;
+					for (const field of numberFields) {
+						if (!IDBUtils.whereNumberFilter(record, field, whereClause[field])) return null;
+					}
+					if (whereClause.exercise) {
+						const { is, isNot, ...rest } = whereClause.exercise;
+						if (is !== null && is !== undefined) {
+							const relatedRecord = await this.client.exerciseSplitDaySessionExercise.findFirst(
+								{ where: { ...is, id: record.exerciseId } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+						if (isNot !== null && isNot !== undefined) {
+							const relatedRecord = await this.client.exerciseSplitDaySessionExercise.findFirst(
+								{ where: { ...isNot, id: record.exerciseId } },
+								tx
+							);
+							if (relatedRecord) return null;
+						}
+						if (Object.keys(rest).length) {
+							const relatedRecord = await this.client.exerciseSplitDaySessionExercise.findFirst(
+								{ where: { ...whereClause.exercise, id: record.exerciseId } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+					}
+					return record;
+				})
+			)
+		).filter((result) => result !== null);
+	}
+
+	private _applySelectClause<
+		S extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'findMany'>['select']
+	>(
+		records: Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			object,
+			'findFirstOrThrow'
+		>[],
+		selectClause: S
+	): Prisma.Result<
+		Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+		{ select: S },
+		'findFirstOrThrow'
+	>[] {
+		if (!selectClause) {
+			return records as Prisma.Result<
+				Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+				{ select: S },
+				'findFirstOrThrow'
+			>[];
+		}
+		return records.map((record) => {
+			const partialRecord: Partial<typeof record> = record;
+			for (const untypedKey of ['id', 'exercise', 'exerciseId', 'note', 'noteIndex']) {
+				const key = untypedKey as keyof typeof record & keyof S;
+				if (!selectClause[key]) delete partialRecord[key];
+			}
+			return partialRecord;
+		}) as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			{ select: S },
+			'findFirstOrThrow'
+		>[];
+	}
+
+	private async _applyRelations<
+		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'findMany'>
+	>(
+		records: Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			object,
+			'findFirstOrThrow'
+		>[],
+		tx: IDBUtils.TransactionType,
+		query?: Q
+	): Promise<
+		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'findFirstOrThrow'>[]
+	> {
+		if (!query)
+			return records as Prisma.Result<
+				Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+				Q,
+				'findFirstOrThrow'
+			>[];
+		const recordsWithRelations = records.map(async (record) => {
+			const unsafeRecord = record as Record<string, unknown>;
+			const attach_exercise = query.select?.exercise || query.include?.exercise;
+			if (attach_exercise) {
+				unsafeRecord['exercise'] = await this.client.exerciseSplitDaySessionExercise.findUnique(
+					{
+						...(attach_exercise === true ? {} : attach_exercise),
+						where: { id: record.exerciseId! }
+					},
+					tx
+				);
+			}
+			return unsafeRecord;
+		});
+		return (await Promise.all(recordsWithRelations)) as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			Q,
+			'findFirstOrThrow'
+		>[];
+	}
+
+	async _applyOrderByClause<
+		O extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			'findMany'
+		>['orderBy'],
+		R extends Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			object,
+			'findFirstOrThrow'
+		>
+	>(records: R[], orderByClause: O, tx: IDBUtils.TransactionType): Promise<void> {
+		if (orderByClause === undefined) return;
+		const orderByClauses = IDBUtils.convertToArray(orderByClause);
+		const indexedKeys = await Promise.all(
+			records.map(async (record) => {
+				const keys = await Promise.all(
+					orderByClauses.map(async (clause) => await this._resolveOrderByKey(record, clause, tx))
+				);
+				return { keys, record };
+			})
+		);
+		indexedKeys.sort((a, b) => {
+			for (let i = 0; i < orderByClauses.length; i++) {
+				const clause = orderByClauses[i];
+				const comparison = IDBUtils.genericComparator(
+					a.keys[i],
+					b.keys[i],
+					this._resolveSortOrder(clause)
+				);
+				if (comparison !== 0) return comparison;
+			}
+			return 0;
+		});
+		for (let i = 0; i < records.length; i++) {
+			records[i] = indexedKeys[i].record;
+		}
+	}
+
+	async _resolveOrderByKey(
+		record: Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			object,
+			'findFirstOrThrow'
+		>,
+		orderByInput: Prisma.ExerciseSplitDaySessionExerciseNoteOrderByWithRelationInput,
+		tx: IDBUtils.TransactionType
+	): Promise<unknown> {
+		const scalarFields = ['id', 'exerciseId', 'note', 'noteIndex'] as const;
+		for (const field of scalarFields) if (orderByInput[field]) return record[field];
+		if (orderByInput.exercise) {
+			return await this.client.exerciseSplitDaySessionExercise._resolveOrderByKey(
+				await this.client.exerciseSplitDaySessionExercise.findFirstOrThrow({
+					where: { id: record.exerciseId }
+				}),
+				orderByInput.exercise,
+				tx
+			);
+		}
+	}
+
+	_resolveSortOrder(
+		orderByInput: Prisma.ExerciseSplitDaySessionExerciseNoteOrderByWithRelationInput
+	): Prisma.SortOrder | { sort: Prisma.SortOrder; nulls?: 'first' | 'last' } {
+		const scalarFields = ['id', 'exerciseId', 'note', 'noteIndex'] as const;
+		for (const field of scalarFields) if (orderByInput[field]) return orderByInput[field];
+		if (orderByInput.exercise) {
+			return this.client.exerciseSplitDaySessionExercise._resolveSortOrder(orderByInput.exercise);
+		}
+		throw new Error('No field in orderBy clause');
+	}
+
+	private async _fillDefaults<
+		D extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'create'>['data']
+	>(data: D, tx?: IDBUtils.ReadwriteTransactionType): Promise<D> {
+		if (data === undefined) data = {} as NonNullable<D>;
+		if (data.id === undefined) {
+			data.id = uuidv4();
+		}
+		return data;
+	}
+
+	_getNeededStoresForWhere<
+		W extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'findMany'>['where']
+	>(whereClause: W, neededStores: Set<StoreNames<PrismaIDBSchema>>) {
+		if (whereClause === undefined) return;
+		for (const param of IDBUtils.LogicalParams) {
+			if (whereClause[param]) {
+				for (const clause of IDBUtils.convertToArray(whereClause[param])) {
+					this._getNeededStoresForWhere(clause, neededStores);
+				}
+			}
+		}
+		if (whereClause.exercise) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+			this.client.exerciseSplitDaySessionExercise._getNeededStoresForWhere(
+				whereClause.exercise,
+				neededStores
+			);
+		}
+	}
+
+	_getNeededStoresForFind<
+		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'findMany'>
+	>(query?: Q): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
+		neededStores.add('ExerciseSplitDaySessionExerciseNote');
+		this._getNeededStoresForWhere(query?.where, neededStores);
+		if (query?.orderBy) {
+			const orderBy = IDBUtils.convertToArray(query.orderBy);
+			const orderBy_exercise = orderBy.find((clause) => clause.exercise);
+			if (orderBy_exercise) {
+				this.client.exerciseSplitDaySessionExercise
+					._getNeededStoresForFind({ orderBy: orderBy_exercise.exercise })
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		if (query?.select?.exercise || query?.include?.exercise) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+			if (typeof query.select?.exercise === 'object') {
+				this.client.exerciseSplitDaySessionExercise
+					._getNeededStoresForFind(query.select.exercise)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.exercise === 'object') {
+				this.client.exerciseSplitDaySessionExercise
+					._getNeededStoresForFind(query.include.exercise)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForCreate<
+		D extends Partial<
+			Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'create'>['data']
+		>
+	>(data: D): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
+		neededStores.add('ExerciseSplitDaySessionExerciseNote');
+		if (data?.exercise) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+			if (data.exercise.create) {
+				const createData = Array.isArray(data.exercise.create)
+					? data.exercise.create
+					: [data.exercise.create];
+				createData.forEach((record) =>
+					this.client.exerciseSplitDaySessionExercise
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.exercise.connectOrCreate) {
+				IDBUtils.convertToArray(data.exercise.connectOrCreate).forEach((record) =>
+					this.client.exerciseSplitDaySessionExercise
+						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+		}
+		if (data.exerciseId !== undefined) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForUpdate<
+		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'update'>
+	>(query: Partial<Q>): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores = this._getNeededStoresForFind(query).union(
+			this._getNeededStoresForCreate(
+				query.data as Prisma.Args<
+					Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+					'create'
+				>['data']
+			)
+		);
+		if (query.data?.exercise?.connect) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+			IDBUtils.convertToArray(query.data.exercise.connect).forEach((connect) => {
+				this.client.exerciseSplitDaySessionExercise._getNeededStoresForWhere(connect, neededStores);
+			});
+		}
+		if (query.data?.exercise?.update) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+			IDBUtils.convertToArray(query.data.exercise.update).forEach((update) => {
+				this.client.exerciseSplitDaySessionExercise
+					._getNeededStoresForUpdate(
+						update as Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'update'>
+					)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.exercise?.upsert) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+			IDBUtils.convertToArray(query.data.exercise.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'update'>;
+				this.client.exerciseSplitDaySessionExercise
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForNestedDelete(neededStores: Set<StoreNames<PrismaIDBSchema>>): void {
+		neededStores.add('ExerciseSplitDaySessionExerciseNote');
+	}
+
+	private _removeNestedCreateData<
+		D extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'create'>['data']
+	>(
+		data: D
+	): Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, object, 'findFirstOrThrow'> {
+		const recordWithoutNestedCreate = structuredClone(data);
+		delete recordWithoutNestedCreate?.exercise;
+		return recordWithoutNestedCreate as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			object,
+			'findFirstOrThrow'
+		>;
+	}
+
+	private _preprocessListFields(
+		records: Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, object, 'findMany'>
+	): void {}
+
+	async findMany<
+		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'findMany'>
+	>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'findMany'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const records = await this._applyWhereClause(
+			await tx.objectStore('ExerciseSplitDaySessionExerciseNote').getAll(),
+			query?.where,
+			tx
+		);
+		await this._applyOrderByClause(records, query?.orderBy, tx);
+		const relationAppliedRecords = (await this._applyRelations(
+			records,
+			tx,
+			query
+		)) as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			object,
+			'findFirstOrThrow'
+		>[];
+		const selectClause = query?.select;
+		let selectAppliedRecords = this._applySelectClause(relationAppliedRecords, selectClause);
+		if (query?.distinct) {
+			const distinctFields = IDBUtils.convertToArray(query.distinct);
+			const seen = new Set<string>();
+			selectAppliedRecords = selectAppliedRecords.filter((record) => {
+				const key = distinctFields.map((field) => record[field]).join('|');
+				if (seen.has(key)) return false;
+				seen.add(key);
+				return true;
+			});
+		}
+		this._preprocessListFields(selectAppliedRecords);
+		return selectAppliedRecords as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			Q,
+			'findMany'
+		>;
+	}
+
+	async findFirst<
+		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'findFirst'>
+	>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'findFirst'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		return (await this.findMany(query, tx))[0] ?? null;
+	}
+
+	async findFirstOrThrow<
+		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'findFirstOrThrow'>
+	>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<
+		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'findFirstOrThrow'>
+	> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const record = await this.findFirst(query, tx);
+		if (!record) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		return record;
+	}
+
+	async findUnique<
+		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'findUnique'>
+	>(
+		query: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'findUnique'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		let record;
+		if (query.where.id !== undefined) {
+			record = await tx.objectStore('ExerciseSplitDaySessionExerciseNote').get([query.where.id]);
+		}
+		if (!record) return null;
+
+		const recordWithRelations = this._applySelectClause(
+			await this._applyRelations(
+				await this._applyWhereClause([record], query.where, tx),
+				tx,
+				query
+			),
+			query.select
+		)[0];
+		this._preprocessListFields([recordWithRelations]);
+		return recordWithRelations as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			Q,
+			'findUnique'
+		>;
+	}
+
+	async findUniqueOrThrow<
+		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'findUniqueOrThrow'>
+	>(
+		query: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<
+		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'findUniqueOrThrow'>
+	> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const record = await this.findUnique(query, tx);
+		if (!record) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		return record;
+	}
+
+	async count<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'count'>>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'count'>> {
+		tx = tx ?? this.client._db.transaction(['ExerciseSplitDaySessionExerciseNote'], 'readonly');
+		if (!query?.select || query.select === true) {
+			const records = await this.findMany({ where: query?.where }, tx);
+			return records.length as Prisma.Result<
+				Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+				Q,
+				'count'
+			>;
+		}
+		const result: Partial<
+			Record<keyof Prisma.ExerciseSplitDaySessionExerciseNoteCountAggregateInputType, number>
+		> = {};
+		for (const key of Object.keys(query.select)) {
+			const typedKey = key as keyof typeof query.select;
+			if (typedKey === '_all') {
+				result[typedKey] = (await this.findMany({ where: query.where }, tx)).length;
+				continue;
+			}
+			result[typedKey] = (
+				await this.findMany({ where: { [`${typedKey}`]: { not: null } } }, tx)
+			).length;
+		}
+		return result as Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'count'>;
+	}
+
+	async create<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'create'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'create'>> {
+		const storesNeeded = this._getNeededStoresForCreate(query.data);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		if (query.data.exercise) {
+			const fk: Partial<PrismaIDBSchema['ExerciseSplitDaySessionExercise']['key']> = [];
+			if (query.data.exercise?.create) {
+				const record = await this.client.exerciseSplitDaySessionExercise.create(
+					{ data: query.data.exercise.create },
+					tx
+				);
+				fk[0] = record.id;
+			}
+			if (query.data.exercise?.connect) {
+				const record = await this.client.exerciseSplitDaySessionExercise.findUniqueOrThrow(
+					{ where: query.data.exercise.connect },
+					tx
+				);
+				delete query.data.exercise.connect;
+				fk[0] = record.id;
+			}
+			if (query.data.exercise?.connectOrCreate) {
+				const record = await this.client.exerciseSplitDaySessionExercise.upsert(
+					{
+						where: query.data.exercise.connectOrCreate.where,
+						create: query.data.exercise.connectOrCreate.create,
+						update: {}
+					},
+					tx
+				);
+				fk[0] = record.id;
+			}
+			const unsafeData = query.data as Record<string, unknown>;
+			unsafeData.exerciseId = fk[0];
+			delete unsafeData.exercise;
+		} else if (query.data?.exerciseId !== undefined && query.data.exerciseId !== null) {
+			await this.client.exerciseSplitDaySessionExercise.findUniqueOrThrow(
+				{
+					where: { id: query.data.exerciseId }
+				},
+				tx
+			);
+		}
+		const record = this._removeNestedCreateData(await this._fillDefaults(query.data, tx));
+		const keyPath = await tx.objectStore('ExerciseSplitDaySessionExerciseNote').add(record);
+		const data = (await tx.objectStore('ExerciseSplitDaySessionExerciseNote').get(keyPath))!;
+		const recordsWithRelations = this._applySelectClause(
+			await this._applyRelations<object>([data], tx, query),
+			query.select
+		)[0];
+		this._preprocessListFields([recordsWithRelations]);
+		this.emit('create', keyPath);
+		return recordsWithRelations as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			Q,
+			'create'
+		>;
+	}
+
+	async createMany<
+		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'createMany'>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'createMany'>> {
+		const createManyData = IDBUtils.convertToArray(query.data);
+		tx = tx ?? this.client._db.transaction(['ExerciseSplitDaySessionExerciseNote'], 'readwrite');
+		for (const createData of createManyData) {
+			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
+			const keyPath = await tx.objectStore('ExerciseSplitDaySessionExerciseNote').add(record);
+			this.emit('create', keyPath);
+		}
+		return { count: createManyData.length };
+	}
+
+	async createManyAndReturn<
+		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'createManyAndReturn'>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<
+		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'createManyAndReturn'>
+	> {
+		const createManyData = IDBUtils.convertToArray(query.data);
+		const records: Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			object,
+			'findMany'
+		> = [];
+		tx = tx ?? this.client._db.transaction(['ExerciseSplitDaySessionExerciseNote'], 'readwrite');
+		for (const createData of createManyData) {
+			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
+			const keyPath = await tx.objectStore('ExerciseSplitDaySessionExerciseNote').add(record);
+			this.emit('create', keyPath);
+			records.push(this._applySelectClause([record], query.select)[0]);
+		}
+		this._preprocessListFields(records);
+		return records as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			Q,
+			'createManyAndReturn'
+		>;
+	}
+
+	async delete<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'delete'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'delete'>> {
+		const storesNeeded = this._getNeededStoresForFind(query);
+		this._getNeededStoresForNestedDelete(storesNeeded);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		const record = await this.findUnique(query, tx);
+		if (!record) throw new Error('Record not found');
+		await tx.objectStore('ExerciseSplitDaySessionExerciseNote').delete([record.id]);
+		this.emit('delete', [record.id]);
+		return record;
+	}
+
+	async deleteMany<
+		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'deleteMany'>
+	>(
+		query?: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'deleteMany'>> {
+		const storesNeeded = this._getNeededStoresForFind(query);
+		this._getNeededStoresForNestedDelete(storesNeeded);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		const records = await this.findMany(query, tx);
+		for (const record of records) {
+			await this.delete({ where: { id: record.id } }, tx);
+		}
+		return { count: records.length };
+	}
+
+	async update<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'update'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'update'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForUpdate(query)), 'readwrite');
+		const record = await this.findUnique({ where: query.where }, tx);
+		if (record === null) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		const startKeyPath: PrismaIDBSchema['ExerciseSplitDaySessionExerciseNote']['key'] = [record.id];
+		const stringFields = ['id', 'exerciseId', 'note'] as const;
+		for (const field of stringFields) {
+			IDBUtils.handleStringUpdateField(record, field, query.data[field]);
+		}
+		const intFields = ['noteIndex'] as const;
+		for (const field of intFields) {
+			IDBUtils.handleIntUpdateField(record, field, query.data[field]);
+		}
+		if (query.data.exercise) {
+			if (query.data.exercise.connect) {
+				const other = await this.client.exerciseSplitDaySessionExercise.findUniqueOrThrow(
+					{ where: query.data.exercise.connect },
+					tx
+				);
+				record.exerciseId = other.id;
+			}
+			if (query.data.exercise.create) {
+				const other = await this.client.exerciseSplitDaySessionExercise.create(
+					{ data: query.data.exercise.create },
+					tx
+				);
+				record.exerciseId = other.id;
+			}
+			if (query.data.exercise.update) {
+				const updateData = query.data.exercise.update.data ?? query.data.exercise.update;
+				await this.client.exerciseSplitDaySessionExercise.update(
+					{
+						where: {
+							...query.data.exercise.update.where,
+							id: record.exerciseId!
+						} as Prisma.ExerciseSplitDaySessionExerciseWhereUniqueInput,
+						data: updateData
+					},
+					tx
+				);
+			}
+			if (query.data.exercise.upsert) {
+				await this.client.exerciseSplitDaySessionExercise.upsert(
+					{
+						where: {
+							...query.data.exercise.upsert.where,
+							id: record.exerciseId!
+						} as Prisma.ExerciseSplitDaySessionExerciseWhereUniqueInput,
+						create: { ...query.data.exercise.upsert.create, id: record.exerciseId! } as Prisma.Args<
+							Prisma.ExerciseSplitDaySessionExerciseDelegate,
+							'upsert'
+						>['create'],
+						update: query.data.exercise.upsert.update
+					},
+					tx
+				);
+			}
+			if (query.data.exercise.connectOrCreate) {
+				await this.client.exerciseSplitDaySessionExercise.upsert(
+					{
+						where: { ...query.data.exercise.connectOrCreate.where, id: record.exerciseId! },
+						create: {
+							...query.data.exercise.connectOrCreate.create,
+							id: record.exerciseId!
+						} as Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'upsert'>['create'],
+						update: { id: record.exerciseId! }
+					},
+					tx
+				);
+			}
+		}
+		if (query.data.exerciseId !== undefined) {
+			const related = await this.client.exerciseSplitDaySessionExercise.findUnique(
+				{ where: { id: record.exerciseId } },
+				tx
+			);
+			if (!related) throw new Error('Related record not found');
+		}
+		const endKeyPath: PrismaIDBSchema['ExerciseSplitDaySessionExerciseNote']['key'] = [record.id];
+		for (let i = 0; i < startKeyPath.length; i++) {
+			if (startKeyPath[i] !== endKeyPath[i]) {
+				if (
+					(await tx.objectStore('ExerciseSplitDaySessionExerciseNote').get(endKeyPath)) !==
+					undefined
+				) {
+					throw new Error('Record with the same keyPath already exists');
+				}
+				await tx.objectStore('ExerciseSplitDaySessionExerciseNote').delete(startKeyPath);
+				break;
+			}
+		}
+		const keyPath = await tx.objectStore('ExerciseSplitDaySessionExerciseNote').put(record);
+		this.emit('update', keyPath, startKeyPath);
+		for (let i = 0; i < startKeyPath.length; i++) {
+			if (startKeyPath[i] !== endKeyPath[i]) {
+				break;
+			}
+		}
+		const recordWithRelations = (await this.findUnique(
+			{
+				where: { id: keyPath[0] }
+			},
+			tx
+		))!;
+		return recordWithRelations as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			Q,
+			'update'
+		>;
+	}
+
+	async updateMany<
+		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'updateMany'>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'updateMany'>> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readwrite');
+		const records = await this.findMany({ where: query.where }, tx);
+		await Promise.all(
+			records.map(async (record) => {
+				await this.update({ where: { id: record.id }, data: query.data }, tx);
+			})
+		);
+		return { count: records.length };
+	}
+
+	async upsert<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'upsert'>>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'upsert'>> {
+		const neededStores = this._getNeededStoresForUpdate({
+			...query,
+			data: { ...query.update, ...query.create } as Prisma.Args<
+				Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+				'update'
+			>['data']
+		});
+		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
+		let record = await this.findUnique({ where: query.where }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx);
+		else record = await this.update({ where: query.where, data: query.update }, tx);
+		record = await this.findUniqueOrThrow(
+			{ where: { id: record.id }, select: query.select, include: query.include },
+			tx
+		);
+		return record as Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'upsert'>;
+	}
+
+	async aggregate<
+		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'aggregate'>
+	>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'aggregate'>> {
+		tx = tx ?? this.client._db.transaction(['ExerciseSplitDaySessionExerciseNote'], 'readonly');
+		const records = await this.findMany({ where: query?.where }, tx);
+		const result: Partial<
+			Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'aggregate'>
+		> = {};
+		if (query?._count) {
+			if (query._count === true) {
+				(result._count as number) = records.length;
+			} else {
+				for (const key of Object.keys(query._count)) {
+					const typedKey = key as keyof typeof query._count;
+					if (typedKey === '_all') {
+						(result._count as Record<string, number>)[typedKey] = records.length;
+						continue;
+					}
+					(result._count as Record<string, number>)[typedKey] = (
+						await this.findMany({ where: { [`${typedKey}`]: { not: null } } }, tx)
+					).length;
+				}
+			}
+		}
+		if (query?._min) {
+			const minResult = {} as Prisma.Result<
+				Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+				Q,
+				'aggregate'
+			>['_min'];
+			const numericFields = ['noteIndex'] as const;
+			for (const field of numericFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field] as number)
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as number) = Math.min(...values);
+			}
+			const stringFields = ['id', 'exerciseId', 'note'] as const;
+			for (const field of stringFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field] as string)
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as string) = values.sort()[0];
+			}
+			result._min = minResult;
+		}
+		if (query?._max) {
+			const maxResult = {} as Prisma.Result<
+				Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+				Q,
+				'aggregate'
+			>['_max'];
+			const numericFields = ['noteIndex'] as const;
+			for (const field of numericFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field] as number)
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as number) = Math.max(...values);
+			}
+			const stringFields = ['id', 'exerciseId', 'note'] as const;
+			for (const field of stringFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field] as string)
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as string) = values.sort().reverse()[0];
+			}
+			result._max = maxResult;
+		}
+		if (query?._avg) {
+			const avgResult = {} as Prisma.Result<
+				Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+				Q,
+				'aggregate'
+			>['_avg'];
+			for (const untypedField of Object.keys(query._avg)) {
+				const field = untypedField as keyof (typeof records)[number];
+				const values = records.map((record) => record[field] as number);
+				(avgResult[field as keyof typeof avgResult] as number) =
+					values.reduce((a, b) => a + b, 0) / values.length;
+			}
+			result._avg = avgResult;
+		}
+		if (query?._sum) {
+			const sumResult = {} as Prisma.Result<
+				Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+				Q,
+				'aggregate'
+			>['_sum'];
+			for (const untypedField of Object.keys(query._sum)) {
+				const field = untypedField as keyof (typeof records)[number];
+				const values = records.map((record) => record[field] as number);
+				(sumResult[field as keyof typeof sumResult] as number) = values.reduce((a, b) => a + b, 0);
+			}
+			result._sum = sumResult;
+		}
+		return result as unknown as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
+			Q,
+			'aggregate'
+		>;
+	}
+}
+
+class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseIDBModelClass<'ExerciseSplitDaySessionExerciseSecondaryMuscleGroup'> {
+	private async _applyWhereClause<
+		W extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'findFirstOrThrow'
+		>['where'],
+		R extends Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			object,
+			'findFirstOrThrow'
+		>
+	>(records: R[], whereClause: W, tx: IDBUtils.TransactionType): Promise<R[]> {
+		if (!whereClause) return records;
+		records = await IDBUtils.applyLogicalFilters<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			R,
+			W
+		>(records, whereClause, tx, this.keyPath, this._applyWhereClause.bind(this));
+		return (
+			await Promise.all(
+				records.map(async (record) => {
+					const stringFields = ['id', 'exerciseId', 'muscleGroup'] as const;
+					for (const field of stringFields) {
+						if (!IDBUtils.whereStringFilter(record, field, whereClause[field])) return null;
+					}
+					if (whereClause.exercise) {
+						const { is, isNot, ...rest } = whereClause.exercise;
+						if (is !== null && is !== undefined) {
+							const relatedRecord = await this.client.exerciseSplitDaySessionExercise.findFirst(
+								{ where: { ...is, id: record.exerciseId } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+						if (isNot !== null && isNot !== undefined) {
+							const relatedRecord = await this.client.exerciseSplitDaySessionExercise.findFirst(
+								{ where: { ...isNot, id: record.exerciseId } },
+								tx
+							);
+							if (relatedRecord) return null;
+						}
+						if (Object.keys(rest).length) {
+							const relatedRecord = await this.client.exerciseSplitDaySessionExercise.findFirst(
+								{ where: { ...whereClause.exercise, id: record.exerciseId } },
+								tx
+							);
+							if (!relatedRecord) return null;
+						}
+					}
+					return record;
+				})
+			)
+		).filter((result) => result !== null);
+	}
+
+	private _applySelectClause<
+		S extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'findMany'
+		>['select']
+	>(
+		records: Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			object,
+			'findFirstOrThrow'
+		>[],
+		selectClause: S
+	): Prisma.Result<
+		Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+		{ select: S },
+		'findFirstOrThrow'
+	>[] {
+		if (!selectClause) {
+			return records as Prisma.Result<
+				Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+				{ select: S },
+				'findFirstOrThrow'
+			>[];
+		}
+		return records.map((record) => {
+			const partialRecord: Partial<typeof record> = record;
+			for (const untypedKey of ['id', 'exercise', 'exerciseId', 'muscleGroup']) {
+				const key = untypedKey as keyof typeof record & keyof S;
+				if (!selectClause[key]) delete partialRecord[key];
+			}
+			return partialRecord;
+		}) as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			{ select: S },
+			'findFirstOrThrow'
+		>[];
+	}
+
+	private async _applyRelations<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'findMany'
+		>
+	>(
+		records: Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			object,
+			'findFirstOrThrow'
+		>[],
+		tx: IDBUtils.TransactionType,
+		query?: Q
+	): Promise<
+		Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'findFirstOrThrow'
+		>[]
+	> {
+		if (!query)
+			return records as Prisma.Result<
+				Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+				Q,
+				'findFirstOrThrow'
+			>[];
+		const recordsWithRelations = records.map(async (record) => {
+			const unsafeRecord = record as Record<string, unknown>;
+			const attach_exercise = query.select?.exercise || query.include?.exercise;
+			if (attach_exercise) {
+				unsafeRecord['exercise'] = await this.client.exerciseSplitDaySessionExercise.findUnique(
+					{
+						...(attach_exercise === true ? {} : attach_exercise),
+						where: { id: record.exerciseId! }
+					},
+					tx
+				);
+			}
+			return unsafeRecord;
+		});
+		return (await Promise.all(recordsWithRelations)) as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'findFirstOrThrow'
+		>[];
+	}
+
+	async _applyOrderByClause<
+		O extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'findMany'
+		>['orderBy'],
+		R extends Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			object,
+			'findFirstOrThrow'
+		>
+	>(records: R[], orderByClause: O, tx: IDBUtils.TransactionType): Promise<void> {
+		if (orderByClause === undefined) return;
+		const orderByClauses = IDBUtils.convertToArray(orderByClause);
+		const indexedKeys = await Promise.all(
+			records.map(async (record) => {
+				const keys = await Promise.all(
+					orderByClauses.map(async (clause) => await this._resolveOrderByKey(record, clause, tx))
+				);
+				return { keys, record };
+			})
+		);
+		indexedKeys.sort((a, b) => {
+			for (let i = 0; i < orderByClauses.length; i++) {
+				const clause = orderByClauses[i];
+				const comparison = IDBUtils.genericComparator(
+					a.keys[i],
+					b.keys[i],
+					this._resolveSortOrder(clause)
+				);
+				if (comparison !== 0) return comparison;
+			}
+			return 0;
+		});
+		for (let i = 0; i < records.length; i++) {
+			records[i] = indexedKeys[i].record;
+		}
+	}
+
+	async _resolveOrderByKey(
+		record: Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			object,
+			'findFirstOrThrow'
+		>,
+		orderByInput: Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupOrderByWithRelationInput,
+		tx: IDBUtils.TransactionType
+	): Promise<unknown> {
+		const scalarFields = ['id', 'exerciseId', 'muscleGroup'] as const;
+		for (const field of scalarFields) if (orderByInput[field]) return record[field];
+		if (orderByInput.exercise) {
+			return await this.client.exerciseSplitDaySessionExercise._resolveOrderByKey(
+				await this.client.exerciseSplitDaySessionExercise.findFirstOrThrow({
+					where: { id: record.exerciseId }
+				}),
+				orderByInput.exercise,
+				tx
+			);
+		}
+	}
+
+	_resolveSortOrder(
+		orderByInput: Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupOrderByWithRelationInput
+	): Prisma.SortOrder | { sort: Prisma.SortOrder; nulls?: 'first' | 'last' } {
+		const scalarFields = ['id', 'exerciseId', 'muscleGroup'] as const;
+		for (const field of scalarFields) if (orderByInput[field]) return orderByInput[field];
+		if (orderByInput.exercise) {
+			return this.client.exerciseSplitDaySessionExercise._resolveSortOrder(orderByInput.exercise);
+		}
+		throw new Error('No field in orderBy clause');
+	}
+
+	private async _fillDefaults<
+		D extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'create'
+		>['data']
+	>(data: D, tx?: IDBUtils.ReadwriteTransactionType): Promise<D> {
+		if (data === undefined) data = {} as NonNullable<D>;
+		if (data.id === undefined) {
+			data.id = uuidv4();
+		}
+		return data;
+	}
+
+	_getNeededStoresForWhere<
+		W extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'findMany'
+		>['where']
+	>(whereClause: W, neededStores: Set<StoreNames<PrismaIDBSchema>>) {
+		if (whereClause === undefined) return;
+		for (const param of IDBUtils.LogicalParams) {
+			if (whereClause[param]) {
+				for (const clause of IDBUtils.convertToArray(whereClause[param])) {
+					this._getNeededStoresForWhere(clause, neededStores);
+				}
+			}
+		}
+		if (whereClause.exercise) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+			this.client.exerciseSplitDaySessionExercise._getNeededStoresForWhere(
+				whereClause.exercise,
+				neededStores
+			);
+		}
+	}
+
+	_getNeededStoresForFind<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'findMany'
+		>
+	>(query?: Q): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
+		neededStores.add('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+		this._getNeededStoresForWhere(query?.where, neededStores);
+		if (query?.orderBy) {
+			const orderBy = IDBUtils.convertToArray(query.orderBy);
+			const orderBy_exercise = orderBy.find((clause) => clause.exercise);
+			if (orderBy_exercise) {
+				this.client.exerciseSplitDaySessionExercise
+					._getNeededStoresForFind({ orderBy: orderBy_exercise.exercise })
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		if (query?.select?.exercise || query?.include?.exercise) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+			if (typeof query.select?.exercise === 'object') {
+				this.client.exerciseSplitDaySessionExercise
+					._getNeededStoresForFind(query.select.exercise)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+			if (typeof query.include?.exercise === 'object') {
+				this.client.exerciseSplitDaySessionExercise
+					._getNeededStoresForFind(query.include.exercise)
+					.forEach((storeName) => neededStores.add(storeName));
+			}
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForCreate<
+		D extends Partial<
+			Prisma.Args<
+				Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+				'create'
+			>['data']
+		>
+	>(data: D): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
+		neededStores.add('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+		if (data?.exercise) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+			if (data.exercise.create) {
+				const createData = Array.isArray(data.exercise.create)
+					? data.exercise.create
+					: [data.exercise.create];
+				createData.forEach((record) =>
+					this.client.exerciseSplitDaySessionExercise
+						._getNeededStoresForCreate(record)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.exercise.connectOrCreate) {
+				IDBUtils.convertToArray(data.exercise.connectOrCreate).forEach((record) =>
+					this.client.exerciseSplitDaySessionExercise
+						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+		}
+		if (data.exerciseId !== undefined) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForUpdate<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'update'
+		>
+	>(query: Partial<Q>): Set<StoreNames<PrismaIDBSchema>> {
+		const neededStores = this._getNeededStoresForFind(query).union(
+			this._getNeededStoresForCreate(
+				query.data as Prisma.Args<
+					Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+					'create'
+				>['data']
+			)
+		);
+		if (query.data?.exercise?.connect) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+			IDBUtils.convertToArray(query.data.exercise.connect).forEach((connect) => {
+				this.client.exerciseSplitDaySessionExercise._getNeededStoresForWhere(connect, neededStores);
+			});
+		}
+		if (query.data?.exercise?.update) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+			IDBUtils.convertToArray(query.data.exercise.update).forEach((update) => {
+				this.client.exerciseSplitDaySessionExercise
+					._getNeededStoresForUpdate(
+						update as Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'update'>
+					)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		if (query.data?.exercise?.upsert) {
+			neededStores.add('ExerciseSplitDaySessionExercise');
+			IDBUtils.convertToArray(query.data.exercise.upsert).forEach((upsert) => {
+				const update = {
+					where: upsert.where,
+					data: { ...upsert.update, ...upsert.create }
+				} as Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'update'>;
+				this.client.exerciseSplitDaySessionExercise
+					._getNeededStoresForUpdate(update)
+					.forEach((store) => neededStores.add(store));
+			});
+		}
+		return neededStores;
+	}
+
+	_getNeededStoresForNestedDelete(neededStores: Set<StoreNames<PrismaIDBSchema>>): void {
+		neededStores.add('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+	}
+
+	private _removeNestedCreateData<
+		D extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'create'
+		>['data']
+	>(
+		data: D
+	): Prisma.Result<
+		Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+		object,
+		'findFirstOrThrow'
+	> {
+		const recordWithoutNestedCreate = structuredClone(data);
+		delete recordWithoutNestedCreate?.exercise;
+		return recordWithoutNestedCreate as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			object,
+			'findFirstOrThrow'
+		>;
+	}
+
+	private _preprocessListFields(
+		records: Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			object,
+			'findMany'
+		>
+	): void {}
+
+	async findMany<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'findMany'
+		>
+	>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<
+		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate, Q, 'findMany'>
+	> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const records = await this._applyWhereClause(
+			await tx.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup').getAll(),
+			query?.where,
+			tx
+		);
+		await this._applyOrderByClause(records, query?.orderBy, tx);
+		const relationAppliedRecords = (await this._applyRelations(
+			records,
+			tx,
+			query
+		)) as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			object,
+			'findFirstOrThrow'
+		>[];
+		const selectClause = query?.select;
+		let selectAppliedRecords = this._applySelectClause(relationAppliedRecords, selectClause);
+		if (query?.distinct) {
+			const distinctFields = IDBUtils.convertToArray(query.distinct);
+			const seen = new Set<string>();
+			selectAppliedRecords = selectAppliedRecords.filter((record) => {
+				const key = distinctFields.map((field) => record[field]).join('|');
+				if (seen.has(key)) return false;
+				seen.add(key);
+				return true;
+			});
+		}
+		this._preprocessListFields(selectAppliedRecords);
+		return selectAppliedRecords as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'findMany'
+		>;
+	}
+
+	async findFirst<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'findFirst'
+		>
+	>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<
+		Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'findFirst'
+		>
+	> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		return (await this.findMany(query, tx))[0] ?? null;
+	}
+
+	async findFirstOrThrow<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'findFirstOrThrow'
+		>
+	>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<
+		Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'findFirstOrThrow'
+		>
+	> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const record = await this.findFirst(query, tx);
+		if (!record) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		return record;
+	}
+
+	async findUnique<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'findUnique'
+		>
+	>(
+		query: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<
+		Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'findUnique'
+		>
+	> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		let record;
+		if (query.where.id !== undefined) {
+			record = await tx
+				.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup')
+				.get([query.where.id]);
+		} else if (query.where.exerciseId_muscleGroup !== undefined) {
+			record = await tx
+				.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup')
+				.index('exerciseId_muscleGroupIndex')
+				.get([
+					query.where.exerciseId_muscleGroup.exerciseId,
+					query.where.exerciseId_muscleGroup.muscleGroup
+				]);
+		}
+		if (!record) return null;
+
+		const recordWithRelations = this._applySelectClause(
+			await this._applyRelations(
+				await this._applyWhereClause([record], query.where, tx),
+				tx,
+				query
+			),
+			query.select
+		)[0];
+		this._preprocessListFields([recordWithRelations]);
+		return recordWithRelations as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'findUnique'
+		>;
+	}
+
+	async findUniqueOrThrow<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'findUniqueOrThrow'
+		>
+	>(
+		query: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<
+		Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'findUniqueOrThrow'
+		>
+	> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
+		const record = await this.findUnique(query, tx);
+		if (!record) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		return record;
+	}
+
+	async count<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'count'
+		>
+	>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<
+		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate, Q, 'count'>
+	> {
+		tx =
+			tx ??
+			this.client._db.transaction(
+				['ExerciseSplitDaySessionExerciseSecondaryMuscleGroup'],
+				'readonly'
+			);
+		if (!query?.select || query.select === true) {
+			const records = await this.findMany({ where: query?.where }, tx);
+			return records.length as Prisma.Result<
+				Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+				Q,
+				'count'
+			>;
+		}
+		const result: Partial<
+			Record<
+				keyof Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupCountAggregateInputType,
+				number
+			>
+		> = {};
+		for (const key of Object.keys(query.select)) {
+			const typedKey = key as keyof typeof query.select;
+			if (typedKey === '_all') {
+				result[typedKey] = (await this.findMany({ where: query.where }, tx)).length;
+				continue;
+			}
+			result[typedKey] = (
+				await this.findMany({ where: { [`${typedKey}`]: { not: null } } }, tx)
+			).length;
+		}
+		return result as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'count'
+		>;
+	}
+
+	async create<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'create'
+		>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<
+		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate, Q, 'create'>
+	> {
+		const storesNeeded = this._getNeededStoresForCreate(query.data);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		if (query.data.exercise) {
+			const fk: Partial<PrismaIDBSchema['ExerciseSplitDaySessionExercise']['key']> = [];
+			if (query.data.exercise?.create) {
+				const record = await this.client.exerciseSplitDaySessionExercise.create(
+					{ data: query.data.exercise.create },
+					tx
+				);
+				fk[0] = record.id;
+			}
+			if (query.data.exercise?.connect) {
+				const record = await this.client.exerciseSplitDaySessionExercise.findUniqueOrThrow(
+					{ where: query.data.exercise.connect },
+					tx
+				);
+				delete query.data.exercise.connect;
+				fk[0] = record.id;
+			}
+			if (query.data.exercise?.connectOrCreate) {
+				const record = await this.client.exerciseSplitDaySessionExercise.upsert(
+					{
+						where: query.data.exercise.connectOrCreate.where,
+						create: query.data.exercise.connectOrCreate.create,
+						update: {}
+					},
+					tx
+				);
+				fk[0] = record.id;
+			}
+			const unsafeData = query.data as Record<string, unknown>;
+			unsafeData.exerciseId = fk[0];
+			delete unsafeData.exercise;
+		} else if (query.data?.exerciseId !== undefined && query.data.exerciseId !== null) {
+			await this.client.exerciseSplitDaySessionExercise.findUniqueOrThrow(
+				{
+					where: { id: query.data.exerciseId }
+				},
+				tx
+			);
+		}
+		const record = this._removeNestedCreateData(await this._fillDefaults(query.data, tx));
+		const keyPath = await tx
+			.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup')
+			.add(record);
+		const data = (await tx
+			.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup')
+			.get(keyPath))!;
+		const recordsWithRelations = this._applySelectClause(
+			await this._applyRelations<object>([data], tx, query),
+			query.select
+		)[0];
+		this._preprocessListFields([recordsWithRelations]);
+		this.emit('create', keyPath);
+		return recordsWithRelations as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'create'
+		>;
+	}
+
+	async createMany<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'createMany'
+		>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<
+		Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'createMany'
+		>
+	> {
+		const createManyData = IDBUtils.convertToArray(query.data);
+		tx =
+			tx ??
+			this.client._db.transaction(
+				['ExerciseSplitDaySessionExerciseSecondaryMuscleGroup'],
+				'readwrite'
+			);
+		for (const createData of createManyData) {
+			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
+			const keyPath = await tx
+				.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup')
+				.add(record);
+			this.emit('create', keyPath);
+		}
+		return { count: createManyData.length };
+	}
+
+	async createManyAndReturn<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'createManyAndReturn'
+		>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<
+		Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'createManyAndReturn'
+		>
+	> {
+		const createManyData = IDBUtils.convertToArray(query.data);
+		const records: Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			object,
+			'findMany'
+		> = [];
+		tx =
+			tx ??
+			this.client._db.transaction(
+				['ExerciseSplitDaySessionExerciseSecondaryMuscleGroup'],
+				'readwrite'
+			);
+		for (const createData of createManyData) {
+			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
+			const keyPath = await tx
+				.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup')
+				.add(record);
+			this.emit('create', keyPath);
+			records.push(this._applySelectClause([record], query.select)[0]);
+		}
+		this._preprocessListFields(records);
+		return records as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'createManyAndReturn'
+		>;
+	}
+
+	async delete<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'delete'
+		>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<
+		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate, Q, 'delete'>
+	> {
+		const storesNeeded = this._getNeededStoresForFind(query);
+		this._getNeededStoresForNestedDelete(storesNeeded);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		const record = await this.findUnique(query, tx);
+		if (!record) throw new Error('Record not found');
+		await tx.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup').delete([record.id]);
+		this.emit('delete', [record.id]);
+		return record;
+	}
+
+	async deleteMany<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'deleteMany'
+		>
+	>(
+		query?: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<
+		Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'deleteMany'
+		>
+	> {
+		const storesNeeded = this._getNeededStoresForFind(query);
+		this._getNeededStoresForNestedDelete(storesNeeded);
+		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
+		const records = await this.findMany(query, tx);
+		for (const record of records) {
+			await this.delete({ where: { id: record.id } }, tx);
+		}
+		return { count: records.length };
+	}
+
+	async update<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'update'
+		>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<
+		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate, Q, 'update'>
+	> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForUpdate(query)), 'readwrite');
+		const record = await this.findUnique({ where: query.where }, tx);
+		if (record === null) {
+			tx.abort();
+			throw new Error('Record not found');
+		}
+		const startKeyPath: PrismaIDBSchema['ExerciseSplitDaySessionExerciseSecondaryMuscleGroup']['key'] =
+			[record.id];
+		const stringFields = ['id', 'exerciseId', 'muscleGroup'] as const;
+		for (const field of stringFields) {
+			IDBUtils.handleStringUpdateField(record, field, query.data[field]);
+		}
+		if (query.data.exercise) {
+			if (query.data.exercise.connect) {
+				const other = await this.client.exerciseSplitDaySessionExercise.findUniqueOrThrow(
+					{ where: query.data.exercise.connect },
+					tx
+				);
+				record.exerciseId = other.id;
+			}
+			if (query.data.exercise.create) {
+				const other = await this.client.exerciseSplitDaySessionExercise.create(
+					{ data: query.data.exercise.create },
+					tx
+				);
+				record.exerciseId = other.id;
+			}
+			if (query.data.exercise.update) {
+				const updateData = query.data.exercise.update.data ?? query.data.exercise.update;
+				await this.client.exerciseSplitDaySessionExercise.update(
+					{
+						where: {
+							...query.data.exercise.update.where,
+							id: record.exerciseId!
+						} as Prisma.ExerciseSplitDaySessionExerciseWhereUniqueInput,
+						data: updateData
+					},
+					tx
+				);
+			}
+			if (query.data.exercise.upsert) {
+				await this.client.exerciseSplitDaySessionExercise.upsert(
+					{
+						where: {
+							...query.data.exercise.upsert.where,
+							id: record.exerciseId!
+						} as Prisma.ExerciseSplitDaySessionExerciseWhereUniqueInput,
+						create: { ...query.data.exercise.upsert.create, id: record.exerciseId! } as Prisma.Args<
+							Prisma.ExerciseSplitDaySessionExerciseDelegate,
+							'upsert'
+						>['create'],
+						update: query.data.exercise.upsert.update
+					},
+					tx
+				);
+			}
+			if (query.data.exercise.connectOrCreate) {
+				await this.client.exerciseSplitDaySessionExercise.upsert(
+					{
+						where: { ...query.data.exercise.connectOrCreate.where, id: record.exerciseId! },
+						create: {
+							...query.data.exercise.connectOrCreate.create,
+							id: record.exerciseId!
+						} as Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'upsert'>['create'],
+						update: { id: record.exerciseId! }
+					},
+					tx
+				);
+			}
+		}
+		if (query.data.exerciseId !== undefined) {
+			const related = await this.client.exerciseSplitDaySessionExercise.findUnique(
+				{ where: { id: record.exerciseId } },
+				tx
+			);
+			if (!related) throw new Error('Related record not found');
+		}
+		const endKeyPath: PrismaIDBSchema['ExerciseSplitDaySessionExerciseSecondaryMuscleGroup']['key'] =
+			[record.id];
+		for (let i = 0; i < startKeyPath.length; i++) {
+			if (startKeyPath[i] !== endKeyPath[i]) {
+				if (
+					(await tx
+						.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup')
+						.get(endKeyPath)) !== undefined
+				) {
+					throw new Error('Record with the same keyPath already exists');
+				}
+				await tx
+					.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup')
+					.delete(startKeyPath);
+				break;
+			}
+		}
+		const keyPath = await tx
+			.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup')
+			.put(record);
+		this.emit('update', keyPath, startKeyPath);
+		for (let i = 0; i < startKeyPath.length; i++) {
+			if (startKeyPath[i] !== endKeyPath[i]) {
+				break;
+			}
+		}
+		const recordWithRelations = (await this.findUnique(
+			{
+				where: { id: keyPath[0] }
+			},
+			tx
+		))!;
+		return recordWithRelations as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'update'
+		>;
+	}
+
+	async updateMany<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'updateMany'
+		>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<
+		Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'updateMany'
+		>
+	> {
+		tx =
+			tx ??
+			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readwrite');
+		const records = await this.findMany({ where: query.where }, tx);
+		await Promise.all(
+			records.map(async (record) => {
+				await this.update({ where: { id: record.id }, data: query.data }, tx);
+			})
+		);
+		return { count: records.length };
+	}
+
+	async upsert<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'upsert'
+		>
+	>(
+		query: Q,
+		tx?: IDBUtils.ReadwriteTransactionType
+	): Promise<
+		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate, Q, 'upsert'>
+	> {
+		const neededStores = this._getNeededStoresForUpdate({
+			...query,
+			data: { ...query.update, ...query.create } as Prisma.Args<
+				Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+				'update'
+			>['data']
+		});
+		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
+		let record = await this.findUnique({ where: query.where }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx);
+		else record = await this.update({ where: query.where, data: query.update }, tx);
+		record = await this.findUniqueOrThrow(
+			{ where: { id: record.id }, select: query.select, include: query.include },
+			tx
+		);
+		return record as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'upsert'
+		>;
+	}
+
+	async aggregate<
+		Q extends Prisma.Args<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			'aggregate'
+		>
+	>(
+		query?: Q,
+		tx?: IDBUtils.TransactionType
+	): Promise<
+		Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+			Q,
+			'aggregate'
+		>
+	> {
+		tx =
+			tx ??
+			this.client._db.transaction(
+				['ExerciseSplitDaySessionExerciseSecondaryMuscleGroup'],
+				'readonly'
+			);
+		const records = await this.findMany({ where: query?.where }, tx);
+		const result: Partial<
+			Prisma.Result<
+				Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+				Q,
+				'aggregate'
+			>
+		> = {};
+		if (query?._count) {
+			if (query._count === true) {
+				(result._count as number) = records.length;
+			} else {
+				for (const key of Object.keys(query._count)) {
+					const typedKey = key as keyof typeof query._count;
+					if (typedKey === '_all') {
+						(result._count as Record<string, number>)[typedKey] = records.length;
+						continue;
+					}
+					(result._count as Record<string, number>)[typedKey] = (
+						await this.findMany({ where: { [`${typedKey}`]: { not: null } } }, tx)
+					).length;
+				}
+			}
+		}
+		if (query?._min) {
+			const minResult = {} as Prisma.Result<
+				Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+				Q,
+				'aggregate'
+			>['_min'];
+			const stringFields = ['id', 'exerciseId', 'muscleGroup'] as const;
+			for (const field of stringFields) {
+				if (!query._min[field]) continue;
+				const values = records
+					.map((record) => record[field] as string)
+					.filter((value) => value !== undefined);
+				(minResult[field as keyof typeof minResult] as string) = values.sort()[0];
+			}
+			result._min = minResult;
+		}
+		if (query?._max) {
+			const maxResult = {} as Prisma.Result<
+				Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+				Q,
+				'aggregate'
+			>['_max'];
+			const stringFields = ['id', 'exerciseId', 'muscleGroup'] as const;
+			for (const field of stringFields) {
+				if (!query._max[field]) continue;
+				const values = records
+					.map((record) => record[field] as string)
+					.filter((value) => value !== undefined);
+				(maxResult[field as keyof typeof maxResult] as string) = values.sort().reverse()[0];
+			}
+			result._max = maxResult;
+		}
+		return result as unknown as Prisma.Result<
+			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
 			Q,
 			'aggregate'
 		>;
@@ -10371,13 +13088,13 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 	}
 }
 
-class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
+class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 	private async _applyWhereClause<
-		W extends Prisma.Args<Prisma.DashboardItemsDelegate, 'findFirstOrThrow'>['where'],
-		R extends Prisma.Result<Prisma.DashboardItemsDelegate, object, 'findFirstOrThrow'>
+		W extends Prisma.Args<Prisma.DashboardItemDelegate, 'findFirstOrThrow'>['where'],
+		R extends Prisma.Result<Prisma.DashboardItemDelegate, object, 'findFirstOrThrow'>
 	>(records: R[], whereClause: W, tx: IDBUtils.TransactionType): Promise<R[]> {
 		if (!whereClause) return records;
-		records = await IDBUtils.applyLogicalFilters<Prisma.DashboardItemsDelegate, R, W>(
+		records = await IDBUtils.applyLogicalFilters<Prisma.DashboardItemDelegate, R, W>(
 			records,
 			whereClause,
 			tx,
@@ -10426,35 +13143,35 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 	}
 
 	private _applySelectClause<
-		S extends Prisma.Args<Prisma.DashboardItemsDelegate, 'findMany'>['select']
+		S extends Prisma.Args<Prisma.DashboardItemDelegate, 'findMany'>['select']
 	>(
-		records: Prisma.Result<Prisma.DashboardItemsDelegate, object, 'findFirstOrThrow'>[],
+		records: Prisma.Result<Prisma.DashboardItemDelegate, object, 'findFirstOrThrow'>[],
 		selectClause: S
-	): Prisma.Result<Prisma.DashboardItemsDelegate, { select: S }, 'findFirstOrThrow'>[] {
+	): Prisma.Result<Prisma.DashboardItemDelegate, { select: S }, 'findFirstOrThrow'>[] {
 		if (!selectClause) {
 			return records as Prisma.Result<
-				Prisma.DashboardItemsDelegate,
+				Prisma.DashboardItemDelegate,
 				{ select: S },
 				'findFirstOrThrow'
 			>[];
 		}
 		return records.map((record) => {
 			const partialRecord: Partial<typeof record> = record;
-			for (const untypedKey of ['id', 'user', 'userId', 'items', 'createdAt']) {
+			for (const untypedKey of ['id', 'user', 'userId', 'type', 'createdAt']) {
 				const key = untypedKey as keyof typeof record & keyof S;
 				if (!selectClause[key]) delete partialRecord[key];
 			}
 			return partialRecord;
-		}) as Prisma.Result<Prisma.DashboardItemsDelegate, { select: S }, 'findFirstOrThrow'>[];
+		}) as Prisma.Result<Prisma.DashboardItemDelegate, { select: S }, 'findFirstOrThrow'>[];
 	}
 
-	private async _applyRelations<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'findMany'>>(
-		records: Prisma.Result<Prisma.DashboardItemsDelegate, object, 'findFirstOrThrow'>[],
+	private async _applyRelations<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'findMany'>>(
+		records: Prisma.Result<Prisma.DashboardItemDelegate, object, 'findFirstOrThrow'>[],
 		tx: IDBUtils.TransactionType,
 		query?: Q
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'findFirstOrThrow'>[]> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'findFirstOrThrow'>[]> {
 		if (!query)
-			return records as Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'findFirstOrThrow'>[];
+			return records as Prisma.Result<Prisma.DashboardItemDelegate, Q, 'findFirstOrThrow'>[];
 		const recordsWithRelations = records.map(async (record) => {
 			const unsafeRecord = record as Record<string, unknown>;
 			const attach_user = query.select?.user || query.include?.user;
@@ -10470,15 +13187,15 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 			return unsafeRecord;
 		});
 		return (await Promise.all(recordsWithRelations)) as Prisma.Result<
-			Prisma.DashboardItemsDelegate,
+			Prisma.DashboardItemDelegate,
 			Q,
 			'findFirstOrThrow'
 		>[];
 	}
 
 	async _applyOrderByClause<
-		O extends Prisma.Args<Prisma.DashboardItemsDelegate, 'findMany'>['orderBy'],
-		R extends Prisma.Result<Prisma.DashboardItemsDelegate, object, 'findFirstOrThrow'>
+		O extends Prisma.Args<Prisma.DashboardItemDelegate, 'findMany'>['orderBy'],
+		R extends Prisma.Result<Prisma.DashboardItemDelegate, object, 'findFirstOrThrow'>
 	>(records: R[], orderByClause: O, tx: IDBUtils.TransactionType): Promise<void> {
 		if (orderByClause === undefined) return;
 		const orderByClauses = IDBUtils.convertToArray(orderByClause);
@@ -10508,11 +13225,11 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 	}
 
 	async _resolveOrderByKey(
-		record: Prisma.Result<Prisma.DashboardItemsDelegate, object, 'findFirstOrThrow'>,
-		orderByInput: Prisma.DashboardItemsOrderByWithRelationInput,
+		record: Prisma.Result<Prisma.DashboardItemDelegate, object, 'findFirstOrThrow'>,
+		orderByInput: Prisma.DashboardItemOrderByWithRelationInput,
 		tx: IDBUtils.TransactionType
 	): Promise<unknown> {
-		const scalarFields = ['id', 'userId', 'items', 'createdAt'] as const;
+		const scalarFields = ['id', 'userId', 'type', 'createdAt'] as const;
 		for (const field of scalarFields) if (orderByInput[field]) return record[field];
 		if (orderByInput.user) {
 			return await this.client.user._resolveOrderByKey(
@@ -10524,9 +13241,9 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 	}
 
 	_resolveSortOrder(
-		orderByInput: Prisma.DashboardItemsOrderByWithRelationInput
+		orderByInput: Prisma.DashboardItemOrderByWithRelationInput
 	): Prisma.SortOrder | { sort: Prisma.SortOrder; nulls?: 'first' | 'last' } {
-		const scalarFields = ['id', 'userId', 'items', 'createdAt'] as const;
+		const scalarFields = ['id', 'userId', 'type', 'createdAt'] as const;
 		for (const field of scalarFields) if (orderByInput[field]) return orderByInput[field];
 		if (orderByInput.user) {
 			return this.client.user._resolveSortOrder(orderByInput.user);
@@ -10535,7 +13252,7 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 	}
 
 	private async _fillDefaults<
-		D extends Prisma.Args<Prisma.DashboardItemsDelegate, 'create'>['data']
+		D extends Prisma.Args<Prisma.DashboardItemDelegate, 'create'>['data']
 	>(data: D, tx?: IDBUtils.ReadwriteTransactionType): Promise<D> {
 		if (data === undefined) data = {} as NonNullable<D>;
 		if (data.id === undefined) {
@@ -10544,9 +13261,6 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 		if (data.createdAt === undefined) {
 			data.createdAt = new Date();
 		}
-		if (!Array.isArray(data.items)) {
-			data.items = data.items?.set;
-		}
 		if (typeof data.createdAt === 'string') {
 			data.createdAt = new Date(data.createdAt);
 		}
@@ -10554,7 +13268,7 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 	}
 
 	_getNeededStoresForWhere<
-		W extends Prisma.Args<Prisma.DashboardItemsDelegate, 'findMany'>['where']
+		W extends Prisma.Args<Prisma.DashboardItemDelegate, 'findMany'>['where']
 	>(whereClause: W, neededStores: Set<StoreNames<PrismaIDBSchema>>) {
 		if (whereClause === undefined) return;
 		for (const param of IDBUtils.LogicalParams) {
@@ -10570,11 +13284,11 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 		}
 	}
 
-	_getNeededStoresForFind<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'findMany'>>(
+	_getNeededStoresForFind<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'findMany'>>(
 		query?: Q
 	): Set<StoreNames<PrismaIDBSchema>> {
 		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
-		neededStores.add('DashboardItems');
+		neededStores.add('DashboardItem');
 		this._getNeededStoresForWhere(query?.where, neededStores);
 		if (query?.orderBy) {
 			const orderBy = IDBUtils.convertToArray(query.orderBy);
@@ -10602,10 +13316,10 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 	}
 
 	_getNeededStoresForCreate<
-		D extends Partial<Prisma.Args<Prisma.DashboardItemsDelegate, 'create'>['data']>
+		D extends Partial<Prisma.Args<Prisma.DashboardItemDelegate, 'create'>['data']>
 	>(data: D): Set<StoreNames<PrismaIDBSchema>> {
 		const neededStores: Set<StoreNames<PrismaIDBSchema>> = new Set();
-		neededStores.add('DashboardItems');
+		neededStores.add('DashboardItem');
 		if (data?.user) {
 			neededStores.add('User');
 			if (data.user.create) {
@@ -10630,12 +13344,12 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 		return neededStores;
 	}
 
-	_getNeededStoresForUpdate<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'update'>>(
+	_getNeededStoresForUpdate<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'update'>>(
 		query: Partial<Q>
 	): Set<StoreNames<PrismaIDBSchema>> {
 		const neededStores = this._getNeededStoresForFind(query).union(
 			this._getNeededStoresForCreate(
-				query.data as Prisma.Args<Prisma.DashboardItemsDelegate, 'create'>['data']
+				query.data as Prisma.Args<Prisma.DashboardItemDelegate, 'create'>['data']
 			)
 		);
 		if (query.data?.user?.connect) {
@@ -10668,38 +13382,34 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 	}
 
 	_getNeededStoresForNestedDelete(neededStores: Set<StoreNames<PrismaIDBSchema>>): void {
-		neededStores.add('DashboardItems');
+		neededStores.add('DashboardItem');
 	}
 
 	private _removeNestedCreateData<
-		D extends Prisma.Args<Prisma.DashboardItemsDelegate, 'create'>['data']
-	>(data: D): Prisma.Result<Prisma.DashboardItemsDelegate, object, 'findFirstOrThrow'> {
+		D extends Prisma.Args<Prisma.DashboardItemDelegate, 'create'>['data']
+	>(data: D): Prisma.Result<Prisma.DashboardItemDelegate, object, 'findFirstOrThrow'> {
 		const recordWithoutNestedCreate = structuredClone(data);
 		delete recordWithoutNestedCreate?.user;
 		return recordWithoutNestedCreate as Prisma.Result<
-			Prisma.DashboardItemsDelegate,
+			Prisma.DashboardItemDelegate,
 			object,
 			'findFirstOrThrow'
 		>;
 	}
 
 	private _preprocessListFields(
-		records: Prisma.Result<Prisma.DashboardItemsDelegate, object, 'findMany'>
-	): void {
-		for (const record of records) {
-			record.items = record.items ?? [];
-		}
-	}
+		records: Prisma.Result<Prisma.DashboardItemDelegate, object, 'findMany'>
+	): void {}
 
-	async findMany<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'findMany'>>(
+	async findMany<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'findMany'>>(
 		query?: Q,
 		tx?: IDBUtils.TransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'findMany'>> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'findMany'>> {
 		tx =
 			tx ??
 			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
 		const records = await this._applyWhereClause(
-			await tx.objectStore('DashboardItems').getAll(),
+			await tx.objectStore('DashboardItem').getAll(),
 			query?.where,
 			tx
 		);
@@ -10708,7 +13418,7 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 			records,
 			tx,
 			query
-		)) as Prisma.Result<Prisma.DashboardItemsDelegate, object, 'findFirstOrThrow'>[];
+		)) as Prisma.Result<Prisma.DashboardItemDelegate, object, 'findFirstOrThrow'>[];
 		const selectClause = query?.select;
 		let selectAppliedRecords = this._applySelectClause(relationAppliedRecords, selectClause);
 		if (query?.distinct) {
@@ -10722,23 +13432,23 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 			});
 		}
 		this._preprocessListFields(selectAppliedRecords);
-		return selectAppliedRecords as Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'findMany'>;
+		return selectAppliedRecords as Prisma.Result<Prisma.DashboardItemDelegate, Q, 'findMany'>;
 	}
 
-	async findFirst<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'findFirst'>>(
+	async findFirst<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'findFirst'>>(
 		query?: Q,
 		tx?: IDBUtils.TransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'findFirst'>> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'findFirst'>> {
 		tx =
 			tx ??
 			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
 		return (await this.findMany(query, tx))[0] ?? null;
 	}
 
-	async findFirstOrThrow<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'findFirstOrThrow'>>(
+	async findFirstOrThrow<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'findFirstOrThrow'>>(
 		query?: Q,
 		tx?: IDBUtils.TransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'findFirstOrThrow'>> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'findFirstOrThrow'>> {
 		tx =
 			tx ??
 			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
@@ -10750,21 +13460,23 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 		return record;
 	}
 
-	async findUnique<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'findUnique'>>(
+	async findUnique<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'findUnique'>>(
 		query: Q,
 		tx?: IDBUtils.TransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'findUnique'>> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'findUnique'>> {
 		tx =
 			tx ??
 			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
 		let record;
 		if (query.where.id !== undefined) {
-			record = await tx.objectStore('DashboardItems').get([query.where.id]);
+			record = await tx.objectStore('DashboardItem').get([query.where.id]);
 		} else if (query.where.userId !== undefined) {
+			record = await tx.objectStore('DashboardItem').index('userIdIndex').get([query.where.userId]);
+		} else if (query.where.userId_type !== undefined) {
 			record = await tx
-				.objectStore('DashboardItems')
-				.index('userIdIndex')
-				.get([query.where.userId]);
+				.objectStore('DashboardItem')
+				.index('userId_typeIndex')
+				.get([query.where.userId_type.userId, query.where.userId_type.type]);
 		}
 		if (!record) return null;
 
@@ -10777,15 +13489,13 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 			query.select
 		)[0];
 		this._preprocessListFields([recordWithRelations]);
-		return recordWithRelations as Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'findUnique'>;
+		return recordWithRelations as Prisma.Result<Prisma.DashboardItemDelegate, Q, 'findUnique'>;
 	}
 
-	async findUniqueOrThrow<
-		Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'findUniqueOrThrow'>
-	>(
+	async findUniqueOrThrow<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'findUniqueOrThrow'>>(
 		query: Q,
 		tx?: IDBUtils.TransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'findUniqueOrThrow'>> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'findUniqueOrThrow'>> {
 		tx =
 			tx ??
 			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readonly');
@@ -10797,16 +13507,16 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 		return record;
 	}
 
-	async count<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'count'>>(
+	async count<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'count'>>(
 		query?: Q,
 		tx?: IDBUtils.TransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'count'>> {
-		tx = tx ?? this.client._db.transaction(['DashboardItems'], 'readonly');
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'count'>> {
+		tx = tx ?? this.client._db.transaction(['DashboardItem'], 'readonly');
 		if (!query?.select || query.select === true) {
 			const records = await this.findMany({ where: query?.where }, tx);
-			return records.length as Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'count'>;
+			return records.length as Prisma.Result<Prisma.DashboardItemDelegate, Q, 'count'>;
 		}
-		const result: Partial<Record<keyof Prisma.DashboardItemsCountAggregateInputType, number>> = {};
+		const result: Partial<Record<keyof Prisma.DashboardItemCountAggregateInputType, number>> = {};
 		for (const key of Object.keys(query.select)) {
 			const typedKey = key as keyof typeof query.select;
 			if (typedKey === '_all') {
@@ -10817,13 +13527,13 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 				await this.findMany({ where: { [`${typedKey}`]: { not: null } } }, tx)
 			).length;
 		}
-		return result as Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'count'>;
+		return result as Prisma.Result<Prisma.DashboardItemDelegate, Q, 'count'>;
 	}
 
-	async create<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'create'>>(
+	async create<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'create'>>(
 		query: Q,
 		tx?: IDBUtils.ReadwriteTransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'create'>> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		if (query.data.user) {
@@ -10863,68 +13573,68 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 			);
 		}
 		const record = this._removeNestedCreateData(await this._fillDefaults(query.data, tx));
-		const keyPath = await tx.objectStore('DashboardItems').add(record);
-		const data = (await tx.objectStore('DashboardItems').get(keyPath))!;
+		const keyPath = await tx.objectStore('DashboardItem').add(record);
+		const data = (await tx.objectStore('DashboardItem').get(keyPath))!;
 		const recordsWithRelations = this._applySelectClause(
 			await this._applyRelations<object>([data], tx, query),
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
 		this.emit('create', keyPath);
-		return recordsWithRelations as Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'create'>;
+		return recordsWithRelations as Prisma.Result<Prisma.DashboardItemDelegate, Q, 'create'>;
 	}
 
-	async createMany<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'createMany'>>(
+	async createMany<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'createMany'>>(
 		query: Q,
 		tx?: IDBUtils.ReadwriteTransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'createMany'>> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
-		tx = tx ?? this.client._db.transaction(['DashboardItems'], 'readwrite');
+		tx = tx ?? this.client._db.transaction(['DashboardItem'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
-			const keyPath = await tx.objectStore('DashboardItems').add(record);
+			const keyPath = await tx.objectStore('DashboardItem').add(record);
 			this.emit('create', keyPath);
 		}
 		return { count: createManyData.length };
 	}
 
 	async createManyAndReturn<
-		Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'createManyAndReturn'>
+		Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
 		tx?: IDBUtils.ReadwriteTransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'createManyAndReturn'>> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
-		const records: Prisma.Result<Prisma.DashboardItemsDelegate, object, 'findMany'> = [];
-		tx = tx ?? this.client._db.transaction(['DashboardItems'], 'readwrite');
+		const records: Prisma.Result<Prisma.DashboardItemDelegate, object, 'findMany'> = [];
+		tx = tx ?? this.client._db.transaction(['DashboardItem'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
-			const keyPath = await tx.objectStore('DashboardItems').add(record);
+			const keyPath = await tx.objectStore('DashboardItem').add(record);
 			this.emit('create', keyPath);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
-		return records as Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'createManyAndReturn'>;
+		return records as Prisma.Result<Prisma.DashboardItemDelegate, Q, 'createManyAndReturn'>;
 	}
 
-	async delete<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'delete'>>(
+	async delete<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'delete'>>(
 		query: Q,
 		tx?: IDBUtils.ReadwriteTransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'delete'>> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
-		await tx.objectStore('DashboardItems').delete([record.id]);
+		await tx.objectStore('DashboardItem').delete([record.id]);
 		this.emit('delete', [record.id]);
 		return record;
 	}
 
-	async deleteMany<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'deleteMany'>>(
+	async deleteMany<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'deleteMany'>>(
 		query?: Q,
 		tx?: IDBUtils.ReadwriteTransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'deleteMany'>> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
@@ -10935,10 +13645,10 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 		return { count: records.length };
 	}
 
-	async update<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'update'>>(
+	async update<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'update'>>(
 		query: Q,
 		tx?: IDBUtils.ReadwriteTransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'update'>> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'update'>> {
 		tx =
 			tx ??
 			this.client._db.transaction(Array.from(this._getNeededStoresForUpdate(query)), 'readwrite');
@@ -10947,7 +13657,7 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 			tx.abort();
 			throw new Error('Record not found');
 		}
-		const startKeyPath: PrismaIDBSchema['DashboardItems']['key'] = [record.id];
+		const startKeyPath: PrismaIDBSchema['DashboardItem']['key'] = [record.id];
 		const stringFields = ['id', 'userId'] as const;
 		for (const field of stringFields) {
 			IDBUtils.handleStringUpdateField(record, field, query.data[field]);
@@ -10956,9 +13666,9 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 		for (const field of dateTimeFields) {
 			IDBUtils.handleDateTimeUpdateField(record, field, query.data[field]);
 		}
-		const listFields = ['items'] as const;
-		for (const field of listFields) {
-			IDBUtils.handleScalarListUpdateField(record, field, query.data[field]);
+		const enumFields = ['type'] as const;
+		for (const field of enumFields) {
+			IDBUtils.handleEnumUpdateField(record, field, query.data[field]);
 		}
 		if (query.data.user) {
 			if (query.data.user.connect) {
@@ -11019,17 +13729,17 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 			const related = await this.client.user.findUnique({ where: { id: record.userId } }, tx);
 			if (!related) throw new Error('Related record not found');
 		}
-		const endKeyPath: PrismaIDBSchema['DashboardItems']['key'] = [record.id];
+		const endKeyPath: PrismaIDBSchema['DashboardItem']['key'] = [record.id];
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
-				if ((await tx.objectStore('DashboardItems').get(endKeyPath)) !== undefined) {
+				if ((await tx.objectStore('DashboardItem').get(endKeyPath)) !== undefined) {
 					throw new Error('Record with the same keyPath already exists');
 				}
-				await tx.objectStore('DashboardItems').delete(startKeyPath);
+				await tx.objectStore('DashboardItem').delete(startKeyPath);
 				break;
 			}
 		}
-		const keyPath = await tx.objectStore('DashboardItems').put(record);
+		const keyPath = await tx.objectStore('DashboardItem').put(record);
 		this.emit('update', keyPath, startKeyPath);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
@@ -11042,13 +13752,13 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 			},
 			tx
 		))!;
-		return recordWithRelations as Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'update'>;
+		return recordWithRelations as Prisma.Result<Prisma.DashboardItemDelegate, Q, 'update'>;
 	}
 
-	async updateMany<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'updateMany'>>(
+	async updateMany<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'updateMany'>>(
 		query: Q,
 		tx?: IDBUtils.ReadwriteTransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'updateMany'>> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
 			this.client._db.transaction(Array.from(this._getNeededStoresForFind(query)), 'readwrite');
@@ -11061,14 +13771,14 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 		return { count: records.length };
 	}
 
-	async upsert<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'upsert'>>(
+	async upsert<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'upsert'>>(
 		query: Q,
 		tx?: IDBUtils.ReadwriteTransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'upsert'>> {
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
 			data: { ...query.update, ...query.create } as Prisma.Args<
-				Prisma.DashboardItemsDelegate,
+				Prisma.DashboardItemDelegate,
 				'update'
 			>['data']
 		});
@@ -11080,16 +13790,16 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
 		);
-		return record as Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'upsert'>;
+		return record as Prisma.Result<Prisma.DashboardItemDelegate, Q, 'upsert'>;
 	}
 
-	async aggregate<Q extends Prisma.Args<Prisma.DashboardItemsDelegate, 'aggregate'>>(
+	async aggregate<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'aggregate'>>(
 		query?: Q,
 		tx?: IDBUtils.TransactionType
-	): Promise<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'aggregate'>> {
-		tx = tx ?? this.client._db.transaction(['DashboardItems'], 'readonly');
+	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'aggregate'>> {
+		tx = tx ?? this.client._db.transaction(['DashboardItem'], 'readonly');
 		const records = await this.findMany({ where: query?.where }, tx);
-		const result: Partial<Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'aggregate'>> = {};
+		const result: Partial<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'aggregate'>> = {};
 		if (query?._count) {
 			if (query._count === true) {
 				(result._count as number) = records.length;
@@ -11107,7 +13817,7 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 			}
 		}
 		if (query?._min) {
-			const minResult = {} as Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'aggregate'>['_min'];
+			const minResult = {} as Prisma.Result<Prisma.DashboardItemDelegate, Q, 'aggregate'>['_min'];
 			const dateTimeFields = ['createdAt'] as const;
 			for (const field of dateTimeFields) {
 				if (!query._min[field]) continue;
@@ -11127,7 +13837,7 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 			result._min = minResult;
 		}
 		if (query?._max) {
-			const maxResult = {} as Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'aggregate'>['_max'];
+			const maxResult = {} as Prisma.Result<Prisma.DashboardItemDelegate, Q, 'aggregate'>['_max'];
 			const dateTimeFields = ['createdAt'] as const;
 			for (const field of dateTimeFields) {
 				if (!query._max[field]) continue;
@@ -11146,7 +13856,7 @@ class DashboardItemsIDBClass extends BaseIDBModelClass<'DashboardItems'> {
 			}
 			result._max = maxResult;
 		}
-		return result as unknown as Prisma.Result<Prisma.DashboardItemsDelegate, Q, 'aggregate'>;
+		return result as unknown as Prisma.Result<Prisma.DashboardItemDelegate, Q, 'aggregate'>;
 	}
 }
 
@@ -11293,50 +14003,27 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 							if (!relatedRecord) return null;
 						}
 					}
-					if (whereClause.dashboardItems === null) {
-						const relatedRecord = await this.client.dashboardItems.findFirst(
-							{ where: { userId: record.id } },
-							tx
-						);
-						if (relatedRecord) return null;
-					}
 					if (whereClause.dashboardItems) {
-						const { is, isNot, ...rest } = whereClause.dashboardItems;
-						if (is === null) {
-							const relatedRecord = await this.client.dashboardItems.findFirst(
-								{ where: { userId: record.id } },
+						if (whereClause.dashboardItems.every) {
+							const violatingRecord = await this.client.dashboardItem.findFirst({
+								where: { NOT: { ...whereClause.dashboardItems.every }, userId: record.id },
 								tx
-							);
-							if (relatedRecord) return null;
+							});
+							if (violatingRecord !== null) return null;
 						}
-						if (is !== null && is !== undefined) {
-							const relatedRecord = await this.client.dashboardItems.findFirst(
-								{ where: { ...is, userId: record.id } },
+						if (whereClause.dashboardItems.some) {
+							const relatedRecords = await this.client.dashboardItem.findMany({
+								where: { ...whereClause.dashboardItems.some, userId: record.id },
 								tx
-							);
-							if (!relatedRecord) return null;
+							});
+							if (relatedRecords.length === 0) return null;
 						}
-						if (isNot === null) {
-							const relatedRecord = await this.client.dashboardItems.findFirst(
-								{ where: { userId: record.id } },
+						if (whereClause.dashboardItems.none) {
+							const violatingRecord = await this.client.dashboardItem.findFirst({
+								where: { ...whereClause.dashboardItems.none, userId: record.id },
 								tx
-							);
-							if (!relatedRecord) return null;
-						}
-						if (isNot !== null && isNot !== undefined) {
-							const relatedRecord = await this.client.dashboardItems.findFirst(
-								{ where: { ...isNot, userId: record.id } },
-								tx
-							);
-							if (relatedRecord) return null;
-						}
-						if (Object.keys(rest).length) {
-							if (record.id === null) return null;
-							const relatedRecord = await this.client.dashboardItems.findFirst(
-								{ where: { ...whereClause.dashboardItems, userId: record.id } },
-								tx
-							);
-							if (!relatedRecord) return null;
+							});
+							if (violatingRecord !== null) return null;
 						}
 					}
 					if (whereClause.metrics) {
@@ -11569,10 +14256,10 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			}
 			const attach_dashboardItems = query.select?.dashboardItems || query.include?.dashboardItems;
 			if (attach_dashboardItems) {
-				unsafeRecord['dashboardItems'] = await this.client.dashboardItems.findUnique(
+				unsafeRecord['dashboardItems'] = await this.client.dashboardItem.findMany(
 					{
 						...(attach_dashboardItems === true ? {} : attach_dashboardItems),
-						where: { userId: record.id }
+						where: { userId: record.id! }
 					},
 					tx
 				);
@@ -11688,15 +14375,6 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						tx
 					);
 		}
-		if (orderByInput.dashboardItems) {
-			return record.id === null
-				? null
-				: await this.client.dashboardItems._resolveOrderByKey(
-						await this.client.dashboardItems.findFirstOrThrow({ where: { userId: record.id } }),
-						orderByInput.dashboardItems,
-						tx
-					);
-		}
 		if (orderByInput.activityTrackingPreferences) {
 			return record.id === null
 				? null
@@ -11726,6 +14404,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		if (orderByInput.exerciseSplits) {
 			return await this.client.exerciseSplit.count({ where: { userId: record.id } }, tx);
 		}
+		if (orderByInput.dashboardItems) {
+			return await this.client.dashboardItem.count({ where: { userId: record.id } }, tx);
+		}
 		if (orderByInput.metrics) {
 			return await this.client.macroMetrics.count({ where: { userId: record.id } }, tx);
 		}
@@ -11753,9 +14434,6 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				orderByInput.gettingStartedAnswers
 			);
 		}
-		if (orderByInput.dashboardItems) {
-			return this.client.dashboardItems._resolveSortOrder(orderByInput.dashboardItems);
-		}
 		if (orderByInput.activityTrackingPreferences) {
 			return this.client.macroActivityTrackingPreferences._resolveSortOrder(
 				orderByInput.activityTrackingPreferences
@@ -11772,6 +14450,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		}
 		if (orderByInput.exerciseSplits?._count) {
 			return orderByInput.exerciseSplits._count;
+		}
+		if (orderByInput.dashboardItems?._count) {
+			return orderByInput.dashboardItems._count;
 		}
 		if (orderByInput.metrics?._count) {
 			return orderByInput.metrics._count;
@@ -11852,8 +14533,19 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			);
 		}
 		if (whereClause.dashboardItems) {
-			neededStores.add('DashboardItems');
-			this.client.dashboardItems._getNeededStoresForWhere(whereClause.dashboardItems, neededStores);
+			neededStores.add('DashboardItem');
+			this.client.dashboardItem._getNeededStoresForWhere(
+				whereClause.dashboardItems.every,
+				neededStores
+			);
+			this.client.dashboardItem._getNeededStoresForWhere(
+				whereClause.dashboardItems.some,
+				neededStores
+			);
+			this.client.dashboardItem._getNeededStoresForWhere(
+				whereClause.dashboardItems.none,
+				neededStores
+			);
 		}
 		if (whereClause.metrics) {
 			neededStores.add('MacroMetrics');
@@ -11908,9 +14600,7 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			}
 			const orderBy_dashboardItems = orderBy.find((clause) => clause.dashboardItems);
 			if (orderBy_dashboardItems) {
-				this.client.dashboardItems
-					._getNeededStoresForFind({ orderBy: orderBy_dashboardItems.dashboardItems })
-					.forEach((storeName) => neededStores.add(storeName));
+				neededStores.add('DashboardItem');
 			}
 			const orderBy_metrics = orderBy.find((clause) => clause.metrics);
 			if (orderBy_metrics) {
@@ -11990,14 +14680,14 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			}
 		}
 		if (query?.select?.dashboardItems || query?.include?.dashboardItems) {
-			neededStores.add('DashboardItems');
+			neededStores.add('DashboardItem');
 			if (typeof query.select?.dashboardItems === 'object') {
-				this.client.dashboardItems
+				this.client.dashboardItem
 					._getNeededStoresForFind(query.select.dashboardItems)
 					.forEach((storeName) => neededStores.add(storeName));
 			}
 			if (typeof query.include?.dashboardItems === 'object') {
-				this.client.dashboardItems
+				this.client.dashboardItem
 					._getNeededStoresForFind(query.include.dashboardItems)
 					.forEach((storeName) => neededStores.add(storeName));
 			}
@@ -12164,21 +14854,28 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			}
 		}
 		if (data?.dashboardItems) {
-			neededStores.add('DashboardItems');
+			neededStores.add('DashboardItem');
 			if (data.dashboardItems.create) {
 				const createData = Array.isArray(data.dashboardItems.create)
 					? data.dashboardItems.create
 					: [data.dashboardItems.create];
 				createData.forEach((record) =>
-					this.client.dashboardItems
+					this.client.dashboardItem
 						._getNeededStoresForCreate(record)
 						.forEach((storeName) => neededStores.add(storeName))
 				);
 			}
 			if (data.dashboardItems.connectOrCreate) {
 				IDBUtils.convertToArray(data.dashboardItems.connectOrCreate).forEach((record) =>
-					this.client.dashboardItems
+					this.client.dashboardItem
 						._getNeededStoresForCreate(record.create)
+						.forEach((storeName) => neededStores.add(storeName))
+				);
+			}
+			if (data.dashboardItems.createMany) {
+				IDBUtils.convertToArray(data.dashboardItems.createMany.data).forEach((record) =>
+					this.client.dashboardItem
+						._getNeededStoresForCreate(record)
 						.forEach((storeName) => neededStores.add(storeName))
 				);
 			}
@@ -12448,35 +15145,41 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			});
 		}
 		if (query.data?.dashboardItems?.connect) {
-			neededStores.add('DashboardItems');
+			neededStores.add('DashboardItem');
 			IDBUtils.convertToArray(query.data.dashboardItems.connect).forEach((connect) => {
-				this.client.dashboardItems._getNeededStoresForWhere(connect, neededStores);
+				this.client.dashboardItem._getNeededStoresForWhere(connect, neededStores);
 			});
 		}
-		if (query.data?.dashboardItems?.disconnect) {
-			neededStores.add('DashboardItems');
-			if (query.data?.dashboardItems?.disconnect !== true) {
-				IDBUtils.convertToArray(query.data.dashboardItems.disconnect).forEach((disconnect) => {
-					this.client.dashboardItems._getNeededStoresForWhere(disconnect, neededStores);
-				});
-			}
+		if (query.data?.dashboardItems?.set) {
+			neededStores.add('DashboardItem');
+			IDBUtils.convertToArray(query.data.dashboardItems.set).forEach((setWhere) => {
+				this.client.dashboardItem._getNeededStoresForWhere(setWhere, neededStores);
+			});
+		}
+		if (query.data?.dashboardItems?.updateMany) {
+			neededStores.add('DashboardItem');
+			IDBUtils.convertToArray(query.data.dashboardItems.updateMany).forEach((update) => {
+				this.client.dashboardItem
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.DashboardItemDelegate, 'update'>)
+					.forEach((store) => neededStores.add(store));
+			});
 		}
 		if (query.data?.dashboardItems?.update) {
-			neededStores.add('DashboardItems');
+			neededStores.add('DashboardItem');
 			IDBUtils.convertToArray(query.data.dashboardItems.update).forEach((update) => {
-				this.client.dashboardItems
-					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.DashboardItemsDelegate, 'update'>)
+				this.client.dashboardItem
+					._getNeededStoresForUpdate(update as Prisma.Args<Prisma.DashboardItemDelegate, 'update'>)
 					.forEach((store) => neededStores.add(store));
 			});
 		}
 		if (query.data?.dashboardItems?.upsert) {
-			neededStores.add('DashboardItems');
+			neededStores.add('DashboardItem');
 			IDBUtils.convertToArray(query.data.dashboardItems.upsert).forEach((upsert) => {
 				const update = {
 					where: upsert.where,
 					data: { ...upsert.update, ...upsert.create }
-				} as Prisma.Args<Prisma.DashboardItemsDelegate, 'update'>;
-				this.client.dashboardItems
+				} as Prisma.Args<Prisma.DashboardItemDelegate, 'update'>;
+				this.client.dashboardItem
 					._getNeededStoresForUpdate(update)
 					.forEach((store) => neededStores.add(store));
 			});
@@ -12651,8 +15354,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		if (query.data?.gettingStartedAnswers?.delete) {
 			this.client.gettingStartedAnswers._getNeededStoresForNestedDelete(neededStores);
 		}
-		if (query.data?.dashboardItems?.delete) {
-			this.client.dashboardItems._getNeededStoresForNestedDelete(neededStores);
+		if (query.data?.dashboardItems?.delete || query.data?.dashboardItems?.deleteMany) {
+			this.client.dashboardItem._getNeededStoresForNestedDelete(neededStores);
 		}
 		if (query.data?.metrics?.delete || query.data?.metrics?.deleteMany) {
 			this.client.macroMetrics._getNeededStoresForNestedDelete(neededStores);
@@ -12673,7 +15376,7 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			neededStores.add('MacroActivityTrackingPreferences');
 			neededStores.add('FoodEntry');
 			neededStores.add('GettingStartedAnswers');
-			neededStores.add('DashboardItems');
+			neededStores.add('DashboardItem');
 			neededStores.add('Session');
 			neededStores.add('Account');
 		}
@@ -12686,7 +15389,7 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		this.client.account._getNeededStoresForNestedDelete(neededStores);
 		this.client.exerciseSplit._getNeededStoresForNestedDelete(neededStores);
 		this.client.gettingStartedAnswers._getNeededStoresForNestedDelete(neededStores);
-		this.client.dashboardItems._getNeededStoresForNestedDelete(neededStores);
+		this.client.dashboardItem._getNeededStoresForNestedDelete(neededStores);
 		this.client.macroMetrics._getNeededStoresForNestedDelete(neededStores);
 		this.client.macroActivityTrackingPreferences._getNeededStoresForNestedDelete(neededStores);
 		this.client.macroTargets._getNeededStoresForNestedDelete(neededStores);
@@ -13042,37 +15745,60 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				);
 			}
 		}
-		if (query.data.dashboardItems?.create) {
-			await this.client.dashboardItems.create(
-				{
-					data: { ...query.data.dashboardItems.create, userId: keyPath[0] } as Prisma.Args<
-						Prisma.DashboardItemsDelegate,
-						'create'
-					>['data']
-				},
-				tx
-			);
-		}
-		if (query.data.dashboardItems?.connect) {
-			await this.client.dashboardItems.update(
-				{ where: query.data.dashboardItems.connect, data: { userId: keyPath[0] } },
-				tx
-			);
-		}
-		if (query.data.dashboardItems?.connectOrCreate) {
-			if (query.data.dashboardItems?.connectOrCreate) {
-				await this.client.dashboardItems.upsert(
+		if (query.data?.dashboardItems?.create) {
+			for (const elem of IDBUtils.convertToArray(query.data.dashboardItems.create)) {
+				await this.client.dashboardItem.create(
 					{
-						where: query.data.dashboardItems.connectOrCreate.where,
-						create: {
-							...query.data.dashboardItems.connectOrCreate.create,
-							userId: keyPath[0]
-						} as Prisma.Args<Prisma.DashboardItemsDelegate, 'create'>['data'],
-						update: { userId: keyPath[0] }
+						data: { ...elem, user: { connect: { id: keyPath[0] } } } as Prisma.Args<
+							Prisma.DashboardItemDelegate,
+							'create'
+						>['data']
 					},
 					tx
 				);
 			}
+		}
+		if (query.data?.dashboardItems?.connect) {
+			await Promise.all(
+				IDBUtils.convertToArray(query.data.dashboardItems.connect).map(async (connectWhere) => {
+					await this.client.dashboardItem.update(
+						{ where: connectWhere, data: { userId: keyPath[0] } },
+						tx
+					);
+				})
+			);
+		}
+		if (query.data?.dashboardItems?.connectOrCreate) {
+			await Promise.all(
+				IDBUtils.convertToArray(query.data.dashboardItems.connectOrCreate).map(
+					async (connectOrCreate) => {
+						await this.client.dashboardItem.upsert(
+							{
+								where: connectOrCreate.where,
+								create: { ...connectOrCreate.create, userId: keyPath[0] } as Prisma.Args<
+									Prisma.DashboardItemDelegate,
+									'create'
+								>['data'],
+								update: { userId: keyPath[0] }
+							},
+							tx
+						);
+					}
+				)
+			);
+		}
+		if (query.data?.dashboardItems?.createMany) {
+			await this.client.dashboardItem.createMany(
+				{
+					data: IDBUtils.convertToArray(query.data.dashboardItems.createMany.data).map(
+						(createData) => ({
+							...createData,
+							userId: keyPath[0]
+						})
+					)
+				},
+				tx
+			);
 		}
 		if (query.data?.metrics?.create) {
 			for (const elem of IDBUtils.convertToArray(query.data.metrics.create)) {
@@ -13334,11 +16060,11 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		);
 		if (relatedGettingStartedAnswers.length)
 			throw new Error('Cannot delete record, other records depend on it');
-		const relatedDashboardItems = await this.client.dashboardItems.findMany(
+		const relatedDashboardItem = await this.client.dashboardItem.findMany(
 			{ where: { userId: record.id } },
 			tx
 		);
-		if (relatedDashboardItems.length)
+		if (relatedDashboardItem.length)
 			throw new Error('Cannot delete record, other records depend on it');
 		await this.client.session.deleteMany(
 			{
@@ -13786,77 +16512,112 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		}
 		if (query.data.dashboardItems) {
 			if (query.data.dashboardItems.connect) {
-				await this.client.dashboardItems.update(
-					{ where: query.data.dashboardItems.connect, data: { userId: record.id } },
-					tx
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.dashboardItems.connect).map(async (connectWhere) => {
+						await this.client.dashboardItem.update(
+							{ where: connectWhere, data: { userId: record.id } },
+							tx
+						);
+					})
 				);
 			}
 			if (query.data.dashboardItems.disconnect) {
 				throw new Error('Cannot disconnect required relation');
 			}
 			if (query.data.dashboardItems.create) {
-				await this.client.dashboardItems.create(
-					{
-						data: { ...query.data.dashboardItems.create, userId: record.id } as Prisma.Args<
-							Prisma.DashboardItemsDelegate,
-							'create'
-						>['data']
-					},
-					tx
-				);
+				const createData = Array.isArray(query.data.dashboardItems.create)
+					? query.data.dashboardItems.create
+					: [query.data.dashboardItems.create];
+				for (const elem of createData) {
+					await this.client.dashboardItem.create(
+						{
+							data: { ...elem, userId: record.id } as Prisma.Args<
+								Prisma.DashboardItemDelegate,
+								'create'
+							>['data']
+						},
+						tx
+					);
+				}
 			}
-			if (query.data.dashboardItems.delete) {
-				const deleteWhere =
-					query.data.dashboardItems.delete === true ? {} : query.data.dashboardItems.delete;
-				await this.client.dashboardItems.delete(
-					{ where: { ...deleteWhere, userId: record.id } as Prisma.DashboardItemsWhereUniqueInput },
-					tx
+			if (query.data.dashboardItems.createMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.dashboardItems.createMany.data).map(
+						async (createData) => {
+							await this.client.dashboardItem.create(
+								{ data: { ...createData, userId: record.id } },
+								tx
+							);
+						}
+					)
 				);
 			}
 			if (query.data.dashboardItems.update) {
-				const updateData =
-					query.data.dashboardItems.update.data ?? query.data.dashboardItems.update;
-				await this.client.dashboardItems.update(
-					{
-						where: {
-							...query.data.dashboardItems.update.where,
-							userId: record.id
-						} as Prisma.DashboardItemsWhereUniqueInput,
-						data: updateData
-					},
-					tx
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.dashboardItems.update).map(async (updateData) => {
+						await this.client.dashboardItem.update(updateData, tx);
+					})
+				);
+			}
+			if (query.data.dashboardItems.updateMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.dashboardItems.updateMany).map(async (updateData) => {
+						await this.client.dashboardItem.updateMany(updateData, tx);
+					})
 				);
 			}
 			if (query.data.dashboardItems.upsert) {
-				await this.client.dashboardItems.upsert(
-					{
-						...query.data.dashboardItems.upsert,
-						where: {
-							...query.data.dashboardItems.upsert.where,
-							userId: record.id
-						} as Prisma.DashboardItemsWhereUniqueInput,
-						create: {
-							...query.data.dashboardItems.upsert.create,
-							userId: record.id
-						} as Prisma.Args<Prisma.DashboardItemsDelegate, 'upsert'>['create']
-					},
-					tx
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.dashboardItems.upsert).map(async (upsertData) => {
+						await this.client.dashboardItem.upsert(
+							{
+								...upsertData,
+								where: { ...upsertData.where, userId: record.id },
+								create: { ...upsertData.create, userId: record.id } as Prisma.Args<
+									Prisma.DashboardItemDelegate,
+									'upsert'
+								>['create']
+							},
+							tx
+						);
+					})
 				);
 			}
-			if (query.data.dashboardItems.connectOrCreate) {
-				await this.client.dashboardItems.upsert(
-					{
-						where: {
-							...query.data.dashboardItems.connectOrCreate.where,
-							userId: record.id
-						} as Prisma.DashboardItemsWhereUniqueInput,
-						create: {
-							...query.data.dashboardItems.connectOrCreate.create,
-							userId: record.id
-						} as Prisma.Args<Prisma.DashboardItemsDelegate, 'upsert'>['create'],
-						update: { userId: record.id }
-					},
+			if (query.data.dashboardItems.delete) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.dashboardItems.delete).map(async (deleteData) => {
+						await this.client.dashboardItem.delete(
+							{ where: { ...deleteData, userId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.dashboardItems.deleteMany) {
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.dashboardItems.deleteMany).map(async (deleteData) => {
+						await this.client.dashboardItem.deleteMany(
+							{ where: { ...deleteData, userId: record.id } },
+							tx
+						);
+					})
+				);
+			}
+			if (query.data.dashboardItems.set) {
+				const existing = await this.client.dashboardItem.findMany(
+					{ where: { userId: record.id } },
 					tx
+				);
+				if (existing.length > 0) {
+					throw new Error('Cannot set required relation');
+				}
+				await Promise.all(
+					IDBUtils.convertToArray(query.data.dashboardItems.set).map(async (setData) => {
+						await this.client.dashboardItem.update(
+							{ where: setData, data: { userId: record.id } },
+							tx
+						);
+					})
 				);
 			}
 		}
@@ -14286,7 +17047,7 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 					},
 					tx
 				);
-				await this.client.dashboardItems.updateMany(
+				await this.client.dashboardItem.updateMany(
 					{
 						where: { userId: startKeyPath[0] },
 						data: { userId: endKeyPath[0] }

@@ -31,14 +31,32 @@ model ExerciseSplitDaySessionExercise {
   id                        String                  @id @default(uuid())
   exerciseIndex             Int
   name                      String
-  notes                     String[]
   primaryMuscleGroup        String
-  secondaryMuscleGroups     String[]
   repRangeStart             Int
   repRangeEnd               Int
   setType                   SetType
   exerciseSplitDaySession   ExerciseSplitDaySession @relation(fields: [exerciseSplitDaySessionId], references: [id])
   exerciseSplitDaySessionId String
 
+  notes                 ExerciseSplitDaySessionExerciseNote[]
+  secondaryMuscleGroups ExerciseSplitDaySessionExerciseSecondaryMuscleGroup[]
+
   @@unique([exerciseSplitDaySessionId, exerciseIndex])
+}
+
+model ExerciseSplitDaySessionExerciseNote {
+  id         String                          @id @default(uuid())
+  exercise   ExerciseSplitDaySessionExercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  exerciseId String
+  note       String
+  noteIndex  Int
+}
+
+model ExerciseSplitDaySessionExerciseSecondaryMuscleGroup {
+  id          String                          @id @default(uuid())
+  exercise    ExerciseSplitDaySessionExercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  exerciseId  String
+  muscleGroup String
+
+  @@unique([exerciseId, muscleGroup])
 }

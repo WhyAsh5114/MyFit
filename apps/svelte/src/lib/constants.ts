@@ -3,6 +3,8 @@ import type {
 	ExerciseSplitDay,
 	ExerciseSplitDaySession,
 	ExerciseSplitDaySessionExercise,
+	ExerciseSplitDaySessionExerciseNote,
+	ExerciseSplitDaySessionExerciseSecondaryMuscleGroup,
 	FitnessKnowledge
 } from '@prisma/client';
 import {
@@ -212,7 +214,13 @@ export const QUICK_SETUP_QUESTION = {
 export type ExerciseSplitTemplate = Omit<ExerciseSplit, 'id' | 'userId'> & {
 	splitDays: (Omit<ExerciseSplitDay, 'id' | 'exerciseSplitId'> & {
 		splitDaySessions: (Omit<ExerciseSplitDaySession, 'id' | 'exerciseSplitDayId'> & {
-			exercises: Omit<ExerciseSplitDaySessionExercise, 'id' | 'exerciseSplitDaySessionId'>[];
+			exercises: (Omit<ExerciseSplitDaySessionExercise, 'id' | 'exerciseSplitDaySessionId'> & {
+				notes: Omit<ExerciseSplitDaySessionExerciseNote, 'id' | 'exerciseId'>[];
+				secondaryMuscleGroups: Omit<
+					ExerciseSplitDaySessionExerciseSecondaryMuscleGroup,
+					'id' | 'exerciseId'
+				>[];
+			})[];
 		})[];
 	})[];
 };
@@ -233,7 +241,7 @@ export const EXERCISE_SPLIT_TEMPLATES: ExerciseSplitTemplate[] = [
 								notes: [],
 								exerciseIndex: 0,
 								primaryMuscleGroup: 'Chest',
-								secondaryMuscleGroups: ['Triceps', 'Front delts'],
+								secondaryMuscleGroups: [{ muscleGroup: 'Triceps' }, { muscleGroup: 'Front delts' }],
 								repRangeStart: 5,
 								repRangeEnd: 10,
 								setType: 'Down'
@@ -254,7 +262,7 @@ export const EXERCISE_SPLIT_TEMPLATES: ExerciseSplitTemplate[] = [
 								notes: [],
 								exerciseIndex: 0,
 								primaryMuscleGroup: 'Lats',
-								secondaryMuscleGroups: ['Biceps'],
+								secondaryMuscleGroups: [{ muscleGroup: 'Biceps' }],
 								repRangeStart: 5,
 								repRangeEnd: 10,
 								setType: 'Down'
