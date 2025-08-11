@@ -11,9 +11,15 @@ function buildPrefixQuery(search: string): string {
 		.join(' & ');
 }
 
-export const getFoodById = command(z.strictObject({ id: z.int() }), async (data) => {
+export const getFoodById = command(z.strictObject({ id: z.number() }), async (data) => {
 	return await prisma.nutritionData.findUniqueOrThrow({
 		where: { id: data.id }
+	});
+});
+
+export const getFoodByCode = command(z.strictObject({ code: z.string() }), async (data) => {
+	return await prisma.nutritionData.findUniqueOrThrow({
+		where: { code: data.code }
 	});
 });
 

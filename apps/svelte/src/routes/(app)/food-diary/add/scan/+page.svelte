@@ -3,24 +3,31 @@
 	import H2 from '$lib/components/typography/h2.svelte';
 	import H3 from '$lib/components/typography/h3.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import type { NutritionData } from '@prisma/client';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { BarqodeStream, type DetectedBarcode } from 'barqode';
-	import { LoaderCircleIcon, PencilIcon, RedoIcon, ScanTextIcon, SearchIcon } from 'lucide-svelte';
+	import {
+		LoaderCircleIcon,
+		PencilIcon,
+		PlusIcon,
+		RedoIcon,
+		ScanTextIcon,
+		SearchIcon
+	} from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
+	import { getFoodByCode } from '../../food.remote';
 
 	let loading = $state(true);
 	let paused = $state(false);
-	let result = $state<number>();
+	let result = $state<string>();
 
 	function onCameraOn() {
 		loading = false;
 	}
 
 	function onDetect(detectedCodes: DetectedBarcode[]) {
-		const value = Number(detectedCodes.at(-1)?.rawValue);
-		if (isNaN(value)) {
+		const value = detectedCodes.at(-1)?.rawValue;
+		if (typeof value !== 'string') {
 			toast.error('Detected code is not a valid number');
 			return;
 		}
@@ -33,13 +40,11 @@
 		queryKey: ['barcode', result],
 		queryFn: async () => {
 			try {
-				const response = await fetch(`/api/food/${result}`);
-				if (response.ok) return (await response.json()) as NutritionData;
-				else if (response.status === 404) return null;
-				else throw new Error('Error occurred while fetching food data');
+				return await getFoodByCode({ code: result! });
 			} catch (error) {
 				toast.error('Failed to fetch food data');
 				console.error('Error fetching food data:', error);
+				return null;
 			}
 		},
 		enabled: Boolean(result)
@@ -81,13 +86,23 @@
 								<span>Error fetching food data</span>
 							</div>
 						{:else if barcodeQuery.data}
-							<div class="flex flex-col items-center gap-2">
-								<span class="text-lg font-semibold">Food found:</span>
-								<span class="text-xl">{barcodeQuery.data.product_name}</span>
+							<div class="flex flex-col">
+								<span class="text-lg">{barcodeQuery.data.product_name}</span>
 								<span class="text-muted-foreground text-sm">
 									{barcodeQuery.data.brands}
 								</span>
 							</div>
+							<Button class="mt-4 w-full"><PlusIcon /> Add to diary</Button>
+							<Button
+								class="mt-2 w-full"
+								variant="outline"
+								onclick={() => {
+									result = undefined;
+									paused = false;
+								}}
+							>
+								<RedoIcon /> Try again
+							</Button>
 						{:else}
 							<div class="grid gap-2">
 								<span>No food data found for this barcode</span>

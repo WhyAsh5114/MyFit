@@ -6,7 +6,6 @@ export async function load() {
 		code: '2',
 		product_name: 'Filets de poulet blanc x2',
 		brands: 'SoLo',
-		quantity: '240-400 g',
 		energy_kcal_100g: 141,
 		proteins_100g: 30,
 		fat_100g: 2.7,

@@ -47,12 +47,12 @@ model FoodEntry {
 }
 
 model NutritionData {
-  id           Int         @id @default(autoincrement())
-  code         String
-  product_name String
-  brands       String?
-  quantity     String?
-  foodEntries  FoodEntry[]
+  id            Int                     @id @default(autoincrement())
+  code          String                  @unique
+  product_name  String
+  brands        String?
+  search_vector Unsupported("tsvector") @default(dbgenerated())
+  foodEntries   FoodEntry[]
 
   energy_kcal_100g   Float
   proteins_100g      Float

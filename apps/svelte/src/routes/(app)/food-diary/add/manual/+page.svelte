@@ -16,7 +16,7 @@
 	const nutrimentLabels = getNutrimentLabels(data.sampleNutritionData);
 
 	function getNutrimentLabels(sampleData: NutritionData) {
-		const { code, quantity, product_name, brands, ...nutriments } = sampleData;
+		const { code, product_name, brands, ...nutriments } = sampleData;
 		const { energy_kcal_100g, proteins_100g, carbohydrates_100g, fat_100g, ...others } = nutriments;
 
 		return Object.keys(others).map((key) => capitalizeWords(snakeToNormal(key).slice(0, -4)));
