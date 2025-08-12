@@ -3,6 +3,7 @@
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import { ModeWatcher, setMode } from 'mode-watcher';
+	import { pwaInfo } from 'virtual:pwa-info';
 	import '../app.css';
 
 	let { children } = $props();
@@ -15,11 +16,7 @@
 			const eventData: { eventType: string; payload: string } = JSON.parse(event.data);
 			if (eventData.eventType === 'THEME_CHANGE') {
 				const { payload } = eventData;
-				if (payload === 'dark') {
-					setMode('dark');
-				} else {
-					setMode('light');
-				}
+				setMode(payload === 'dark' ? 'dark' : 'light');
 			}
 		}
 	}
@@ -28,14 +25,12 @@
 		window.addEventListener('message', themeChangeHandler);
 		document.addEventListener('message', themeChangeHandler);
 	});
+
+	const webManifestLink = $derived(pwaInfo ? pwaInfo.webManifest.linkTag : '');
 </script>
 
 <svelte:head>
-	<title>MyFit</title>
-	<link rel="manifest" href="/manifest.json" />
-	<meta name="application-name" content="MyFit" />
-	<meta name="description" content="Most comprehensive fitness platform ever!" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	{@html webManifestLink}
 </svelte:head>
 
 <ModeWatcher />
