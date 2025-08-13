@@ -1,51 +1,12 @@
 <script lang="ts">
-	import { dev } from '$app/environment';
 	import H1 from '$lib/components/typography/h1.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { client } from '$lib/idb-client';
-	import { createMutation } from '@tanstack/svelte-query';
+	import { createMutation, createQuery } from '@tanstack/svelte-query';
 	import { LoaderCircleIcon, RefreshCcwIcon, RotateCwIcon } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
-	import { getSerwist } from 'virtual:serwist';
 	import { appLayoutState } from '../_components/app-layout-state.svelte';
-
-	let swStatus = $state<'checking' | 'installing' | 'waiting' | undefined>();
-
-	async function checkForUpdate() {
-		if (dev) return;
-
-		swStatus = 'checking';
-		if ('serviceWorker' in navigator) {
-			try {
-				const sw = await getSerwist();
-				if (!sw) return;
-				await sw.register();
-
-				sw.addEventListener('installing', () => {
-					swStatus = 'installing';
-				});
-
-				sw.addEventListener('waiting', () => {
-					swStatus = 'waiting';
-				});
-
-				await sw.update();
-			} catch (error) {
-				swStatus = undefined;
-				toast.error('Failed to check for updates');
-				console.error(error);
-			}
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-			if (swStatus === 'checking') {
-				swStatus = undefined;
-				toast.success('App is already at the latest version');
-			}
-			appLayoutState.lastChecked = new Date();
-		} else {
-			swStatus = undefined;
-		}
-	}
 
 	let resetDatabaseMutation = createMutation(() => ({
 		mutationFn: async () => {
@@ -57,6 +18,36 @@
 			toast.error('Failed to clear IndexedDB');
 			console.error('Error clearing IndexedDB:', error);
 		}
+	}));
+
+	let checkForUpdate = createQuery(() => ({
+		queryFn: async () => {
+			if (!appLayoutState.swRegistration) {
+				toast.error('Service Worker not registered');
+				return null;
+			}
+
+			try {
+				await appLayoutState.swRegistration.update();
+				appLayoutState.lastChecked = new Date();
+			} catch (error) {
+				toast.error('Failed to check for updates');
+				console.error('Error checking for updates:', error);
+				return null;
+			}
+
+			// Wait for new registration to occur and sync state
+			await new Promise((resolve) => setTimeout(resolve, 5000));
+
+			if (appLayoutState.updateServiceWorkerFunction === undefined) {
+				toast.success('App is already at the latest version');
+				return null;
+			}
+
+			return true;
+		},
+		queryKey: ['checkForUpdate'],
+		enabled: false
 	}));
 </script>
 
@@ -72,19 +63,21 @@
 		</Card.Description>
 	</Card.Header>
 	<Card.Content class="flex justify-end">
-		{#if appLayoutState.skipWaitingFunction}
+		{#if appLayoutState.updateServiceWorkerFunction}
 			<Button onclick={() => (appLayoutState.updateDialogOpen = true)}>
 				Update and refresh <RefreshCcwIcon />
 			</Button>
-		{:else if swStatus === 'checking'}
+		{:else if checkForUpdate.isFetching}
 			<Button disabled>
 				Checking for updates <LoaderCircleIcon class="animate-spin" />
 			</Button>
-		{:else if swStatus === undefined}
-			<Button onclick={checkForUpdate}>Check now <RefreshCcwIcon /></Button>
-		{:else}
+		{:else if checkForUpdate.data === true}
 			<Button disabled>
 				Installing update <LoaderCircleIcon class="animate-spin" />
+			</Button>
+		{:else}
+			<Button onclick={() => checkForUpdate.refetch()}>
+				Check now <RefreshCcwIcon />
 			</Button>
 		{/if}
 	</Card.Content>

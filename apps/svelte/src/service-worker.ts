@@ -1,38 +1,19 @@
-/// <reference no-default-lib="true"/>
-/// <reference lib="esnext" />
-/// <reference lib="webworker" />
-/// <reference types="@sveltejs/kit" />
+/// <reference lib="WebWorker" />
+import { deleteDB } from 'idb';
+import { setCacheNameDetails } from 'workbox-core';
+import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching';
 
-import type { PrecacheEntry, SerwistGlobalConfig } from 'serwist';
-import { CacheFirst, Serwist } from 'serwist';
+declare let self: ServiceWorkerGlobalScope;
 
-declare global {
-	interface WorkerGlobalScope extends SerwistGlobalConfig {
-		__SW_MANIFEST: (PrecacheEntry | string)[] | undefined;
-	}
-}
-
-declare const self: ServiceWorkerGlobalScope;
-
-const serwist = new Serwist({
-	precacheEntries: self.__SW_MANIFEST,
-	precacheOptions: {
-		cleanupOutdatedCaches: true,
-		concurrency: 20,
-		ignoreURLParametersMatching: [/^x-sveltekit-invalidated$/],
-		cleanURLs: true,
-		cacheName: 'serwist-precache'
-	},
-	skipWaiting: false,
-	clientsClaim: true,
-	navigationPreload: false,
-	disableDevLogs: true,
-	runtimeCaching: [
-		{
-			matcher: ({ request }) => request.destination === 'image',
-			handler: new CacheFirst({ cacheName: 'pwa-runtime-images' })
-		}
-	]
+setCacheNameDetails({
+	prefix: '',
+	precache: 'workbox-precache',
+	suffix: ''
+});
+cleanupOutdatedCaches();
+precacheAndRoute(self.__WB_MANIFEST, {
+	ignoreURLParametersMatching: [/.*/],
+	cleanURLs: true
 });
 
 self.addEventListener('message', async (event) => {
@@ -45,4 +26,15 @@ self.addEventListener('message', async (event) => {
 	}
 });
 
-serwist.addEventListeners();
+async function clearIndexedDB() {
+	try {
+		const databaseNames = ['prisma-idb'];
+		await Promise.all(databaseNames.map((dbName) => deleteDB(dbName)));
+	} catch (error) {
+		console.error('Error clearing IndexedDB:', error);
+	}
+}
+
+self.addEventListener('activate', (event) => {
+	clearIndexedDB();
+});

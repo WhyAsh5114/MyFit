@@ -10505,12 +10505,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 				const deleteWhere =
 					query.data.nutritionData.delete === true ? {} : query.data.nutritionData.delete;
 				await this.client.nutritionData.delete(
-					{
-						where: {
-							...deleteWhere,
-							id: record.nutritionDataId!
-						} /* TODO: as Prisma.NutritionDataWhereUniqueInput */
-					},
+					{ where: { ...deleteWhere, id: record.nutritionDataId! } },
 					tx
 				);
 				record.nutritionDataId = null;

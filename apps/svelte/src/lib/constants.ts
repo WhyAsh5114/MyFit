@@ -28,6 +28,8 @@ import {
 	SproutIcon
 } from 'lucide-svelte';
 
+export const SERVICE_WORKER_UPDATE_INTERVAL = 1000 * 60 * 60 * 24;
+
 export const MUSCLE_GROUPS = {
 	Biceps: 'Biceps',
 	Triceps: 'Triceps',

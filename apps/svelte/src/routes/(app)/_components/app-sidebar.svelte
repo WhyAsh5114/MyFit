@@ -51,7 +51,7 @@
 									{#snippet child({ props })}
 										<a
 											href={link.href}
-											target={link.label === 'Github' ? '_blank' : '_self'}
+											target={link.label === 'Github' ? '_blank' : undefined}
 											{...props}
 										>
 											<link.icon />
@@ -116,7 +116,7 @@
 				{/if}
 			</Sidebar.MenuItem>
 			<Sidebar.MenuItem>
-				{#if appLayoutState.skipWaitingFunction}
+				{#if appLayoutState.updateServiceWorkerFunction}
 					<Sidebar.MenuButton
 						aria-label="Update app"
 						variant="outline"

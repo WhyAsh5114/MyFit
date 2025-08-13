@@ -1,44 +1,31 @@
-function createAppLayoutState() {
-	let lastChecked = $state<Date>();
-	let skipWaitingFunction = $state<() => void>();
-	let deferredPrompt = $state<Event & { prompt: () => void }>();
-	let updateDialogOpen = $state(false);
+class AppLayoutState {
+	#lastChecked = $state<Date>();
+	updateServiceWorkerFunction = $state<(reloadPage?: boolean) => Promise<void>>();
+	swRegistration = $state<ServiceWorkerRegistration>();
+	deferredPrompt = $state<Event & { prompt: () => void }>();
+	updateDialogOpen = $state(false);
 
-	if (typeof window !== 'undefined' && 'localStorage' in window) {
-		const lastCheckedItem = localStorage.getItem('last-checked');
-		if (lastCheckedItem) {
-			lastChecked = new Date(lastCheckedItem);
+	constructor() {
+		if (typeof window !== 'undefined' && 'localStorage' in window) {
+			const lastCheckedItem = localStorage.getItem('last-checked');
+			if (lastCheckedItem) {
+				this.#lastChecked = new Date(lastCheckedItem);
+			}
 		}
 	}
 
-	return {
-		get lastChecked() {
-			return lastChecked;
-		},
-		set lastChecked(value) {
-			lastChecked = value;
-			if (!value) return;
-			localStorage.setItem('last-checked', value.toISOString());
-		},
-		get skipWaitingFunction() {
-			return skipWaitingFunction;
-		},
-		set skipWaitingFunction(value) {
-			skipWaitingFunction = value;
-		},
-		get deferredPrompt() {
-			return deferredPrompt;
-		},
-		set deferredPrompt(value) {
-			deferredPrompt = value;
-		},
-		get updateDialogOpen() {
-			return updateDialogOpen;
-		},
-		set updateDialogOpen(value) {
-			updateDialogOpen = value;
+	get lastChecked() {
+		return this.#lastChecked;
+	}
+
+	set lastChecked(value: Date | undefined) {
+		this.#lastChecked = value;
+		if (!value) {
+			localStorage.removeItem('last-checked');
+			return;
 		}
-	};
+		localStorage.setItem('last-checked', value.toISOString());
+	}
 }
 
-export const appLayoutState = createAppLayoutState();
+export const appLayoutState = new AppLayoutState();

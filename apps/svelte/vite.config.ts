@@ -3,6 +3,11 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 
+export const globPatterns = [
+	'client/**/*.{js,css,ico,png,svg,ttf,webp,webmanifest}',
+	'prerendered/**/*.{html,json}'
+];
+
 export default defineConfig({
 	define: {
 		'process.env.NODE_ENV': process.env.NODE_ENV === 'production' ? '"production"' : '"development"'
@@ -15,12 +20,7 @@ export default defineConfig({
 			srcDir: 'src',
 			filename: 'service-worker.ts',
 			kit: { includeVersionFile: true },
-			injectManifest: {
-				globPatterns: [
-					'client/**/*.{js,css,ico,png,svg,ttf,webp,webmanifest}',
-					'prerendered/**/*.{html,json}'
-				]
-			}
+			injectManifest: { globPatterns }
 		})
 	]
 });

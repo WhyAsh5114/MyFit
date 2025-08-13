@@ -1,13 +1,11 @@
 import { getManifest } from '@serwist/build';
 import { writeFileSync } from 'fs';
-import { globPatternsAndIgnores } from '../../../vite.config';
+import { globPatterns } from '../../../vite.config';
 
-const { ...config } = {
+const { count } = await getManifest({
 	globDirectory: '.svelte-kit/output',
-	...globPatternsAndIgnores
-};
-
-const { count } = await getManifest(config);
+	globPatterns
+});
 const data = JSON.stringify({ count });
 
 writeFileSync('.vercel/output/static/precache-entries.json', data);
