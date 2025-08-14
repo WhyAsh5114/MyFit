@@ -1,4 +1,4 @@
-import { getManifest } from '@serwist/build';
+import { getManifest } from 'workbox-build';
 import { writeFileSync } from 'fs';
 import { globPatterns } from '../../../vite.config';
 
