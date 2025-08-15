@@ -63,7 +63,9 @@
 
 		progressToast = toast.promise(
 			new Promise<void>((resolve) => {
-				if (progress === 1) resolve();
+				if (progress !== 1) return;
+				resolve();
+				progress = 0;
 			}),
 			{
 				id: progressToast,

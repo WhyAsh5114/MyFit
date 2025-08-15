@@ -3,8 +3,8 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { client } from '$lib/idb-client';
+	import { LoaderCircleIcon, RefreshCcwIcon, RotateCwIcon, TrashIcon } from '@lucide/svelte';
 	import { createMutation, createQuery } from '@tanstack/svelte-query';
-	import { LoaderCircleIcon, RefreshCcwIcon, RotateCwIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { appLayoutState } from '../../_components/app-layout-state.svelte';
 
@@ -53,16 +53,19 @@
 
 <H1>Settings</H1>
 
-<Card.Root>
+<Card.Root class="gap-4">
 	<Card.Header>
 		<Card.Title>Check for updates</Card.Title>
 		<Card.Description>
 			Last checked at: <span class="font-semibold">
-				{appLayoutState.lastChecked ?? 'Not checked'}
+				{appLayoutState.lastChecked?.toLocaleString(undefined, {
+					dateStyle: 'short',
+					timeStyle: 'short'
+				}) ?? 'Not checked'}
 			</span>
 		</Card.Description>
 	</Card.Header>
-	<Card.Content class="flex justify-end">
+	<Card.Content class="[&>button]:w-full">
 		{#if appLayoutState.updateServiceWorkerFunction}
 			<Button onclick={() => (appLayoutState.updateDialogOpen = true)}>
 				Update and refresh <RefreshCcwIcon />
@@ -83,38 +86,36 @@
 	</Card.Content>
 </Card.Root>
 
-<Card.Root>
+<Card.Root class="gap-4">
 	<Card.Header>
 		<Card.Title>Redo getting started</Card.Title>
 		<Card.Description>
 			Redo the questionnaire in case you missed it or want to change your answers
 		</Card.Description>
-		<Card.Action>
-		<Button href="/getting-started">Redo <RotateCwIcon /></Button>
-
-		</Card.Action>
 	</Card.Header>
-	<Card.Content class="flex justify-end">
+	<Card.Content>
+		<Button href="/getting-started" class="w-full">Redo <RotateCwIcon /></Button>
 	</Card.Content>
 </Card.Root>
 
-<Card.Root>
+<Card.Root class="gap-4">
 	<Card.Header>
 		<Card.Title>Clear IndexedDB</Card.Title>
 		<Card.Description>
 			Remove IndexedDB data stored in the app, for development purposes only
 		</Card.Description>
 	</Card.Header>
-	<Card.Content class="flex justify-end">
+	<Card.Content>
 		<Button
 			disabled={resetDatabaseMutation.isPending}
 			onclick={() => resetDatabaseMutation.mutate()}
 			variant="destructive"
+			class="w-full"
 		>
 			{#if resetDatabaseMutation.isPending}
 				Clearing <LoaderCircleIcon class="animate-spin" />
 			{:else}
-				Clear <RotateCwIcon />
+				Clear <TrashIcon />
 			{/if}
 		</Button>
 	</Card.Content>

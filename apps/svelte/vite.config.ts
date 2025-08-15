@@ -2,6 +2,7 @@ import { enhancedImages } from '@sveltejs/enhanced-img';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import { SvelteKitPWA } from '@vite-pwa/sveltekit';
+import tailwindcss from '@tailwindcss/vite';
 
 export const globPatterns = [
 	'client/**/*.{js,css,ico,png,svg,ttf,webp,webmanifest}',
@@ -15,6 +16,7 @@ export default defineConfig({
 		'process.env.NODE_ENV': process.env.NODE_ENV === 'production' ? '"production"' : '"development"'
 	},
 	plugins: [
+		tailwindcss(),
 		enhancedImages(),
 		sveltekit(),
 		SvelteKitPWA({
@@ -24,7 +26,8 @@ export default defineConfig({
 			kit: { includeVersionFile: true },
 			injectManifest: { globPatterns, globIgnores },
 			includeManifestIcons: false,
-			manifest: false
+			manifest: false,
+			devOptions: { enabled: true, type: 'module' }
 		})
 	]
 });
