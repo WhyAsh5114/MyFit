@@ -13,6 +13,6 @@
 	{...restProps}
 >
 	{#snippet loadingIcon()}
-		<LoaderCircleIcon class="animate-spin" />
+		<LoaderCircleIcon class="animate-spin" size={16} />
 	{/snippet}
 </Sonner>

@@ -8,6 +8,7 @@
 	import { toast } from 'svelte-sonner';
 	import { useRegisterSW } from 'virtual:pwa-register/svelte';
 	import { appLayoutState } from './app-layout-state.svelte';
+	import { client } from '$lib/idb-client';
 
 	let progress = $state<number>();
 	let progressToast = $state<string | number>();
@@ -49,7 +50,10 @@
 		},
 		onNeedRefresh() {
 			if (dev) return;
-			appLayoutState.updateServiceWorkerFunction = updateServiceWorker;
+			appLayoutState.updateServiceWorkerFunction = async () => {
+				await client.resetDatabase();
+				await updateServiceWorker();
+			};
 			appLayoutState.updateDialogOpen = true;
 		}
 	});
@@ -69,7 +73,7 @@
 			}),
 			{
 				id: progressToast,
-				loading: `Installing ${Math.round(progress * 100)}%`,
+				loading: `Preparing app ${Math.round(progress * 100)}%`,
 				success: 'App ready for offline use'
 			}
 		);

@@ -1,5 +1,4 @@
 /// <reference lib="WebWorker" />
-import { deleteDB } from 'idb';
 import { setCacheNameDetails } from 'workbox-core';
 import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
@@ -27,19 +26,6 @@ self.addEventListener('message', async (event) => {
 	if (event.data.type === 'SKIP_WAITING') {
 		event.waitUntil(skipWaitAndClaimClients());
 	}
-});
-
-async function clearIndexedDB() {
-	try {
-		const databaseNames = ['prisma-idb'];
-		await Promise.all(databaseNames.map((dbName) => deleteDB(dbName)));
-	} catch (error) {
-		console.error('Error clearing IndexedDB:', error);
-	}
-}
-
-self.addEventListener('activate', () => {
-	clearIndexedDB();
 });
 
 registerRoute(

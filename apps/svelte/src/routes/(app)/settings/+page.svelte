@@ -8,6 +8,11 @@
 	import { toast } from 'svelte-sonner';
 	import { appLayoutState } from '../../_components/app-layout-state.svelte';
 
+	function bytesToMB(bytes: number | undefined) {
+		bytes = bytes ?? 0;
+		return (bytes / 1024 / 1024).toFixed(2);
+	}
+
 	let resetDatabaseMutation = createMutation(() => ({
 		mutationFn: async () => {
 			await client.resetDatabase();
@@ -49,6 +54,26 @@
 		queryKey: ['checkForUpdate'],
 		enabled: false
 	}));
+
+	let offlineReady = createQuery(() => ({
+		queryKey: ['offlineReady'],
+		enabled: false,
+		queryFn: async () => {
+			if (!appLayoutState.swRegistration) {
+				toast.error('Service Worker not registered');
+				return null;
+			}
+
+			const storageEstimate = await navigator.storage.estimate();
+			const description = `Storage usage: ${bytesToMB(storageEstimate.usage)} of ${bytesToMB(storageEstimate.quota)} MB`;
+
+			const isOfflineReady = appLayoutState.swRegistration.active;
+			if (isOfflineReady) toast.success(`App is offline ready`, { description });
+			else toast.error(`App is not offline ready`, { description });
+
+			return isOfflineReady;
+		}
+	}));
 </script>
 
 <H1>Settings</H1>
@@ -65,7 +90,7 @@
 			</span>
 		</Card.Description>
 	</Card.Header>
-	<Card.Content class="[&>button]:w-full">
+	<Card.Content class="flex justify-end">
 		{#if appLayoutState.updateServiceWorkerFunction}
 			<Button onclick={() => (appLayoutState.updateDialogOpen = true)}>
 				Update and refresh <RefreshCcwIcon />
@@ -93,8 +118,8 @@
 			Redo the questionnaire in case you missed it or want to change your answers
 		</Card.Description>
 	</Card.Header>
-	<Card.Content>
-		<Button href="/getting-started" class="w-full">Redo <RotateCwIcon /></Button>
+	<Card.Content class="flex justify-end">
+		<Button href="/getting-started" variant="outline">Redo <RotateCwIcon /></Button>
 	</Card.Content>
 </Card.Root>
 
@@ -105,18 +130,31 @@
 			Remove IndexedDB data stored in the app, for development purposes only
 		</Card.Description>
 	</Card.Header>
-	<Card.Content>
+	<Card.Content class="flex justify-end">
 		<Button
 			disabled={resetDatabaseMutation.isPending}
 			onclick={() => resetDatabaseMutation.mutate()}
 			variant="destructive"
-			class="w-full"
 		>
 			{#if resetDatabaseMutation.isPending}
 				Clearing <LoaderCircleIcon class="animate-spin" />
 			{:else}
 				Clear <TrashIcon />
 			{/if}
+		</Button>
+	</Card.Content>
+</Card.Root>
+
+<Card.Root class="gap-4">
+	<Card.Header>
+		<Card.Title>Offline status</Card.Title>
+		<Card.Description>
+			Check whether the app can run offline and currently used storage space
+		</Card.Description>
+	</Card.Header>
+	<Card.Content class="flex justify-end">
+		<Button variant="outline" onclick={() => offlineReady.refetch()}>
+			Check <RefreshCcwIcon />
 		</Button>
 	</Card.Content>
 </Card.Root>
