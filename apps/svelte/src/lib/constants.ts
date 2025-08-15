@@ -26,7 +26,7 @@ import {
 	SmilePlus,
 	SparkleIcon,
 	SproutIcon
-} from 'lucide-svelte';
+} from '@lucide/svelte';
 
 export const SERVICE_WORKER_UPDATE_INTERVAL = 1000 * 60 * 60 * 24;
 

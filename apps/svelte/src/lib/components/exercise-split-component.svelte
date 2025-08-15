@@ -4,7 +4,7 @@
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import type { ExerciseSplitTemplate } from '$lib/constants';
-	import { GitCompareArrowsIcon, MenuIcon, WrenchIcon } from 'lucide-svelte';
+	import { GitCompareArrowsIcon, MenuIcon, WrenchIcon } from '@lucide/svelte';
 	import AddExerciseSheet from './add-exercise-sheet.svelte';
 
 	type PropsType = { currentSplit: ExerciseSplitTemplate };

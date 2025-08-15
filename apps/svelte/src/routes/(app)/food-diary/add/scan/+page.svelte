@@ -13,7 +13,7 @@
 		RedoIcon,
 		ScanTextIcon,
 		SearchIcon
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { getFoodByCode } from '../../food.remote';
 

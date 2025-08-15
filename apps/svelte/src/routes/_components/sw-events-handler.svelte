@@ -4,7 +4,7 @@
 	import ResponsiveDialog from '$lib/components/responsive-dialog.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { SERVICE_WORKER_UPDATE_INTERVAL } from '$lib/constants';
-	import { LoaderCircleIcon } from 'lucide-svelte';
+	import { LoaderCircleIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { useRegisterSW } from 'virtual:pwa-register/svelte';
 	import { appLayoutState } from './app-layout-state.svelte';

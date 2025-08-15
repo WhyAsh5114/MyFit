@@ -2,7 +2,7 @@
 	import H1 from '$lib/components/typography/h1.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import type { BridgeEventRequest, BridgeEventResponse } from 'bridge-types';
-	import { CircleOffIcon, DownloadIcon, LoaderCircle } from 'lucide-svelte';
+	import { CircleOffIcon, DownloadIcon, LoaderCircle } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 

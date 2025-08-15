@@ -2,7 +2,7 @@
 	import H1 from '$lib/components/typography/h1.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { FastForwardIcon, SmartphoneIcon } from 'lucide-svelte';
+	import { FastForwardIcon, SmartphoneIcon } from '@lucide/svelte';
 </script>
 
 <H1>Dashboard</H1>

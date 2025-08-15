@@ -6,7 +6,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-svelte';
+	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
 	import { defaults, superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { selectedStepsState } from '../../selected-steps.svelte';

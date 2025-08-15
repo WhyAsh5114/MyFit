@@ -19,7 +19,7 @@
 	} from '@internationalized/date';
 	import type { NutritionData } from '@prisma/client';
 	import { createMutation, createQuery } from '@tanstack/svelte-query';
-	import { CalendarIcon, LoaderCircleIcon, PencilIcon, PlusIcon } from 'lucide-svelte';
+	import { CalendarIcon, LoaderCircleIcon, PencilIcon, PlusIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import FoodDataCard from './_components/food-data-card.svelte';
 	import { getFoodById } from '../../food.remote';

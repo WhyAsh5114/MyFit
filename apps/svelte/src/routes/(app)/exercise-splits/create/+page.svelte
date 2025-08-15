@@ -2,7 +2,7 @@
 	import H1 from '$lib/components/typography/h1.svelte';
 	import H2 from '$lib/components/typography/h2.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { ChevronRightCircleIcon } from 'lucide-svelte';
+	import { ChevronRightCircleIcon } from '@lucide/svelte';
 </script>
 
 <H1>Create split</H1>

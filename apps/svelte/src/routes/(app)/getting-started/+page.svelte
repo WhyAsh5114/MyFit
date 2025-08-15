@@ -17,7 +17,7 @@
 		ChevronRightIcon,
 		LoaderCircleIcon,
 		XCircleIcon
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { Spring } from 'svelte/motion';
 

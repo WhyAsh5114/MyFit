@@ -4,7 +4,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { client } from '$lib/idb-client';
 	import { createMutation, createQuery } from '@tanstack/svelte-query';
-	import { LoaderCircleIcon, RefreshCcwIcon, RotateCwIcon } from 'lucide-svelte';
+	import { LoaderCircleIcon, RefreshCcwIcon, RotateCwIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { appLayoutState } from '../../_components/app-layout-state.svelte';
 

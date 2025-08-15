@@ -3,7 +3,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import type { ActivityAdjustmentType } from '@prisma/client';
-	import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-svelte';
+	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { selectedStepsState } from '../../selected-steps.svelte';
 	import { macroTrackingQuickstartState } from '../macro-tracking-quickstart-state.svelte';

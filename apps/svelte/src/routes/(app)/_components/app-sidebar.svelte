@@ -13,7 +13,7 @@
 		LogInIcon,
 		RefreshCcwIcon,
 		UserRoundIcon
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 	import { appLayoutState } from '../../_components/app-layout-state.svelte';
 
 	const sidebar = useSidebar();

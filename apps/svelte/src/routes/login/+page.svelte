@@ -5,7 +5,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { createMutation, createQuery } from '@tanstack/svelte-query';
-	import { UserIcon } from 'lucide-svelte';
+	import { UserIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 
 	const isLoggedInQuery = createQuery(() => ({

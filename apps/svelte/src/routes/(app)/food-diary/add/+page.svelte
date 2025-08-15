@@ -13,7 +13,7 @@
 		ScanBarcodeIcon,
 		SearchIcon,
 		SearchXIcon
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 	import { Debounced } from 'runed';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';

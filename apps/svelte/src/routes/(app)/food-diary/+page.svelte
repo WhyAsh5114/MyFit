@@ -22,7 +22,7 @@
 		PlusIcon,
 		ScissorsIcon,
 		TrashIcon
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import { SvelteDate } from 'svelte/reactivity';
