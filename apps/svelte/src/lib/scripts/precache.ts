@@ -1,10 +1,11 @@
-import { getManifest } from 'workbox-build';
 import { writeFileSync } from 'fs';
-import { globPatterns } from '../../../vite.config';
+import { getManifest } from 'workbox-build';
+import { globPatterns, globIgnores } from '../../../vite.config';
 
 const { count } = await getManifest({
 	globDirectory: '.svelte-kit/output',
-	globPatterns
+	globPatterns,
+	globIgnores
 });
 const data = JSON.stringify({ count });
 

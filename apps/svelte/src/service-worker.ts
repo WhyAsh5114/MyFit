@@ -2,13 +2,16 @@
 import { deleteDB } from 'idb';
 import { setCacheNameDetails } from 'workbox-core';
 import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching';
+import { registerRoute } from 'workbox-routing';
+import { CacheFirst } from 'workbox-strategies';
 
 declare let self: ServiceWorkerGlobalScope;
 
 setCacheNameDetails({
 	prefix: '',
+	suffix: '',
 	precache: 'workbox-precache',
-	suffix: ''
+	runtime: 'workbox-runtime'
 });
 cleanupOutdatedCaches();
 precacheAndRoute(self.__WB_MANIFEST, {
@@ -35,6 +38,11 @@ async function clearIndexedDB() {
 	}
 }
 
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', () => {
 	clearIndexedDB();
 });
+
+registerRoute(
+	({ request }) => request.destination === 'image',
+	new CacheFirst({ cacheName: 'workbox-runtime' })
+);

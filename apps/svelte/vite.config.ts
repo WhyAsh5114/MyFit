@@ -8,6 +8,8 @@ export const globPatterns = [
 	'prerendered/**/*.{html,json}'
 ];
 
+export const globIgnores = ['client/pwa/**/*'];
+
 export default defineConfig({
 	define: {
 		'process.env.NODE_ENV': process.env.NODE_ENV === 'production' ? '"production"' : '"development"'
@@ -20,7 +22,9 @@ export default defineConfig({
 			srcDir: 'src',
 			filename: 'service-worker.ts',
 			kit: { includeVersionFile: true },
-			injectManifest: { globPatterns }
+			injectManifest: { globPatterns, globIgnores },
+			includeManifestIcons: false,
+			manifest: false
 		})
 	]
 });
