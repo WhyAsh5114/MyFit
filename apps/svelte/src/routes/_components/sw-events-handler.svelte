@@ -53,6 +53,7 @@
 			appLayoutState.updateServiceWorkerFunction = async () => {
 				await client.resetDatabase();
 				await updateServiceWorker();
+				window.location.reload();
 			};
 			appLayoutState.updateDialogOpen = true;
 		}

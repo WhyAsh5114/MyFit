@@ -1,3 +1,4 @@
+import devtoolsJson from 'vite-plugin-devtools-json';
 import { enhancedImages } from '@sveltejs/enhanced-img';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
@@ -28,6 +29,7 @@ export default defineConfig({
 			includeManifestIcons: false,
 			manifest: false,
 			devOptions: { enabled: true, type: 'module' }
-		})
+		}),
+		devtoolsJson()
 	]
 });

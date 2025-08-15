@@ -21,7 +21,7 @@
 		if (!sessionData && !existingUser) {
 			if (!UNPROTECTED_ROUTES.includes(page.url.pathname)) {
 				goto(`/login?redirect=${encodeURIComponent(page.url.pathname)}`);
-				return toast.info('Please login to continue.');
+				return toast.info('Please login to continue');
 			}
 		}
 

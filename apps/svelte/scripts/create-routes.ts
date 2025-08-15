@@ -1,4 +1,4 @@
-import fs, { writeFileSync } from 'fs';
+import fs from 'fs';
 import path from 'path';
 
 export type StepRoutesMap = Record<
@@ -6,7 +6,7 @@ export type StepRoutesMap = Record<
 	Array<{ href: string; label: string; metadata: Record<string, string> }>
 >;
 
-function findStepRoutes(): StepRoutesMap {
+export function findStepRoutes(): StepRoutesMap {
 	const routesMap: StepRoutesMap = {};
 
 	const routesDir = path.join(process.cwd(), 'src', 'routes');
@@ -121,10 +121,4 @@ export async function getStepRoutesMap(props: {
 	const { dev, building, fetch } = props;
 	if (dev || building) return findStepRoutes();
 	return fetch(`/step-routes.json`).then((res) => res.json());
-}
-
-if (process.argv.includes('--create-json-file')) {
-	const stepRoutesMap = findStepRoutes();
-	writeFileSync('.vercel/output/static/step-routes.json', JSON.stringify(stepRoutesMap));
-	writeFileSync('.svelte-kit/output/client/step-routes.json', JSON.stringify(stepRoutesMap));
 }

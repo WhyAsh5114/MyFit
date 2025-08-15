@@ -48,9 +48,7 @@ jobs:
       - name: Initialize database schema
         run: |
           cd apps/svelte
-          export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/defaultdb?sslmode=disable"
-          pnpm exec prisma db push
-          psql "$DATABASE_URL" -f prisma/add_search_vector.sql
+          pnpm exec prisma migrate deploy
           pnpm exec prisma db seed
           pnpm exec prisma generate --sql
 

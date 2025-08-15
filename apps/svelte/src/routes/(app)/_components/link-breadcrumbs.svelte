@@ -4,7 +4,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Scrollbar } from '$lib/components/ui/scroll-area';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
-	import type { StepRoutesMap } from '$lib/scripts/routes';
+	import type { StepRoutesMap } from '$root/scripts/create-routes';
 	import { ChevronDown, Slash } from '@lucide/svelte';
 
 	const stepRoutesMap: StepRoutesMap = page.data.stepRoutesMap || {};
