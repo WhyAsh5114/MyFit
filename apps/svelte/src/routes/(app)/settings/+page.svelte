@@ -6,7 +6,7 @@
 	import { createMutation, createQuery } from '@tanstack/svelte-query';
 	import { LoaderCircleIcon, RefreshCcwIcon, RotateCwIcon } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
-	import { appLayoutState } from '../_components/app-layout-state.svelte';
+	import { appLayoutState } from '../../_components/app-layout-state.svelte';
 
 	let resetDatabaseMutation = createMutation(() => ({
 		mutationFn: async () => {
@@ -89,9 +89,12 @@
 		<Card.Description>
 			Redo the questionnaire in case you missed it or want to change your answers
 		</Card.Description>
+		<Card.Action>
+		<Button href="/getting-started">Redo <RotateCwIcon /></Button>
+
+		</Card.Action>
 	</Card.Header>
 	<Card.Content class="flex justify-end">
-		<Button href="/getting-started">Redo <RotateCwIcon /></Button>
 	</Card.Content>
 </Card.Root>
 

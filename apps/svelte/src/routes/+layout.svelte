@@ -2,6 +2,7 @@
 	import { browser } from '$app/environment';
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
+	import SwEventsHandler from './_components/sw-events-handler.svelte';
 	import { ModeWatcher, setMode } from 'mode-watcher';
 	import { pwaInfo } from 'virtual:pwa-info';
 	import '../app.css';
@@ -35,6 +36,7 @@
 
 <ModeWatcher />
 <Toaster />
+<SwEventsHandler />
 
 <QueryClientProvider client={queryClient}>
 	{@render children()}

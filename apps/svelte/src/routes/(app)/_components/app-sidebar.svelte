@@ -14,7 +14,7 @@
 		RefreshCcwIcon,
 		UserRoundIcon
 	} from 'lucide-svelte';
-	import { appLayoutState } from './app-layout-state.svelte';
+	import { appLayoutState } from '../../_components/app-layout-state.svelte';
 
 	const sidebar = useSidebar();
 	const session = authClient.useSession();

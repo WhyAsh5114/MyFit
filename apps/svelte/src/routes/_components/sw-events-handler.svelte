@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { dev } from '$app/environment';
+	import { page } from '$app/state';
 	import ResponsiveDialog from '$lib/components/responsive-dialog.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { SERVICE_WORKER_UPDATE_INTERVAL } from '$lib/constants';
@@ -55,6 +56,10 @@
 
 	$effect(() => {
 		if (!progress) return;
+		if (page.url.pathname === '/') {
+			if (progressToast !== undefined) toast.dismiss(progressToast);
+			return;
+		}
 
 		progressToast = toast.promise(
 			new Promise<void>((resolve) => {
