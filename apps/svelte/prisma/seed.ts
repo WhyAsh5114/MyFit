@@ -8,7 +8,6 @@ async function main() {
 			code: '10001882',
 			product_name: 'Ripen At Home Bananas',
 			brands: 'Tesco',
-			quantity: null,
 			energy_kcal_100g: 90,
 			proteins_100g: 1.2,
 			fat_100g: 0.5,
