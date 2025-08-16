@@ -186,7 +186,6 @@
 				bind:value={userBodyweight}
 			/>
 			{#if workoutRunes.editingWorkoutId !== null && workoutRunes.workoutData}
-				{@const a = console.log(workoutRunes.workoutData)}
 				<div class="grid grid-cols-2 gap-x-2 gap-y-1.5">
 					<Label for="start-date">Start date</Label>
 					<Label for="end-date">End date</Label>
