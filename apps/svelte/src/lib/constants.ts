@@ -1,12 +1,3 @@
-import type {
-	ExerciseSplit,
-	ExerciseSplitDay,
-	ExerciseSplitDaySession,
-	ExerciseSplitDaySessionExercise,
-	ExerciseSplitDaySessionExerciseNote,
-	ExerciseSplitDaySessionExerciseSecondaryMuscleGroup,
-	FitnessKnowledge
-} from '@prisma/client';
 import {
 	AppleIcon,
 	BabyIcon,
@@ -27,6 +18,16 @@ import {
 	SparkleIcon,
 	SproutIcon
 } from '@lucide/svelte';
+import type {
+	ExerciseSplit,
+	ExerciseSplitDay,
+	ExerciseSplitDaySession,
+	ExerciseSplitDaySessionExercise,
+	ExerciseSplitDaySessionExerciseNote,
+	ExerciseSplitDaySessionExerciseSecondaryMuscleGroup,
+	FitnessKnowledge
+} from '@prisma/client';
+import DiscordIcon from './icons/discord-icon.svelte';
 
 export const SERVICE_WORKER_UPDATE_INTERVAL = 1000 * 60 * 60 * 24;
 
@@ -108,6 +109,11 @@ export const SIDEBAR_LINK_GROUPS = [
 				label: 'Github',
 				href: 'https://github.com/WhyAsh5114/MyFit',
 				icon: GithubIcon
+			},
+			{
+				label: 'Discord',
+				href: 'https://discord.com/invite/2g9YPD6PQu',
+				icon: DiscordIcon
 			},
 			{
 				label: 'Privacy policy',

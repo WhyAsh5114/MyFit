@@ -44,18 +44,20 @@
 <H1>Food diary</H1>
 <H2>Add food</H2>
 
-<div class="flex w-full flex-col gap-1.5">
-	<Label for="search-food">Search for foods</Label>
-	<Input type="text" placeholder="Type here" id="search-food" bind:value={searchTerm} />
-</div>
+<div class="bg-card flex flex-col gap-2 rounded-md border p-4">
+	<div class="flex w-full flex-col gap-1.5">
+		<Label for="search-food">Search for foods</Label>
+		<Input type="text" placeholder="Type here" id="search-food" bind:value={searchTerm} />
+	</div>
 
-<div class="flex justify-between gap-2">
-	<Button href="/food-diary/add/manual?day={selectedDay}" variant="secondary">
-		<PlusCircleIcon /> Add manually
-	</Button>
-	<Button href="/food-diary/add/scan?day={selectedDay}">
-		<ScanBarcodeIcon /> Scan barcode
-	</Button>
+	<div class="flex justify-between gap-2">
+		<Button href="/food-diary/add/manual?day={selectedDay}" variant="secondary">
+			<PlusCircleIcon /> Add manually
+		</Button>
+		<Button href="/food-diary/add/scan?day={selectedDay}">
+			<ScanBarcodeIcon /> Scan barcode
+		</Button>
+	</div>
 </div>
 
 {#if searchQuery.isFetching}

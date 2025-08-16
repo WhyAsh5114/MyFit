@@ -44,8 +44,8 @@
 </svelte:head>
 
 <form id="activity-levels-form" onsubmit={continueToNextPage}>
-	<Tabs.Root bind:value={selectedActivityAdjustmentType} class="w-full">
-		<Tabs.List class="grid grid-cols-3">
+	<Tabs.Root bind:value={selectedActivityAdjustmentType}>
+		<Tabs.List class="grid w-full grid-cols-3">
 			<Tabs.Trigger value="Dynamic">Dynamic</Tabs.Trigger>
 			<Tabs.Trigger value="Manual">Manual</Tabs.Trigger>
 			<Tabs.Trigger value="Static">Static</Tabs.Trigger>

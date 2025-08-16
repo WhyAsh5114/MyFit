@@ -65,9 +65,9 @@
 
 <Card.Root>
 	<Card.Content class="flex flex-col">
-		<Label class="flex flex-col gap-1.5">
+		<Label class="flex flex-col items-start gap-2">
 			<span>Weight change per week</span>
-			<div class="bg-background grid grid-cols-2 gap-2 rounded-md border p-4">
+			<div class="bg-background grid w-full grid-cols-2 gap-2 rounded-md border p-4">
 				<Slider
 					class="col-span-full"
 					bind:value={selectedWeightChange}

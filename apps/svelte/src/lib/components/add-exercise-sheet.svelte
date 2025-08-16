@@ -39,7 +39,7 @@
 		<Sheet.Header>
 			<Sheet.Title>Add exercise</Sheet.Title>
 		</Sheet.Header>
-		<div class="grid grid-cols-2 gap-4 py-4">
+		<div class="grid grid-cols-2 gap-4 px-4">
 			<Popover.Root>
 				<Popover.Trigger class="col-span-full">
 					{#snippet child({ props })}
@@ -96,7 +96,7 @@
 					bind:value={currentExercise.repRangeEnd}
 				/>
 			</div>
-			<Label class="flex flex-col gap-1.5">
+			<Label class="flex flex-col items-start gap-1.5">
 				Set type
 				<Select.Root type="single" bind:value={currentExercise.setType}>
 					<Select.Trigger class="w-full">{currentExercise.setType}</Select.Trigger>

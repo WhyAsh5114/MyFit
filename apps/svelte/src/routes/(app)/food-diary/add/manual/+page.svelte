@@ -27,7 +27,7 @@
 <H2 class="flex items-center justify-between">Add food</H2>
 
 <form class="flex h-full flex-col gap-2">
-	<div class="grid grid-cols-2 gap-2">
+	<div class="bg-card grid grid-cols-2 gap-2 rounded-md border p-4">
 		<div class="col-span-2 flex w-full flex-col gap-1.5">
 			<Label for="food-name">Name <span class="text-red-500">*</span></Label>
 			<Input id="food-name" placeholder="Chicken sandwich" required />
@@ -37,7 +37,7 @@
 			<Input id="food-brands" placeholder="McDonald's" />
 		</div>
 		<div class="flex w-full flex-col gap-1.5">
-			<Label for="food-quantity">Quantity (in grams) <span class="text-red-500">*</span></Label>
+			<Label for="food-quantity">Quantity (g) <span class="text-red-500">*</span></Label>
 			<Input
 				id="food-quantity"
 				type="number"
@@ -48,10 +48,12 @@
 			/>
 		</div>
 	</div>
-	<div class="flex items-center gap-2">
-		<Separator class="w-px grow" />
-		<span class="text-muted-foreground text-sm">Nutritional value per {quantity ?? '?'} grams</span>
-		<Separator class="w-px grow" />
+	<div class="grid grid-cols-4 place-items-center gap-2">
+		<Separator />
+		<span class="text-muted-foreground col-span-2 text-center text-sm">
+			Nutritional value per {quantity ?? '?'} grams
+		</span>
+		<Separator />
 	</div>
 	<ScrollArea class="bg-card h-px grow rounded-md border">
 		<div class="grid grid-cols-2 place-items-end gap-4 p-4">

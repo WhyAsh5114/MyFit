@@ -63,7 +63,7 @@
 	let items = $derived(pathnameToItems(page.url.pathname));
 </script>
 
-<ScrollArea class="py-1.5">
+<ScrollArea class="w-px grow py-1.5">
 	<Breadcrumb.Root>
 		<Breadcrumb.List class="flex-nowrap">
 			{#each items as item, idx (item.label)}
