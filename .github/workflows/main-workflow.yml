@@ -8,6 +8,7 @@ on:
   pull_request:
     branches:
       - main
+      - v4-svelte
 
 jobs:
   lint:
@@ -17,17 +18,6 @@ jobs:
       - uses: ./.github/actions/setup-environment
       - name: Run ESLint and Prettier Check
         run: cd apps/svelte && pnpm run lint
-
-  svelte_check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-environment
-      - name: Run Svelte Check
-        run: cd apps/svelte && pnpm run check
-    env:
-      AUTH_GOOGLE_ID: ${{ secrets.AUTH_GOOGLE_ID }}
-      AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
 
   playwright_tests:
     runs-on: ubuntu-latest
@@ -40,19 +30,33 @@ jobs:
           POSTGRES_DB: defaultdb
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-environment
 
       - name: Set DATABASE_URL
-        run: cd apps/svelte && echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/defaultdb?sslmode=disable" >> $GITHUB_ENV
+        run: |
+          cd apps/svelte
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/defaultdb?sslmode=disable" >> .env
 
       - name: Initialize database schema
-        run: cd apps/svelte && pnpm exec prisma db push && pnpm exec prisma db seed
+        run: |
+          cd apps/svelte
+          pnpm exec prisma migrate deploy
+          pnpm exec prisma db seed
+          pnpm exec prisma generate --sql
 
       - name: Generate AUTH_SECRET
         run: cd apps/svelte && echo "AUTH_SECRET=$(openssl rand -base64 33)" >> $GITHUB_ENV
+      
+      - name: Run Svelte Check
+        run: cd apps/svelte && pnpm run check
 
       - name: Install Playwright Browsers
         run: cd apps/svelte && pnpm exec playwright install --with-deps

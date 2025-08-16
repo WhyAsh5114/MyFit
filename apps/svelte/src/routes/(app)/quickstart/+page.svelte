@@ -5,7 +5,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import { QUICK_SETUP_QUESTION } from '$lib/constants';
-	import { ChevronRightIcon, XCircleIcon } from 'lucide-svelte';
+	import { ChevronRightIcon, XCircleIcon } from '@lucide/svelte';
 
 	let answer = $state<string>(QUICK_SETUP_QUESTION.default);
 </script>

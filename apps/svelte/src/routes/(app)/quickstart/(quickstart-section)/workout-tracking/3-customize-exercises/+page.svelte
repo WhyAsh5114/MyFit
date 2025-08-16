@@ -4,7 +4,7 @@
 	import ExerciseSplitComponent from '$lib/components/exercise-split-component.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import type { ExerciseSplitTemplate } from '$lib/constants';
-	import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-svelte';
+	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { selectedStepsState } from '../../selected-steps.svelte';
 	import { workoutTrackingQuickstartState } from '../workout-tracking-quickstart-state.svelte';

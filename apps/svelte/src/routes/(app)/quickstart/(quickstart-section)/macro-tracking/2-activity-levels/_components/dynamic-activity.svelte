@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import type { BridgeEventRequest, BridgeEventResponse } from 'bridge-types';
-	import { CableIcon, DownloadIcon, LoaderCircleIcon } from 'lucide-svelte';
+	import { CableIcon, DownloadIcon, LoaderCircleIcon } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 

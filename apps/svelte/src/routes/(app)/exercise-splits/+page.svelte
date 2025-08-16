@@ -5,7 +5,7 @@
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import { client } from '$lib/idb-client';
 	import { createQuery } from '@tanstack/svelte-query';
-	import { CalendarIcon, FilterIcon, LoaderCircleIcon, PlusIcon } from 'lucide-svelte';
+	import { CalendarIcon, FilterIcon, LoaderCircleIcon, PlusIcon } from '@lucide/svelte';
 
 	const exerciseSplitsQuery = createQuery(() => ({
 		queryKey: ['exerciseSplits'],

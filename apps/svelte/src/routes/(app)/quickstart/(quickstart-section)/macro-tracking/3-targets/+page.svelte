@@ -9,7 +9,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Slider } from '$lib/components/ui/slider/index.js';
 	import { pascalToNormal } from '$lib/my-utils';
-	import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-svelte';
+	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { selectedStepsState } from '../../selected-steps.svelte';
 	import { macroTrackingQuickstartState } from '../macro-tracking-quickstart-state.svelte';

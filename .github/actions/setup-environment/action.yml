@@ -13,4 +13,8 @@ runs:
 
     - name: Install dependencies
       shell: bash
-      run: pnpm install --frozen-lockfile
+      run: pnpm install --frozen-lockfile --ignore-scripts
+
+    - name: Generate Prisma Client (types only)
+      shell: bash
+      run: cd apps/svelte && pnpm exec prisma generate

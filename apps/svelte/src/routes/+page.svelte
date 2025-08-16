@@ -3,7 +3,7 @@
 	import Ripple from '$lib/components/magicui/ripple.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
-	import { BicepsFlexedIcon } from 'lucide-svelte';
+	import { BicepsFlexedIcon } from '@lucide/svelte';
 	import { fade } from 'svelte/transition';
 </script>
 

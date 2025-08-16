@@ -5,12 +5,10 @@
 	import AppSidebar from './_components/app-sidebar.svelte';
 	import LinkBreadcrumbs from './_components/link-breadcrumbs.svelte';
 	import SessionCacher from './_components/session-cacher.svelte';
-	import SwEventsHandler from './_components/sw-events-handler.svelte';
 
 	let { children } = $props();
 </script>
 
-<SwEventsHandler />
 <SessionCacher />
 
 <Sidebar.Provider>

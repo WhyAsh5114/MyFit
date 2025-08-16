@@ -490,7 +490,7 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 				);
 			}
 		}
-		if (data.userId !== undefined) {
+		if (data?.userId !== undefined) {
 			neededStores.add('User');
 		}
 		if (data?.splitDays) {
@@ -817,10 +817,9 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 						await this.client.exerciseSplitDay.upsert(
 							{
 								where: connectOrCreate.where,
-								create: { ...connectOrCreate.create, exerciseSplitId: keyPath[0] } as Prisma.Args<
-									Prisma.ExerciseSplitDayDelegate,
-									'create'
-								>['data'],
+								create: { ...connectOrCreate.create, exerciseSplitId: keyPath[0] } as NonNullable<
+									Prisma.Args<Prisma.ExerciseSplitDayDelegate, 'create'>['data']
+								>,
 								update: { exerciseSplitId: keyPath[0] }
 							},
 							tx
@@ -1536,7 +1535,7 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 				);
 			}
 		}
-		if (data.exerciseSplitId !== undefined) {
+		if (data?.exerciseSplitId !== undefined) {
 			neededStores.add('ExerciseSplit');
 		}
 		if (data?.splitDaySessions) {
@@ -1882,7 +1881,9 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 								create: {
 									...connectOrCreate.create,
 									exerciseSplitDayId: keyPath[0]
-								} as Prisma.Args<Prisma.ExerciseSplitDaySessionDelegate, 'create'>['data'],
+								} as NonNullable<
+									Prisma.Args<Prisma.ExerciseSplitDaySessionDelegate, 'create'>['data']
+								>,
 								update: { exerciseSplitDayId: keyPath[0] }
 							},
 							tx
@@ -2686,7 +2687,7 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 				);
 			}
 		}
-		if (data.exerciseSplitDayId !== undefined) {
+		if (data?.exerciseSplitDayId !== undefined) {
 			neededStores.add('ExerciseSplitDay');
 		}
 		if (data?.exercises) {
@@ -3049,7 +3050,9 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 								create: {
 									...connectOrCreate.create,
 									exerciseSplitDaySessionId: keyPath[0]
-								} as Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'create'>['data'],
+								} as NonNullable<
+									Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'create'>['data']
+								>,
 								update: { exerciseSplitDaySessionId: keyPath[0] }
 							},
 							tx
@@ -4014,7 +4017,7 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 				);
 			}
 		}
-		if (data.exerciseSplitDaySessionId !== undefined) {
+		if (data?.exerciseSplitDaySessionId !== undefined) {
 			neededStores.add('ExerciseSplitDaySession');
 		}
 		if (data?.notes) {
@@ -4491,10 +4494,9 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 					await this.client.exerciseSplitDaySessionExerciseNote.upsert(
 						{
 							where: connectOrCreate.where,
-							create: { ...connectOrCreate.create, exerciseId: keyPath[0] } as Prisma.Args<
-								Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
-								'create'
-							>['data'],
+							create: { ...connectOrCreate.create, exerciseId: keyPath[0] } as NonNullable<
+								Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'create'>['data']
+							>,
 							update: { exerciseId: keyPath[0] }
 						},
 						tx
@@ -4545,10 +4547,12 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 						await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.upsert(
 							{
 								where: connectOrCreate.where,
-								create: { ...connectOrCreate.create, exerciseId: keyPath[0] } as Prisma.Args<
-									Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
-									'create'
-								>['data'],
+								create: { ...connectOrCreate.create, exerciseId: keyPath[0] } as NonNullable<
+									Prisma.Args<
+										Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
+										'create'
+									>['data']
+								>,
 								update: { exerciseId: keyPath[0] }
 							},
 							tx
@@ -5486,7 +5490,7 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 				);
 			}
 		}
-		if (data.exerciseId !== undefined) {
+		if (data?.exerciseId !== undefined) {
 			neededStores.add('ExerciseSplitDaySessionExercise');
 		}
 		return neededStores;
@@ -6397,7 +6401,7 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 				);
 			}
 		}
-		if (data.exerciseId !== undefined) {
+		if (data?.exerciseId !== undefined) {
 			neededStores.add('ExerciseSplitDaySessionExercise');
 		}
 		return neededStores;
@@ -7432,7 +7436,7 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 				);
 			}
 		}
-		if (data.userId !== undefined) {
+		if (data?.userId !== undefined) {
 			neededStores.add('User');
 		}
 		return neededStores;
@@ -8253,7 +8257,7 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 				);
 			}
 		}
-		if (data.userId !== undefined) {
+		if (data?.userId !== undefined) {
 			neededStores.add('User');
 		}
 		return neededStores;
@@ -9068,7 +9072,7 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 				);
 			}
 		}
-		if (data.userId !== undefined) {
+		if (data?.userId !== undefined) {
 			neededStores.add('User');
 		}
 		return neededStores;
@@ -10029,7 +10033,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 				);
 			}
 		}
-		if (data.nutritionDataId !== undefined) {
+		if (data?.nutritionDataId !== undefined) {
 			neededStores.add('NutritionData');
 		}
 		if (data?.user) {
@@ -10050,7 +10054,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 				);
 			}
 		}
-		if (data.userId !== undefined) {
+		if (data?.userId !== undefined) {
 			neededStores.add('User');
 		}
 		return neededStores;
@@ -10506,11 +10510,8 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 					query.data.nutritionData.delete === true ? {} : query.data.nutritionData.delete;
 				await this.client.nutritionData.delete(
 					{
-						where: {
-							...deleteWhere,
-							id: record.nutritionDataId!
-						} /* TODO: as Prisma.NutritionDataWhereUniqueInput */
-					},
+						where: { ...deleteWhere, id: record.nutritionDataId! }
+					} as Prisma.NutritionDataDeleteArgs,
 					tx
 				);
 				record.nutritionDataId = null;
@@ -11482,10 +11483,9 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 						await this.client.foodEntry.upsert(
 							{
 								where: connectOrCreate.where,
-								create: { ...connectOrCreate.create, nutritionDataId: keyPath[0] } as Prisma.Args<
-									Prisma.FoodEntryDelegate,
-									'create'
-								>['data'],
+								create: { ...connectOrCreate.create, nutritionDataId: keyPath[0] } as NonNullable<
+									Prisma.Args<Prisma.FoodEntryDelegate, 'create'>['data']
+								>,
 								update: { nutritionDataId: keyPath[0] }
 							},
 							tx
@@ -12229,7 +12229,7 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 				);
 			}
 		}
-		if (data.userId !== undefined) {
+		if (data?.userId !== undefined) {
 			neededStores.add('User');
 		}
 		return neededStores;
@@ -12972,7 +12972,7 @@ class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 				);
 			}
 		}
-		if (data.userId !== undefined) {
+		if (data?.userId !== undefined) {
 			neededStores.add('User');
 		}
 		return neededStores;
@@ -15176,10 +15176,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						await this.client.session.upsert(
 							{
 								where: connectOrCreate.where,
-								create: { ...connectOrCreate.create, userId: keyPath[0] } as Prisma.Args<
-									Prisma.SessionDelegate,
-									'create'
-								>['data'],
+								create: { ...connectOrCreate.create, userId: keyPath[0] } as NonNullable<
+									Prisma.Args<Prisma.SessionDelegate, 'create'>['data']
+								>,
 								update: { userId: keyPath[0] }
 							},
 							tx
@@ -15229,10 +15228,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						await this.client.account.upsert(
 							{
 								where: connectOrCreate.where,
-								create: { ...connectOrCreate.create, userId: keyPath[0] } as Prisma.Args<
-									Prisma.AccountDelegate,
-									'create'
-								>['data'],
+								create: { ...connectOrCreate.create, userId: keyPath[0] } as NonNullable<
+									Prisma.Args<Prisma.AccountDelegate, 'create'>['data']
+								>,
 								update: { userId: keyPath[0] }
 							},
 							tx
@@ -15282,10 +15280,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						await this.client.exerciseSplit.upsert(
 							{
 								where: connectOrCreate.where,
-								create: { ...connectOrCreate.create, userId: keyPath[0] } as Prisma.Args<
-									Prisma.ExerciseSplitDelegate,
-									'create'
-								>['data'],
+								create: { ...connectOrCreate.create, userId: keyPath[0] } as NonNullable<
+									Prisma.Args<Prisma.ExerciseSplitDelegate, 'create'>['data']
+								>,
 								update: { userId: keyPath[0] }
 							},
 							tx
@@ -15369,10 +15366,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						await this.client.dashboardItem.upsert(
 							{
 								where: connectOrCreate.where,
-								create: { ...connectOrCreate.create, userId: keyPath[0] } as Prisma.Args<
-									Prisma.DashboardItemDelegate,
-									'create'
-								>['data'],
+								create: { ...connectOrCreate.create, userId: keyPath[0] } as NonNullable<
+									Prisma.Args<Prisma.DashboardItemDelegate, 'create'>['data']
+								>,
 								update: { userId: keyPath[0] }
 							},
 							tx
@@ -15423,10 +15419,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 					await this.client.macroMetrics.upsert(
 						{
 							where: connectOrCreate.where,
-							create: { ...connectOrCreate.create, userId: keyPath[0] } as Prisma.Args<
-								Prisma.MacroMetricsDelegate,
-								'create'
-							>['data'],
+							create: { ...connectOrCreate.create, userId: keyPath[0] } as NonNullable<
+								Prisma.Args<Prisma.MacroMetricsDelegate, 'create'>['data']
+							>,
 							update: { userId: keyPath[0] }
 						},
 						tx
@@ -15542,10 +15537,9 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						await this.client.foodEntry.upsert(
 							{
 								where: connectOrCreate.where,
-								create: { ...connectOrCreate.create, userId: keyPath[0] } as Prisma.Args<
-									Prisma.FoodEntryDelegate,
-									'create'
-								>['data'],
+								create: { ...connectOrCreate.create, userId: keyPath[0] } as NonNullable<
+									Prisma.Args<Prisma.FoodEntryDelegate, 'create'>['data']
+								>,
 								update: { userId: keyPath[0] }
 							},
 							tx
@@ -17057,7 +17051,7 @@ class SessionIDBClass extends BaseIDBModelClass<'Session'> {
 				);
 			}
 		}
-		if (data.userId !== undefined) {
+		if (data?.userId !== undefined) {
 			neededStores.add('User');
 		}
 		return neededStores;
@@ -17866,7 +17860,7 @@ class AccountIDBClass extends BaseIDBModelClass<'Account'> {
 				);
 			}
 		}
-		if (data.userId !== undefined) {
+		if (data?.userId !== undefined) {
 			neededStores.add('User');
 		}
 		return neededStores;

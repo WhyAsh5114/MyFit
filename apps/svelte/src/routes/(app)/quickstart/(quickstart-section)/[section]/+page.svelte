@@ -5,7 +5,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
-	import { ChevronRightIcon, XCircleIcon } from 'lucide-svelte';
+	import { ChevronRightIcon, XCircleIcon } from '@lucide/svelte';
 	import { selectedStepsState } from '../selected-steps.svelte';
 
 	let stepRoutes = $state(

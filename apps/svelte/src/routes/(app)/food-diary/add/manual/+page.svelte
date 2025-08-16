@@ -8,7 +8,7 @@
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { capitalizeWords, snakeToNormal } from '$lib/my-utils';
 	import type { NutritionData } from '@prisma/client';
-	import { PlusIcon } from 'lucide-svelte';
+	import { PlusIcon } from '@lucide/svelte';
 
 	let { data } = $props();
 	let quantity = $state(100);
