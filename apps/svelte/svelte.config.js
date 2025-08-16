@@ -11,8 +11,7 @@ const config = {
 		adapter: adapter(),
 		serviceWorker: { register: false },
 		experimental: { remoteFunctions: true },
-		files: { serviceWorker: 'src/service-worker.ts' },
-		alias: { $root: './' }
+		files: { serviceWorker: 'src/service-worker.ts' }
 	},
 
 	extensions: ['.svelte']
