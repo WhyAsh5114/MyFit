@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { createHash, randomBytes } from 'crypto';
+import { randomBytes } from 'crypto';
 import { existsSync, writeFileSync } from 'fs';
 import { join } from 'path';
 

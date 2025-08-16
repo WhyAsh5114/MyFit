@@ -5,7 +5,7 @@ test('log food entry', async ({ page }) => {
 	await page.getByRole('link', { name: 'Add food' }).click();
 	await page.getByPlaceholder('Type here').fill('ripen at home bananas');
 	await expect(page.locator('#bits-3')).toContainText('Ripen At Home Bananas 90 kcal, Tesco');
-	await page.locator('div:nth-child(1) > .ring-offset-background').click();
+	await page.locator('div:nth-child(0) > .ring-offset-background').click();
 
 	const date = new Date();
 	await expect(page.getByRole('main')).toContainText('Ripen At Home Bananas Tesco');
