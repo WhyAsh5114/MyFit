@@ -7,6 +7,8 @@
 	import { Spring } from 'svelte/motion';
 	import { selectedStepsState } from './selected-steps.svelte';
 	import H3 from '$lib/components/typography/h3.svelte';
+	import { toast } from 'svelte-sonner';
+	import { goto } from '$app/navigation';
 
 	let { children } = $props();
 	let progressValue = new Spring(0, { stiffness: 0.3, damping: 0.9 });
@@ -17,6 +19,15 @@
 			(route) => route === page.url.pathname
 		);
 		progressValue.set(isNaN(value) ? 0 : value);
+	});
+
+	$effect(() => {
+		if (page.url.pathname.split('/').length === 3) return;
+
+		if (selectedStepsState.selectedSteps.length === 0) {
+			toast.error('No steps selected');
+			goto(page.url.pathname.split('/').slice(0, -1).join('/'));
+		}
 	});
 </script>
 
