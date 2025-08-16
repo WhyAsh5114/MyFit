@@ -19,6 +19,10 @@
 		}
 		currentSplit = workoutTrackingQuickstartState.selectedSplitTemplate;
 	});
+
+	function continueToNextPage() {
+		selectedStepsState.navigateToPage(page.url.pathname, 'next');
+	}
 </script>
 
 <svelte:head>
@@ -35,6 +39,6 @@
 		>
 			<ChevronLeftIcon /> Previous
 		</Button>
-		<Button>Next <ChevronRightIcon /></Button>
+		<Button onclick={continueToNextPage}>Next <ChevronRightIcon /></Button>
 	</div>
 {/if}

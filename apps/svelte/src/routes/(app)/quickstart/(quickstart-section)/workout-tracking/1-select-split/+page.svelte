@@ -2,7 +2,6 @@
 	import { page } from '$app/state';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label';
 	import * as Popover from '$lib/components/ui/popover/index.js';
@@ -10,8 +9,8 @@
 	import { Slider } from '$lib/components/ui/slider/index.js';
 	import { EXERCISE_SPLIT_TEMPLATES, SUGGESTED_DAYS_PER_WEEK } from '$lib/constants';
 	import { client } from '$lib/idb-client';
-	import type { FitnessKnowledge } from '@prisma/client';
 	import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from '@lucide/svelte';
+	import type { FitnessKnowledge } from '@prisma/client';
 	import { toast } from 'svelte-sonner';
 	import { selectedStepsState } from '../../selected-steps.svelte';
 	import { workoutTrackingQuickstartState } from '../workout-tracking-quickstart-state.svelte';
@@ -106,22 +105,18 @@
 			class="border-muted bg-popover hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary rounded-md border-2"
 		>
 			<RadioGroup.Item value={split.name} id={split.name} class="sr-only" aria-label={split.name} />
-			<Card.Root class="border-0">
-				<Card.Header>
-					<Card.Title>{split.name}</Card.Title>
-				</Card.Header>
-				<Card.Content>
-					<div class="flex flex-wrap gap-1">
-						{#each split.splitDays as day, idx (idx)}
-							{#if day.splitDaySessions.length}
-								<Badge>{day.splitDaySessions[0].name}</Badge>
-							{:else}
-								<Badge variant="outline">Rest</Badge>
-							{/if}
-						{/each}
-					</div>
-				</Card.Content>
-			</Card.Root>
+			<div class="flex w-full flex-col gap-2 p-4 font-semibold">
+				<span class="text-lg">{split.name}</span>
+				<div class="flex flex-wrap gap-1">
+					{#each split.splitDays as day, idx (idx)}
+						{#if day.splitDaySessions.length}
+							<Badge>{day.splitDaySessions[0].name}</Badge>
+						{:else}
+							<Badge variant="secondary">Rest</Badge>
+						{/if}
+					{/each}
+				</div>
+			</div>
 		</Label>
 	{:else}
 		<p class="text-center p-2 text-muted-foreground border rounded-md">
