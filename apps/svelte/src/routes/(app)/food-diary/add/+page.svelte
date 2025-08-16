@@ -76,8 +76,11 @@
 {:else}
 	<ScrollArea class="h-px grow">
 		<div class="flex flex-col gap-2">
-			{#each searchQuery.data as result (result.id)}
-				<div class="bg-card flex w-full justify-between gap-2 rounded-md border p-4">
+			{#each searchQuery.data as result, idx (result.id)}
+				<div
+					class="bg-card flex w-full justify-between gap-2 rounded-md border p-4"
+					data-test-id={`food-search-result-${idx + 1}`}
+				>
 					<div class="flex w-3/4 flex-col justify-between">
 						<p class="truncate">{result.product_name}</p>
 						<p class="text-muted-foreground text-sm">
@@ -89,6 +92,7 @@
 						size="icon"
 						class="rounded-full"
 						variant="outline"
+						data-test-id={`add-food-search-result-${idx + 1}`}
 						href={`${page.url.pathname}/item?id=${result.id}&day=${page.url.searchParams.get('day')}`}
 					>
 						<PlusIcon />

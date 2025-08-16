@@ -4,8 +4,10 @@ test('log food entry', async ({ page }) => {
 	await page.getByRole('link', { name: 'Food diary' }).click();
 	await page.getByRole('link', { name: 'Add food' }).click();
 	await page.getByPlaceholder('Type here').fill('ripen at home bananas');
-	await expect(page.locator('#bits-3')).toContainText('Ripen At Home Bananas 90 kcal, Tesco');
-	await page.locator('div:nth-child(0) > .ring-offset-background').click();
+	await expect(page.locator('[data-test-id="food-search-result-1"]')).toContainText(
+		'Ripen At Home Bananas 90 kcal, Tesco'
+	);
+	await page.locator('[data-test-id="add-food-search-result-1"]').click();
 
 	const date = new Date();
 	await expect(page.getByRole('main')).toContainText('Ripen At Home Bananas Tesco');
@@ -26,7 +28,7 @@ test('log food entry', async ({ page }) => {
 	);
 
 	await page.getByRole('button', { name: 'Add food' }).click();
-	await expect(page.getByLabel('Notifications alt+T').getByRole('listitem')).toContainText(
+	await expect(page.getByLabel('Notifications alt+T').getByRole('listitem').first()).toContainText(
 		'Food entry logged successfully!'
 	);
 	await expect(page.getByRole('main')).toContainText('Ripen At Home Bananas 150g - 135 calories');
