@@ -5,6 +5,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import { Calendar } from '$lib/components/ui/calendar';
+	import * as Card from '$lib/components/ui/card/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import * as Popover from '$lib/components/ui/popover/index.js';
@@ -17,12 +18,12 @@
 		getLocalTimeZone,
 		parseDate
 	} from '@internationalized/date';
+	import { CalendarIcon, LoaderCircleIcon, PencilIcon, PlusIcon } from '@lucide/svelte';
 	import type { NutritionData } from '@prisma/client';
 	import { createMutation, createQuery } from '@tanstack/svelte-query';
-	import { CalendarIcon, LoaderCircleIcon, PencilIcon, PlusIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
-	import FoodDataCard from './_components/food-data-card.svelte';
 	import { getFoodById } from '../../food.remote';
+	import FoodDataCard from './_components/food-data-card.svelte';
 
 	const df = new DateFormatter('en-US', { dateStyle: 'long' });
 
@@ -174,55 +175,59 @@
 	</div>
 {/if}
 
-<form
-	class="bg-card grid grid-cols-2 gap-x-2 gap-y-4 rounded-md border p-4"
-	onsubmit={logFoodEntry}
-	name="food-entry-form"
-	id="food-entry-form"
->
-	<Label class="col-span-full flex flex-col gap-2">
-		Quantity (in grams)
-		<Input
-			type="number"
-			min="0"
-			step="0.01"
-			bind:value={userQuantity}
-			class="w-full"
-			placeholder="Enter quantity in grams"
-		/>
-	</Label>
+<Card.Root class="py-4">
+	<Card.Content class="px-4">
+		<form
+			class="bg-card grid grid-cols-2 gap-x-2 gap-y-4"
+			onsubmit={logFoodEntry}
+			name="food-entry-form"
+			id="food-entry-form"
+		>
+			<Label class="col-span-2 flex flex-col items-start gap-2">
+				Date
+				<Popover.Root>
+					<Popover.Trigger class="w-full">
+						{#snippet child({ props })}
+							<Button
+								variant="outline"
+								class={cn(
+									'w-full justify-start text-left font-normal',
+									!dateValue && 'text-muted-foreground'
+								)}
+								{...props}
+							>
+								<CalendarIcon class="size-4" />
+								<span class="truncate">
+									{dateValue ? df.format(dateValue.toDate(getLocalTimeZone())) : 'Select a date'}
+								</span>
+							</Button>
+						{/snippet}
+					</Popover.Trigger>
+					<Popover.Content class="w-auto p-0">
+						<Calendar bind:value={dateValue} type="single" initialFocus />
+					</Popover.Content>
+				</Popover.Root>
+			</Label>
 
-	<Label class="flex flex-col gap-2">
-		Date
-		<Popover.Root>
-			<Popover.Trigger>
-				{#snippet child({ props })}
-					<Button
-						variant="outline"
-						class={cn(
-							'w-full justify-start text-left font-normal',
-							!dateValue && 'text-muted-foreground'
-						)}
-						{...props}
-					>
-						<CalendarIcon class="size-4" />
-						<span class="truncate">
-							{dateValue ? df.format(dateValue.toDate(getLocalTimeZone())) : 'Select a date'}
-						</span>
-					</Button>
-				{/snippet}
-			</Popover.Trigger>
-			<Popover.Content class="w-auto p-0">
-				<Calendar bind:value={dateValue} type="single" initialFocus />
-			</Popover.Content>
-		</Popover.Root>
-	</Label>
+			<Label class="flex flex-col items-start gap-2">
+				Quantity (g)
+				<Input
+					type="number"
+					min="0"
+					step="0.01"
+					bind:value={userQuantity}
+					class="w-full"
+					placeholder="Enter quantity in grams"
+				/>
+			</Label>
 
-	<Label class="flex flex-col gap-2">
-		Time
-		<Input type="time" bind:value={timeValue} />
-	</Label>
-</form>
+			<Label class="flex flex-col gap-2">
+				Time
+				<Input type="time" bind:value={timeValue} />
+			</Label>
+		</form>
+	</Card.Content>
+</Card.Root>
 
 <Button
 	class="mt-auto"

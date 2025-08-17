@@ -1,19 +1,16 @@
 <script lang="ts">
-	import { Button, type ButtonSize, type ButtonVariant } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
-	import { onMount, type Snippet } from 'svelte';
+	import { type Snippet } from 'svelte';
+	import { MediaQuery } from 'svelte/reactivity';
 
 	type PropsType = {
-		title: string;
+		title: Snippet;
 		description?: Snippet;
 		open: boolean;
 		dismissible?: boolean;
-		triggerButtonVariant?: ButtonVariant;
-		triggerButtonSize?: ButtonSize;
-		triggerButtonAriaLabel?: string;
-		triggerButtonContent?: Snippet;
-		cancelButtonVariant?: ButtonVariant;
+		triggerButton?: Snippet<[{ props: Record<string, unknown> }]>;
+		cancelButton?: Snippet<[{ props: Record<string, unknown> }]>;
 		children?: Snippet;
 	};
 
@@ -22,37 +19,26 @@
 		description,
 		open = $bindable(false),
 		dismissible = true,
-		triggerButtonVariant = 'outline',
-		triggerButtonSize = 'default',
-		triggerButtonAriaLabel = '',
-		triggerButtonContent,
-		cancelButtonVariant = 'outline',
+		triggerButton,
+		cancelButton,
 		children
 	}: PropsType = $props();
 
-	let isDesktop = $state(false);
-	onMount(() => (isDesktop = window.matchMedia('(min-width: 768px)').matches));
+	let isDesktop = new MediaQuery('(min-width: 768px)');
 </script>
 
-{#if isDesktop}
+{#if isDesktop.current}
 	<Dialog.Root bind:open>
-		{#if triggerButtonContent}
+		{#if triggerButton}
 			<Dialog.Trigger>
 				{#snippet child({ props })}
-					<Button
-						{...props}
-						aria-label={triggerButtonAriaLabel}
-						size={triggerButtonSize}
-						variant={triggerButtonVariant}
-					>
-						{@render triggerButtonContent()}
-					</Button>
+					{@render triggerButton({ props })}
 				{/snippet}
 			</Dialog.Trigger>
 		{/if}
 		<Dialog.Content class="sm:max-w-[425px]">
 			<Dialog.Header>
-				<Dialog.Title>{title}</Dialog.Title>
+				<Dialog.Title>{@render title()}</Dialog.Title>
 				{#if description}
 					<Dialog.Description>
 						{@render description()}
@@ -66,41 +52,36 @@
 	</Dialog.Root>
 {:else}
 	<Drawer.Root {dismissible} bind:open>
-		{#if triggerButtonContent}
+		{#if triggerButton}
 			<Drawer.Trigger>
 				{#snippet child({ props })}
-					<Button
-						{...props}
-						aria-label={triggerButtonAriaLabel}
-						size={triggerButtonSize}
-						variant={triggerButtonVariant}
-					>
-						{@render triggerButtonContent()}
-					</Button>
+					{@render triggerButton({ props })}
 				{/snippet}
 			</Drawer.Trigger>
 		{/if}
 		<Drawer.Content class="h-fit">
 			<Drawer.Header>
-				<Drawer.Title>{title}</Drawer.Title>
+				<Drawer.Title>{@render title()}</Drawer.Title>
 				{#if description}
 					<Drawer.Description>
 						{@render description()}
 					</Drawer.Description>
 				{/if}
 			</Drawer.Header>
-			<div class="flex flex-col gap-2 px-4">
+			<div class="mb-4 flex flex-col gap-2 px-4">
 				{#if children}
 					{@render children()}
 				{/if}
 			</div>
-			<Drawer.Footer class="my-0 shrink pt-2">
-				<Drawer.Close>
-					{#snippet child({ props })}
-						<Button {...props} variant={cancelButtonVariant}>Cancel</Button>
-					{/snippet}
-				</Drawer.Close>
-			</Drawer.Footer>
+			{#if cancelButton}
+				<Drawer.Footer class="my-0 shrink pt-2">
+					<Drawer.Close>
+						{#snippet child({ props })}
+							{@render cancelButton({ props })}
+						{/snippet}
+					</Drawer.Close>
+				</Drawer.Footer>
+			{/if}
 		</Drawer.Content>
 	</Drawer.Root>
 {/if}

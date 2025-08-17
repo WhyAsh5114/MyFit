@@ -6,6 +6,7 @@
 	import { Label } from '$lib/components/ui/label';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
+	import * as Card from '$lib/components/ui/card/index.js';
 	import { Slider } from '$lib/components/ui/slider/index.js';
 	import { EXERCISE_SPLIT_TEMPLATES, SUGGESTED_DAYS_PER_WEEK } from '$lib/constants';
 	import { client } from '$lib/idb-client';
@@ -102,11 +103,14 @@
 	{#each filteredWorkoutSplits as split (split.name)}
 		<Label
 			for={split.name}
-			class="border-muted bg-popover hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary rounded-md border-2"
+			class="border-muted bg-popover hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary flex-col rounded-md border-2 py-4"
 		>
 			<RadioGroup.Item value={split.name} id={split.name} class="sr-only" aria-label={split.name} />
-			<div class="flex w-full flex-col gap-2 p-4 font-semibold">
-				<span class="text-lg">{split.name}</span>
+			<Card.Header class="w-full px-4">
+				<Card.Title>{split.name}</Card.Title>
+				<Card.Description>{split.description}</Card.Description>
+			</Card.Header>
+			<Card.Content class="px-4">
 				<div class="flex flex-wrap gap-1">
 					{#each split.splitDays as day, idx (idx)}
 						{#if day.splitDaySessions.length}
@@ -116,10 +120,10 @@
 						{/if}
 					{/each}
 				</div>
-			</div>
+			</Card.Content>
 		</Label>
 	{:else}
-		<p class="text-center p-2 text-muted-foreground border rounded-md">
+		<p class="text-center p-2 text-muted-foreground border rounded-lg">
 			No such workout splits available
 		</p>
 	{/each}

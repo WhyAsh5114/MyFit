@@ -25,7 +25,7 @@
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
 				<Sidebar.MenuButton
-					class="bg-secondary h-fit w-full justify-start text-start"
+					class="bg-card h-fit w-full justify-start text-start"
 					onclick={() => sidebar.setOpenMobile(false)}
 				>
 					<a class="flex w-full items-center gap-2 px-2 py-0 text-xl font-semibold" href="/">
@@ -51,7 +51,7 @@
 									{#snippet child({ props })}
 										<a
 											href={link.href}
-											target={link.label === 'Github' ? '_blank' : undefined}
+											target={['Github', 'Discord'].includes(link.label) ? '_blank' : undefined}
 											{...props}
 										>
 											<link.icon />

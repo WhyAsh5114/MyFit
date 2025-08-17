@@ -7,6 +7,7 @@
 	import Label from '$lib/components/ui/label/label.svelte';
 	import { ChevronRightIcon, XCircleIcon } from '@lucide/svelte';
 	import { selectedStepsState } from '../selected-steps.svelte';
+	import * as Card from '$lib/components/ui/card';
 
 	let stepRoutes = $state(
 		page.data.stepRoutesMap
@@ -30,15 +31,19 @@
 <H3>What all do you wanna customize?</H3>
 <div class="flex grow flex-col gap-2">
 	{#each stepRoutes as stepRoute, i (stepRoute.label)}
-		<Label class="bg-card flex items-center gap-4 rounded-md border p-2">
-			<Checkbox
-				disabled={stepRoute.metadata['required'] === 'true'}
-				bind:checked={stepRoutes[i].checked}
-			/>
-			<div class="flex flex-col">
-				<span class="text-base font-semibold">{stepRoute.label}</span>
-				<p class="text-muted-foreground text-sm font-normal">{stepRoute.metadata['description']}</p>
-			</div>
+		<Label>
+			<Card.Root class="w-full py-4">
+				<Card.Header class="px-4">
+					<Card.Title>{stepRoute.label}</Card.Title>
+					<Card.Description>{stepRoute.metadata['description']}</Card.Description>
+					<Card.Action>
+						<Checkbox
+							disabled={stepRoute.metadata['required'] === 'true'}
+							bind:checked={stepRoutes[i].checked}
+						/>
+					</Card.Action>
+				</Card.Header>
+			</Card.Root>
 		</Label>
 	{/each}
 </div>

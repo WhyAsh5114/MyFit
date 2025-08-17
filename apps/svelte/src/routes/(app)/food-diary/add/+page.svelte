@@ -3,10 +3,10 @@
 	import H1 from '$lib/components/typography/h1.svelte';
 	import H2 from '$lib/components/typography/h2.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Card from '$lib/components/ui/card';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { Label } from '$lib/components/ui/label';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
-	import { createQuery } from '@tanstack/svelte-query';
 	import {
 		PlusCircleIcon,
 		PlusIcon,
@@ -14,6 +14,7 @@
 		SearchIcon,
 		SearchXIcon
 	} from '@lucide/svelte';
+	import { createQuery } from '@tanstack/svelte-query';
 	import { Debounced } from 'runed';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
@@ -44,20 +45,18 @@
 <H1>Food diary</H1>
 <H2>Add food</H2>
 
-<div class="bg-card flex flex-col gap-2 rounded-md border p-4">
-	<div class="flex w-full flex-col gap-1.5">
-		<Label for="search-food">Search for foods</Label>
-		<Input type="text" placeholder="Type here" id="search-food" bind:value={searchTerm} />
-	</div>
+<div class="flex w-full flex-col gap-1.5">
+	<Label for="search-food">Search for foods</Label>
+	<Input type="text" placeholder="Type here" id="search-food" bind:value={searchTerm} />
+</div>
 
-	<div class="flex justify-between gap-2">
-		<Button href="/food-diary/add/manual?day={selectedDay}" variant="secondary">
-			<PlusCircleIcon /> Add manually
-		</Button>
-		<Button href="/food-diary/add/scan?day={selectedDay}">
-			<ScanBarcodeIcon /> Scan barcode
-		</Button>
-	</div>
+<div class="flex justify-between gap-2">
+	<Button href="/food-diary/add/manual?day={selectedDay}" variant="secondary">
+		<PlusCircleIcon /> Add manually
+	</Button>
+	<Button href="/food-diary/add/scan?day={selectedDay}">
+		<ScanBarcodeIcon /> Scan barcode
+	</Button>
 </div>
 
 {#if searchQuery.isFetching}
@@ -79,27 +78,27 @@
 	<ScrollArea class="h-px grow">
 		<div class="flex flex-col gap-2">
 			{#each searchQuery.data as result, idx (result.id)}
-				<div
-					class="bg-card flex w-full justify-between gap-2 rounded-md border p-4"
-					data-test-id={`food-search-result-${idx + 1}`}
-				>
-					<div class="flex w-3/4 flex-col justify-between">
-						<p class="truncate">{result.product_name}</p>
-						<p class="text-muted-foreground text-sm">
-							{result.energy_kcal_100g.toFixed()} kcal,
-							{result.brands ?? 'Unknown'}
-						</p>
-					</div>
-					<Button
-						size="icon"
-						class="rounded-full"
-						variant="outline"
-						data-test-id={`add-food-search-result-${idx + 1}`}
-						href={`${page.url.pathname}/item?id=${result.id}&day=${page.url.searchParams.get('day')}`}
-					>
-						<PlusIcon />
-					</Button>
-				</div>
+				<Card.Root class="py-4">
+					<Card.Header class="px-4" data-test-id={`food-search-result-${idx + 1}`}>
+						<Card.Title>
+							{result.product_name}
+						</Card.Title>
+						<Card.Description>
+							{result.energy_kcal_100g.toFixed()} kcal, {result.brands ?? 'Unknown'}
+						</Card.Description>
+						<Card.Action>
+							<Button
+								size="icon"
+								class="rounded-full"
+								variant="outline"
+								data-test-id={`add-food-search-result-${idx + 1}`}
+								href={`${page.url.pathname}/item?id=${result.id}&day=${page.url.searchParams.get('day')}`}
+							>
+								<PlusIcon />
+							</Button>
+						</Card.Action>
+					</Card.Header>
+				</Card.Root>
 			{/each}
 		</div>
 	</ScrollArea>

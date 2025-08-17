@@ -3,8 +3,10 @@
 	import { page } from '$app/state';
 	import H1 from '$lib/components/typography/h1.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import Progress from '$lib/components/ui/progress/progress.svelte';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { client } from '$lib/idb-client';
 	import { calculateBMR } from '$lib/my-utils';
@@ -125,61 +127,69 @@
 
 <H1>Food diary</H1>
 
-<div class="bg-card flex flex-col items-center gap-2 rounded-md border p-4">
-	<div class="flex w-full items-center">
-		<Button size="icon" variant="outline" onclick={() => changeDay('prev')}>
-			<ChevronLeftIcon />
-		</Button>
-		{#if selectedDay}
-			<p class="grow text-center text-lg font-semibold">
-				{selectedDay?.toLocaleDateString(undefined, { dateStyle: 'long' })}
-			</p>
-		{:else}
-			<Skeleton class="mx-auto h-7 w-32" />
-		{/if}
-		<Button size="icon" variant="outline" onclick={() => changeDay('next')}>
-			<ChevronRightIcon />
-		</Button>
-	</div>
-	<Progress
-		value={caloricIntake}
-		max={macroDataQuery.data?.caloricTarget ?? Infinity}
-		class="h-2"
-	/>
-	<div
-		class="text-muted-foreground flex h-4 w-full items-center justify-between text-sm font-medium"
-	>
-		{#if macroDataQuery.data}
-			<p>{macroDataQuery.data?.caloricTarget?.toFixed()}</p>
-			<MinusIcon size={16} />
-			<p>{caloricIntake.toFixed()}</p>
-			<PlusIcon size={16} />
-			<p>TBD</p>
-			<EqualIcon size={16} />
-			<p>{(macroDataQuery.data?.caloricTarget - caloricIntake).toFixed()}</p>
-		{:else if macroDataQuery.data === null}
-			<p>Targets and/or metrics haven't been setup</p>
-		{:else}
-			<p>Fetching data...</p>
-			<LoaderCircleIcon class="animate-spin" size={16} />
-		{/if}
-	</div>
-</div>
+<Card.Root class="py-4">
+	<Card.Content class="flex flex-col gap-2 px-4">
+		<div class="flex w-full items-center">
+			<Button size="icon" variant="secondary" onclick={() => changeDay('prev')}>
+				<ChevronLeftIcon />
+			</Button>
+			{#if selectedDay}
+				<p class="grow text-center text-base font-semibold">
+					{selectedDay?.toLocaleDateString(undefined, { dateStyle: 'long' })}
+				</p>
+			{:else}
+				<Skeleton class="mx-auto h-7 w-32" />
+			{/if}
+			<Button size="icon" variant="secondary" onclick={() => changeDay('next')}>
+				<ChevronRightIcon />
+			</Button>
+		</div>
+		<Progress
+			value={caloricIntake}
+			max={macroDataQuery.data?.caloricTarget ?? Infinity}
+			class="h-2"
+		/>
+		<div
+			class="text-muted-foreground flex h-4 w-full items-center justify-between text-sm font-medium"
+		>
+			{#if macroDataQuery.data}
+				<p>{macroDataQuery.data?.caloricTarget?.toFixed()}</p>
+				<MinusIcon size={16} />
+				<p>{caloricIntake.toFixed()}</p>
+				<PlusIcon size={16} />
+				<p>TBD</p>
+				<EqualIcon size={16} />
+				<p>{(macroDataQuery.data?.caloricTarget - caloricIntake).toFixed()}</p>
+			{:else if macroDataQuery.data === null}
+				<p class="w-full text-center">
+					Goals haven't been setup. <a href="/food-diary/goals" class="underline">Set up now!</a>
+				</p>
+			{:else}
+				<p>Fetching data...</p>
+				<LoaderCircleIcon class="animate-spin" size={16} />
+			{/if}
+		</div>
+		<Separator class="my-2" />
 
-<div class="bg-card flex gap-2 rounded-md border p-2">
-	<Button variant="outline" size="icon">
-		<CopyIcon />
-	</Button>
-	<Button variant="outline" size="icon">
-		<ClipboardPasteIcon />
-	</Button>
-	<Button variant="outline" size="icon">
-		<ScissorsIcon />
-	</Button>
-	<Button class="ml-auto" href={`/food-diary/add?day=${selectedDay?.toISOString().split('T')[0]}`}>
-		<PlusIcon /> Add food
-	</Button>
-</div>
+		<div class="flex w-full gap-2">
+			<Button variant="outline" size="icon">
+				<CopyIcon />
+			</Button>
+			<Button variant="outline" size="icon">
+				<ClipboardPasteIcon />
+			</Button>
+			<Button variant="outline" size="icon">
+				<ScissorsIcon />
+			</Button>
+			<Button
+				class="ml-auto"
+				href={`/food-diary/add?day=${selectedDay?.toISOString().split('T')[0]}`}
+			>
+				<PlusIcon /> Add food
+			</Button>
+		</div>
+	</Card.Content>
+</Card.Root>
 
 {#if !foodEntriesQuery.data}
 	<div class="text-muted-foreground flex h-full flex-col items-center justify-center gap-2">
@@ -188,39 +198,41 @@
 	</div>
 {:else}
 	{#each foodEntriesQuery.data as entry (entry.id)}
-		<div class="bg-card flex w-full items-start justify-between rounded-md border p-3">
-			<div class="flex flex-col">
-				<p class="max-w-56 truncate font-semibold">{entry.nutritionData?.product_name}</p>
-				<p class="text-muted-foreground text-sm">
+		<Card.Root class="py-4">
+			<Card.Header class="px-4">
+				<Card.Title>{entry.nutritionData?.product_name}</Card.Title>
+				<Card.Description>
 					{entry.quantity}g - {(
 						entry.nutritionData!.energy_kcal_100g *
 						(entry.quantity / 100)
 					).toFixed()} calories
-				</p>
-			</div>
-			<DropdownMenu.Root>
-				<DropdownMenu.Trigger>
-					{#snippet child({ props })}
-						<Button variant="ghost" size="icon" {...props}>
-							<EllipsisVerticalIcon />
-						</Button>
-					{/snippet}
-				</DropdownMenu.Trigger>
-				<DropdownMenu.Content align="end">
-					<DropdownMenu.Group>
-						<DropdownMenu.Item
-							onclick={() =>
-								goto(`/food-diary/add/item?id=${entry.nutritionDataId}&edit=${entry.id}`)}
-						>
-							<PencilIcon /> Edit
-						</DropdownMenu.Item>
-						<DropdownMenu.Item class="text-red-500" onclick={() => deleteEntry(entry.id)}>
-							<TrashIcon /> Delete
-						</DropdownMenu.Item>
-					</DropdownMenu.Group>
-				</DropdownMenu.Content>
-			</DropdownMenu.Root>
-		</div>
+				</Card.Description>
+				<Card.Action>
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger>
+							{#snippet child({ props })}
+								<Button variant="ghost" size="icon" {...props}>
+									<EllipsisVerticalIcon />
+								</Button>
+							{/snippet}
+						</DropdownMenu.Trigger>
+						<DropdownMenu.Content align="end">
+							<DropdownMenu.Group>
+								<DropdownMenu.Item
+									onclick={() =>
+										goto(`/food-diary/add/item?id=${entry.nutritionDataId}&edit=${entry.id}`)}
+								>
+									<PencilIcon /> Edit
+								</DropdownMenu.Item>
+								<DropdownMenu.Item class="text-red-500" onclick={() => deleteEntry(entry.id)}>
+									<TrashIcon /> Delete
+								</DropdownMenu.Item>
+							</DropdownMenu.Group>
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
+				</Card.Action>
+			</Card.Header>
+		</Card.Root>
 	{:else}
 		<div class="h-full flex flex-col justify-center items-center gap-2 text-muted-foreground">
 			<CalendarIcon size={128} strokeWidth={1} />
