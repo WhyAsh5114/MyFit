@@ -233,9 +233,10 @@ export type ExerciseSplitTemplate = Omit<ExerciseSplit, 'id' | 'userId'> & {
 	})[];
 };
 
-export const EXERCISE_SPLIT_TEMPLATES: ExerciseSplitTemplate[] = [
+export const EXERCISE_SPLIT_TEMPLATES: (ExerciseSplitTemplate & { description: string })[] = [
 	{
 		name: 'Push Pull Legs',
+		description: 'A classic bodybuilding split',
 		splitDays: [
 			{
 				dayIndex: 0,

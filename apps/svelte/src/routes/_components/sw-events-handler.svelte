@@ -101,7 +101,10 @@
 	});
 </script>
 
-<ResponsiveDialog title="Update available 🎉" bind:open={appLayoutState.updateDialogOpen}>
+<ResponsiveDialog bind:open={appLayoutState.updateDialogOpen}>
+	{#snippet title()}
+		Update available 🎉
+	{/snippet}
 	{#snippet description()}
 		Any unsaved data, like a workout in progress, will be lost. Are you sure you want to update now?
 	{/snippet}

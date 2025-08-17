@@ -16,7 +16,7 @@ test('log food entry', async ({ page }) => {
 	);
 	await expect(page.locator('h2')).toContainText('Code: 10001882');
 	await expect(page.locator('#food-entry-form')).toContainText(
-		`Quantity (in grams) Date ${date.toLocaleDateString(['en-US'], { dateStyle: 'long' })} Time`
+		`Date ${date.toLocaleDateString(['en-US'], { dateStyle: 'long' })} Quantity (g) Time`
 	);
 	await expect(page.getByLabel('Time')).toHaveValue(
 		date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })

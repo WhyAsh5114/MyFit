@@ -6,6 +6,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
+	import * as Card from '$lib/components/ui/card/index.js';
 	import { GETTING_STARTED_QUESTIONS } from '$lib/constants';
 	import { client } from '$lib/idb-client';
 	import { kebabToCamel } from '$lib/my-utils';
@@ -77,17 +78,21 @@
 		class="grid gap-2"
 	>
 		{#each questions[currentQuestion].options as { value, label, description, Icon } (value)}
-			<Label
-				for={value}
-				class="border-muted bg-popover hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary animate-in {slideAnimation} flex items-center gap-4 rounded-md border-2 p-4"
-			>
-				<RadioGroup.Item {value} id={value} class="sr-only" aria-label={label} />
-				<Icon size={36} class="shrink-0" />
-				<div class="flex flex-col gap-2">
-					<p class="font-semibold">{label}</p>
-					<p class="text-muted-foreground leading-tight">{description}</p>
-				</div>
-			</Label>
+			<Card.Root class="border-0 py-0">
+				<Label
+					for={value}
+					class="border-muted bg-popover hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary animate-in {slideAnimation} flex items-center gap-4 rounded-lg border-2 p-4"
+				>
+					<RadioGroup.Item {value} id={value} class="sr-only" aria-label={label} />
+					<Icon size={36} class="shrink-0" />
+					<div class="flex flex-col gap-2">
+						<Card.Title>{label}</Card.Title>
+						<Card.Description class="text-muted-foreground leading-tight">
+							{description}
+						</Card.Description>
+					</div>
+				</Label>
+			</Card.Root>
 		{/each}
 	</RadioGroup.Root>
 {/key}

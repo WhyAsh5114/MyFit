@@ -117,7 +117,7 @@
 	<Card.Header>
 		<Card.Title>Color mode</Card.Title>
 		<Card.Description>Manage the app's color mode settings</Card.Description>
-	</Card.Header>	
+	</Card.Header>
 	<Card.Content class="flex justify-end">
 		<Select.Root
 			type="single"

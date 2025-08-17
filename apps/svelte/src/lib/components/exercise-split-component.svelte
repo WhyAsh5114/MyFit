@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Card from '$lib/components/ui/card/index.js';
 	import { Scrollbar } from '$lib/components/ui/scroll-area';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
@@ -58,28 +59,32 @@
 			</Tabs.List>
 		</ScrollArea>
 	</Tabs.Root>
-	<div class="bg-card flex gap-2 rounded-md border p-2">
-		<div class="flex grow flex-col">
-			<span class="font-semibold">{currentSplit.name}</span>
-			<span class="text-muted-foreground text-sm">
+	<Card.Root class="py-4">
+		<Card.Header class="px-4">
+			<Card.Title>{currentSplit.name}</Card.Title>
+			<Card.Description>
 				Day {Number(selectedDayIndex) + 1}, Session {Number(selectedSessionIndex) + 1}
-			</span>
-		</div>
-		<AddExerciseSheet />
-		<Button variant="outline" size="icon"><GitCompareArrowsIcon /></Button>
-		<Button variant="outline" size="icon"><WrenchIcon /></Button>
-	</div>
+			</Card.Description>
+			<Card.Action>
+				<AddExerciseSheet />
+				<Button variant="outline" size="icon"><GitCompareArrowsIcon /></Button>
+				<Button variant="outline" size="icon"><WrenchIcon /></Button>
+			</Card.Action>
+		</Card.Header>
+	</Card.Root>
 	<ScrollArea class="h-px grow">
 		{#each selectedSession!.exercises as exercise (exercise.exerciseIndex)}
-			<div class="bg-card flex flex-col rounded-md border p-2">
-				<div class="flex items-center justify-between">
-					<span class="font-medium">{exercise.name}</span>
-					<Button class="h-4 w-4 p-0" variant="ghost"><MenuIcon /></Button>
-				</div>
-				<span class="text-muted-foreground text-sm">
-					{exercise.setType} sets of {exercise.repRangeStart} to {exercise.repRangeEnd} reps
-				</span>
-			</div>
+			<Card.Root class="py-4">
+				<Card.Header class="px-4">
+					<Card.Title>{exercise.name}</Card.Title>
+					<Card.Description>
+						{exercise.setType} sets of {exercise.repRangeStart} to {exercise.repRangeEnd} reps
+					</Card.Description>
+					<Card.Action>
+						<Button class="h-4 w-4 p-0" variant="ghost"><MenuIcon /></Button>
+					</Card.Action>
+				</Card.Header>
+			</Card.Root>
 		{/each}
 	</ScrollArea>
 </div>
