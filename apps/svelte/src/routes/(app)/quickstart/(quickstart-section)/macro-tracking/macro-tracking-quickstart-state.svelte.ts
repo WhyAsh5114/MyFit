@@ -1,86 +1,44 @@
 import { client } from '$lib/idb-client';
+import type { MacroTrackingMetricsSchema } from '$routes/(app)/food-diary/goals/metrics/_components/metrics-form-schema';
 import type { ActivityAdjustmentType } from '@prisma/client';
-import type { z } from 'zod';
-import type { macroTrackingMetricsSchema } from './1-metrics/schema';
 
-function createMacroTrackingQuickstartState() {
-	let macroTrackingMetrics = $state<z.infer<typeof macroTrackingMetricsSchema>>();
+class MacroTrackingQuickstartState {
+	macroTrackingMetrics = $state<MacroTrackingMetricsSchema>();
+	activityAdjustmentType = $state<ActivityAdjustmentType>();
+	staticActivityCalories = $state<number>();
+	selectedWeightChange = $state<number>();
+	selectedMacroTargetQuantifier = $state<'Percentage' | 'Absolute'>();
+	macroDistribution = $state<{ macro: string; value: number | undefined }[]>();
 
-	let activityAdjustmentType = $state<ActivityAdjustmentType>();
-	let staticActivityCalories = $state<number>();
-
-	let selectedWeightChange = $state<number>();
-	let selectedMacroTargetQuantifier = $state<'Percentage' | 'Absolute'>();
-	let macroDistribution = $state<{ macro: string; value: number | undefined }[]>();
-
-	async function saveDataToIndexedDB() {
+	async saveDataToIndexedDB() {
 		const user = await client.user.findFirst();
 
 		if (!user) throw new Error('User not found, please log in again');
-		if (!macroTrackingMetrics) throw new Error('Macro tracking metrics not found');
-		if (!selectedMacroTargetQuantifier) throw new Error('Macro target quantifier not found');
-		if (!activityAdjustmentType) throw new Error('Activity adjustment type not found');
-		if (selectedWeightChange === undefined) throw new Error('Selected weight change not found');
+		if (!this.macroTrackingMetrics) throw new Error('Macro tracking metrics not found');
+		if (!this.selectedMacroTargetQuantifier) throw new Error('Macro target quantifier not found');
+		if (!this.activityAdjustmentType) throw new Error('Activity adjustment type not found');
+		if (this.selectedWeightChange === undefined)
+			throw new Error('Selected weight change not found');
 
-		await client.macroMetrics.create({ data: { userId: user.id, ...macroTrackingMetrics } });
+		await client.macroMetrics.create({ data: { userId: user.id, ...this.macroTrackingMetrics } });
 		await client.macroActivityTrackingPreferences.create({
 			data: {
 				userId: user.id,
-				adjustmentType: activityAdjustmentType,
-				staticActivityCalories: staticActivityCalories
+				adjustmentType: this.activityAdjustmentType,
+				staticActivityCalories: this.staticActivityCalories
 			}
 		});
 		await client.macroTargets.create({
 			data: {
 				userId: user.id,
-				quantifier: selectedMacroTargetQuantifier,
-				carbs: macroDistribution?.find((v) => v.macro === 'carbs')?.value,
-				proteins: macroDistribution?.find((v) => v.macro === 'protein')?.value,
-				fats: macroDistribution?.find((v) => v.macro === 'fats')?.value,
-				caloricChange: selectedWeightChange * 7700
+				quantifier: this.selectedMacroTargetQuantifier,
+				carbs: this.macroDistribution?.find((v) => v.macro === 'carbs')?.value,
+				proteins: this.macroDistribution?.find((v) => v.macro === 'protein')?.value,
+				fats: this.macroDistribution?.find((v) => v.macro === 'fats')?.value,
+				caloricChange: this.selectedWeightChange * 7700
 			}
 		});
 	}
-
-	return {
-		get macroTrackingMetrics() {
-			return macroTrackingMetrics;
-		},
-		set macroTrackingMetrics(value) {
-			macroTrackingMetrics = value;
-		},
-		get activityAdjustmentType() {
-			return activityAdjustmentType;
-		},
-		set activityAdjustmentType(value) {
-			activityAdjustmentType = value;
-		},
-		get staticActivityCalories() {
-			return staticActivityCalories;
-		},
-		set staticActivityCalories(value) {
-			staticActivityCalories = value;
-		},
-		get selectedWeightChange() {
-			return selectedWeightChange;
-		},
-		set selectedWeightChange(value) {
-			selectedWeightChange = value;
-		},
-		get selectedMacroTargetQuantifier() {
-			return selectedMacroTargetQuantifier;
-		},
-		set selectedMacroTargetQuantifier(value) {
-			selectedMacroTargetQuantifier = value;
-		},
-		get macroDistribution() {
-			return macroDistribution;
-		},
-		set macroDistribution(value) {
-			macroDistribution = value;
-		},
-		saveDataToIndexedDB
-	};
 }
 
-export const macroTrackingQuickstartState = createMacroTrackingQuickstartState();
+export const macroTrackingQuickstartState = new MacroTrackingQuickstartState();
