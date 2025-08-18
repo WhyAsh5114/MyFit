@@ -8,12 +8,10 @@
 	import { createMutation } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import { writable } from 'svelte/store';
-	import type { SuperFormData } from 'sveltekit-superforms/client';
 	import type { MacroTrackingActivitySchema } from './_components/activity-form-schema';
 	import ActivityForm from './_components/activity-form.svelte';
 
-	let formData =
-		$state<SuperFormData<MacroTrackingActivitySchema>>(writable<MacroTrackingActivitySchema>());
+	let formData = $state(writable<MacroTrackingActivitySchema>());
 
 	async function loadExistingActivityPreferences() {
 		const existingPreferences = await client.macroActivityTrackingPreferences.findFirst();

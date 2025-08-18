@@ -5,12 +5,10 @@
 	import MetricsForm from '$routes/(app)/food-diary/goals/metrics/_components/metrics-form.svelte';
 	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
 	import { writable } from 'svelte/store';
-	import { type SuperFormData } from 'sveltekit-superforms/client';
 	import { selectedStepsState } from '../../selected-steps.svelte';
 	import { macroTrackingQuickstartState } from '../macro-tracking-quickstart-state.svelte';
 
-	let formData: SuperFormData<MacroTrackingMetricsSchema> =
-		$state(writable<MacroTrackingMetricsSchema>());
+	let formData = $state(writable<MacroTrackingMetricsSchema>());
 
 	$effect(() => {
 		if (macroTrackingQuickstartState.macroTrackingMetrics) {

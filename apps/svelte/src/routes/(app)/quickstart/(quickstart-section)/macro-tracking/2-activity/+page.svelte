@@ -7,12 +7,10 @@
 	import type { ActivityAdjustmentType } from '@prisma/client';
 	import { toast } from 'svelte-sonner';
 	import { writable } from 'svelte/store';
-	import type { SuperFormData } from 'sveltekit-superforms/client';
 	import { selectedStepsState } from '../../selected-steps.svelte';
 	import { macroTrackingQuickstartState } from '../macro-tracking-quickstart-state.svelte';
 
-	let formData =
-		$state<SuperFormData<MacroTrackingActivitySchema>>(writable<MacroTrackingActivitySchema>());
+	let formData = $state(writable<MacroTrackingActivitySchema>());
 
 	$effect(() => {
 		if (!macroTrackingQuickstartState.macroTrackingMetrics) {

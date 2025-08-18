@@ -8,7 +8,9 @@ class MacroTrackingQuickstartState {
 	staticActivityCalories = $state<number>();
 	selectedWeightChange = $state<number>();
 	selectedMacroTargetQuantifier = $state<'Percentage' | 'Absolute'>();
-	macroDistribution = $state<{ macro: string; value: number | undefined }[]>();
+	carbs = $state<number | null>(null);
+	fats = $state<number | null>(null);
+	proteins = $state<number | null>(null);
 
 	async saveDataToIndexedDB() {
 		const user = await client.user.findFirst();
@@ -32,9 +34,9 @@ class MacroTrackingQuickstartState {
 			data: {
 				userId: user.id,
 				quantifier: this.selectedMacroTargetQuantifier,
-				carbs: this.macroDistribution?.find((v) => v.macro === 'carbs')?.value,
-				proteins: this.macroDistribution?.find((v) => v.macro === 'protein')?.value,
-				fats: this.macroDistribution?.find((v) => v.macro === 'fats')?.value,
+				carbs: this.carbs,
+				proteins: this.proteins,
+				fats: this.fats,
 				caloricChange: this.selectedWeightChange * 7700
 			}
 		});

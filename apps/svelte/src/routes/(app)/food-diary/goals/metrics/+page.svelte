@@ -8,12 +8,10 @@
 	import { createMutation } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import { writable } from 'svelte/store';
-	import type { SuperFormData } from 'sveltekit-superforms/client';
 	import type { MacroTrackingMetricsSchema } from './_components/metrics-form-schema';
 	import MetricsForm from './_components/metrics-form.svelte';
 
-	let formData: SuperFormData<MacroTrackingMetricsSchema> =
-		$state(writable<MacroTrackingMetricsSchema>());
+	let formData = $state(writable<MacroTrackingMetricsSchema>());
 
 	async function loadExistingMetrics() {
 		const existingMetrics = await client.macroMetrics.findFirst();
