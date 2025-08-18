@@ -1,34 +1,35 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
-	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import type { ActivityAdjustmentType } from '@prisma/client';
+	import type { MacroTrackingActivitySchema } from '$routes/(app)/food-diary/goals/activity/_components/activity-form-schema';
+	import ActivityForm from '$routes/(app)/food-diary/goals/activity/_components/activity-form.svelte';
 	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
+	import type { ActivityAdjustmentType } from '@prisma/client';
 	import { toast } from 'svelte-sonner';
+	import { writable } from 'svelte/store';
+	import type { SuperFormData } from 'sveltekit-superforms/client';
 	import { selectedStepsState } from '../../selected-steps.svelte';
 	import { macroTrackingQuickstartState } from '../macro-tracking-quickstart-state.svelte';
-	import DynamicActivity from './_components/dynamic-activity.svelte';
-	import ManualActivity from './_components/manual-activity.svelte';
-	import StaticActivity from './_components/static-activity.svelte';
+
+	let formData =
+		$state<SuperFormData<MacroTrackingActivitySchema>>(writable<MacroTrackingActivitySchema>());
 
 	$effect(() => {
 		if (!macroTrackingQuickstartState.macroTrackingMetrics) {
 			toast.warning('Fill in your metrics first');
 			selectedStepsState.navigateToPage(page.url.pathname, 'previous');
+		} else if (macroTrackingQuickstartState.activityAdjustmentType) {
+			$formData.adjustmentType = macroTrackingQuickstartState.activityAdjustmentType;
+			$formData.staticCalories = macroTrackingQuickstartState.staticActivityCalories ?? null;
 		}
 	});
 
 	let selectedActivityAdjustmentType = $state<ActivityAdjustmentType>('Dynamic');
+	let staticCalories = $state<number>(500);
 
-	function continueToNextPage(e: SubmitEvent) {
-		e.preventDefault();
-		const form = e.target as HTMLFormElement;
-		const formData = new FormData(form);
-
+	function continueToNextPage() {
 		macroTrackingQuickstartState.staticActivityCalories =
-			selectedActivityAdjustmentType === 'Static'
-				? Number(formData.get('static-activity-adjustment-calories'))
-				: undefined;
+			selectedActivityAdjustmentType === 'Static' ? staticCalories : undefined;
 		macroTrackingQuickstartState.activityAdjustmentType = selectedActivityAdjustmentType;
 
 		selectedStepsState.navigateToPage(page.url.pathname, 'next');
@@ -43,24 +44,13 @@
 	/>
 </svelte:head>
 
-<form id="activity-levels-form" onsubmit={continueToNextPage}>
-	<Tabs.Root bind:value={selectedActivityAdjustmentType}>
-		<Tabs.List class="grid w-full grid-cols-3">
-			<Tabs.Trigger value="Dynamic">Dynamic</Tabs.Trigger>
-			<Tabs.Trigger value="Manual">Manual</Tabs.Trigger>
-			<Tabs.Trigger value="Static">Static</Tabs.Trigger>
-		</Tabs.List>
-		<Tabs.Content value="Dynamic">
-			<DynamicActivity />
-		</Tabs.Content>
-		<Tabs.Content value="Manual">
-			<ManualActivity />
-		</Tabs.Content>
-		<Tabs.Content value="Static">
-			<StaticActivity />
-		</Tabs.Content>
-	</Tabs.Root>
-</form>
+<ActivityForm
+	bind:formData
+	onUpdate={({ form }) => {
+		if (!form.valid) return;
+		continueToNextPage();
+	}}
+/>
 
 <div class="mt-auto grid grid-cols-2 gap-2">
 	<Button
@@ -69,5 +59,5 @@
 	>
 		<ChevronLeftIcon /> Previous
 	</Button>
-	<Button type="submit" form="activity-levels-form">Next <ChevronRightIcon /></Button>
+	<Button type="submit" form="activity-form">Next <ChevronRightIcon /></Button>
 </div>

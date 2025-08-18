@@ -13,15 +13,10 @@
 	} from './metrics-form-schema';
 
 	type PropsType = {
-		formId?: string;
 		onUpdate?: (event: { form: SuperValidated<MacroTrackingMetricsSchema> }) => unknown;
 		formData: SuperFormData<MacroTrackingMetricsSchema>;
 	};
-	let {
-		formId = 'macro-tracking-metrics-form',
-		onUpdate,
-		formData = $bindable()
-	}: PropsType = $props();
+	let { onUpdate, formData = $bindable() }: PropsType = $props();
 
 	const form = superForm(defaults(zod4(macroTrackingMetricsSchema)), {
 		SPA: true,
@@ -34,15 +29,7 @@
 	({ form: formData } = form);
 </script>
 
-<svelte:head>
-	<meta name="required" content="true" />
-	<meta
-		name="description"
-		content="Enter your weight, height, and other essentials to get started"
-	/>
-</svelte:head>
-
-<form use:enhance id={formId}>
+<form use:enhance id="macro-tracking-metrics-form">
 	<Card.Root>
 		<Card.Content class="grid grid-cols-4 gap-4">
 			<Form.Field {form} name="bodyweight" class="col-span-3">
