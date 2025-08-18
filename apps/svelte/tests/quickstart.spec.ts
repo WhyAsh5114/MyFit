@@ -12,9 +12,9 @@ test('perform macro-tracking quickstart', async ({ page }) => {
 	await page.getByRole('button', { name: 'Next' }).click();
 	await page.getByRole('tab', { name: 'Manual' }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
-	await page.getByRole('spinbutton', { name: 'Proteins %' }).fill('40');
-	await page.getByRole('spinbutton', { name: 'Carbs %' }).fill('30');
-	await page.getByRole('spinbutton', { name: 'Fats %' }).fill('30');
+	await page.getByRole('spinbutton', { name: 'Proteins' }).fill('40');
+	await page.getByRole('spinbutton', { name: 'Carbs' }).fill('30');
+	await page.getByRole('spinbutton', { name: 'Fats' }).fill('30');
 	await page.getByRole('button', { name: 'Next' }).click();
 	await expect(page.getByLabel('Notifications alt+T').getByRole('listitem')).toContainText(
 		'Data saved successfully'

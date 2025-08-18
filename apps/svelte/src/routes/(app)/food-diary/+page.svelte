@@ -10,6 +10,7 @@
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { client } from '$lib/idb-client';
 	import { calculateBMR } from '$lib/my-utils';
+	import { CalendarDateTime, fromDate, getLocalTimeZone, today } from '@internationalized/date';
 	import {
 		CalendarIcon,
 		ChevronLeftIcon,
@@ -49,24 +50,20 @@
 	}));
 
 	const foodEntriesQuery = createQuery(() => ({
-		queryKey: ['food-entries', selectedDay?.toISOString().split('T')[0]],
+		queryKey: ['food-entries', selectedDay?.toDateString()],
 		queryFn: async () => {
 			if (!selectedDay) return [];
 
-			const startOfDay = new Date(selectedDay);
-			const endOfDay = new Date(
-				selectedDay.getFullYear(),
-				selectedDay.getMonth(),
-				selectedDay.getDate() + 1
-			);
+			const calDate = fromDate(selectedDay, getLocalTimeZone());
+
+			const start = new CalendarDateTime(calDate.year, calDate.month, calDate.day, 0, 0, 0, 0);
+			const end = new CalendarDateTime(calDate.year, calDate.month, calDate.day, 23, 59, 59, 999);
+
+			const startDate = start.toDate(getLocalTimeZone());
+			const endDate = end.toDate(getLocalTimeZone());
 
 			return await client.foodEntry.findMany({
-				where: {
-					eatenAt: {
-						gte: startOfDay,
-						lt: endOfDay
-					}
-				},
+				where: { eatenAt: { gte: startDate, lt: endDate } },
 				include: { nutritionData: true },
 				orderBy: { eatenAt: 'asc' }
 			});
@@ -92,9 +89,9 @@
 		}
 
 		if (!selectedDay) {
-			const today = new SvelteDate();
-			goto(`/food-diary?day=${today.toISOString().split('T')[0]}`);
-			selectedDay = today;
+			const calToday = today(getLocalTimeZone());
+			goto(`/food-diary?day=${calToday.toString()}`);
+			selectedDay = new SvelteDate(calToday.toDate(getLocalTimeZone()));
 		}
 	});
 

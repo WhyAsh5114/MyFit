@@ -1,4 +1,3 @@
-import { MacroTargetQuantifier } from '@prisma/client';
 import { z } from 'zod';
 
 export const macroTrackingTargetsSchema = z
@@ -7,7 +6,7 @@ export const macroTrackingTargetsSchema = z
 		carbs: z.number().nullable().default(30),
 		fats: z.number().nullable().default(30),
 		caloricChange: z.number().default(0),
-		quantifier: z.enum(MacroTargetQuantifier).default('Percentage')
+		quantifier: z.enum(['Percentage', 'Absolute']).default('Percentage')
 	})
 	.refine(
 		(data) => {

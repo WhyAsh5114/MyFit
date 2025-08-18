@@ -15,8 +15,13 @@
 	import {
 		type DateValue,
 		DateFormatter,
+		fromDate,
 		getLocalTimeZone,
-		parseDate
+		parseDate,
+		Time,
+		toCalendarDate,
+		toCalendarDateTime,
+		today
 	} from '@internationalized/date';
 	import { CalendarIcon, LoaderCircleIcon, PencilIcon, PlusIcon } from '@lucide/svelte';
 	import type { NutritionData } from '@prisma/client';
@@ -27,13 +32,12 @@
 
 	const df = new DateFormatter('en-US', { dateStyle: 'long' });
 
+	const now = new Date();
 	let itemId = $state<number | null>();
 	let editingFoodEntryId = $state<string | null>();
 
-	let dateValue = $state<DateValue>(parseDate(new Date().toISOString().split('T')[0]));
-	let timeValue = $state(
-		new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
-	);
+	let dateValue = $state<DateValue>(today(getLocalTimeZone()));
+	let timeValue = $state(new Time(now.getHours(), now.getMinutes()).toString().slice(0, 5));
 	let userQuantity = $state(100);
 
 	$effect(() => {
@@ -64,12 +68,10 @@
 	$effect(() => {
 		if (editEntryQuery.data) {
 			const entry = editEntryQuery.data;
-			dateValue = parseDate(entry.eatenAt.toISOString().split('T')[0]);
-			timeValue = entry.eatenAt.toLocaleTimeString('en-US', {
-				hour: '2-digit',
-				minute: '2-digit',
-				hour12: false
-			});
+			const eatenAt = entry.eatenAt;
+			const zoned = fromDate(eatenAt, getLocalTimeZone());
+			dateValue = toCalendarDate(zoned);
+			timeValue = new Time(eatenAt.getHours(), eatenAt.getMinutes()).toString();
 			userQuantity = entry.quantity;
 		}
 	});
@@ -127,7 +129,8 @@
 				: 'Food entry logged successfully!';
 			toast.success(message);
 
-			goto(`/food-diary?day=${variables.eatenAt.toISOString().split('T')[0]}`);
+			const calEatenAt = fromDate(variables.eatenAt, getLocalTimeZone());
+			goto(`/food-diary?day=${calEatenAt.toString()}`);
 		},
 		onError: (error) => {
 			console.error('Error logging food entry:', error);
@@ -141,7 +144,11 @@
 			return toast.error('Please fill in all fields correctly.');
 		}
 
-		const eatenAt = new Date(`${dateValue.toString()}T${timeValue}:00`);
+		const [hours, minutes] = timeValue.split(':').map(Number);
+		const time = new Time(hours, minutes);
+
+		const dateTime = toCalendarDateTime(dateValue, time);
+		const eatenAt = dateTime.toDate(getLocalTimeZone());
 
 		foodEntryMutation.mutate({
 			eatenAt,

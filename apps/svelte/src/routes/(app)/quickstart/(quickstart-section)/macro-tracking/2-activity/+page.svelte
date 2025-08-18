@@ -25,12 +25,12 @@
 	let selectedActivityAdjustmentType = $state<ActivityAdjustmentType>('Dynamic');
 	let staticCalories = $state<number>(500);
 
-	function continueToNextPage() {
+	async function continueToNextPage() {
 		macroTrackingQuickstartState.staticActivityCalories =
 			selectedActivityAdjustmentType === 'Static' ? staticCalories : undefined;
 		macroTrackingQuickstartState.activityAdjustmentType = selectedActivityAdjustmentType;
 
-		selectedStepsState.navigateToPage(page.url.pathname, 'next');
+		await selectedStepsState.navigateToPage(page.url.pathname, 'next');
 	}
 </script>
 
@@ -44,9 +44,9 @@
 
 <ActivityForm
 	bind:formData
-	onUpdate={({ form }) => {
+	onUpdate={async ({ form }) => {
 		if (!form.valid) return;
-		continueToNextPage();
+		await continueToNextPage();
 	}}
 />
 
@@ -57,5 +57,8 @@
 	>
 		<ChevronLeftIcon /> Previous
 	</Button>
+	<!-- <Button onclick={continueToNextPage}>
+		Next <ChevronRightIcon />
+	</Button> -->
 	<Button type="submit" form="activity-form">Next <ChevronRightIcon /></Button>
 </div>

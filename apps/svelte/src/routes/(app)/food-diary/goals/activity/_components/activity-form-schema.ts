@@ -1,9 +1,8 @@
-import { ActivityAdjustmentType } from '@prisma/client';
 import { z } from 'zod';
 
 export const macroTrackingActivitySchema = z
 	.object({
-		adjustmentType: z.enum(ActivityAdjustmentType),
+		adjustmentType: z.enum(['Static', 'Dynamic', 'Manual']).default('Dynamic'),
 		staticCalories: z.number().nullable()
 	})
 	.refine(
