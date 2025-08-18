@@ -50,7 +50,7 @@
 		editingFoodEntryId = page.url.searchParams.get('edit');
 	});
 
-	let editEntryQuery = createQuery(() => ({
+	const editEntryQuery = createQuery(() => ({
 		queryKey: ['foodEntry', editingFoodEntryId],
 		queryFn: async () => {
 			if (!editingFoodEntryId) return null;
@@ -74,7 +74,7 @@
 		}
 	});
 
-	let foodQuery = createQuery(() => ({
+	const foodQuery = createQuery(() => ({
 		queryKey: ['food', itemId],
 		queryFn: () => getFoodById({ id: itemId! }),
 		enabled: Boolean(itemId),
@@ -85,7 +85,7 @@
 		}
 	}));
 
-	let foodEntryMutation = createMutation(() => ({
+	const foodEntryMutation = createMutation(() => ({
 		mutationFn: async (data: {
 			eatenAt: Date;
 			quantity: number;

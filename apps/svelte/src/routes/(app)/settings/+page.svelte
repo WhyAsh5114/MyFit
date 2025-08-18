@@ -15,7 +15,7 @@
 		return (bytes / 1024 / 1024).toFixed(2);
 	}
 
-	let resetDatabaseMutation = createMutation(() => ({
+	const resetDatabaseMutation = createMutation(() => ({
 		mutationFn: async () => {
 			await client.resetDatabase();
 			toast.success('IndexedDB cleared');
@@ -27,7 +27,7 @@
 		}
 	}));
 
-	let checkForUpdate = createQuery(() => ({
+	const checkForUpdate = createQuery(() => ({
 		queryFn: async () => {
 			if (!appLayoutState.swRegistration) {
 				toast.error('Service Worker not registered');
@@ -57,7 +57,7 @@
 		enabled: false
 	}));
 
-	let offlineReady = createQuery(() => ({
+	const offlineReady = createQuery(() => ({
 		queryKey: ['offlineReady'],
 		enabled: false,
 		queryFn: async () => {
