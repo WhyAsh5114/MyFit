@@ -4,14 +4,12 @@
 	import H1 from '$lib/components/typography/h1.svelte';
 	import H3 from '$lib/components/typography/h3.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$lib/components/ui/card/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
 	import { GETTING_STARTED_QUESTIONS } from '$lib/constants';
 	import { client } from '$lib/idb-client';
 	import { kebabToCamel } from '$lib/my-utils';
-	import type { FitnessKnowledge, MyFitPrimaryUsage } from '@prisma/client';
-	import { createMutation } from '@tanstack/svelte-query';
 	import {
 		CheckCircleIcon,
 		ChevronLeftIcon,
@@ -19,6 +17,8 @@
 		LoaderCircleIcon,
 		XCircleIcon
 	} from '@lucide/svelte';
+	import type { FitnessKnowledge, MyFitPrimaryUsage } from '@prisma/client';
+	import { createMutation } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import { Spring } from 'svelte/motion';
 
@@ -50,7 +50,9 @@
 			goto('/dashboard');
 		},
 		onError: (error) => {
-			toast.error('An error occurred while saving your preferences.');
+			toast.error('An error occurred while saving your preferences', {
+				description: error.message
+			});
 			console.error('Error saving answers:', error);
 		}
 	}));

@@ -8,7 +8,18 @@ services:
       - ../..:/workspaces:cached
       
     # Overrides default command so things don't shut down after the process ends.
-    command: sleep infinity
+    command: bash -c "sudo chmod 666 /dev/kvm 2>/dev/null || true && sleep infinity"
+
+    # Enable KVM and hardware acceleration for Android emulator
+    privileged: true
+    devices:
+      - /dev/kvm:/dev/kvm
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_ADMIN
+    group_add:
+      - "993"  # KVM group ID from host
 
     # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
     network_mode: service:db
