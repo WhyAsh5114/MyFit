@@ -14,7 +14,6 @@
 	let entityCounts: RouterOutputs['users']['getEntityCounts'] | undefined = $state(undefined);
 	let dismissDiscord = $state(false);
 	let dismissDomainMove = $state(false);
-	let isOnNewDomain = $state(false);
 
 	onMount(async () => {
 		if (data.entityCounts === undefined) {
@@ -22,22 +21,6 @@
 			return;
 		}
 		entityCounts = await data.entityCounts;
-
-		if ('serviceWorker' in navigator) {
-			try {
-				const registration = await navigator.serviceWorker.getRegistration();
-				if (registration) {
-					isOnNewDomain = registration.scope.includes('myfit.fit');
-				} else {
-					isOnNewDomain = window.location.hostname === 'myfit.fit';
-				}
-			} catch (error) {
-				console.log('Could not check service worker registration:', error);
-				isOnNewDomain = window.location.hostname === 'myfit.fit';
-			}
-		} else {
-			isOnNewDomain = window.location.hostname === 'myfit.fit';
-		}
 	});
 
 	$effect(() => {
@@ -77,13 +60,13 @@
 	</Card.Root>
 {/if}
 
-{#if !dismissDomainMove && !isOnNewDomain}
-	<Card.Root class="mt-2 border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950">
+{#if !dismissDomainMove}
+	<Card.Root class="mt-2">
 		<Card.Header>
-			<Card.Title class="Title text-blue-800 dark:text-blue-200">🚀 MyFit has moved to a new domain!</Card.Title>
-			<Card.Description class="text-blue-700 dark:text-blue-300">
-				We've moved to <strong>myfit.fit</strong> for a better experience! Please reinstall the app from the new domain to
-				ensure you get the latest updates and features.
+			<Card.Title class="text-primary">🚀 MyFit has moved to a new domain!</Card.Title>
+			<Card.Description>
+				We've moved to <strong>myfit.fit</strong> for a better experience! Please install the app from the new domain to
+				ensure you get the latest updates and features. Once you've installed from myfit.fit, you can dismiss this message.
 			</Card.Description>
 		</Card.Header>
 		<Card.Footer class="flex justify-between">
@@ -96,7 +79,7 @@
 			>
 				Dismiss
 			</Button>
-			<Button class="gap-2 bg-blue-600 hover:bg-blue-700" href="https://myfit.fit">
+			<Button class="gap-2" href="https://myfit.fit">
 				<ExternalLinkIcon />
 				Visit myfit.fit
 			</Button>
