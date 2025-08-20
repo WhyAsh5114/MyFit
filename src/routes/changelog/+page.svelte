@@ -7,6 +7,11 @@
 	let { data } = $props();
 </script>
 
+<svelte:head>
+  <title>Changelog - MyFit</title>
+  <meta name="description" content="See what's new in MyFit with regular updates and feature improvements.">
+</svelte:head>
+
 <H2>Changelog</H2>
 {#each data.releases as { body }, idx}
 	<article class="prose prose-sm dark:prose-invert md:prose-base">

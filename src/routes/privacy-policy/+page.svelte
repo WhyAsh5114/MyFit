@@ -1,3 +1,8 @@
+<svelte:head>
+  <title>Privacy Policy - MyFit</title>
+  <meta name="description" content="Learn how MyFit protects your data and respects your privacy.">
+</svelte:head>
+
 <div class="prose prose-neutral max-w-none dark:prose-invert lg:prose-lg">
 	<h1>Privacy Policy</h1>
 	<p>Last updated: January 04, 2024</p>
@@ -89,7 +94,7 @@
 		<li>
 			<p>
 				<strong>Website</strong> refers to MyFit, accessible from
-				<a href="https://my-fit-v3.vercel.app" rel="external nofollow noopener">https://my-fit-v3.vercel.app</a>
+				<a href="https://myfit.fit" rel="external nofollow noopener">https://myfit.fit</a>
 			</p>
 		</li>
 		<li>

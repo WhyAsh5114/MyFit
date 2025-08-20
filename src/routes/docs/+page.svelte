@@ -1,3 +1,8 @@
+<svelte:head>
+  <title>Docs - MyFit</title>
+  <meta name="description" content="Read MyFit documentation to learn how to use the app effectively.">
+</svelte:head>
+
 <div class="prose prose-neutral max-w-none dark:prose-invert lg:prose-lg">
 	<h1>Docs</h1>
 	<blockquote>Just a basic overview of things work in this app, as there are some differences from V2</blockquote>
