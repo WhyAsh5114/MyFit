@@ -1,6 +1,6 @@
 <svelte:head>
-  <title>Support MyFit</title>
-  <meta name="description" content="Support the development of MyFit and help us keep it free and privacy-first.">
+	<title>Support MyFit</title>
+	<meta name="description" content="Support the development of MyFit and help us keep it free and privacy-first." />
 </svelte:head>
 
 <div class="prose prose-neutral max-w-none dark:prose-invert lg:prose-lg">

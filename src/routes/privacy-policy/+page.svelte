@@ -1,6 +1,6 @@
 <svelte:head>
-  <title>Privacy Policy - MyFit</title>
-  <meta name="description" content="Learn how MyFit protects your data and respects your privacy.">
+	<title>Privacy Policy - MyFit</title>
+	<meta name="description" content="Learn how MyFit protects your data and respects your privacy." />
 </svelte:head>
 
 <div class="prose prose-neutral max-w-none dark:prose-invert lg:prose-lg">

@@ -8,8 +8,8 @@
 </script>
 
 <svelte:head>
-  <title>Changelog - MyFit</title>
-  <meta name="description" content="See what's new in MyFit with regular updates and feature improvements.">
+	<title>Changelog - MyFit</title>
+	<meta name="description" content="See what's new in MyFit with regular updates and feature improvements." />
 </svelte:head>
 
 <H2>Changelog</H2>

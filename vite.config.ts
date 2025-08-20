@@ -66,6 +66,7 @@ export default defineConfig({
 			scope: '/',
 			base: '/',
 			manifest: {
+				id: '/?app=v3',
 				name: 'MyFit v3',
 				short_name: 'MyFit',
 				start_url: '/',

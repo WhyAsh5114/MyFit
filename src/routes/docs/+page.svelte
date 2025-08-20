@@ -1,6 +1,6 @@
 <svelte:head>
-  <title>Docs - MyFit</title>
-  <meta name="description" content="Read MyFit documentation to learn how to use the app effectively.">
+	<title>Docs - MyFit</title>
+	<meta name="description" content="Read MyFit documentation to learn how to use the app effectively." />
 </svelte:head>
 
 <div class="prose prose-neutral max-w-none dark:prose-invert lg:prose-lg">
