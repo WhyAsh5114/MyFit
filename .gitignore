@@ -1,14 +1,29 @@
+test-results
 node_modules
 
-# Folders and files from v3
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+dist
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
 .env
-.svelte-kit
 .env.*
-.vscode
 !.env.example
+!.env.test
+
+# Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-.vercel
-test-results
-playwright-report
-auth.json
+
+# Serwist
+public/sw*
+public/swe-worker*
