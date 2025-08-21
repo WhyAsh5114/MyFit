@@ -1,4 +1,4 @@
-import { query, command } from '$app/server';
+import { query } from '$app/server';
 import { prisma } from '$lib/prisma';
 import { searchFoodsQuery } from '@prisma/client/sql';
 import z from 'zod';
@@ -11,13 +11,13 @@ function buildPrefixQuery(search: string): string {
 		.join(' & ');
 }
 
-export const getFoodById = command(z.strictObject({ id: z.number() }), async (data) => {
+export const getFoodById = query(z.strictObject({ id: z.number() }), async (data) => {
 	return await prisma.nutritionData.findUniqueOrThrow({
 		where: { id: data.id }
 	});
 });
 
-export const getFoodByCode = command(z.strictObject({ code: z.string() }), async (data) => {
+export const getFoodByCode = query(z.strictObject({ code: z.string() }), async (data) => {
 	return await prisma.nutritionData.findUniqueOrThrow({
 		where: { code: data.code }
 	});

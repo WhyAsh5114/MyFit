@@ -4,11 +4,11 @@
 	import ResponsiveDialog from '$lib/components/responsive-dialog.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { SERVICE_WORKER_UPDATE_INTERVAL } from '$lib/constants';
+	import { client } from '$lib/idb-client';
 	import { LoaderCircleIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import { useRegisterSW } from 'virtual:pwa-register/svelte';
 	import { appLayoutState } from './app-layout-state.svelte';
-	import { client } from '$lib/idb-client';
 
 	let progress = $state<number>();
 	let progressToast = $state<string | number>();
