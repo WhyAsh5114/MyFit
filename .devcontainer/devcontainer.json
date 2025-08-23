@@ -1,36 +1,36 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/javascript-node-postgres
 {
-  "name": "MyFit SvelteKit App",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "app",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"name": "MyFit SvelteKit App",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
-  // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [5432],
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [5432],
 
-  // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "pnpm install && cd apps/svelte && pnpm exec tsx scripts/populate-env.ts && pnpm exec prisma migrate deploy",
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "pnpm install && pnpm exec tsx scripts/populate-env.ts && pnpm exec prisma migrate deploy",
 
-  // Configure tool-specific properties.
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "svelte.svelte-vscode",
-        "bradlc.vscode-tailwindcss",
-        "prisma.prisma",
-        "ms-playwright.playwright",
-        "esbenp.prettier-vscode"
-      ],
-      "settings": {
-        "typescript.preferences.includePackageJsonAutoImports": "on",
-        "typescript.suggest.autoImports": true
-      }
-    }
-  },
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"svelte.svelte-vscode",
+				"bradlc.vscode-tailwindcss",
+				"prisma.prisma",
+				"ms-playwright.playwright",
+				"esbenp.prettier-vscode"
+			],
+			"settings": {
+				"typescript.preferences.includePackageJsonAutoImports": "on",
+				"typescript.suggest.autoImports": true
+			}
+		}
+	},
 
-  // Environment variables
-  "containerEnv": {
-    "DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/postgres"
-  }
+	// Environment variables
+	"containerEnv": {
+		"DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/postgres"
+	}
 }
