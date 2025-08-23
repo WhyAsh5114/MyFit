@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import '$lib/capacitor-fetch-patch';
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { oklchToHex } from '$lib/my-utils';
+	import { Capacitor } from '@capacitor/core';
 	import { StatusBar, Style } from '@capacitor/status-bar';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import { mode, ModeWatcher } from 'mode-watcher';
@@ -17,6 +17,7 @@
 
 	$effect(() => {
 		if (!mode.current) return;
+		if (!Capacitor.isNativePlatform()) return;
 		requestAnimationFrame(() => {
 			const computedStyle = getComputedStyle(document.documentElement);
 			const backgroundColor = computedStyle.getPropertyValue('--background').trim();
