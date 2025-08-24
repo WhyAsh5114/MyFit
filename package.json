@@ -5,10 +5,10 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev --host",
+		"dev:android": "pnpm sync:mixed && pnpm dev",
 		"build": "vite build && tsx scripts/post-build.ts",
 		"build:debug": "cross-env BUILD_DEBUG=true pnpm build",
 		"preview": "vite preview --host",
-		"preview:secure": "cross-env HTTPS=true pnpm preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -17,7 +17,7 @@
 		"test": "playwright test",
 		"postinstall": "prisma generate --sql",
 		"sync": "cap sync",
-		"sync:mixed": "cross-env ANDROID_DEV=true pnpm sync"
+		"sync:dev": "cross-env ANDROID_DEV=true pnpm sync"
 	},
 	"devDependencies": {
 		"@capacitor/assets": "^3.0.5",
@@ -82,6 +82,7 @@
 		"@tanstack/svelte-query": "https://pkg.pr.new/@tanstack/svelte-query@746b9c5d83e901deb3a5ca7012a4b4e2b617c5e3",
 		"barqode": "^0.0.2",
 		"better-auth": "^1.3.7",
+		"capacitor-health": "^7.0.0",
 		"culori": "^4.0.2",
 		"d3-scale": "^4.0.2",
 		"idb": "^8.0.3",

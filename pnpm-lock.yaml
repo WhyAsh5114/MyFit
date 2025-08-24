@@ -29,6 +29,9 @@ importers:
       better-auth:
         specifier: ^1.3.7
         version: 1.3.7(zod@4.0.10)
+      capacitor-health:
+        specifier: ^7.0.0
+        version: 7.0.0(@capacitor/core@7.4.3)
       culori:
         specifier: ^4.0.2
         version: 4.0.2
@@ -2176,6 +2179,11 @@ packages:
 
   caniuse-lite@1.0.30001736:
     resolution: {integrity: sha512-ImpN5gLEY8gWeqfLUyEF4b7mYWcYoR2Si1VhnrbM4JizRFmfGaAQ12PhNykq6nvI4XvKLrsp8Xde74D5phJOSw==}
+
+  capacitor-health@7.0.0:
+    resolution: {integrity: sha512-iW5ImqhzEEFiTibnmEBlGniSp0Z6dhIqjuGDUZpU3bzpiJfF1K6gachIQKIhWMQAbByndFHU4zQLtd5PMzwZxA==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
 
   chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
@@ -7540,6 +7548,10 @@ snapshots:
     optional: true
 
   caniuse-lite@1.0.30001736: {}
+
+  capacitor-health@7.0.0(@capacitor/core@7.4.3):
+    dependencies:
+      '@capacitor/core': 7.4.3
 
   chalk@2.4.2:
     dependencies:

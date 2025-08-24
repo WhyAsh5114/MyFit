@@ -9,7 +9,7 @@
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { client } from '$lib/idb-client';
-	import { calculateBMR } from '$lib/my-utils';
+	import { calculateBMR, stepsToCalories } from '$lib/my-utils';
 	import { CalendarDateTime, fromDate, getLocalTimeZone, today } from '@internationalized/date';
 	import {
 		CalendarIcon,
@@ -26,9 +26,10 @@
 		ScissorsIcon,
 		TrashIcon
 	} from '@lucide/svelte';
-	import { createQuery } from '@tanstack/svelte-query';
+	import { createMutation, createQuery } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import { SvelteDate } from 'svelte/reactivity';
+	import { healthState } from '../_components/health-state.svelte';
 
 	let selectedDay = $state<SvelteDate>();
 
@@ -71,6 +72,38 @@
 		enabled: Boolean(selectedDay)
 	}));
 
+	const activeCaloriesBurnedQuery = createQuery(() => ({
+		queryKey: ['active-calories-burned', selectedDay?.toDateString()],
+		queryFn: async () => {
+			if (!selectedDay) return 0;
+			const activityTrackingPreferences = await client.macroActivityTrackingPreferences.findFirst();
+			if (!activityTrackingPreferences) return 0;
+
+			if (activityTrackingPreferences.adjustmentType === 'Static') {
+				return activityTrackingPreferences.staticCalories ?? 0;
+			}
+
+			if (activityTrackingPreferences.adjustmentType === 'Dynamic') {
+				const caloricData = await healthState.getTotalCaloriesForDay(selectedDay);
+				if (caloricData === null) {
+					toast.error('Device sync failed');
+					return null;
+				}
+
+				const { calories, steps } = caloricData;
+				if (calories !== 0) return calories;
+
+				// Fallback to step-based estimation if no calorie data is available
+				const userMetrics = await client.macroMetrics.findFirst();
+				if (!userMetrics) return 0;
+
+				return stepsToCalories(steps, userMetrics);
+			}
+
+			return 0;
+		}
+	}));
+
 	let caloricIntake = $derived(
 		foodEntriesQuery.data?.reduce((sum, entry) => {
 			return sum + (entry.nutritionData?.energy_kcal_100g || 0) * (entry.quantity / 100);
@@ -108,18 +141,19 @@
 		goto(`/food-diary?day=${newDate.toISOString().split('T')[0]}`);
 	}
 
-	function deleteEntry(entryId: string) {
-		client.foodEntry
-			.delete({ where: { id: entryId } })
-			.then(() => {
-				toast.success('Food entry deleted successfully');
-				foodEntriesQuery.refetch();
-			})
-			.catch((error) => {
-				console.error('Error deleting food entry:', error);
-				toast.error('Failed to delete food entry');
-			});
-	}
+	const deleteEntryMutation = createMutation(() => ({
+		mutationFn: async (entryId: string) => {
+			return await client.foodEntry.delete({ where: { id: entryId } });
+		},
+		onSuccess: () => {
+			toast.success('Food entry deleted successfully');
+			foodEntriesQuery.refetch();
+		},
+		onError: (error) => {
+			console.error('Error deleting food entry:', error);
+			toast.error('Failed to delete food entry');
+		}
+	}));
 </script>
 
 <H1>Food diary</H1>
@@ -154,7 +188,11 @@
 				<MinusIcon size={16} />
 				<p>{caloricIntake.toFixed()}</p>
 				<PlusIcon size={16} />
-				<p>TBD</p>
+				{#if typeof activeCaloriesBurnedQuery.data === 'number'}
+					<p>{activeCaloriesBurnedQuery.data.toFixed()}</p>
+				{:else}
+					<LoaderCircleIcon class="animate-spin" size={16} />
+				{/if}
 				<EqualIcon size={16} />
 				<p>{(macroDataQuery.data?.caloricTarget - caloricIntake).toFixed()}</p>
 			{:else if macroDataQuery.data === null}
@@ -221,7 +259,10 @@
 								>
 									<PencilIcon /> Edit
 								</DropdownMenu.Item>
-								<DropdownMenu.Item class="text-red-500" onclick={() => deleteEntry(entry.id)}>
+								<DropdownMenu.Item
+									class="text-red-500"
+									onclick={() => deleteEntryMutation.mutate(entry.id)}
+								>
 									<TrashIcon /> Delete
 								</DropdownMenu.Item>
 							</DropdownMenu.Group>

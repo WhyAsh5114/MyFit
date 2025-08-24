@@ -1,7 +1,7 @@
-name: "Setup Node.js and Install Dependencies"
-description: "Checks out the code, sets up Node.js, and installs dependencies using pnpm"
+name: 'Setup Node.js and Install Dependencies'
+description: 'Checks out the code, sets up Node.js, and installs dependencies using pnpm'
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Setup Node.js
       uses: actions/setup-node@v4

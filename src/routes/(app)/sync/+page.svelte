@@ -1,69 +1,88 @@
-<!-- <script lang="ts">
+<script lang="ts">
 	import H1 from '$lib/components/typography/h1.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import type { BridgeEventRequest, BridgeEventResponse } from 'bridge-types';
+	import { Capacitor } from '@capacitor/core';
 	import { CircleOffIcon, DownloadIcon, LoaderCircle } from '@lucide/svelte';
+	import { Health } from 'capacitor-health';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
 	let detectedOS = $state<'iOS' | 'Android'>();
 	let isAvailable = $state<boolean>();
 	let isAuthorized = $state<boolean>();
-	let steps = $state<{ count: number; startTime: string; endTime: string }[]>([]);
-
-	function messageHandler(event: Event) {
-		if ('data' in event && typeof event.data === 'string') {
-			const bridgeResponse = JSON.parse(event.data) as BridgeEventResponse;
-			if (bridgeResponse.type === 'IS_AVAILABLE') {
-				isAvailable = bridgeResponse.payload as boolean;
-			}
-			if (bridgeResponse.type === 'IS_AUTHORIZED') {
-				isAuthorized = bridgeResponse.payload as boolean;
-			}
-			if (bridgeResponse.type === 'ASK_FOR_PERMISSIONS') {
-				isAuthorized = bridgeResponse.payload as boolean;
-				if (isAuthorized) {
-					toast.success('Permissions granted');
-				} else {
-					toast.error('Permissions denied');
-				}
-			}
-			if (bridgeResponse.type === 'GET_STEPS') {
-				steps = bridgeResponse.payload;
-			}
-		}
-	}
 
 	onMount(async () => {
 		const userAgent = navigator.userAgent;
 		if (/iPad|iPhone|iPod/.test(userAgent)) {
 			detectedOS = 'iOS';
-			window.addEventListener('message', messageHandler);
 		}
 		if (/android/i.test(userAgent)) {
 			detectedOS = 'Android';
-			document.addEventListener('message', messageHandler);
 		}
 
-		if (detectedOS && window.ReactNativeWebView) {
-			sendMessageToNative('IS_AVAILABLE');
+		if (detectedOS && Capacitor.isNativePlatform()) {
+			isAvailable = (await Health.isHealthAvailable()).available;
+			if (!isAvailable) {
+				toast.error('Health data not available', {
+					description: 'Have you installed Health Connect?',
+					action: () => Health.showHealthConnectInPlayStore()
+				});
+			}
+
+			const { permissions } = await Health.checkHealthPermissions({
+				permissions: ['READ_TOTAL_CALORIES']
+			});
+			// @ts-expect-error: Types aren't up-to-date
+			isAuthorized = permissions['READ_TOTAL_CALORIES'];
 		} else {
 			isAvailable = false;
 			toast.error('Platform syncing not available');
 		}
 	});
 
-	$effect(() => {
-		if (isAvailable) sendMessageToNative('IS_AUTHORIZED');
-	});
+	async function requestPermissions() {
+		const requestResult = await Health.requestHealthPermissions({
+			permissions: ['READ_TOTAL_CALORIES']
+		});
 
-	$effect(() => {
-		if (isAuthorized) sendMessageToNative('GET_STEPS');
-	});
+		// @ts-expect-error: Types aren't up-to-date
+		if (requestResult['READ_TOTAL_CALORIES']) {
+			toast.success('Permissions granted');
+			isAuthorized = true;
+		} else {
+			toast.error('Permissions denied');
+		}
+	}
 
-	function sendMessageToNative(eventType: BridgeEventRequest) {
-		if (detectedOS && window.ReactNativeWebView) {
-			window.ReactNativeWebView.postMessage(eventType);
+	async function getData() {
+		if (!isAuthorized) return;
+		try {
+			const today = new Date();
+			const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+			const endOfDay = new Date(
+				today.getFullYear(),
+				today.getMonth(),
+				today.getDate(),
+				23,
+				59,
+				59,
+				999
+			);
+
+			const { aggregatedData } = await Health.queryAggregated({
+				// @ts-expect-error: Types aren't up-to-date, but total-calories is supported
+				dataType: 'total-calories',
+				startDate: startOfDay.toISOString(),
+				endDate: endOfDay.toISOString(),
+				bucket: 'day'
+			});
+			toast.success('Data fetched successfully', {
+				description: `Total calories burned today: ${aggregatedData[0].value.toFixed(0)}`
+			});
+		} catch (error) {
+			if (error instanceof Error) {
+				toast.error('Failed to fetch health data', { description: error.message });
+			}
 		}
 	}
 </script>
@@ -82,26 +101,9 @@
 			<span>Loading</span>
 		</div>
 	{:else if isAuthorized}
-		{#each steps as record (record.startTime)}
-			<div class="flex flex-col gap-2">
-				<div class="flex items-center gap-2">
-					<span class="text-muted-foreground text-sm font-semibold">
-						{new Date(record.startTime).toLocaleString()}
-					</span>
-					<span class="text-muted-foreground text-sm font-semibold">to</span>
-					<span class="text-muted-foreground text-sm font-semibold">
-						{new Date(record.endTime).toLocaleString()}
-					</span>
-				</div>
-				<p class="text-muted-foreground text-sm">
-					{record.count} steps
-				</p>
-			</div>
-		{/each}
+		<Button onclick={getData}>Fetch data</Button>
 	{:else}
-		<Button onclick={() => window.ReactNativeWebView!.postMessage('ASK_FOR_PERMISSIONS')}>
-			Grant permissions
-		</Button>
+		<Button onclick={requestPermissions}>Grant permissions</Button>
 	{/if}
 {:else}
 	<div class="text-muted-foreground flex h-full flex-col items-center justify-center gap-2">
@@ -125,16 +127,4 @@
 			</p>
 		{/if}
 	</div>
-{/if} -->
-
-<script lang="ts">
-	import { onMount } from 'svelte';
-	import { toast } from 'svelte-sonner';
-	import { testCommand } from './test.remote';
-
-	onMount(() => {
-		testCommand().then((res) => {
-			toast.success(res);
-		});
-	});
-</script>
+{/if}

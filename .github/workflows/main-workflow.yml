@@ -54,7 +54,7 @@ jobs:
 
       - name: Generate AUTH_SECRET
         run: cd apps/svelte && echo "AUTH_SECRET=$(openssl rand -base64 33)" >> $GITHUB_ENV
-      
+
       - name: Run Svelte Check
         run: cd apps/svelte && pnpm run check
 
