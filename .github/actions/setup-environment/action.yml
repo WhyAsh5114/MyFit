@@ -17,4 +17,4 @@ runs:
 
     - name: Generate Prisma Client (types only)
       shell: bash
-      run: cd apps/svelte && pnpm exec prisma generate
+      run: pnpm exec prisma generate
