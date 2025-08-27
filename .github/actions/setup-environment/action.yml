@@ -1,7 +1,7 @@
-name: "Setup Node.js and Install Dependencies"
-description: "Checks out the code, sets up Node.js, and installs dependencies using pnpm"
+name: 'Setup Node.js and Install Dependencies'
+description: 'Checks out the code, sets up Node.js, and installs dependencies using pnpm'
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -17,4 +17,4 @@ runs:
 
     - name: Generate Prisma Client (types only)
       shell: bash
-      run: cd apps/svelte && pnpm exec prisma generate
+      run: pnpm exec prisma generate

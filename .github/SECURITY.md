@@ -16,7 +16,6 @@ If you discover a security vulnerability in our Node.js web application or Cockr
 ### How to Report
 
 1. **Email**: Send an email to `myfit.auth@gmail.com` with the details of the vulnerability.
-
    - Use the subject line: `Security Vulnerability Report - [Your Issue Title]`.
    - Provide a detailed description of the vulnerability, including:
      - Affected components (e.g., frontend, API, database).
@@ -25,12 +24,10 @@ If you discover a security vulnerability in our Node.js web application or Cockr
      - Any suggested fixes or mitigations.
 
 2. **Response Time**:
-
    - You can expect an initial response within **72 hours** of your report.
    - We will provide regular updates as we investigate and work on a fix, typically every **5-7 business days**.
 
 3. **After Reporting**:
-
    - If the vulnerability is confirmed, we will work on a patch or mitigation strategy.
    - You will be credited for your discovery unless you wish to remain anonymous.
    - We will coordinate with you on the responsible disclosure of the vulnerability and its fix.
