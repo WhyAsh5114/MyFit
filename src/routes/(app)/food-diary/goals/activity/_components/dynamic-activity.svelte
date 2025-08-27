@@ -1,56 +1,26 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import type { BridgeEventRequest, BridgeEventResponse } from 'bridge-types';
-	import { CableIcon, DownloadIcon, LoaderCircleIcon } from '@lucide/svelte';
-	import { onMount } from 'svelte';
-	import { toast } from 'svelte-sonner';
+	import { healthState } from '$routes/(app)/_components/health-state.svelte';
+	import { DownloadIcon, LoaderCircleIcon } from '@lucide/svelte';
 
-	let detectedOS = $state<'iOS' | 'Android'>();
 	let isAvailable = $state<boolean>();
-	let isAuthorized = $state<boolean>();
+	let hasPermissions = $state<boolean>();
+	let currentPlatform = $state<string>();
 
-	function messageHandler(event: Event) {
-		if ('data' in event && typeof event.data === 'string') {
-			const bridgeResponse = JSON.parse(event.data) as BridgeEventResponse;
-			if (bridgeResponse.type === 'IS_AVAILABLE') {
-				isAvailable = bridgeResponse.payload as boolean;
-				if (isAvailable) sendMessageToNative('IS_AUTHORIZED');
-			}
-			if (bridgeResponse.type === 'IS_AUTHORIZED') {
-				isAuthorized = bridgeResponse.payload as boolean;
-			}
-			if (bridgeResponse.type === 'ASK_FOR_PERMISSIONS') {
-				isAuthorized = bridgeResponse.payload as boolean;
-				if (isAuthorized) {
-					toast.success('Permissions granted');
-				} else {
-					toast.error('Permissions denied');
-				}
-			}
-		}
-	}
-
-	onMount(async () => {
+	$effect(() => {
 		const userAgent = navigator.userAgent;
-		if (/iPad|iPhone|iPod/.test(userAgent)) {
-			detectedOS = 'iOS';
-			window.addEventListener('message', messageHandler);
-		}
-		if (/android/i.test(userAgent)) {
-			detectedOS = 'Android';
-			document.addEventListener('message', messageHandler);
-		}
+		if (/iPad|iPhone|iPod/.test(userAgent)) currentPlatform = 'iOS';
+		if (/android/i.test(userAgent)) currentPlatform = 'Android';
 
-		if (detectedOS && window.ReactNativeWebView) sendMessageToNative('IS_AVAILABLE');
-		else isAvailable = false;
+		healthState.getPermissions(['READ_STEPS']).then((permissions) => {
+			if (permissions === null) {
+				isAvailable = false;
+				return;
+			}
+			hasPermissions = permissions['READ_STEPS'];
+		});
 	});
-
-	function sendMessageToNative(eventType: BridgeEventRequest) {
-		if (detectedOS && window.ReactNativeWebView) {
-			window.ReactNativeWebView.postMessage(eventType);
-		}
-	}
 </script>
 
 <Card.Root>
@@ -68,20 +38,18 @@
 				<p class="text-sm leading-tight">
 					Platform syncing not available, download the native app to sync your data
 				</p>
-				{#if detectedOS === 'iOS'}
+				{#if currentPlatform === 'iOS'}
 					<Button variant="outline" href="/native/myfit-ios.ipa" download="myfit-ios.ipa">
 						Download for iOS <DownloadIcon />
 					</Button>
-				{:else if detectedOS === 'Android'}
+				{:else if currentPlatform === 'Android'}
 					<Button variant="outline" href="/native/myfit-android.apk" download="myfit-android.apk">
 						Download for Android <DownloadIcon />
 					</Button>
 				{/if}
 			</div>
-		{:else if detectedOS === 'Android'}
-			<Button>Connect with HealthConnect <CableIcon /></Button>
-		{:else if detectedOS === 'iOS'}
-			<Button>Connect with HealthKit <CableIcon /></Button>
+		{:else if hasPermissions}
+			<Button>Data is being synced</Button>
 		{/if}
 	</Card.Content>
 </Card.Root>

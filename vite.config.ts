@@ -2,7 +2,7 @@ import { enhancedImages } from '@sveltejs/enhanced-img';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { SvelteKitPWA } from '@vite-pwa/sveltekit';
-import { defineConfig, type BuildEnvironmentOptions, type ServerOptions } from 'vite';
+import { defineConfig, type BuildEnvironmentOptions } from 'vite';
 import devtoolsJson from 'vite-plugin-devtools-json';
 
 export const globPatterns = [

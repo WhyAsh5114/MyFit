@@ -15,7 +15,7 @@ class HealthState {
 			permissions: permissionsArray
 		});
 		// @ts-expect-error: Types aren't up-to-date
-		return permissions as Record<HealthPermission, Boolean>;
+		return permissions as Record<HealthPermission, boolean>;
 	}
 
 	async requestPermissions(permissionsArray: HealthPermission[]) {
@@ -25,7 +25,7 @@ class HealthState {
 			permissions: permissionsArray
 		});
 		// @ts-expect-error: Types aren't up-to-date
-		return permissions as Record<HealthPermission, Boolean>;
+		return permissions as Record<HealthPermission, boolean>;
 	}
 
 	async getTotalCaloriesForDay(date: Date) {
