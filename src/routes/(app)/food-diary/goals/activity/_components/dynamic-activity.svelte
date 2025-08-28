@@ -3,6 +3,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { healthState } from '$routes/(app)/_components/health-state.svelte';
 	import { DownloadIcon, LoaderCircleIcon } from '@lucide/svelte';
+	import { toast } from 'svelte-sonner';
 
 	let isAvailable = $state<boolean>();
 	let hasPermissions = $state<boolean>();
@@ -16,11 +17,18 @@
 		healthState.getPermissions(['READ_STEPS']).then((permissions) => {
 			if (permissions === null) {
 				isAvailable = false;
+				hasPermissions = false;
 				return;
 			}
 			hasPermissions = permissions['READ_STEPS'];
 		});
 	});
+
+	function showErrorToast() {
+		toast.error('Platform syncing not available', {
+			description: 'Download the native app on a supported platform'
+		});
+	}
 </script>
 
 <Card.Root>
@@ -35,15 +43,17 @@
 			<LoaderCircleIcon class="animate-spin" />
 		{:else if isAvailable === false}
 			<div class="flex flex-col items-end gap-4">
-				<p class="text-sm leading-tight">
-					Platform syncing not available, download the native app to sync your data
-				</p>
+				<Button variant="destructive" onclick={showErrorToast}>Unavailable</Button>
 				{#if currentPlatform === 'iOS'}
 					<Button variant="outline" href="/native/myfit-ios.ipa" download="myfit-ios.ipa">
 						Download for iOS <DownloadIcon />
 					</Button>
 				{:else if currentPlatform === 'Android'}
-					<Button variant="outline" href="/native/myfit-android.apk" download="myfit-android.apk">
+					<Button
+						variant="outline"
+						href="/native/myfit-android-debug.apk"
+						download="myfit-android-debug.apk"
+					>
 						Download for Android <DownloadIcon />
 					</Button>
 				{/if}

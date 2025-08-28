@@ -30,7 +30,7 @@
 				>
 					<a class="flex w-full items-center gap-2 px-2 py-0 text-xl font-semibold" href="/">
 						<img src="/favicon.png" alt="logo" class="h-12 w-12" />
-						MyFit <span class="ml-auto text-sm font-normal">v4</span>
+						MyFit <span class="ml-auto font-mono text-sm font-normal">.fit</span>
 					</a>
 				</Sidebar.MenuButton>
 			</Sidebar.MenuItem>

@@ -9,7 +9,7 @@ class HealthState {
 	}
 
 	async getPermissions(permissionsArray: HealthPermission[]) {
-		if (!this.isNative()) return null;
+		if (!(await this.isNative())) return null;
 
 		const { permissions } = await Health.checkHealthPermissions({
 			permissions: permissionsArray
@@ -19,7 +19,7 @@ class HealthState {
 	}
 
 	async requestPermissions(permissionsArray: HealthPermission[]) {
-		if (!this.isNative()) return null;
+		if (!(await this.isNative())) return null;
 
 		const { permissions } = await Health.requestHealthPermissions({
 			permissions: permissionsArray

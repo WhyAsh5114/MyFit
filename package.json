@@ -7,7 +7,6 @@
 		"dev": "vite dev --host",
 		"dev:android": "pnpm sync:mixed && pnpm dev",
 		"build": "vite build && tsx scripts/post-build.ts",
-		"build:debug": "cross-env BUILD_DEBUG=true pnpm build",
 		"preview": "vite preview --host",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

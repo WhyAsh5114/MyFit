@@ -2,7 +2,7 @@ import { enhancedImages } from '@sveltejs/enhanced-img';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { SvelteKitPWA } from '@vite-pwa/sveltekit';
-import { defineConfig, type BuildEnvironmentOptions } from 'vite';
+import { defineConfig } from 'vite';
 import devtoolsJson from 'vite-plugin-devtools-json';
 
 export const globPatterns = [
@@ -10,15 +10,6 @@ export const globPatterns = [
 	'prerendered/**/*.{html,json}'
 ];
 export const globIgnores = ['client/pwa/**/*'];
-
-let buildEnvironmentOptions: BuildEnvironmentOptions | undefined = undefined;
-if (process.env.BUILD_DEBUG) {
-	buildEnvironmentOptions = {
-		sourcemap: true,
-		minify: false,
-		rollupOptions: { output: { manualChunks: undefined } }
-	};
-}
 
 export default defineConfig({
 	define: {
@@ -39,6 +30,5 @@ export default defineConfig({
 			devOptions: { enabled: true, type: 'module' }
 		}),
 		devtoolsJson()
-	],
-	build: buildEnvironmentOptions
+	]
 });
