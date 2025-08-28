@@ -1,5 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 import { Health, type HealthPermission } from 'capacitor-health';
+import { CalendarDateTime, fromDate, getLocalTimeZone } from '@internationalized/date';
 
 class HealthState {
 	async isNative() {
@@ -28,32 +29,23 @@ class HealthState {
 		return permissions as Record<HealthPermission, boolean>;
 	}
 
-	async getTotalCaloriesForDay(date: Date) {
-		const permissions = await this.requestPermissions(['READ_STEPS', 'READ_ACTIVE_CALORIES']);
+	async getStepsForDay(date: Date) {
+		const permissions = await this.requestPermissions(['READ_STEPS']);
 		if (permissions === null) return null;
-		if (!permissions['READ_ACTIVE_CALORIES'] || !permissions['READ_STEPS']) return null;
+		if (!permissions['READ_STEPS']) return null;
 
-		const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-		const endOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
-
-		const calorieQuery = await Health.queryAggregated({
-			dataType: 'active-calories',
-			startDate: startOfDay.toISOString(),
-			endDate: endOfDay.toISOString(),
-			bucket: 'day'
-		});
+		const calDate = fromDate(date, getLocalTimeZone());
+		const startOfDay = new CalendarDateTime(calDate.year, calDate.month, calDate.day, 0, 0, 0, 0);
+		const endOfDay = new CalendarDateTime(calDate.year, calDate.month, calDate.day, 23, 59, 59, 999);
 
 		const stepQuery = await Health.queryAggregated({
 			dataType: 'steps',
-			startDate: startOfDay.toISOString(),
-			endDate: endOfDay.toISOString(),
+			startDate: startOfDay.toDate(getLocalTimeZone()).toISOString(),
+			endDate: endOfDay.toDate(getLocalTimeZone()).toISOString(),
 			bucket: 'day'
 		});
 
-		return {
-			calories: calorieQuery.aggregatedData[0].value ?? 0,
-			steps: stepQuery.aggregatedData[0].value ?? 0
-		};
+		return stepQuery.aggregatedData[0].value ?? 0;
 	}
 }
 

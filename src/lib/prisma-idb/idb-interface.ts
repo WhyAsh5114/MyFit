@@ -72,6 +72,10 @@ export interface PrismaIDBSchema extends DBSchema {
 		key: [id: Prisma.FoodEntry['id']];
 		value: Prisma.FoodEntry;
 	};
+	ActivityEntry: {
+		key: [id: Prisma.ActivityEntry['id']];
+		value: Prisma.ActivityEntry;
+	};
 	NutritionData: {
 		key: [id: Prisma.NutritionData['id']];
 		value: Prisma.NutritionData;

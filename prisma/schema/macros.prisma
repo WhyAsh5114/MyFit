@@ -46,6 +46,18 @@ model FoodEntry {
   userId String
 }
 
+model ActivityEntry {
+  id              String   @id @default(uuid())
+  performedAt     DateTime
+  calories        Int
+  quantity        Int
+  quantityUnit    String
+  systemGenerated Boolean  @default(false)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
 model NutritionData {
   id            Int                     @id @default(autoincrement())
   code          String                  @unique

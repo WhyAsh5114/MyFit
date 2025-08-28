@@ -130,7 +130,7 @@
 			toast.success(message);
 
 			const calEatenAt = fromDate(variables.eatenAt, getLocalTimeZone());
-			goto(`/food-diary?day=${calEatenAt.toString()}`);
+			goto(`/food-diary?day=${calEatenAt.toString().split('T')[0]}`);
 		},
 		onError: (error) => {
 			console.error('Error logging food entry:', error);
