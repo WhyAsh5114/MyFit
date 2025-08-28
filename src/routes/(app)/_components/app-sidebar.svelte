@@ -18,6 +18,28 @@
 
 	const sidebar = useSidebar();
 	const session = authClient.useSession();
+
+	let currentPlatform = $state<'Android' | 'iOS'>();
+
+	$effect(() => {
+		const userAgent = navigator.userAgent;
+		if (/iPad|iPhone|iPod/.test(userAgent)) currentPlatform = 'iOS';
+		if (/android/i.test(userAgent)) currentPlatform = 'Android';
+	});
+
+	function installApp() {
+		if (currentPlatform === undefined) return appLayoutState.deferredPrompt?.prompt();
+
+		const link = document.createElement('a');
+		if (currentPlatform === 'Android') {
+			link.href = '/native/myfit-android-debug.apk';
+			link.download = 'myfit-android-debug.apk';
+		} else if (currentPlatform === 'iOS') {
+			link.href = '/native/myfit-ios.ipa';
+			link.download = 'myfit-ios.ipa';
+		}
+		link.click();
+	}
 </script>
 
 <Sidebar.Root>
@@ -129,11 +151,7 @@
 						Update
 					</Sidebar.MenuButton>
 				{:else if appLayoutState.deferredPrompt}
-					<Sidebar.MenuButton
-						aria-label="Install app"
-						onclick={() => appLayoutState.deferredPrompt?.prompt()}
-						variant="outline"
-					>
+					<Sidebar.MenuButton aria-label="Install app" onclick={installApp} variant="outline">
 						<DownloadIcon />
 						Install
 					</Sidebar.MenuButton>
