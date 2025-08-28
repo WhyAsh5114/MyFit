@@ -1,18 +1,18 @@
 model MacroTargets {
   id            String                @id @default(uuid())
   createdAt     DateTime              @default(now())
-  userId        String                @unique
   proteins      Float?
   carbs         Float?
   fats          Float?
   quantifier    MacroTargetQuantifier
   caloricChange Int
+
   user          User                  @relation(fields: [userId], references: [id])
+  userId        String                @unique
 }
 
 model MacroMetrics {
   id                String     @id @default(uuid())
-  userId            String
   createdAt         DateTime   @default(now())
   bodyweight        Float
   bodyweightUnit    WeightUnit
@@ -21,7 +21,9 @@ model MacroMetrics {
   bodyFatPercentage Float
   age               Int
   gender            Gender
+
   user              User       @relation(fields: [userId], references: [id])
+  userId            String
 }
 
 model MacroActivityTrackingPreferences {
@@ -41,6 +43,18 @@ model FoodEntry {
   nutritionData   NutritionData? @relation(fields: [nutritionDataId], references: [id])
   nutritionDataId Int?
   // TODO: add user-added foods optional relation
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model ActivityEntry {
+  id              String   @id @default(uuid())
+  performedAt     DateTime
+  calories        Int
+  quantity        Int
+  quantityUnit    String
+  systemGenerated Boolean  @default(false)
 
   user   User   @relation(fields: [userId], references: [id])
   userId String

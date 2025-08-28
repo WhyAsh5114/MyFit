@@ -1,3 +1,4 @@
+import { fromDate, getLocalTimeZone } from '@internationalized/date';
 import type { MacroMetrics } from '@prisma/client';
 import { formatHex } from 'culori';
 
@@ -112,4 +113,9 @@ export function stepsToCalories(steps: number, userMetrics: MacroMetrics): numbe
 
 	// Return rounded calories (minimum 1 calorie for any steps > 0)
 	return Math.max(1, Math.round(calories));
+}
+
+export function formatDateToISO(date: Date): string {
+	const calendarDate = fromDate(date, getLocalTimeZone());
+	return calendarDate.toString();
 }

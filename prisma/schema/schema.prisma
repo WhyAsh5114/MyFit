@@ -31,6 +31,7 @@ model User {
   activityTrackingPreferences MacroActivityTrackingPreferences?
   macroTargets                MacroTargets?
   foodEntries                 FoodEntry[]
+  activityEntries             ActivityEntry[]
 
   @@map("user")
 }

@@ -31,5 +31,5 @@ test('log food entry', async ({ page }) => {
 	await expect(page.getByLabel('Notifications alt+T').getByRole('listitem').first()).toContainText(
 		'Food entry logged successfully!'
 	);
-	await expect(page.getByRole('main')).toContainText('Ripen At Home Bananas 150g - 135 calories');
+	await expect(page.getByRole('main')).toContainText('Ripen At Home Bananas 150g - 135 cals');
 });

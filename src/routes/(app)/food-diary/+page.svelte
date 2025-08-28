@@ -2,34 +2,17 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import H1 from '$lib/components/typography/h1.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import Progress from '$lib/components/ui/progress/progress.svelte';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { client } from '$lib/idb-client';
 	import { calculateBMR, stepsToCalories } from '$lib/my-utils';
 	import { CalendarDateTime, fromDate, getLocalTimeZone, today } from '@internationalized/date';
-	import {
-		CalendarIcon,
-		ChevronLeftIcon,
-		ChevronRightIcon,
-		ClipboardPasteIcon,
-		CopyIcon,
-		EllipsisVerticalIcon,
-		EqualIcon,
-		LoaderCircleIcon,
-		MinusIcon,
-		PencilIcon,
-		PlusIcon,
-		ScissorsIcon,
-		TrashIcon
-	} from '@lucide/svelte';
-	import { createMutation, createQuery } from '@tanstack/svelte-query';
+	import { CalendarIcon, LoaderCircleIcon } from '@lucide/svelte';
+	import { createQuery } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import { SvelteDate } from 'svelte/reactivity';
 	import { healthState } from '../_components/health-state.svelte';
+	import ActivityEntryCard from './_components/activity-entry-card.svelte';
+	import FoodEntryCard from './_components/food-entry-card.svelte';
+	import TopActionCard from './_components/top-action-card.svelte';
 
 	let selectedDay = $state<SvelteDate>();
 
@@ -50,10 +33,10 @@
 		}
 	}));
 
-	const foodEntriesQuery = createQuery(() => ({
-		queryKey: ['food-entries', selectedDay?.toDateString()],
+	const entriesQuery = createQuery(() => ({
+		queryKey: ['entries', selectedDay?.toDateString()],
 		queryFn: async () => {
-			if (!selectedDay) return [];
+			if (!selectedDay) return { activityEntries: [], foodEntries: [] };
 
 			const calDate = fromDate(selectedDay, getLocalTimeZone());
 
@@ -63,54 +46,111 @@
 			const startDate = start.toDate(getLocalTimeZone());
 			const endDate = end.toDate(getLocalTimeZone());
 
-			return await client.foodEntry.findMany({
-				where: { eatenAt: { gte: startDate, lt: endDate } },
-				include: { nutritionData: true },
-				orderBy: { eatenAt: 'asc' }
-			});
+			const [activityEntries, foodEntries] = await Promise.all([
+				client.activityEntry.findMany({
+					where: { performedAt: { gte: startDate, lt: endDate } },
+					orderBy: { performedAt: 'asc' }
+				}),
+				client.foodEntry.findMany({
+					where: { eatenAt: { gte: startDate, lt: endDate } },
+					include: { nutritionData: true },
+					orderBy: { eatenAt: 'asc' }
+				})
+			]);
+
+			return { activityEntries, foodEntries };
 		},
 		enabled: Boolean(selectedDay)
 	}));
 
-	const activeCaloriesBurnedQuery = createQuery(() => ({
+	createQuery(() => ({
 		queryKey: ['active-calories-burned', selectedDay?.toDateString()],
 		queryFn: async () => {
-			if (!selectedDay) return 0;
+			if (!selectedDay) return null;
+			const currentDay = new Date(selectedDay);
 			const activityTrackingPreferences = await client.macroActivityTrackingPreferences.findFirst();
-			if (!activityTrackingPreferences) return 0;
+			if (!activityTrackingPreferences) return null;
+
+			const existingSystemEntry = await client.activityEntry.findFirst({
+				where: {
+					performedAt: {
+						gte: new Date(currentDay.getFullYear(), currentDay.getMonth(), currentDay.getDate()),
+						lte: new Date(
+							currentDay.getFullYear(),
+							currentDay.getMonth(),
+							currentDay.getDate(),
+							23,
+							59,
+							59,
+							999
+						)
+					},
+					userId: activityTrackingPreferences.userId,
+					systemGenerated: true
+				}
+			});
 
 			if (activityTrackingPreferences.adjustmentType === 'Static') {
-				return activityTrackingPreferences.staticCalories ?? 0;
+				if (!activityTrackingPreferences.staticCalories) return null;
+				const activityEntryData = {
+					calories: activityTrackingPreferences.staticCalories,
+					performedAt: currentDay,
+					quantity: activityTrackingPreferences.staticCalories,
+					quantityUnit: 'calories',
+					systemGenerated: true,
+					userId: activityTrackingPreferences.userId
+				};
+				await client.activityEntry.upsert({
+					where: { id: existingSystemEntry?.id },
+					create: activityEntryData,
+					update: activityEntryData
+				});
+				await entriesQuery.refetch();
+				return activityEntryData.calories;
 			}
 
 			if (activityTrackingPreferences.adjustmentType === 'Dynamic') {
-				const caloricData = await healthState.getTotalCaloriesForDay(selectedDay);
-				if (caloricData === null) {
+				const stepsForDay = await healthState.getStepsForDay(currentDay);
+				if (stepsForDay === null) {
 					toast.error('Device sync failed');
 					return null;
 				}
 
-				const { calories, steps } = caloricData;
-				if (calories !== 0) return calories;
-
-				// Fallback to step-based estimation if no calorie data is available
 				const userMetrics = await client.macroMetrics.findFirst();
-				if (!userMetrics) return 0;
+				if (!userMetrics) return null;
 
-				return stepsToCalories(steps, userMetrics);
+				const activityEntryData = {
+					calories: stepsToCalories(stepsForDay, userMetrics),
+					performedAt: currentDay,
+					quantity: stepsForDay,
+					quantityUnit: 'steps',
+					systemGenerated: true,
+					userId: activityTrackingPreferences.userId
+				};
+
+				await client.activityEntry.upsert({
+					where: { id: existingSystemEntry?.id },
+					create: activityEntryData,
+					update: activityEntryData
+				});
+				await entriesQuery.refetch();
+				return activityEntryData.calories;
 			}
-
-			return 0;
-		}
+		},
+		enabled: Boolean(selectedDay)
 	}));
 
 	let caloricIntake = $derived(
-		foodEntriesQuery.data?.reduce((sum, entry) => {
-			return sum + (entry.nutritionData?.energy_kcal_100g || 0) * (entry.quantity / 100);
-		}, 0) || 0
+		entriesQuery.data?.foodEntries.reduce(
+			(sum, entry) => sum + (entry.nutritionData?.energy_kcal_100g || 0) * (entry.quantity / 100),
+			0
+		) || 0
 	);
 
-	// Initialize selected day from URL or default to today
+	let caloricExpenditure = $derived(
+		entriesQuery.data?.activityEntries.reduce((sum, entry) => sum + entry.calories, 0) || 0
+	);
+
 	$effect(() => {
 		const urlDay = page.url.searchParams.get('day');
 		if (urlDay) {
@@ -127,150 +167,23 @@
 			selectedDay = new SvelteDate(calToday.toDate(getLocalTimeZone()));
 		}
 	});
-
-	function changeDay(direction: 'prev' | 'next') {
-		if (!selectedDay) return;
-
-		const newDate = new SvelteDate(selectedDay);
-		if (direction === 'prev') {
-			newDate.setDate(newDate.getDate() - 1);
-		} else {
-			newDate.setDate(newDate.getDate() + 1);
-		}
-		selectedDay = newDate;
-		goto(`/food-diary?day=${newDate.toISOString().split('T')[0]}`);
-	}
-
-	const deleteEntryMutation = createMutation(() => ({
-		mutationFn: async (entryId: string) => {
-			return await client.foodEntry.delete({ where: { id: entryId } });
-		},
-		onSuccess: () => {
-			toast.success('Food entry deleted successfully');
-			foodEntriesQuery.refetch();
-		},
-		onError: (error) => {
-			console.error('Error deleting food entry:', error);
-			toast.error('Failed to delete food entry');
-		}
-	}));
 </script>
 
 <H1>Food diary</H1>
 
-<Card.Root class="py-4">
-	<Card.Content class="flex flex-col gap-2 px-4">
-		<div class="flex w-full items-center">
-			<Button size="icon" variant="secondary" onclick={() => changeDay('prev')}>
-				<ChevronLeftIcon />
-			</Button>
-			{#if selectedDay}
-				<p class="grow text-center text-base font-semibold">
-					{selectedDay?.toLocaleDateString(undefined, { dateStyle: 'long' })}
-				</p>
-			{:else}
-				<Skeleton class="mx-auto h-7 w-32" />
-			{/if}
-			<Button size="icon" variant="secondary" onclick={() => changeDay('next')}>
-				<ChevronRightIcon />
-			</Button>
-		</div>
-		<Progress
-			value={caloricIntake}
-			max={macroDataQuery.data?.caloricTarget ?? Infinity}
-			class="h-2"
-		/>
-		<div
-			class="text-muted-foreground flex h-4 w-full items-center justify-between text-sm font-medium"
-		>
-			{#if macroDataQuery.data}
-				<p>{macroDataQuery.data?.caloricTarget?.toFixed()}</p>
-				<MinusIcon size={16} />
-				<p>{caloricIntake.toFixed()}</p>
-				<PlusIcon size={16} />
-				{#if typeof activeCaloriesBurnedQuery.data === 'number'}
-					<p>{activeCaloriesBurnedQuery.data.toFixed()}</p>
-				{:else}
-					<LoaderCircleIcon class="animate-spin" size={16} />
-				{/if}
-				<EqualIcon size={16} />
-				<p>{(macroDataQuery.data?.caloricTarget - caloricIntake).toFixed()}</p>
-			{:else if macroDataQuery.data === null}
-				<p class="w-full text-center">
-					Goals haven't been setup. <a href="/food-diary/goals" class="underline">Set up now!</a>
-				</p>
-			{:else}
-				<p>Fetching data...</p>
-				<LoaderCircleIcon class="animate-spin" size={16} />
-			{/if}
-		</div>
-		<Separator class="my-2" />
+<TopActionCard {caloricExpenditure} {caloricIntake} macroData={macroDataQuery.data} {selectedDay} />
 
-		<div class="flex w-full gap-2">
-			<Button variant="outline" size="icon">
-				<CopyIcon />
-			</Button>
-			<Button variant="outline" size="icon">
-				<ClipboardPasteIcon />
-			</Button>
-			<Button variant="outline" size="icon">
-				<ScissorsIcon />
-			</Button>
-			<Button
-				class="ml-auto"
-				href={`/food-diary/add?day=${selectedDay?.toISOString().split('T')[0]}`}
-			>
-				<PlusIcon /> Add food
-			</Button>
-		</div>
-	</Card.Content>
-</Card.Root>
-
-{#if !foodEntriesQuery.data}
+{#if !entriesQuery.data}
 	<div class="text-muted-foreground flex h-full flex-col items-center justify-center gap-2">
 		<LoaderCircleIcon size={128} strokeWidth={1} class="animate-spin" />
 		<span>Loading</span>
 	</div>
 {:else}
-	{#each foodEntriesQuery.data as entry (entry.id)}
-		<Card.Root class="py-4">
-			<Card.Header class="px-4">
-				<Card.Title>{entry.nutritionData?.product_name}</Card.Title>
-				<Card.Description>
-					{entry.quantity}g - {(
-						entry.nutritionData!.energy_kcal_100g *
-						(entry.quantity / 100)
-					).toFixed()} calories
-				</Card.Description>
-				<Card.Action>
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger>
-							{#snippet child({ props })}
-								<Button variant="ghost" size="icon" {...props}>
-									<EllipsisVerticalIcon />
-								</Button>
-							{/snippet}
-						</DropdownMenu.Trigger>
-						<DropdownMenu.Content align="end">
-							<DropdownMenu.Group>
-								<DropdownMenu.Item
-									onclick={() =>
-										goto(`/food-diary/add/item?id=${entry.nutritionDataId}&edit=${entry.id}`)}
-								>
-									<PencilIcon /> Edit
-								</DropdownMenu.Item>
-								<DropdownMenu.Item
-									class="text-red-500"
-									onclick={() => deleteEntryMutation.mutate(entry.id)}
-								>
-									<TrashIcon /> Delete
-								</DropdownMenu.Item>
-							</DropdownMenu.Group>
-						</DropdownMenu.Content>
-					</DropdownMenu.Root>
-				</Card.Action>
-			</Card.Header>
-		</Card.Root>
+	{#each entriesQuery.data.activityEntries as entry (entry.id)}
+		<ActivityEntryCard {entry} />
+	{/each}
+	{#each entriesQuery.data.foodEntries as entry (entry.id)}
+		<FoodEntryCard {entry} {entriesQuery} />
 	{:else}
 		<div class="h-full flex flex-col justify-center items-center gap-2 text-muted-foreground">
 			<CalendarIcon size={128} strokeWidth={1} />
