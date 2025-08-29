@@ -15,11 +15,10 @@ jobs:
       - uses: actions/stale@v9
         with:
           days-before-stale: 30
-          days-before-close: 7
+          days-before-close: -1
           only-issue-labels: 'question'
           stale-issue-label: 'stale'
-          stale-issue-message: 'This issue has been automatically marked as stale because it has been open for 30 days with no activity. It will be closed in 7 days if no further activity occurs. Remove the stale label or add a comment to keep it open.'
-          close-issue-message: 'This issue has been automatically closed due to inactivity. If you believe this issue is still relevant, please reopen it with updated information.'
+          stale-issue-message: 'This issue has been automatically marked as stale because it has been open for 30 days with no activity. Please add a comment or remove the stale label if this issue is still relevant.'
           operations-per-run: 100
           exempt-pr-labels: ''
           days-before-pr-stale: -1
