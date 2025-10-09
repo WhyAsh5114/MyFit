@@ -19,7 +19,8 @@
 		{ text: 'Docs', href: '/docs' },
 		{ text: 'Changelog', href: '/changelog' },
 		{ text: 'Donations', href: '/donations' },
-		{ text: 'Privacy policy', href: '/privacy-policy' }
+		{ text: 'Privacy policy', href: '/privacy-policy' },
+		{ text: 'Terms of service', href: '/terms-of-service' }
 	];
 </script>
 

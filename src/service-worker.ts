@@ -5,7 +5,7 @@ import { CacheFirst, NetworkOnly } from 'workbox-strategies';
 declare let self: ServiceWorkerGlobalScope;
 
 const cacheFirstDestinations: RequestDestination[] = ['style', 'manifest', 'image', 'font'];
-const prerenderedPages = ['/privacy-policy', '/offline', '/donations', '/docs'];
+const prerenderedPages = ['/privacy-policy', '/terms-of-service', '/offline', '/donations', '/docs'];
 const fallbackPlugin = new PrecacheFallbackPlugin({ fallbackURL: '/offline' });
 
 function routingStrategyFunction(mode: 'networkOnly' | 'cacheFirst', request: Request, url: URL) {
