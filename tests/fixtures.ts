@@ -1,7 +1,7 @@
 import { test as baseTest, expect } from '@playwright/test';
-import path from 'path';
-import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
+import dotenv from 'dotenv';
+import path from 'path';
 import type { UserData } from './global-setup';
 
 dotenv.config();
@@ -37,7 +37,14 @@ export const test = baseTest.extend<{ autoTestFixture: string }, { workerStorage
 			const fileName = path.resolve(test.info().project.outputDir, `.auth/${id}.json`);
 
 			// Important: make sure we authenticate in a clean environment by unsetting storage state.
-			const page = await browser.newPage({ storageState: undefined });
+			const page = await browser.newPage({
+				storageState: {
+					origins: [
+						{ origin: 'http://localhost:4173', localStorage: [{ name: 'myfit_terms_accepted', value: 'true' }] }
+					],
+					cookies: []
+				}
+			});
 
 			// Perform authentication steps. Just set a test user's cookie.
 			await page.context().addCookies([
