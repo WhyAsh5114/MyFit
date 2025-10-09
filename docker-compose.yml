@@ -1,0 +1,12 @@
+services:
+  cockroachdb:
+    image: cockroachdb/cockroach:latest
+    command: start-single-node --insecure --disable-max-offset-check
+    ports:
+      - '26257:26257'
+      - '8080:8080'
+    volumes:
+      - cockroach-data:/cockroach/cockroach-data
+
+volumes:
+  cockroach-data:
