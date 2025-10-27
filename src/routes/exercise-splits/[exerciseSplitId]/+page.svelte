@@ -46,7 +46,7 @@
 	async function deleteExerciseSplit() {
 		callingDeleteEndpoint = true;
 		try {
-			const response = await trpc().exerciseSplits.deleteById.mutate($page.params.exerciseSplitId);
+			const response = await trpc().exerciseSplits.deleteById.mutate($page.params.exerciseSplitId!);
 			toast.success(response.message);
 			await invalidate('exerciseSplits:all');
 			await goto('/exercise-splits');
