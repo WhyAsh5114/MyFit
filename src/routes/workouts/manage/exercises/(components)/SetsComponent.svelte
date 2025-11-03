@@ -10,6 +10,7 @@
 		type WorkoutExerciseInProgress
 	} from '$lib/utils/workoutUtils';
 	import CheckIcon from 'virtual:icons/lucide/check';
+	import ArrowDownIcon from 'virtual:icons/lucide/chevron-down';
 	import RemoveIcon from 'virtual:icons/lucide/minus';
 	import EditIcon from 'virtual:icons/lucide/pencil';
 	import AddIcon from 'virtual:icons/lucide/plus';
@@ -198,6 +199,15 @@
 	<span></span>
 	{#each exercise.sets as set, idx}
 		<form class="contents" onsubmit={(e) => completeSet(e, set, idx)}>
+			{#if exercise.setType === 'TopBackoff' && idx === 1}
+				<div class="col-span-full flex items-center gap-2 text-muted-foreground">
+					<Separator class="w-px grow" />
+					<ArrowDownIcon />
+					<span class="text-center text-sm"> Backoff sets</span>
+					<ArrowDownIcon />
+					<Separator class="w-px grow" />
+				</div>
+			{/if}
 			{#if !set.skipped}
 				<Input
 					id="{exercise.name}-set-{idx + 1}-reps"
