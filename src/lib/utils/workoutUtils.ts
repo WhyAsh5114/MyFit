@@ -315,13 +315,17 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 	const sameLoadSetType = ex.setType === 'Straight' || ex.setType === 'Myorep';
 	let loadIncreasedForOneOfSameLoadSets = false;
 
-	const newSets = ex.sets.map((set) => {
+	const newSets = ex.sets.map((set, setIdx) => {
 		if (set.reps === undefined || set.load === undefined || set.RIR === undefined) return set;
 
 		let newLoad = set.load;
 
+		// For TopBackoff, use topRepRangeEnd for first set, regular repRangeEnd for others
+		const isTopSet = ex.setType === 'TopBackoff' && setIdx === 0;
+		const repRangeEnd = isTopSet && typeof ex.topRepRangeEnd === 'number' ? ex.topRepRangeEnd : ex.repRangeEnd;
+
 		// TODO: #107
-		if (set.reps > ex.repRangeEnd || loadIncreasedForOneOfSameLoadSets) {
+		if (set.reps > repRangeEnd || loadIncreasedForOneOfSameLoadSets) {
 			newLoad += ex.minimumWeightChange ?? 5;
 		}
 		if (sameLoadSetType && newLoad > set.load) {
@@ -351,7 +355,11 @@ function increaseLoadOfSets(ex: WorkoutExerciseInProgress, userBodyweight: numbe
 	}
 
 	return newSets.map((newSet, setIdx) => {
-		if (newSet.reps! < ex.repRangeStart) return ex.sets[setIdx];
+		// For TopBackoff, use topRepRangeStart for first set, regular repRangeStart for others
+		const isTopSet = ex.setType === 'TopBackoff' && setIdx === 0;
+		const repRangeStart = isTopSet && typeof ex.topRepRangeStart === 'number' ? ex.topRepRangeStart : ex.repRangeStart;
+
+		if (newSet.reps! < repRangeStart) return ex.sets[setIdx];
 		return newSet;
 	});
 }
@@ -514,10 +522,15 @@ export function progressiveOverloadMagic(
 
 			if (RIRDifference > 0 && !(ex.forceRIRMatching ?? mesocycle.forceRIRMatching)) return;
 
+			// For TopBackoff, use topRepRangeStart for first set, regular repRangeStart for others
+			const isTopSet = ex.setType === 'TopBackoff' && idx === 0;
+			const repRangeStart =
+				isTopSet && typeof ex.topRepRangeStart === 'number' ? ex.topRepRangeStart : ex.repRangeStart;
+
 			// If the RIR adjustment we are about to make causes reps to fall outside of lower rep range
 			const adjustedReps = set.reps - RIRDifference;
-			if (adjustedReps < ex.repRangeStart && !(lastSetToFailure && idx === ex.sets.length - 1)) {
-				const maxRIR = Math.max(set.reps - ex.repRangeStart, 0);
+			if (adjustedReps < repRangeStart && !(lastSetToFailure && idx === ex.sets.length - 1)) {
+				const maxRIR = Math.max(set.reps - repRangeStart, 0);
 				set.RIR = maxRIR;
 				set.reps -= maxRIR - oldRIR;
 				return;

@@ -40,6 +40,8 @@ model WorkoutExercise {
   lastSetToFailure    Boolean?
   forceRIRMatching    Boolean?
   minimumWeightChange Float?
+  topRepRangeStart    Int?
+  topRepRangeEnd      Int?
 }
 
 model WorkoutExerciseSet {
