@@ -346,7 +346,9 @@ export const users = t.router({
 							lastSetToFailure: null,
 							forceRIRMatching: null,
 							minimumWeightChange: 5,
-							overloadPercentage: 0 // Assumption (concept didn't exist in V2)
+							overloadPercentage: 0, // Assumption (concept didn't exist in V2)
+							topRepRangeStart: null,
+							topRepRangeEnd: null
 						};
 						return prismaWorkoutExercise;
 					})
