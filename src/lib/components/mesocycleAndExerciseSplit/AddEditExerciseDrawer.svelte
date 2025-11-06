@@ -5,6 +5,7 @@
 	import * as Command from '$lib/components/ui/command';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import * as Popover from '$lib/components/ui/popover';
 	import * as Select from '$lib/components/ui/select';
 	import * as Sheet from '$lib/components/ui/sheet';
 	import { Switch } from '$lib/components/ui/switch';
@@ -14,13 +15,12 @@
 	import { ChangeType, MuscleGroup, SetType, type Mesocycle } from '@prisma/client';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import CheckIcon from 'virtual:icons/lucide/check';
 	import ChevronLeft from 'virtual:icons/lucide/chevron-left';
 	import ChevronRight from 'virtual:icons/lucide/chevron-right';
-	import AddIcon from 'virtual:icons/lucide/plus';
 	import FilterIcon from 'virtual:icons/lucide/filter';
+	import AddIcon from 'virtual:icons/lucide/plus';
 	import XIcon from 'virtual:icons/lucide/x';
-	import CheckIcon from 'virtual:icons/lucide/check';
-	import * as Popover from '$lib/components/ui/popover';
 	import type {
 		ExerciseTemplateWithoutIdsOrIndex,
 		MesocycleExerciseTemplateWithoutIdsOrIndex,
@@ -416,8 +416,38 @@
 					/>
 				</div>
 			{/if}
+			{#if currentExercise.setType === 'TopBackoff'}
+				<div class="flex w-full flex-col gap-1.5">
+					<Label for="exercise-top-rep-range-start">Top set rep range start</Label>
+					<Input
+						id="exercise-top-rep-range-start"
+						min={1}
+						placeholder="Type here"
+						required
+						type="number"
+						bind:value={currentExercise.topRepRangeStart}
+					/>
+				</div>
+				<div class="flex w-full flex-col gap-1.5">
+					<Label for="exercise-top-rep-range-end">Top set rep range end</Label>
+					<Input
+						id="exercise-top-rep-range-end"
+						min={(currentExercise.topRepRangeStart ?? 0) + 1}
+						placeholder="Type here"
+						required
+						type="number"
+						bind:value={currentExercise.topRepRangeEnd}
+					/>
+				</div>
+			{/if}
 			<div class="flex w-full flex-col gap-1.5">
-				<Label for="exercise-rep-range-start">Rep range start</Label>
+				<Label for="exercise-rep-range-start">
+					{#if currentExercise.setType === 'TopBackoff'}
+						Backoff sets rep range start
+					{:else}
+						Rep range start
+					{/if}
+				</Label>
 				<Input
 					id="exercise-rep-range-start"
 					min={1}
@@ -428,7 +458,13 @@
 				/>
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
-				<Label for="exercise-rep-range-end">Rep range end</Label>
+				<Label for="exercise-rep-range-end">
+					{#if currentExercise.setType === 'TopBackoff'}
+						Backoff sets rep range end
+					{:else}
+						Rep range end
+					{/if}
+				</Label>
 				<Input
 					id="exercise-rep-range-end"
 					min={(currentExercise.repRangeStart ?? 0) + 1}

@@ -32,4 +32,6 @@ model ExerciseTemplate {
   note               String?
   exerciseSplitDay   ExerciseSplitDay @relation(fields: [exerciseSplitDayId], references: [id], onDelete: Cascade)
   exerciseSplitDayId String
+  topRepRangeStart   Int?
+  topRepRangeEnd     Int?
 }

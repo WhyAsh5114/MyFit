@@ -1,0 +1,33 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    volumes:
+      - ../..:/workspaces:cached
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    network_mode: service:db
+
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+  db:
+    image: cockroachdb/cockroach:v24.2.1
+    restart: unless-stopped
+    volumes:
+      - cockroach-data:/cockroach/cockroach-data
+    environment:
+      COCKROACH_ARGS: 'start-single-node --insecure'
+    ports:
+      - 26257:26267
+
+    # Add "forwardPorts": ["26257"] to **devcontainer.json** to forward CockroachDB locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+volumes:
+  cockroach-data:
