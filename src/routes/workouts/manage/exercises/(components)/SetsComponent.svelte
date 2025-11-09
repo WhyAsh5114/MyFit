@@ -22,6 +22,11 @@
 	type WorkoutExerciseSet = WorkoutExerciseInProgress['sets'][number];
 	let { exercise = $bindable(), originalSetLoads = $bindable() }: PropsType = $props();
 
+	// Get previous workout data for this exercise
+	let previousExercise = $derived(
+		workoutRunes.previousWorkoutData?.exercises.find((e) => e.name === exercise.name)
+	);
+
 	let isSameLoadExercise = $derived(['Straight', 'Myorep', 'MyorepMatch'].includes(exercise.setType));
 
 	function shouldSetBeDisabled(set: WorkoutExerciseSet, idx: number): boolean {
@@ -209,35 +214,57 @@
 				</div>
 			{/if}
 			{#if !set.skipped}
-				<Input
-					id="{exercise.name}-set-{idx + 1}-reps"
-					disabled={set.completed || set.skipped}
-					min={1}
-					required
-					type="number"
-					bind:value={set.reps}
-				/>
-				{#if idx === 0 || !isSameLoadExercise}
+				{@const prevSet = previousExercise?.sets[idx]}
+				<div class="flex items-center gap-1">
+					{#if prevSet}
+						<span class="text-xs text-muted-foreground/50 min-w-[2rem] text-right">{prevSet.reps}</span>
+						<span class="text-muted-foreground/40">→</span>
+					{/if}
 					<Input
-						id="{exercise.name}-set-{idx + 1}-load"
+						id="{exercise.name}-set-{idx + 1}-reps"
 						disabled={set.completed || set.skipped}
-						min={exercise.bodyweightFraction ? undefined : 0.25}
-						placeholder={getNextLoad(idx)}
+						min={1}
 						required
-						step={0.25}
 						type="number"
-						bind:value={set.load}
+						bind:value={set.reps}
+						class={prevSet ? 'flex-1' : 'w-full'}
 					/>
+				</div>
+				{#if idx === 0 || !isSameLoadExercise}
+					<div class="flex items-center gap-1">
+						{#if prevSet}
+							<span class="text-xs text-muted-foreground/50 min-w-[2rem] text-right">{prevSet.load}</span>
+							<span class="text-muted-foreground/40">→</span>
+						{/if}
+						<Input
+							id="{exercise.name}-set-{idx + 1}-load"
+							disabled={set.completed || set.skipped}
+							min={exercise.bodyweightFraction ? undefined : 0.25}
+							placeholder={getNextLoad(idx)}
+							required
+							step={0.25}
+							type="number"
+							bind:value={set.load}
+							class={prevSet ? 'flex-1' : 'w-full'}
+						/>
+					</div>
 				{:else}
 					<span></span>
 				{/if}
-				<Input
-					id="{exercise.name}-set-{idx + 1}-RIR"
-					disabled={set.completed || set.skipped}
-					required
-					type="number"
-					bind:value={set.RIR}
-				/>
+				<div class="flex items-center gap-1">
+					{#if prevSet}
+						<span class="text-xs text-muted-foreground/50 min-w-[2rem] text-right">{prevSet.RIR}</span>
+						<span class="text-muted-foreground/40">→</span>
+					{/if}
+					<Input
+						id="{exercise.name}-set-{idx + 1}-RIR"
+						disabled={set.completed || set.skipped}
+						required
+						type="number"
+						bind:value={set.RIR}
+						class={prevSet ? 'flex-1' : 'w-full'}
+					/>
+				</div>
 			{:else}
 				<div class="col-span-3 flex items-center gap-2">
 					<Separator class="w-px grow" />
