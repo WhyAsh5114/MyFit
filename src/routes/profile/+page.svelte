@@ -12,6 +12,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { goto } from '$app/navigation';
+	import WorkoutActivityGraph from './WorkoutActivityGraph.svelte';
 
 	let { data } = $props();
 	let migratingToV2 = $state(false);
@@ -98,6 +99,16 @@
 		</Card.Content>
 	</Card.Root>
 </div>
+
+{#await data.workoutsForGraph}
+	<Skeleton class="h-40 w-full" />
+{:then workouts}
+	<Card.Root class="mb-4 bg-background">
+		<Card.Content class="p-4">
+			<WorkoutActivityGraph {workouts} />
+		</Card.Content>
+	</Card.Root>
+{/await}
 
 {#await data.V2Counts}
 	<Skeleton class="h-40 w-full" />
