@@ -7230,13 +7230,13 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 			for (const untypedKey of [
 				'id',
 				'createdAt',
-				'userId',
 				'proteins',
 				'carbs',
 				'fats',
 				'quantifier',
 				'caloricChange',
-				'user'
+				'user',
+				'userId'
 			]) {
 				const key = untypedKey as keyof typeof record & keyof S;
 				if (!selectClause[key]) delete partialRecord[key];
@@ -7309,12 +7309,12 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 		const scalarFields = [
 			'id',
 			'createdAt',
-			'userId',
 			'proteins',
 			'carbs',
 			'fats',
 			'quantifier',
-			'caloricChange'
+			'caloricChange',
+			'userId'
 		] as const;
 		for (const field of scalarFields) if (orderByInput[field]) return record[field];
 		if (orderByInput.user) {
@@ -7331,12 +7331,12 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 		const scalarFields = [
 			'id',
 			'createdAt',
-			'userId',
 			'proteins',
 			'carbs',
 			'fats',
 			'quantifier',
-			'caloricChange'
+			'caloricChange',
+			'userId'
 		] as const;
 		for (const field of scalarFields) if (orderByInput[field]) return orderByInput[field];
 		if (orderByInput.user) {
@@ -8053,7 +8053,6 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 			const partialRecord: Partial<typeof record> = record;
 			for (const untypedKey of [
 				'id',
-				'userId',
 				'createdAt',
 				'bodyweight',
 				'bodyweightUnit',
@@ -8062,7 +8061,8 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 				'bodyFatPercentage',
 				'age',
 				'gender',
-				'user'
+				'user',
+				'userId'
 			]) {
 				const key = untypedKey as keyof typeof record & keyof S;
 				if (!selectClause[key]) delete partialRecord[key];
@@ -8134,7 +8134,6 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 	): Promise<unknown> {
 		const scalarFields = [
 			'id',
-			'userId',
 			'createdAt',
 			'bodyweight',
 			'bodyweightUnit',
@@ -8142,7 +8141,8 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 			'heightUnit',
 			'bodyFatPercentage',
 			'age',
-			'gender'
+			'gender',
+			'userId'
 		] as const;
 		for (const field of scalarFields) if (orderByInput[field]) return record[field];
 		if (orderByInput.user) {
@@ -8158,7 +8158,6 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 	): Prisma.SortOrder | { sort: Prisma.SortOrder; nulls?: 'first' | 'last' } {
 		const scalarFields = [
 			'id',
-			'userId',
 			'createdAt',
 			'bodyweight',
 			'bodyweightUnit',
@@ -8166,7 +8165,8 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 			'heightUnit',
 			'bodyFatPercentage',
 			'age',
-			'gender'
+			'gender',
+			'userId'
 		] as const;
 		for (const field of scalarFields) if (orderByInput[field]) return orderByInput[field];
 		if (orderByInput.user) {

@@ -27,3 +27,6 @@ vite.config.ts.timestamp-*
 # Serwist
 public/sw*
 public/swe-worker*
+
+# Prisma
+src/lib/generated
