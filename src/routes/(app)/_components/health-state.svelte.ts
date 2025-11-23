@@ -36,7 +36,15 @@ class HealthState {
 
 		const calDate = fromDate(date, getLocalTimeZone());
 		const startOfDay = new CalendarDateTime(calDate.year, calDate.month, calDate.day, 0, 0, 0, 0);
-		const endOfDay = new CalendarDateTime(calDate.year, calDate.month, calDate.day, 23, 59, 59, 999);
+		const endOfDay = new CalendarDateTime(
+			calDate.year,
+			calDate.month,
+			calDate.day,
+			23,
+			59,
+			59,
+			999
+		);
 
 		const stepQuery = await Health.queryAggregated({
 			dataType: 'steps',

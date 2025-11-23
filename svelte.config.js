@@ -11,7 +11,6 @@ const config = {
 		adapter: adapter(),
 		serviceWorker: { register: false },
 		experimental: { remoteFunctions: true },
-		files: { serviceWorker: 'src/service-worker.ts' },
 		alias: { $routes: 'src/routes' }
 	},
 

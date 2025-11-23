@@ -1,4 +1,4 @@
-import type { NutritionData } from '@prisma/client';
+import type { NutritionData } from '$lib/generated/prisma/client';
 
 export async function load() {
 	const sampleNutritionData = {

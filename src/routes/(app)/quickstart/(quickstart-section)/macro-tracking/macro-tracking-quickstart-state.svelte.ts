@@ -1,6 +1,6 @@
 import { client } from '$lib/idb-client';
 import type { MacroTrackingMetricsSchema } from '$routes/(app)/food-diary/goals/metrics/_components/metrics-form-schema';
-import type { ActivityAdjustmentType } from '@prisma/client';
+import type { ActivityAdjustmentType } from '$lib/generated/prisma/client';
 
 class MacroTrackingQuickstartState {
 	macroTrackingMetrics = $state<MacroTrackingMetricsSchema>();

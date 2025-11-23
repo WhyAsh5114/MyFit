@@ -26,7 +26,7 @@ import type {
 	ExerciseSplitDaySessionExerciseNote,
 	ExerciseSplitDaySessionExerciseSecondaryMuscleGroup,
 	FitnessKnowledge
-} from '@prisma/client';
+} from '$lib/generated/prisma/client';
 import DiscordIcon from './icons/discord-icon.svelte';
 
 export const SERVICE_WORKER_UPDATE_INTERVAL = 1000 * 60 * 60 * 24;

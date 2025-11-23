@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import type { ActivityEntry } from '@prisma/client';
+	import type { ActivityEntry } from '$lib/generated/prisma/client';
 
-  let { entry }: { entry: ActivityEntry } = $props();
+	let { entry }: { entry: ActivityEntry } = $props();
 </script>
 
 <Card.Root class="py-4">

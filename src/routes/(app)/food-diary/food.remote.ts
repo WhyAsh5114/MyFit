@@ -1,6 +1,6 @@
 import { query } from '$app/server';
 import { prisma } from '$lib/prisma';
-import { searchFoodsQuery } from '@prisma/client/sql';
+import { searchFoodsQuery } from '$lib/generated/prisma/sql';
 import z from 'zod';
 
 function buildPrefixQuery(search: string): string {

@@ -24,7 +24,7 @@
 		today
 	} from '@internationalized/date';
 	import { CalendarIcon, LoaderCircleIcon, PencilIcon, PlusIcon } from '@lucide/svelte';
-	import type { NutritionData } from '@prisma/client';
+	import type { NutritionData } from '$lib/generated/prisma/client';
 	import { createMutation, createQuery } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import { getFoodById } from '../../food.remote';

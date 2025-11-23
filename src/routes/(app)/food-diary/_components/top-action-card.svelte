@@ -17,7 +17,7 @@
 		PlusIcon,
 		ScissorsIcon
 	} from '@lucide/svelte';
-	import type { MacroMetrics, MacroTargets } from '@prisma/client';
+	import type { MacroMetrics, MacroTargets } from '$lib/generated/prisma/client';
 	import { SvelteDate } from 'svelte/reactivity';
 
 	type PropsType = {

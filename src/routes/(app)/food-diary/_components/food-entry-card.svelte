@@ -5,7 +5,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { client } from '$lib/idb-client';
 	import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from '@lucide/svelte';
-	import type { Prisma } from '@prisma/client';
+	import type { Prisma } from '$lib/generated/prisma/client';
 	import { createMutation, type createQuery } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 

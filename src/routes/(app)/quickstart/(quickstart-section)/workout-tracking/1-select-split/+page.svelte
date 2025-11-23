@@ -11,7 +11,7 @@
 	import { EXERCISE_SPLIT_TEMPLATES, SUGGESTED_DAYS_PER_WEEK } from '$lib/constants';
 	import { client } from '$lib/idb-client';
 	import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from '@lucide/svelte';
-	import type { FitnessKnowledge } from '@prisma/client';
+	import type { FitnessKnowledge } from '$lib/generated/prisma/client';
 	import { toast } from 'svelte-sonner';
 	import { selectedStepsState } from '../../selected-steps.svelte';
 	import { workoutTrackingQuickstartState } from '../workout-tracking-quickstart-state.svelte';

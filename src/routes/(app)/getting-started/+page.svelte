@@ -17,7 +17,7 @@
 		LoaderCircleIcon,
 		XCircleIcon
 	} from '@lucide/svelte';
-	import type { FitnessKnowledge, MyFitPrimaryUsage } from '@prisma/client';
+	import type { FitnessKnowledge, MyFitPrimaryUsage } from '$lib/generated/prisma/client';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import { Spring } from 'svelte/motion';

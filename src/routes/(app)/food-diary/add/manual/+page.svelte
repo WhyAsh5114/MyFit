@@ -9,7 +9,7 @@
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import { capitalizeWords, snakeToNormal } from '$lib/my-utils';
 	import { PlusIcon } from '@lucide/svelte';
-	import type { NutritionData } from '@prisma/client';
+	import type { NutritionData } from '$lib/generated/prisma/client';
 	import ExtrasSheet from './_components/extras-sheet.svelte';
 
 	let { data } = $props();

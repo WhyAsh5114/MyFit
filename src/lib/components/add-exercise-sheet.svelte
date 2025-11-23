@@ -8,7 +8,7 @@
 	import { MUSCLE_GROUPS } from '$lib/constants';
 	import { pascalToNormal } from '$lib/my-utils';
 	import { cn } from '$lib/utils.js';
-	import { type ExerciseSplitDaySessionExercise, SetType } from '@prisma/client';
+	import { type ExerciseSplitDaySessionExercise, SetType } from '$lib/generated/prisma/client';
 	import { Check, ChevronDown, ChevronsUpDown, PlusIcon } from '@lucide/svelte';
 	import Button from './ui/button/button.svelte';
 
