@@ -24,7 +24,7 @@
 		SPA: true,
 		validators: zod4(macroTrackingTargetsSchema),
 		resetForm: false,
-		onUpdate
+		onUpdate: (event) => onUpdate?.(event)
 	});
 
 	let { enhance } = form;
