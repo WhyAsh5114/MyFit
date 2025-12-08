@@ -4,9 +4,10 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
+	import { nutrimentLabels } from '$lib/templates/food';
 	import { FilterIcon, SlidersHorizontalIcon } from '@lucide/svelte';
 
-	let { nutrimentLabels, quantity }: { nutrimentLabels: string[]; quantity: number } = $props();
+	let { quantity }: { quantity: number } = $props();
 	let open = $state(false);
 </script>
 
