@@ -107,7 +107,6 @@
 	}
 
 	async function loadMore(infiniteEvent: InfiniteEvent) {
-		console.log('loadMore', exerciseInstances?.length);
 		const exerciseName = selectedExercise;
 		const lastExerciseFound = exerciseInstances?.at(-1);
 		if (exerciseName === undefined) return;
