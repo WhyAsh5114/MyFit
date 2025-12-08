@@ -1,3 +1,12 @@
+import type {
+	ExerciseSplit,
+	ExerciseSplitDay,
+	ExerciseSplitDaySession,
+	ExerciseSplitDaySessionExercise,
+	ExerciseSplitDaySessionExerciseNote,
+	ExerciseSplitDaySessionExerciseSecondaryMuscleGroup,
+	FitnessKnowledge
+} from '$lib/generated/prisma/client';
 import {
 	AppleIcon,
 	BabyIcon,
@@ -9,6 +18,7 @@ import {
 	GithubIcon,
 	GlobeLockIcon,
 	HandCoinsIcon,
+	HandshakeIcon,
 	LayoutDashboardIcon,
 	MedalIcon,
 	NotebookTextIcon,
@@ -18,15 +28,6 @@ import {
 	SparkleIcon,
 	SproutIcon
 } from '@lucide/svelte';
-import type {
-	ExerciseSplit,
-	ExerciseSplitDay,
-	ExerciseSplitDaySession,
-	ExerciseSplitDaySessionExercise,
-	ExerciseSplitDaySessionExerciseNote,
-	ExerciseSplitDaySessionExerciseSecondaryMuscleGroup,
-	FitnessKnowledge
-} from '$lib/generated/prisma/client';
 import DiscordIcon from './icons/discord-icon.svelte';
 
 export const SERVICE_WORKER_UPDATE_INTERVAL = 1000 * 60 * 60 * 24;
@@ -52,6 +53,7 @@ export const UNPROTECTED_ROUTES = [
 	'/login',
 	'/dashboard',
 	'/privacy-policy',
+	'/terms-of-service',
 	'/changelog',
 	'/blog',
 	'/donations',
@@ -119,6 +121,11 @@ export const SIDEBAR_LINK_GROUPS = [
 				label: 'Privacy policy',
 				href: '/privacy-policy',
 				icon: GlobeLockIcon
+			},
+			{
+				label: 'Terms of service',
+				href: '/terms-of-service',
+				icon: HandshakeIcon
 			}
 		]
 	}

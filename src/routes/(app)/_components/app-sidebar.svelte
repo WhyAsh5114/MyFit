@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { authClient } from '$lib/auth/auth-client';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
@@ -50,7 +51,10 @@
 					class="bg-card h-fit w-full justify-start text-start"
 					onclick={() => sidebar.setOpenMobile(false)}
 				>
-					<a class="flex w-full items-center gap-2 px-2 py-0 text-xl font-semibold" href="/">
+					<a
+						class="flex w-full items-center gap-2 px-2 py-0 text-xl font-semibold"
+						href={resolve('/')}
+					>
 						<img src="/favicon.png" alt="logo" class="h-12 w-12" />
 						MyFit <span class="ml-auto font-mono text-sm font-normal">.fit</span>
 					</a>
@@ -71,14 +75,18 @@
 									isActive={page.url.pathname.startsWith(link.href)}
 								>
 									{#snippet child({ props })}
-										<a
-											href={link.href}
-											target={['Github', 'Discord'].includes(link.label) ? '_blank' : undefined}
-											{...props}
-										>
-											<link.icon />
-											<span>{link.label}</span>
-										</a>
+										{#if link.label === 'Github' || link.label === 'Discord'}
+											<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+											<a href={link.href} target="_blank" {...props}>
+												<link.icon />
+												<span>{link.label}</span>
+											</a>
+										{:else}
+											<a href={resolve(link.href)} {...props}>
+												<link.icon />
+												<span>{link.label}</span>
+											</a>
+										{/if}
 									{/snippet}
 								</Sidebar.MenuButton>
 							</Sidebar.MenuItem>
@@ -98,7 +106,7 @@
 				{:else if !$session.data}
 					<Sidebar.MenuButton variant="outline">
 						{#snippet child({ props })}
-							<a {...props} href="/login">
+							<a {...props} href={resolve('/login')}>
 								<LogInIcon /> Login
 							</a>
 						{/snippet}
@@ -114,11 +122,11 @@
 								</Sidebar.MenuButton>
 							{/snippet}
 						</DropdownMenu.Trigger>
-						<DropdownMenu.Content class="w-[var(--bits-dropdown-menu-anchor-width)]">
+						<DropdownMenu.Content class="w-(--bits-dropdown-menu-anchor-width)">
 							<DropdownMenu.Group>
 								<DropdownMenu.Item onclick={() => sidebar.setOpenMobile(false)}>
 									{#snippet child({ props })}
-										<a href="/profile" {...props}><UserRoundIcon /> Profile</a>
+										<a href={resolve('/profile')} {...props}><UserRoundIcon /> Profile</a>
 									{/snippet}
 								</DropdownMenu.Item>
 								<DropdownMenu.Item

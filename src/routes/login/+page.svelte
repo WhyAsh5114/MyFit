@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { authClient } from '$lib/auth/auth-client';
 	import { Button } from '$lib/components/ui/button';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { createMutation, createQuery } from '@tanstack/svelte-query';
 	import { UserIcon } from '@lucide/svelte';
+	import { createMutation, createQuery } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 
 	const isLoggedInQuery = createQuery(() => ({
@@ -14,7 +15,8 @@
 			const session = await authClient.getSession();
 			if (session.data?.user) {
 				toast.info("You're already signed in");
-				goto(page.url.searchParams.get('redirect') ?? '/dashboard');
+				// eslint-disable-next-line svelte/no-navigation-without-resolve
+				goto(page.url.searchParams.get('redirect') ?? resolve('/dashboard'));
 				return true;
 			}
 			return false;
@@ -28,14 +30,14 @@
 
 			if (loginType === 'anonymous') {
 				await authClient.signIn.anonymous();
-				goto('/getting-started');
+				goto(resolve('/getting-started'));
 				return;
 			}
 
 			await authClient.signIn.social({
 				provider: 'google',
 				callbackURL: page.url.searchParams.get('redirect') ?? '/dashboard',
-				newUserCallbackURL: '/getting-started'
+				newUserCallbackURL: resolve('/getting-started')
 			});
 		},
 		onError: (error) => {
@@ -106,12 +108,10 @@
 				{/if}
 			</div>
 			<p class="text-muted-foreground text-center text-sm">
-				By continuing, you agree to our Terms of Service and <a
-					href="/privacy-policy"
-					class="underline"
-				>
-					Privacy Policy
+				By continuing, you agree to our <a href={resolve('/terms-of-service')} class="underline">
+					Terms of Service
 				</a>
+				and <a href={resolve('/privacy-policy')} class="underline"> Privacy Policy </a>
 			</p>
 		</div>
 	</div>
