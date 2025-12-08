@@ -1,4 +1,4 @@
-import * as Prisma from '@prisma/client';
+import * as Prisma from '$lib/generated/prisma/client';
 import type { DBSchema } from 'idb';
 
 export interface PrismaIDBSchema extends DBSchema {

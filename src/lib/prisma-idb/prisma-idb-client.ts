@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { openDB } from 'idb';
 import type { IDBPDatabase, StoreNames, IDBPTransaction } from 'idb';
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from '$lib/generated/prisma/client';
 import * as IDBUtils from './idb-utils';
 import type { PrismaIDBSchema } from './idb-interface';
 import { v4 as uuidv4 } from 'uuid';
