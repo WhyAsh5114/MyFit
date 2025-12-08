@@ -24,6 +24,7 @@
 			.map((stepRoute) => stepRoute.href);
 
 		selectedStepsState.selectedSteps = customizationRoutes;
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		goto(customizationRoutes[0]);
 	}
 </script>

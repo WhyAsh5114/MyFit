@@ -122,7 +122,7 @@
 		<Select.Root
 			type="single"
 			value={userPrefersMode.current}
-			onValueChange={(v) => setMode(v as Parameters<typeof setMode>[0])}
+			onValueChange={(v) => setMode(v as 'light' | 'dark' | 'system')}
 		>
 			<Select.Trigger class="capitalize">
 				{userPrefersMode.current}

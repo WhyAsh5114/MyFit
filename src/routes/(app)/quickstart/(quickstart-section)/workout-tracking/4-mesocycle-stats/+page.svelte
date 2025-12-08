@@ -1,16 +1,17 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { toast } from 'svelte-sonner';
-	import { workoutTrackingQuickstartState } from '../workout-tracking-quickstart-state.svelte';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
-	import { selectedStepsState } from '../../selected-steps.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
+	import { toast } from 'svelte-sonner';
+	import { selectedStepsState } from '../../selected-steps.svelte';
+	import { workoutTrackingQuickstartState } from '../workout-tracking-quickstart-state.svelte';
 
 	$effect(() => {
 		if (!workoutTrackingQuickstartState.selectedSplitTemplate) {
 			toast.warning('Select a split template first');
-			goto('/quickstart/workout-tracking/1-select-split');
+			goto(resolve('/quickstart/workout-tracking/1-select-split'));
 		}
 	});
 

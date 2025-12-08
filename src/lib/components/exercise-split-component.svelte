@@ -12,7 +12,7 @@
 	type PropsType = { currentSplit: ExerciseSplitTemplate };
 
 	let { currentSplit }: PropsType = $props();
-	
+
 	let selectedDayIndex = $state<string>(
 		untrack(() =>
 			currentSplit.splitDays.findIndex((splitDay) => splitDay.splitDaySessions.length).toString()

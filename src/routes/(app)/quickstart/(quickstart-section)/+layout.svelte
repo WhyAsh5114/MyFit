@@ -26,6 +26,7 @@
 
 		if (selectedStepsState.selectedSteps.length === 0) {
 			toast.error('No steps selected');
+			// eslint-disable-next-line svelte/no-navigation-without-resolve
 			goto(page.url.pathname.split('/').slice(0, -1).join('/'));
 		}
 	});

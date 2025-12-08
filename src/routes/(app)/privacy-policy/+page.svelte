@@ -110,8 +110,8 @@
 		</li>
 		<li>
 			<p>
-				<strong>You</strong> means the individual accessing or using the Service, or the company, or
-				other legal entity on behalf of which such individual is accessing or using the Service, as applicable.
+				<strong>You</strong> means the individual accessing or using the Service, or the company, or other
+				legal entity on behalf of which such individual is accessing or using the Service, as applicable.
 			</p>
 		</li>
 	</ul>
@@ -183,15 +183,15 @@
 		<li>
 			<strong>Cookies or Browser Cookies.</strong> A cookie is a small file placed on Your Device. You
 			can instruct Your browser to refuse all Cookies or to indicate when a Cookie is being sent. However,
-			if You do not accept Cookies, You may not be able to use some parts of our Service. Unless you
-			have adjusted Your browser setting so that it will refuse Cookies, our Service may use Cookies.
+			if You do not accept Cookies, You may not be able to use some parts of our Service. Unless you have
+			adjusted Your browser setting so that it will refuse Cookies, our Service may use Cookies.
 		</li>
 		<li>
-			<strong>Web Beacons.</strong> Certain sections of our Service and our emails may contain small
-			electronic files known as web beacons (also referred to as clear gifs, pixel tags, and single-pixel
-			gifs) that permit the Company, for example, to count users who have visited those pages or opened
-			an email and for other related website statistics (for example, recording the popularity of a certain
-			section and verifying system and server integrity).
+			<strong>Web Beacons.</strong> Certain sections of our Service and our emails may contain small electronic
+			files known as web beacons (also referred to as clear gifs, pixel tags, and single-pixel gifs) that
+			permit the Company, for example, to count users who have visited those pages or opened an email
+			and for other related website statistics (for example, recording the popularity of a certain section
+			and verifying system and server integrity).
 		</li>
 	</ul>
 	<p>
@@ -249,8 +249,8 @@
 			<p>
 				<strong>To contact You:</strong> To contact You by email, telephone calls, SMS, or other equivalent
 				forms of electronic communication, such as a mobile application&apos;s push notifications regarding
-				updates or informative communications related to the functionalities, products or contracted
-				services, including the security updates, when necessary or reasonable for their implementation.
+				updates or informative communications related to the functionalities, products or contracted services,
+				including the security updates, when necessary or reasonable for their implementation.
 			</p>
 		</li>
 		<li>
@@ -269,9 +269,9 @@
 			<p>
 				<strong>For business transfers:</strong> We may use Your information to evaluate or conduct a
 				merger, divestiture, restructuring, reorganization, dissolution, or other sale or transfer of
-				some or all of Our assets, whether as a going concern or as part of bankruptcy, liquidation,
-				or similar proceeding, in which Personal Data held by Us about our Service users is among the
-				assets transferred.
+				some or all of Our assets, whether as a going concern or as part of bankruptcy, liquidation, or
+				similar proceeding, in which Personal Data held by Us about our Service users is among the assets
+				transferred.
 			</p>
 		</li>
 		<li>
@@ -290,9 +290,9 @@
 			to monitor and analyze the use of our Service, to contact You.
 		</li>
 		<li>
-			<strong>For business transfers:</strong> We may share or transfer Your personal information in
-			connection with, or during negotiations of, any merger, sale of Company assets, financing, or acquisition
-			of all or a portion of Our business to another company.
+			<strong>For business transfers:</strong> We may share or transfer Your personal information in connection
+			with, or during negotiations of, any merger, sale of Company assets, financing, or acquisition of
+			all or a portion of Our business to another company.
 		</li>
 		<li>
 			<strong>With Affiliates:</strong> We may share Your information with Our affiliates, in which case
@@ -307,10 +307,10 @@
 		<li>
 			<strong>With other users:</strong> when You share personal information or otherwise interact in
 			the public areas with other users, such information may be viewed by all users and may be publicly
-			distributed outside. If You interact with other users or register through a Third-Party Social
-			Media Service, Your contacts on the Third-Party Social Media Service may see Your name, profile,
-			pictures and description of Your activity. Similarly, other users will be able to view descriptions
-			of Your activity, communicate with You and view Your profile.
+			distributed outside. If You interact with other users or register through a Third-Party Social Media
+			Service, Your contacts on the Third-Party Social Media Service may see Your name, profile, pictures
+			and description of Your activity. Similarly, other users will be able to view descriptions of Your
+			activity, communicate with You and view Your profile.
 		</li>
 		<li>
 			<strong>With Your consent</strong>: We may disclose Your personal information for any other

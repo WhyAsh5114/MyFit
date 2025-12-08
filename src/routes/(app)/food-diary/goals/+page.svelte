@@ -1,8 +1,9 @@
-<script>
+<script lang="ts">
+	import { resolve } from '$app/paths';
 	import H1 from '$lib/components/typography/h1.svelte';
 	import H2 from '$lib/components/typography/h2.svelte';
-	import { FlameIcon, RulerIcon, TargetIcon } from '@lucide/svelte';
 	import * as Card from '$lib/components/ui/card';
+	import { FlameIcon, RulerIcon, TargetIcon } from '@lucide/svelte';
 
 	const buttonData = [
 		{
@@ -23,14 +24,14 @@
 			href: '/food-diary/goals/targets',
 			icon: TargetIcon
 		}
-	];
+	] as const;
 </script>
 
 <H1>Food diary</H1>
 <H2>Goals</H2>
 
 {#each buttonData as data (data.title)}
-	<a href={data.href}>
+	<a href={resolve(data.href)}>
 		<Card.Root class="py-4">
 			<Card.Header class="px-4">
 				<Card.Title class="flex gap-2">

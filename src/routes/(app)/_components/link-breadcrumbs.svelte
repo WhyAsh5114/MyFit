@@ -78,6 +78,7 @@
 								{#each item.stepItems as stepItem (stepItem.href)}
 									<DropdownMenu.Item>
 										{#snippet child({ props })}
+											<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 											<a href={stepItem.href} {...props}>
 												<span class="font-mono">{stepItem.label.slice(0, 3)}</span>
 												{stepItem.label.slice(2)}

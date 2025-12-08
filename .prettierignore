@@ -6,3 +6,6 @@ yarn.lock
 # Mobile platforms
 android/
 ios/
+
+# shadcn-svelte components
+src/lib/components/ui/**

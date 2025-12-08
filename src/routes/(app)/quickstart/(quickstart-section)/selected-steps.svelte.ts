@@ -14,8 +14,10 @@ function createSelectedStepsState() {
 		const currentIndex = selectedStepsState.selectedSteps.findIndex((route) => route === pathname);
 		const targetIndex = direction === 'next' ? currentIndex + 1 : currentIndex - 1;
 		if (targetIndex < 0) {
+			// eslint-disable-next-line svelte/no-navigation-without-resolve
 			return goto(selectedStepsState.selectedSteps[0].split('/').slice(0, -1).join('/'));
 		}
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		return goto(selectedStepsState.selectedSteps[targetIndex]);
 	}
 

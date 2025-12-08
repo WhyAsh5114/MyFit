@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
 	import type { MacroTrackingTargetsSchema } from '$routes/(app)/food-diary/goals/targets/_components/targets-form-schema';
@@ -29,7 +30,7 @@
 		try {
 			await macroTrackingQuickstartState.saveDataToIndexedDB();
 			toast.success('Data saved successfully');
-			goto('/dashboard');
+			goto(resolve('/dashboard'));
 		} catch (error) {
 			if (error instanceof Error) toast.error(error.message);
 		}

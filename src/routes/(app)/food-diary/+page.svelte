@@ -163,6 +163,7 @@
 
 		if (!selectedDay) {
 			const calToday = today(getLocalTimeZone());
+			// eslint-disable-next-line svelte/no-navigation-without-resolve
 			goto(`/food-diary?day=${calToday.toString()}`);
 			selectedDay = new SvelteDate(calToday.toDate(getLocalTimeZone()));
 		}

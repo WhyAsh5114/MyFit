@@ -130,6 +130,7 @@
 			toast.success(message);
 
 			const calEatenAt = fromDate(variables.eatenAt, getLocalTimeZone());
+			// eslint-disable-next-line svelte/no-navigation-without-resolve
 			goto(`/food-diary?day=${calEatenAt.toString().split('T')[0]}`);
 		},
 		onError: (error) => {

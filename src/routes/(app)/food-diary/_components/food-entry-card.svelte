@@ -52,6 +52,7 @@
 					<DropdownMenu.Group>
 						<DropdownMenu.Item
 							onclick={() =>
+								// eslint-disable-next-line svelte/no-navigation-without-resolve
 								goto(`/food-diary/add/item?id=${entry.nutritionDataId}&edit=${entry.id}`)}
 						>
 							<PencilIcon /> Edit

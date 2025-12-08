@@ -20,6 +20,7 @@
 
 		if (!sessionData && !existingUser) {
 			if (!UNPROTECTED_ROUTES.includes(page.url.pathname)) {
+				// eslint-disable-next-line svelte/no-navigation-without-resolve
 				goto(`/login?redirect=${encodeURIComponent(page.url.pathname)}`);
 				return toast.info('Please login to continue');
 			}

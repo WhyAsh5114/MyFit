@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import CircularProgressBar from '$lib/components/magicui/circular-progress-bar.svelte';
 	import H1 from '$lib/components/typography/h1.svelte';
 	import H3 from '$lib/components/typography/h3.svelte';
@@ -8,6 +9,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import { GETTING_STARTED_QUESTIONS } from '$lib/constants';
+	import type { FitnessKnowledge, MyFitPrimaryUsage } from '$lib/generated/prisma/client';
 	import { client } from '$lib/idb-client';
 	import { kebabToCamel } from '$lib/my-utils';
 	import {
@@ -17,7 +19,6 @@
 		LoaderCircleIcon,
 		XCircleIcon
 	} from '@lucide/svelte';
-	import type { FitnessKnowledge, MyFitPrimaryUsage } from '$lib/generated/prisma/client';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import { Spring } from 'svelte/motion';
@@ -47,7 +48,7 @@
 				create: data
 			});
 			toast.success('Your preferences have been saved!');
-			goto('/dashboard');
+			goto(resolve('/dashboard'));
 		},
 		onError: (error) => {
 			toast.error('An error occurred while saving your preferences', {

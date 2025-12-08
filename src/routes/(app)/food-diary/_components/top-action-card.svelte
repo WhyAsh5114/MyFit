@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Progress } from '$lib/components/ui/progress';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Skeleton } from '$lib/components/ui/skeleton';
+	import type { MacroMetrics, MacroTargets } from '$lib/generated/prisma/client';
 	import { formatDateToISO } from '$lib/my-utils';
 	import {
 		ChevronLeftIcon,
@@ -17,7 +19,6 @@
 		PlusIcon,
 		ScissorsIcon
 	} from '@lucide/svelte';
-	import type { MacroMetrics, MacroTargets } from '$lib/generated/prisma/client';
 	import { SvelteDate } from 'svelte/reactivity';
 
 	type PropsType = {
@@ -45,6 +46,8 @@
 			newDate.setDate(newDate.getDate() + 1);
 		}
 		selectedDay = newDate;
+
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		goto(`/food-diary?day=${formatDateToISO(newDate).split('T')[0]}`);
 	}
 </script>
@@ -83,7 +86,8 @@
 				<p>{(macroData.caloricTarget - caloricIntake).toFixed()}</p>
 			{:else if macroData === null}
 				<p class="w-full text-center">
-					Goals haven't been setup. <a href="/food-diary/goals" class="underline">Set up now!</a>
+					Goals haven't been setup.
+					<a href={resolve('/food-diary/goals')} class="underline">Set up now!</a>
 				</p>
 			{:else}
 				<p>Fetching data...</p>

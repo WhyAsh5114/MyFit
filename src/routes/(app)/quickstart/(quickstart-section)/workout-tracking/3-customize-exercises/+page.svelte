@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import ExerciseSplitComponent from '$lib/components/exercise-split-component.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -14,7 +15,7 @@
 	$effect(() => {
 		if (!workoutTrackingQuickstartState.selectedSplitTemplate) {
 			toast.warning('Select a split template first');
-			goto('/quickstart/workout-tracking/1-select-split');
+			goto(resolve('/quickstart/workout-tracking/1-select-split'));
 			return;
 		}
 		currentSplit = workoutTrackingQuickstartState.selectedSplitTemplate;
