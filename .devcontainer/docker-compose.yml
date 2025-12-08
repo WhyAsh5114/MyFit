@@ -22,7 +22,7 @@ services:
     volumes:
       - cockroach-data:/cockroach/cockroach-data
     environment:
-      COCKROACH_ARGS: 'start-single-node --insecure'
+      COCKROACH_ARGS: 'start-single-node --insecure --disable-max-offset-check'
     ports:
       - 26257:26267
 

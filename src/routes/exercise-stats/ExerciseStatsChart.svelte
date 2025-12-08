@@ -66,7 +66,8 @@
 			dataValues = Array.from({ length: maxSets }, (_, setIdx) =>
 				nonSkippedExercises.map((ex, idx) => {
 					if (idx === 0) return 0;
-					const oldestSet = nonSkippedExercises.find((ex) => ex.sets[setIdx] && !ex.sets[setIdx].skipped)!.sets[setIdx];
+					const oldestSet = nonSkippedExercises.find((ex) => ex.sets[setIdx] && !ex.sets[setIdx].skipped)?.sets[setIdx];
+					if (!oldestSet) return null;
 					if (!selectedSets.includes(setIdx.toString())) return null;
 					if (!ex.sets[setIdx]) return null;
 
