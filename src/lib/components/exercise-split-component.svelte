@@ -6,13 +6,17 @@
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import type { ExerciseSplitTemplate } from '$lib/constants';
 	import { GitCompareArrowsIcon, MenuIcon, WrenchIcon } from '@lucide/svelte';
+	import { untrack } from 'svelte';
 	import AddExerciseSheet from './add-exercise-sheet.svelte';
 
 	type PropsType = { currentSplit: ExerciseSplitTemplate };
 
 	let { currentSplit }: PropsType = $props();
+	
 	let selectedDayIndex = $state<string>(
-		currentSplit.splitDays.findIndex((splitDay) => splitDay.splitDaySessions.length).toString()
+		untrack(() =>
+			currentSplit.splitDays.findIndex((splitDay) => splitDay.splitDaySessions.length).toString()
+		)
 	);
 	let selectedSessionIndex = $state<string>('0');
 

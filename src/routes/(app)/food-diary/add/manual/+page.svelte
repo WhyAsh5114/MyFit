@@ -7,22 +7,10 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
-	import { capitalizeWords, snakeToNormal } from '$lib/my-utils';
 	import { PlusIcon } from '@lucide/svelte';
-	import type { NutritionData } from '$lib/generated/prisma/client';
 	import ExtrasSheet from './_components/extras-sheet.svelte';
 
-	let { data } = $props();
 	let quantity = $state(100);
-
-	const nutrimentLabels = getNutrimentLabels(data.sampleNutritionData);
-
-	function getNutrimentLabels(sampleData: NutritionData) {
-		const { id, code, product_name, brands, ...nutriments } = sampleData;
-		const { energy_kcal_100g, proteins_100g, carbohydrates_100g, fat_100g, ...others } = nutriments;
-
-		return Object.keys(others).map((key) => capitalizeWords(snakeToNormal(key).slice(0, -4)));
-	}
 </script>
 
 <H1>Food diary</H1>
@@ -86,7 +74,7 @@
 		</div>
 	</ScrollArea>
 	<div class="grid grid-cols-2 gap-2">
-		<ExtrasSheet {nutrimentLabels} {quantity} />
+		<ExtrasSheet {quantity} />
 		<Button type="submit">
 			Add food <PlusIcon />
 		</Button>

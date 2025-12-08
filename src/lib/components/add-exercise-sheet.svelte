@@ -6,27 +6,25 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import { MUSCLE_GROUPS } from '$lib/constants';
+	import { type ExerciseSplitDaySessionExercise, SetType } from '$lib/generated/prisma/client';
 	import { pascalToNormal } from '$lib/my-utils';
 	import { cn } from '$lib/utils.js';
-	import { type ExerciseSplitDaySessionExercise, SetType } from '$lib/generated/prisma/client';
 	import { Check, ChevronDown, ChevronsUpDown, PlusIcon } from '@lucide/svelte';
 	import Button from './ui/button/button.svelte';
 
 	type PropsType = {
-		editingExercise?: Partial<
+		currentExercise?: Partial<
 			Omit<ExerciseSplitDaySessionExercise, 'id' | 'exerciseIndex' | 'exerciseSplitDaySessionId'>
 		>;
 	};
-	let { editingExercise }: PropsType = $props();
-
-	const defaultExercise: PropsType['editingExercise'] = {
-		name: '',
-		repRangeStart: 5,
-		repRangeEnd: 15,
-		setType: SetType.Straight
-	};
-
-	let currentExercise = $state(editingExercise ?? defaultExercise);
+	let {
+		currentExercise = {
+			name: '',
+			repRangeStart: 5,
+			repRangeEnd: 15,
+			setType: SetType.Straight
+		}
+	}: PropsType = $props();
 </script>
 
 <Sheet.Root>
@@ -49,7 +47,7 @@
 						</Button>
 					{/snippet}
 				</Popover.Trigger>
-				<Popover.Content class="w-[var(--bits-popover-anchor-width)] p-0">
+				<Popover.Content class="w-(--bits-popover-anchor-width) p-0">
 					<Command.Root>
 						<Command.Input class="text-sm" placeholder="Search exercises..." />
 						<Command.List>

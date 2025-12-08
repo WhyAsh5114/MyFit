@@ -16,7 +16,7 @@
 		userQuantity
 	}: PropsType = $props();
 
-	const chartData = [
+	let chartData = $derived([
 		{
 			macro: 'Carbs',
 			value: carbohydrates_100g,
@@ -35,7 +35,7 @@
 			perc: getPercentageOfCalories('Protein', proteins_100g),
 			color: '#FFCE56'
 		}
-	];
+	]);
 
 	const chartConfig = {
 		Carbs: { label: 'Carbs', color: 'var(--chart-1)' },
