@@ -1,5 +1,5 @@
 import { building } from '$app/environment';
-import { auth } from '$lib/auth/auth';
+import { auth } from '$lib/server/auth';
 import type { Handle } from '@sveltejs/kit';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 

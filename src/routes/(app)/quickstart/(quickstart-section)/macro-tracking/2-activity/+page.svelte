@@ -4,7 +4,7 @@
 	import type { MacroTrackingActivitySchema } from '$routes/(app)/food-diary/goals/activity/_components/activity-form-schema';
 	import ActivityForm from '$routes/(app)/food-diary/goals/activity/_components/activity-form.svelte';
 	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
-	import type { ActivityAdjustmentType } from '$lib/generated/prisma/client';
+	import type { ActivityAdjustmentType } from '$lib/server/generated/prisma/client';
 	import { toast } from 'svelte-sonner';
 	import { writable } from 'svelte/store';
 	import { selectedStepsState } from '../../selected-steps.svelte';

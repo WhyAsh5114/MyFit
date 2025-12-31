@@ -6,7 +6,7 @@ import type {
 	ExerciseSplitDaySessionExerciseNote,
 	ExerciseSplitDaySessionExerciseSecondaryMuscleGroup,
 	FitnessKnowledge
-} from '$lib/generated/prisma/client';
+} from '$lib/server/generated/prisma/client';
 import {
 	AppleIcon,
 	BabyIcon,

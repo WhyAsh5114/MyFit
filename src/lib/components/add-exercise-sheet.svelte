@@ -6,7 +6,8 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import { MUSCLE_GROUPS } from '$lib/constants';
-	import { type ExerciseSplitDaySessionExercise, SetType } from '$lib/generated/prisma/client';
+	import type { ExerciseSplitDaySessionExercise } from '$lib/server/generated/prisma/client';
+	import { SetType } from '$lib/generated/prisma/enums';
 	import { pascalToNormal } from '$lib/my-utils';
 	import { cn } from '$lib/utils.js';
 	import { Check, ChevronDown, ChevronsUpDown, PlusIcon } from '@lucide/svelte';

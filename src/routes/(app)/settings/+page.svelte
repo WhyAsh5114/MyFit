@@ -3,7 +3,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import { client } from '$lib/idb-client';
+	import { client } from '$lib/clients/idb-client';
 	import { LoaderCircleIcon, RefreshCcwIcon, RotateCwIcon, TrashIcon } from '@lucide/svelte';
 	import { createMutation, createQuery } from '@tanstack/svelte-query';
 	import { setMode, userPrefersMode } from 'mode-watcher';

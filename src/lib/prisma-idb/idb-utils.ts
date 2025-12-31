@@ -1,4 +1,4 @@
-import type { Prisma } from '$lib/generated/prisma/client';
+import type { Prisma } from '$lib/server/generated/prisma/client';
 import type { IDBPTransaction, StoreNames } from 'idb';
 import type { PrismaIDBSchema } from './idb-interface';
 

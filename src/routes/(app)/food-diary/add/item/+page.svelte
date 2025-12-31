@@ -10,7 +10,7 @@
 	import Label from '$lib/components/ui/label/label.svelte';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { client } from '$lib/idb-client';
+	import { client } from '$lib/clients/idb-client';
 	import { cn } from '$lib/utils';
 	import {
 		type DateValue,
@@ -24,7 +24,7 @@
 		today
 	} from '@internationalized/date';
 	import { CalendarIcon, LoaderCircleIcon, PencilIcon, PlusIcon } from '@lucide/svelte';
-	import type { NutritionData } from '$lib/generated/prisma/client';
+	import type { NutritionData } from '$lib/server/generated/prisma/client';
 	import { createMutation, createQuery } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import { getFoodById } from '../../food.remote';

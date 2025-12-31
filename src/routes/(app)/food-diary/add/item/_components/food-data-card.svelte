@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Chart from '$lib/components/ui/chart/index.js';
-	import type { NutritionData } from '$lib/generated/prisma/client';
+	import type { NutritionData } from '$lib/server/generated/prisma/client';
 	import { PieChart, Text } from 'layerchart';
 
 	type PropsType = NutritionData & { userQuantity: number };

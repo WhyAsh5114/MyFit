@@ -9,8 +9,8 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import { GETTING_STARTED_QUESTIONS } from '$lib/constants';
-	import type { FitnessKnowledge, MyFitPrimaryUsage } from '$lib/generated/prisma/client';
-	import { client } from '$lib/idb-client';
+	import type { FitnessKnowledge, MyFitPrimaryUsage } from '$lib/server/generated/prisma/client';
+	import { client } from '$lib/clients/idb-client';
 	import { kebabToCamel } from '$lib/my-utils';
 	import {
 		CheckCircleIcon,

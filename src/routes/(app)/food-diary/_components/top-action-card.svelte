@@ -6,7 +6,7 @@
 	import { Progress } from '$lib/components/ui/progress';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Skeleton } from '$lib/components/ui/skeleton';
-	import type { MacroMetrics, MacroTargets } from '$lib/generated/prisma/client';
+	import type { MacroMetrics, MacroTargets } from '$lib/server/generated/prisma/client';
 	import { formatDateToISO } from '$lib/my-utils';
 	import {
 		ChevronLeftIcon,

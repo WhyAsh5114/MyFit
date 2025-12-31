@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { authClient } from '$lib/auth/auth-client';
+	import { authClient } from '$lib/clients/auth-client';
 	import { UNPROTECTED_ROUTES } from '$lib/constants';
-	import { client } from '$lib/idb-client';
+	import { client } from '$lib/clients/idb-client';
 	import { toast } from 'svelte-sonner';
 
 	const session = authClient.useSession();

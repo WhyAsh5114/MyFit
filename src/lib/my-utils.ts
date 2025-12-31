@@ -1,5 +1,5 @@
 import { fromDate, getLocalTimeZone } from '@internationalized/date';
-import type { MacroMetrics } from '$lib/generated/prisma/client';
+import type { MacroMetrics } from '$lib/server/generated/prisma/client';
 import { formatHex } from 'culori';
 
 export function kebabToCamel(str: string) {

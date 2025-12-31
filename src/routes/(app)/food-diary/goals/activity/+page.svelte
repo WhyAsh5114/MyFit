@@ -3,7 +3,7 @@
 	import H2 from '$lib/components/typography/h2.svelte';
 	import H3 from '$lib/components/typography/h3.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { client } from '$lib/idb-client';
+	import { client } from '$lib/clients/idb-client';
 	import { SaveIcon } from '@lucide/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';

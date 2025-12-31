@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { authClient } from '$lib/auth/auth-client';
+	import { authClient } from '$lib/clients/auth-client';
 	import { Button } from '$lib/components/ui/button';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { UserIcon } from '@lucide/svelte';

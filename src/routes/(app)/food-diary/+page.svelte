@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import H1 from '$lib/components/typography/h1.svelte';
-	import { client } from '$lib/idb-client';
+	import { client } from '$lib/clients/idb-client';
 	import { calculateBMR, stepsToCalories } from '$lib/my-utils';
 	import { CalendarDateTime, fromDate, getLocalTimeZone, today } from '@internationalized/date';
 	import { CalendarIcon, LoaderCircleIcon } from '@lucide/svelte';

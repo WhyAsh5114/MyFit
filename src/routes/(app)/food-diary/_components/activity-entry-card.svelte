@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import type { ActivityEntry } from '$lib/generated/prisma/client';
+	import type { ActivityEntry } from '$lib/server/generated/prisma/client';
 
 	let { entry }: { entry: ActivityEntry } = $props();
 </script>

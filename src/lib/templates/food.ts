@@ -1,4 +1,4 @@
-import type { NutritionData } from '$lib/generated/prisma/client';
+import type { NutritionData } from '$lib/server/generated/prisma/client';
 import { capitalizeWords, snakeToNormal } from '$lib/my-utils';
 
 function getNutrimentLabels(sampleData: NutritionData) {

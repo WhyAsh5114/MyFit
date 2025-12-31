@@ -1,13 +1,13 @@
 generator client {
   provider        = "prisma-client"
   previewFeatures = ["fullTextSearchPostgres", "typedSql"]
-  output          = "../../src/lib/generated/prisma"
+  output          = "../../src/lib/server/generated/prisma"
 }
 
 generator prismaIDB {
   provider           = "idb-client-generator"
   output             = "../../src/lib/prisma-idb"
-  prismaClientImport = "$lib/generated/prisma/client"
+  prismaClientImport = "$lib/server/generated/prisma/client"
 }
 
 datasource db {

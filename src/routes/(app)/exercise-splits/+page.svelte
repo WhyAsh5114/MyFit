@@ -3,7 +3,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
-	import { client } from '$lib/idb-client';
+	import { client } from '$lib/clients/idb-client';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { CalendarIcon, FilterIcon, LoaderCircleIcon, PlusIcon } from '@lucide/svelte';
 

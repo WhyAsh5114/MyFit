@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { authClient } from '$lib/auth/auth-client';
+	import { authClient } from '$lib/clients/auth-client';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
 	import { SIDEBAR_LINK_GROUPS } from '$lib/constants';
-	import { client } from '$lib/idb-client';
+	import { client } from '$lib/clients/idb-client';
 	import {
 		ChevronUpIcon,
 		DownloadIcon,
