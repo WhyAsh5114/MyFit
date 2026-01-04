@@ -28,7 +28,7 @@
 		"@internationalized/date": "^3.10.1",
 		"@lucide/svelte": "^0.556.0",
 		"@playwright/test": "^1.57.0",
-		"@prisma-idb/idb-client-generator": "link:../idb-client-generator/packages/generator",
+		"@prisma-idb/idb-client-generator": "^0.22.1",
 		"@prisma/adapter-pg": "^7.2.0",
 		"@prisma/client": "^7.2.0",
 		"@prisma/extension-accelerate": "^3.0.1",
