@@ -1,16 +1,46 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { openDB } from 'idb';
 import type { IDBPDatabase, StoreNames, IDBPTransaction } from 'idb';
-import type { Prisma } from '$lib/server/generated/prisma/client';
+import type { Prisma } from '../../server/generated/prisma/client';
 import * as IDBUtils from './idb-utils';
-import type { PrismaIDBSchema } from './idb-interface';
+import type {
+	OutboxEventRecord,
+	PrismaIDBSchema,
+	AppliedResult,
+	SyncWorkerOptions,
+	SyncWorker
+} from './idb-interface';
+import { validators, keyPathValidators } from '../validators';
 import { v4 as uuidv4 } from 'uuid';
 const IDB_VERSION = 1;
 export class PrismaIDBClient {
 	private static instance: PrismaIDBClient;
 	_db!: IDBPDatabase<PrismaIDBSchema>;
+	private outboxEnabled: boolean = true;
+	private includedModels: Set<string>;
 
-	private constructor() {}
+	private constructor() {
+		this.includedModels = new Set([
+			'ExerciseSplit',
+			'ExerciseSplitDay',
+			'ExerciseSplitDaySession',
+			'ExerciseSplitDaySessionExercise',
+			'ExerciseSplitDaySessionExerciseNote',
+			'ExerciseSplitDaySessionExerciseSecondaryMuscleGroup',
+			'MacroTargets',
+			'MacroMetrics',
+			'MacroActivityTrackingPreferences',
+			'FoodEntry',
+			'ActivityEntry',
+			'NutritionData',
+			'GettingStartedAnswers',
+			'DashboardItem',
+			'User',
+			'Session',
+			'Account',
+			'Verification'
+		]);
+	}
 	exerciseSplit!: ExerciseSplitIDBClass;
 	exerciseSplitDay!: ExerciseSplitDayIDBClass;
 	exerciseSplitDaySession!: ExerciseSplitDaySessionIDBClass;
@@ -29,6 +59,7 @@ export class PrismaIDBClient {
 	session!: SessionIDBClass;
 	account!: AccountIDBClass;
 	verification!: VerificationIDBClass;
+	$outbox!: OutboxEventIDBClass;
 	public static async createClient(): Promise<PrismaIDBClient> {
 		if (!PrismaIDBClient.instance) {
 			const client = new PrismaIDBClient();
@@ -41,6 +72,649 @@ export class PrismaIDBClient {
 		this._db.close();
 		window.indexedDB.deleteDatabase('prisma-idb');
 		await PrismaIDBClient.instance.initialize();
+	}
+	shouldTrackModel(modelName: string): boolean {
+		return this.outboxEnabled && this.includedModels.has(modelName);
+	}
+	createSyncWorker(options: {
+		syncHandler: (events: OutboxEventRecord[]) => Promise<AppliedResult[]>;
+		batchSize?: number;
+		intervalMs?: number;
+		maxRetries?: number;
+	}): SyncWorker {
+		const { syncHandler, batchSize = 20, intervalMs = 8000, maxRetries = 5 } = options;
+
+		let intervalId: ReturnType<typeof setInterval | typeof setTimeout> | null = null;
+		let isRunning = false;
+		let isProcessing = false;
+
+		const processBatch = async (): Promise<void> => {
+			if (!isRunning || isProcessing) return;
+
+			isProcessing = true;
+			try {
+				const batch = await this.$outbox.getNextBatch({ limit: batchSize });
+
+				if (batch.length === 0) return;
+
+				const toSync = batch.filter((event: OutboxEventRecord) => event.tries < maxRetries);
+				const abandoned = batch.filter((event: OutboxEventRecord) => event.tries >= maxRetries);
+
+				for (const event of abandoned) {
+					await this.$outbox.markFailed(event.id, `Abandoned after ${maxRetries} retries`);
+				}
+
+				if (toSync.length === 0) return;
+
+				let results: AppliedResult[] = [];
+				try {
+					results = await syncHandler(toSync);
+				} catch (err) {
+					for (const event of toSync) {
+						const error = err instanceof Error ? err.message : String(err);
+						await this.$outbox.markFailed(event.id, error);
+					}
+					return;
+				}
+
+				const successIds: string[] = [];
+				for (const result of results) {
+					if (result.error) {
+						await this.$outbox.markFailed(result.id, result.error);
+					} else {
+						successIds.push(result.id);
+
+						if (result.mergedRecord && result.entityKeyPath) {
+							const originalEvent = toSync.find((e: OutboxEventRecord) => e.id === result.id);
+							if (originalEvent) {
+								try {
+									switch (originalEvent.entityType) {
+										case 'ExerciseSplit': {
+											{
+												const recordValidation = validators.ExerciseSplit.safeParse(
+													result.mergedRecord
+												);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation = keyPathValidators.ExerciseSplit.safeParse(
+													result.entityKeyPath
+												);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.exerciseSplit.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'ExerciseSplitDay': {
+											{
+												const recordValidation = validators.ExerciseSplitDay.safeParse(
+													result.mergedRecord
+												);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation = keyPathValidators.ExerciseSplitDay.safeParse(
+													result.entityKeyPath
+												);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.exerciseSplitDay.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'ExerciseSplitDaySession': {
+											{
+												const recordValidation = validators.ExerciseSplitDaySession.safeParse(
+													result.mergedRecord
+												);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation =
+													keyPathValidators.ExerciseSplitDaySession.safeParse(result.entityKeyPath);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.exerciseSplitDaySession.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'ExerciseSplitDaySessionExercise': {
+											{
+												const recordValidation =
+													validators.ExerciseSplitDaySessionExercise.safeParse(result.mergedRecord);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation =
+													keyPathValidators.ExerciseSplitDaySessionExercise.safeParse(
+														result.entityKeyPath
+													);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.exerciseSplitDaySessionExercise.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'ExerciseSplitDaySessionExerciseNote': {
+											{
+												const recordValidation =
+													validators.ExerciseSplitDaySessionExerciseNote.safeParse(
+														result.mergedRecord
+													);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation =
+													keyPathValidators.ExerciseSplitDaySessionExerciseNote.safeParse(
+														result.entityKeyPath
+													);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.exerciseSplitDaySessionExerciseNote.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'ExerciseSplitDaySessionExerciseSecondaryMuscleGroup': {
+											{
+												const recordValidation =
+													validators.ExerciseSplitDaySessionExerciseSecondaryMuscleGroup.safeParse(
+														result.mergedRecord
+													);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation =
+													keyPathValidators.ExerciseSplitDaySessionExerciseSecondaryMuscleGroup.safeParse(
+														result.entityKeyPath
+													);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'MacroTargets': {
+											{
+												const recordValidation = validators.MacroTargets.safeParse(
+													result.mergedRecord
+												);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation = keyPathValidators.MacroTargets.safeParse(
+													result.entityKeyPath
+												);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.macroTargets.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'MacroMetrics': {
+											{
+												const recordValidation = validators.MacroMetrics.safeParse(
+													result.mergedRecord
+												);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation = keyPathValidators.MacroMetrics.safeParse(
+													result.entityKeyPath
+												);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.macroMetrics.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'MacroActivityTrackingPreferences': {
+											{
+												const recordValidation =
+													validators.MacroActivityTrackingPreferences.safeParse(
+														result.mergedRecord
+													);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation =
+													keyPathValidators.MacroActivityTrackingPreferences.safeParse(
+														result.entityKeyPath
+													);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.macroActivityTrackingPreferences.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'FoodEntry': {
+											{
+												const recordValidation = validators.FoodEntry.safeParse(
+													result.mergedRecord
+												);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation = keyPathValidators.FoodEntry.safeParse(
+													result.entityKeyPath
+												);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.foodEntry.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'ActivityEntry': {
+											{
+												const recordValidation = validators.ActivityEntry.safeParse(
+													result.mergedRecord
+												);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation = keyPathValidators.ActivityEntry.safeParse(
+													result.entityKeyPath
+												);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.activityEntry.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'NutritionData': {
+											{
+												const recordValidation = validators.NutritionData.safeParse(
+													result.mergedRecord
+												);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation = keyPathValidators.NutritionData.safeParse(
+													result.entityKeyPath
+												);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.nutritionData.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'GettingStartedAnswers': {
+											{
+												const recordValidation = validators.GettingStartedAnswers.safeParse(
+													result.mergedRecord
+												);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation = keyPathValidators.GettingStartedAnswers.safeParse(
+													result.entityKeyPath
+												);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.gettingStartedAnswers.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'DashboardItem': {
+											{
+												const recordValidation = validators.DashboardItem.safeParse(
+													result.mergedRecord
+												);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation = keyPathValidators.DashboardItem.safeParse(
+													result.entityKeyPath
+												);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.dashboardItem.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'User': {
+											{
+												const recordValidation = validators.User.safeParse(result.mergedRecord);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation = keyPathValidators.User.safeParse(
+													result.entityKeyPath
+												);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.user.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'Session': {
+											{
+												const recordValidation = validators.Session.safeParse(result.mergedRecord);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation = keyPathValidators.Session.safeParse(
+													result.entityKeyPath
+												);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.session.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'Account': {
+											{
+												const recordValidation = validators.Account.safeParse(result.mergedRecord);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation = keyPathValidators.Account.safeParse(
+													result.entityKeyPath
+												);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.account.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										case 'Verification': {
+											{
+												const recordValidation = validators.Verification.safeParse(
+													result.mergedRecord
+												);
+												if (!recordValidation.success) {
+													throw new Error(
+														`Record validation failed: ${recordValidation.error.message}`
+													);
+												}
+												const keyPathValidation = keyPathValidators.Verification.safeParse(
+													result.entityKeyPath
+												);
+												if (!keyPathValidation.success) {
+													throw new Error(
+														`KeyPath validation failed: ${keyPathValidation.error.message}`
+													);
+												}
+												await this.verification.upsert(
+													{
+														where: { id: keyPathValidation.data[0] },
+														update: recordValidation.data,
+														create: recordValidation.data
+													},
+													undefined,
+													true
+												);
+												break;
+											}
+										}
+										default:
+											throw new Error(`No upsert handler for ${originalEvent.entityType}`);
+									}
+								} catch (upsertErr) {
+									console.warn(`Failed to upsert merged record for event ${result.id}:`, upsertErr);
+								}
+							}
+						}
+					}
+				}
+
+				if (successIds.length > 0) {
+					await this.$outbox.markSynced(successIds, { syncedAt: new Date() });
+				}
+			} catch (err) {
+				console.error('Sync worker error:', err);
+			} finally {
+				isProcessing = false;
+			}
+		};
+
+		const syncLoop = async (): Promise<void> => {
+			await processBatch().catch((err) => {
+				console.error('Unhandled error in sync loop:', err);
+			});
+			if (isRunning) {
+				intervalId = setTimeout(syncLoop, intervalMs);
+			}
+		};
+
+		return {
+			start(): void {
+				if (isRunning) return;
+				isRunning = true;
+				syncLoop().catch((err) => {
+					console.error('Unhandled error starting sync loop:', err);
+				});
+			},
+
+			stop(): void {
+				isRunning = false;
+				if (intervalId !== null) {
+					clearTimeout(intervalId);
+					intervalId = null;
+				}
+			}
+		};
 	}
 	private async initialize() {
 		this._db = await openDB<PrismaIDBSchema>('prisma-idb', IDB_VERSION, {
@@ -106,6 +780,7 @@ export class PrismaIDBClient {
 				SessionStore.createIndex('tokenIndex', ['token'], { unique: true });
 				db.createObjectStore('Account', { keyPath: ['id'] });
 				db.createObjectStore('Verification', { keyPath: ['id'] });
+				db.createObjectStore('OutboxEvent', { keyPath: ['id'] });
 			}
 		});
 		this.exerciseSplit = new ExerciseSplitIDBClass(this, ['id']);
@@ -134,16 +809,19 @@ export class PrismaIDBClient {
 		this.session = new SessionIDBClass(this, ['id']);
 		this.account = new AccountIDBClass(this, ['id']);
 		this.verification = new VerificationIDBClass(this, ['id']);
+		this.$outbox = new OutboxEventIDBClass(this, ['id']);
 	}
 }
 class BaseIDBModelClass<T extends keyof PrismaIDBSchema> {
 	protected client: PrismaIDBClient;
 	protected keyPath: string[];
+	protected modelName: string;
 	private eventEmitter: EventTarget;
 
-	constructor(client: PrismaIDBClient, keyPath: string[]) {
+	constructor(client: PrismaIDBClient, keyPath: string[], modelName: string) {
 		this.client = client;
 		this.keyPath = keyPath;
+		this.modelName = modelName;
 		this.eventEmitter = new EventTarget();
 	}
 	subscribe(
@@ -157,9 +835,9 @@ class BaseIDBModelClass<T extends keyof PrismaIDBSchema> {
 	) {
 		if (Array.isArray(event)) {
 			event.forEach((event) => this.eventEmitter.addEventListener(event, callback));
-			return;
+		} else {
+			this.eventEmitter.addEventListener(event, callback);
 		}
-		this.eventEmitter.addEventListener(event, callback);
 	}
 	unsubscribe(
 		event: 'create' | 'update' | 'delete' | ('create' | 'update' | 'delete')[],
@@ -176,19 +854,38 @@ class BaseIDBModelClass<T extends keyof PrismaIDBSchema> {
 		}
 		this.eventEmitter.removeEventListener(event, callback);
 	}
-	protected emit(
+	protected async emit(
 		event: 'create' | 'update' | 'delete',
 		keyPath: PrismaIDBSchema[T]['key'],
-		oldKeyPath?: PrismaIDBSchema[T]['key']
+		oldKeyPath?: PrismaIDBSchema[T]['key'],
+		record?: unknown,
+		silent?: boolean
 	) {
+		if (silent) return;
+
 		if (event === 'update') {
 			this.eventEmitter.dispatchEvent(new CustomEvent(event, { detail: { keyPath, oldKeyPath } }));
-			return;
+		} else {
+			this.eventEmitter.dispatchEvent(new CustomEvent(event, { detail: { keyPath } }));
 		}
-		this.eventEmitter.dispatchEvent(new CustomEvent(event, { detail: { keyPath } }));
+
+		if (this.client.shouldTrackModel(this.modelName)) {
+			await this.client.$outbox.create({
+				data: {
+					entityType: this.modelName,
+					entityKeyPath: keyPath as Array<string | number>,
+					operation: event,
+					payload: record ?? keyPath
+				}
+			});
+		}
 	}
 }
 class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'ExerciseSplit');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.ExerciseSplitDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.ExerciseSplitDelegate, object, 'findFirstOrThrow'>
@@ -748,14 +1445,15 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 	}
 	async create<Q extends Prisma.Args<Prisma.ExerciseSplitDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		if (query.data.user) {
 			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
 			if (query.data.user?.create) {
-				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				const record = await this.client.user.create({ data: query.data.user.create }, tx, silent);
 				fk[0] = record.id;
 			}
 			if (query.data.user?.connect) {
@@ -773,7 +1471,8 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 						create: query.data.user.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -799,7 +1498,8 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 							'create'
 						>['data']
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -808,7 +1508,8 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 				IDBUtils.convertToArray(query.data.splitDays.connect).map(async (connectWhere) => {
 					await this.client.exerciseSplitDay.update(
 						{ where: connectWhere, data: { exerciseSplitId: keyPath[0] } },
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -825,7 +1526,8 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 								>,
 								update: { exerciseSplitId: keyPath[0] }
 							},
-							tx
+							tx,
+							silent
 						);
 					}
 				)
@@ -839,7 +1541,8 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 						exerciseSplitId: keyPath[0]
 					}))
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		const data = (await tx.objectStore('ExerciseSplit').get(keyPath))!;
@@ -848,19 +1551,20 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<Prisma.ExerciseSplitDelegate, Q, 'create'>;
 	}
 	async createMany<Q extends Prisma.Args<Prisma.ExerciseSplitDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['ExerciseSplit'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('ExerciseSplit').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -868,7 +1572,8 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 		Q extends Prisma.Args<Prisma.ExerciseSplitDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.ExerciseSplitDelegate, object, 'findMany'> = [];
@@ -876,7 +1581,7 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('ExerciseSplit').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -884,7 +1589,8 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 	}
 	async delete<Q extends Prisma.Args<Prisma.ExerciseSplitDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -898,25 +1604,27 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 		if (relatedExerciseSplitDay.length)
 			throw new Error('Cannot delete record, other records depend on it');
 		await tx.objectStore('ExerciseSplit').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.ExerciseSplitDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.ExerciseSplitDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -1110,7 +1818,7 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 			}
 		}
 		const keyPath = await tx.objectStore('ExerciseSplit').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				await this.client.exerciseSplitDay.updateMany(
@@ -1133,7 +1841,8 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.ExerciseSplitDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -1141,14 +1850,15 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.ExerciseSplitDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -1159,8 +1869,8 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -1218,6 +1928,10 @@ class ExerciseSplitIDBClass extends BaseIDBModelClass<'ExerciseSplit'> {
 	}
 }
 class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'ExerciseSplitDay');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.ExerciseSplitDayDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.ExerciseSplitDayDelegate, object, 'findFirstOrThrow'>
@@ -1806,7 +2520,8 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 	}
 	async create<Q extends Prisma.Args<Prisma.ExerciseSplitDayDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDayDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
@@ -1815,7 +2530,8 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 			if (query.data.exerciseSplit?.create) {
 				const record = await this.client.exerciseSplit.create(
 					{ data: query.data.exerciseSplit.create },
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -1834,7 +2550,8 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 						create: query.data.exerciseSplit.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -1860,7 +2577,8 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 							'create'
 						>['data']
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -1869,7 +2587,8 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 				IDBUtils.convertToArray(query.data.splitDaySessions.connect).map(async (connectWhere) => {
 					await this.client.exerciseSplitDaySession.update(
 						{ where: connectWhere, data: { exerciseSplitDayId: keyPath[0] } },
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -1889,7 +2608,8 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 								>,
 								update: { exerciseSplitDayId: keyPath[0] }
 							},
-							tx
+							tx,
+							silent
 						);
 					}
 				)
@@ -1905,7 +2625,8 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 						})
 					)
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		const data = (await tx.objectStore('ExerciseSplitDay').get(keyPath))!;
@@ -1914,19 +2635,20 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<Prisma.ExerciseSplitDayDelegate, Q, 'create'>;
 	}
 	async createMany<Q extends Prisma.Args<Prisma.ExerciseSplitDayDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDayDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['ExerciseSplitDay'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('ExerciseSplitDay').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -1934,7 +2656,8 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 		Q extends Prisma.Args<Prisma.ExerciseSplitDayDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDayDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.ExerciseSplitDayDelegate, object, 'findMany'> = [];
@@ -1942,7 +2665,7 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('ExerciseSplitDay').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -1950,7 +2673,8 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 	}
 	async delete<Q extends Prisma.Args<Prisma.ExerciseSplitDayDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDayDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -1964,25 +2688,27 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 		if (relatedExerciseSplitDaySession.length)
 			throw new Error('Cannot delete record, other records depend on it');
 		await tx.objectStore('ExerciseSplitDay').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.ExerciseSplitDayDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDayDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.ExerciseSplitDayDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDayDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -2195,7 +2921,7 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 			}
 		}
 		const keyPath = await tx.objectStore('ExerciseSplitDay').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				await this.client.exerciseSplitDaySession.updateMany(
@@ -2218,7 +2944,8 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.ExerciseSplitDayDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDayDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -2226,14 +2953,15 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.ExerciseSplitDayDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDayDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -2244,8 +2972,8 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -2354,6 +3082,10 @@ class ExerciseSplitDayIDBClass extends BaseIDBModelClass<'ExerciseSplitDay'> {
 	}
 }
 class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDaySession'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'ExerciseSplitDaySession');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.ExerciseSplitDaySessionDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.ExerciseSplitDaySessionDelegate, object, 'findFirstOrThrow'>
@@ -2972,7 +3704,8 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 	}
 	async create<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
@@ -2981,7 +3714,8 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 			if (query.data.exerciseSplitDay?.create) {
 				const record = await this.client.exerciseSplitDay.create(
 					{ data: query.data.exerciseSplitDay.create },
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -3000,7 +3734,8 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 						create: query.data.exerciseSplitDay.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -3029,7 +3764,8 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 							exerciseSplitDaySession: { connect: { id: keyPath[0] } }
 						} as Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'create'>['data']
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -3038,7 +3774,8 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 				IDBUtils.convertToArray(query.data.exercises.connect).map(async (connectWhere) => {
 					await this.client.exerciseSplitDaySessionExercise.update(
 						{ where: connectWhere, data: { exerciseSplitDaySessionId: keyPath[0] } },
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -3058,7 +3795,8 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 								>,
 								update: { exerciseSplitDaySessionId: keyPath[0] }
 							},
-							tx
+							tx,
+							silent
 						);
 					}
 				)
@@ -3072,7 +3810,8 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 						exerciseSplitDaySessionId: keyPath[0]
 					}))
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		const data = (await tx.objectStore('ExerciseSplitDaySession').get(keyPath))!;
@@ -3081,7 +3820,7 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<
 			Prisma.ExerciseSplitDaySessionDelegate,
 			Q,
@@ -3090,14 +3829,15 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 	}
 	async createMany<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['ExerciseSplitDaySession'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('ExerciseSplitDaySession').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -3105,7 +3845,8 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.ExerciseSplitDaySessionDelegate, object, 'findMany'> = [];
@@ -3113,7 +3854,7 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('ExerciseSplitDaySession').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -3125,7 +3866,8 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 	}
 	async delete<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -3140,25 +3882,27 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 		if (relatedExerciseSplitDaySessionExercise.length)
 			throw new Error('Cannot delete record, other records depend on it');
 		await tx.objectStore('ExerciseSplitDaySession').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -3366,7 +4110,7 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 			}
 		}
 		const keyPath = await tx.objectStore('ExerciseSplitDaySession').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				await this.client.exerciseSplitDaySessionExercise.updateMany(
@@ -3393,7 +4137,8 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -3401,14 +4146,15 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -3419,8 +4165,8 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -3534,6 +4280,10 @@ class ExerciseSplitDaySessionIDBClass extends BaseIDBModelClass<'ExerciseSplitDa
 	}
 }
 class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'ExerciseSplitDaySessionExercise'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'ExerciseSplitDaySessionExercise');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<
 			Prisma.ExerciseSplitDaySessionExerciseDelegate,
@@ -4420,7 +5170,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 	}
 	async create<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
@@ -4429,7 +5180,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 			if (query.data.exerciseSplitDaySession?.create) {
 				const record = await this.client.exerciseSplitDaySession.create(
 					{ data: query.data.exerciseSplitDaySession.create },
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -4448,7 +5200,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 						create: query.data.exerciseSplitDaySession.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -4477,7 +5230,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 							'create'
 						>['data']
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -4486,7 +5240,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 				IDBUtils.convertToArray(query.data.notes.connect).map(async (connectWhere) => {
 					await this.client.exerciseSplitDaySessionExerciseNote.update(
 						{ where: connectWhere, data: { exerciseId: keyPath[0] } },
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -4502,7 +5257,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 							>,
 							update: { exerciseId: keyPath[0] }
 						},
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -4515,7 +5271,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 						exerciseId: keyPath[0]
 					}))
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		if (query.data?.secondaryMuscleGroups?.create) {
@@ -4527,7 +5284,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 							'create'
 						>['data']
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -4537,7 +5295,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 					async (connectWhere) => {
 						await this.client.exerciseSplitDaySessionExerciseSecondaryMuscleGroup.update(
 							{ where: connectWhere, data: { exerciseId: keyPath[0] } },
-							tx
+							tx,
+							silent
 						);
 					}
 				)
@@ -4558,7 +5317,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 								>,
 								update: { exerciseId: keyPath[0] }
 							},
-							tx
+							tx,
+							silent
 						);
 					}
 				)
@@ -4574,7 +5334,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 						})
 					)
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		const data = (await tx.objectStore('ExerciseSplitDaySessionExercise').get(keyPath))!;
@@ -4583,7 +5344,7 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<
 			Prisma.ExerciseSplitDaySessionExerciseDelegate,
 			Q,
@@ -4594,14 +5355,15 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'createMany'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['ExerciseSplitDaySessionExercise'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('ExerciseSplitDaySessionExercise').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -4609,7 +5371,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<
 		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseDelegate, Q, 'createManyAndReturn'>
 	> {
@@ -4623,7 +5386,7 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('ExerciseSplitDaySessionExercise').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -4635,7 +5398,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 	}
 	async delete<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -4655,27 +5419,29 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 			tx
 		);
 		await tx.objectStore('ExerciseSplitDaySessionExercise').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<
 		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'deleteMany'>
 	>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -5020,7 +5786,7 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 			}
 		}
 		const keyPath = await tx.objectStore('ExerciseSplitDaySessionExercise').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				await this.client.exerciseSplitDaySessionExerciseNote.updateMany(
@@ -5056,7 +5822,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'updateMany'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -5064,14 +5831,15 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -5082,8 +5850,8 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -5210,6 +5978,10 @@ class ExerciseSplitDaySessionExerciseIDBClass extends BaseIDBModelClass<'Exercis
 	}
 }
 class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'ExerciseSplitDaySessionExerciseNote'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'ExerciseSplitDaySessionExerciseNote');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<
 			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
@@ -5708,7 +6480,8 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 	}
 	async create<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
@@ -5717,7 +6490,8 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 			if (query.data.exercise?.create) {
 				const record = await this.client.exerciseSplitDaySessionExercise.create(
 					{ data: query.data.exercise.create },
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -5736,7 +6510,8 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 						create: query.data.exercise.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -5759,7 +6534,7 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<
 			Prisma.ExerciseSplitDaySessionExerciseNoteDelegate,
 			Q,
@@ -5770,14 +6545,15 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'createMany'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['ExerciseSplitDaySessionExerciseNote'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('ExerciseSplitDaySessionExerciseNote').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -5785,7 +6561,8 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<
 		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'createManyAndReturn'>
 	> {
@@ -5799,7 +6576,7 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('ExerciseSplitDaySessionExerciseNote').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -5811,7 +6588,8 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 	}
 	async delete<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -5819,27 +6597,29 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
 		await tx.objectStore('ExerciseSplitDaySessionExerciseNote').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<
 		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'deleteMany'>
 	>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -5937,7 +6717,7 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 			}
 		}
 		const keyPath = await tx.objectStore('ExerciseSplitDaySessionExerciseNote').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				break;
@@ -5959,7 +6739,8 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 		Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'updateMany'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -5967,14 +6748,15 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseNoteDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -5985,8 +6767,8 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -6103,6 +6885,10 @@ class ExerciseSplitDaySessionExerciseNoteIDBClass extends BaseIDBModelClass<'Exe
 	}
 }
 class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseIDBModelClass<'ExerciseSplitDaySessionExerciseSecondaryMuscleGroup'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'ExerciseSplitDaySessionExerciseSecondaryMuscleGroup');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<
 			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
@@ -6704,7 +7490,8 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 		>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<
 		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate, Q, 'create'>
 	> {
@@ -6715,7 +7502,8 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 			if (query.data.exercise?.create) {
 				const record = await this.client.exerciseSplitDaySessionExercise.create(
 					{ data: query.data.exercise.create },
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -6734,7 +7522,8 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 						create: query.data.exercise.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -6761,7 +7550,7 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<
 			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
 			Q,
@@ -6775,7 +7564,8 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 		>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<
 		Prisma.Result<
 			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
@@ -6795,7 +7585,7 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 			const keyPath = await tx
 				.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup')
 				.add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -6806,7 +7596,8 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 		>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<
 		Prisma.Result<
 			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
@@ -6831,7 +7622,7 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 			const keyPath = await tx
 				.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup')
 				.add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -6848,7 +7639,8 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 		>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<
 		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate, Q, 'delete'>
 	> {
@@ -6858,7 +7650,7 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
 		await tx.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<
@@ -6868,7 +7660,8 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 		>
 	>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<
 		Prisma.Result<
 			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
@@ -6881,7 +7674,7 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
@@ -6892,7 +7685,8 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 		>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<
 		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate, Q, 'update'>
 	> {
@@ -6995,7 +7789,7 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 		const keyPath = await tx
 			.objectStore('ExerciseSplitDaySessionExerciseSecondaryMuscleGroup')
 			.put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				break;
@@ -7020,7 +7814,8 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 		>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<
 		Prisma.Result<
 			Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate,
@@ -7034,7 +7829,7 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
@@ -7046,7 +7841,8 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 		>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<
 		Prisma.Result<Prisma.ExerciseSplitDaySessionExerciseSecondaryMuscleGroupDelegate, Q, 'upsert'>
 	> {
@@ -7059,8 +7855,8 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -7156,6 +7952,10 @@ class ExerciseSplitDaySessionExerciseSecondaryMuscleGroupIDBClass extends BaseID
 	}
 }
 class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'MacroTargets');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.MacroTargetsDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.MacroTargetsDelegate, object, 'findFirstOrThrow'>
@@ -7617,14 +8417,15 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 	}
 	async create<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		if (query.data.user) {
 			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
 			if (query.data.user?.create) {
-				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				const record = await this.client.user.create({ data: query.data.user.create }, tx, silent);
 				fk[0] = record.id;
 			}
 			if (query.data.user?.connect) {
@@ -7642,7 +8443,8 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 						create: query.data.user.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -7665,19 +8467,20 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'create'>;
 	}
 	async createMany<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['MacroTargets'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('MacroTargets').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -7685,7 +8488,8 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 		Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.MacroTargetsDelegate, object, 'findMany'> = [];
@@ -7693,7 +8497,7 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('MacroTargets').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -7701,7 +8505,8 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 	}
 	async delete<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -7709,25 +8514,27 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
 		await tx.objectStore('MacroTargets').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -7828,7 +8635,7 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 			}
 		}
 		const keyPath = await tx.objectStore('MacroTargets').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				break;
@@ -7844,7 +8651,8 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -7852,14 +8660,15 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.MacroTargetsDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroTargetsDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -7870,8 +8679,8 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -7980,6 +8789,10 @@ class MacroTargetsIDBClass extends BaseIDBModelClass<'MacroTargets'> {
 	}
 }
 class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'MacroMetrics');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.MacroMetricsDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.MacroMetricsDelegate, object, 'findFirstOrThrow'>
@@ -8436,14 +9249,15 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 	}
 	async create<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		if (query.data.user) {
 			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
 			if (query.data.user?.create) {
-				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				const record = await this.client.user.create({ data: query.data.user.create }, tx, silent);
 				fk[0] = record.id;
 			}
 			if (query.data.user?.connect) {
@@ -8461,7 +9275,8 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 						create: query.data.user.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -8484,19 +9299,20 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'create'>;
 	}
 	async createMany<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['MacroMetrics'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('MacroMetrics').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -8504,7 +9320,8 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 		Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.MacroMetricsDelegate, object, 'findMany'> = [];
@@ -8512,7 +9329,7 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('MacroMetrics').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -8520,7 +9337,8 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 	}
 	async delete<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -8528,25 +9346,27 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
 		await tx.objectStore('MacroMetrics').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -8647,7 +9467,7 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 			}
 		}
 		const keyPath = await tx.objectStore('MacroMetrics').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				break;
@@ -8663,7 +9483,8 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -8671,14 +9492,15 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.MacroMetricsDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroMetricsDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -8689,8 +9511,8 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -8799,6 +9621,10 @@ class MacroMetricsIDBClass extends BaseIDBModelClass<'MacroMetrics'> {
 	}
 }
 class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroActivityTrackingPreferences'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'MacroActivityTrackingPreferences');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<
 			Prisma.MacroActivityTrackingPreferencesDelegate,
@@ -9290,14 +10116,15 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 	}
 	async create<Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		if (query.data.user) {
 			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
 			if (query.data.user?.create) {
-				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				const record = await this.client.user.create({ data: query.data.user.create }, tx, silent);
 				fk[0] = record.id;
 			}
 			if (query.data.user?.connect) {
@@ -9315,7 +10142,8 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 						create: query.data.user.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -9338,7 +10166,7 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<
 			Prisma.MacroActivityTrackingPreferencesDelegate,
 			Q,
@@ -9349,14 +10177,15 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'createMany'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['MacroActivityTrackingPreferences'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('MacroActivityTrackingPreferences').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -9364,7 +10193,8 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<
 		Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'createManyAndReturn'>
 	> {
@@ -9378,7 +10208,7 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('MacroActivityTrackingPreferences').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -9390,7 +10220,8 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 	}
 	async delete<Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -9398,27 +10229,29 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
 		await tx.objectStore('MacroActivityTrackingPreferences').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<
 		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'deleteMany'>
 	>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -9513,7 +10346,7 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 			}
 		}
 		const keyPath = await tx.objectStore('MacroActivityTrackingPreferences').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				break;
@@ -9535,7 +10368,8 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 		Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'updateMany'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -9543,14 +10377,15 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.MacroActivityTrackingPreferencesDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -9561,8 +10396,8 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -9679,6 +10514,10 @@ class MacroActivityTrackingPreferencesIDBClass extends BaseIDBModelClass<'MacroA
 	}
 }
 class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'FoodEntry');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.FoodEntryDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.FoodEntryDelegate, object, 'findFirstOrThrow'>
@@ -10271,7 +11110,8 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 	}
 	async create<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
@@ -10280,7 +11120,8 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 			if (query.data.nutritionData?.create) {
 				const record = await this.client.nutritionData.create(
 					{ data: query.data.nutritionData.create },
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -10299,7 +11140,8 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 						create: query.data.nutritionData.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -10317,7 +11159,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 		if (query.data.user) {
 			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
 			if (query.data.user?.create) {
-				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				const record = await this.client.user.create({ data: query.data.user.create }, tx, silent);
 				fk[0] = record.id;
 			}
 			if (query.data.user?.connect) {
@@ -10335,7 +11177,8 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 						create: query.data.user.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -10358,25 +11201,27 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<Prisma.FoodEntryDelegate, Q, 'create'>;
 	}
 	async createMany<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['FoodEntry'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('FoodEntry').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
 	async createManyAndReturn<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'createManyAndReturn'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.FoodEntryDelegate, object, 'findMany'> = [];
@@ -10384,7 +11229,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('FoodEntry').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -10392,7 +11237,8 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 	}
 	async delete<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -10400,25 +11246,27 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
 		await tx.objectStore('FoodEntry').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -10597,7 +11445,7 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 			}
 		}
 		const keyPath = await tx.objectStore('FoodEntry').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				break;
@@ -10613,7 +11461,8 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -10621,14 +11470,15 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.FoodEntryDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.FoodEntryDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -10639,8 +11489,8 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -10749,6 +11599,10 @@ class FoodEntryIDBClass extends BaseIDBModelClass<'FoodEntry'> {
 	}
 }
 class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'ActivityEntry');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.ActivityEntryDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.ActivityEntryDelegate, object, 'findFirstOrThrow'>
@@ -11198,14 +12052,15 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 	}
 	async create<Q extends Prisma.Args<Prisma.ActivityEntryDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ActivityEntryDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		if (query.data.user) {
 			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
 			if (query.data.user?.create) {
-				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				const record = await this.client.user.create({ data: query.data.user.create }, tx, silent);
 				fk[0] = record.id;
 			}
 			if (query.data.user?.connect) {
@@ -11223,7 +12078,8 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 						create: query.data.user.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -11246,19 +12102,20 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<Prisma.ActivityEntryDelegate, Q, 'create'>;
 	}
 	async createMany<Q extends Prisma.Args<Prisma.ActivityEntryDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ActivityEntryDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['ActivityEntry'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('ActivityEntry').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -11266,7 +12123,8 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 		Q extends Prisma.Args<Prisma.ActivityEntryDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ActivityEntryDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.ActivityEntryDelegate, object, 'findMany'> = [];
@@ -11274,7 +12132,7 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('ActivityEntry').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -11282,7 +12140,8 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 	}
 	async delete<Q extends Prisma.Args<Prisma.ActivityEntryDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ActivityEntryDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -11290,25 +12149,27 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
 		await tx.objectStore('ActivityEntry').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.ActivityEntryDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ActivityEntryDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.ActivityEntryDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ActivityEntryDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -11405,7 +12266,7 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 			}
 		}
 		const keyPath = await tx.objectStore('ActivityEntry').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				break;
@@ -11421,7 +12282,8 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.ActivityEntryDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ActivityEntryDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -11429,14 +12291,15 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.ActivityEntryDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.ActivityEntryDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -11447,8 +12310,8 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -11510,7 +12373,8 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 				const values = records
 					.map((record) => record[field] as boolean)
 					.filter((value) => value !== undefined);
-				(minResult[field as keyof typeof minResult] as boolean) = values.includes(true);
+				(minResult[field as keyof typeof minResult] as boolean) =
+					values.length === 0 ? false : values.includes(false) ? false : true;
 			}
 			result._min = minResult;
 		}
@@ -11546,9 +12410,9 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 				const values = records
 					.map((record) => record[field] as boolean)
 					.filter((value) => value !== undefined);
-				(maxResult[field as keyof typeof maxResult] as boolean) = values.includes(true);
+				(maxResult[field as keyof typeof maxResult] as boolean) =
+					values.length === 0 ? false : values.includes(true);
 			}
-			result._max = maxResult;
 			result._max = maxResult;
 		}
 		if (query?._avg) {
@@ -11574,6 +12438,10 @@ class ActivityEntryIDBClass extends BaseIDBModelClass<'ActivityEntry'> {
 	}
 }
 class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'NutritionData');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.NutritionDataDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.NutritionDataDelegate, object, 'findFirstOrThrow'>
@@ -12272,7 +13140,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 	}
 	async create<Q extends Prisma.Args<Prisma.NutritionDataDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.NutritionDataDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
@@ -12290,7 +13159,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 							'create'
 						>['data']
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -12299,7 +13169,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 				IDBUtils.convertToArray(query.data.foodEntries.connect).map(async (connectWhere) => {
 					await this.client.foodEntry.update(
 						{ where: connectWhere, data: { nutritionDataId: keyPath[0] } },
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -12316,7 +13187,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 								>,
 								update: { nutritionDataId: keyPath[0] }
 							},
-							tx
+							tx,
+							silent
 						);
 					}
 				)
@@ -12332,7 +13204,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 						})
 					)
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		const data = (await tx.objectStore('NutritionData').get(keyPath))!;
@@ -12341,19 +13214,20 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<Prisma.NutritionDataDelegate, Q, 'create'>;
 	}
 	async createMany<Q extends Prisma.Args<Prisma.NutritionDataDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.NutritionDataDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['NutritionData'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('NutritionData').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -12361,7 +13235,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		Q extends Prisma.Args<Prisma.NutritionDataDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.NutritionDataDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.NutritionDataDelegate, object, 'findMany'> = [];
@@ -12369,7 +13244,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('NutritionData').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -12377,7 +13252,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 	}
 	async delete<Q extends Prisma.Args<Prisma.NutritionDataDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.NutritionDataDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -12392,25 +13268,27 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			tx
 		);
 		await tx.objectStore('NutritionData').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.NutritionDataDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.NutritionDataDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.NutritionDataDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.NutritionDataDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -12602,7 +13480,7 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 			}
 		}
 		const keyPath = await tx.objectStore('NutritionData').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				await this.client.foodEntry.updateMany(
@@ -12625,7 +13503,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.NutritionDataDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.NutritionDataDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -12633,14 +13512,15 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.NutritionDataDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.NutritionDataDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -12651,8 +13531,8 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -12821,6 +13701,10 @@ class NutritionDataIDBClass extends BaseIDBModelClass<'NutritionData'> {
 	}
 }
 class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAnswers'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'GettingStartedAnswers');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.GettingStartedAnswersDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.GettingStartedAnswersDelegate, object, 'findFirstOrThrow'>
@@ -13252,14 +14136,15 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 	}
 	async create<Q extends Prisma.Args<Prisma.GettingStartedAnswersDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.GettingStartedAnswersDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		if (query.data.user) {
 			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
 			if (query.data.user?.create) {
-				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				const record = await this.client.user.create({ data: query.data.user.create }, tx, silent);
 				fk[0] = record.id;
 			}
 			if (query.data.user?.connect) {
@@ -13277,7 +14162,8 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 						create: query.data.user.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -13300,19 +14186,20 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<Prisma.GettingStartedAnswersDelegate, Q, 'create'>;
 	}
 	async createMany<Q extends Prisma.Args<Prisma.GettingStartedAnswersDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.GettingStartedAnswersDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['GettingStartedAnswers'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('GettingStartedAnswers').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -13320,7 +14207,8 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 		Q extends Prisma.Args<Prisma.GettingStartedAnswersDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.GettingStartedAnswersDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.GettingStartedAnswersDelegate, object, 'findMany'> = [];
@@ -13328,7 +14216,7 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('GettingStartedAnswers').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -13336,7 +14224,8 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 	}
 	async delete<Q extends Prisma.Args<Prisma.GettingStartedAnswersDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.GettingStartedAnswersDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -13344,25 +14233,27 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
 		await tx.objectStore('GettingStartedAnswers').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.GettingStartedAnswersDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.GettingStartedAnswersDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.GettingStartedAnswersDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.GettingStartedAnswersDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -13451,7 +14342,7 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 			}
 		}
 		const keyPath = await tx.objectStore('GettingStartedAnswers').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				break;
@@ -13467,7 +14358,8 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.GettingStartedAnswersDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.GettingStartedAnswersDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -13475,14 +14367,15 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.GettingStartedAnswersDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.GettingStartedAnswersDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -13493,8 +14386,8 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -13560,6 +14453,10 @@ class GettingStartedAnswersIDBClass extends BaseIDBModelClass<'GettingStartedAns
 	}
 }
 class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'DashboardItem');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.DashboardItemDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.DashboardItemDelegate, object, 'findFirstOrThrow'>
@@ -13983,14 +14880,15 @@ class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 	}
 	async create<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		if (query.data.user) {
 			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
 			if (query.data.user?.create) {
-				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				const record = await this.client.user.create({ data: query.data.user.create }, tx, silent);
 				fk[0] = record.id;
 			}
 			if (query.data.user?.connect) {
@@ -14008,7 +14906,8 @@ class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 						create: query.data.user.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -14031,19 +14930,20 @@ class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<Prisma.DashboardItemDelegate, Q, 'create'>;
 	}
 	async createMany<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['DashboardItem'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('DashboardItem').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -14051,7 +14951,8 @@ class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 		Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.DashboardItemDelegate, object, 'findMany'> = [];
@@ -14059,7 +14960,7 @@ class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('DashboardItem').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -14067,7 +14968,8 @@ class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 	}
 	async delete<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -14075,25 +14977,27 @@ class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
 		await tx.objectStore('DashboardItem').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -14186,7 +15090,7 @@ class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 			}
 		}
 		const keyPath = await tx.objectStore('DashboardItem').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				break;
@@ -14202,7 +15106,8 @@ class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -14210,14 +15115,15 @@ class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.DashboardItemDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.DashboardItemDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -14228,8 +15134,8 @@ class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -14303,6 +15209,10 @@ class DashboardItemIDBClass extends BaseIDBModelClass<'DashboardItem'> {
 	}
 }
 class UserIDBClass extends BaseIDBModelClass<'User'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'User');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.UserDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.UserDelegate, object, 'findFirstOrThrow'>
@@ -16114,7 +17024,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 	}
 	async create<Q extends Prisma.Args<Prisma.UserDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.UserDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
@@ -16129,7 +17040,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 							'create'
 						>['data']
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -16138,7 +17050,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				IDBUtils.convertToArray(query.data.sessions.connect).map(async (connectWhere) => {
 					await this.client.session.update(
 						{ where: connectWhere, data: { userId: keyPath[0] } },
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -16155,7 +17068,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 								>,
 								update: { userId: keyPath[0] }
 							},
-							tx
+							tx,
+							silent
 						);
 					}
 				)
@@ -16169,7 +17083,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						userId: keyPath[0]
 					}))
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		if (query.data?.accounts?.create) {
@@ -16181,7 +17096,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 							'create'
 						>['data']
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -16190,7 +17106,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				IDBUtils.convertToArray(query.data.accounts.connect).map(async (connectWhere) => {
 					await this.client.account.update(
 						{ where: connectWhere, data: { userId: keyPath[0] } },
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -16207,7 +17124,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 								>,
 								update: { userId: keyPath[0] }
 							},
-							tx
+							tx,
+							silent
 						);
 					}
 				)
@@ -16221,7 +17139,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						userId: keyPath[0]
 					}))
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		if (query.data?.exerciseSplits?.create) {
@@ -16233,7 +17152,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 							'create'
 						>['data']
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -16242,7 +17162,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				IDBUtils.convertToArray(query.data.exerciseSplits.connect).map(async (connectWhere) => {
 					await this.client.exerciseSplit.update(
 						{ where: connectWhere, data: { userId: keyPath[0] } },
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -16259,7 +17180,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 								>,
 								update: { userId: keyPath[0] }
 							},
-							tx
+							tx,
+							silent
 						);
 					}
 				)
@@ -16275,7 +17197,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						})
 					)
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		if (query.data.gettingStartedAnswers?.create) {
@@ -16286,13 +17209,15 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						'create'
 					>['data']
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		if (query.data.gettingStartedAnswers?.connect) {
 			await this.client.gettingStartedAnswers.update(
 				{ where: query.data.gettingStartedAnswers.connect, data: { userId: keyPath[0] } },
-				tx
+				tx,
+				silent
 			);
 		}
 		if (query.data.gettingStartedAnswers?.connectOrCreate) {
@@ -16306,7 +17231,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						} as Prisma.Args<Prisma.GettingStartedAnswersDelegate, 'create'>['data'],
 						update: { userId: keyPath[0] }
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -16319,7 +17245,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 							'create'
 						>['data']
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -16328,7 +17255,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				IDBUtils.convertToArray(query.data.dashboardItems.connect).map(async (connectWhere) => {
 					await this.client.dashboardItem.update(
 						{ where: connectWhere, data: { userId: keyPath[0] } },
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -16345,7 +17273,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 								>,
 								update: { userId: keyPath[0] }
 							},
-							tx
+							tx,
+							silent
 						);
 					}
 				)
@@ -16361,7 +17290,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						})
 					)
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		if (query.data?.metrics?.create) {
@@ -16373,7 +17303,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 							'create'
 						>['data']
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -16382,7 +17313,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				IDBUtils.convertToArray(query.data.metrics.connect).map(async (connectWhere) => {
 					await this.client.macroMetrics.update(
 						{ where: connectWhere, data: { userId: keyPath[0] } },
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -16398,7 +17330,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 							>,
 							update: { userId: keyPath[0] }
 						},
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -16411,7 +17344,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						userId: keyPath[0]
 					}))
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		if (query.data.activityTrackingPreferences?.create) {
@@ -16422,13 +17356,15 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						userId: keyPath[0]
 					} as Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'create'>['data']
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		if (query.data.activityTrackingPreferences?.connect) {
 			await this.client.macroActivityTrackingPreferences.update(
 				{ where: query.data.activityTrackingPreferences.connect, data: { userId: keyPath[0] } },
-				tx
+				tx,
+				silent
 			);
 		}
 		if (query.data.activityTrackingPreferences?.connectOrCreate) {
@@ -16442,7 +17378,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						} as Prisma.Args<Prisma.MacroActivityTrackingPreferencesDelegate, 'create'>['data'],
 						update: { userId: keyPath[0] }
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -16454,13 +17391,15 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						'create'
 					>['data']
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		if (query.data.macroTargets?.connect) {
 			await this.client.macroTargets.update(
 				{ where: query.data.macroTargets.connect, data: { userId: keyPath[0] } },
-				tx
+				tx,
+				silent
 			);
 		}
 		if (query.data.macroTargets?.connectOrCreate) {
@@ -16474,7 +17413,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						} as Prisma.Args<Prisma.MacroTargetsDelegate, 'create'>['data'],
 						update: { userId: keyPath[0] }
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -16490,7 +17430,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 							'create'
 						>['data']
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -16499,7 +17440,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				IDBUtils.convertToArray(query.data.foodEntries.connect).map(async (connectWhere) => {
 					await this.client.foodEntry.update(
 						{ where: connectWhere, data: { userId: keyPath[0] } },
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -16516,7 +17458,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 								>,
 								update: { userId: keyPath[0] }
 							},
-							tx
+							tx,
+							silent
 						);
 					}
 				)
@@ -16532,7 +17475,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						})
 					)
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		if (query.data?.activityEntries?.create) {
@@ -16544,7 +17488,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 							'create'
 						>['data']
 					},
-					tx
+					tx,
+					silent
 				);
 			}
 		}
@@ -16553,7 +17498,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				IDBUtils.convertToArray(query.data.activityEntries.connect).map(async (connectWhere) => {
 					await this.client.activityEntry.update(
 						{ where: connectWhere, data: { userId: keyPath[0] } },
-						tx
+						tx,
+						silent
 					);
 				})
 			);
@@ -16570,7 +17516,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 								>,
 								update: { userId: keyPath[0] }
 							},
-							tx
+							tx,
+							silent
 						);
 					}
 				)
@@ -16586,7 +17533,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 						})
 					)
 				},
-				tx
+				tx,
+				silent
 			);
 		}
 		const data = (await tx.objectStore('User').get(keyPath))!;
@@ -16595,25 +17543,27 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<Prisma.UserDelegate, Q, 'create'>;
 	}
 	async createMany<Q extends Prisma.Args<Prisma.UserDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.UserDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['User'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('User').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
 	async createManyAndReturn<Q extends Prisma.Args<Prisma.UserDelegate, 'createManyAndReturn'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.UserDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.UserDelegate, object, 'findMany'> = [];
@@ -16621,7 +17571,7 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('User').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -16629,7 +17579,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 	}
 	async delete<Q extends Prisma.Args<Prisma.UserDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.UserDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -16698,25 +17649,27 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			tx
 		);
 		await tx.objectStore('User').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.UserDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.UserDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.UserDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.UserDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -17730,7 +18683,7 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 			}
 		}
 		const keyPath = await tx.objectStore('User').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				await this.client.exerciseSplit.updateMany(
@@ -17816,7 +18769,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.UserDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.UserDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -17824,14 +18778,15 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.UserDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.UserDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -17842,8 +18797,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -17897,7 +18852,8 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				const values = records
 					.map((record) => record[field] as boolean)
 					.filter((value) => value !== undefined);
-				(minResult[field as keyof typeof minResult] as boolean) = values.includes(true);
+				(minResult[field as keyof typeof minResult] as boolean) =
+					values.length === 0 ? false : values.includes(false) ? false : true;
 			}
 			result._min = minResult;
 		}
@@ -17925,15 +18881,19 @@ class UserIDBClass extends BaseIDBModelClass<'User'> {
 				const values = records
 					.map((record) => record[field] as boolean)
 					.filter((value) => value !== undefined);
-				(maxResult[field as keyof typeof maxResult] as boolean) = values.includes(true);
+				(maxResult[field as keyof typeof maxResult] as boolean) =
+					values.length === 0 ? false : values.includes(true);
 			}
-			result._max = maxResult;
 			result._max = maxResult;
 		}
 		return result as unknown as Prisma.Result<Prisma.UserDelegate, Q, 'aggregate'>;
 	}
 }
 class SessionIDBClass extends BaseIDBModelClass<'Session'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'Session');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.SessionDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.SessionDelegate, object, 'findFirstOrThrow'>
@@ -18381,14 +19341,15 @@ class SessionIDBClass extends BaseIDBModelClass<'Session'> {
 	}
 	async create<Q extends Prisma.Args<Prisma.SessionDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.SessionDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		if (query.data.user) {
 			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
 			if (query.data.user?.create) {
-				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				const record = await this.client.user.create({ data: query.data.user.create }, tx, silent);
 				fk[0] = record.id;
 			}
 			if (query.data.user?.connect) {
@@ -18406,7 +19367,8 @@ class SessionIDBClass extends BaseIDBModelClass<'Session'> {
 						create: query.data.user.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -18429,25 +19391,27 @@ class SessionIDBClass extends BaseIDBModelClass<'Session'> {
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<Prisma.SessionDelegate, Q, 'create'>;
 	}
 	async createMany<Q extends Prisma.Args<Prisma.SessionDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.SessionDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['Session'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('Session').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
 	async createManyAndReturn<Q extends Prisma.Args<Prisma.SessionDelegate, 'createManyAndReturn'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.SessionDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.SessionDelegate, object, 'findMany'> = [];
@@ -18455,7 +19419,7 @@ class SessionIDBClass extends BaseIDBModelClass<'Session'> {
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('Session').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -18463,7 +19427,8 @@ class SessionIDBClass extends BaseIDBModelClass<'Session'> {
 	}
 	async delete<Q extends Prisma.Args<Prisma.SessionDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.SessionDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -18471,25 +19436,27 @@ class SessionIDBClass extends BaseIDBModelClass<'Session'> {
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
 		await tx.objectStore('Session').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.SessionDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.SessionDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.SessionDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.SessionDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -18578,7 +19545,7 @@ class SessionIDBClass extends BaseIDBModelClass<'Session'> {
 			}
 		}
 		const keyPath = await tx.objectStore('Session').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				break;
@@ -18594,7 +19561,8 @@ class SessionIDBClass extends BaseIDBModelClass<'Session'> {
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.SessionDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.SessionDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -18602,14 +19570,15 @@ class SessionIDBClass extends BaseIDBModelClass<'Session'> {
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.SessionDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.SessionDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -18620,8 +19589,8 @@ class SessionIDBClass extends BaseIDBModelClass<'Session'> {
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -18695,6 +19664,10 @@ class SessionIDBClass extends BaseIDBModelClass<'Session'> {
 	}
 }
 class AccountIDBClass extends BaseIDBModelClass<'Account'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'Account');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.AccountDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.AccountDelegate, object, 'findFirstOrThrow'>
@@ -19188,14 +20161,15 @@ class AccountIDBClass extends BaseIDBModelClass<'Account'> {
 	}
 	async create<Q extends Prisma.Args<Prisma.AccountDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.AccountDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		if (query.data.user) {
 			const fk: Partial<PrismaIDBSchema['User']['key']> = [];
 			if (query.data.user?.create) {
-				const record = await this.client.user.create({ data: query.data.user.create }, tx);
+				const record = await this.client.user.create({ data: query.data.user.create }, tx, silent);
 				fk[0] = record.id;
 			}
 			if (query.data.user?.connect) {
@@ -19213,7 +20187,8 @@ class AccountIDBClass extends BaseIDBModelClass<'Account'> {
 						create: query.data.user.connectOrCreate.create,
 						update: {}
 					},
-					tx
+					tx,
+					silent
 				);
 				fk[0] = record.id;
 			}
@@ -19236,25 +20211,27 @@ class AccountIDBClass extends BaseIDBModelClass<'Account'> {
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<Prisma.AccountDelegate, Q, 'create'>;
 	}
 	async createMany<Q extends Prisma.Args<Prisma.AccountDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.AccountDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['Account'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('Account').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
 	async createManyAndReturn<Q extends Prisma.Args<Prisma.AccountDelegate, 'createManyAndReturn'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.AccountDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.AccountDelegate, object, 'findMany'> = [];
@@ -19262,7 +20239,7 @@ class AccountIDBClass extends BaseIDBModelClass<'Account'> {
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('Account').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -19270,7 +20247,8 @@ class AccountIDBClass extends BaseIDBModelClass<'Account'> {
 	}
 	async delete<Q extends Prisma.Args<Prisma.AccountDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.AccountDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -19278,25 +20256,27 @@ class AccountIDBClass extends BaseIDBModelClass<'Account'> {
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
 		await tx.objectStore('Account').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.AccountDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.AccountDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.AccountDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.AccountDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -19400,7 +20380,7 @@ class AccountIDBClass extends BaseIDBModelClass<'Account'> {
 			}
 		}
 		const keyPath = await tx.objectStore('Account').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				break;
@@ -19416,7 +20396,8 @@ class AccountIDBClass extends BaseIDBModelClass<'Account'> {
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.AccountDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.AccountDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -19424,14 +20405,15 @@ class AccountIDBClass extends BaseIDBModelClass<'Account'> {
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.AccountDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.AccountDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -19442,8 +20424,8 @@ class AccountIDBClass extends BaseIDBModelClass<'Account'> {
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow(
 			{ where: { id: record.id }, select: query.select, include: query.include },
 			tx
@@ -19547,6 +20529,10 @@ class AccountIDBClass extends BaseIDBModelClass<'Account'> {
 	}
 }
 class VerificationIDBClass extends BaseIDBModelClass<'Verification'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'Verification');
+	}
+
 	private async _applyWhereClause<
 		W extends Prisma.Args<Prisma.VerificationDelegate, 'findFirstOrThrow'>['where'],
 		R extends Prisma.Result<Prisma.VerificationDelegate, object, 'findFirstOrThrow'>
@@ -19877,7 +20863,8 @@ class VerificationIDBClass extends BaseIDBModelClass<'Verification'> {
 	}
 	async create<Q extends Prisma.Args<Prisma.VerificationDelegate, 'create'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.VerificationDelegate, Q, 'create'>> {
 		const storesNeeded = this._getNeededStoresForCreate(query.data);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
@@ -19889,19 +20876,20 @@ class VerificationIDBClass extends BaseIDBModelClass<'Verification'> {
 			query.select
 		)[0];
 		this._preprocessListFields([recordsWithRelations]);
-		this.emit('create', keyPath);
+		await this.emit('create', keyPath, undefined, data, silent);
 		return recordsWithRelations as Prisma.Result<Prisma.VerificationDelegate, Q, 'create'>;
 	}
 	async createMany<Q extends Prisma.Args<Prisma.VerificationDelegate, 'createMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.VerificationDelegate, Q, 'createMany'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		tx = tx ?? this.client._db.transaction(['Verification'], 'readwrite');
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('Verification').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 		}
 		return { count: createManyData.length };
 	}
@@ -19909,7 +20897,8 @@ class VerificationIDBClass extends BaseIDBModelClass<'Verification'> {
 		Q extends Prisma.Args<Prisma.VerificationDelegate, 'createManyAndReturn'>
 	>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.VerificationDelegate, Q, 'createManyAndReturn'>> {
 		const createManyData = IDBUtils.convertToArray(query.data);
 		const records: Prisma.Result<Prisma.VerificationDelegate, object, 'findMany'> = [];
@@ -19917,7 +20906,7 @@ class VerificationIDBClass extends BaseIDBModelClass<'Verification'> {
 		for (const createData of createManyData) {
 			const record = this._removeNestedCreateData(await this._fillDefaults(createData, tx));
 			const keyPath = await tx.objectStore('Verification').add(record);
-			this.emit('create', keyPath);
+			await this.emit('create', keyPath, undefined, record, silent);
 			records.push(this._applySelectClause([record], query.select)[0]);
 		}
 		this._preprocessListFields(records);
@@ -19925,7 +20914,8 @@ class VerificationIDBClass extends BaseIDBModelClass<'Verification'> {
 	}
 	async delete<Q extends Prisma.Args<Prisma.VerificationDelegate, 'delete'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.VerificationDelegate, Q, 'delete'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
@@ -19933,25 +20923,27 @@ class VerificationIDBClass extends BaseIDBModelClass<'Verification'> {
 		const record = await this.findUnique(query, tx);
 		if (!record) throw new Error('Record not found');
 		await tx.objectStore('Verification').delete([record.id]);
-		this.emit('delete', [record.id]);
+		await this.emit('delete', [record.id], undefined, record, silent);
 		return record;
 	}
 	async deleteMany<Q extends Prisma.Args<Prisma.VerificationDelegate, 'deleteMany'>>(
 		query?: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.VerificationDelegate, Q, 'deleteMany'>> {
 		const storesNeeded = this._getNeededStoresForFind(query);
 		this._getNeededStoresForNestedDelete(storesNeeded);
 		tx = tx ?? this.client._db.transaction(Array.from(storesNeeded), 'readwrite');
 		const records = await this.findMany(query, tx);
 		for (const record of records) {
-			await this.delete({ where: { id: record.id } }, tx);
+			await this.delete({ where: { id: record.id } }, tx, silent);
 		}
 		return { count: records.length };
 	}
 	async update<Q extends Prisma.Args<Prisma.VerificationDelegate, 'update'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.VerificationDelegate, Q, 'update'>> {
 		tx =
 			tx ??
@@ -19981,7 +20973,7 @@ class VerificationIDBClass extends BaseIDBModelClass<'Verification'> {
 			}
 		}
 		const keyPath = await tx.objectStore('Verification').put(record);
-		this.emit('update', keyPath, startKeyPath);
+		await this.emit('update', keyPath, startKeyPath, record, silent);
 		for (let i = 0; i < startKeyPath.length; i++) {
 			if (startKeyPath[i] !== endKeyPath[i]) {
 				break;
@@ -19997,7 +20989,8 @@ class VerificationIDBClass extends BaseIDBModelClass<'Verification'> {
 	}
 	async updateMany<Q extends Prisma.Args<Prisma.VerificationDelegate, 'updateMany'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.VerificationDelegate, Q, 'updateMany'>> {
 		tx =
 			tx ??
@@ -20005,14 +20998,15 @@ class VerificationIDBClass extends BaseIDBModelClass<'Verification'> {
 		const records = await this.findMany({ where: query.where }, tx);
 		await Promise.all(
 			records.map(async (record) => {
-				await this.update({ where: { id: record.id }, data: query.data }, tx);
+				await this.update({ where: { id: record.id }, data: query.data }, tx, silent);
 			})
 		);
 		return { count: records.length };
 	}
 	async upsert<Q extends Prisma.Args<Prisma.VerificationDelegate, 'upsert'>>(
 		query: Q,
-		tx?: IDBUtils.ReadwriteTransactionType
+		tx?: IDBUtils.ReadwriteTransactionType,
+		silent?: boolean
 	): Promise<Prisma.Result<Prisma.VerificationDelegate, Q, 'upsert'>> {
 		const neededStores = this._getNeededStoresForUpdate({
 			...query,
@@ -20023,8 +21017,8 @@ class VerificationIDBClass extends BaseIDBModelClass<'Verification'> {
 		});
 		tx = tx ?? this.client._db.transaction(Array.from(neededStores), 'readwrite');
 		let record = await this.findUnique({ where: query.where }, tx);
-		if (!record) record = await this.create({ data: query.create }, tx);
-		else record = await this.update({ where: query.where, data: query.update }, tx);
+		if (!record) record = await this.create({ data: query.create }, tx, silent);
+		else record = await this.update({ where: query.where, data: query.update }, tx, silent);
 		record = await this.findUniqueOrThrow({ where: { id: record.id }, select: query.select }, tx);
 		return record as Prisma.Result<Prisma.VerificationDelegate, Q, 'upsert'>;
 	}
@@ -20092,5 +21086,120 @@ class VerificationIDBClass extends BaseIDBModelClass<'Verification'> {
 			result._max = maxResult;
 		}
 		return result as unknown as Prisma.Result<Prisma.VerificationDelegate, Q, 'aggregate'>;
+	}
+}
+class OutboxEventIDBClass extends BaseIDBModelClass<'OutboxEvent'> {
+	constructor(client: PrismaIDBClient, keyPath: string[]) {
+		super(client, keyPath, 'OutboxEvent');
+	}
+
+	async create(query: {
+		data: Pick<OutboxEventRecord, 'entityKeyPath' | 'entityType' | 'operation' | 'payload'>;
+	}): Promise<OutboxEventRecord> {
+		const tx = this.client._db.transaction('OutboxEvent', 'readwrite');
+		const store = tx.objectStore('OutboxEvent');
+
+		const event: OutboxEventRecord = {
+			id: crypto.randomUUID(),
+			createdAt: new Date(),
+			synced: false,
+			syncedAt: null,
+			tries: 0,
+			lastError: null,
+			...query.data
+		};
+
+		await store.add(event);
+		await tx.done;
+
+		return event;
+	}
+
+	async getNextBatch(options?: { limit?: number }): Promise<OutboxEventRecord[]> {
+		const limit = options?.limit ?? 20;
+		const tx = this.client._db.transaction('OutboxEvent', 'readonly');
+		const store = tx.objectStore('OutboxEvent');
+
+		// Get all unsynced events, ordered by createdAt
+		const allEvents = await store.getAll();
+		const unsynced = allEvents
+			.filter((e) => !e.synced)
+			.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+		return unsynced.slice(0, limit);
+	}
+
+	async markSynced(eventIds: string[], meta?: { syncedAt?: Date }): Promise<void> {
+		const syncedAt = meta?.syncedAt ?? new Date();
+		const tx = this.client._db.transaction('OutboxEvent', 'readwrite');
+		const store = tx.objectStore('OutboxEvent');
+
+		for (const id of eventIds) {
+			const event = await store.get([id]);
+			if (event) {
+				await store.put({
+					...event,
+					synced: true,
+					syncedAt
+				});
+			}
+		}
+
+		await tx.done;
+	}
+
+	async markFailed(eventId: string, error: string): Promise<void> {
+		const tx = this.client._db.transaction('OutboxEvent', 'readwrite');
+		const store = tx.objectStore('OutboxEvent');
+
+		const event = await store.get([eventId]);
+		if (event) {
+			await store.put({
+				...event,
+				tries: (event.tries ?? 0) + 1,
+				lastError: error
+			});
+		}
+
+		await tx.done;
+	}
+
+	async stats(): Promise<{ unsynced: number; failed: number; lastError?: string }> {
+		const tx = this.client._db.transaction('OutboxEvent', 'readonly');
+		const store = tx.objectStore('OutboxEvent');
+		const allEvents = await store.getAll();
+
+		const unsynced = allEvents.filter((e) => !e.synced).length;
+		const failed = allEvents.filter(
+			(e) => e.lastError !== null && e.lastError !== undefined
+		).length;
+		const lastError = allEvents
+			.filter((e) => e.lastError)
+			.sort(
+				(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+			)[0]?.lastError;
+
+		return { unsynced, failed, lastError: lastError ?? undefined };
+	}
+
+	async clearSynced(options?: { olderThanDays?: number }): Promise<number> {
+		const olderThanDays = options?.olderThanDays ?? 7;
+		const cutoffDate = new Date();
+		cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
+
+		const tx = this.client._db.transaction('OutboxEvent', 'readwrite');
+		const store = tx.objectStore('OutboxEvent');
+		const allEvents = await store.getAll();
+
+		let deletedCount = 0;
+		for (const event of allEvents) {
+			if (event.synced && new Date(event.createdAt) < cutoffDate) {
+				await store.delete([event.id]);
+				deletedCount++;
+			}
+		}
+
+		await tx.done;
+		return deletedCount;
 	}
 }

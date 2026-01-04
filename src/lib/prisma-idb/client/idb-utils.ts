@@ -1,35 +1,35 @@
-import type { Prisma } from '$lib/server/generated/prisma/client';
 import type { IDBPTransaction, StoreNames } from 'idb';
 import type { PrismaIDBSchema } from './idb-interface';
+import type { Prisma } from '../../server/generated/prisma/client';
 
 export function convertToArray<T>(arg: T | T[]): T[] {
 	return Array.isArray(arg) ? arg : [arg];
 }
-
 export type ReadwriteTransactionType = IDBPTransaction<
 	PrismaIDBSchema,
 	StoreNames<PrismaIDBSchema>[],
 	'readwrite'
 >;
-
 export type ReadonlyTransactionType = IDBPTransaction<
 	PrismaIDBSchema,
 	StoreNames<PrismaIDBSchema>[],
 	'readonly'
 >;
-
 export type TransactionType = ReadonlyTransactionType | ReadwriteTransactionType;
 
 export const LogicalParams = ['AND', 'OR', 'NOT'] as const;
 
 export function intersectArraysByNestedKey<T>(arrays: T[][], keyPath: string[]): T[] {
-	return arrays.reduce((acc, array) =>
-		acc.filter((item) =>
-			array.some((el) => keyPath.every((key) => el[key as keyof T] === item[key as keyof T]))
-		)
+	const safeArrays = arrays ?? [];
+	if (safeArrays.length === 0) return [];
+	return safeArrays.reduce(
+		(acc, array) =>
+			acc.filter((item) =>
+				array.some((el) => keyPath.every((key) => el[key as keyof T] === item[key as keyof T]))
+			),
+		safeArrays[0] ?? []
 	);
 }
-
 export function removeDuplicatesByKeyPath<T>(arrays: T[][], keyPath: string[]): T[] {
 	const seen = new Set<string>();
 	return arrays
@@ -41,7 +41,6 @@ export function removeDuplicatesByKeyPath<T>(arrays: T[][], keyPath: string[]): 
 			return true;
 		});
 }
-
 export async function applyLogicalFilters<
 	T,
 	R extends Prisma.Result<T, object, 'findFirstOrThrow'>,
@@ -91,7 +90,6 @@ export async function applyLogicalFilters<
 	}
 	return records;
 }
-
 export function whereStringFilter<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
@@ -193,7 +191,6 @@ export function whereStringFilter<T, R extends Prisma.Result<T, object, 'findFir
 	}
 	return true;
 }
-
 export function whereNumberFilter<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
@@ -253,7 +250,6 @@ export function whereNumberFilter<T, R extends Prisma.Result<T, object, 'findFir
 	}
 	return true;
 }
-
 export function whereBoolFilter<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
@@ -287,7 +283,6 @@ export function whereBoolFilter<T, R extends Prisma.Result<T, object, 'findFirst
 	}
 	return true;
 }
-
 export function whereDateTimeFilter<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
@@ -351,7 +346,6 @@ export function whereDateTimeFilter<T, R extends Prisma.Result<T, object, 'findF
 	}
 	return true;
 }
-
 export function handleStringUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
@@ -361,7 +355,7 @@ export function handleStringUpdateField<T, R extends Prisma.Result<T, object, 'f
 		| Prisma.StringFieldUpdateOperationsInput
 		| null
 		| Prisma.NullableStringFieldUpdateOperationsInput
-) {
+): void {
 	if (stringUpdate === undefined) return;
 	if (typeof stringUpdate === 'string' || stringUpdate === null) {
 		(record[fieldName] as string | null) = stringUpdate;
@@ -369,7 +363,6 @@ export function handleStringUpdateField<T, R extends Prisma.Result<T, object, 'f
 		(record[fieldName] as string | null) = stringUpdate.set;
 	}
 }
-
 export function handleBooleanUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
@@ -379,7 +372,7 @@ export function handleBooleanUpdateField<T, R extends Prisma.Result<T, object, '
 		| Prisma.BoolFieldUpdateOperationsInput
 		| null
 		| Prisma.NullableBoolFieldUpdateOperationsInput
-) {
+): void {
 	if (booleanUpdate === undefined) return;
 	if (typeof booleanUpdate === 'boolean' || booleanUpdate === null) {
 		(record[fieldName] as boolean | null) = booleanUpdate;
@@ -387,7 +380,6 @@ export function handleBooleanUpdateField<T, R extends Prisma.Result<T, object, '
 		(record[fieldName] as boolean | null) = booleanUpdate.set;
 	}
 }
-
 export function handleDateTimeUpdateField<
 	T,
 	R extends Prisma.Result<T, object, 'findFirstOrThrow'>
@@ -401,7 +393,7 @@ export function handleDateTimeUpdateField<
 		| Prisma.DateTimeFieldUpdateOperationsInput
 		| null
 		| Prisma.NullableDateTimeFieldUpdateOperationsInput
-) {
+): void {
 	if (dateTimeUpdate === undefined) return;
 	if (
 		typeof dateTimeUpdate === 'string' ||
@@ -414,7 +406,6 @@ export function handleDateTimeUpdateField<
 			dateTimeUpdate.set === null ? null : new Date(dateTimeUpdate.set);
 	}
 }
-
 export function handleIntUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
@@ -424,7 +415,7 @@ export function handleIntUpdateField<T, R extends Prisma.Result<T, object, 'find
 		| Prisma.IntFieldUpdateOperationsInput
 		| null
 		| Prisma.NullableIntFieldUpdateOperationsInput
-) {
+): void {
 	if (intUpdate === undefined) return;
 	if (typeof intUpdate === 'number' || intUpdate === null) {
 		(record[fieldName] as number | null) = intUpdate;
@@ -440,7 +431,6 @@ export function handleIntUpdateField<T, R extends Prisma.Result<T, object, 'find
 		(record[fieldName] as number) /= intUpdate.divide;
 	}
 }
-
 export function handleFloatUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
@@ -450,7 +440,7 @@ export function handleFloatUpdateField<T, R extends Prisma.Result<T, object, 'fi
 		| Prisma.FloatFieldUpdateOperationsInput
 		| null
 		| Prisma.NullableFloatFieldUpdateOperationsInput
-) {
+): void {
 	if (floatUpdate === undefined) return;
 	if (typeof floatUpdate === 'number' || floatUpdate === null) {
 		(record[fieldName] as number | null) = floatUpdate;
@@ -466,12 +456,11 @@ export function handleFloatUpdateField<T, R extends Prisma.Result<T, object, 'fi
 		(record[fieldName] as number) /= floatUpdate.divide;
 	}
 }
-
 export function handleEnumUpdateField<T, R extends Prisma.Result<T, object, 'findFirstOrThrow'>>(
 	record: R,
 	fieldName: keyof R,
 	enumUpdate: undefined | string | { set?: string }
-) {
+): void {
 	if (enumUpdate === undefined) return;
 	if (typeof enumUpdate === 'string') {
 		(record[fieldName] as string) = enumUpdate;
@@ -479,7 +468,6 @@ export function handleEnumUpdateField<T, R extends Prisma.Result<T, object, 'fin
 		(record[fieldName] as string) = enumUpdate.set;
 	}
 }
-
 export function genericComparator(
 	a: unknown,
 	b: unknown,
@@ -520,7 +508,17 @@ export function genericComparator(
 		returnValue = a.getTime() - b.getTime();
 	}
 	if (a instanceof Uint8Array && b instanceof Uint8Array) {
-		returnValue = a.length - b.length;
+		const n = Math.min(a.length, b.length);
+		for (let i = 0; i < n; i++) {
+			const diff = a[i] - b[i];
+			if (diff !== 0) {
+				returnValue = diff;
+				break;
+			}
+		}
+		if (returnValue === undefined) {
+			returnValue = a.length - b.length;
+		}
 	}
 	if (typeof a === 'boolean' && typeof b === 'boolean') {
 		returnValue = a === b ? 0 : a ? 1 : -1;
@@ -530,3 +528,4 @@ export function genericComparator(
 	}
 	return returnValue * multiplier;
 }
+export type { AppliedResult, SyncWorkerOptions, SyncWorker } from './idb-interface';

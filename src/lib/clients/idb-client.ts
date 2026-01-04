@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { PrismaIDBClient } from '../prisma-idb/prisma-idb-client';
+import { PrismaIDBClient } from '../prisma-idb/client/prisma-idb-client';
 
 let client: PrismaIDBClient;
 
