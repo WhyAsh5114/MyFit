@@ -1,13 +1,16 @@
 generator client {
   provider        = "prisma-client"
   previewFeatures = ["fullTextSearchPostgres", "typedSql"]
-  output          = "../../src/lib/server/generated/prisma"
+  output          = "../src/lib/server/generated/prisma"
 }
 
 generator prismaIDB {
-  provider           = "idb-client-generator"
-  output             = "../../src/lib/prisma-idb"
-  prismaClientImport = "$lib/server/generated/prisma/client"
+  provider              = "idb-client-generator"
+  prismaSingletonImport = "$lib/server/prisma"
+  output                = "../src/lib/prisma-idb"
+  exportEnums           = true
+  outboxSync            = true
+  exclude               = ["ChangeLog"]
 }
 
 datasource db {
@@ -80,4 +83,23 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model ChangeLog {
+  id         BigInt          @id @default(autoincrement())
+  model      String
+  oldKeyPath Json?
+  keyPath    Json
+  operation  ChangeOperation
+  version    Int?
+  scopeKey   String
+  createdAt  DateTime        @default(now())
+
+  @@index([model, id])
+}
+
+enum ChangeOperation {
+  create
+  update
+  delete
 }
