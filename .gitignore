@@ -30,3 +30,6 @@ public/swe-worker*
 
 # Prisma
 src/lib/server/generated/prisma
+
+# OpenFoodFacts seed files
+prisma/seed/data

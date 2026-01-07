@@ -1,6 +1,16 @@
-import { PrismaClient } from '$lib/server/generated/prisma/client';
+import { PrismaClient } from '../../src/lib/server/generated/prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { withAccelerate } from '@prisma/extension-accelerate';
+import 'dotenv/config';
 
-const prisma = new PrismaClient();
+const DATABASE_URL = process.env.DATABASE_URL!;
+if (!DATABASE_URL) {
+	throw new Error('DATABASE_URL is not defined in environment variables.');
+}
+
+const prisma = new PrismaClient({
+	adapter: new PrismaPg({ connectionString: DATABASE_URL })
+}).$extends(withAccelerate());
 
 async function main() {
 	const seedNutritionData = [
