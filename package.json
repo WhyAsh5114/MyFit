@@ -14,7 +14,7 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"test": "playwright test",
-		"postinstall": "prisma generate --sql",
+		"postinstall": "svelte-kit sync && prisma generate --sql",
 		"sync": "cap sync",
 		"sync:dev": "cross-env ANDROID_DEV=true pnpm sync"
 	},
