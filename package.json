@@ -21,7 +21,7 @@
 		"@playwright/test": "1.45.1",
 		"@release-it/conventional-changelog": "^10.0.0",
 		"@sveltejs/adapter-vercel": "^5.4.7",
-		"@sveltejs/kit": "^2.5.18",
+		"@sveltejs/kit": "^2.49.5",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/typography": "^0.5.13",
 		"@types/node": "^22.0.2",
