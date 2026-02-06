@@ -1,6 +1,6 @@
 {
 	"private": true,
-	"name": "myfit-monorepo",
+	"name": "@myfit/monorepo",
 	"packageManager": "pnpm@10.28.2",
 	"scripts": {
     "dev": "turbo run dev",

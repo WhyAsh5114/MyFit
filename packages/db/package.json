@@ -1,0 +1,34 @@
+{
+	"name": "@myfit/db",
+	"version": "0.0.1",
+	"type": "module",
+	"exports": {
+		".": {
+			"import": "./generated/prisma/client.js",
+			"types": "./generated/prisma/client.d.ts"
+		},
+		"./prisma-idb/client": {
+			"import": "./generated/prisma-idb/client/index.js",
+			"types": "./generated/prisma-idb/client/index.d.ts"
+		},
+		"./prisma-idb/server": {
+			"import": "./generated/prisma-idb/server/index.js",
+			"types": "./generated/prisma-idb/server/index.d.ts"
+		}
+	},
+	"scripts": {
+		"generate": "prisma generate",
+		"push": "prisma db push",
+		"studio": "prisma studio"
+	},
+	"dependencies": {
+		"@prisma-idb/idb-client-generator": "^0.30.0",
+		"@prisma/client": "^7.3.0",
+		"idb": "^8.0.3",
+		"uuid": "^13.0.0",
+		"zod": "^4.3.6"
+	},
+	"devDependencies": {
+		"prisma": "^7.3.0"
+	}
+}
