@@ -14,6 +14,7 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
+		"@myfit/db": "workspace:*",
 		"@capacitor/android": "^8.0.2",
 		"@capacitor/cli": "^8.0.2",
 		"@capacitor/ios": "^8.0.2",

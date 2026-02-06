@@ -22,7 +22,7 @@
 		"studio": "prisma studio"
 	},
 	"dependencies": {
-		"@prisma-idb/idb-client-generator": "^0.30.0",
+		"@prisma-idb/idb-client-generator": "^0.30.1",
 		"@prisma/client": "^7.3.0",
 		"idb": "^8.0.3",
 		"uuid": "^13.0.0",
