@@ -23,6 +23,9 @@ importers:
       eslint-plugin-svelte:
         specifier: ^3.14.0
         version: 3.14.0(eslint@9.39.2(jiti@2.6.1))(svelte@5.49.2)
+      globals:
+        specifier: ^17.3.0
+        version: 17.3.0
       prettier:
         specifier: ^3.8.1
         version: 3.8.1
@@ -100,9 +103,6 @@ importers:
       '@types/node':
         specifier: ^20
         version: 20.19.32
-      globals:
-        specifier: ^17.1.0
-        version: 17.3.0
       svelte:
         specifier: ^5.48.2
         version: 5.49.2

@@ -9,9 +9,14 @@ import ts from 'typescript-eslint';
 import svelteConfig from './apps/frontend/svelte.config.js';
 
 const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
+const frontendGitignorePath = path.resolve(import.meta.dirname, 'apps/frontend/.gitignore');
 
 export default defineConfig(
 	includeIgnoreFile(gitignorePath),
+	{
+		basePath: 'apps/frontend',
+		ignores: [...includeIgnoreFile(frontendGitignorePath).ignores, 'android', 'ios']
+	},
 	js.configs.recommended,
 	...ts.configs.recommended,
 	...svelte.configs.recommended,

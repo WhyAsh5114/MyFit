@@ -25,7 +25,6 @@
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/node": "^20",
-		"globals": "^17.1.0",
 		"svelte": "^5.48.2",
 		"svelte-check": "^4.3.5",
 		"tailwindcss": "^4.1.18",

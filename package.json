@@ -1,20 +1,22 @@
 {
 	"private": true,
 	"name": "@myfit/monorepo",
+	"type": "module",
 	"packageManager": "pnpm@10.28.2",
 	"scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "format": "turbo run format",
-    "check": "turbo run check"
-  },
+		"dev": "turbo run dev",
+		"build": "turbo run build",
+		"lint": "turbo run lint",
+		"format": "turbo run format",
+		"check": "turbo run check"
+	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.1",
 		"@eslint/js": "^9.39.2",
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.14.0",
+		"globals": "^17.3.0",
 		"prettier": "^3.8.1",
 		"prettier-plugin-svelte": "^3.4.1",
 		"prettier-plugin-tailwindcss": "^0.7.2",
