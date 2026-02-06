@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: /api/
-Disallow: /auth/
-Sitemap: https://myfit.fit/sitemap.xml
