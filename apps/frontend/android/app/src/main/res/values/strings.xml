@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MyFit</string>
+    <string name="title_activity_main">MyFit</string>
+    <string name="package_name">fit.myfit</string>
+    <string name="custom_url_scheme">fit.myfit</string>
+</resources>
