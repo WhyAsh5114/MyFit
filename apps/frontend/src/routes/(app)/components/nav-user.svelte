@@ -17,7 +17,11 @@
 
 	let user = $derived($authData.data?.user);
 
-	function getInitials(name: string) {
+	function getInitials(name: string, email: string) {
+		if (name.length === 0) {
+			return email[0].toUpperCase();
+		}
+
 		const names = name.split(' ');
 		const initials = names.map((n) => n[0]).join('');
 		return initials.toUpperCase();
@@ -57,7 +61,9 @@
 						>
 							<Avatar.Root class="size-8 rounded-lg">
 								<Avatar.Image src={user.image} alt={user.name} />
-								<Avatar.Fallback class="rounded-lg">{getInitials(user.name)}</Avatar.Fallback>
+								<Avatar.Fallback class="rounded-lg">
+									{getInitials(user.name, user.email)}
+								</Avatar.Fallback>
 							</Avatar.Root>
 							<div class="grid flex-1 text-start text-sm leading-tight">
 								<span class="truncate font-medium">{user.name}</span>
@@ -74,8 +80,12 @@
 					sideOffset={4}
 				>
 					<DropdownMenu.Item>
-						<BadgeCheckIcon />
-						{m['account.title']()}
+						{#snippet child({ props })}
+							<a href={resolve('/account')} {...props}>
+								<BadgeCheckIcon />
+								{m['account.title']()}
+							</a>
+						{/snippet}
 					</DropdownMenu.Item>
 					<DropdownMenu.Item onclick={() => authClient.signOut()}>
 						<LogOutIcon />

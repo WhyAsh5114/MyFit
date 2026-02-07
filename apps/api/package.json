@@ -12,7 +12,8 @@
 		"@prisma/adapter-pg": "^7.3.0",
 		"better-auth": "^1.4.18",
 		"dotenv": "^17.2.4",
-		"hono": "^4.11.8"
+		"hono": "^4.11.8",
+		"resend": "^6.9.1"
 	},
 	"devDependencies": {
 		"@types/node": "^20.19.32",

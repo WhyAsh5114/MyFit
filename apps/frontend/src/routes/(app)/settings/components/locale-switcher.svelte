@@ -23,7 +23,7 @@
 		<Card.Action>
 			<Select.Root type="single" value={getLocale()} onValueChange={changeLocale}>
 				<Select.Trigger class="capitalize">
-					{getLocale()}
+					{m[`language.${getLocale()}`]()}
 				</Select.Trigger>
 				<Select.Content align="end">
 					<Select.Item value="en">{m['language.en']()}</Select.Item>
