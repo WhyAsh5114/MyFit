@@ -50,5 +50,8 @@
 	"localeSwitcher.description": "Select the language for the app",
 	"legal.consentIntro": "By continuing to use MyFit, you agree to the following",
 	"legal.privacyPolicy": "Privacy Policy",
-	"legal.termsOfService": "Terms of Service"
+	"legal.termsOfService": "Terms of Service",
+	"dashboard.betaTitle": "V4 beta",
+	"dashboard.betaDescription": "This build is for UI and feature validation only. Data models may change and entries can be wiped between updates. Do not use this as your primary macro tracker.\n\nIf you're here, feedback > perfection. Thanks for testing.",
+	"dashboard.reportBugs": "Report bugs"
 }

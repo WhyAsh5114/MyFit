@@ -2,11 +2,11 @@ import { m } from '$lib/paraglide/messages';
 import {
 	BlocksIcon,
 	SettingsIcon,
-	GithubIcon,
 	CodeXmlIcon,
 	LockIcon,
 	HeartHandshakeIcon
 } from '@lucide/svelte';
+import GithubIcon from '$lib/icons/github-icon.svelte';
 
 export const sidebarLinks = [
 	{
