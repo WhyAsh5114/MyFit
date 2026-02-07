@@ -24,9 +24,6 @@
 			items.push({ label, href: fullPath });
 		});
 
-		if (items.length === 0) {
-			items.push({ label: 'All notifications', href: '/' });
-		}
 		return items;
 	}
 

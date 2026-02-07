@@ -1,16 +1,17 @@
+import { m } from '$lib/paraglide/messages';
 import { BlocksIcon, SettingsIcon, GithubIcon, CodeXmlIcon } from '@lucide/svelte';
 
 export const sidebarLinks = [
 	{
-		title: 'Application',
+		title: m['sidebar.group.application.title'](),
 		items: [
 			{
-				title: 'Dashboard',
+				title: m['sidebar.group.application.items.dashboard.title'](),
 				url: '/dashboard',
 				icon: BlocksIcon
 			},
 			{
-				title: 'Settings',
+				title: m['sidebar.group.application.items.settings.title'](),
 				url: '/settings',
 				icon: SettingsIcon
 			}
@@ -20,12 +21,12 @@ export const sidebarLinks = [
 		title: 'External',
 		items: [
 			{
-				title: 'Github',
+				title: m['sidebar.group.external.items.github.title'](),
 				url: 'https://github.com/WhyAsh5114/MyFit',
 				icon: GithubIcon
 			},
 			{
-				title: 'Developer site',
+				title: m['sidebar.group.external.items.developer_site.title'](),
 				url: 'https://whyash5114.com',
 				icon: CodeXmlIcon
 			}

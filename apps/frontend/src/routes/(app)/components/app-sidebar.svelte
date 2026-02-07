@@ -6,6 +6,7 @@
 	import type { ComponentProps } from 'svelte';
 	import { isExternalLink, sidebarLinks } from './constants';
 	import favicon from '$lib/assets/favicon.webp';
+	import { m } from '$lib/paraglide/messages';
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 	const sidebar = useSidebar();
@@ -24,7 +25,7 @@
 						href={resolve('/')}
 					>
 						<img src={favicon} alt="logo" class="h-12 w-12" />
-						MyFit
+						{m['app.name']()}
 					</a>
 				</Sidebar.MenuButton>
 			</Sidebar.MenuItem>

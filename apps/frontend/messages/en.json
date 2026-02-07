@@ -1,4 +1,18 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"home_biceps_flexed_button": "Open app"
+	"app.name": "MyFit",
+	"home.biceps_flexed_button": "Open app",
+	"sidebar.group.application.title": "Application",
+	"sidebar.group.application.items.dashboard.title": "Dashboard",
+	"sidebar.group.application.items.settings.title": "Settings",
+	"sidebar.group.external.title": "External",
+	"sidebar.group.external.items.github.title": "Github",
+	"sidebar.group.external.items.developer_site.title": "Developer site",
+	"dashboard.title": "Dashboard",
+	"settings.title": "Settings",
+	"settings.color_mode.title": "Color mode",
+	"settings.color_mode.description": "Select the color mode for the app",
+	"settings.color_mode.light": "Light",
+	"settings.color_mode.dark": "Dark",
+	"settings.color_mode.system": "System"
 }
