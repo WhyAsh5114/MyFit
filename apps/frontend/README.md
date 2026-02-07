@@ -1,42 +1,121 @@
-# sv
+# Frontend
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+The MyFit web and mobile app. Built with [SvelteKit](https://kit.svelte.dev), [Tailwind CSS](https://tailwindcss.com), and [Capacitor](https://capacitorjs.com) for iOS/Android.
 
-## Creating a project
+## Quick Start
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project
-npx sv create my-app
+```bash
+pnpm install
+pnpm dev
 ```
 
-To recreate this project with the same configuration:
+App runs on `http://localhost:5173`.
 
-```sh
-# recreate this project
-pnpm dlx sv create --template minimal --types ts --add prettier eslint tailwindcss="plugins:typography" sveltekit-adapter="adapter:static" devtools-json paraglide="languageTags:en+demo:yes" --install pnpm frontend
+## Environment Setup
+
+Create a `.env` file:
+
+```
+PUBLIC_API_URL=http://localhost:3000
 ```
 
-## Developing
+## Development
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```bash
+pnpm dev           # Start dev server
+pnpm build         # Build for web
+pnpm preview       # Preview production build
+pnpm check         # Type-check
+pnpm lint          # ESLint + Prettier check
+pnpm format        # Format code
 ```
 
-## Building
+## Project Structure
 
-To create a production version of your app:
-
-```sh
-npm run build
+```
+src/
+├── routes/        # SvelteKit pages and API routes
+├── lib/
+│   ├── components/    # Reusable Svelte components
+│   ├── hooks/         # Svelte hooks
+│   ├── auth-client.ts # Auth utilities
+│   ├── idb-client.ts  # IndexedDB utilities
+│   └── utils.ts       # Helper functions
+├── app.html       # HTML entry point
+└── app.d.ts       # Global types
 ```
 
-You can preview the production build with `npm run preview`.
+## Features
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- 🎨 **Tailwind CSS** - Utility-first styling
+- 🌍 **i18n** - Multilingual support via Paraglide
+- 📲 **Mobile-ready** - Capacitor for native iOS/Android
+- 💾 **Offline-first** - IndexedDB with Prisma-IDB
+- ♿ **Accessible** - Semantic HTML and ARIA
+- 🎭 **Themes** - Dark/light 
+
+# Build web assets
+```bash
+pnpm build
+```
+
+# Sync to Xcode
+```bash
+pnpm exec cap sync ios
+pnpm exec cap open ios
+```
+
+# In Xcode
+Select target device and press Run
+
+### Android
+
+```bash
+# Install Android SDK via Android Studio first
+
+# Sync to Android Studio
+pnpm exec cap sync android
+pnpm exec cap open android
+
+# In Android Studio: Select emulator/device and click Run
+```
+
+### Workflow
+
+1. Make changes in `src/`
+2. `pnpm dev` to see changes in browser
+3. When ready to test on device:
+   ```bash
+   pnpm build
+   pnpm exec cap sync
+   ```
+4. Open in Xcode/Android Studio and run
+
+## Database
+
+Uses `@myfit/db` with browser-side support via Prisma-IDB:
+
+```typescript
+import { prismaIdbClient } from '@myfit/db/prisma-idb/client';
+
+const users = await prismaIdbClient.user.findMany();
+```
+
+## Internationalization
+
+Translations are in `messages/en.json`. The app uses Paraglide for i18n:
+
+```typescript
+import * as m from '$lib/paraglide/messages';
+
+const greeting = m.hello();
+```
+
+## Scripts
+
+- `pnpm dev` - Development server
+- `pnpm build` - Build for production
+- `pnpm preview` - Preview production build
+- `pnpm check` - Type-check
+- `pnpm lint` - Lint and format check
+- `pnpm format` - Auto-format code
