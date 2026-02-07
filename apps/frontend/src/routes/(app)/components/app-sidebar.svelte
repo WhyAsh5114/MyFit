@@ -7,6 +7,7 @@
 	import { isExternalLink, sidebarLinks } from './constants';
 	import favicon from '$lib/assets/favicon.webp';
 	import { m } from '$lib/paraglide/messages';
+	import NavUser from './nav-user.svelte';
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 	const sidebar = useSidebar();
@@ -66,5 +67,7 @@
 			</Sidebar.Group>
 		{/each}
 	</Sidebar.Content>
-	<Sidebar.Rail />
+	<Sidebar.Footer>
+		<NavUser />
+	</Sidebar.Footer>
 </Sidebar.Root>

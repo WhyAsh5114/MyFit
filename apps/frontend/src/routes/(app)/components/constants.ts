@@ -1,5 +1,12 @@
 import { m } from '$lib/paraglide/messages';
-import { BlocksIcon, SettingsIcon, GithubIcon, CodeXmlIcon } from '@lucide/svelte';
+import {
+	BlocksIcon,
+	SettingsIcon,
+	GithubIcon,
+	CodeXmlIcon,
+	LockIcon,
+	HeartHandshakeIcon
+} from '@lucide/svelte';
 
 export const sidebarLinks = [
 	{
@@ -14,6 +21,21 @@ export const sidebarLinks = [
 				title: m['nav.settings'](),
 				url: '/settings',
 				icon: SettingsIcon
+			}
+		]
+	},
+	{
+		title: 'Legal',
+		items: [
+			{
+				title: m['legal.privacyPolicy'](),
+				url: '/privacy-policy',
+				icon: LockIcon
+			},
+			{
+				title: m['legal.termsOfService'](),
+				url: '/terms-of-service',
+				icon: HeartHandshakeIcon
 			}
 		]
 	},
@@ -34,7 +56,7 @@ export const sidebarLinks = [
 	}
 ] as const;
 
-type ExternalLink = (typeof sidebarLinks)[1]['items'][number]['url'];
+type ExternalLink = (typeof sidebarLinks)[2]['items'][number]['url'];
 
 export function isExternalLink(url: string): url is ExternalLink {
 	return url.startsWith('http://') || url.startsWith('https://');

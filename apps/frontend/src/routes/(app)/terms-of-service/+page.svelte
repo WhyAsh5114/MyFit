@@ -3,4 +3,4 @@
 	import { m } from '$lib/paraglide/messages';
 </script>
 
-<H1>{m['legal.termsOfService']}</H1>
+<H1>{m['legal.termsOfService']()}</H1>
