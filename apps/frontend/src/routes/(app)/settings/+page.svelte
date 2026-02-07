@@ -2,7 +2,10 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { setMode, userPrefersMode } from 'mode-watcher';
+	import H1 from '$lib/components/typography/h1.svelte';
 </script>
+
+<H1>Settings</H1>
 
 <Card.Root>
 	<Card.Header>

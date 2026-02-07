@@ -23,7 +23,7 @@
 						class="flex w-full items-center gap-2 px-2 py-0 text-xl font-semibold"
 						href={resolve('/')}
 					>
-						<img src={favicon} alt="logo" class="h-12 w-12 invert dark:invert-0" />
+						<img src={favicon} alt="logo" class="h-12 w-12" />
 						MyFit
 					</a>
 				</Sidebar.MenuButton>
