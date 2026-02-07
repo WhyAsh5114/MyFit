@@ -1,11 +1,21 @@
 import { browser } from '$app/environment';
 import { PrismaIDBClient } from '@myfit/db/prisma-idb/client';
 
-let client: PrismaIDBClient;
+let client: PrismaIDBClient | undefined;
+let initPromise: Promise<PrismaIDBClient> | undefined;
 
 async function initializeClient() {
 	if (!browser) throw new Error('PrismaIDBClient can only be initialized in the browser');
-	client = await PrismaIDBClient.createClient();
+	if (!initPromise) {
+		initPromise = PrismaIDBClient.createClient().then((c) => (client = c));
+	}
+	await initPromise;
+	return client;
 }
 
-export { initializeClient, client };
+function getClient(): PrismaIDBClient {
+	if (!client) throw new Error('PrismaIDBClient not initialized. Call initializeClient() first.');
+	return client;
+}
+
+export { initializeClient, getClient };

@@ -148,6 +148,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      dotenv:
+        specifier: ^17.2.4
+        version: 17.2.4
       svelte:
         specifier: ^5.48.2
         version: 5.49.2

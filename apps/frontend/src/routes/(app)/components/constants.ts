@@ -61,3 +61,9 @@ type ExternalLink = (typeof sidebarLinks)[2]['items'][number]['url'];
 export function isExternalLink(url: string): url is ExternalLink {
 	return url.startsWith('http://') || url.startsWith('https://');
 }
+
+const unprotectedRoutes = ['/', '/login', '/privacy-policy', '/terms-of-service'] as const;
+
+export function isUnprotectedRoute(path: string): boolean {
+	return unprotectedRoutes.includes(path as (typeof unprotectedRoutes)[number]);
+}

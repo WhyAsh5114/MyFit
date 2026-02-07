@@ -11,6 +11,8 @@
 	import BadgeCheckIcon from '@lucide/svelte/icons/badge-check';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
+	import { resetDatabaseState } from './db';
+	import { getClient } from '$lib/idb-client';
 
 	const sidebar = useSidebar();
 	let authData = authClient.useSession();
@@ -25,6 +27,11 @@
 		const names = name.split(' ');
 		const initials = names.map((n) => n[0]).join('');
 		return initials.toUpperCase();
+	}
+
+	async function logout() {
+		await resetDatabaseState(getClient());
+		await authClient.signOut();
 	}
 </script>
 
@@ -87,7 +94,7 @@
 							</a>
 						{/snippet}
 					</DropdownMenu.Item>
-					<DropdownMenu.Item onclick={() => authClient.signOut()}>
+					<DropdownMenu.Item onclick={logout}>
 						<LogOutIcon />
 						{m['account.logout']()}
 					</DropdownMenu.Item>
