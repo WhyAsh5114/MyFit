@@ -2,6 +2,7 @@
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"language.en": "English",
 	"language.es": "Spanish",
+	"inProgress": "In progress",
 	"app.name": "MyFit",
 	"app.iconAlt": "MyFit logo",
 	"home.openApp": "Open app",

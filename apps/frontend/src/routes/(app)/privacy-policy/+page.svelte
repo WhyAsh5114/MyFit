@@ -4,3 +4,5 @@
 </script>
 
 <H1>{m['legal.privacyPolicy']()}</H1>
+
+<p class="text-muted-foreground">{m['inProgress']()}</p>

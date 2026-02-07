@@ -4,3 +4,5 @@
 </script>
 
 <H1>{m['legal.termsOfService']()}</H1>
+
+<p class="text-muted-foreground">{m['inProgress']()}</p>
