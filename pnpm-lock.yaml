@@ -78,6 +78,9 @@ importers:
       '@capacitor/core':
         specifier: ^8.0.2
         version: 8.0.2
+      '@capacitor/status-bar':
+        specifier: ^8.0.0
+        version: 8.0.0(@capacitor/core@8.0.2)
       mode-watcher:
         specifier: ^1.1.0
         version: 1.1.0(svelte@5.49.2)
@@ -232,6 +235,11 @@ packages:
     resolution: {integrity: sha512-7EM7vBxXI3Ku49aYCJcS9su5Y3i6UmXpx7e0y+oQV9PzCnZ6l5B0ACJ+gXAU0bM3q7/f+kGBsOtXMid84rU6MQ==}
     peerDependencies:
       '@capacitor/core': ^8.0.0
+
+  '@capacitor/status-bar@8.0.0':
+    resolution: {integrity: sha512-aIj3bc7z8lfPgOen8HlrBrkfnxpFnh21OCx6jCUx4Mvv+B6eEkUQ49b32DOddgVfr+igRHLX2SYi7duqIsNDXg==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
 
   '@chevrotain/cst-dts-gen@10.5.0':
     resolution: {integrity: sha512-lhmC/FyqQ2o7pGK4Om+hzuDrm9rhFYIJ/AXoQBeongmn870Xeb0L6oGEiuR8nohFNL5sMaQEJWCxr1oIVIVXrw==}
@@ -3862,6 +3870,10 @@ snapshots:
       tslib: 2.8.1
 
   '@capacitor/ios@8.0.2(@capacitor/core@8.0.2)':
+    dependencies:
+      '@capacitor/core': 8.0.2
+
+  '@capacitor/status-bar@8.0.0(@capacitor/core@8.0.2)':
     dependencies:
       '@capacitor/core': 8.0.2
 
