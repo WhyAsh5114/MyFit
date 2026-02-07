@@ -6,11 +6,21 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import { browser } from '$app/environment';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
+	import { Capacitor } from '@capacitor/core';
+	import { App } from '@capacitor/app';
 
 	let { children } = $props();
 
 	const queryClient = new QueryClient({
 		defaultOptions: { queries: { enabled: browser } }
+	});
+
+	$effect(() => {
+		if (Capacitor.getPlatform() !== 'android') return;
+		App.addListener('backButton', ({ canGoBack }) => {
+			if (canGoBack) window.history.back();
+			else App.exitApp();
+		});
 	});
 </script>
 

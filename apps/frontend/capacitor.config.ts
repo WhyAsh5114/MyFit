@@ -9,7 +9,8 @@ let server;
 if (isDev) {
 	server = {
 		cleartext: true,
-		url: 'http://localhost:5173'
+		androidScheme: 'http',
+		iosScheme: 'http'
 	};
 }
 
@@ -17,7 +18,9 @@ const config: CapacitorConfig = {
 	appId: 'fit.myfit',
 	appName: 'MyFit',
 	webDir: 'build',
-	plugins: { StatusBar: { overlaysWebView: false } },
+	plugins: {
+		StatusBar: { overlaysWebView: false }
+	},
 	server
 };
 
