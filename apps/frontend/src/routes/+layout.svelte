@@ -3,25 +3,9 @@
 	import { locales, localizeHref } from '$lib/paraglide/runtime';
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.webp';
-	import { mode, ModeWatcher } from 'mode-watcher';
-	import { Capacitor } from '@capacitor/core';
-	import { StatusBar, Style } from '@capacitor/status-bar';
-	import { oklchToHex } from '$lib/my-utils';
+	import { ModeWatcher } from 'mode-watcher';
 
 	let { children } = $props();
-
-	$effect(() => {
-		if (!mode.current) return;
-		if (!Capacitor.isNativePlatform()) return;
-		requestAnimationFrame(() => {
-			const computedStyle = getComputedStyle(document.documentElement);
-			const backgroundColor = computedStyle.getPropertyValue('--background').trim();
-			const hexColor = oklchToHex(backgroundColor);
-
-			StatusBar.setBackgroundColor({ color: hexColor });
-			StatusBar.setStyle({ style: mode.current === 'dark' ? Style.Dark : Style.Light });
-		});
-	});
 </script>
 
 <svelte:head>
