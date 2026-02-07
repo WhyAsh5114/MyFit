@@ -6,7 +6,7 @@
 </script>
 
 <div class="flex h-screen w-screen items-center justify-center">
-	<Button aria-label={m['home.biceps_flexed_button']()} class="size-36" href={resolve('/dashboard')}>
+	<Button aria-label={m['home.openApp']()} class="size-36" href={resolve('/dashboard')}>
 		<BicepsFlexedIcon class="size-24" strokeWidth={1.25} />
 	</Button>
 </div>

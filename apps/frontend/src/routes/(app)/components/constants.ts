@@ -3,15 +3,15 @@ import { BlocksIcon, SettingsIcon, GithubIcon, CodeXmlIcon } from '@lucide/svelt
 
 export const sidebarLinks = [
 	{
-		title: m['sidebar.group.application.title'](),
+		title: 'Application',
 		items: [
 			{
-				title: m['sidebar.group.application.items.dashboard.title'](),
+				title: m['nav.dashboard'](),
 				url: '/dashboard',
 				icon: BlocksIcon
 			},
 			{
-				title: m['sidebar.group.application.items.settings.title'](),
+				title: m['nav.settings'](),
 				url: '/settings',
 				icon: SettingsIcon
 			}
@@ -21,12 +21,12 @@ export const sidebarLinks = [
 		title: 'External',
 		items: [
 			{
-				title: m['sidebar.group.external.items.github.title'](),
+				title: m['nav.github'](),
 				url: 'https://github.com/WhyAsh5114/MyFit',
 				icon: GithubIcon
 			},
 			{
-				title: m['sidebar.group.external.items.developer_site.title'](),
+				title: m['nav.developerSite'](),
 				url: 'https://whyash5114.com',
 				icon: CodeXmlIcon
 			}

@@ -4,8 +4,14 @@
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.webp';
 	import { ModeWatcher } from 'mode-watcher';
+	import { browser } from '$app/environment';
+	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 
 	let { children } = $props();
+
+	const queryClient = new QueryClient({
+		defaultOptions: { queries: { enabled: browser } }
+	});
 </script>
 
 <svelte:head>
@@ -16,7 +22,9 @@
 
 <ModeWatcher />
 
-{@render children()}
+<QueryClientProvider client={queryClient}>
+	{@render children()}
+</QueryClientProvider>
 
 <div style="display:none">
 	{#each locales as locale (locale)}
