@@ -1,7 +1,0 @@
-node_modules
-.env
-.env.local
-generated/
-dist/
-
-prisma/seed/data

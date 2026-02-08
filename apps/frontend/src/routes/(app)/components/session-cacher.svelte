@@ -4,7 +4,7 @@
 	import { getClient } from '$lib/idb-client';
 	import { toast } from 'svelte-sonner';
 	import { isUnprotectedRoute } from './constants';
-	import { PrismaIDBClient } from '@myfit/db/prisma-idb/client';
+	import { PrismaIDBClient } from '@myfit/api/prisma-idb/client';
 	import {
 		createUserForCurrentSession,
 		getExistingUser,

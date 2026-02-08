@@ -9,18 +9,16 @@ This is a monorepo managed with [Turborepo](https://turbo.build) and [pnpm](http
 ```
 .
 ├── apps/
-│   ├── api/          # Backend API (Hono + Better Auth)
+│   ├── api/          # Backend API (Hono + Better Auth + Prisma)
 │   └── frontend/     # Web/mobile app (SvelteKit + Capacitor)
 ├── packages/
-│   └── db/           # Shared database layer (Prisma)
 └── turbo.json        # Turborepo configuration
 ```
 
 ## 📦 What's Inside
 
-- **[API](./apps/api/README.md)** - REST API with authentication, built with Hono
+- **[API](./apps/api/README.md)** - REST API with authentication and database (Hono + Prisma)
 - **[Frontend](./apps/frontend/README.md)** - Web app and mobile clients (iOS/Android via Capacitor)
-- **[Database](./packages/db/README.md)** - Prisma-based database layer with browser-side support
 
 ## 🚀 Quick Start
 
@@ -75,7 +73,7 @@ Packages reference each other using `workspace:*`:
 ```json
 {
   "dependencies": {
-    "@myfit/db": "workspace:*"
+    "@myfit/api": "workspace:*"
   }
 }
 ```
@@ -114,15 +112,15 @@ See [Frontend README](./apps/frontend/README.md) for detailed mobile setup.
 
 ## 🗄️ Database
 
-MyFit uses [Prisma](https://www.prisma.io) with a PostgreSQL database. The `@myfit/db` package provides:
+MyFit uses [Prisma](https://www.prisma.io) with a PostgreSQL database. Database files are in `apps/api/prisma/`:
 
 - **Server-side** - Standard Prisma Client for the API
-- **Browser-side** - Prisma-IDB for offline-first capabilities
+- **Browser-side** - Prisma-IDB for offline-first capabilities (used by frontend)
 
 ```bash
-cd packages/db
+cd apps/api
 
-# Generate Prisma client
+# Generate Prisma client and Prisma-IDB
 pnpm generate
 
 # Push schema changes
@@ -132,7 +130,7 @@ pnpm push
 pnpm studio
 ```
 
-See [Database README](./packages/db/README.md) for usage examples.
+See [API README](./apps/api/README.md) for schema and usage details.
 
 ## 🔐 Environment Variables
 

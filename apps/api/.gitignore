@@ -29,3 +29,7 @@ lerna-debug.log*
 
 # build
 dist/
+
+# Prisma
+generated/
+prisma/seed/data

@@ -43,21 +43,31 @@ pnpm start    # Run production build
 
 ## Database
 
-Ts `@myfit/db` for database access:
+Prisma ORM with PostgreSQL. The schema, migrations, and Prisma config are in this package:
 
 ```typescript
-import { PrismaClient } from '@myfit/db';
+import { prisma } from './lib/prisma.js';
 
-const prisma = new PrismaClient();
 const users = await prisma.user.findMany();
 ```
 
-See [Database README](../../packages/db/README.md) for schema and usage details.
+### Prisma Commands
 
-## Scripts
+```bash
+pnpm generate     # Generate Prisma client and Prisma-IDB
+pnpm push         # Push schema changes to database
+pnpm studio       # Open Prisma Studio
+```
 
-- `pnpm dev` - Development server
-- `pnpm build` - TypeScript compilation
+### TypedSQL Queries
+
+Define SQL queries in `prisma/sql/` and use them with full type safety:
+
+```typescript
+import { myQuery } from '../generated/prisma/sql/myQuery.js';
+
+const results = await prisma.$queryRawTyped(myQuery(params));
+```
 - `pnpm start` - Run compiled app
 - `pnpm lint` - ESLint
 - `pnpm format` - Prettier formatting

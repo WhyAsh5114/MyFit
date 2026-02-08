@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider        = "prisma-client"
+  output          = "../generated/prisma"
+  previewFeatures = ["typedSql"]
 }
 
 generator prismaIDB {
@@ -8,7 +9,7 @@ generator prismaIDB {
   output                = "../generated/prisma-idb"
   prismaSingletonImport = ""
   outboxSync            = true
-  exclude               = ["Changelog", "Verification", "Session", "Account"]
+  exclude               = ["Changelog", "Verification", "Session", "Account", "NutritionData"]
   rootModel             = "User"
 }
 

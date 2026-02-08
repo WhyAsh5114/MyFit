@@ -1,5 +1,5 @@
 import { goto } from '$app/navigation';
-import type { PrismaIDBClient } from '@myfit/db/prisma-idb/client';
+import type { PrismaIDBClient } from '@myfit/api/prisma-idb/client';
 import type { Session, User } from 'better-auth';
 import { toast } from 'svelte-sonner';
 

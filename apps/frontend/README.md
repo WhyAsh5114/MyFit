@@ -93,12 +93,12 @@ pnpm exec cap open android
 
 ## Database
 
-Uses `@myfit/db` with browser-side support via Prisma-IDB:
+Uses Prisma-IDB (offline-first browser database) exported from the API package:
 
 ```typescript
-import { prismaIdbClient } from '@myfit/db/prisma-idb/client';
+import { PrismaIDBClient } from '@myfit/api/prisma-idb/client';
 
-const users = await prismaIdbClient.user.findMany();
+const users = await PrismaIDBClient.user.findMany();
 ```
 
 ## Internationalization
