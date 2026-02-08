@@ -99,6 +99,9 @@ importers:
       culori:
         specifier: ^4.0.2
         version: 4.0.2
+      hono:
+        specifier: ^4.11.8
+        version: 4.11.8
       mode-watcher:
         specifier: ^1.1.0
         version: 1.1.0(svelte@5.49.2)
@@ -124,6 +127,9 @@ importers:
       '@lucide/svelte':
         specifier: ^0.561.0
         version: 0.561.0(svelte@5.49.2)
+      '@myfit/api':
+        specifier: workspace:*
+        version: link:../api
       '@myfit/db':
         specifier: workspace:*
         version: link:../../packages/db

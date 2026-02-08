@@ -1,11 +1,11 @@
 import { serve } from '@hono/node-server';
 import { cors } from 'hono/cors';
 import { Hono } from 'hono';
-import { auth } from '../lib/auth.js';
+import { authRoutes } from './routes/auth.js';
+import { healthRoutes } from './routes/health.js';
 import 'dotenv/config';
 
 const app = new Hono();
-
 app.use(
 	'*',
 	cors({
@@ -18,8 +18,8 @@ app.use(
 	})
 );
 
-app.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw));
+const routes = app.route('/api/health', healthRoutes).route('/api/auth', authRoutes);
 
-app.get('/api/health', (c) => c.json({ status: 'ok' }));
+export type AppType = typeof routes;
 
 serve(app);

@@ -1,6 +1,11 @@
 {
 	"name": "@myfit/api",
 	"type": "module",
+	"exports": {
+		".": {
+			"types": "./src/index.ts"
+		}
+	},
 	"scripts": {
 		"dev": "tsx watch src/index.ts",
 		"build": "tsc",
