@@ -1,6 +1,5 @@
-<script>
-	import H1 from '$lib/components/typography/h1.svelte';
+<script lang="ts">
 	import { m } from '$lib/paraglide/messages';
 </script>
 
-<H1>{m['account.title']()}</H1>
+<p class="text-muted-foreground">{m['inProgress']()}</p>
