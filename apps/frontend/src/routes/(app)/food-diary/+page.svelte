@@ -1,6 +1,7 @@
-<script>
-	import H1 from '$lib/components/typography/h1.svelte';
-	import { m } from '$lib/paraglide/messages';
+<script lang="ts">
+	import FoodEntries from './components/food-entries.svelte';
+	import HeaderCard from './components/header-card.svelte';
 </script>
 
-<H1>{m['nav.foodDiary']()}</H1>
+<HeaderCard />
+<FoodEntries />

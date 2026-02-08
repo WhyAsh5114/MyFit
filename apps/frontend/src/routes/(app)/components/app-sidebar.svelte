@@ -18,7 +18,7 @@
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
 				<Sidebar.MenuButton
-					class="h-fit w-full justify-start bg-muted text-start"
+					class="h-fit w-full justify-start bg-card text-start"
 					onclick={() => sidebar.setOpenMobile(false)}
 				>
 					<a
