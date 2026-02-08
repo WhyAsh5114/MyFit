@@ -15,7 +15,12 @@ export default defineConfig(
 	includeIgnoreFile(gitignorePath),
 	{
 		basePath: 'apps/frontend',
-		ignores: [...includeIgnoreFile(frontendGitignorePath).ignores, 'android', 'ios']
+		ignores: [
+			...includeIgnoreFile(frontendGitignorePath).ignores,
+			'android',
+			'ios',
+			'src/lib/components/ui'
+		]
 	},
 	js.configs.recommended,
 	...ts.configs.recommended,

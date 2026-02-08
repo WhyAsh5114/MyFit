@@ -1,4 +1,4 @@
-import { CalendarDate, DateFormatter, fromDate, getLocalTimeZone } from '@internationalized/date';
+import { DateFormatter, fromDate, getLocalTimeZone } from '@internationalized/date';
 
 export function kebabToCamel(str: string) {
 	return str.replace(/-([a-z])/g, (m, w) => w.toUpperCase());

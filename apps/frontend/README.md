@@ -52,20 +52,23 @@ src/
 - 📲 **Mobile-ready** - Capacitor for native iOS/Android
 - 💾 **Offline-first** - IndexedDB with Prisma-IDB
 - ♿ **Accessible** - Semantic HTML and ARIA
-- 🎭 **Themes** - Dark/light 
+- 🎭 **Themes** - Dark/light
 
 # Build web assets
+
 ```bash
 pnpm build
 ```
 
 # Sync to Xcode
+
 ```bash
 pnpm exec cap sync ios
 pnpm exec cap open ios
 ```
 
 # In Xcode
+
 Select target device and press Run
 
 ### Android

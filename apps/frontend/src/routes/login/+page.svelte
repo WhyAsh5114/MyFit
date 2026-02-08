@@ -16,9 +16,7 @@
 	<div class="flex flex-col gap-4 p-6 md:p-10">
 		<div class="flex justify-center gap-2 md:justify-start">
 			<a href={resolve('/')} class="flex items-center gap-2 font-medium">
-				<div
-					class="flex size-8 items-center justify-center rounded-md bg-secondary"
-				>
+				<div class="flex size-8 items-center justify-center rounded-md bg-secondary">
 					<img src={favicon} alt={m['app.iconAlt']()} />
 				</div>
 				{m['app.name']()}

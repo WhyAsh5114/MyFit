@@ -27,9 +27,9 @@
 					{modeLabel}
 				</Select.Trigger>
 				<Select.Content align="end">
-				<Select.Item value="light">{m['themeSwitcher.light']()}</Select.Item>
-				<Select.Item value="dark">{m['themeSwitcher.dark']()}</Select.Item>
-				<Select.Item value="system">{m['themeSwitcher.system']()}</Select.Item>
+					<Select.Item value="light">{m['themeSwitcher.light']()}</Select.Item>
+					<Select.Item value="dark">{m['themeSwitcher.dark']()}</Select.Item>
+					<Select.Item value="system">{m['themeSwitcher.system']()}</Select.Item>
 				</Select.Content>
 			</Select.Root>
 		</Card.Action>
