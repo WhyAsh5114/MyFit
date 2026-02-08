@@ -1,0 +1,133 @@
+model MacroTargets {
+  id            String                @id @default(uuid())
+  createdAt     DateTime              @default(now())
+  proteins      Float?
+  carbs         Float?
+  fats          Float?
+  quantifier    MacroTargetQuantifier
+  caloricChange Int
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+}
+
+model MacroMetrics {
+  id                String     @id @default(uuid())
+  createdAt         DateTime   @default(now())
+  bodyweight        Float
+  bodyweightUnit    WeightUnit
+  height            Float
+  heightUnit        HeightUnit
+  bodyFatPercentage Float
+  age               Int
+  gender            Gender
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model MacroActivityTrackingPreferences {
+  id             String                 @id @default(uuid())
+  userId         String                 @unique
+  adjustmentType ActivityAdjustmentType
+  staticCalories Int?
+  user           User                   @relation(fields: [userId], references: [id])
+}
+
+model FoodEntry {
+  id           String   @id @default(uuid())
+  eatenAt      DateTime
+  quantity     Float
+  quantityUnit String   @default("g")
+
+  nutritionData   NutritionData? @relation(fields: [nutritionDataId], references: [id])
+  nutritionDataId Int?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model ActivityEntry {
+  id              String   @id @default(uuid())
+  performedAt     DateTime
+  calories        Int
+  quantity        Int
+  quantityUnit    String
+  systemGenerated Boolean  @default(false)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model NutritionData {
+  id            Int                     @id @default(autoincrement())
+  code          String                  @unique
+  product_name  String
+  brands        String?
+  search_vector Unsupported("tsvector") @default(dbgenerated())
+  foodEntries   FoodEntry[]
+
+  energy_kcal_100g   Float
+  proteins_100g      Float
+  fat_100g           Float
+  carbohydrates_100g Float
+
+  saturated_fat_100g       Float?
+  unsaturated_fat_100g     Float?
+  monounsaturated_fat_100g Float?
+  polyunsaturated_fat_100g Float?
+  trans_fat_100g           Float?
+  cholesterol_100g         Float?
+  sugars_100g              Float?
+  polyols_100g             Float?
+  fiber_100g               Float?
+  salt_100g                Float?
+  sodium_100g              Float?
+  alcohol_100g             Float?
+  vitamin_a_100g           Float?
+  vitamin_d_100g           Float?
+  vitamin_e_100g           Float?
+  vitamin_k_100g           Float?
+  vitamin_c_100g           Float?
+  vitamin_b1_100g          Float?
+  vitamin_b2_100g          Float?
+  vitamin_b6_100g          Float?
+  vitamin_b9_100g          Float?
+  folates_100g             Float?
+  vitamin_b12_100g         Float?
+  potassium_100g           Float?
+  calcium_100g             Float?
+  phosphorus_100g          Float?
+  iron_100g                Float?
+  magnesium_100g           Float?
+  zinc_100g                Float?
+  copper_100g              Float?
+  manganese_100g           Float?
+  caffeine_100g            Float?
+}
+
+enum MacroTargetQuantifier {
+  Percentage
+  Absolute
+}
+
+enum Gender {
+  Male
+  Female
+}
+
+enum WeightUnit {
+  kg
+  lb
+}
+
+enum HeightUnit {
+  cm
+  in
+}
+
+enum ActivityAdjustmentType {
+  Static
+  Dynamic
+  Manual
+}
