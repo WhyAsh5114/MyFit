@@ -4,7 +4,8 @@ import {
 	SettingsIcon,
 	CodeXmlIcon,
 	LockIcon,
-	HeartHandshakeIcon
+	HeartHandshakeIcon,
+	BookOpenIcon
 } from '@lucide/svelte';
 import GithubIcon from '$lib/icons/github-icon.svelte';
 
@@ -21,6 +22,11 @@ export const sidebarLinks = [
 				title: m['nav.settings'](),
 				url: '/settings',
 				icon: SettingsIcon
+			},
+			{
+				title: m['nav.docs'](),
+				url: '/docs',
+				icon: BookOpenIcon
 			}
 		]
 	},

@@ -8,6 +8,7 @@
 	"home.openApp": "Open app",
 	"nav.dashboard": "Dashboard",
 	"nav.settings": "Settings",
+	"nav.docs": "Docs",
 	"nav.github": "Github",
 	"nav.developerSite": "Developer site",
 	"login.alreadySignedIn": "You're already signed in",
