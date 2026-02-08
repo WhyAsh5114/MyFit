@@ -3,6 +3,8 @@
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import { Scrollbar } from '$lib/components/ui/scroll-area';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
+	import { shortDateFormatter } from '$lib/my-utils';
+	import { getLocalTimeZone, parseDate } from '@internationalized/date';
 	import { Slash } from '@lucide/svelte';
 
 	type Item = {
@@ -12,19 +14,31 @@
 
 	function pathnameToItems(pathname: string): Item[] {
 		const parts = pathname.split('/').filter((part) => part !== '');
-		const items: Item[] = [];
 
-		parts.forEach((part, index) => {
-			const fullPath = `/${parts.slice(0, index + 1).join('/')}`;
-			const label = part
-				.split('-')
-				.map((word, idx) => (idx === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word))
-				.join(' ');
+		return pathname
+			.split('/')
+			.filter((part) => part !== '')
+			.map((part, index) => {
+				const fullPath = `/${parts.slice(0, index + 1).join('/')}`;
+				let label;
 
-			items.push({ label, href: fullPath });
-		});
+				try {
+					const date = parseDate(part);
+					return {
+						label: shortDateFormatter.format(date.toDate(getLocalTimeZone())),
+						href: fullPath
+					};
+				} catch {
+					// Not a date, continue processing
+				}
 
-		return items;
+				label = part
+					.split('-')
+					.map((word, idx) => (idx === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word))
+					.join(' ');
+
+				return { label, href: fullPath };
+			});
 	}
 
 	let items = $derived(pathnameToItems(page.url.pathname));

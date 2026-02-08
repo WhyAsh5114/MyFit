@@ -6,36 +6,29 @@
 	import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from '@lucide/svelte';
-	import { getRelativeDayLabel, dateFormatter } from './utils';
+	import { getRelativeDayLabel } from './utils';
 	import Progress from '$lib/components/ui/progress/progress.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import { dateFormatter } from '$lib/my-utils';
 
 	const timeZone = getLocalTimeZone();
 
 	let selectedDay = $derived.by(() => {
-		const dayParam = page.url.searchParams.get('day');
-		if (dayParam) {
+		const dateParam = page.params.date;
+		if (dateParam) {
 			try {
-				return parseDate(dayParam);
+				return parseDate(dateParam);
 			} catch (error) {
-				console.warn(`Invalid date parameter: ${dayParam}`, error);
+				console.warn(`Invalid date parameter: ${dateParam}`, error);
 				return today(timeZone);
 			}
 		}
 		return today(timeZone);
 	});
 
-	$effect(() => {
-		if (!page.url.searchParams.has('day')) {
-			// @ts-expect-error - SvelteKit's goto doesn't support search params
-			goto(resolve(`/food-diary?day=${today(timeZone).toString()}`));
-		}
-	});
-
 	function changeDay(days: number) {
 		selectedDay = selectedDay.add({ days });
-		// @ts-expect-error - SvelteKit's goto doesn't support search params
-		goto(resolve(`/food-diary?day=${selectedDay.toString()}`));
+		goto(resolve(`/food-diary/${selectedDay.toString()}`));
 	}
 </script>
 

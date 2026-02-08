@@ -1,10 +1,4 @@
-import { CalendarDate, DateFormatter, getLocalTimeZone, today } from '@internationalized/date';
-
-export const dateFormatter = new DateFormatter('en-US', {
-	month: 'long',
-	day: 'numeric',
-	year: 'numeric'
-});
+import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 
 export function getRelativeDayLabel(date: CalendarDate) {
 	const todayDate = today(getLocalTimeZone());
