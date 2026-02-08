@@ -50,6 +50,8 @@
 	</Card.Header>
 	<Separator />
 	<Card.Content class="flex">
-		<Button class="ml-auto">Add food <PlusIcon /></Button>
+		<Button class="ml-auto" href={resolve(`/food-diary/${selectedDay.toString()}/add`)}>
+			Add food <PlusIcon />
+		</Button>
 	</Card.Content>
 </Card.Root>
