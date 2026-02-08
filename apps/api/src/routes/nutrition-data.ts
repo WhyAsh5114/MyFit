@@ -14,24 +14,25 @@ function buildPrefixQuery(search: string): string {
 
 const nutritionDataRoutes = new Hono()
 	/**
-	 * Health check endpoint
-	 * Returns status of the API
+	 * Nutrition data search endpoint
+	 * Searches food database using full-text search
 	 */
 	.get(
-		'/',
+		'/:search',
 		zValidator(
-			'json',
+			'param',
 			z.object({
 				search: z.string().min(1, 'Search query cannot be empty')
 			})
 		),
 		async (c) => {
-			const { search } = c.req.valid('json');
+			const { search } = c.req.valid('param');
+			const foodIds = await prisma.$queryRawTyped(searchFoodsQuery(buildPrefixQuery(search)));
+			const results = await prisma.nutritionData.findMany({
+				where: { id: { in: foodIds.map((f) => f.id) } }
+			});
 
-			const results = await prisma.$queryRawTyped(searchFoodsQuery(buildPrefixQuery(search)));
-			results[0].id
-
-			c.json({ status: 'ok', results }, 200);
+			return c.json({ results }, 200);
 		}
 	);
 

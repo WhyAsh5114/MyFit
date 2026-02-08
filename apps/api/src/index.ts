@@ -4,6 +4,7 @@ import { Hono } from 'hono';
 import { authRoutes } from './routes/auth.js';
 import { healthRoutes } from './routes/health.js';
 import 'dotenv/config';
+import { nutritionDataRoutes } from './routes/nutrition-data.js';
 
 const app = new Hono();
 app.use(
@@ -18,7 +19,10 @@ app.use(
 	})
 );
 
-const routes = app.route('/api/health', healthRoutes).route('/api/auth', authRoutes);
+const routes = app
+	.route('/api/health', healthRoutes)
+	.route('/api/auth', authRoutes)
+	.route('/api/nutrition-data', nutritionDataRoutes);
 
 export type AppType = typeof routes;
 
