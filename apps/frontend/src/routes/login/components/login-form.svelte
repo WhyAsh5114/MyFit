@@ -15,6 +15,7 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import * as m from '$lib/paraglide/messages';
+	import { resolve } from '$app/paths';
 
 	let email = $state('');
 	let otp = $state('');
@@ -53,6 +54,12 @@
 		mutationFn: async (otp: string) => {
 			const { data, error } = await authClient.signIn.emailOtp({ email, otp });
 			if (error) throw error;
+
+			if (data.user.name.trim() === '') {
+				toast.success(m['login.registerSuccess']());
+				goto(resolve('/onboarding/setup-account'));
+				return data;
+			}
 
 			toast.success(m['login.loginSuccess']());
 			const callbackUrl = page.url.searchParams.get('callbackUrl') || '/dashboard';

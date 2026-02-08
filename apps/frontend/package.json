@@ -31,9 +31,11 @@
 		"bits-ui": "^2.15.5",
 		"clsx": "^2.1.1",
 		"dotenv": "^17.2.4",
+		"formsnap": "^2.0.1",
 		"svelte": "^5.48.2",
 		"svelte-check": "^4.3.5",
 		"svelte-sonner": "^1.0.7",
+		"sveltekit-superforms": "^2.29.1",
 		"tailwind-merge": "^3.4.0",
 		"tailwind-variants": "^3.2.2",
 		"tailwindcss": "^4.1.18",
@@ -50,6 +52,7 @@
 		"@tanstack/svelte-query": "^6.0.18",
 		"better-auth": "^1.4.18",
 		"culori": "^4.0.2",
-		"mode-watcher": "^1.1.0"
+		"mode-watcher": "^1.1.0",
+		"zod": "^4.3.6"
 	}
 }

@@ -13,11 +13,12 @@
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 	import { resetDatabaseState } from './db';
 	import { getClient } from '$lib/idb-client';
+	import { useCurrentUserQuery } from '$lib/queries/user/get-current-user';
 
 	const sidebar = useSidebar();
-	let authData = authClient.useSession();
+	let authData = useCurrentUserQuery();
 
-	let user = $derived($authData.data?.user);
+	let user = $derived(authData.data);
 
 	function getInitials(name: string, email: string) {
 		if (name.length === 0) {
@@ -37,7 +38,7 @@
 
 <Sidebar.Menu>
 	<Sidebar.MenuItem>
-		{#if $authData.isPending}
+		{#if authData.isPending}
 			<Sidebar.MenuButton
 				size="lg"
 				variant="outline"

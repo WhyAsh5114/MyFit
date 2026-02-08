@@ -4,16 +4,12 @@
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.webp';
 	import { ModeWatcher } from 'mode-watcher';
-	import { browser } from '$app/environment';
-	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
+	import { QueryClientProvider } from '@tanstack/svelte-query';
 	import { Capacitor } from '@capacitor/core';
 	import { App } from '@capacitor/app';
+	import { queryClient } from '$lib/query-client';
 
 	let { children } = $props();
-
-	const queryClient = new QueryClient({
-		defaultOptions: { queries: { enabled: browser } }
-	});
 
 	$effect(() => {
 		if (Capacitor.getPlatform() !== 'android') return;
