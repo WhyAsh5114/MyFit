@@ -4,7 +4,8 @@
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
-			"outputs": [".svelte-kit/**", "build/**", "dist/**"]
+			"outputs": [".svelte-kit/**", "build/**", "dist/**"],
+			"env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "BETTER_AUTH_URL", "RESEND_API_KEY", "TRUSTED_ORIGINS"]
 		},
 		"check": {
 			"dependsOn": ["^check"]
