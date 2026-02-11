@@ -6,7 +6,7 @@
 	import type { User } from 'better-auth';
 	import { setupAccountFormSchema } from './schema';
 	import { defaults, superForm } from 'sveltekit-superforms';
-	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { SendIcon } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
@@ -16,7 +16,7 @@
 	const updateAccountNameMutation = useUpdateAccountNameMutation();
 
 	// svelte-ignore state_referenced_locally
-	const form = superForm(defaults({ name: data.name }, zod4(setupAccountFormSchema)), {
+	const form = superForm(defaults({ name: data.name }, zod4Client(setupAccountFormSchema)), {
 		SPA: true,
 		validators: zod4Client(setupAccountFormSchema),
 		async onUpdate({ form }) {

@@ -7,7 +7,8 @@
 		},
 		"./prisma/client": "./src/prisma-types.ts",
 		"./prisma-idb/client": "./generated/prisma-idb/client/index.ts",
-		"./prisma-idb/server": "./generated/prisma-idb/server/index.ts"
+		"./prisma-idb/server": "./generated/prisma-idb/server/index.ts",
+		"./validators": "./generated/prisma-idb/validators.ts"
 	},
 	"scripts": {
 		"dev": "tsx watch src/index.ts",

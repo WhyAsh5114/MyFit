@@ -6,6 +6,7 @@
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { PlusCircleIcon, ScanBarcodeIcon, SearchIcon, SearchXIcon } from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import EntryForm from './components/entry-form.svelte';
 
 	const getFoodByCodeQuery = useGetFoodByCodeQuery(() => page.params.code ?? '');
 </script>
@@ -37,4 +38,5 @@
 	</Empty.Root>
 {:else}
 	<FoodCard food={getFoodByCodeQuery.data} />
+	<EntryForm food={getFoodByCodeQuery.data} />
 {/if}

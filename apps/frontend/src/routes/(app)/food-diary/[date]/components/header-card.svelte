@@ -8,7 +8,6 @@
 	import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from '@lucide/svelte';
 	import { getRelativeDayLabel } from './utils';
 	import Progress from '$lib/components/ui/progress/progress.svelte';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { dateFormatter } from '$lib/my-utils';
 
 	const timeZone = getLocalTimeZone();
@@ -48,10 +47,8 @@
 		</div>
 		<Progress value={10} max={100} />
 	</Card.Header>
-	<Separator />
-	<Card.Content class="flex">
-		<Button class="ml-auto" href={resolve(`/food-diary/${selectedDay.toString()}/add`)}>
-			Add food <PlusIcon />
-		</Button>
-	</Card.Content>
 </Card.Root>
+
+<Button class="ml-auto" href={resolve(`/food-diary/${selectedDay.toString()}/add`)}>
+	Add food <PlusIcon />
+</Button>

@@ -1,8 +1,9 @@
-import { z } from 'zod';
+import { validators } from '@myfit/api/validators';
 
-export const foodEntryFormSchema = z.object({
-	datetime: z.date(),
-	quantity: z.number().min(0.1, 'Quantity must be at least 0.1')
-});
+export const foodEntryFormSchema = validators.FoodEntry.omit({ id: true, userId: true })
+	.loose()
+	.extend({
+		quantity: validators.FoodEntry.shape.quantity.min(1, { message: 'Quantity must be at least 1' })
+	});
 
 export type FoodEntryFormSchema = typeof foodEntryFormSchema;

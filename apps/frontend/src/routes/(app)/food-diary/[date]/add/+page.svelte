@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Card from '$lib/components/ui/card/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import { PlusCircleIcon, ScanBarcodeIcon } from '@lucide/svelte';
@@ -11,15 +10,13 @@
 	const debounced = new Debounced(() => search, 500);
 </script>
 
-<Card.Root>
-	<Card.Content class="grid grid-cols-2 gap-2">
-		<Label class="col-span-2 flex flex-col items-start">
-			Search for foods
-			<Input type="text" placeholder="apple pie" bind:value={search} />
-		</Label>
-		<Button variant="secondary"><PlusCircleIcon /> Add manually</Button>
-		<Button>Scan barcode <ScanBarcodeIcon /></Button>
-	</Card.Content>
-</Card.Root>
+<div class="grid grid-cols-2 gap-2">
+	<Label class="col-span-2 flex flex-col items-start">
+		Search for foods
+		<Input type="text" placeholder="apple pie" bind:value={search} />
+	</Label>
+	<Button variant="secondary"><PlusCircleIcon /> Add manually</Button>
+	<Button>Scan barcode <ScanBarcodeIcon /></Button>
+</div>
 
 <FoodInfinite search={debounced.current} />
