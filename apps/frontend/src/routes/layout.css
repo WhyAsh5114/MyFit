@@ -161,24 +161,3 @@
 	}
 }
 
-.scroll-shadow {
-	background: /* Shadow covers */
-		linear-gradient(var(--background) 30%, rgb(from var(--background) r g b / 0)),
-		linear-gradient(rgb(from var(--background) r g b / 0), var(--background) 70%) 0 100%,
-		/* Shadows */ radial-gradient(50% 0, farthest-side, var(--shadow-color), rgba(0, 0, 0, 0)),
-		radial-gradient(50% 100%, farthest-side, var(--shadow-color), rgba(0, 0, 0, 0)) 0 100%;
-	background: /* Shadow covers */
-		linear-gradient(var(--background) 30%, rgb(from var(--background) r g b / 0)),
-		linear-gradient(rgb(from var(--background) r g b / 0), var(--background) 70%) 0 100%,
-		/* Shadows */ radial-gradient(farthest-side at 50% 0, var(--shadow-color), rgba(0, 0, 0, 0)),
-		radial-gradient(farthest-side at 50% 100%, var(--shadow-color), rgba(0, 0, 0, 0)) 0 100%;
-	background-repeat: no-repeat;
-	background-color: var(--background);
-	background-size:
-		100% 60px,
-		100% 60px,
-		100% 21px,
-		100% 21px;
-	/* Opera doesn't support this in the shorthand */
-	background-attachment: local, local, scroll, scroll;
-}
