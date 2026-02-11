@@ -8,7 +8,7 @@ type AuthSessionData = {
 	session: Session;
 };
 
-export async function getExistingUser(
+export async function getCachedUserOnClient(
 	client: PrismaIDBClient,
 	sessionData: AuthSessionData | null
 ) {
@@ -16,7 +16,7 @@ export async function getExistingUser(
 		? await client.user.findUnique({ where: { id: sessionData.user.id } })
 		: null;
 
-	return { sessionData, existingUser };
+	return { existingUser };
 }
 
 export async function getOfflineUser(client: PrismaIDBClient) {

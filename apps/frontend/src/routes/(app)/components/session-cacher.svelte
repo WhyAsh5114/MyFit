@@ -7,7 +7,7 @@
 	import { PrismaIDBClient } from '@myfit/api/prisma-idb/client';
 	import {
 		createUserForCurrentSession,
-		getExistingUser,
+		getCachedUserOnClient,
 		getOfflineUser,
 		redirectToLogin
 	} from './db';
@@ -27,9 +27,9 @@
 
 	async function syncIdbWithSession() {
 		if ($session.isPending || $session.isRefetching) return;
-		const { sessionData, existingUser } = await getExistingUser(client, $session.data);
+		const { existingUser } = await getCachedUserOnClient(client, $session.data);
 
-		if (!sessionData && !existingUser) {
+		if (!$session.data && !existingUser) {
 			if (await getOfflineUser(client)) return;
 
 			if (!isUnprotectedRoute(page.url.pathname)) {
@@ -37,8 +37,8 @@
 			}
 		}
 
-		if (sessionData && !existingUser) {
-			await createUserForCurrentSession(client, sessionData);
+		if ($session.data && !existingUser) {
+			await createUserForCurrentSession(client, $session.data);
 		}
 	}
 </script>

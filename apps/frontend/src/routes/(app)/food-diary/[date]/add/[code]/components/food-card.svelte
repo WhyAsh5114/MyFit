@@ -3,11 +3,16 @@
 	import MacrosPieChart from './macros-pie-chart.svelte';
 	import type { NutritionData } from '@myfit/api/prisma/client';
 
-	let { food }: { food: NutritionData } = $props();
+	let { food }: { food: (NutritionData & { quantity: number }) } = $props();
+
+	let energyKcal = $derived(food.energy_kcal_100g * (food.quantity / 100));
+	let carbs = $derived(food.carbohydrates_100g * (food.quantity / 100));
+	let fats = $derived(food.fat_100g * (food.quantity / 100));
+	let proteins = $derived(food.proteins_100g * (food.quantity / 100));
 
 	function calculateMacroPercentage(macroGrams: number, kcalPerGram: number) {
 		const macroKcal = macroGrams * kcalPerGram;
-		const totalKcal = food.energy_kcal_100g ?? 1;
+		const totalKcal = energyKcal ?? 1;
 		return totalKcal > 0 ? (macroKcal / totalKcal) * 100 : 0;
 	}
 
@@ -32,16 +37,11 @@
 		<Card.Description>{food.brands ?? 'No brand'}</Card.Description>
 	</Card.Header>
 	<Card.Content class="flex items-center justify-around gap-4">
-		<MacrosPieChart
-			carbs={food.carbohydrates_100g}
-			fats={food.fat_100g}
-			proteins={food.proteins_100g}
-			kcal={food.energy_kcal_100g}
-		/>
+		<MacrosPieChart {carbs} {fats} {proteins} kcal={energyKcal} />
 		<div class="grid grow grid-cols-3">
-			{@render macroCell('Carbs', food.carbohydrates_100g, 'text-chart-3', 4)}
-			{@render macroCell('Fats', food.fat_100g, 'text-chart-2', 9)}
-			{@render macroCell('Proteins', food.proteins_100g, 'text-chart-1', 4)}
+			{@render macroCell('Carbs', carbs, 'text-chart-3', 4)}
+			{@render macroCell('Fats', fats, 'text-chart-2', 9)}
+			{@render macroCell('Proteins', proteins, 'text-chart-1', 4)}
 		</div>
 	</Card.Content>
 </Card.Root>

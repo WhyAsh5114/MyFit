@@ -9,6 +9,7 @@
 
 	--background: oklch(0.99 0 89.876);
 	--foreground: oklch(0.159 0 89.876);
+	--shadow-color: rgba(0, 0, 0, 0.3);
 
 	--card: oklch(1 0 89.876);
 	--card-foreground: oklch(0.159 0 89.876);
@@ -30,6 +31,9 @@
 
 	--destructive: oklch(0.637 0.208 25.331);
 	--destructive-foreground: oklch(0.985 0 89.876);
+
+	--warning: oklch(62.35% 0.12832 96.393);
+	--warning-foreground: oklch(0.985 0 89.876);
 
 	--border: oklch(0.94 0 89.876);
 	--input: oklch(0.882 0 89.876);
@@ -54,6 +58,7 @@
 .dark {
 	--background: oklch(0 0 0);
 	--foreground: oklch(0.985 0 89.876);
+	--shadow-color: rgba(255, 255, 255, 0.2);
 
 	--card: oklch(0.16 0 89.876);
 	--card-foreground: oklch(0.985 0 89.876);
@@ -75,6 +80,9 @@
 
 	--destructive: oklch(0.637 0.208 25.331);
 	--destructive-foreground: oklch(0.985 0 89.876);
+
+	--warning: oklch(62.35% 0.12832 96.393);
+	--warning-foreground: oklch(0.985 0 89.876);
 
 	--border: oklch(0.226 0 89.876);
 	--input: oklch(0.285 0 89.876);
@@ -116,6 +124,8 @@
 	--color-accent: var(--accent);
 	--color-accent-foreground: var(--accent-foreground);
 	--color-destructive: var(--destructive);
+	--color-warning: var(--warning);
+	--color-warning-foreground: var(--warning-foreground);
 	--color-border: var(--border);
 	--color-input: var(--input);
 	--color-ring: var(--ring);
@@ -149,4 +159,26 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+}
+
+.scroll-shadow {
+	background: /* Shadow covers */
+		linear-gradient(var(--background) 30%, rgb(from var(--background) r g b / 0)),
+		linear-gradient(rgb(from var(--background) r g b / 0), var(--background) 70%) 0 100%,
+		/* Shadows */ radial-gradient(50% 0, farthest-side, var(--shadow-color), rgba(0, 0, 0, 0)),
+		radial-gradient(50% 100%, farthest-side, var(--shadow-color), rgba(0, 0, 0, 0)) 0 100%;
+	background: /* Shadow covers */
+		linear-gradient(var(--background) 30%, rgb(from var(--background) r g b / 0)),
+		linear-gradient(rgb(from var(--background) r g b / 0), var(--background) 70%) 0 100%,
+		/* Shadows */ radial-gradient(farthest-side at 50% 0, var(--shadow-color), rgba(0, 0, 0, 0)),
+		radial-gradient(farthest-side at 50% 100%, var(--shadow-color), rgba(0, 0, 0, 0)) 0 100%;
+	background-repeat: no-repeat;
+	background-color: var(--background);
+	background-size:
+		100% 60px,
+		100% 60px,
+		100% 21px,
+		100% 21px;
+	/* Opera doesn't support this in the shorthand */
+	background-attachment: local, local, scroll, scroll;
 }

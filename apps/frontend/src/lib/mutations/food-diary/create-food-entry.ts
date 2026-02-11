@@ -6,7 +6,7 @@ import type { FoodEntry } from '@myfit/api/prisma/client';
 
 export const useCreateFoodEntryMutation = () =>
 	createMutation(() => ({
-		mutationFn: async (data: FoodEntry) => {
+		mutationFn: async (data: Omit<FoodEntry, 'id'>) => {
 			const client = getClient();
 
 			await client.foodEntry.create({ data });
