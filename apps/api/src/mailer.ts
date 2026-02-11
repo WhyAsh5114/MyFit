@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY!);
 
 export function sendOTPEmail(to: string, otp: string) {
   return resend.emails.send({
-    from: "onboarding@resend.dev",
+    from: "auth@login.myfit.fit",
     to,
     subject: "Your OTP",
     html: `<p>Your OTP is: ${otp}</p>`,
