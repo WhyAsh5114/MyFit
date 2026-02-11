@@ -5,6 +5,7 @@
 		".": {
 			"types": "./src/index.ts"
 		},
+		"./prisma/client": "./src/prisma-types.ts",
 		"./prisma-idb/client": "./generated/prisma-idb/client/index.ts",
 		"./prisma-idb/server": "./generated/prisma-idb/server/index.ts"
 	},

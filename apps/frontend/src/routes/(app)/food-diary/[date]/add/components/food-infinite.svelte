@@ -55,7 +55,7 @@
 						<Card.Header>
 							<Card.Title>{foodEntry.product_name}</Card.Title>
 							<Card.Description>
-								{foodEntry.brands}, {Math.round(foodEntry.energy_kcal_100g)} kcal per 100g
+								{foodEntry.brands ?? 'No brand'}, {Math.round(foodEntry.energy_kcal_100g)} kcal per 100g
 							</Card.Description>
 							<Card.Action>
 								<Button
