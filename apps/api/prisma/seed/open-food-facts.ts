@@ -196,7 +196,7 @@ function download(url: string, dest: string, maxRedirects: number = 5): Promise<
 function num(v?: string) {
 	if (!v || v === '') return '\\N';
 	const n = Number(v);
-	return Number.isFinite(n) ? n.toString() : '\\N';
+	return Number.isFinite(n) ? Number(n).toFixed(2) : '\\N';
 }
 
 function escapeText(v?: string) {
