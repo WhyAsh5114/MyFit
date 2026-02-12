@@ -129,6 +129,9 @@ importers:
       '@tanstack/svelte-query':
         specifier: ^6.0.18
         version: 6.0.18(svelte@5.49.2)
+      barqode:
+        specifier: ^0.0.2
+        version: 0.0.2(svelte@5.49.2)
       better-auth:
         specifier: ^1.4.18
         version: 1.4.18(@prisma/client@7.3.0(prisma@7.3.0(@types/react@19.2.13)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3))(typescript@5.9.3))(@sveltejs/kit@2.50.2(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.49.2)(vite@7.3.1(@types/node@20.19.32)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)))(svelte@5.49.2)(typescript@5.9.3)(vite@7.3.1(@types/node@20.19.32)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)))(mysql2@3.15.3)(pg@8.18.0)(prisma@7.3.0(@types/react@19.2.13)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(svelte@5.49.2)
@@ -1194,6 +1197,12 @@ packages:
   '@types/culori@4.0.1':
     resolution: {integrity: sha512-43M51r/22CjhbOXyGT361GZ9vncSVQ39u62x5eJdBQFviI8zWp2X5jzqg7k4M6PVgDQAClpy2bUe2dtwEgEDVQ==}
 
+  '@types/dom-webcodecs@0.1.11':
+    resolution: {integrity: sha512-yPEZ3z7EohrmOxbk/QTAa0yonMFkNkjnVXqbGb7D4rMr+F1dGQ8ZUFxXkyLLJuiICPejZ0AZE9Rrk9wUCczx4A==}
+
+  '@types/emscripten@1.41.5':
+    resolution: {integrity: sha512-cMQm7pxu6BxtHyqJ7mQZ2kXWV5SLmugybFdHCBbJ5eHzOo6VhBckEgAT3//rP5FwPHNPeEiq4SmQ5ucBwsOo4Q==}
+
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
@@ -1433,6 +1442,9 @@ packages:
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
+  barcode-detector@2.3.1:
+    resolution: {integrity: sha512-D9KEtrquS1tmBZduxBZl8qublIKnRrFqD8TAHDYcLCyrHQBo+vitIxmjMJ61LvXjXyAMalOlO7q0Oh/9Rl2PbQ==}
+
   bare-events@2.8.2:
     resolution: {integrity: sha512-riJjyv1/mHLIPX4RwiK+oW9/4c3TEUeORHKefKAKnZ5kyslbN+HXowtbaVEqt4IMUB7OXlfixcs6gsFeo/jhiQ==}
     peerDependencies:
@@ -1470,6 +1482,11 @@ packages:
 
   bare-url@2.3.2:
     resolution: {integrity: sha512-ZMq4gd9ngV5aTMa5p9+UfY0b3skwhHELaDkhEHetMdX0LRkW9kzaym4oo/Eh+Ghm0CCDuMTsRIGM/ytUc1ZYmw==}
+
+  barqode@0.0.2:
+    resolution: {integrity: sha512-/mfVnLfBpqmuyTn7a8eAnYqtmFuDZFn0mFtE32ClqzIJXuKDXkIMkcvdN1nUQ11Y6qd9vLygemfNIHfQwh0dyg==}
+    peerDependencies:
+      svelte: ^5.0.0
 
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
@@ -3577,6 +3594,11 @@ packages:
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
 
+  runed@0.16.3:
+    resolution: {integrity: sha512-4LJmDU9iGyCZLzNzNy0f0GId0/n/nN/VlhAX2t9PkmcSpxIEpc4Ads4HIUj4xp9UBZfZceRwtfLqaktK2eQJMw==}
+    peerDependencies:
+      svelte: ^5.0.0-next.1
+
   runed@0.23.4:
     resolution: {integrity: sha512-9q8oUiBYeXIDLWNK5DfCWlkL0EW3oGbk845VdKlPeia28l751VpfesaB/+7pI6rnbx1I6rqoZ2fZxptOJLxILA==}
     peerDependencies:
@@ -3643,6 +3665,9 @@ packages:
 
   scheduler@0.27.0:
     resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
+
+  sdp@3.2.1:
+    resolution: {integrity: sha512-lwsAIzOPlH8/7IIjjz3K0zYBk7aBVVcvjMwt3M4fLxpjMYyy7i3I97SLHebgn4YBjirkzfp3RvRDWSKsh/+WFw==}
 
   selderee@0.11.0:
     resolution: {integrity: sha512-5TF+l7p4+OsnP8BCCvSyZiSPc4x4//p5uPwK8TCnVPJYRmU2aYKMpOXvw8zM5a5JvuuCGN1jmsMwuU2W02ukfA==}
@@ -4231,6 +4256,10 @@ packages:
   webpack-virtual-modules@0.6.2:
     resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
 
+  webrtc-adapter@9.0.3:
+    resolution: {integrity: sha512-5fALBcroIl31OeXAdd1YUntxiZl1eHlZZWzNg3U4Fn+J9/cGL3eT80YlrsWGvj2ojuz1rZr2OXkgCzIxAZ7vRQ==}
+    engines: {node: '>=6.0.0', npm: '>=3.10.0'}
+
   whatwg-url@5.0.0:
     resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
 
@@ -4365,6 +4394,9 @@ packages:
 
   zod@4.3.6:
     resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
+
+  zxing-wasm@1.3.4:
+    resolution: {integrity: sha512-9l0QymyATF19FmI92QHe7Dayb+BUN7P7zFAt5iDgTnUf0dFWokz6GVA/W9EepjW5q8s3e89fIE/7uxpX27yqEQ==}
 
 snapshots:
 
@@ -5372,6 +5404,10 @@ snapshots:
 
   '@types/culori@4.0.1': {}
 
+  '@types/dom-webcodecs@0.1.11': {}
+
+  '@types/emscripten@1.41.5': {}
+
   '@types/estree@1.0.8': {}
 
   '@types/fs-extra@8.1.5':
@@ -5631,6 +5667,11 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
+  barcode-detector@2.3.1:
+    dependencies:
+      '@types/dom-webcodecs': 0.1.11
+      zxing-wasm: 1.3.4
+
   bare-events@2.8.2: {}
 
   bare-fs@4.5.3:
@@ -5667,6 +5708,13 @@ snapshots:
     dependencies:
       bare-path: 3.0.0
     optional: true
+
+  barqode@0.0.2(svelte@5.49.2):
+    dependencies:
+      barcode-detector: 2.3.1
+      runed: 0.16.3(svelte@5.49.2)
+      svelte: 5.49.2
+      webrtc-adapter: 9.0.3
 
   base64-js@1.5.1: {}
 
@@ -7704,6 +7752,11 @@ snapshots:
     dependencies:
       queue-microtask: 1.2.3
 
+  runed@0.16.3(svelte@5.49.2):
+    dependencies:
+      esm-env: 1.2.2
+      svelte: 5.49.2
+
   runed@0.23.4(svelte@5.49.2):
     dependencies:
       esm-env: 1.2.2
@@ -7760,6 +7813,8 @@ snapshots:
   sax@1.4.4: {}
 
   scheduler@0.27.0: {}
+
+  sdp@3.2.1: {}
 
   selderee@0.11.0:
     dependencies:
@@ -8365,6 +8420,10 @@ snapshots:
 
   webpack-virtual-modules@0.6.2: {}
 
+  webrtc-adapter@9.0.3:
+    dependencies:
+      sdp: 3.2.1
+
   whatwg-url@5.0.0:
     dependencies:
       tr46: 0.0.3
@@ -8506,3 +8565,7 @@ snapshots:
     optional: true
 
   zod@4.3.6: {}
+
+  zxing-wasm@1.3.4:
+    dependencies:
+      '@types/emscripten': 1.41.5

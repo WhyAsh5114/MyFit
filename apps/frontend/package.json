@@ -51,6 +51,7 @@
 		"@capacitor/status-bar": "^8.0.0",
 		"@internationalized/date": "^3.11.0",
 		"@tanstack/svelte-query": "^6.0.18",
+		"barqode": "^0.0.2",
 		"better-auth": "^1.4.18",
 		"culori": "^4.0.2",
 		"hono": "^4.11.8",

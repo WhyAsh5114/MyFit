@@ -9,6 +9,7 @@
 	import EntryForm from './components/entry-form.svelte';
 	import type { FoodEntryFormSchema } from './components/food-entry-form-schema';
 	import { useCurrentUserQuery } from '$lib/queries/user/get-current-user';
+	import { resolve } from '$app/paths';
 
 	const currentUserQuery = useCurrentUserQuery();
 	const getFoodByCodeQuery = useGetFoodByCodeQuery(() => page.params.code ?? '');
@@ -40,7 +41,7 @@
 			</Empty.Description>
 		</Empty.Header>
 		<Empty.Content class="grid gap-2">
-			<Button>
+			<Button href={resolve(`/food-diary/${page.params.date}/add/scan`)}>
 				<ScanBarcodeIcon /> Scan barcode
 			</Button>
 			<Button variant="secondary">
