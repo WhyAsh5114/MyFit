@@ -36,6 +36,7 @@ type TodaysWorkoutData = {
 		splitDayName: string;
 	};
 	note: string | null;
+	isLastWorkout: boolean;
 };
 
 type WorkoutExercisesWithPreviousData = {
@@ -302,14 +303,15 @@ export const workouts = t.router({
 			userBodyweight,
 			startedAt: new Date(),
 			endedAt: null,
-			note: null
+			note: null,
+			isLastWorkout: false
 		};
 
 		if (data === null) {
 			return todaysWorkoutData;
 		}
 
-		const { isRestDay, splitDayIndex, cycleNumber, todaysSplitDay } = getBasicDayInfo(
+		const { isRestDay, splitDayIndex, cycleNumber, todaysSplitDay, isLastWorkout } = getBasicDayInfo(
 			data,
 			data.workoutsOfMesocycle.length
 		);
@@ -322,6 +324,8 @@ export const workouts = t.router({
 			cycleNumber,
 			splitDayIndex
 		};
+
+		todaysWorkoutData.isLastWorkout = isLastWorkout;
 
 		if (!isRestDay) {
 			todaysWorkoutData.workoutExercises = todaysSplitDay.mesocycleSplitDayExercises.map((exercise) => ({
@@ -364,7 +368,8 @@ export const workouts = t.router({
 			userBodyweight,
 			startedAt: new Date(),
 			endedAt: null,
-			note: null
+			note: null,
+			isLastWorkout: false
 		};
 
 		if (data === null) {
@@ -751,7 +756,8 @@ function getBasicDayInfo(
 	const isRestDay = todaysSplitDay.isRestDay;
 	const splitDayIndex = totalWorkouts % splitLength;
 	const cycleNumber = 1 + Math.floor(totalWorkouts / splitLength);
-	return { isRestDay, splitDayIndex, cycleNumber, todaysSplitDay };
+	const isLastWorkout = totalWorkouts === mesocycleData.workoutsOfMesocycle.length;
+	return { isRestDay, splitDayIndex, cycleNumber, todaysSplitDay, isLastWorkout };
 }
 
 function getBasicDayInfoForSkippedWorkout(
