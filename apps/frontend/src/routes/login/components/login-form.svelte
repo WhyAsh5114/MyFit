@@ -55,6 +55,9 @@
 			const { data, error } = await authClient.signIn.emailOtp({ email, otp });
 			if (error) throw error;
 
+			// Re-fetch session to let state sync
+			await authClient.getSession();
+
 			if (data.user.name.trim() === '') {
 				toast.success(m['login.registerSuccess']());
 				goto(resolve('/onboarding/setup-account'));
