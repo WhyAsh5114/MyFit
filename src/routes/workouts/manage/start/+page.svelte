@@ -154,6 +154,22 @@
 	<Skeleton class="h-[166px] w-full" />
 	<Skeleton class="mt-auto h-10 w-full" />
 {:else}
+	{#if workoutData.isLastWorkout}
+		<Card.Root class="mb-1">
+			<Card.Header>
+				<Card.Title>Last workout for the mesocycle &nbsp;🎉</Card.Title>
+				<Card.Description>
+					If you complete this workout, this mescycle will be marked as completed and you'll have to start a new one to
+					continue training. If you don't want to go through that hassle, you can edit the duration and extend it now.
+				</Card.Description>
+			</Card.Header>
+			<Card.Footer>
+				<Button class="ml-auto" href={`/mesocycles/${workoutData.workoutOfMesocycle?.mesocycle.id}`}>
+					Edit mesocycle
+				</Button>
+			</Card.Footer>
+		</Card.Root>
+	{/if}
 	{#if workoutRunes.editingWorkoutId === null}
 		<div class="mb-1 flex items-center justify-between gap-2 rounded-lg border bg-card p-4">
 			<Label for="use-active-mesocycle">
