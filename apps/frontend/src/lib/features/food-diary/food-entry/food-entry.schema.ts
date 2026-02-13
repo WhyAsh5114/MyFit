@@ -26,7 +26,7 @@ const optionalShape = Object.fromEntries(
 ) as Record<(typeof optionalFields)[number]['key'], z.ZodNullable<z.ZodNumber>>;
 
 export const foodEntryFormSchema = z.object({
-	productName: z.string().min(1, 'Product name is required'),
+	product_name: z.string().min(1, 'Product name is required'),
 	brands: z.string().nullable(),
 	eatenAt: z.date(),
 	quantityG: z.number().positive('Quantity must be greater than zero'),

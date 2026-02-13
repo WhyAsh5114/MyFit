@@ -16,7 +16,7 @@
 
 	let foodData = $derived.by(() => {
 		if (!getFoodByCodeQuery.data) return getFoodByCodeQuery.data;
-		return { ...getFoodByCodeQuery.data, quantity: 100 };
+		return { ...getFoodByCodeQuery.data, quantityG: 100 };
 	});
 
 	function handleChange(data: FoodEntryFormSchema) {

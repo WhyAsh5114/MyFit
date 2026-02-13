@@ -28,7 +28,7 @@
 	let { food, onChange, userId }: Props = $props();
 
 	const createFoodEntryMutation = useCreateFoodEntryMutation();
-	let defaultData = $derived({ ...food, id: undefined, eatenAt: new Date(), quantity: 100 });
+	let defaultData = $derived({ ...food, id: undefined, eatenAt: new Date() });
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(defaults(defaultData, zod4(foodEntryFormSchema)), {

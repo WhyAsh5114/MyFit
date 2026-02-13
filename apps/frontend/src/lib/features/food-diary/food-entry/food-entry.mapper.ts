@@ -34,7 +34,7 @@ export function foodEntryFormSchemaToFoodEntry(
 	) as Record<(typeof OPTIONAL_NUTRIENTS)[number]['foodEntryKey'], number>;
 
 	return {
-		productName: input.productName,
+		productName: input.product_name,
 		brands: input.brands,
 		eatenAt: input.eatenAt,
 		quantityG: input.quantityG,
