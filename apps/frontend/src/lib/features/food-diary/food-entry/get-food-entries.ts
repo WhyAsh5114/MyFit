@@ -1,5 +1,5 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { type CalendarDate } from '@internationalized/date';
+import { getLocalTimeZone, type CalendarDate } from '@internationalized/date';
 import { getClient } from '$lib/clients/idb-client';
 import { foodEntryKeys } from './food-entry.keys';
 
@@ -9,12 +9,13 @@ export const useGetFoodByDateQuery = (getDate: () => CalendarDate) =>
 		return {
 			queryKey: foodEntryKeys.getByDateQuery(date.toString()),
 			queryFn: async () => {
-				const dayAfter = date.add({ days: 1 }).toString();
+				const timezone = getLocalTimeZone();
+				const dayAfter = date.add({ days: 1 }).toDate(timezone);
 
 				return await getClient().foodEntry.findMany({
 					where: {
 						eatenAt: {
-							gte: date.toString(),
+							gte: date.toDate(timezone),
 							lte: dayAfter
 						}
 					}
