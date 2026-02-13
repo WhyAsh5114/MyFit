@@ -3,23 +3,24 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { RulerIcon, FlameIcon, TargetIcon, ChevronRightIcon } from '@lucide/svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	const buttonData = [
 		{
-			title: 'Metrics',
-			description: 'Your bodyweight, height, and other metrics',
+			title: m['foodDiary.metricsTitle'](),
+			description: m['foodDiary.metricsDescription'](),
 			href: '/food-diary/goals/metrics',
 			icon: RulerIcon
 		},
 		{
-			title: 'Activity',
-			description: 'Daily energy expenditure and activity tracking',
+			title: m['foodDiary.activityTitle'](),
+			description: m['foodDiary.activityDescription'](),
 			href: '/food-diary/goals/activity',
 			icon: FlameIcon
 		},
 		{
-			title: 'Targets',
-			description: 'Set your targets: weight change and macro ratios',
+			title: m['foodDiary.targetsTitle'](),
+			description: m['foodDiary.targetsDescription'](),
 			href: '/food-diary/goals/targets',
 			icon: TargetIcon
 		}

@@ -7,6 +7,7 @@
 	import { useGetFoodByDateQuery } from '$lib/features/food-diary/food-entry/get-food-entries';
 	import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
 	import { AppleIcon } from '@lucide/svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	const timeZone = getLocalTimeZone();
 
@@ -32,10 +33,11 @@
 			<Empty.Media variant="icon">
 				<Spinner />
 			</Empty.Media>
-			<Empty.Title>Loading food entries</Empty.Title>
+			<Empty.Title>{m['foodDiary.loadingEntries']()}</Empty.Title>
 			<Empty.Description>
-				Did you know that the average person eats around 1,000 pounds of food per year? That's a lot
-				of food to keep track of!
+				{m['foodDiary.loadingEntriesDescription']({
+					date: dateFormatter.format(selectedDay.toDate(timeZone))
+				})}
 			</Empty.Description>
 		</Empty.Header>
 	</Empty.Root>
@@ -45,9 +47,11 @@
 			<Empty.Media variant="icon">
 				<AppleIcon />
 			</Empty.Media>
-			<Empty.Title>No food entries</Empty.Title>
+			<Empty.Title>{m['foodDiary.noEntries']()}</Empty.Title>
 			<Empty.Description>
-				No food entries found for {dateFormatter.format(selectedDay.toDate(timeZone))}
+				{m['foodDiary.noEntriesDescription']({
+					date: dateFormatter.format(selectedDay.toDate(timeZone))
+				})}
 			</Empty.Description>
 		</Empty.Header>
 	</Empty.Root>

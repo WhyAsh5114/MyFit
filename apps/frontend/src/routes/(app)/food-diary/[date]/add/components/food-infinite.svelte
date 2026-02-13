@@ -8,6 +8,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { m } from '$lib/paraglide/messages';
 
 	let { search }: { search: string } = $props();
 
@@ -20,9 +21,9 @@
 			<Empty.Media variant="icon">
 				<SearchIcon />
 			</Empty.Media>
-			<Empty.Title>Search foods</Empty.Title>
+			<Empty.Title>{m['foodDiary.searchFoodsEmpty']()}</Empty.Title>
 			<Empty.Description>
-				Type in the search box above to find foods to add to your diary
+				{m['foodDiary.searchFoodsEmptyDescription']()}
 			</Empty.Description>
 		</Empty.Header>
 	</Empty.Root>
@@ -32,8 +33,8 @@
 			<Empty.Media variant="icon">
 				<Spinner />
 			</Empty.Media>
-			<Empty.Title>Searching...</Empty.Title>
-			<Empty.Description>Fetching foods that match your search</Empty.Description>
+			<Empty.Title>{m['foodDiary.searching']()}</Empty.Title>
+			<Empty.Description>{m['foodDiary.searchingDescription']()}</Empty.Description>
 		</Empty.Header>
 	</Empty.Root>
 {:else if searchFoodsQuery.data?.length === 0}
@@ -42,8 +43,8 @@
 			<Empty.Media variant="icon">
 				<SearchIcon />
 			</Empty.Media>
-			<Empty.Title>No foods found</Empty.Title>
-			<Empty.Description>Try another search or add the food manually</Empty.Description>
+			<Empty.Title>{m['foodDiary.noFoodsFound']()}</Empty.Title>
+			<Empty.Description>{m['foodDiary.noFoodsFoundDescription']()}</Empty.Description>
 		</Empty.Header>
 	</Empty.Root>
 {:else}
@@ -60,7 +61,7 @@
 							<Card.Action>
 								<Button
 									size="icon"
-									aria-label="Add food"
+									aria-label={m['foodDiary.addFood']()}
 									class="ml-2 rounded-full"
 									variant="outline"
 								>

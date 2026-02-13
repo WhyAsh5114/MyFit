@@ -10,6 +10,7 @@
 	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
 	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
 	import { resolve } from '$app/paths';
+	import { m } from '$lib/paraglide/messages';
 
 	const getCurrentUserQuery = useGetCurrentUserQuery();
 	const getFoodByCodeQuery = useGetFoodByCodeQuery(() => page.params.code ?? '');
@@ -35,20 +36,20 @@
 			<Empty.Media variant="icon">
 				<SearchXIcon />
 			</Empty.Media>
-			<Empty.Title>No food found</Empty.Title>
+			<Empty.Title>{m['foodDiary.noFoodFound']()}</Empty.Title>
 			<Empty.Description>
-				Food with this code couldn't be found. Try some other options?
+				{m['foodDiary.noFoodFoundDescription']()}
 			</Empty.Description>
 		</Empty.Header>
 		<Empty.Content class="grid gap-2">
 			<Button href={resolve(`/food-diary/${page.params.date}/add/scan`)}>
-				<ScanBarcodeIcon /> Scan barcode
+				<ScanBarcodeIcon /> {m['foodDiary.scanBarcode']()}
 			</Button>
 			<Button variant="secondary" href={resolve(`/food-diary/${page.params.date}/add`)}>
-				<SearchIcon /> Search for foods
+				<SearchIcon /> {m['foodDiary.searchForFoods']()}
 			</Button>
 			<Button variant="outline">
-				<PlusCircleIcon /> Add manually
+				<PlusCircleIcon /> {m['foodDiary.addManually']()}
 			</Button>
 		</Empty.Content>
 	</Empty.Root>

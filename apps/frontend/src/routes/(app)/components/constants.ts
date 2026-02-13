@@ -12,7 +12,7 @@ import GithubIcon from '$lib/icons/github-icon.svelte';
 
 export const sidebarLinks = [
 	{
-		title: 'Application',
+		title: m['sidebar.application'](),
 		items: [
 			{
 				title: m['nav.dashboard'](),
@@ -37,7 +37,7 @@ export const sidebarLinks = [
 		]
 	},
 	{
-		title: 'Legal',
+		title: m['sidebar.legal'](),
 		items: [
 			{
 				title: m['legal.privacyPolicy'](),
@@ -52,7 +52,7 @@ export const sidebarLinks = [
 		]
 	},
 	{
-		title: 'External',
+		title: m['sidebar.external'](),
 		items: [
 			{
 				title: m['nav.github'](),

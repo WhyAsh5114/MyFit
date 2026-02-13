@@ -19,6 +19,7 @@
 	import CustomScrollArea from '$lib/components/custom-scroll-area.svelte';
 	import { toast } from 'svelte-sonner';
 	import { cn } from '$lib/utils';
+	import { m } from '$lib/paraglide/messages';
 
 	let { form }: { form: SuperForm<FoodEntryFormSchema> } = $props();
 	let formData = $derived(form.form);
@@ -40,8 +41,8 @@
 	});
 
 	function showErrorsToast() {
-		toast.error('There are errors in the form', {
-			description: `In the fields: ${$formErrors.map((error) => getLabelForField(error.path)).join(', ')}`
+		toast.error(m['validation.errors'](), {
+			description: m['validation.errorFields']({ fields: $formErrors.map((error) => getLabelForField(error.path)).join(', ') })
 		});
 	}
 
@@ -60,21 +61,21 @@
 				class={cn({ 'border-destructive!': hasFieldErrors })}
 				{...props}
 			>
-				Edit nutrition <PencilIcon />
+				{m['foodDiary.nutritionEditTitle']()} <PencilIcon />
 			</Button>
 		{/snippet}
 	</Sheet.Trigger>
 	<Sheet.Content class="w-5/6">
 		<Sheet.Header>
-			<Sheet.Title>Edit nutrition</Sheet.Title>
+			<Sheet.Title>{m['foodDiary.nutritionEditTitle']()}</Sheet.Title>
 			<Sheet.Description>
-				Edit nutrition for this entry only, original food will remain unchanged.
+				{m['foodDiary.nutritionEditDescription']()}
 			</Sheet.Description>
 			<div class="flex items-center gap-2 rounded-md border p-2 text-xs text-muted-foreground">
-				<InfoIcon class="size-4" /> All values are per 100g of the food
+				<InfoIcon class="size-4" /> {m['foodDiary.nutritionAllValuesPerHundred']()}
 			</div>
 		</Sheet.Header>
-		<span class="ml-4 font-semibold">Required fields</span>
+		<span class="ml-4 font-semibold">{m['foodDiary.nutritionRequiredFields']()}</span>
 		<div class="grid grid-cols-2 gap-2 px-4">
 			{#each requiredFields as requiredField (requiredField.key)}
 				<Form.Field {form} name={requiredField.key}>
@@ -93,7 +94,7 @@
 				</Form.Field>
 			{/each}
 		</div>
-		<span class="ml-4 font-semibold">Optional fields</span>
+		<span class="ml-4 font-semibold">{m['foodDiary.nutritionOptionalFields']()}</span>
 		<CustomScrollArea class="h-px grow px-4" viewportClass="scroll-shadow">
 			<div class="grid grid-cols-2 gap-2">
 				{#each optionalFields as optionalField (optionalField.key)}

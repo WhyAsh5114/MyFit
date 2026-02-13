@@ -7,6 +7,7 @@
 	import FoodInfinite from './components/food-infinite.svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { m } from '$lib/paraglide/messages';
 
 	let search = $state('');
 	const debounced = new Debounced(() => search, 500);
@@ -14,12 +15,12 @@
 
 <div class="grid grid-cols-2 gap-2">
 	<Label class="col-span-2 flex flex-col items-start">
-		Search for foods
-		<Input type="text" placeholder="apple pie" bind:value={search} />
+		{m['foodDiary.searchFoods']()}
+		<Input type="text" placeholder={m['foodDiary.searchPlaceholder']()} bind:value={search} />
 	</Label>
-	<Button variant="secondary"><PlusCircleIcon /> Add manually</Button>
+	<Button variant="secondary"><PlusCircleIcon /> {m['foodDiary.addManually']()}</Button>
 	<Button href={resolve(`/food-diary/${page.params.date}/add/scan`)}>
-		Scan barcode <ScanBarcodeIcon />
+		{m['foodDiary.scanBarcode']()} <ScanBarcodeIcon />
 	</Button>
 </div>
 

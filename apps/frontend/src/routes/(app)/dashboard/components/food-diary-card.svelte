@@ -9,15 +9,14 @@
 	<Card.Header>
 		<Card.Title>{m['nav.foodDiary']()}</Card.Title>
 		<Card.Description>
-			The first feature we're working on is the food diary. This will allow you to track your meals
-			and calories throughout the day.
+			{m['foodDiary.notes.formLabel']()}
 		</Card.Description>
 	</Card.Header>
 	<Card.Content class="prose prose-sm dark:prose-invert">
 		<ul>
-			<li>Syncs activity with Android <b>HealthConnect</b> and Apple <b>HealthKit</b></li>
-			<li>Large database of foods and nutrition information</li>
-			<li>Support for barcode scanning</li>
+			<li>{m['foodDiary.notes.healthConnect']()}</li>
+			<li>{m['foodDiary.notes.database']()}</li>
+			<li>{m['foodDiary.notes.barcode']()}</li>
 		</ul>
 	</Card.Content>
 	<Card.Footer>

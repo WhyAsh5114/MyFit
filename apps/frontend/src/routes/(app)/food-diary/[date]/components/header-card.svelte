@@ -9,6 +9,7 @@
 	import { getRelativeDayLabel } from './utils';
 	import Progress from '$lib/components/ui/progress/progress.svelte';
 	import { dateFormatter } from '$lib/my-utils';
+	import { m } from '$lib/paraglide/messages';
 
 	const timeZone = getLocalTimeZone();
 
@@ -50,5 +51,5 @@
 </Card.Root>
 
 <Button class="ml-auto" href={resolve(`/food-diary/${selectedDay.toString()}/add`)}>
-	Add food <PlusIcon />
+	{m['foodDiary.headerAddFood']()} <PlusIcon />
 </Button>

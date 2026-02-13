@@ -10,9 +10,14 @@
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	let constraintOptions: { label: string; constraints: MediaTrackConstraints }[] = $state([]);
 	let selectedConstraintsValue = $state<string>();
+	let selectedConstraint = $derived(
+		constraintOptions.find(({ label }) => label === selectedConstraintsValue)
+	);
+
 	let torch = $state(false);
 	let torchSupported = $state<boolean>();
 
@@ -28,14 +33,14 @@
 			}));
 
 			if (constraintOptions.length === 0) {
-				toast.error('No cameras found');
+				toast.error(m['foodDiary.noCamerasFound']());
 				torchSupported = false;
 			} else {
 				selectedConstraintsValue = constraintOptions[0].label;
 				torchSupported = !!(capabilities as MediaTrackCapabilities & { torch?: boolean[] }).torch;
 			}
 		} catch (e) {
-			toast.error('Error accessing cameras');
+			toast.error(m['foodDiary.cameraAccessError']());
 			console.error(e);
 			torchSupported = false;
 		}
@@ -43,20 +48,23 @@
 
 	function onDetect(detectedCodes: DetectedBarcode[]) {
 		const detectedCode = detectedCodes[0].rawValue;
-		toast.success('Barcode detected', { description: `Value: ${detectedCode}` });
+		toast.success(m['foodDiary.barcodeDetected'](), {
+			description: m['foodDiary.barcodeDetectedValue']({ value: detectedCode })
+		});
 		goto(resolve(`/food-diary/${page.params.date}/add/${detectedCode}`));
 	}
 </script>
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title>Scan barcode</Card.Title>
-		<Card.Description>Select a camera and point it at a barcode</Card.Description>
+		<Card.Title>{m['foodDiary.scanBarcodeTitle']()}</Card.Title>
+		<Card.Description>{m['foodDiary.scanBarcodeDescription']()}</Card.Description>
 	</Card.Header>
 	<Card.Content class="grid grid-cols-3 gap-2">
 		<Label class="col-span-2 flex flex-col items-start gap-2">
 			<div class="flex items-center gap-2">
-				<CameraIcon class="size-4" /> Select camera
+				<CameraIcon class="size-4" />
+				{m['foodDiary.selectCamera']()}
 			</div>
 			{#if selectedConstraintsValue === undefined}
 				<Skeleton class="h-9 w-full bg-secondary" />
@@ -79,7 +87,8 @@
 		</Label>
 		<Label class="flex flex-col items-start gap-2">
 			<div class="flex items-center gap-2">
-				<FlashlightIcon class="size-4" /> Torch
+				<FlashlightIcon class="size-4" />
+				{m['foodDiary.torchLabel']()}
 			</div>
 			{#if torchSupported === undefined}
 				<Skeleton class="h-9 w-full bg-secondary" />
@@ -101,6 +110,7 @@
 	{onDetect}
 	{onCameraOn}
 	{torch}
+	constraints={selectedConstraint?.constraints}
 	onError={(err) => toast.error('An error occurred while scanning', { description: err.message })}
 	formats={['ean_13', 'ean_8', 'upc_a']}
 />

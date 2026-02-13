@@ -3,14 +3,15 @@
 	import SetupAccountForm from './components/setup-account-form.svelte';
 	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user.js';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	const getCurrentUserQuery = useGetCurrentUserQuery();
 </script>
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title>Setup account</Card.Title>
-		<Card.Description>Set up your account details</Card.Description>
+		<Card.Title>{m['onboarding.setupAccountTitle']()}</Card.Title>
+		<Card.Description>{m['onboarding.setupAccountDescription']()}</Card.Description>
 	</Card.Header>
 	<Card.Content>
 		{#if !getCurrentUserQuery.data}

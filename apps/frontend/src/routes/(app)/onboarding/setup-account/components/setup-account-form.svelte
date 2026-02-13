@@ -10,6 +10,7 @@
 	import { SendIcon } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { m } from '$lib/paraglide/messages';
 
 	let { data }: { data: User } = $props();
 
@@ -37,7 +38,7 @@
 	<Form.Field {form} name="name">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Name</Form.Label>
+				<Form.Label>{m['onboarding.nameLabel']()}</Form.Label>
 				<Input {...props} bind:value={$formData.name} />
 			{/snippet}
 		</Form.Control>

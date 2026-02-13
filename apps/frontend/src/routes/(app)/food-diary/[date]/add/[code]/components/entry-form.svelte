@@ -18,6 +18,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { m } from '$lib/paraglide/messages';
 
 	type Props = {
 		food: NutritionData;
@@ -35,12 +36,12 @@
 		SPA: true,
 		validators: zod4Client(foodEntryFormSchema),
 		onUpdate: async ({ form }) => {
-			if (!form.valid) return toast.error('Please fix the errors in the form before logging');
+			if (!form.valid) return toast.error(m['errors.formInvalid']());
 			await createFoodEntryMutation.mutateAsync({
 				data: form.data,
 				userId
 			});
-			toast.success('Food logged successfully!');
+			toast.success(m['feedback.foodLogged']());
 			await goto(resolve(`/food-diary/${page.params.date}`));
 		},
 		onChange: async () => {
@@ -70,7 +71,7 @@
 					{#snippet children({ props })}
 						<Form.Label>
 							<WeightTildeIcon class="size-4" />
-							Quantity (in grams)
+						{m['foodDiary.entryQuantity']()}
 						</Form.Label>
 						<Input {...props} type="number" step="0.1" bind:value={$formData.quantityG} />
 					{/snippet}
@@ -82,7 +83,7 @@
 					{#snippet children({ props })}
 						<Form.Label>
 							<ClockIcon class="size-4" />
-							Eaten at
+						{m['foodDiary.entryEatenAt']()}
 						</Form.Label>
 						<Input {...props} type="datetime-local" bind:value={$eatenAt} />
 					{/snippet}
@@ -92,7 +93,7 @@
 		</Card.Content>
 		<Card.Footer class="grid grid-cols-2 gap-2">
 			<Button variant="outline" onclick={resetForm}>
-				<RefreshCcwIcon /> Reset data
+				<RefreshCcwIcon /> {m['foodDiary.entryReset']()}
 			</Button>
 			<ModifyNutritionalInfoSheet {form} />
 		</Card.Footer>

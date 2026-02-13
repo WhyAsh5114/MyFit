@@ -12,6 +12,7 @@
 	} from '$lib/features/food-diary/metrics/metrics.schema';
 	import { SaveIcon } from '@lucide/svelte';
 	import { useCreateMetricsMutation } from '$lib/features/food-diary/metrics/create-metrics';
+	import { m } from '$lib/paraglide/messages';
 
 	type Props = { metrics: MacroTrackingMetricsSchema | null; userId: string };
 	let { metrics, userId }: Props = $props();
@@ -38,7 +39,7 @@
 			<Form.Field {form} name="bodyweight" class="col-span-3">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Bodyweight</Form.Label>
+						<Form.Label>{m['foodDiary.metrics.bodyweight']()}</Form.Label>
 						<Input {...props} bind:value={$formData.bodyweight} type="number" />
 					{/snippet}
 				</Form.Control>
@@ -47,7 +48,7 @@
 			<Form.Field {form} name="bodyweightUnit">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Unit</Form.Label>
+					<Form.Label>{m['foodDiary.metrics.unit']()}</Form.Label>
 						<Select.Root type="single" bind:value={$formData.bodyweightUnit} name={props.name}>
 							<Select.Trigger {...props} class="w-full">
 								{$formData.bodyweightUnit ?? 'Pick one'}
@@ -64,7 +65,7 @@
 			<Form.Field {form} name="height" class="col-span-3">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Height</Form.Label>
+						<Form.Label>{m['foodDiary.metrics.height']()}</Form.Label>
 						<Input {...props} bind:value={$formData.height} type="number" />
 					{/snippet}
 				</Form.Control>
@@ -73,7 +74,7 @@
 			<Form.Field {form} name="heightUnit">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Unit</Form.Label>
+					<Form.Label>{m['foodDiary.metrics.unit']()}</Form.Label>
 						<Select.Root type="single" bind:value={$formData.heightUnit} name={props.name}>
 							<Select.Trigger {...props} class="w-full">
 								{$formData.heightUnit ?? 'Pick one'}
@@ -90,7 +91,7 @@
 			<Form.Field {form} name="age" class="col-span-2">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Age</Form.Label>
+						<Form.Label>{m['foodDiary.metrics.age']()}</Form.Label>
 						<Input {...props} bind:value={$formData.age} type="number" />
 					{/snippet}
 				</Form.Control>
@@ -99,14 +100,14 @@
 			<Form.Field {form} name="bodyFatPercentage" class="col-span-2">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Body fat %</Form.Label>
+						<Form.Label>{m['foodDiary.metrics.bodyFatPercentage']()}</Form.Label>
 						<Input {...props} bind:value={$formData.bodyFatPercentage} type="number" />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
 			<Form.Fieldset {form} name="gender" class="col-span-full">
-				<Form.Legend>Gender</Form.Legend>
+			<Form.Legend>{m['foodDiary.metrics.gender']()}</Form.Legend>
 				<RadioGroup.Root bind:value={$formData.gender} class="col-span-full grid grid-cols-2 gap-2">
 					<Form.Control>
 						{#snippet children({ props })}
@@ -115,7 +116,7 @@
 								class="grid place-items-center rounded-md border-2 border-muted bg-secondary p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary"
 							>
 								<RadioGroup.Item value="Male" class="sr-only" aria-label="Male" {...props} />
-								Male
+							{m['foodDiary.metrics.male']()}
 							</Form.Label>
 						{/snippet}
 					</Form.Control>
@@ -126,7 +127,7 @@
 								class="grid place-items-center rounded-md border-2 border-muted bg-secondary p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary"
 							>
 								<RadioGroup.Item value="Female" class="sr-only" aria-label="Female" {...props} />
-								Female
+							{m['foodDiary.metrics.female']()}
 							</Form.Label>
 						{/snippet}
 					</Form.Control>
@@ -136,6 +137,6 @@
 	</Card.Root>
 
 	<Form.Button class="mt-auto w-full" type="submit">
-		Save <SaveIcon />
+		{m['foodDiary.metrics.save']()} <SaveIcon />
 	</Form.Button>
 </form>
