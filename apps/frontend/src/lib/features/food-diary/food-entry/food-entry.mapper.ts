@@ -2,11 +2,11 @@ import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/fo
 import type { Prisma } from '@myfit/api/prisma/client';
 
 const optionalNutrimentsMap = {
-	saturated_fat: 'saturated_fat_100g',
-	unsaturated_fat: 'unsaturated_fat_100g',
-	monounsaturated_fat: 'monounsaturated_fat_100g',
-	polyunsaturated_fat: 'polyunsaturated_fat_100g',
-	trans_fat: 'trans_fat_100g',
+	saturatedFat: 'saturated_fat_100g',
+	unsaturatedFat: 'unsaturated_fat_100g',
+	monounsaturatedFat: 'monounsaturated_fat_100g',
+	polyunsaturatedFat: 'polyunsaturated_fat_100g',
+	transFat: 'trans_fat_100g',
 	cholesterol: 'cholesterol_100g',
 	sugars: 'sugars_100g',
 	polyols: 'polyols_100g',
@@ -14,17 +14,17 @@ const optionalNutrimentsMap = {
 	salt: 'salt_100g',
 	sodium: 'sodium_100g',
 	alcohol: 'alcohol_100g',
-	vitamin_a: 'vitamin_a_100g',
-	vitamin_d: 'vitamin_d_100g',
-	vitamin_e: 'vitamin_e_100g',
-	vitamin_k: 'vitamin_k_100g',
-	vitamin_c: 'vitamin_c_100g',
-	vitamin_b1: 'vitamin_b1_100g',
-	vitamin_b2: 'vitamin_b2_100g',
-	vitamin_b6: 'vitamin_b6_100g',
-	vitamin_b9: 'vitamin_b9_100g',
+	vitaminA: 'vitamin_a_100g',
+	vitaminD: 'vitamin_d_100g',
+	vitaminE: 'vitamin_e_100g',
+	vitaminK: 'vitamin_k_100g',
+	vitaminC: 'vitamin_c_100g',
+	vitaminB1: 'vitamin_b1_100g',
+	vitaminB2: 'vitamin_b2_100g',
+	vitaminB6: 'vitamin_b6_100g',
+	vitaminB9: 'vitamin_b9_100g',
 	folates: 'folates_100g',
-	vitamin_b12: 'vitamin_b12_100g',
+	vitaminB12: 'vitamin_b12_100g',
 	potassium: 'potassium_100g',
 	calcium: 'calcium_100g',
 	phosphorus: 'phosphorus_100g',
@@ -45,19 +45,19 @@ export function foodEntryFormSchemaToFoodEntry(
 	input: FoodEntryFormSchema,
 	userId: string
 ): Prisma.FoodEntryUncheckedCreateInput {
-	const factor = input.quantity / 100;
+	const factor = input.quantityG / 100;
 
 	return {
-		product_name: input.product_name,
+		productName: input.productName,
 		brands: input.brands,
 		eatenAt: input.eatenAt,
-		quantity_g: input.quantity,
+		quantityG: input.quantityG,
 		userId,
 
-		protein_g: round(input.proteins_100g * factor, 1),
-		carbs_g: round(input.carbohydrates_100g * factor, 1),
-		fat_g: round(input.fat_100g * factor, 1),
-		energy_kcal: Math.round(input.energy_kcal_100g * factor),
+		proteinG: round(input.proteins_100g * factor, 1),
+		carbsG: round(input.carbohydrates_100g * factor, 1),
+		fatG: round(input.fat_100g * factor, 1),
+		energyKcal: Math.round(input.energy_kcal_100g * factor),
 
 		...Object.entries(optionalNutrimentsMap).reduce(
 			(acc, [key, value]) => {

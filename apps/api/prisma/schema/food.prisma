@@ -37,50 +37,50 @@ model MacroActivityTrackingPreferences {
 model FoodEntry {
   id         String   @id @default(uuid())
   eatenAt    DateTime
-  quantity_g Float
+  quantityG  Float
 
-  product_name    String
+  productName     String
   brands          String?
   nutritionData   NutritionData? @relation(fields: [nutritionDataId], references: [id])
   nutritionDataId Int?
 
-  energy_kcal Float
-  protein_g   Float
-  fat_g       Float
-  carbs_g     Float
+  energyKcal Float
+  proteinG   Float
+  fatG       Float
+  carbsG     Float
 
-  saturated_fat       Float?
-  unsaturated_fat     Float?
-  monounsaturated_fat Float?
-  polyunsaturated_fat Float?
-  trans_fat           Float?
-  cholesterol         Float?
-  sugars              Float?
-  polyols             Float?
-  fiber               Float?
-  salt                Float?
-  sodium              Float?
-  alcohol             Float?
-  vitamin_a           Float?
-  vitamin_d           Float?
-  vitamin_e           Float?
-  vitamin_k           Float?
-  vitamin_c           Float?
-  vitamin_b1          Float?
-  vitamin_b2          Float?
-  vitamin_b6          Float?
-  vitamin_b9          Float?
-  folates             Float?
-  vitamin_b12         Float?
-  potassium           Float?
-  calcium             Float?
-  phosphorus          Float?
-  iron                Float?
-  magnesium           Float?
-  zinc                Float?
-  copper              Float?
-  manganese           Float?
-  caffeine            Float?
+  saturatedFat       Float?
+  unsaturatedFat     Float?
+  monounsaturatedFat Float?
+  polyunsaturatedFat Float?
+  transFat           Float?
+  cholesterol        Float?
+  sugars             Float?
+  polyols            Float?
+  fiber              Float?
+  salt               Float?
+  sodium             Float?
+  alcohol            Float?
+  vitaminA           Float?
+  vitaminD           Float?
+  vitaminE           Float?
+  vitaminK           Float?
+  vitaminC           Float?
+  vitaminB1          Float?
+  vitaminB2          Float?
+  vitaminB6          Float?
+  vitaminB9          Float?
+  folates            Float?
+  vitaminB12         Float?
+  potassium          Float?
+  calcium            Float?
+  phosphorus         Float?
+  iron               Float?
+  magnesium          Float?
+  zinc               Float?
+  copper             Float?
+  manganese          Float?
+  caffeine           Float?
 
   user   User   @relation(fields: [userId], references: [id])
   userId String

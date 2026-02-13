@@ -55,9 +55,9 @@
 	{#each getFoodByDateQuery.data as foodEntry (foodEntry.id)}
 		<Card.Root>
 			<Card.Header>
-				<Card.Title>{foodEntry.product_name}</Card.Title>
+				<Card.Title>{foodEntry.productName}</Card.Title>
 				<Card.Description>
-					{foodEntry.quantity_g}g, {foodEntry.energy_kcal} kcal
+					{foodEntry.quantityG}g, {foodEntry.energyKcal} kcal
 				</Card.Description>
 			</Card.Header>
 		</Card.Root>

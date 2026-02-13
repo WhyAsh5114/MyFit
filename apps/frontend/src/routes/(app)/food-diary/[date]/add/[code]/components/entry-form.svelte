@@ -65,14 +65,14 @@
 <form use:enhance id="create-food-entry-form">
 	<Card.Root>
 		<Card.Content class="grid gap-2">
-			<Form.Field {form} name="quantity">
+			<Form.Field {form} name="quantityG">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>
 							<WeightTildeIcon class="size-4" />
 							Quantity (in grams)
 						</Form.Label>
-						<Input {...props} type="number" step="0.1" bind:value={$formData.quantity} />
+						<Input {...props} type="number" step="0.1" bind:value={$formData.quantityG} />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
