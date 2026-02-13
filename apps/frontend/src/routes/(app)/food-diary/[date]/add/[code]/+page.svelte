@@ -7,7 +7,7 @@
 	import { PlusCircleIcon, ScanBarcodeIcon, SearchIcon, SearchXIcon } from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import EntryForm from './components/entry-form.svelte';
-	import type { FoodEntryFormSchema } from '../../../../../../lib/features/food-diary/food-entry/food-entry.schema';
+	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
 	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
 	import { resolve } from '$app/paths';
 
