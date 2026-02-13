@@ -44,7 +44,7 @@
 			<Button href={resolve(`/food-diary/${page.params.date}/add/scan`)}>
 				<ScanBarcodeIcon /> Scan barcode
 			</Button>
-			<Button variant="secondary">
+			<Button variant="secondary" href={resolve(`/food-diary/${page.params.date}/add`)}>
 				<SearchIcon /> Search for foods
 			</Button>
 			<Button variant="outline">
