@@ -9,7 +9,7 @@
 	import {
 		macroTrackingMetricsSchema,
 		type MacroTrackingMetricsSchema
-	} from '../../../../../../lib/schemas/metrics-form-schema';
+	} from '$lib/schemas/metrics-form-schema';
 	import { SaveIcon } from '@lucide/svelte';
 	import { useCreateMetricsMutation } from '$lib/mutations/food-diary/create-metrics';
 

@@ -57,7 +57,7 @@
 			<Card.Header>
 				<Card.Title>{foodEntry.product_name}</Card.Title>
 				<Card.Description>
-					{foodEntry.quantity}g, {(foodEntry.energy_kcal_100g * foodEntry.quantity) / 100} kcal
+					{foodEntry.quantity_g}g, {foodEntry.energy_kcal} kcal
 				</Card.Description>
 			</Card.Header>
 		</Card.Root>

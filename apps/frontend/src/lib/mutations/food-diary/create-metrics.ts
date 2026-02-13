@@ -4,11 +4,11 @@ import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/query-client';
 import { metricsKeys } from '$lib/query-keys/food-diary';
-import type { MacroMetricsCreateInput } from '@myfit/api/prisma/models';
+import type { Prisma } from '@myfit/api/prisma/client';
 
 export const useCreateMetricsMutation = () =>
 	createMutation(() => ({
-		mutationFn: async (data: MacroMetricsCreateInput) => {
+		mutationFn: async (data: Prisma.MacroMetricsUncheckedCreateInput) => {
 			const client = getClient();
 			return await client.macroMetrics.create({ data });
 		},
