@@ -42,7 +42,9 @@
 
 	function showErrorsToast() {
 		toast.error(m['validation.errors'](), {
-			description: m['validation.errorFields']({ fields: $formErrors.map((error) => getLabelForField(error.path)).join(', ') })
+			description: m['validation.errorFields']({
+				fields: $formErrors.map((error) => getLabelForField(error.path)).join(', ')
+			})
 		});
 	}
 
@@ -61,7 +63,8 @@
 				class={cn({ 'border-destructive!': hasFieldErrors })}
 				{...props}
 			>
-				{m['foodDiary.nutritionEditTitle']()} <PencilIcon />
+				{m['foodDiary.nutritionEditTitle']()}
+				<PencilIcon />
 			</Button>
 		{/snippet}
 	</Sheet.Trigger>
@@ -72,7 +75,8 @@
 				{m['foodDiary.nutritionEditDescription']()}
 			</Sheet.Description>
 			<div class="flex items-center gap-2 rounded-md border p-2 text-xs text-muted-foreground">
-				<InfoIcon class="size-4" /> {m['foodDiary.nutritionAllValuesPerHundred']()}
+				<InfoIcon class="size-4" />
+				{m['foodDiary.nutritionAllValuesPerHundred']()}
 			</div>
 		</Sheet.Header>
 		<span class="ml-4 font-semibold">{m['foodDiary.nutritionRequiredFields']()}</span>
@@ -117,7 +121,7 @@
 		</CustomScrollArea>
 		{#if hasFieldErrors}
 			<Button class="mx-4 mb-4" type="button" variant="destructive" onclick={showErrorsToast}>
-				There are errors in the form <XCircleIcon />
+				{m['foodDiary.nutritionFormErrors']()} <XCircleIcon />
 			</Button>
 		{:else if hasCalculationErrors}
 			<Button
@@ -125,11 +129,11 @@
 				type="button"
 				onclick={() => (open = false)}
 			>
-				Potentially inaccurate entries <AlertCircleIcon />
+				{m['foodDiary.nutritionInaccurateEntries']()} <AlertCircleIcon />
 			</Button>
 		{:else}
 			<Button class="mx-4 mb-4" type="button" onclick={() => (open = false)}>
-				Done <CircleCheckIcon />
+				{m['foodDiary.nutritionDone']()} <CircleCheckIcon />
 			</Button>
 		{/if}
 	</Sheet.Content>
