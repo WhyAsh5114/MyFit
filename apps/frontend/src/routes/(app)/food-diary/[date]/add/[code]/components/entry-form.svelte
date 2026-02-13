@@ -9,7 +9,10 @@
 	import { Spinner } from '$lib/components/ui/spinner';
 	import { useCreateFoodEntryMutation } from '$lib/mutations/food-diary/create-food-entry';
 	import { Button } from '$lib/components/ui/button';
-	import { foodEntryFormSchema, type FoodEntryFormSchema } from './food-entry-form-schema';
+	import {
+		foodEntryFormSchema,
+		type FoodEntryFormSchema
+	} from '$lib/schemas/food-entry-form-schema';
 	import ModifyNutritionalInfoSheet from './modify-nutritional-info-sheet.svelte';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
@@ -34,7 +37,7 @@
 		onUpdate: async ({ form }) => {
 			if (!form.valid) return toast.error('Please fix the errors in the form before logging');
 			await createFoodEntryMutation.mutateAsync({
-				...form.data,
+				data: form.data,
 				userId
 			});
 			toast.success('Food logged successfully!');
