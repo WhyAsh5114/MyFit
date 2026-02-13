@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { BarqodeStream, type DetectedBarcode } from 'barqode';
+	import { BarqodeStream } from 'barqode';
 	import { toast } from 'svelte-sonner';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import * as Empty from '$lib/components/ui/empty/index.js';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import { CameraIcon, FlashlightIcon } from '@lucide/svelte';
 	import Switch from '$lib/components/ui/switch/switch.svelte';
-	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
-	import { resolve } from '$app/paths';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { m } from '$lib/paraglide/messages';
+	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import { onDetect, pickBestCamera } from './utils';
 
 	let constraintOptions: { label: string; constraints: MediaTrackConstraints }[] = $state([]);
 	let selectedConstraintsValue = $state<string>();
@@ -21,38 +21,37 @@
 	let torch = $state(false);
 	let torchSupported = $state<boolean>();
 
-	async function onCameraOn(capabilities: MediaTrackCapabilities) {
-		if (constraintOptions.length > 0) return;
-		try {
-			const devices = await navigator.mediaDevices.enumerateDevices();
-			const videoDevices = devices.filter(({ kind }) => kind === 'videoinput');
+	async function initializeCameraOptions() {
+		navigator.mediaDevices.getUserMedia({ video: true });
+		const devices = await navigator.mediaDevices.enumerateDevices();
+		const videoDevices = devices.filter(({ kind }) => kind === 'videoinput');
 
-			constraintOptions = videoDevices.map(({ deviceId, label }) => ({
-				label: `${label}`,
-				constraints: { deviceId }
-			}));
+		if (videoDevices.length === 0) {
+			toast.error(m['foodDiary.noCamerasFound']());
+			return false;
+		}
 
-			if (constraintOptions.length === 0) {
-				toast.error(m['foodDiary.noCamerasFound']());
-				torchSupported = false;
-			} else {
-				selectedConstraintsValue = constraintOptions[0].label;
-				torchSupported = !!(capabilities as MediaTrackCapabilities & { torch?: boolean[] }).torch;
-			}
-		} catch (e) {
+		const bestCamera = await pickBestCamera(videoDevices);
+
+		constraintOptions = videoDevices.map(({ deviceId, label }) => ({
+			label,
+			constraints: { deviceId }
+		}));
+
+		selectedConstraintsValue = bestCamera.label;
+		return true;
+	}
+
+	function onCameraOn(capabilities: MediaTrackCapabilities) {
+		torchSupported = 'torch' in capabilities;
+	}
+
+	$effect(() => {
+		initializeCameraOptions().catch((e) => {
 			toast.error(m['foodDiary.cameraAccessError']());
 			console.error(e);
-			torchSupported = false;
-		}
-	}
-
-	function onDetect(detectedCodes: DetectedBarcode[]) {
-		const detectedCode = detectedCodes[0].rawValue;
-		toast.success(m['foodDiary.barcodeDetected'](), {
-			description: m['foodDiary.barcodeDetectedValue']({ value: detectedCode })
 		});
-		goto(resolve(`/food-diary/${page.params.date}/add/${detectedCode}`));
-	}
+	});
 </script>
 
 <Card.Root>
@@ -106,11 +105,27 @@
 	</Card.Content>
 </Card.Root>
 
-<BarqodeStream
-	{onDetect}
-	{onCameraOn}
-	{torch}
-	constraints={selectedConstraint?.constraints}
-	onError={(err) => toast.error('An error occurred while scanning', { description: err.message })}
-	formats={['ean_13', 'ean_8', 'upc_a']}
-/>
+{#if selectedConstraintsValue === undefined}
+	<Empty.Root class="h-full">
+		<Empty.Header>
+			<Empty.Media variant="icon">
+				<Spinner />
+			</Empty.Media>
+			<Empty.Title>
+				{m['foodDiary.initializingCamera']()}
+			</Empty.Title>
+			<Empty.Description>
+				{m['foodDiary.initializingCameraDescription']()}
+			</Empty.Description>
+		</Empty.Header>
+	</Empty.Root>
+{:else}
+	<BarqodeStream
+		{onDetect}
+		{onCameraOn}
+		{torch}
+		constraints={selectedConstraint?.constraints}
+		onError={(err) => toast.error('An error occurred while scanning', { description: err.message })}
+		formats={['ean_13', 'ean_8', 'upc_a']}
+	/>
+{/if}

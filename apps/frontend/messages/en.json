@@ -121,6 +121,8 @@
 	"foodDiary.notes.barcode": "Support for barcode scanning",
 	"foodDiary.headerToday": "Today",
 	"foodDiary.headerAddFood": "Add food",
+	"foodDiary.initializingCamera": "Initializing camera",
+	"foodDiary.initializingCameraDescription": "Please wait while we set up the camera for barcode scanning",
 	"navigation.unit.kg": "kg",
 	"navigation.unit.lb": "lb",
 	"navigation.unit.cm": "cm",
