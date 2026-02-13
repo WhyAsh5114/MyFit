@@ -4,7 +4,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { dateFormatter } from '$lib/my-utils';
-	import { useGetFoodByDateQuery } from '$lib/queries/food-diary/get-food-by-date';
+	import { useGetFoodByDateQuery } from '$lib/features/food-diary/food-entry/get-food-entries';
 	import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
 	import { AppleIcon } from '@lucide/svelte';
 

@@ -1,7 +1,7 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { getClient } from '$lib/idb-client';
+import { getClient } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
-import { metricsKeys } from '$lib/query-keys/food-diary';
+import { metricsKeys } from './metrics.keys';
 
 export const useGetMetricsQuery = (getUserId: () => string) =>
 	createQuery(() => {

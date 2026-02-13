@@ -1,10 +1,10 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/idb-client';
+import { getClient } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
-import { queryClient } from '$lib/query-client';
-import { metricsKeys } from '$lib/query-keys/food-diary';
+import { queryClient } from '$lib/clients/query-client';
 import type { Prisma } from '@myfit/api/prisma/client';
+import { metricsKeys } from './metrics.keys';
 
 export const useCreateMetricsMutation = () =>
 	createMutation(() => ({

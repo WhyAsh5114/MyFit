@@ -7,8 +7,8 @@
 	import { QueryClientProvider } from '@tanstack/svelte-query';
 	import { Capacitor } from '@capacitor/core';
 	import { App } from '@capacitor/app';
-	import { queryClient } from '$lib/query-client';
-	import { Toaster } from "$lib/components/ui/sonner/index.js";
+	import { queryClient } from '$lib/clients/query-client';
+	import { Toaster } from '$lib/components/ui/sonner/index.js';
 
 	let { children } = $props();
 

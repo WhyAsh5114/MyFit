@@ -11,7 +11,11 @@
 	} from '@lucide/svelte';
 	import { Input } from '$lib/components/ui/input';
 	import type { SuperForm } from 'sveltekit-superforms';
-	import { optionalFields, requiredFields, type FoodEntryFormSchema } from '$lib/schemas/food-entry-form-schema';
+	import {
+		optionalFields,
+		requiredFields,
+		type FoodEntryFormSchema
+	} from '$lib/features/food-diary/food-entry/food-entry.schema';
 	import CustomScrollArea from '$lib/components/custom-scroll-area.svelte';
 	import { toast } from 'svelte-sonner';
 	import { cn } from '$lib/utils';

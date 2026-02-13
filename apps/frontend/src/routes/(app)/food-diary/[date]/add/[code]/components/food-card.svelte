@@ -3,7 +3,7 @@
 	import MacrosPieChart from './macros-pie-chart.svelte';
 	import type { NutritionData } from '@myfit/api/prisma/client';
 
-	let { food }: { food: (NutritionData & { quantity: number }) } = $props();
+	let { food }: { food: NutritionData & { quantity: number } } = $props();
 
 	let energyKcal = $derived(food.energy_kcal_100g * (food.quantity / 100));
 	let carbs = $derived(food.carbohydrates_100g * (food.quantity / 100));

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import MetricsForm from './components/metrics-form.svelte';
-	import { useGetCurrentUserQuery } from '$lib/queries/user/get-current-user';
+	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { useGetMetricsQuery } from '$lib/queries/food-diary/get-metrics';
+	import { useGetMetricsQuery } from '$lib/features/food-diary/metrics/get-metrics';
 
 	const getCurrentUserQuery = useGetCurrentUserQuery();
 	const getMetricsQuery = useGetMetricsQuery(() => getCurrentUserQuery.data?.id ?? '');

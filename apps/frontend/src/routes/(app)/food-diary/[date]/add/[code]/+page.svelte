@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { useGetFoodByCodeQuery } from '$lib/queries/food-diary/get-food-by-code';
+	import { useGetFoodByCodeQuery } from '$lib/features/food-diary/nutrition-data/get-food-by-code';
 	import FoodCard from './components/food-card.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { PlusCircleIcon, ScanBarcodeIcon, SearchIcon, SearchXIcon } from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import EntryForm from './components/entry-form.svelte';
-	import type { FoodEntryFormSchema } from '../../../../../../lib/schemas/food-entry-form-schema';
-	import { useGetCurrentUserQuery } from '$lib/queries/user/get-current-user';
+	import type { FoodEntryFormSchema } from '../../../../../../lib/features/food-diary/food-entry/food-entry.schema';
+	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
 	import { resolve } from '$app/paths';
 
 	const getCurrentUserQuery = useGetCurrentUserQuery();

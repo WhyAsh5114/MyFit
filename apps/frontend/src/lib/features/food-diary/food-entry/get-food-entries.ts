@@ -1,13 +1,13 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { foodDiaryKeys } from '$lib/query-keys/food-diary';
 import { type CalendarDate } from '@internationalized/date';
-import { getClient } from '$lib/idb-client';
+import { getClient } from '$lib/clients/idb-client';
+import { foodEntryKeys } from './food-entry.keys';
 
 export const useGetFoodByDateQuery = (getDate: () => CalendarDate) =>
 	createQuery(() => {
 		const date = getDate();
 		return {
-			queryKey: foodDiaryKeys.getByDateQuery(date.toString()),
+			queryKey: foodEntryKeys.getByDateQuery(date.toString()),
 			queryFn: async () => {
 				const dayAfter = date.add({ days: 1 }).toString();
 

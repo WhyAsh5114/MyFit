@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { authClient } from '$lib/auth-client';
-	import { getClient } from '$lib/idb-client';
+	import { authClient } from '$lib/clients/auth-client';
+	import { getClient } from '$lib/clients/idb-client';
 	import { toast } from 'svelte-sonner';
 	import { isUnprotectedRoute } from './constants';
 	import { PrismaIDBClient } from '@myfit/api/prisma-idb/client';

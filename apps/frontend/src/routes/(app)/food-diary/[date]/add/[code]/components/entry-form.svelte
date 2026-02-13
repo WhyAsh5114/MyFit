@@ -7,12 +7,12 @@
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
 	import type { NutritionData } from '@myfit/api/prisma/client';
 	import { Spinner } from '$lib/components/ui/spinner';
-	import { useCreateFoodEntryMutation } from '$lib/mutations/food-diary/create-food-entry';
+	import { useCreateFoodEntryMutation } from '$lib/features/food-diary/food-entry/create-food-entry';
 	import { Button } from '$lib/components/ui/button';
 	import {
 		foodEntryFormSchema,
 		type FoodEntryFormSchema
-	} from '$lib/schemas/food-entry-form-schema';
+	} from '$lib/features/food-diary/food-entry/food-entry.schema';
 	import ModifyNutritionalInfoSheet from './modify-nutritional-info-sheet.svelte';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';

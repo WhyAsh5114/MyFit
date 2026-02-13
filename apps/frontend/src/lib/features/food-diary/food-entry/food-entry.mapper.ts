@@ -1,4 +1,4 @@
-import type { FoodEntryFormSchema } from '$lib/schemas/food-entry-form-schema';
+import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
 import type { Prisma } from '@myfit/api/prisma/client';
 
 const optionalNutrimentsMap = {

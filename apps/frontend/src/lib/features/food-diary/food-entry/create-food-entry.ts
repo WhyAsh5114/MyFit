@@ -1,11 +1,11 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/idb-client';
+import { getClient } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
-import { queryClient } from '$lib/query-client';
-import { foodDiaryKeys } from '$lib/query-keys/food-diary';
-import type { FoodEntryFormSchema } from '$lib/schemas/food-entry-form-schema';
-import { foodEntryFormSchemaToFoodEntry } from '$lib/domain/food-diary/mappers';
+import { queryClient } from '$lib/clients/query-client';
+import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
+import { foodEntryFormSchemaToFoodEntry } from '$lib/features/food-diary/food-entry/food-entry.mapper';
+import { foodEntryKeys } from './food-entry.keys';
 
 export const useCreateFoodEntryMutation = () =>
 	createMutation(() => ({
@@ -17,7 +17,7 @@ export const useCreateFoodEntryMutation = () =>
 
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({
-				queryKey: foodDiaryKeys.getByDateQuery(data.eatenAt.toISOString().split('T')[0])
+				queryKey: foodEntryKeys.getByDateQuery(data.eatenAt.toISOString().split('T')[0])
 			});
 		},
 

@@ -9,9 +9,9 @@
 	import {
 		macroTrackingMetricsSchema,
 		type MacroTrackingMetricsSchema
-	} from '$lib/schemas/metrics-form-schema';
+	} from '$lib/features/food-diary/metrics/metrics.schema';
 	import { SaveIcon } from '@lucide/svelte';
-	import { useCreateMetricsMutation } from '$lib/mutations/food-diary/create-metrics';
+	import { useCreateMetricsMutation } from '$lib/features/food-diary/metrics/create-metrics';
 
 	type Props = { metrics: MacroTrackingMetricsSchema | null; userId: string };
 	let { metrics, userId }: Props = $props();

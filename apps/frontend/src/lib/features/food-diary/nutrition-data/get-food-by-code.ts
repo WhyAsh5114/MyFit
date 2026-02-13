@@ -1,13 +1,13 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { foodDiaryKeys } from '$lib/query-keys/food-diary';
-import { apiClient } from '$lib/api-client';
+import { apiClient } from '$lib/clients/api-client';
 import { toast } from 'svelte-sonner';
+import { nutritionDataKeys } from './nutrition-data.keys';
 
 export const useGetFoodByCodeQuery = (getCode: () => string) =>
 	createQuery(() => {
 		const code = getCode();
 		return {
-			queryKey: foodDiaryKeys.getByCodeQuery(code),
+			queryKey: nutritionDataKeys.getByCodeQuery(code),
 			queryFn: async () => {
 				const res = await apiClient.api['nutrition-data'][':code'].$get({ param: { code } });
 				if (!res.ok) {

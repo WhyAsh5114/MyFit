@@ -1,12 +1,11 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/idb-client';
+import { getClient } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
-import { accountKeys } from '$lib/query-keys/account';
-import { queryClient } from '$lib/query-client';
-import { userKeys } from '$lib/query-keys/user';
+import { queryClient } from '$lib/clients/query-client';
+import { userKeys } from '$lib/features/user/user.keys';
 
-export const useUpdateAccountNameMutation = () =>
+export const useUpdateUserNameMutation = () =>
 	createMutation(() => ({
 		mutationFn: async ({ userId, name }: { userId: string; name: string }) => {
 			const client = getClient();
@@ -19,7 +18,7 @@ export const useUpdateAccountNameMutation = () =>
 
 		onSuccess: (_, { userId }) => {
 			queryClient.invalidateQueries({
-				queryKey: accountKeys.detail(userId)
+				queryKey: userKeys.detail(userId)
 			});
 			queryClient.invalidateQueries({
 				queryKey: userKeys.current()

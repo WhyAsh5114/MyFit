@@ -2,12 +2,8 @@
 	import * as Chart from '$lib/components/ui/chart/index.js';
 	import { PieChart, Text } from 'layerchart';
 
-	let {
-		carbs,
-		fat,
-		protein,
-		kcal
-	}: { carbs: number; fat: number; protein: number; kcal: number } = $props();
+	let { carbs, fat, protein, kcal }: { carbs: number; fat: number; protein: number; kcal: number } =
+		$props();
 
 	let chartData = $derived([
 		{ macro: 'carbs', value: carbs, color: 'var(--chart-3)' },

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { authClient } from '$lib/auth-client';
+	import { authClient } from '$lib/clients/auth-client';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -12,8 +12,8 @@
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 	import { resetDatabaseState } from './db';
-	import { getClient } from '$lib/idb-client';
-	import { useGetCurrentUserQuery } from '$lib/queries/user/get-current-user';
+	import { getClient } from '$lib/clients/idb-client';
+	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
 
 	const sidebar = useSidebar();
 	let authData = useGetCurrentUserQuery();

@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { initializeClient } from '$lib/idb-client';
+import { initializeClient } from '$lib/clients/idb-client';
 
 export const prerender = true;
 

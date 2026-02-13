@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { useSearchFoodsQuery } from '$lib/queries/food-diary/search-foods';
+	import { useSearchFoodsQuery } from '$lib/features/food-diary/nutrition-data/search-foods';
 	import { PlusIcon, SearchIcon } from '@lucide/svelte';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';

@@ -8,7 +8,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { authClient } from '$lib/auth-client';
+	import { authClient } from '$lib/clients/auth-client';
 	import { toast } from 'svelte-sonner';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
