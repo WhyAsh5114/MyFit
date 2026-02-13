@@ -7,11 +7,11 @@
 	import { PlusCircleIcon, ScanBarcodeIcon, SearchIcon, SearchXIcon } from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import EntryForm from './components/entry-form.svelte';
-	import type { FoodEntryFormSchema } from './components/food-entry-form-schema';
-	import { useCurrentUserQuery } from '$lib/queries/user/get-current-user';
+	import type { FoodEntryFormSchema } from '../../../../../../lib/schemas/food-entry-form-schema';
+	import { useGetCurrentUserQuery } from '$lib/queries/user/get-current-user';
 	import { resolve } from '$app/paths';
 
-	const currentUserQuery = useCurrentUserQuery();
+	const getCurrentUserQuery = useGetCurrentUserQuery();
 	const getFoodByCodeQuery = useGetFoodByCodeQuery(() => page.params.code ?? '');
 
 	let foodData = $derived.by(() => {
@@ -25,7 +25,7 @@
 	}
 </script>
 
-{#if foodData === undefined || !currentUserQuery.data}
+{#if foodData === undefined || !getCurrentUserQuery.data}
 	<Skeleton class="h-47 w-full" />
 	<Skeleton class="h-64 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
@@ -54,5 +54,5 @@
 	</Empty.Root>
 {:else}
 	<FoodCard food={foodData} />
-	<EntryForm userId={currentUserQuery.data.id} food={foodData} onChange={handleChange} />
+	<EntryForm userId={getCurrentUserQuery.data.id} food={foodData} onChange={handleChange} />
 {/if}

@@ -13,10 +13,10 @@
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 	import { resetDatabaseState } from './db';
 	import { getClient } from '$lib/idb-client';
-	import { useCurrentUserQuery } from '$lib/queries/user/get-current-user';
+	import { useGetCurrentUserQuery } from '$lib/queries/user/get-current-user';
 
 	const sidebar = useSidebar();
-	let authData = useCurrentUserQuery();
+	let authData = useGetCurrentUserQuery();
 
 	let user = $derived(authData.data);
 
