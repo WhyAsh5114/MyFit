@@ -2,17 +2,6 @@ import { prisma } from '../../../lib/prisma.js';
 import { searchFoodsQuery } from '../../../generated/prisma/sql/searchFoodsQuery.js';
 
 /**
- * Build a PostgreSQL full-text search query with prefix matching
- */
-function buildPrefixQuery(search: string): string {
-	return search
-		.trim()
-		.split(/\s+/)
-		.map((word) => `${word}:*`)
-		.join(' & ');
-}
-
-/**
  * Service layer for nutrition data operations
  */
 export const nutritionDataService = {
@@ -21,17 +10,7 @@ export const nutritionDataService = {
 	 * Returns basic food info (id, name, brand, calories)
 	 */
 	async searchFoods(search: string) {
-		const foodIds = await prisma.$queryRawTyped(searchFoodsQuery(buildPrefixQuery(search)));
-		const results = await prisma.nutritionData.findMany({
-			where: { id: { in: foodIds.map((f) => f.id) } },
-			select: {
-				id: true,
-				product_name: true,
-				code: true,
-				energy_kcal_100g: true,
-				brands: true
-			}
-		});
+		const results = await prisma.$queryRawTyped(searchFoodsQuery(search));
 		return results;
 	},
 

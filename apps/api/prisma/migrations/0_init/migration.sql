@@ -60,9 +60,46 @@ CREATE TABLE "MacroActivityTrackingPreferences" (
 CREATE TABLE "FoodEntry" (
     "id" TEXT NOT NULL,
     "eatenAt" TIMESTAMP(3) NOT NULL,
-    "quantity" DOUBLE PRECISION NOT NULL,
-    "quantityUnit" TEXT NOT NULL DEFAULT 'g',
+    "quantityG" DOUBLE PRECISION NOT NULL,
+    "productName" TEXT NOT NULL,
+    "brands" TEXT,
     "nutritionDataId" INTEGER,
+    "energyKcal" DOUBLE PRECISION NOT NULL,
+    "proteinG" DOUBLE PRECISION NOT NULL,
+    "fatG" DOUBLE PRECISION NOT NULL,
+    "carbsG" DOUBLE PRECISION NOT NULL,
+    "saturatedFat" DOUBLE PRECISION,
+    "unsaturatedFat" DOUBLE PRECISION,
+    "monounsaturatedFat" DOUBLE PRECISION,
+    "polyunsaturatedFat" DOUBLE PRECISION,
+    "transFat" DOUBLE PRECISION,
+    "cholesterol" DOUBLE PRECISION,
+    "sugars" DOUBLE PRECISION,
+    "polyols" DOUBLE PRECISION,
+    "fiber" DOUBLE PRECISION,
+    "salt" DOUBLE PRECISION,
+    "sodium" DOUBLE PRECISION,
+    "alcohol" DOUBLE PRECISION,
+    "vitaminA" DOUBLE PRECISION,
+    "vitaminD" DOUBLE PRECISION,
+    "vitaminE" DOUBLE PRECISION,
+    "vitaminK" DOUBLE PRECISION,
+    "vitaminC" DOUBLE PRECISION,
+    "vitaminB1" DOUBLE PRECISION,
+    "vitaminB2" DOUBLE PRECISION,
+    "vitaminB6" DOUBLE PRECISION,
+    "vitaminB9" DOUBLE PRECISION,
+    "folates" DOUBLE PRECISION,
+    "vitaminB12" DOUBLE PRECISION,
+    "potassium" DOUBLE PRECISION,
+    "calcium" DOUBLE PRECISION,
+    "phosphorus" DOUBLE PRECISION,
+    "iron" DOUBLE PRECISION,
+    "magnesium" DOUBLE PRECISION,
+    "zinc" DOUBLE PRECISION,
+    "copper" DOUBLE PRECISION,
+    "manganese" DOUBLE PRECISION,
+    "caffeine" DOUBLE PRECISION,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "FoodEntry_pkey" PRIMARY KEY ("id")
@@ -252,17 +289,3 @@ ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId"
 
 -- AddForeignKey
 ALTER TABLE "account" ADD CONSTRAINT "account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- Drop the existing search_vector column and recreate as generated column
-ALTER TABLE "NutritionData" 
-DROP COLUMN IF EXISTS search_vector;
-
-ALTER TABLE "NutritionData" 
-ADD COLUMN search_vector tsvector 
-GENERATED ALWAYS AS (
-  to_tsvector('english', 
-    COALESCE(product_name, '') || ' ' || 
-    COALESCE(brands, '')
-  )
-) STORED;
-

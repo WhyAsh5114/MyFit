@@ -35,9 +35,9 @@ model MacroActivityTrackingPreferences {
 }
 
 model FoodEntry {
-  id         String   @id @default(uuid())
-  eatenAt    DateTime
-  quantityG  Float
+  id        String   @id @default(uuid())
+  eatenAt   DateTime
+  quantityG Float
 
   productName     String
   brands          String?
@@ -143,6 +143,10 @@ model NutritionData {
   copper_100g              Float?
   manganese_100g           Float?
   caffeine_100g            Float?
+
+  @@index([brands(ops: raw("gin_trgm_ops"))], map: "nutrition_brands_trgm_idx", type: Gin)
+  @@index([product_name(ops: raw("gin_trgm_ops"))], map: "nutrition_product_name_trgm_idx", type: Gin)
+  @@index([search_vector], map: "nutrition_search_vector_idx", type: Gin)
 }
 
 enum MacroTargetQuantifier {
