@@ -7,8 +7,8 @@
 
 	let energyKcal = $derived(food.energy_kcal_100g * (food.quantity / 100));
 	let carbs = $derived(food.carbohydrates_100g * (food.quantity / 100));
-	let fats = $derived(food.fat_100g * (food.quantity / 100));
-	let proteins = $derived(food.proteins_100g * (food.quantity / 100));
+	let fat = $derived(food.fat_100g * (food.quantity / 100));
+	let protein = $derived(food.proteins_100g * (food.quantity / 100));
 
 	function calculateMacroPercentage(macroGrams: number, kcalPerGram: number) {
 		const macroKcal = macroGrams * kcalPerGram;
@@ -37,11 +37,11 @@
 		<Card.Description>{food.brands ?? 'No brand'}</Card.Description>
 	</Card.Header>
 	<Card.Content class="flex items-center justify-around gap-4">
-		<MacrosPieChart {carbs} {fats} {proteins} kcal={energyKcal} />
+		<MacrosPieChart {carbs} {fat} {protein} kcal={energyKcal} />
 		<div class="grid grow grid-cols-3">
 			{@render macroCell('Carbs', carbs, 'text-chart-3', 4)}
-			{@render macroCell('Fats', fats, 'text-chart-2', 9)}
-			{@render macroCell('Proteins', proteins, 'text-chart-1', 4)}
+			{@render macroCell('Fat', fat, 'text-chart-2', 9)}
+			{@render macroCell('Protein', protein, 'text-chart-1', 4)}
 		</div>
 	</Card.Content>
 </Card.Root>

@@ -5,12 +5,14 @@ import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/query-client';
 import { foodDiaryKeys } from '$lib/query-keys/food-diary';
 import type { FoodEntryFormSchema } from '$lib/schemas/food-entry-form-schema';
+import { foodEntryFormSchemaToFoodEntry } from '$lib/domain/food-diary/mappers';
 
 export const useCreateFoodEntryMutation = () =>
 	createMutation(() => ({
 		mutationFn: async ({ data, userId }: { data: FoodEntryFormSchema; userId: string }) => {
 			const client = getClient();
-			return await client.foodEntry.create({ data: { ...data, userId } });
+			const foodEntry = foodEntryFormSchemaToFoodEntry(data, userId);
+			return await client.foodEntry.create({ data: foodEntry });
 		},
 
 		onSuccess: (data) => {

@@ -4,22 +4,22 @@
 
 	let {
 		carbs,
-		fats,
-		proteins,
+		fat,
+		protein,
 		kcal
-	}: { carbs: number; fats: number; proteins: number; kcal: number } = $props();
+	}: { carbs: number; fat: number; protein: number; kcal: number } = $props();
 
 	let chartData = $derived([
 		{ macro: 'carbs', value: carbs, color: 'var(--chart-3)' },
-		{ macro: 'fats', value: fats, color: 'var(--chart-2)' },
-		{ macro: 'proteins', value: proteins, color: 'var(--chart-1)' }
+		{ macro: 'fat', value: fat, color: 'var(--chart-2)' },
+		{ macro: 'protein', value: protein, color: 'var(--chart-1)' }
 	]);
 
 	const chartConfig = {
 		macro: { label: 'Macro' },
 		carbs: { label: 'Carbs', color: 'var(--chart-3)' },
-		fats: { label: 'Fats', color: 'var(--chart-2)' },
-		proteins: { label: 'Proteins', color: 'var(--chart-1)' }
+		fat: { label: 'Fat', color: 'var(--chart-2)' },
+		protein: { label: 'Protein', color: 'var(--chart-1)' }
 	} satisfies Chart.ChartConfig;
 </script>
 
