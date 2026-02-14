@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Chart from '$lib/components/ui/chart/index.js';
+	import { cn } from '$lib/utils';
 	import { PieChart, Text } from 'layerchart';
 
 	let { carbs, fat, protein, kcal }: { carbs: number; fat: number; protein: number; kcal: number } =
@@ -17,6 +18,11 @@
 		fat: { label: 'Fat', color: 'var(--chart-2)' },
 		protein: { label: 'Protein', color: 'var(--chart-1)' }
 	} satisfies Chart.ChartConfig;
+
+	let hasCalculationErrors = $derived.by(() => {
+		const totalKcal = carbs * 4 + fat * 9 + protein * 4;
+		return Math.abs(totalKcal - kcal) > 0.1 * kcal; // allow 10% error margin
+	});
 </script>
 
 <Chart.Container config={chartConfig} class="aspect-square h-18">
@@ -41,7 +47,9 @@
 				value="kcal"
 				textAnchor="middle"
 				verticalAnchor="end"
-				class="fill-muted-foreground! text-muted-foreground"
+				class={cn('fill-muted-foreground! text-muted-foreground', {
+					'fill-warning!': hasCalculationErrors
+				})}
 				dy={20}
 			/>
 		{/snippet}

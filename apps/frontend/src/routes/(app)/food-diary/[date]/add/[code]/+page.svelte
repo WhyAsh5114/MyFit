@@ -2,35 +2,23 @@
 	import { page } from '$app/state';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { useGetFoodByCodeQuery } from '$lib/features/food-diary/nutrition-data/get-food-by-code';
-	import FoodCard from './components/food-card.svelte';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { PlusCircleIcon, ScanBarcodeIcon, SearchIcon, SearchXIcon } from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import EntryForm from './components/entry-form.svelte';
-	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
 	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
 	import { resolve } from '$app/paths';
 	import { m } from '$lib/paraglide/messages';
 
 	const getCurrentUserQuery = useGetCurrentUserQuery();
 	const getFoodByCodeQuery = useGetFoodByCodeQuery(() => page.params.code ?? '');
-
-	let foodData = $derived.by(() => {
-		if (!getFoodByCodeQuery.data) return getFoodByCodeQuery.data;
-		return { ...getFoodByCodeQuery.data, quantityG: 100 };
-	});
-
-	function handleChange(data: FoodEntryFormSchema) {
-		if (!foodData) return;
-		foodData = { ...foodData, ...data };
-	}
 </script>
 
-{#if foodData === undefined || !getCurrentUserQuery.data}
+{#if getFoodByCodeQuery.data === undefined || !getCurrentUserQuery.data}
 	<Skeleton class="h-47 w-full" />
 	<Skeleton class="h-64 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
-{:else if foodData === null}
+{:else if getFoodByCodeQuery.data === null}
 	<Empty.Root>
 		<Empty.Header>
 			<Empty.Media variant="icon">
@@ -54,6 +42,5 @@
 		</Empty.Content>
 	</Empty.Root>
 {:else}
-	<FoodCard food={foodData} />
-	<EntryForm userId={getCurrentUserQuery.data.id} food={foodData} onChange={handleChange} />
+	<EntryForm userId={getCurrentUserQuery.data.id} food={getFoodByCodeQuery.data} />
 {/if}

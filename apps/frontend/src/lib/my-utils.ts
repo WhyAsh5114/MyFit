@@ -38,3 +38,8 @@ export function formatDateToISO(date: Date): string {
 	const calendarDate = fromDate(date, getLocalTimeZone());
 	return calendarDate.toString();
 }
+
+export function round(num: number, decimals = 2): number {
+	const factor = Math.pow(10, decimals);
+	return Math.round(num * factor) / factor;
+}
