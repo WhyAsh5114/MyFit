@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const macroTrackingTargetsSchema = z
+export const macroTargetsSchema = z
 	.object({
 		proteinG: z.number().nullable().default(40),
 		carbsG: z.number().nullable().default(30),
@@ -24,4 +24,4 @@ export const macroTrackingTargetsSchema = z
 		{ error: 'Macro targets must sum to 100%' }
 	);
 
-export type MacroTrackingTargetsSchema = z.infer<typeof macroTrackingTargetsSchema>;
+export type MacroTargetsSchema = z.infer<typeof macroTargetsSchema>;

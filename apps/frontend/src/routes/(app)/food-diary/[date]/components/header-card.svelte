@@ -64,12 +64,12 @@
 	</Card.Header>
 </Card.Root>
 
-<div class="flex">
+<div class="flex justify-end gap-2">
 	<Button size="icon" variant="outline" href={resolve('/food-diary/goals')}>
 		<TargetIcon />
 	</Button>
 
-	<Button class="ml-auto" href={resolve(`/food-diary/${selectedDay.toString()}/add`)}>
+	<Button href={resolve(`/food-diary/${selectedDay.toString()}/add`)}>
 		{m['foodDiary.headerAddFood']()}
 		<PlusIcon />
 	</Button>

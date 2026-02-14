@@ -9,7 +9,9 @@
 </script>
 
 {#if !getCurrentUserQuery.data || getMacroMetricsQuery.data === undefined}
-	<Skeleton class="h-86 w-full" />
+	<Skeleton class="h-67.5 w-full" />
+	<Skeleton class="h-27 w-full" />
+	<Skeleton class="mt-auto h-9 w-full" />
 {:else}
 	<MetricsForm metrics={getMacroMetricsQuery.data} userId={getCurrentUserQuery.data.id} />
 {/if}

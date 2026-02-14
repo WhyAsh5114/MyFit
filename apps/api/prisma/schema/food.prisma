@@ -1,9 +1,9 @@
 model MacroTargets {
   id            String                @id @default(uuid())
   createdAt     DateTime              @default(now())
-  proteins      Float?
-  carbs         Float?
-  fats          Float?
+  proteinG      Float?
+  carbsG        Float?
+  fatG          Float?
   quantifier    MacroTargetQuantifier
   caloricChange Int
 

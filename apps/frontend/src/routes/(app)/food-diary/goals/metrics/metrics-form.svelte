@@ -42,7 +42,6 @@
 			}
 		}
 	);
-	form.validateForm({ update: true });
 
 	const { form: formData, enhance } = form;
 </script>
