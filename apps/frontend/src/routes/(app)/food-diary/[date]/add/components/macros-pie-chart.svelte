@@ -7,16 +7,16 @@
 		$props();
 
 	let chartData = $derived([
-		{ macro: 'carbs', value: carbs, color: 'var(--chart-3)' },
-		{ macro: 'fat', value: fat, color: 'var(--chart-2)' },
-		{ macro: 'protein', value: protein, color: 'var(--chart-1)' }
+		{ macro: 'carbs', value: carbs, color: 'var(--chart-carbs)' },
+		{ macro: 'fat', value: fat, color: 'var(--chart-fat)' },
+		{ macro: 'protein', value: protein, color: 'var(--chart-protein)' }
 	]);
 
 	const chartConfig = {
 		macro: { label: 'Macro' },
-		carbs: { label: 'Carbs', color: 'var(--chart-3)' },
-		fat: { label: 'Fat', color: 'var(--chart-2)' },
-		protein: { label: 'Protein', color: 'var(--chart-1)' }
+		carbs: { label: 'Carbs', color: 'var(--chart-carbs)' },
+		fat: { label: 'Fat', color: 'var(--chart-fat)' },
+		protein: { label: 'Protein', color: 'var(--chart-protein)' }
 	} satisfies Chart.ChartConfig;
 
 	let hasCalculationErrors = $derived.by(() => {

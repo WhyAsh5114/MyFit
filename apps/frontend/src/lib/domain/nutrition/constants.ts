@@ -1,0 +1,1 @@
+export const CALORIES_PER_KILOGRAM = 7700;

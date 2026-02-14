@@ -1,11 +1,11 @@
 model MacroTargets {
-  id            String                @id @default(uuid())
-  createdAt     DateTime              @default(now())
-  proteinG      Float?
-  carbsG        Float?
-  fatG          Float?
-  quantifier    MacroTargetQuantifier
-  caloricChange Int
+  id                  String                @id @default(uuid())
+  createdAt           DateTime              @default(now())
+  proteinG            Float?
+  carbsG              Float?
+  fatG                Float?
+  quantifier          MacroTargetQuantifier
+  weeklyCaloricChange Int
 
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique

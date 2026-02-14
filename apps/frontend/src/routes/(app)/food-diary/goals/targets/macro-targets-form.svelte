@@ -20,6 +20,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { Spinner } from '$lib/components/ui/spinner';
+	import { CALORIES_PER_KILOGRAM } from '$lib/domain/nutrition/constants';
 
 	type Props = { targets: MacroTargetsSchema | null; userId: string };
 	let { targets, userId }: Props = $props();
@@ -51,7 +52,7 @@
 <form id="targets-form" use:enhance class="contents">
 	<Card.Root>
 		<Card.Content class="flex flex-col gap-2">
-			<Form.Field {form} name="caloricChange" class="flex flex-col items-start">
+			<Form.Field {form} name="weeklyCaloricChange" class="flex flex-col items-start">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Weight change per week</Form.Label>
@@ -62,13 +63,13 @@
 								min={-2}
 								step={0.25}
 								max={2}
-								value={$formData.caloricChange / 7700}
-								onValueChange={(value) => ($formData.caloricChange = value * 7700)}
+								value={$formData.weeklyCaloricChange / CALORIES_PER_KILOGRAM}
+								onValueChange={(value) => ($formData.weeklyCaloricChange = value * CALORIES_PER_KILOGRAM)}
 								{...props}
 							/>
-							<span class="text-muted-foreground">{$formData.caloricChange} kcal</span>
+							<span class="text-muted-foreground">{$formData.weeklyCaloricChange} kcal</span>
 							<span class="place-self-end text-muted-foreground">
-								{$formData.caloricChange / 7700} kg
+								{$formData.weeklyCaloricChange / CALORIES_PER_KILOGRAM} kg
 							</span>
 						</div>
 					{/snippet}

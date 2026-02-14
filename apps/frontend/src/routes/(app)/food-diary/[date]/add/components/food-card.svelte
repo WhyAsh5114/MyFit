@@ -50,8 +50,8 @@
 <Card.Content class="flex items-center justify-around gap-4">
 	<MacrosPieChart {carbs} {fat} {protein} kcal={energyKcal} />
 	<div class="grid grow grid-cols-3">
-		{@render macroCell('Carbs', carbs, 'text-chart-3', 4)}
-		{@render macroCell('Fat', fat, 'text-chart-2', 9)}
-		{@render macroCell('Protein', protein, 'text-chart-1', 4)}
+		{@render macroCell('Carbs', carbs, 'text-chart-carbs', 4)}
+		{@render macroCell('Fat', fat, 'text-chart-fat', 9)}
+		{@render macroCell('Protein', protein, 'text-chart-protein', 4)}
 	</div>
 </Card.Content>

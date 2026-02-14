@@ -5,7 +5,7 @@ export const macroTargetsSchema = z
 		proteinG: z.number().nullable().default(40),
 		carbsG: z.number().nullable().default(30),
 		fatG: z.number().nullable().default(30),
-		caloricChange: z.number().default(0),
+		weeklyCaloricChange: z.number().default(0),
 		quantifier: z.enum(['Percentage', 'Absolute']).default('Percentage')
 	})
 	.refine(
