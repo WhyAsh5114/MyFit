@@ -9,19 +9,20 @@
 	import {
 		macroTrackingMetricsSchema,
 		type MacroTrackingMetricsSchema
-	} from '$lib/features/food-diary/metrics/metrics.schema';
+	} from '$lib/features/food-diary/macro-metrics/macro-metrics.schema';
 	import { ChevronDownIcon, SaveIcon } from '@lucide/svelte';
-	import { useCreateMetricsMutation } from '$lib/features/food-diary/metrics/create-metrics';
+	import { useCreateMacroMetricsMutation } from '$lib/features/food-diary/macro-metrics/create-macro-metrics';
 	import { m } from '$lib/paraglide/messages';
 	import { calculateBMR } from '$lib/domain/nutrition/bmr';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 
 	type Props = { metrics: MacroTrackingMetricsSchema | null; userId: string };
 	let { metrics, userId }: Props = $props();
 
-	const createMetricsMutation = useCreateMetricsMutation();
+	const createMacroMetricsMutation = useCreateMacroMetricsMutation();
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(
@@ -35,7 +36,7 @@
 			resetForm: false,
 			onUpdate: async ({ form }) => {
 				if (!form.valid) return;
-				await createMetricsMutation.mutateAsync({ ...form.data, userId });
+				await createMacroMetricsMutation.mutateAsync({ ...form.data, userId });
 				toast.success(m['foodDiary.metrics.saved']());
 				await goto(resolve('/food-diary/goals'));
 			}
@@ -184,8 +185,12 @@
 		</Card.Header>
 	</Card.Root>
 
-	<Form.Button class="mt-auto w-full" type="submit">
-		{m['foodDiary.metrics.save']()}
-		<SaveIcon />
+	<Form.Button class="mt-auto w-full" type="submit" disabled={createMacroMetricsMutation.isPending}>
+		{#if createMacroMetricsMutation.isPending}
+			<Spinner />
+		{:else}
+			{m['foodDiary.metrics.save']()}
+			<SaveIcon />
+		{/if}
 	</Form.Button>
 </form>

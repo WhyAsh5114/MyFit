@@ -1,13 +1,13 @@
 import { createQuery } from '@tanstack/svelte-query';
 import { getClient } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
-import { metricsKeys } from './metrics.keys';
+import { macroMetricsKeys } from './macro-metrics.keys';
 
-export const useGetMetricsQuery = (getUserId: () => string) =>
+export const useGetMacroMetricsQuery = (getUserId: () => string) =>
 	createQuery(() => {
 		const userId = getUserId();
 		return {
-			queryKey: metricsKeys.all,
+			queryKey: macroMetricsKeys.all,
 			queryFn: async () => {
 				const client = getClient();
 				try {

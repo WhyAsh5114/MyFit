@@ -5,12 +5,12 @@
 	import { resolve } from '$app/paths';
 	import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from '@lucide/svelte';
+	import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, TargetIcon } from '@lucide/svelte';
 	import { getRelativeDayLabel } from './utils';
 	import Progress from '$lib/components/ui/progress/progress.svelte';
 	import { dateFormatter } from '$lib/my-utils';
 	import { m } from '$lib/paraglide/messages';
-	import { useGetMetricsQuery } from '$lib/features/food-diary/metrics/get-metrics';
+	import { useGetMacroMetricsQuery } from '$lib/features/food-diary/macro-metrics/get-macro-metrics';
 	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
 
 	const timeZone = getLocalTimeZone();
@@ -29,7 +29,7 @@
 	});
 
 	const getCurrentUserQuery = useGetCurrentUserQuery();
-	const getMetricsQuery = useGetMetricsQuery(() => getCurrentUserQuery.data?.id ?? '');
+	const getMacroMetricsQuery = useGetMacroMetricsQuery(() => getCurrentUserQuery.data?.id ?? '');
 
 	function changeDay(days: number) {
 		selectedDay = selectedDay.add({ days });
@@ -51,7 +51,7 @@
 				<ChevronRightIcon />
 			</Button>
 		</div>
-		{#if getMetricsQuery.data}
+		{#if getMacroMetricsQuery.data}
 			<Progress value={10} max={100} />
 		{:else}
 			<a
@@ -64,7 +64,13 @@
 	</Card.Header>
 </Card.Root>
 
-<Button class="ml-auto" href={resolve(`/food-diary/${selectedDay.toString()}/add`)}>
-	{m['foodDiary.headerAddFood']()}
-	<PlusIcon />
-</Button>
+<div class="flex">
+	<Button size="icon" variant="outline" href={resolve('/food-diary/goals')}>
+		<TargetIcon />
+	</Button>
+
+	<Button class="ml-auto" href={resolve(`/food-diary/${selectedDay.toString()}/add`)}>
+		{m['foodDiary.headerAddFood']()}
+		<PlusIcon />
+	</Button>
+</div>

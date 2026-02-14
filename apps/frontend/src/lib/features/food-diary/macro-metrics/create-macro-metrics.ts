@@ -4,9 +4,9 @@ import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
 import type { Prisma } from '@myfit/api/prisma/client';
-import { metricsKeys } from './metrics.keys';
+import { macroMetricsKeys } from './macro-metrics.keys';
 
-export const useCreateMetricsMutation = () =>
+export const useCreateMacroMetricsMutation = () =>
 	createMutation(() => ({
 		mutationFn: async (data: Prisma.MacroMetricsUncheckedCreateInput) => {
 			const client = getClient();
@@ -15,7 +15,7 @@ export const useCreateMetricsMutation = () =>
 
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: metricsKeys.all
+				queryKey: macroMetricsKeys.all
 			});
 		},
 
