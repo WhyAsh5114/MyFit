@@ -18,9 +18,13 @@
 		{m['foodDiary.searchFoods']()}
 		<Input type="text" placeholder={m['foodDiary.searchPlaceholder']()} bind:value={search} />
 	</Label>
-	<Button variant="secondary"><PlusCircleIcon /> {m['foodDiary.addManually']()}</Button>
+	<Button variant="secondary" href={resolve(`/food-diary/${page.params.date}/add/manual`)}>
+		<PlusCircleIcon />
+		{m['foodDiary.addManually']()}
+	</Button>
 	<Button href={resolve(`/food-diary/${page.params.date}/add/scan`)}>
-		{m['foodDiary.scanBarcode']()} <ScanBarcodeIcon />
+		{m['foodDiary.scanBarcode']()}
+		<ScanBarcodeIcon />
 	</Button>
 </div>
 

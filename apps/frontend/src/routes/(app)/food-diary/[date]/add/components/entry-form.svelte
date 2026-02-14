@@ -4,6 +4,8 @@
 		AlertTriangleIcon,
 		CircleCheckBigIcon,
 		ClockIcon,
+		FolderPenIcon,
+		HexagonIcon,
 		WeightTildeIcon
 	} from '@lucide/svelte';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
@@ -28,7 +30,7 @@
 	import FoodCard from './food-card.svelte';
 
 	type Props = {
-		food: NutritionData;
+		food?: NutritionData;
 		userId: string;
 	};
 
@@ -73,6 +75,36 @@
 	<Card.Root>
 		<FoodCard food={$formData} quantityG={$formData.quantityG} />
 		<Card.Content class="grid grid-cols-6 gap-2">
+			{#if food === undefined}
+				<Form.Field {form} name="product_name" class="col-span-3">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>
+								<FolderPenIcon class="size-4" />
+								{m['foodDiary.entryProductName']()}
+							</Form.Label>
+							<InputGroup.Root>
+								<InputGroup.Input {...props} type="text" bind:value={$formData.product_name} />
+							</InputGroup.Root>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="brands" class="col-span-3">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>
+								<HexagonIcon class="size-4" />
+								{m['foodDiary.entryBrands']()}
+							</Form.Label>
+							<InputGroup.Root>
+								<InputGroup.Input {...props} type="text" bind:value={$formData.brands} />
+							</InputGroup.Root>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+			{/if}
 			<Form.Field {form} name="quantityG" class="col-span-3">
 				<Form.Control>
 					{#snippet children({ props })}
@@ -118,7 +150,7 @@
 						<Popover.Trigger>
 							<AlertTriangleIcon class="size-4 text-warning" />
 						</Popover.Trigger>
-						<Popover.Content align="start" class="w-fit text-sm text-muted-foreground p-2">
+						<Popover.Content align="start" class="w-fit p-2 text-sm text-muted-foreground">
 							{m['foodDiary.nutritionInaccurateEntries']()}
 						</Popover.Content>
 					</Popover.Root>

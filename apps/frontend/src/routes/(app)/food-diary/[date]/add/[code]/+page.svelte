@@ -5,7 +5,7 @@
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { PlusCircleIcon, ScanBarcodeIcon, SearchIcon, SearchXIcon } from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import EntryForm from './components/entry-form.svelte';
+	import EntryForm from '../components/entry-form.svelte';
 	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
 	import { resolve } from '$app/paths';
 	import { m } from '$lib/paraglide/messages';
@@ -15,8 +15,8 @@
 </script>
 
 {#if getFoodByCodeQuery.data === undefined || !getCurrentUserQuery.data}
-	<Skeleton class="h-47 w-full" />
-	<Skeleton class="h-64 w-full" />
+	<Skeleton class="h-70 w-full" />
+	<Skeleton class="h-65 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
 {:else if getFoodByCodeQuery.data === null}
 	<Empty.Root>
