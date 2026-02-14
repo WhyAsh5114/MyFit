@@ -14,12 +14,13 @@ const nutritionDataRoutes = new Hono()
 		zValidator(
 			'query',
 			z.object({
-				search: z.string().min(1, 'Search query cannot be empty')
+				search: z.string().min(1, 'Search query cannot be empty'),
+				offset: z.coerce.number().min(0).optional().default(0)
 			})
 		),
 		async (c) => {
-			const { search } = c.req.valid('query');
-			const results = await nutritionDataService.searchFoods(search);
+			const { search, offset } = c.req.valid('query');
+			const results = await nutritionDataService.searchFoods(search, offset);
 			return c.json({ results }, 200);
 		}
 	)

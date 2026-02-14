@@ -147,6 +147,9 @@ importers:
       runed:
         specifier: ^0.37.1
         version: 0.37.1(@sveltejs/kit@2.50.2(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.49.2)(vite@7.3.1(@types/node@20.19.32)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)))(svelte@5.49.2)(typescript@5.9.3)(vite@7.3.1(@types/node@20.19.32)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)))(svelte@5.49.2)(zod@4.3.6)
+      svelte-infinite:
+        specifier: ^0.5.1
+        version: 0.5.1(svelte@5.49.2)
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -3860,6 +3863,11 @@ packages:
     peerDependenciesMeta:
       svelte:
         optional: true
+
+  svelte-infinite@0.5.1:
+    resolution: {integrity: sha512-NvpYWrHPcLHZQMnqUXgKGpOSMq9kMQ6sa8+WO80jLrgBFX+LWoKvAsrc1d1g+eiaagNAE9HalWWJ4KDtYi/+sw==}
+    peerDependencies:
+      svelte: ^5.0.0-0
 
   svelte-sonner@1.0.7:
     resolution: {integrity: sha512-1EUFYmd7q/xfs2qCHwJzGPh9n5VJ3X6QjBN10fof2vxgy8fYE7kVfZ7uGnd7i6fQaWIr5KvXcwYXE/cmTEjk5A==}
@@ -8012,6 +8020,10 @@ snapshots:
       postcss-scss: 4.0.9(postcss@8.5.6)
       postcss-selector-parser: 7.1.1
     optionalDependencies:
+      svelte: 5.49.2
+
+  svelte-infinite@0.5.1(svelte@5.49.2):
+    dependencies:
       svelte: 5.49.2
 
   svelte-sonner@1.0.7(svelte@5.49.2):

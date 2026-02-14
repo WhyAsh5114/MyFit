@@ -1,4 +1,6 @@
 -- @param {String} $1:search - The search term to look for
+-- @param {Int} $2:offset - Number of rows to skip for pagination
+-- @param {Int} $3:limit - Number of results to return
 SELECT
   id,
   code,
@@ -16,4 +18,5 @@ ORDER BY
   product_name <-> $1,
   brands <-> $1,
   LENGTH(product_name) ASC
-LIMIT 20;
+LIMIT $3::INT
+OFFSET $2::INT;
