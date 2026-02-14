@@ -10,6 +10,8 @@
 	import Progress from '$lib/components/ui/progress/progress.svelte';
 	import { dateFormatter } from '$lib/my-utils';
 	import { m } from '$lib/paraglide/messages';
+	import { useGetMetricsQuery } from '$lib/features/food-diary/metrics/get-metrics';
+	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
 
 	const timeZone = getLocalTimeZone();
 
@@ -25,6 +27,9 @@
 		}
 		return today(timeZone);
 	});
+
+	const getCurrentUserQuery = useGetCurrentUserQuery();
+	const getMetricsQuery = useGetMetricsQuery(() => getCurrentUserQuery.data?.id ?? '');
 
 	function changeDay(days: number) {
 		selectedDay = selectedDay.add({ days });
@@ -46,10 +51,20 @@
 				<ChevronRightIcon />
 			</Button>
 		</div>
-		<Progress value={10} max={100} />
+		{#if getMetricsQuery.data}
+			<Progress value={10} max={100} />
+		{:else}
+			<a
+				class="w-full text-center text-sm text-muted-foreground underline"
+				href={resolve('/food-diary/goals')}
+			>
+				You haven't set your goals yet
+			</a>
+		{/if}
 	</Card.Header>
 </Card.Root>
 
 <Button class="ml-auto" href={resolve(`/food-diary/${selectedDay.toString()}/add`)}>
-	{m['foodDiary.headerAddFood']()} <PlusIcon />
+	{m['foodDiary.headerAddFood']()}
+	<PlusIcon />
 </Button>

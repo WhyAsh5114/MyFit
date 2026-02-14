@@ -44,7 +44,7 @@
 {/snippet}
 
 <Card.Header>
-	<Card.Title>{food.product_name}</Card.Title>
+	<Card.Title>{food.product_name === '' ? 'No name' : food.product_name}</Card.Title>
 	<Card.Description>{food.brands ?? 'No brand'}</Card.Description>
 </Card.Header>
 <Card.Content class="flex items-center justify-around gap-4">

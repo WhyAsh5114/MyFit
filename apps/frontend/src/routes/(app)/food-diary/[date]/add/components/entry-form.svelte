@@ -33,30 +33,36 @@
 		food?: NutritionData;
 		userId: string;
 	};
-
 	let { food, userId }: Props = $props();
 
+	// 100g quantity and eatenAt now are defaults for both manual and pre-filled entries
+	const defaultValues = { eatenAt: new Date(), quantityG: 100 };
 	const createFoodEntryMutation = useCreateFoodEntryMutation();
-	let defaultData = $derived({ ...food, id: undefined, eatenAt: new Date(), quantityG: 100 });
 
 	// svelte-ignore state_referenced_locally
-	const form = superForm(defaults(defaultData, zod4(foodEntryFormSchema)), {
-		SPA: true,
-		validators: zod4Client(foodEntryFormSchema),
-		onUpdate: async ({ form }) => {
-			if (!form.valid) return toast.error(m['errors.formInvalid']());
-			await createFoodEntryMutation.mutateAsync({
-				data: form.data,
-				userId
-			});
-			toast.success(m['feedback.foodLogged']());
-			await goto(resolve(`/food-diary/${page.params.date}`));
-		},
-		onChange: async () => {
-			const res = await form.validateForm({ update: true });
-			if (!res.valid) return;
+	const form = superForm(
+		defaults(
+			food ? foodEntryFormSchema.parse({ ...food, ...defaultValues }) : { ...defaultValues },
+			zod4(foodEntryFormSchema)
+		),
+		{
+			SPA: true,
+			validators: zod4Client(foodEntryFormSchema),
+			onUpdate: async ({ form }) => {
+				if (!form.valid) return toast.error(m['errors.formInvalid']());
+				await createFoodEntryMutation.mutateAsync({
+					data: form.data,
+					userId
+				});
+				toast.success(m['feedback.foodLogged']());
+				await goto(resolve(`/food-diary/${page.params.date}`));
+			},
+			onChange: async () => {
+				const res = await form.validateForm({ update: true });
+				if (!res.valid) return;
+			}
 		}
-	});
+	);
 
 	const eatenAt = dateProxy(form, 'eatenAt', {
 		format: 'datetime-local'
