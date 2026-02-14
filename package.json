@@ -18,7 +18,7 @@
 		"@iconify/json": "^2.2.227",
 		"@internationalized/date": "^3.6.0",
 		"@paralleldrive/cuid2": "^2.2.2",
-		"@playwright/test": "1.45.1",
+		"@playwright/test": "^1.56.0",
 		"@release-it/conventional-changelog": "^10.0.0",
 		"@sveltejs/adapter-vercel": "^5.4.7",
 		"@sveltejs/kit": "^2.49.5",
