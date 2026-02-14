@@ -4,13 +4,13 @@
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { useUpdateUserNameMutation } from '$lib/features/user/update-user-name.js';
 	import type { User } from 'better-auth';
-	import { setupAccountFormSchema } from './schema';
 	import { defaults, superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { SendIcon } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { m } from '$lib/paraglide/messages';
+	import { setupAccountFormSchema } from '$lib/features/user/setup-account.schema';
 
 	let { data }: { data: User } = $props();
 

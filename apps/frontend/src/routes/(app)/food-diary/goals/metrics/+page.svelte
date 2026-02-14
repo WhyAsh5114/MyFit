@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MetricsForm from './components/metrics-form.svelte';
+	import MetricsForm from './metrics-form.svelte';
 	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { useGetMacroMetricsQuery } from '$lib/features/food-diary/macro-metrics/get-macro-metrics';

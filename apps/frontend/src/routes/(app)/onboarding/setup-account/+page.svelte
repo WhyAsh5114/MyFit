@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
-	import SetupAccountForm from './components/setup-account-form.svelte';
+	import SetupAccountForm from './setup-account-form.svelte';
 	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user.js';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { m } from '$lib/paraglide/messages';
