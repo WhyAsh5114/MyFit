@@ -1,50 +1,52 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { useGetFoodByCodeQuery } from '$lib/features/food-diary/nutrition-data/get-food-by-code';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import {
-		CircleCheckBigIcon,
 		PlusCircleIcon,
 		ScanBarcodeIcon,
 		SearchIcon,
-		SearchXIcon
+		SearchXIcon,
+		SquarePenIcon
 	} from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
 	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
 	import { resolve } from '$app/paths';
 	import { m } from '$lib/paraglide/messages';
-	import { toast } from 'svelte-sonner';
+	import { useGetFoodEntryByIdQuery } from '$lib/features/food-diary/food-entry/get-food-entry-by-id';
+	import { foodEntryToFoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.mapper';
 	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
-	import { useCreateFoodEntryMutation } from '$lib/features/food-diary/food-entry/create-food-entry';
+	import { useUpdateFoodEntryMutation } from '$lib/features/food-diary/food-entry/update-food-entry';
+	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
-	import { Spinner } from '$lib/components/ui/spinner';
+	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
 
 	const getCurrentUserQuery = useGetCurrentUserQuery();
-	const getFoodByCodeQuery = useGetFoodByCodeQuery(() => page.params.code ?? '');
+	const getFoodEntryByIdQuery = useGetFoodEntryByIdQuery(() => page.params.entryId ?? '');
 
-	const createFoodEntryMutation = useCreateFoodEntryMutation();
+	const updateFoodEntryMutation = useUpdateFoodEntryMutation();
 
 	async function handleSubmit(data: FoodEntryFormSchema) {
-		if (!getCurrentUserQuery.data) {
+		if (!page.params.entryId || !getCurrentUserQuery.data) {
 			toast.error(m['unknownErrorOccurred']());
 			return;
 		}
-		await createFoodEntryMutation.mutateAsync({
+		await updateFoodEntryMutation.mutateAsync({
 			data,
+			id: page.params.entryId,
 			userId: getCurrentUserQuery.data.id
 		});
-		toast.success(m['foodDiary.foodEntryCreated']());
+		toast.success(m['foodDiary.foodEntryUpdated']());
 		await goto(resolve(`/food-diary/${page.params.date}`));
 	}
 </script>
 
-{#if getFoodByCodeQuery.data === undefined || !getCurrentUserQuery.data}
+{#if getFoodEntryByIdQuery.data === undefined || !getCurrentUserQuery.data}
 	<Skeleton class="h-70 w-full" />
 	<Skeleton class="h-65 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
-{:else if getFoodByCodeQuery.data === null}
+{:else if getFoodEntryByIdQuery.data === null}
 	<Empty.Root>
 		<Empty.Header>
 			<Empty.Media variant="icon">
@@ -72,24 +74,24 @@
 	</Empty.Root>
 {:else}
 	<FoodEntryForm
-		initialData={getFoodByCodeQuery.data}
-		allowProductEdit={false}
-		formId="create-food-entry-form"
+		initialData={foodEntryToFoodEntryFormSchema(getFoodEntryByIdQuery.data)}
+		allowProductEdit
+		formId="edit-food-entry-form"
 		date={page.params.date}
 		onSubmit={handleSubmit}
 	>
 		{#snippet submit()}
 			<Button
 				type="submit"
+				form="edit-food-entry-form"
 				class="mt-auto"
-				form="create-food-entry-form"
-				disabled={createFoodEntryMutation.isPending}
+				disabled={updateFoodEntryMutation.isPending}
 			>
-				{#if createFoodEntryMutation.isPending}
+				{#if updateFoodEntryMutation.isPending}
 					<Spinner />
 				{:else}
-					Log food
-					<CircleCheckBigIcon />
+					Update entry
+					<SquarePenIcon />
 				{/if}
 			</Button>
 		{/snippet}

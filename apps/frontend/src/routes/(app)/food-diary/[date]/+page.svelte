@@ -2,8 +2,8 @@
 	import { page } from '$app/state';
 	import { useGetFoodByDateQuery } from '$lib/features/food-diary/food-entry/get-food-entries';
 	import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
-	import FoodEntries from './components/food-entries.svelte';
-	import HeaderCard from './components/header-card.svelte';
+	import FoodEntries from './components/entries-page/food-entries.svelte';
+	import HeaderCard from './components/entries-page/header-card.svelte';
 
 	const timezone = getLocalTimeZone();
 

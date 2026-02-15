@@ -1,17 +1,13 @@
 import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
-import type { Prisma } from '@myfit/api/prisma/client';
+import type { FoodEntry, Prisma } from '@myfit/api/prisma/client';
 import { REQUIRED_NUTRIENTS, OPTIONAL_NUTRIENTS } from './nutrients.js';
-
-function round(value: number, decimals: number) {
-	const factor = Math.pow(10, decimals);
-	return Math.round(value * factor) / factor;
-}
+import { round } from '$lib/my-utils.js';
 
 export function foodEntryFormSchemaToFoodEntry(
 	input: FoodEntryFormSchema,
 	userId: string
 ): Prisma.FoodEntryUncheckedCreateInput {
-	const factor = input.quantityG / 100;
+	const multiplier = input.quantityG / 100;
 
 	const requiredNutrients = Object.fromEntries(
 		REQUIRED_NUTRIENTS.map((nutrient) => {
@@ -19,8 +15,8 @@ export function foodEntryFormSchemaToFoodEntry(
 			const scaledValue =
 				typeof value === 'number'
 					? nutrient.foodEntryKey === 'energyKcal'
-						? Math.round(value * factor)
-						: round(value * factor, 1)
+						? Math.round(value * multiplier)
+						: round(value * multiplier, 1)
 					: 0;
 			return [nutrient.foodEntryKey, scaledValue];
 		})
@@ -29,7 +25,7 @@ export function foodEntryFormSchemaToFoodEntry(
 	const optionalNutrients = Object.fromEntries(
 		OPTIONAL_NUTRIENTS.flatMap((nutrient) => {
 			const value = input[nutrient.nutritionDataKey];
-			return typeof value === 'number' ? [[nutrient.foodEntryKey, round(value * factor, 1)]] : [];
+			return typeof value === 'number' ? [[nutrient.foodEntryKey, round(value * multiplier, 1)]] : [];
 		})
 	) as Record<(typeof OPTIONAL_NUTRIENTS)[number]['foodEntryKey'], number>;
 
@@ -42,5 +38,30 @@ export function foodEntryFormSchemaToFoodEntry(
 
 		...requiredNutrients,
 		...optionalNutrients
+	};
+}
+
+export function foodEntryToFoodEntryFormSchema(foodEntry: FoodEntry): FoodEntryFormSchema {
+	const multiplier = 100 / foodEntry.quantityG;
+
+	return {
+		product_name: foodEntry.productName,
+		brands: foodEntry.brands,
+		eatenAt: foodEntry.eatenAt,
+		quantityG: foodEntry.quantityG,
+
+		...(Object.fromEntries(
+			REQUIRED_NUTRIENTS.map((nutrient) => [
+				nutrient.nutritionDataKey,
+				foodEntry[nutrient.foodEntryKey] * multiplier
+			])
+		) as Record<(typeof REQUIRED_NUTRIENTS)[number]['nutritionDataKey'], number>),
+
+		...(Object.fromEntries(
+			OPTIONAL_NUTRIENTS.map((nutrient) => [
+				nutrient.nutritionDataKey,
+				foodEntry[nutrient.foodEntryKey] ? foodEntry[nutrient.foodEntryKey]! * multiplier : null
+			])
+		) as Record<(typeof OPTIONAL_NUTRIENTS)[number]['nutritionDataKey'], number | null>)
 	};
 }

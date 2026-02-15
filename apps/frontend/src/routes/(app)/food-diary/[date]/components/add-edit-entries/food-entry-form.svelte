@@ -2,7 +2,6 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import {
 		AlertTriangleIcon,
-		CircleCheckBigIcon,
 		ClockIcon,
 		FolderPenIcon,
 		HexagonIcon,
@@ -12,37 +11,51 @@
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { superForm, defaults, dateProxy } from 'sveltekit-superforms';
+	import { superForm, defaults, dateProxy, type SuperForm } from 'sveltekit-superforms';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
-	import type { NutritionData } from '@myfit/api/prisma/client';
-	import { Spinner } from '$lib/components/ui/spinner';
-	import { useCreateFoodEntryMutation } from '$lib/features/food-diary/food-entry/create-food-entry';
-	import { Button } from '$lib/components/ui/button';
-	import { foodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
+	import {
+		foodEntryFormSchema,
+		type FoodEntryFormSchema
+	} from '$lib/features/food-diary/food-entry/food-entry.schema';
 	import ModifyNutritionalInfoSheet from './modify-nutritional-info-sheet.svelte';
 	import { toast } from 'svelte-sonner';
-	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
-	import { page } from '$app/state';
 	import { m } from '$lib/paraglide/messages';
 	import { REQUIRED_NUTRIENTS } from '$lib/features/food-diary/food-entry/nutrients';
 	import { round } from '$lib/my-utils';
 	import FoodCard from './food-card.svelte';
+	import type { Snippet } from 'svelte';
 
 	type Props = {
-		food?: NutritionData;
-		userId: string;
+		initialData?: Partial<FoodEntryFormSchema>;
+		formId: string;
+		onSubmit: (data: FoodEntryFormSchema) => Promise<void>;
+		submit: Snippet<[{ form: SuperForm<FoodEntryFormSchema> }]>;
+		allowProductEdit: boolean;
+		date?: string;
 	};
-	let { food, userId }: Props = $props();
+	let { initialData, onSubmit, submit, allowProductEdit, date, formId }: Props = $props();
 
-	// 100g quantity and eatenAt now are defaults for both manual and pre-filled entries
-	const defaultValues = { eatenAt: new Date(), quantityG: 100 };
-	const createFoodEntryMutation = useCreateFoodEntryMutation();
+	// Combine date from page params with current time
+	const createDateWithParamsDateAndCurrentTime = (dateStr: string | undefined) => {
+		if (!dateStr) return new Date();
+		const [year, month, day] = dateStr.split('-').map(Number);
+		const now = new Date();
+		return new Date(year, month - 1, day, now.getHours(), now.getMinutes(), now.getSeconds());
+	};
+
+	// 100g quantity and eatenAt (page date with current time) are defaults for both manual and pre-filled entries
+	// svelte-ignore state_referenced_locally
+	const defaultValues = {
+		eatenAt: createDateWithParamsDateAndCurrentTime(date),
+		quantityG: 100
+	};
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(
 		defaults(
-			food ? foodEntryFormSchema.parse({ ...food, ...defaultValues }) : { ...defaultValues },
+			initialData
+				? foodEntryFormSchema.parse({ ...defaultValues, ...initialData })
+				: { ...defaultValues },
 			zod4(foodEntryFormSchema)
 		),
 		{
@@ -50,16 +63,7 @@
 			validators: zod4Client(foodEntryFormSchema),
 			onUpdate: async ({ form }) => {
 				if (!form.valid) return toast.error(m['errors.formInvalid']());
-				await createFoodEntryMutation.mutateAsync({
-					data: form.data,
-					userId
-				});
-				toast.success(m['feedback.foodLogged']());
-				await goto(resolve(`/food-diary/${page.params.date}`));
-			},
-			onChange: async () => {
-				const res = await form.validateForm({ update: true });
-				if (!res.valid) return;
+				await onSubmit(form.data);
 			}
 		}
 	);
@@ -77,11 +81,11 @@
 	});
 </script>
 
-<form use:enhance id="create-food-entry-form" class="contents">
+<form use:enhance id={formId} class="contents">
 	<Card.Root>
 		<FoodCard food={$formData} quantityG={$formData.quantityG} />
 		<Card.Content class="grid grid-cols-6 gap-2">
-			{#if food === undefined}
+			{#if allowProductEdit}
 				<Form.Field {form} name="product_name" class="col-span-3">
 					<Form.Control>
 						{#snippet children({ props })}
@@ -210,17 +214,6 @@
 			{/each}
 		</Card.Content>
 	</Card.Root>
-</form>
 
-<Button
-	disabled={createFoodEntryMutation.isPending}
-	class="mt-auto"
-	form="create-food-entry-form"
-	type="submit"
->
-	{#if createFoodEntryMutation.isPending}
-		<Spinner />
-	{:else}
-		Log food <CircleCheckBigIcon />
-	{/if}
-</Button>
+	{@render submit({ form })}
+</form>

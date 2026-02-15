@@ -14,14 +14,14 @@ export const optionalFields = OPTIONAL_NUTRIENTS.map((n) => ({
 const requiredShape = Object.fromEntries(
 	requiredFields.map((field) => [
 		field.key,
-		z.coerce.number().nonnegative(`${field.label} must be non-negative`)
+		z.number().nonnegative(`${field.label} must be non-negative`)
 	])
 ) as Record<(typeof requiredFields)[number]['key'], z.ZodNumber>;
 
 const optionalShape = Object.fromEntries(
 	optionalFields.map((field) => [
 		field.key,
-		z.coerce.number().nonnegative(`${field.label} must be non-negative`).nullable()
+		z.number().nonnegative(`${field.label} must be non-negative`).nullable()
 	])
 ) as Record<(typeof optionalFields)[number]['key'], z.ZodNullable<z.ZodNumber>>;
 

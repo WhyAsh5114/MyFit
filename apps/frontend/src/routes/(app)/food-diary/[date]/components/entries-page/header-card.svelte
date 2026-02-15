@@ -2,10 +2,9 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { CalendarDate } from '@internationalized/date';
+	import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { ChevronLeftIcon, ChevronRightIcon, GoalIcon, PlusIcon } from '@lucide/svelte';
-	import { getRelativeDayLabel } from './utils';
 	import { dateFormatter } from '$lib/my-utils';
 	import { m } from '$lib/paraglide/messages';
 	import { useGetMacroMetricsQuery } from '$lib/features/food-diary/macro-metrics/get-macro-metrics';
@@ -29,6 +28,17 @@
 	function changeDay(days: number) {
 		selectedDay = selectedDay.add({ days });
 		goto(resolve(`/food-diary/${selectedDay.toString()}`));
+	}
+
+	function getRelativeDayLabel(date: CalendarDate) {
+		const todayDate = today(getLocalTimeZone());
+		const daysDiff = date.compare(todayDate);
+
+		if (daysDiff === 0) return 'Today';
+		if (daysDiff === -1) return 'Yesterday';
+		if (daysDiff === 1) return 'Tomorrow';
+		if (daysDiff < -1) return `${Math.abs(daysDiff)} days ago`;
+		if (daysDiff > 1) return `In ${daysDiff} days`;
 	}
 
 	let dailyNutritionStats = $derived.by(() => {

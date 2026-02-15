@@ -10,7 +10,7 @@
 		XCircleIcon
 	} from '@lucide/svelte';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import type { SuperForm } from 'sveltekit-superforms';
+	import { type SuperForm } from 'sveltekit-superforms';
 	import {
 		optionalFields,
 		requiredFields,

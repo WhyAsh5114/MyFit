@@ -4,9 +4,11 @@
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { dateFormatter } from '$lib/my-utils';
 	import { CalendarDate } from '@internationalized/date';
-	import { AppleIcon } from '@lucide/svelte';
+	import { AppleIcon, PencilIcon } from '@lucide/svelte';
 	import { m } from '$lib/paraglide/messages';
 	import type { FoodEntry } from '@myfit/api/prisma/client';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { resolve } from '$app/paths';
 
 	type Props = {
 		foodEntries?: FoodEntry[];
@@ -52,6 +54,15 @@
 				<Card.Description>
 					{foodEntry.quantityG}g, {foodEntry.energyKcal} kcal
 				</Card.Description>
+				<Card.Action>
+					<Button
+						variant="ghost"
+						size="icon"
+						href={resolve(`/food-diary/${selectedDay.toString()}/edit/${foodEntry.id}`)}
+					>
+						<PencilIcon />
+					</Button>
+				</Card.Action>
 			</Card.Header>
 		</Card.Root>
 	{/each}

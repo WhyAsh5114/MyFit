@@ -4,10 +4,10 @@
 	import Label from '$lib/components/ui/label/label.svelte';
 	import { PlusCircleIcon, ScanBarcodeIcon } from '@lucide/svelte';
 	import { Debounced } from 'runed';
-	import FoodInfinite from './components/food-infinite.svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { m } from '$lib/paraglide/messages';
+	import FoodInfinite from '../components/add-edit-entries/food-infinite.svelte';
 
 	let search = $state('');
 	const debounced = new Debounced(() => search, 500);
