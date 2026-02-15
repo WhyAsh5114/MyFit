@@ -6,15 +6,11 @@ import { queryClient } from '$lib/clients/query-client';
 import type { Prisma } from '@myfit/api/prisma/client';
 import { macroTargetsKeys } from './macro-targets.keys';
 
-export const useUpsertMacroTargetsMutation = () =>
+export const useCreateMacroTargetsMutation = () =>
 	createMutation(() => ({
 		mutationFn: async (data: Prisma.MacroTargetsUncheckedCreateInput) => {
 			const client = getClient();
-			return await client.macroTargets.upsert({
-				create: data,
-				update: data,
-				where: { userId: data.userId }
-			});
+			return await client.macroTargets.create({ data });
 		},
 
 		onSuccess: () => {

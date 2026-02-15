@@ -28,7 +28,7 @@ model User {
   isAnonymous                      Boolean?
   sessions                         Session[]
   accounts                         Account[]
-  macroTargets                     MacroTargets?
+  macroTargets                     MacroTargets[]
   macroMetrics                     MacroMetrics[]
   macroActivityTrackingPreferences MacroActivityTrackingPreferences?
   foodEntries                      FoodEntry[]

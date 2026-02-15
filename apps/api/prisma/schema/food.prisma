@@ -8,7 +8,7 @@ model MacroTargets {
   weeklyCaloricChange Int
 
   user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
+  userId String
 }
 
 model MacroMetrics {

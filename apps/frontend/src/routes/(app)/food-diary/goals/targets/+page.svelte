@@ -3,7 +3,7 @@
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import MacroTargetsForm from './macro-targets-form.svelte';
 	import { useGetMacroTargetsQuery } from '$lib/features/food-diary/macro-targets/get-macro-targets';
-	import { useUpsertMacroTargetsMutation } from '$lib/features/food-diary/macro-targets/upsert-macro-targets';
+	import { useCreateMacroTargetsMutation } from '$lib/features/food-diary/macro-targets/create-macro-targets';
 	import { m } from '$lib/paraglide/messages';
 	import { SaveIcon } from '@lucide/svelte';
 	import type { MacroTargetsSchema } from '$lib/features/food-diary/macro-targets/macro-targets.schema';
@@ -16,13 +16,13 @@
 	const getCurrentUserQuery = useGetCurrentUserQuery();
 	const getMacroTargetsQuery = useGetMacroTargetsQuery(() => getCurrentUserQuery.data?.id ?? '');
 
-	const upsertMacroTargetsMutation = useUpsertMacroTargetsMutation();
+	const createMacroTargetsMutation = useCreateMacroTargetsMutation();
 
 	async function handleSubmit(data: MacroTargetsSchema) {
 		if (!getCurrentUserQuery.data) {
 			return toast.error('Unable to save targets - user not found');
 		}
-		await upsertMacroTargetsMutation.mutateAsync({ ...data, userId: getCurrentUserQuery.data.id });
+		await createMacroTargetsMutation.mutateAsync({ ...data, userId: getCurrentUserQuery.data.id });
 		toast.success('Targets saved');
 		await goto(resolve('/food-diary/goals'));
 	}
@@ -39,8 +39,8 @@
 		onSubmit={handleSubmit}
 	>
 		{#snippet submit()}
-			<Button class="mt-auto w-full" type="submit" disabled={upsertMacroTargetsMutation.isPending}>
-				{#if upsertMacroTargetsMutation.isPending}
+			<Button class="mt-auto w-full" type="submit" disabled={createMacroTargetsMutation.isPending}>
+				{#if createMacroTargetsMutation.isPending}
 					<Spinner />
 				{:else}
 					{m['foodDiary.metrics.save']()}
