@@ -94,6 +94,8 @@
 	"foodDiary.noFoodFound": "No food found",
 	"foodDiary.noFoodFoundDescription": "Food with this code couldn't be found. Try some other options?",
 	"foodDiary.searchForFoods": "Search for foods",
+	"foodDiary.searchFoodsOffline": "Search foods offline",
+	"foodDiary.searchFoodsOfflineDescription": "Offline search coming soon!",
 	"foodDiary.loadingEntries": "Loading food entries",
 	"foodDiary.loadingEntriesDescription": "Fetching your food entries for {date}",
 	"foodDiary.noEntries": "No food entries",

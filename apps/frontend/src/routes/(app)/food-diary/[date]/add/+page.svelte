@@ -7,10 +7,19 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { m } from '$lib/paraglide/messages';
-	import FoodInfinite from '../components/add-edit-entries/food-infinite.svelte';
+	import FoodInfinite from './food-infinite.svelte';
+	import { goto } from '$app/navigation';
 
-	let search = $state('');
+	let search = $state(page.url.searchParams.get('search') ?? '');
 	const debounced = new Debounced(() => search, 500);
+
+	$effect(() => {
+		if (debounced.current.trim().length === 0) {
+			goto(resolve(`/food-diary/${page.params.date}/add`));
+			return;
+		}
+		goto(resolve(`/food-diary/${page.params.date}/add?search=${debounced.current}`));
+	});
 </script>
 
 <div class="grid grid-cols-2 gap-2">
@@ -28,4 +37,4 @@
 	</Button>
 </div>
 
-<FoodInfinite search={debounced.current} />
+<FoodInfinite />

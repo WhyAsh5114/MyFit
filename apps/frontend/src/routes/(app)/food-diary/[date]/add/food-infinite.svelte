@@ -3,15 +3,16 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { useInfiniteSearchFoodsQuery } from '$lib/features/food-diary/nutrition-data/search-foods';
 	import { InfiniteLoader, LoaderState } from 'svelte-infinite';
-	import { PlusIcon, SearchIcon } from '@lucide/svelte';
+	import { CloudOffIcon, PlusIcon, SearchIcon } from '@lucide/svelte';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { online } from 'svelte/reactivity/window';
 	import { m } from '$lib/paraglide/messages';
 
-	let { search }: { search: string } = $props();
+	let search = $derived(page.url.searchParams.get('search') ?? '');
 
 	const infiniteSearchFoodsQuery = useInfiniteSearchFoodsQuery(() => search);
 	const loaderState = new LoaderState();
@@ -32,7 +33,19 @@
 	});
 </script>
 
-{#if search.trim().length === 0}
+{#if !online.current}
+	<Empty.Root class="h-full">
+		<Empty.Header>
+			<Empty.Media variant="icon">
+				<CloudOffIcon />
+			</Empty.Media>
+			<Empty.Title>{m['foodDiary.searchFoodsOffline']()}</Empty.Title>
+			<Empty.Description>
+				{m['foodDiary.searchFoodsOfflineDescription']()}
+			</Empty.Description>
+		</Empty.Header>
+	</Empty.Root>
+{:else if search.trim().length === 0}
 	<Empty.Root class="h-full">
 		<Empty.Header>
 			<Empty.Media variant="icon">
