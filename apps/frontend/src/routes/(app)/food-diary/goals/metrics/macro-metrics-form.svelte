@@ -4,30 +4,29 @@
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import { defaults, superForm } from 'sveltekit-superforms';
+	import { defaults, superForm, type SuperForm } from 'sveltekit-superforms';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
 	import {
 		macroTrackingMetricsSchema,
 		type MacroTrackingMetricsSchema
 	} from '$lib/features/food-diary/macro-metrics/macro-metrics.schema';
-	import { ChevronDownIcon, SaveIcon } from '@lucide/svelte';
-	import { useCreateMacroMetricsMutation } from '$lib/features/food-diary/macro-metrics/create-macro-metrics';
+	import { ChevronDownIcon } from '@lucide/svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { calculateBMR } from '$lib/domain/nutrition/bmr';
-	import { toast } from 'svelte-sonner';
-	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import type { Snippet } from 'svelte';
 
-	type Props = { metrics: MacroTrackingMetricsSchema | null; userId: string };
-	let { metrics, userId }: Props = $props();
-
-	const createMacroMetricsMutation = useCreateMacroMetricsMutation();
+	type Props = {
+		initialData: Partial<MacroTrackingMetricsSchema> | null;
+		formId: string;
+		onSubmit: (data: MacroTrackingMetricsSchema) => Promise<unknown>;
+		submit: Snippet<[{ form: SuperForm<MacroTrackingMetricsSchema> }]>;
+	};
+	let { initialData, formId, onSubmit, submit }: Props = $props();
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(
 		defaults(
-			metrics ? macroTrackingMetricsSchema.parse(metrics) : undefined,
+			initialData ? macroTrackingMetricsSchema.parse(initialData) : undefined,
 			zod4(macroTrackingMetricsSchema)
 		),
 		{
@@ -36,9 +35,7 @@
 			resetForm: false,
 			onUpdate: async ({ form }) => {
 				if (!form.valid) return;
-				await createMacroMetricsMutation.mutateAsync({ ...form.data, userId });
-				toast.success(m['foodDiary.metrics.saved']());
-				await goto(resolve('/food-diary/goals'));
+				await onSubmit(form.data);
 			}
 		}
 	);
@@ -46,7 +43,7 @@
 	const { form: formData, enhance } = form;
 </script>
 
-<form use:enhance id="macro-tracking-metrics-form" class="contents">
+<form use:enhance id={formId} class="contents">
 	<Card.Root>
 		<Card.Content class="grid grid-cols-2 gap-2">
 			<Form.Field {form} name="bodyweight">
@@ -184,12 +181,5 @@
 		</Card.Header>
 	</Card.Root>
 
-	<Form.Button class="mt-auto w-full" type="submit" disabled={createMacroMetricsMutation.isPending}>
-		{#if createMacroMetricsMutation.isPending}
-			<Spinner />
-		{:else}
-			{m['foodDiary.metrics.save']()}
-			<SaveIcon />
-		{/if}
-	</Form.Button>
+	{@render submit({ form })}
 </form>

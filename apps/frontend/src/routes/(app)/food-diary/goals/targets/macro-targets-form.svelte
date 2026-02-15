@@ -11,37 +11,33 @@
 		type MacroTargetsSchema
 	} from '$lib/features/food-diary/macro-targets/macro-targets.schema';
 	import { pascalToNormal } from '$lib/my-utils';
-	import { zod4 } from 'sveltekit-superforms/adapters';
-	import { defaults, superForm } from 'sveltekit-superforms/client';
+	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
+	import { defaults, superForm, type SuperForm } from 'sveltekit-superforms';
 	import { REQUIRED_NUTRIENTS } from '$lib/features/food-diary/food-entry/nutrients';
-	import { SaveIcon } from '@lucide/svelte';
-	import { toast } from 'svelte-sonner';
-	import { useUpsertMacroTargetsMutation } from '$lib/features/food-diary/macro-targets/upsert-macro-targets';
-	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
-	import { Spinner } from '$lib/components/ui/spinner';
 	import { CALORIES_PER_KILOGRAM } from '$lib/domain/nutrition/constants';
+	import type { Snippet } from 'svelte';
 
-	type Props = { targets: MacroTargetsSchema | null; userId: string };
-	let { targets, userId }: Props = $props();
-
-	const upsertMacroTargetsMutation = useUpsertMacroTargetsMutation();
+	type Props = {
+		initialData: Partial<MacroTargetsSchema> | null;
+		formId: string;
+		onSubmit: (data: MacroTargetsSchema) => Promise<unknown>;
+		submit: Snippet<[{ form: SuperForm<MacroTargetsSchema> }]>;
+	};
+	let { initialData, formId, onSubmit, submit }: Props = $props();
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(
-		defaults(targets ? macroTargetsSchema.parse(targets) : undefined, zod4(macroTargetsSchema)),
+		defaults(
+			initialData ? macroTargetsSchema.parse(initialData) : undefined,
+			zod4(macroTargetsSchema)
+		),
 		{
 			SPA: true,
-			validators: zod4(macroTargetsSchema),
+			validators: zod4Client(macroTargetsSchema),
+			resetForm: false,
 			onUpdate: async ({ form }) => {
-				if (!form.valid) {
-					return toast.error('Error saving targets', {
-						description: form.errors._errors?.join(', ')
-					});
-				}
-				await upsertMacroTargetsMutation.mutateAsync({ ...form.data, userId });
-				toast.success('Targets saved');
-				await goto(resolve('/food-diary/goals'));
+				if (!form.valid) return;
+				await onSubmit(form.data);
 			}
 		}
 	);
@@ -49,7 +45,7 @@
 	const { form: formData, enhance } = form;
 </script>
 
-<form id="targets-form" use:enhance class="contents">
+<form use:enhance id={formId} class="contents">
 	<Card.Root>
 		<Card.Content class="flex flex-col gap-2">
 			<Form.Field {form} name="weeklyCaloricChange" class="flex flex-col items-start">
@@ -137,11 +133,5 @@
 		</Card.Content>
 	</Card.Root>
 
-	<Form.Button class="mt-auto w-full" disabled={upsertMacroTargetsMutation.isPending}>
-		{#if upsertMacroTargetsMutation.isPending}
-			<Spinner />
-		{:else}
-			Save <SaveIcon />
-		{/if}
-	</Form.Button>
+	{@render submit({ form })}
 </form>

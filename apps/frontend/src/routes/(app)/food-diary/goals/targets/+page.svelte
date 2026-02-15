@@ -3,9 +3,29 @@
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import MacroTargetsForm from './macro-targets-form.svelte';
 	import { useGetMacroTargetsQuery } from '$lib/features/food-diary/macro-targets/get-macro-targets';
+	import { useUpsertMacroTargetsMutation } from '$lib/features/food-diary/macro-targets/upsert-macro-targets';
+	import { m } from '$lib/paraglide/messages';
+	import { SaveIcon } from '@lucide/svelte';
+	import type { MacroTargetsSchema } from '$lib/features/food-diary/macro-targets/macro-targets.schema';
+	import { toast } from 'svelte-sonner';
+	import { Button } from '$lib/components/ui/button';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { Spinner } from '$lib/components/ui/spinner';
 
 	const getCurrentUserQuery = useGetCurrentUserQuery();
 	const getMacroTargetsQuery = useGetMacroTargetsQuery(() => getCurrentUserQuery.data?.id ?? '');
+
+	const upsertMacroTargetsMutation = useUpsertMacroTargetsMutation();
+
+	async function handleSubmit(data: MacroTargetsSchema) {
+		if (!getCurrentUserQuery.data) {
+			return toast.error('Unable to save targets - user not found');
+		}
+		await upsertMacroTargetsMutation.mutateAsync({ ...data, userId: getCurrentUserQuery.data.id });
+		toast.success('Targets saved');
+		await goto(resolve('/food-diary/goals'));
+	}
 </script>
 
 {#if !getCurrentUserQuery.data || getMacroTargetsQuery.data === undefined}
@@ -13,5 +33,20 @@
 	<Skeleton class="h-27 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
 {:else}
-	<MacroTargetsForm targets={getMacroTargetsQuery.data} userId={getCurrentUserQuery.data.id} />
+	<MacroTargetsForm
+		initialData={getMacroTargetsQuery.data}
+		formId="macro-targets-form"
+		onSubmit={handleSubmit}
+	>
+		{#snippet submit()}
+			<Button class="mt-auto w-full" type="submit" disabled={upsertMacroTargetsMutation.isPending}>
+				{#if upsertMacroTargetsMutation.isPending}
+					<Spinner />
+				{:else}
+					{m['foodDiary.metrics.save']()}
+					<SaveIcon />
+				{/if}
+			</Button>
+		{/snippet}
+	</MacroTargetsForm>
 {/if}
