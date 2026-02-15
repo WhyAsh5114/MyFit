@@ -100,9 +100,9 @@
 			</span>
 		</p>
 		<p>
-			{round(caloriesRemaining + activityCalories, 0)} left {activityCalories > 0
-				? `(incl. ${round(activityCalories, 0)} burned)`
-				: ''}
+			{Math.abs(round(caloriesRemaining + activityCalories, 0))}
+			{caloriesRemaining < 0 ? 'over' : 'left'}
+			{activityCalories > 0 ? `(incl. ${round(activityCalories, 0)} burned)` : ''}
 		</p>
 	</div>
 </div>

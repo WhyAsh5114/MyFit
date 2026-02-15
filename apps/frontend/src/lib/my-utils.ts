@@ -34,6 +34,11 @@ export const shortDateFormatter = new DateFormatter('en-US', {
 	day: 'numeric'
 });
 
+export const timeFormatter = new DateFormatter('en-US', {
+	hour: 'numeric',
+	minute: 'numeric'
+});
+
 export function formatDateToISO(date: Date): string {
 	const calendarDate = fromDate(date, getLocalTimeZone());
 	return calendarDate.toString();

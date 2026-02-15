@@ -18,7 +18,8 @@ export const useGetFoodEntriesByDateQuery = (getDate: () => CalendarDate) =>
 							gte: date.toDate(timezone),
 							lte: dayAfter
 						}
-					}
+					},
+					orderBy: { eatenAt: 'asc' }
 				});
 			}
 		};
