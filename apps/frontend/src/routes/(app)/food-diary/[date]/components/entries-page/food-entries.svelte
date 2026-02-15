@@ -77,7 +77,7 @@
 			{#each groupedFoodEntriesByHour(foodEntries) as group (group.hour)}
 				{@const hourSummary = getHourGroupSummary(group)}
 				<div class="flex flex-col rounded-lg border">
-					<Item.Root class="rounded-none rounded-t-lg px-4 py-2" variant="muted">
+					<Item.Root class="rounded-none rounded-t-lg px-4 py-2 bg-secondary/75">
 						<Item.Header>
 							<Item.Content>
 								<Item.Title class="flex w-full">
@@ -87,7 +87,7 @@
 										{hourSummary.calories} kcal
 									</p>
 								</Item.Title>
-								<Item.Description class="flex w-full text-xs">
+								<Item.Description class="flex w-full text-xs text-foreground">
 									C {hourSummary.carbs.toFixed()}g • F {hourSummary.fat.toFixed()}g • P {hourSummary.protein.toFixed()}g
 								</Item.Description>
 							</Item.Content>
@@ -98,7 +98,7 @@
 							<Separator />
 							<a href={resolve(`/food-diary/${page.params.date}/edit/${foodEntry.id}`)}>
 								<Item.Root
-									class={cn('rounded-none bg-card py-2', {
+									class={cn('rounded-none py-2', {
 										'rounded-b-lg': index === group.entries.length - 1
 									})}
 								>

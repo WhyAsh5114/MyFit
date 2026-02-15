@@ -3,7 +3,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 import 'dotenv/config';
 
-const isDev = process.env.PUBLIC_API_URL?.startsWith('http://localhost') ?? false;
+const isDev = process.env.PUBLIC_API_URL?.startsWith('http://') ?? false;
 
 let server;
 if (isDev) {
