@@ -3,7 +3,7 @@ import { getLocalTimeZone, type CalendarDate } from '@internationalized/date';
 import { getClient } from '$lib/clients/idb-client';
 import { foodEntryKeys } from './food-entry.keys';
 
-export const useGetFoodByDateQuery = (getDate: () => CalendarDate) =>
+export const useGetFoodEntriesByDateQuery = (getDate: () => CalendarDate) =>
 	createQuery(() => {
 		const date = getDate();
 		return {

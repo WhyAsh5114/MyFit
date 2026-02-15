@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { useGetFoodByDateQuery } from '$lib/features/food-diary/food-entry/get-food-entries';
+	import { useGetFoodEntriesByDateQuery } from '$lib/features/food-diary/food-entry/get-food-entries-by-date';
 	import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
 	import FoodEntries from './components/entries-page/food-entries.svelte';
 	import HeaderCard from './components/entries-page/header-card.svelte';
@@ -20,8 +20,8 @@
 		return today(timezone);
 	});
 
-	const getFoodByDateQuery = useGetFoodByDateQuery(() => selectedDay);
+	const getFoodEntriesByDateQuery = useGetFoodEntriesByDateQuery(() => selectedDay);
 </script>
 
-<HeaderCard foodEntries={getFoodByDateQuery.data} {selectedDay} {timezone} />
-<FoodEntries foodEntries={getFoodByDateQuery.data} {selectedDay} {timezone} />
+<HeaderCard foodEntries={getFoodEntriesByDateQuery.data} {selectedDay} {timezone} />
+<FoodEntries foodEntries={getFoodEntriesByDateQuery.data} {selectedDay} {timezone} />
