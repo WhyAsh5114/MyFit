@@ -1,3 +1,7 @@
+-- Extensions
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE EXTENSION IF NOT EXISTS unaccent;
+
 -- CreateEnum
 CREATE TYPE "MacroTargetQuantifier" AS ENUM ('Percentage', 'Absolute');
 
@@ -20,11 +24,11 @@ CREATE TYPE "ChangeOperation" AS ENUM ('create', 'update', 'delete');
 CREATE TABLE "MacroTargets" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "proteins" DOUBLE PRECISION,
-    "carbs" DOUBLE PRECISION,
-    "fats" DOUBLE PRECISION,
+    "proteinG" DOUBLE PRECISION,
+    "carbsG" DOUBLE PRECISION,
+    "fatG" DOUBLE PRECISION,
     "quantifier" "MacroTargetQuantifier" NOT NULL,
-    "caloricChange" INTEGER NOT NULL,
+    "weeklyCaloricChange" INTEGER NOT NULL,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "MacroTargets_pkey" PRIMARY KEY ("id")
@@ -63,43 +67,44 @@ CREATE TABLE "FoodEntry" (
     "quantityG" DOUBLE PRECISION NOT NULL,
     "productName" TEXT NOT NULL,
     "brands" TEXT,
-    "nutritionDataId" INTEGER,
-    "energyKcal" DOUBLE PRECISION NOT NULL,
-    "proteinG" DOUBLE PRECISION NOT NULL,
-    "fatG" DOUBLE PRECISION NOT NULL,
-    "carbsG" DOUBLE PRECISION NOT NULL,
-    "saturatedFat" DOUBLE PRECISION,
-    "unsaturatedFat" DOUBLE PRECISION,
-    "monounsaturatedFat" DOUBLE PRECISION,
-    "polyunsaturatedFat" DOUBLE PRECISION,
-    "transFat" DOUBLE PRECISION,
-    "cholesterol" DOUBLE PRECISION,
-    "sugars" DOUBLE PRECISION,
-    "polyols" DOUBLE PRECISION,
-    "fiber" DOUBLE PRECISION,
-    "salt" DOUBLE PRECISION,
-    "sodium" DOUBLE PRECISION,
-    "alcohol" DOUBLE PRECISION,
-    "vitaminA" DOUBLE PRECISION,
-    "vitaminD" DOUBLE PRECISION,
-    "vitaminE" DOUBLE PRECISION,
-    "vitaminK" DOUBLE PRECISION,
-    "vitaminC" DOUBLE PRECISION,
-    "vitaminB1" DOUBLE PRECISION,
-    "vitaminB2" DOUBLE PRECISION,
-    "vitaminB6" DOUBLE PRECISION,
-    "vitaminB9" DOUBLE PRECISION,
-    "folates" DOUBLE PRECISION,
-    "vitaminB12" DOUBLE PRECISION,
-    "potassium" DOUBLE PRECISION,
-    "calcium" DOUBLE PRECISION,
-    "phosphorus" DOUBLE PRECISION,
-    "iron" DOUBLE PRECISION,
-    "magnesium" DOUBLE PRECISION,
-    "zinc" DOUBLE PRECISION,
-    "copper" DOUBLE PRECISION,
-    "manganese" DOUBLE PRECISION,
-    "caffeine" DOUBLE PRECISION,
+    "servingQuantity" DOUBLE PRECISION,
+    "servingSize" TEXT,
+    "energyKcal_100g" DOUBLE PRECISION NOT NULL,
+    "proteinsG_100g" DOUBLE PRECISION NOT NULL,
+    "fatG_100g" DOUBLE PRECISION NOT NULL,
+    "carbohydratesG_100g" DOUBLE PRECISION NOT NULL,
+    "saturatedFatG_100g" DOUBLE PRECISION,
+    "unsaturatedFatG_100g" DOUBLE PRECISION,
+    "monounsaturatedFatG_100g" DOUBLE PRECISION,
+    "polyunsaturatedFatG_100g" DOUBLE PRECISION,
+    "transFatG_100g" DOUBLE PRECISION,
+    "cholesterolMg_100g" DOUBLE PRECISION,
+    "sugarsG_100g" DOUBLE PRECISION,
+    "polyolsG_100g" DOUBLE PRECISION,
+    "fiberG_100g" DOUBLE PRECISION,
+    "saltG_100g" DOUBLE PRECISION,
+    "sodiumMg_100g" DOUBLE PRECISION,
+    "alcoholG_100g" DOUBLE PRECISION,
+    "vitaminAIU_100g" DOUBLE PRECISION,
+    "vitaminDIU_100g" DOUBLE PRECISION,
+    "vitaminEMg_100g" DOUBLE PRECISION,
+    "vitaminKMcg_100g" DOUBLE PRECISION,
+    "vitaminCMg_100g" DOUBLE PRECISION,
+    "vitaminB1Mg_100g" DOUBLE PRECISION,
+    "vitaminB2Mg_100g" DOUBLE PRECISION,
+    "vitaminB6Mg_100g" DOUBLE PRECISION,
+    "vitaminB9Mcg_100g" DOUBLE PRECISION,
+    "folatesMcg_100g" DOUBLE PRECISION,
+    "vitaminB12Mcg_100g" DOUBLE PRECISION,
+    "potassiumMg_100g" DOUBLE PRECISION,
+    "calciumMg_100g" DOUBLE PRECISION,
+    "phosphorusMg_100g" DOUBLE PRECISION,
+    "ironMg_100g" DOUBLE PRECISION,
+    "magnesiumMg_100g" DOUBLE PRECISION,
+    "zincMg_100g" DOUBLE PRECISION,
+    "copperMg_100g" DOUBLE PRECISION,
+    "manganeseMg_100g" DOUBLE PRECISION,
+    "caffeineMg_100g" DOUBLE PRECISION,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "FoodEntry_pkey" PRIMARY KEY ("id")
@@ -120,47 +125,49 @@ CREATE TABLE "ActivityEntry" (
 
 -- CreateTable
 CREATE TABLE "NutritionData" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "code" TEXT NOT NULL,
-    "product_name" TEXT NOT NULL,
+    "productName" TEXT NOT NULL,
     "brands" TEXT,
-    "search_vector" tsvector NOT NULL,
-    "energy_kcal_100g" DOUBLE PRECISION NOT NULL,
-    "proteins_100g" DOUBLE PRECISION NOT NULL,
-    "fat_100g" DOUBLE PRECISION NOT NULL,
-    "carbohydrates_100g" DOUBLE PRECISION NOT NULL,
-    "saturated_fat_100g" DOUBLE PRECISION,
-    "unsaturated_fat_100g" DOUBLE PRECISION,
-    "monounsaturated_fat_100g" DOUBLE PRECISION,
-    "polyunsaturated_fat_100g" DOUBLE PRECISION,
-    "trans_fat_100g" DOUBLE PRECISION,
-    "cholesterol_100g" DOUBLE PRECISION,
-    "sugars_100g" DOUBLE PRECISION,
-    "polyols_100g" DOUBLE PRECISION,
-    "fiber_100g" DOUBLE PRECISION,
-    "salt_100g" DOUBLE PRECISION,
-    "sodium_100g" DOUBLE PRECISION,
-    "alcohol_100g" DOUBLE PRECISION,
-    "vitamin_a_100g" DOUBLE PRECISION,
-    "vitamin_d_100g" DOUBLE PRECISION,
-    "vitamin_e_100g" DOUBLE PRECISION,
-    "vitamin_k_100g" DOUBLE PRECISION,
-    "vitamin_c_100g" DOUBLE PRECISION,
-    "vitamin_b1_100g" DOUBLE PRECISION,
-    "vitamin_b2_100g" DOUBLE PRECISION,
-    "vitamin_b6_100g" DOUBLE PRECISION,
-    "vitamin_b9_100g" DOUBLE PRECISION,
-    "folates_100g" DOUBLE PRECISION,
-    "vitamin_b12_100g" DOUBLE PRECISION,
-    "potassium_100g" DOUBLE PRECISION,
-    "calcium_100g" DOUBLE PRECISION,
-    "phosphorus_100g" DOUBLE PRECISION,
-    "iron_100g" DOUBLE PRECISION,
-    "magnesium_100g" DOUBLE PRECISION,
-    "zinc_100g" DOUBLE PRECISION,
-    "copper_100g" DOUBLE PRECISION,
-    "manganese_100g" DOUBLE PRECISION,
-    "caffeine_100g" DOUBLE PRECISION,
+    "searchVector" tsvector NOT NULL,
+    "servingQuantity" DOUBLE PRECISION,
+    "servingSize" TEXT,
+    "energyKcal_100g" DOUBLE PRECISION NOT NULL,
+    "proteinsG_100g" DOUBLE PRECISION NOT NULL,
+    "fatG_100g" DOUBLE PRECISION NOT NULL,
+    "carbohydratesG_100g" DOUBLE PRECISION NOT NULL,
+    "saturatedFatG_100g" DOUBLE PRECISION,
+    "unsaturatedFatG_100g" DOUBLE PRECISION,
+    "monounsaturatedFatG_100g" DOUBLE PRECISION,
+    "polyunsaturatedFatG_100g" DOUBLE PRECISION,
+    "transFatG_100g" DOUBLE PRECISION,
+    "cholesterolMg_100g" DOUBLE PRECISION,
+    "sugarsG_100g" DOUBLE PRECISION,
+    "polyolsG_100g" DOUBLE PRECISION,
+    "fiberG_100g" DOUBLE PRECISION,
+    "saltG_100g" DOUBLE PRECISION,
+    "sodiumMg_100g" DOUBLE PRECISION,
+    "alcoholG_100g" DOUBLE PRECISION,
+    "vitaminAIU_100g" DOUBLE PRECISION,
+    "vitaminDIU_100g" DOUBLE PRECISION,
+    "vitaminEMg_100g" DOUBLE PRECISION,
+    "vitaminKMcg_100g" DOUBLE PRECISION,
+    "vitaminCMg_100g" DOUBLE PRECISION,
+    "vitaminB1Mg_100g" DOUBLE PRECISION,
+    "vitaminB2Mg_100g" DOUBLE PRECISION,
+    "vitaminB6Mg_100g" DOUBLE PRECISION,
+    "vitaminB9Mcg_100g" DOUBLE PRECISION,
+    "folatesMcg_100g" DOUBLE PRECISION,
+    "vitaminB12Mcg_100g" DOUBLE PRECISION,
+    "potassiumMg_100g" DOUBLE PRECISION,
+    "calciumMg_100g" DOUBLE PRECISION,
+    "phosphorusMg_100g" DOUBLE PRECISION,
+    "ironMg_100g" DOUBLE PRECISION,
+    "magnesiumMg_100g" DOUBLE PRECISION,
+    "zincMg_100g" DOUBLE PRECISION,
+    "copperMg_100g" DOUBLE PRECISION,
+    "manganeseMg_100g" DOUBLE PRECISION,
+    "caffeineMg_100g" DOUBLE PRECISION,
 
     CONSTRAINT "NutritionData_pkey" PRIMARY KEY ("id")
 );
@@ -237,13 +244,19 @@ CREATE TABLE "Changelog" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "MacroTargets_userId_key" ON "MacroTargets"("userId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "MacroActivityTrackingPreferences_userId_key" ON "MacroActivityTrackingPreferences"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "NutritionData_code_key" ON "NutritionData"("code");
+CREATE INDEX "NutritionData_code_idx" ON "NutritionData"("code");
+
+-- CreateIndex
+CREATE INDEX "nutrition_brands_trgm_idx" ON "NutritionData" USING GIN ("brands" gin_trgm_ops);
+
+-- CreateIndex
+CREATE INDEX "nutrition_product_name_trgm_idx" ON "NutritionData" USING GIN ("productName" gin_trgm_ops);
+
+-- CreateIndex
+CREATE INDEX "nutrition_search_vector_idx" ON "NutritionData" USING GIN ("searchVector");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
@@ -274,9 +287,6 @@ ALTER TABLE "MacroMetrics" ADD CONSTRAINT "MacroMetrics_userId_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "MacroActivityTrackingPreferences" ADD CONSTRAINT "MacroActivityTrackingPreferences_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "FoodEntry" ADD CONSTRAINT "FoodEntry_nutritionDataId_fkey" FOREIGN KEY ("nutritionDataId") REFERENCES "NutritionData"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "FoodEntry" ADD CONSTRAINT "FoodEntry_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

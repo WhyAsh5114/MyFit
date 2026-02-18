@@ -4,19 +4,19 @@
 SELECT
   id,
   code,
-  product_name,
+  "productName",
   brands,
-  energy_kcal_100g
+  "energyKcal_100g"
 FROM "NutritionData"
 WHERE
   -- Use trigram similarity operator (uses GIN index efficiently)
-  product_name % $1
-  OR brands % $1
-  OR search_vector @@ websearch_to_tsquery('english', unaccent($1))
+  "productName" % $1::text
+  OR brands % $1::text
+  OR "searchVector" @@ websearch_to_tsquery('english', unaccent($1::text))
 ORDER BY
   -- Use distance operators for fast ordering (also uses indexes)
-  product_name <-> $1,
-  brands <-> $1,
-  LENGTH(product_name) ASC
+  "productName" <-> $1::text,
+  brands <-> $1::text,
+  LENGTH("productName") ASC
 LIMIT $3::INT
 OFFSET $2::INT;

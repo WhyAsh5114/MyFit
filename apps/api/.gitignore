@@ -32,4 +32,4 @@ dist/
 
 # Prisma
 generated/
-prisma/seed/data
+prisma/seed/open-food-facts/data

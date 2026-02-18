@@ -39,48 +39,52 @@ model FoodEntry {
   eatenAt   DateTime
   quantityG Float
 
-  productName     String
-  brands          String?
-  nutritionData   NutritionData? @relation(fields: [nutritionDataId], references: [id])
-  nutritionDataId Int?
+  productName String
+  brands      String?
 
-  energyKcal Float
-  proteinG   Float
-  fatG       Float
-  carbsG     Float
+  // Serving size metadata
+  servingQuantity Float?
+  servingSize     String?
 
-  saturatedFat       Float?
-  unsaturatedFat     Float?
-  monounsaturatedFat Float?
-  polyunsaturatedFat Float?
-  transFat           Float?
-  cholesterol        Float?
-  sugars             Float?
-  polyols            Float?
-  fiber              Float?
-  salt               Float?
-  sodium             Float?
-  alcohol            Float?
-  vitaminA           Float?
-  vitaminD           Float?
-  vitaminE           Float?
-  vitaminK           Float?
-  vitaminC           Float?
-  vitaminB1          Float?
-  vitaminB2          Float?
-  vitaminB6          Float?
-  vitaminB9          Float?
-  folates            Float?
-  vitaminB12         Float?
-  potassium          Float?
-  calcium            Float?
-  phosphorus         Float?
-  iron               Float?
-  magnesium          Float?
-  zinc               Float?
-  copper             Float?
-  manganese          Float?
-  caffeine           Float?
+  // Required 100g macros
+  energyKcal_100g     Float
+  proteinsG_100g      Float
+  fatG_100g           Float
+  carbohydratesG_100g Float
+
+  // Optional 100g micronutrients
+  saturatedFatG_100g       Float?
+  unsaturatedFatG_100g     Float?
+  monounsaturatedFatG_100g Float?
+  polyunsaturatedFatG_100g Float?
+  transFatG_100g           Float?
+  cholesterolMg_100g       Float?
+  sugarsG_100g             Float?
+  polyolsG_100g            Float?
+  fiberG_100g              Float?
+  saltG_100g               Float?
+  sodiumMg_100g            Float?
+  alcoholG_100g            Float?
+  vitaminAIU_100g          Float?
+  vitaminDIU_100g          Float?
+  vitaminEMg_100g          Float?
+  vitaminKMcg_100g         Float?
+  vitaminCMg_100g          Float?
+  vitaminB1Mg_100g         Float?
+  vitaminB2Mg_100g         Float?
+  vitaminB6Mg_100g         Float?
+  vitaminB9Mcg_100g        Float?
+  folatesMcg_100g          Float?
+  vitaminB12Mcg_100g       Float?
+  potassiumMg_100g         Float?
+  calciumMg_100g           Float?
+  phosphorusMg_100g        Float?
+  ironMg_100g              Float?
+  magnesiumMg_100g         Float?
+  zincMg_100g              Float?
+  copperMg_100g            Float?
+  manganeseMg_100g         Float?
+  caffeineMg_100g          Float?
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
@@ -99,54 +103,60 @@ model ActivityEntry {
 }
 
 model NutritionData {
-  id            Int                     @id @default(autoincrement())
-  code          String                  @unique
-  product_name  String
-  brands        String?
-  search_vector Unsupported("tsvector") @default(dbgenerated())
-  foodEntries   FoodEntry[]
+  id           String                  @id @default(uuid())
+  code         String
+  productName  String
+  brands       String?
+  searchVector Unsupported("tsvector")
 
-  energy_kcal_100g   Float
-  proteins_100g      Float
-  fat_100g           Float
-  carbohydrates_100g Float
+  // Serving size metadata
+  servingQuantity Float?
+  servingSize     String?
 
-  saturated_fat_100g       Float?
-  unsaturated_fat_100g     Float?
-  monounsaturated_fat_100g Float?
-  polyunsaturated_fat_100g Float?
-  trans_fat_100g           Float?
-  cholesterol_100g         Float?
-  sugars_100g              Float?
-  polyols_100g             Float?
-  fiber_100g               Float?
-  salt_100g                Float?
-  sodium_100g              Float?
-  alcohol_100g             Float?
-  vitamin_a_100g           Float?
-  vitamin_d_100g           Float?
-  vitamin_e_100g           Float?
-  vitamin_k_100g           Float?
-  vitamin_c_100g           Float?
-  vitamin_b1_100g          Float?
-  vitamin_b2_100g          Float?
-  vitamin_b6_100g          Float?
-  vitamin_b9_100g          Float?
-  folates_100g             Float?
-  vitamin_b12_100g         Float?
-  potassium_100g           Float?
-  calcium_100g             Float?
-  phosphorus_100g          Float?
-  iron_100g                Float?
-  magnesium_100g           Float?
-  zinc_100g                Float?
-  copper_100g              Float?
-  manganese_100g           Float?
-  caffeine_100g            Float?
+  // Required 100g macros
+  energyKcal_100g     Float
+  proteinsG_100g      Float
+  fatG_100g           Float
+  carbohydratesG_100g Float
 
+  // Optional 100g micronutrients
+  saturatedFatG_100g       Float?
+  unsaturatedFatG_100g     Float?
+  monounsaturatedFatG_100g Float?
+  polyunsaturatedFatG_100g Float?
+  transFatG_100g           Float?
+  cholesterolMg_100g       Float?
+  sugarsG_100g             Float?
+  polyolsG_100g            Float?
+  fiberG_100g              Float?
+  saltG_100g               Float?
+  sodiumMg_100g            Float?
+  alcoholG_100g            Float?
+  vitaminAIU_100g          Float?
+  vitaminDIU_100g          Float?
+  vitaminEMg_100g          Float?
+  vitaminKMcg_100g         Float?
+  vitaminCMg_100g          Float?
+  vitaminB1Mg_100g         Float?
+  vitaminB2Mg_100g         Float?
+  vitaminB6Mg_100g         Float?
+  vitaminB9Mcg_100g        Float?
+  folatesMcg_100g          Float?
+  vitaminB12Mcg_100g       Float?
+  potassiumMg_100g         Float?
+  calciumMg_100g           Float?
+  phosphorusMg_100g        Float?
+  ironMg_100g              Float?
+  magnesiumMg_100g         Float?
+  zincMg_100g              Float?
+  copperMg_100g            Float?
+  manganeseMg_100g         Float?
+  caffeineMg_100g          Float?
+
+  @@index([code])
   @@index([brands(ops: raw("gin_trgm_ops"))], map: "nutrition_brands_trgm_idx", type: Gin)
-  @@index([product_name(ops: raw("gin_trgm_ops"))], map: "nutrition_product_name_trgm_idx", type: Gin)
-  @@index([search_vector], map: "nutrition_search_vector_idx", type: Gin)
+  @@index([productName(ops: raw("gin_trgm_ops"))], map: "nutrition_product_name_trgm_idx", type: Gin)
+  @@index([searchVector], map: "nutrition_search_vector_idx", type: Gin)
 }
 
 enum MacroTargetQuantifier {
