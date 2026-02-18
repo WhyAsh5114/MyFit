@@ -21,8 +21,17 @@ export const nutritionDataService = {
 	 * Get full nutrition data for a specific food by code
 	 */
 	async getFoodByCode(code: string) {
-		return await prisma.nutritionData.findUnique({
+		return await prisma.nutritionData.findMany({
 			where: { code }
+		});
+	},
+
+	/**
+	 * Get full nutrition data for a specific food by ID
+	 */
+	async getFoodById(id: string) {
+		return await prisma.nutritionData.findUnique({
+			where: { id }
 		});
 	}
 };

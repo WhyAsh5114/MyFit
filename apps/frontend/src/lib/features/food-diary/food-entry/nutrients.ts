@@ -7,29 +7,25 @@ import type { NutritionData, FoodEntry } from '@myfit/api/prisma/client';
  */
 export const REQUIRED_NUTRIENTS = [
 	{
-		nutritionDataKey: 'energy_kcal_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'energyKcal' satisfies keyof FoodEntry,
+		key: 'energyKcal_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Calories',
 		unit: 'kcal',
 		icon: FlameIcon
 	},
 	{
-		nutritionDataKey: 'carbohydrates_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'carbsG' satisfies keyof FoodEntry,
+		key: 'carbohydratesG_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Carbs',
 		unit: 'g',
 		icon: WheatIcon
 	},
 	{
-		nutritionDataKey: 'fat_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'fatG' satisfies keyof FoodEntry,
+		key: 'fatG_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Fat',
 		unit: 'g',
 		icon: AmphoraIcon
 	},
 	{
-		nutritionDataKey: 'proteins_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'proteinG' satisfies keyof FoodEntry,
+		key: 'proteinsG_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Protein',
 		unit: 'g',
 		icon: BeefIcon
@@ -38,194 +34,162 @@ export const REQUIRED_NUTRIENTS = [
 
 export const OPTIONAL_NUTRIENTS = [
 	{
-		nutritionDataKey: 'saturated_fat_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'saturatedFat' satisfies keyof FoodEntry,
+		key: 'saturatedFatG_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Saturated fat',
 		unit: 'g'
 	},
 	{
-		nutritionDataKey: 'unsaturated_fat_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'unsaturatedFat' satisfies keyof FoodEntry,
+		key: 'unsaturatedFatG_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Unsaturated fat',
 		unit: 'g'
 	},
 	{
-		nutritionDataKey: 'monounsaturated_fat_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'monounsaturatedFat' satisfies keyof FoodEntry,
+		key: 'monounsaturatedFatG_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Monounsaturated fat',
 		unit: 'g'
 	},
 	{
-		nutritionDataKey: 'polyunsaturated_fat_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'polyunsaturatedFat' satisfies keyof FoodEntry,
+		key: 'polyunsaturatedFatG_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Polyunsaturated fat',
 		unit: 'g'
 	},
 	{
-		nutritionDataKey: 'trans_fat_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'transFat' satisfies keyof FoodEntry,
+		key: 'transFatG_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Trans fat',
 		unit: 'g'
 	},
 	{
-		nutritionDataKey: 'cholesterol_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'cholesterol' satisfies keyof FoodEntry,
+		key: 'cholesterolMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Cholesterol',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'sugars_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'sugars' satisfies keyof FoodEntry,
+		key: 'sugarsG_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Sugars',
 		unit: 'g'
 	},
 	{
-		nutritionDataKey: 'polyols_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'polyols' satisfies keyof FoodEntry,
+		key: 'polyolsG_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Polyols',
 		unit: 'g'
 	},
 	{
-		nutritionDataKey: 'fiber_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'fiber' satisfies keyof FoodEntry,
+		key: 'fiberG_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Fiber',
 		unit: 'g'
 	},
 	{
-		nutritionDataKey: 'salt_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'salt' satisfies keyof FoodEntry,
+		key: 'saltG_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Salt',
 		unit: 'g'
 	},
 	{
-		nutritionDataKey: 'sodium_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'sodium' satisfies keyof FoodEntry,
+		key: 'sodiumMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Sodium',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'alcohol_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'alcohol' satisfies keyof FoodEntry,
+		key: 'alcoholG_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Alcohol',
 		unit: 'g'
 	},
 	{
-		nutritionDataKey: 'vitamin_a_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'vitaminA' satisfies keyof FoodEntry,
+		key: 'vitaminAIU_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Vitamin A',
 		unit: 'IU'
 	},
 	{
-		nutritionDataKey: 'vitamin_d_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'vitaminD' satisfies keyof FoodEntry,
+		key: 'vitaminDIU_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Vitamin D',
 		unit: 'IU'
 	},
 	{
-		nutritionDataKey: 'vitamin_e_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'vitaminE' satisfies keyof FoodEntry,
+		key: 'vitaminEMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Vitamin E',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'vitamin_k_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'vitaminK' satisfies keyof FoodEntry,
+		key: 'vitaminKMcg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Vitamin K',
 		unit: 'µg'
 	},
 	{
-		nutritionDataKey: 'vitamin_c_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'vitaminC' satisfies keyof FoodEntry,
+		key: 'vitaminCMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Vitamin C',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'vitamin_b1_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'vitaminB1' satisfies keyof FoodEntry,
+		key: 'vitaminB1Mg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Vitamin B1',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'vitamin_b2_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'vitaminB2' satisfies keyof FoodEntry,
+		key: 'vitaminB2Mg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Vitamin B2',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'vitamin_b6_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'vitaminB6' satisfies keyof FoodEntry,
+		key: 'vitaminB6Mg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Vitamin B6',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'vitamin_b9_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'vitaminB9' satisfies keyof FoodEntry,
+		key: 'vitaminB9Mcg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Vitamin B9',
 		unit: 'µg'
 	},
 	{
-		nutritionDataKey: 'folates_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'folates' satisfies keyof FoodEntry,
+		key: 'folatesMcg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Folates',
 		unit: 'µg'
 	},
 	{
-		nutritionDataKey: 'vitamin_b12_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'vitaminB12' satisfies keyof FoodEntry,
+		key: 'vitaminB12Mcg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Vitamin B12',
 		unit: 'µg'
 	},
 	{
-		nutritionDataKey: 'potassium_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'potassium' satisfies keyof FoodEntry,
+		key: 'potassiumMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Potassium',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'calcium_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'calcium' satisfies keyof FoodEntry,
+		key: 'calciumMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Calcium',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'phosphorus_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'phosphorus' satisfies keyof FoodEntry,
+		key: 'phosphorusMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Phosphorus',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'iron_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'iron' satisfies keyof FoodEntry,
+		key: 'ironMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Iron',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'magnesium_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'magnesium' satisfies keyof FoodEntry,
+		key: 'magnesiumMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Magnesium',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'zinc_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'zinc' satisfies keyof FoodEntry,
+		key: 'zincMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Zinc',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'copper_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'copper' satisfies keyof FoodEntry,
+		key: 'copperMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Copper',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'manganese_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'manganese' satisfies keyof FoodEntry,
+		key: 'manganeseMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Manganese',
 		unit: 'mg'
 	},
 	{
-		nutritionDataKey: 'caffeine_100g' satisfies keyof NutritionData,
-		foodEntryKey: 'caffeine' satisfies keyof FoodEntry,
+		key: 'caffeineMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
 		label: 'Caffeine',
 		unit: 'mg'
 	}

@@ -82,13 +82,12 @@
 		<InfiniteLoader {loaderState} triggerLoad={loadMore}>
 			<div class="flex h-full flex-col gap-2">
 				{#each infiniteSearchFoodsQuery.data?.pages.flatMap((page) => page) as foodEntry (foodEntry.id)}
-					<a href={resolve(`/food-diary/${page.params.date}/add/${foodEntry.code}`)}>
+					<a href={resolve(`/food-diary/${page.params.date}/add/${foodEntry.id}`)}>
 						<Card.Root>
 							<Card.Header>
-								<Card.Title>{foodEntry.product_name}</Card.Title>
+								<Card.Title>{foodEntry.productName}</Card.Title>
 								<Card.Description>
-									{foodEntry.brands ?? 'No brand'}, {Math.round(foodEntry.energy_kcal_100g)} kcal per
-									100g
+									{foodEntry.brands ?? 'No brand'}, {Math.round(foodEntry.energyKcal_100g)} kcal per 100g
 								</Card.Description>
 								<Card.Action>
 									<Button

@@ -1,6 +1,7 @@
 -- @param {String} $1:search - The search term to look for
--- @param {Int} $2:offset - Number of rows to skip for pagination
+-- @param {Int} $2:offset - Number of results to skip (for pagination)
 -- @param {Int} $3:limit - Number of results to return
+
 SELECT
   id,
   code,
@@ -9,14 +10,22 @@ SELECT
   "energyKcal_100g"
 FROM "NutritionData"
 WHERE
-  -- Use trigram similarity operator (uses GIN index efficiently)
-  "productName" % $1::text
+  "searchVector" @@ websearch_to_tsquery('english', unaccent($1::text))
+  OR "productName" % $1::text
   OR brands % $1::text
-  OR "searchVector" @@ websearch_to_tsquery('english', unaccent($1::text))
 ORDER BY
-  -- Use distance operators for fast ordering (also uses indexes)
-  "productName" <-> $1::text,
-  brands <-> $1::text,
-  LENGTH("productName") ASC
-LIMIT $3::INT
-OFFSET $2::INT;
+  -- Full-text rank (weighted higher)
+  ts_rank_cd(
+    "searchVector",
+    websearch_to_tsquery('english', unaccent($1::text))
+  ) * 0.7
+  +
+  -- Trigram similarity (weighted lower)
+  GREATEST(
+    similarity("productName", $1::text),
+    similarity(COALESCE(brands, ''), $1::text)
+  ) * 0.3
+  DESC,
+  id ASC
+LIMIT $3
+OFFSET $2;

@@ -1,26 +1,26 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import MacrosPieChart from './macros-pie-chart.svelte';
-	import type { NutritionData } from '@myfit/api/prisma/client';
+	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
 
 	type Props = {
 		food: Pick<
-			NutritionData,
-			| 'product_name'
+			FoodEntryFormSchema,
+			| 'productName'
 			| 'brands'
-			| 'energy_kcal_100g'
-			| 'carbohydrates_100g'
-			| 'fat_100g'
-			| 'proteins_100g'
+			| 'energyKcal_100g'
+			| 'carbohydratesG_100g'
+			| 'fatG_100g'
+			| 'proteinsG_100g'
 		>;
 		quantityG: number;
 	};
 	let { food, quantityG }: Props = $props();
 
-	let energyKcal = $derived(food.energy_kcal_100g * (quantityG / 100));
-	let carbs = $derived(food.carbohydrates_100g * (quantityG / 100));
-	let fat = $derived(food.fat_100g * (quantityG / 100));
-	let protein = $derived(food.proteins_100g * (quantityG / 100));
+	let energyKcal = $derived(food.energyKcal_100g * (quantityG / 100));
+	let carbs = $derived(food.carbohydratesG_100g * (quantityG / 100));
+	let fat = $derived(food.fatG_100g * (quantityG / 100));
+	let protein = $derived(food.proteinsG_100g * (quantityG / 100));
 
 	function calculateMacroPercentage(macroGrams: number, kcalPerGram: number) {
 		const macroKcal = macroGrams * kcalPerGram;
@@ -44,7 +44,7 @@
 {/snippet}
 
 <Card.Header>
-	<Card.Title>{food.product_name === '' ? 'No name' : food.product_name}</Card.Title>
+	<Card.Title>{food.productName === '' ? 'No name' : food.productName}</Card.Title>
 	<Card.Description>{food.brands ?? 'No brand'}</Card.Description>
 </Card.Header>
 <Card.Content class="flex items-center justify-around gap-4">

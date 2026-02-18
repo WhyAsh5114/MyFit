@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { useGetFoodByCodeQuery } from '$lib/features/food-diary/nutrition-data/get-food-by-code';
+	import { useGetFoodByIdQuery } from '$lib/features/food-diary/nutrition-data/get-food-by-id';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import {
 		CircleCheckBigIcon,
@@ -22,7 +22,7 @@
 	import { Spinner } from '$lib/components/ui/spinner';
 
 	const getCurrentUserQuery = useGetCurrentUserQuery();
-	const getFoodByCodeQuery = useGetFoodByCodeQuery(() => page.params.code ?? '');
+	const getFoodByIdQuery = useGetFoodByIdQuery(() => page.params.id ?? '');
 
 	const createFoodEntryMutation = useCreateFoodEntryMutation();
 
@@ -40,11 +40,11 @@
 	}
 </script>
 
-{#if getFoodByCodeQuery.data === undefined || !getCurrentUserQuery.data}
+{#if getFoodByIdQuery.data === undefined || !getCurrentUserQuery.data}
 	<Skeleton class="h-70 w-full" />
 	<Skeleton class="h-65 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
-{:else if getFoodByCodeQuery.data === null}
+{:else if getFoodByIdQuery.data === null}
 	<Empty.Root>
 		<Empty.Header>
 			<Empty.Media variant="icon">
@@ -72,7 +72,7 @@
 	</Empty.Root>
 {:else}
 	<FoodEntryForm
-		initialData={getFoodByCodeQuery.data}
+		initialData={getFoodByIdQuery.data}
 		allowProductEdit={false}
 		formId="create-food-entry-form"
 		date={page.params.date}

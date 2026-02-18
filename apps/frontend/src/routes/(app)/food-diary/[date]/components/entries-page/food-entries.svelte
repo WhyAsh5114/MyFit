@@ -35,10 +35,10 @@
 	}
 
 	function getHourGroupSummary(group: { hour: number; entries: FoodEntry[] }) {
-		const calories = group.entries.reduce((sum, entry) => sum + entry.energyKcal, 0);
-		const protein = group.entries.reduce((sum, entry) => sum + entry.proteinG, 0);
-		const carbs = group.entries.reduce((sum, entry) => sum + entry.carbsG, 0);
-		const fat = group.entries.reduce((sum, entry) => sum + entry.fatG, 0);
+		const calories = group.entries.reduce((sum, entry) => sum + entry.energyKcal_100g, 0);
+		const protein = group.entries.reduce((sum, entry) => sum + entry.proteinsG_100g, 0);
+		const carbs = group.entries.reduce((sum, entry) => sum + entry.carbohydratesG_100g, 0);
+		const fat = group.entries.reduce((sum, entry) => sum + entry.fatG_100g, 0);
 		return { calories, protein, carbs, fat };
 	}
 </script>
@@ -109,7 +109,7 @@
 												<p
 													class="ml-auto flex items-center gap-2 font-normal text-muted-foreground"
 												>
-													{foodEntry.energyKcal} kcal
+													{foodEntry.energyKcal_100g} kcal
 													<ChevronRightIcon class="size-4 p-0" />
 												</p>
 											</Item.Title>

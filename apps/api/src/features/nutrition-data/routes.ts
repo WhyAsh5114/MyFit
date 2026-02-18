@@ -30,16 +30,16 @@ const nutritionDataRoutes = new Hono()
 	 * Public endpoint - no auth required
 	 */
 	.get(
-		'/:code',
+		'/:id',
 		zValidator(
 			'param',
 			z.object({
-				code: z.string().min(1, 'Code cannot be empty')
+				id: z.string().min(1, 'ID cannot be empty')
 			})
 		),
 		async (c) => {
-			const { code } = c.req.valid('param');
-			const data = await nutritionDataService.getFoodByCode(code);
+			const { id } = c.req.valid('param');
+			const data = await nutritionDataService.getFoodById(id);
 
 			if (!data) {
 				return c.json({ error: 'Food item not found' }, 404);

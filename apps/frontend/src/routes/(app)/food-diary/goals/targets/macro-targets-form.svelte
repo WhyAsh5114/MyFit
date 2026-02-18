@@ -25,6 +25,13 @@
 	};
 	let { initialData, formId, onSubmit, submit }: Props = $props();
 
+	// Map macro target field names to nutrient labels and form field names
+	const macroFields = [
+		{ label: 'Protein', formField: 'proteinG' as const },
+		{ label: 'Carbs', formField: 'carbsG' as const },
+		{ label: 'Fat', formField: 'fatG' as const }
+	];
+
 	// svelte-ignore state_referenced_locally
 	const form = superForm(
 		defaults(
@@ -90,40 +97,43 @@
 				<Form.FieldErrors />
 			</Form.Field>
 			<div class="grid">
-				{#each REQUIRED_NUTRIENTS.filter((n) => n.label !== 'Calories') as nutrient (nutrient.label)}
-					<Form.Field {form} name={nutrient.foodEntryKey}>
+				{#each macroFields as { label, formField } (label)}
+					<Form.Field {form} name={formField}>
 						<Form.Control>
 							{#snippet children({ props })}
-								<ButtonGroup.Root>
-									<InputGroup.Root class="w-fit">
-										<InputGroup.Addon class="w-26 justify-start">
-											<nutrient.icon />
-											{nutrient.label}
-										</InputGroup.Addon>
-										<InputGroup.Input
-											type="number"
-											class="border-l"
-											min={0}
-											step={0.1}
-											{...props}
-											bind:value={$formData[nutrient.foodEntryKey]}
-										/>
-										<InputGroup.Addon align="inline-end">
-											<InputGroup.Text>
-												{$formData.quantifier === 'Percentage' ? '%' : 'gm'}
-											</InputGroup.Text>
-										</InputGroup.Addon>
-									</InputGroup.Root>
-									<ButtonGroup.Text>
-										<Switch
-											checked={$formData[nutrient.foodEntryKey] !== null}
-											onCheckedChange={(checked) => {
-												if (checked) $formData[nutrient.foodEntryKey] = 0;
-												else $formData[nutrient.foodEntryKey] = null;
-											}}
-										/>
-									</ButtonGroup.Text>
-								</ButtonGroup.Root>
+								{@const nutrient = REQUIRED_NUTRIENTS.find(n => n.label === label)}
+								{#if nutrient}
+									<ButtonGroup.Root>
+										<InputGroup.Root class="w-fit">
+											<InputGroup.Addon class="w-26 justify-start">
+												<nutrient.icon />
+												{nutrient.label}
+											</InputGroup.Addon>
+											<InputGroup.Input
+												type="number"
+												class="border-l"
+												min={0}
+												step={0.1}
+												{...props}
+												bind:value={$formData[formField]}
+											/>
+											<InputGroup.Addon align="inline-end">
+												<InputGroup.Text>
+													{$formData.quantifier === 'Percentage' ? '%' : 'gm'}
+												</InputGroup.Text>
+											</InputGroup.Addon>
+										</InputGroup.Root>
+										<ButtonGroup.Text>
+											<Switch
+												checked={$formData[formField] !== null}
+												onCheckedChange={(checked) => {
+													if (checked) $formData[formField] = 0;
+													else $formData[formField] = null;
+												}}
+											/>
+										</ButtonGroup.Text>
+									</ButtonGroup.Root>
+								{/if}
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />

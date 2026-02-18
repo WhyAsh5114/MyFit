@@ -76,8 +76,8 @@
 
 	let hasCalculationErrors = $derived.by(() => {
 		const totalKcal =
-			$formData.carbohydrates_100g * 4 + $formData.fat_100g * 9 + $formData.proteins_100g * 4;
-		return Math.abs(totalKcal - $formData.energy_kcal_100g) > 0.1 * $formData.energy_kcal_100g; // allow 10% error margin
+			$formData.carbohydratesG_100g * 4 + $formData.fatG_100g * 9 + $formData.proteinsG_100g * 4;
+		return Math.abs(totalKcal - $formData.energyKcal_100g) > 0.1 * $formData.energyKcal_100g; // allow 10% error margin
 	});
 </script>
 
@@ -86,7 +86,7 @@
 		<FoodCard food={$formData} quantityG={$formData.quantityG} />
 		<Card.Content class="grid grid-cols-6 gap-2">
 			{#if allowProductEdit}
-				<Form.Field {form} name="product_name" class="col-span-3">
+				<Form.Field {form} name="productName" class="col-span-3">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>
@@ -94,7 +94,7 @@
 								{m['foodDiary.entryProductName']()}
 							</Form.Label>
 							<InputGroup.Root>
-								<InputGroup.Input {...props} type="text" bind:value={$formData.product_name} />
+								<InputGroup.Input {...props} type="text" bind:value={$formData.productName} />
 							</InputGroup.Root>
 						{/snippet}
 					</Form.Control>
@@ -174,11 +174,11 @@
 			</Card.Action>
 		</Card.Header>
 		<Card.Content class="grid grid-cols-6 gap-2">
-			{#each REQUIRED_NUTRIENTS as nutrient (nutrient.nutritionDataKey)}
-				<Form.Field
-					{form}
-					name={nutrient.nutritionDataKey}
-					class={nutrient.nutritionDataKey === 'energy_kcal_100g' ? 'col-span-6' : 'col-span-2'}
+		{#each REQUIRED_NUTRIENTS as nutrient (nutrient.key)}
+			<Form.Field
+				{form}
+				name={nutrient.key}
+				class={nutrient.key === 'energyKcal_100g' ? 'col-span-6' : 'col-span-2'}
 				>
 					<Form.Control>
 						{#snippet children({ props })}
@@ -192,15 +192,15 @@
 									type="number"
 									step={0.01}
 									value={round(
-										$formData[nutrient.nutritionDataKey] *
-											(($formData.quantityG > 0 ? $formData.quantityG : 100) / 100)
-									)}
-									onblur={(e) => {
-										const value = e.currentTarget.valueAsNumber;
-										if (!Number.isFinite(value)) return;
+									$formData[nutrient.key] *
+										(($formData.quantityG > 0 ? $formData.quantityG : 100) / 100)
+								)}
+								onblur={(e) => {
+									const value = e.currentTarget.valueAsNumber;
+									if (!Number.isFinite(value)) return;
 
-										const factor = $formData.quantityG > 0 ? $formData.quantityG / 100 : 1;
-										$formData[nutrient.nutritionDataKey] = round(value / factor, 2);
+									const factor = $formData.quantityG > 0 ? $formData.quantityG / 100 : 1;
+									$formData[nutrient.key] = round(value / factor, 2);
 									}}
 								/>
 								<InputGroup.Addon align="inline-end">

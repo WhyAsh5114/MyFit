@@ -83,17 +83,17 @@
 		</Sheet.Header>
 		<span class="ml-4 font-semibold">{m['foodDiary.nutritionRequiredFields']()}</span>
 		<div class="grid grid-cols-2 gap-2 px-4">
-			{#each REQUIRED_NUTRIENTS as nutrient (nutrient.nutritionDataKey)}
-				<Form.Field {form} name={nutrient.nutritionDataKey}>
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>{nutrient.label}</Form.Label>
-							<InputGroup.Root>
-								<InputGroup.Input
-									{...props}
-									type="number"
-									step={0.01}
-									bind:value={$formData[nutrient.nutritionDataKey]}
+		{#each REQUIRED_NUTRIENTS as nutrient (nutrient.key)}
+			<Form.Field {form} name={nutrient.key}>
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>{nutrient.label}</Form.Label>
+						<InputGroup.Root>
+							<InputGroup.Input
+								{...props}
+								type="number"
+								step={0.01}
+								bind:value={$formData[nutrient.key]}
 								/>
 								<InputGroup.Addon align="inline-end">
 									<InputGroup.Text>{nutrient.unit}</InputGroup.Text>
@@ -108,8 +108,8 @@
 		<span class="ml-4 font-semibold">{m['foodDiary.nutritionOptionalFields']()}</span>
 		<CustomScrollArea class="h-px grow px-4" viewportClass="scroll-shadow">
 			<div class="grid grid-cols-2 gap-2">
-				{#each OPTIONAL_NUTRIENTS as nutrient (nutrient.nutritionDataKey)}
-					<Form.Field {form} name={nutrient.nutritionDataKey}>
+				{#each OPTIONAL_NUTRIENTS as nutrient (nutrient.key)}
+					<Form.Field {form} name={nutrient.key}>
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>{nutrient.label}</Form.Label>
@@ -118,7 +118,7 @@
 										{...props}
 										type="number"
 										step={0.01}
-										bind:value={$formData[nutrient.nutritionDataKey]}
+										bind:value={$formData[nutrient.key]}
 									/>
 									<InputGroup.Addon align="inline-end">
 										<InputGroup.Text>{nutrient.unit}</InputGroup.Text>
