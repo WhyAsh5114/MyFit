@@ -33,6 +33,7 @@ model User {
   macroActivityTrackingPreferences MacroActivityTrackingPreferences?
   foodEntries                      FoodEntry[]
   activityEntries                  ActivityEntry[]
+  foodDiaryMeals                   String[]                          @default(["Breakfast", "Lunch", "Dinner", "Snacks"])
 
   @@unique([email])
   @@map("user")

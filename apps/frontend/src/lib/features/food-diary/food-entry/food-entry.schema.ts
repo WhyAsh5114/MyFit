@@ -39,6 +39,7 @@ export const foodEntryFormSchema = z.object({
 	servingSize: z.string().nullable().optional(),
 	servingQuantity: z.number().nullable().optional(),
 	preferredUnit: z.enum(['g', 'serving']),
+	meal: z.string().optional().nullable(),
 	...requiredShape,
 	...optionalShape
 });

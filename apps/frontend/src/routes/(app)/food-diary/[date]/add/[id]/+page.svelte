@@ -21,9 +21,13 @@
 	import { goto } from '$app/navigation';
 	import { Spinner } from '$lib/components/ui/spinner';
 	import { nutritionDataToFoodEntryFormData } from '$lib/features/food-diary/nutrition-data/nutrition-data.mapper';
+	import { useGetFoodDiaryMealsQuery } from '$lib/features/food-diary/food-entry/meals/get-food-diary-meals';
 
 	const getCurrentUserQuery = useGetCurrentUserQuery();
 	const getNutritionDataByIdQuery = useGetNutritionDataByIdQuery(() => page.params.id ?? '');
+	const getFoodDiaryMealsQuery = useGetFoodDiaryMealsQuery(
+		() => getCurrentUserQuery.data?.id ?? ''
+	);
 
 	const createFoodEntryMutation = useCreateFoodEntryMutation();
 
@@ -41,7 +45,7 @@
 	}
 </script>
 
-{#if getNutritionDataByIdQuery.data === undefined || !getCurrentUserQuery.data}
+{#if getNutritionDataByIdQuery.data === undefined || !getCurrentUserQuery.data || !getFoodDiaryMealsQuery.data}
 	<Skeleton class="h-70 w-full" />
 	<Skeleton class="h-65 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
@@ -77,6 +81,7 @@
 		allowProductEdit={false}
 		formId="create-food-entry-form"
 		onSubmit={handleSubmit}
+		meals={getFoodDiaryMealsQuery.data}
 	>
 		{#snippet submit()}
 			<Button

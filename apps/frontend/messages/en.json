@@ -103,6 +103,7 @@
 	"foodDiary.noEntries": "No food entries",
 	"foodDiary.noEntriesDescription": "No food entries found for {date}",
 	"foodDiary.entryQuantity": "Quantity",
+	"foodDiary.entryMeal": "Meal",
 	"foodDiary.entryEatenAt": "Eaten at",
 	"foodDiary.entryReset": "Reset data",
 	"foodDiary.nutritionEditTitle": "Edit nutrition (100g)",

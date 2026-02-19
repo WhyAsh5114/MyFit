@@ -4,12 +4,14 @@
 		ChevronDownIcon,
 		ClockIcon,
 		FolderPenIcon,
+		GroupIcon,
 		HexagonIcon,
 		WeightTildeIcon
 	} from '@lucide/svelte';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { superForm, defaults, dateProxy, type SuperForm } from 'sveltekit-superforms';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
@@ -31,8 +33,9 @@
 		onSubmit: (data: FoodEntryFormSchema) => Promise<void>;
 		submit: Snippet<[{ form: SuperForm<FoodEntryFormSchema> }]>;
 		allowProductEdit: boolean;
+		meals: string[];
 	};
-	let { initialData, onSubmit, submit, allowProductEdit, formId }: Props = $props();
+	let { initialData, onSubmit, submit, allowProductEdit, formId, meals }: Props = $props();
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(
@@ -186,6 +189,37 @@
 							{m['foodDiary.entryEatenAt']()}
 						</Form.Label>
 						<Input {...props} type="datetime-local" bind:value={$eatenAt} />
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+			<Form.Field {form} name="meal" class="col-span-full">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>
+							<GroupIcon class="size-4" />
+							{m['foodDiary.entryMeal']()}
+						</Form.Label>
+						<Select.Root
+							type="single"
+							value={$formData.meal ?? undefined}
+							onValueChange={(value) => ($formData.meal = value === '' ? null : value)}
+							allowDeselect
+							{...props}
+						>
+							<Select.Trigger class="w-full">
+								{$formData.meal ?? 'None'}
+							</Select.Trigger>
+							<Select.Content>
+								<Select.Group>
+									{#each meals as meal (meal)}
+										<Select.Item value={meal} label={meal}>
+											{meal}
+										</Select.Item>
+									{/each}
+								</Select.Group>
+							</Select.Content>
+						</Select.Root>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
