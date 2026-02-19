@@ -4,7 +4,7 @@ import type { FoodEntryFormSchema } from '../food-entry/food-entry.schema';
 export function nutritionDataToFoodEntryFormData(
 	nutritionData: NutritionData,
 	date?: string,
-	meal?: string
+	meal?: string | null
 ): FoodEntryFormSchema {
 	const eatenAt = date ? new Date(date) : new Date();
 	const now = new Date();
@@ -22,6 +22,7 @@ export function nutritionDataToFoodEntryFormData(
 		...nutritionData,
 		quantityG,
 		eatenAt,
-		preferredUnit
+		preferredUnit,
+		meal
 	};
 }

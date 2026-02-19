@@ -4,7 +4,7 @@
 	import { resolve } from '$app/paths';
 	import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { ChevronLeftIcon, ChevronRightIcon, ScanBarcodeIcon, SearchIcon } from '@lucide/svelte';
+	import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, ScanBarcodeIcon } from '@lucide/svelte';
 	import { dateFormatter } from '$lib/my-utils';
 	import { m } from '$lib/paraglide/messages';
 	import { useGetMacroMetricsQuery } from '$lib/features/food-diary/macro-metrics/get-macro-metrics';
@@ -78,7 +78,7 @@
 				class="w-full text-center text-sm text-muted-foreground underline"
 				href={resolve('/food-diary/goals')}
 			>
-				You haven't set your goals yet
+				Set calorie goal →
 			</a>
 		{/if}
 	</Card.Header>
@@ -86,8 +86,8 @@
 
 <div class="grid grid-cols-2 gap-2">
 	<Button href={resolve(`/food-diary/${selectedDay.toString()}/add`)} variant="secondary">
-		<SearchIcon />
-		{m['foodDiary.searchFoods']()}
+		<PlusIcon />
+		{m['foodDiary.addFood']()}
 	</Button>
 
 	<Button href={resolve(`/food-diary/${selectedDay.toString()}/add/scan`)}>

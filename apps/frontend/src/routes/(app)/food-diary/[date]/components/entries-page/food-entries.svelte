@@ -1,12 +1,11 @@
 <script lang="ts">
 	import * as Empty from '$lib/components/ui/empty/index.js';
-	import { dateFormatter, timeFormatter } from '$lib/my-utils';
+	import { dateFormatter, round } from '$lib/my-utils';
 	import { CalendarDate } from '@internationalized/date';
-	import { AppleIcon, ChevronRightIcon } from '@lucide/svelte';
+	import { AppleIcon, ChevronRightIcon, PlusIcon } from '@lucide/svelte';
 	import { m } from '$lib/paraglide/messages';
 	import type { FoodEntry } from '@myfit/api/prisma/client';
 	import * as Item from '$lib/components/ui/item/index.js';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { Spinner } from '$lib/components/ui/spinner';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
@@ -42,10 +41,22 @@
 	}
 
 	function getGroupSummary(group: { meal: string | null; entries: FoodEntry[] }) {
-		const calories = group.entries.reduce((sum, entry) => sum + entry.energyKcal_100g, 0);
-		const protein = group.entries.reduce((sum, entry) => sum + entry.proteinsG_100g, 0);
-		const carbs = group.entries.reduce((sum, entry) => sum + entry.carbohydratesG_100g, 0);
-		const fat = group.entries.reduce((sum, entry) => sum + entry.fatG_100g, 0);
+		const calories = group.entries.reduce(
+			(sum, entry) => sum + entry.energyKcal_100g * (entry.quantityG / 100),
+			0
+		);
+		const protein = group.entries.reduce(
+			(sum, entry) => sum + entry.proteinsG_100g * (entry.quantityG / 100),
+			0
+		);
+		const carbs = group.entries.reduce(
+			(sum, entry) => sum + entry.carbohydratesG_100g * (entry.quantityG / 100),
+			0
+		);
+		const fat = group.entries.reduce(
+			(sum, entry) => sum + entry.fatG_100g * (entry.quantityG / 100),
+			0
+		);
 		return { calories, protein, carbs, fat };
 	}
 </script>
@@ -84,24 +95,26 @@
 			{#each groupedFoodEntriesByMeal(foodEntries) as group (group.mealLabel)}
 				{@const groupSummary = getGroupSummary(group)}
 				<div class="flex flex-col rounded-lg border">
-					<Item.Root class="rounded-none rounded-t-lg bg-secondary/75 px-4 py-2">
-						<Item.Header>
-							<Item.Content>
-								<Item.Title class="flex w-full">
-									{group.mealLabel}
-									<p class="ml-auto font-normal">
-										{groupSummary.calories} kcal
-									</p>
-								</Item.Title>
-								<Item.Description class="flex w-full text-xs text-foreground">
-									C {groupSummary.carbs.toFixed()}g • F {groupSummary.fat.toFixed()}g • P {groupSummary.protein.toFixed()}g
-								</Item.Description>
-							</Item.Content>
-						</Item.Header>
-					</Item.Root>
+					<a href={resolve(`/food-diary/${page.params.date}/add?meal=${group.meal ?? ''}`)}>
+						<Item.Root class="rounded-none rounded-t-lg bg-secondary/75 px-4 py-2">
+							<Item.Header>
+								<Item.Content>
+									<Item.Title class="flex w-full">
+										{group.mealLabel}
+										<p class="ml-auto flex items-center gap-2 font-normal">
+											{round(groupSummary.calories, 0)} kcal
+											<PlusIcon class="size-4" />
+										</p>
+									</Item.Title>
+									<Item.Description class="flex w-full text-xs text-foreground">
+										C {groupSummary.carbs.toFixed()}g • F {groupSummary.fat.toFixed()}g • P {groupSummary.protein.toFixed()}g
+									</Item.Description>
+								</Item.Content>
+							</Item.Header>
+						</Item.Root>
+					</a>
 					<div class="flex w-full flex-col">
 						{#each group.entries as foodEntry, index (foodEntry.id)}
-							<Separator />
 							<a href={resolve(`/food-diary/${page.params.date}/edit/${foodEntry.id}`)}>
 								<Item.Root
 									class={cn('rounded-none py-2', {
@@ -115,15 +128,17 @@
 												<p
 													class="ml-auto flex items-center gap-2 font-normal whitespace-nowrap text-muted-foreground"
 												>
-													{foodEntry.energyKcal_100g} kcal
+													{round(foodEntry.energyKcal_100g * (foodEntry.quantityG / 100), 0)} kcal
 													<ChevronRightIcon class="size-4 p-0" />
 												</p>
 											</Item.Title>
 											<Item.Description class="flex w-full text-xs">
-												{foodEntry.quantityG}g •&nbsp;
-												<p class="font-normal text-muted-foreground">
-													{timeFormatter.format(foodEntry.eatenAt)}
-												</p>
+												{#if foodEntry.servingQuantity && foodEntry.servingSize}
+													{round(foodEntry.quantityG / foodEntry.servingQuantity)} •
+													{foodEntry.servingSize}
+												{:else}
+													{round(foodEntry.quantityG)} g
+												{/if}
 											</Item.Description>
 										</Item.Content>
 									</Item.Header>

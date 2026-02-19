@@ -80,7 +80,6 @@
 	"foodDiary.barcodeDetectedValue": "Value: {value}",
 	"foodDiary.noCamerasFound": "No cameras found",
 	"foodDiary.cameraAccessError": "Error accessing cameras",
-	"foodDiary.searchFoods": "Search for foods",
 	"foodDiary.searchPlaceholder": "apple pie",
 	"foodDiary.addManually": "Add manually",
 	"foodDiary.scanBarcode": "Scan barcode",

@@ -11,7 +11,9 @@
 	import { page } from '$app/state';
 	import { online } from 'svelte/reactivity/window';
 	import { m } from '$lib/paraglide/messages';
+	import type { SvelteURLSearchParams } from 'svelte/reactivity';
 
+	let { params }: { params: SvelteURLSearchParams } = $props();
 	let search = $derived(page.url.searchParams.get('search') ?? '');
 
 	const infiniteSearchNutritionDataQuery = useInfiniteSearchNutritionDataQuery(() => search);
@@ -82,7 +84,11 @@
 		<InfiniteLoader {loaderState} triggerLoad={loadMore}>
 			<div class="flex h-full flex-col gap-2">
 				{#each infiniteSearchNutritionDataQuery.data?.pages.flatMap((page) => page) as foodEntry (foodEntry.id)}
-					<a href={resolve(`/food-diary/${page.params.date}/add/${foodEntry.id}`)}>
+					<a
+						href={resolve(
+							`/food-diary/${page.params.date}/add/${foodEntry.id}?${params.toString()}`
+						)}
+					>
 						<Card.Root>
 							<Card.Header>
 								<Card.Title>{foodEntry.productName}</Card.Title>

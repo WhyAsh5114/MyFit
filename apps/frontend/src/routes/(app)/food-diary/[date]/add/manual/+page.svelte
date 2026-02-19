@@ -35,7 +35,12 @@
 	<Skeleton class="h-65 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
 {:else}
-	<FoodEntryForm allowProductEdit formId="create-food-entry-form" onSubmit={handleSubmit}>
+	<FoodEntryForm
+		allowProductEdit
+		formId="create-food-entry-form"
+		onSubmit={handleSubmit}
+		meals={getCurrentUserQuery.data.foodDiaryMeals}
+	>
 		{#snippet submit()}
 			<Button
 				type="submit"

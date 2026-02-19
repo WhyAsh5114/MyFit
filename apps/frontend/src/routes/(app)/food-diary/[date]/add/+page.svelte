@@ -9,16 +9,20 @@
 	import { m } from '$lib/paraglide/messages';
 	import FoodInfinite from './food-infinite.svelte';
 	import { goto } from '$app/navigation';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 
 	let search = $state(page.url.searchParams.get('search') ?? '');
 	const debounced = new Debounced(() => search, 500);
+	const params = new SvelteURLSearchParams(page.url.searchParams);
 
 	$effect(() => {
 		if (debounced.current.trim().length === 0) {
-			goto(resolve(`/food-diary/${page.params.date}/add`));
-			return;
+			params.delete('search');
+		} else {
+			params.set('search', debounced.current);
 		}
-		goto(resolve(`/food-diary/${page.params.date}/add?search=${debounced.current}`), {
+
+		goto(resolve(`/food-diary/${page.params.date}/add?${params.toString()}`), {
 			replaceState: true
 		});
 	});
@@ -26,17 +30,20 @@
 
 <div class="grid grid-cols-2 gap-2">
 	<Label class="col-span-2 flex flex-col items-start">
-		{m['foodDiary.searchFoods']()}
+		{m['foodDiary.searchForFoods']()}
 		<Input type="text" placeholder={m['foodDiary.searchPlaceholder']()} bind:value={search} />
 	</Label>
-	<Button variant="secondary" href={resolve(`/food-diary/${page.params.date}/add/manual`)}>
+	<Button
+		variant="secondary"
+		href={resolve(`/food-diary/${page.params.date}/add/manual?${params.toString()}`)}
+	>
 		<PlusCircleIcon />
 		{m['foodDiary.addManually']()}
 	</Button>
-	<Button href={resolve(`/food-diary/${page.params.date}/add/scan`)}>
+	<Button href={resolve(`/food-diary/${page.params.date}/add/scan?${params.toString()}`)}>
 		{m['foodDiary.scanBarcode']()}
 		<ScanBarcodeIcon />
 	</Button>
 </div>
 
-<FoodInfinite />
+<FoodInfinite {params} />

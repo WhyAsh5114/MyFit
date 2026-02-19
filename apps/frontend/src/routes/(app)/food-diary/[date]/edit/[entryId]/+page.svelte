@@ -78,6 +78,7 @@
 		allowProductEdit
 		formId="edit-food-entry-form"
 		onSubmit={handleSubmit}
+		meals={getCurrentUserQuery.data.foodDiaryMeals}
 	>
 		{#snippet submit()}
 			<Button
