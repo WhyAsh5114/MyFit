@@ -24,6 +24,7 @@
 		OPTIONAL_NUTRIENTS,
 		REQUIRED_NUTRIENTS
 	} from '$lib/features/food-diary/food-entry/nutrients';
+	import { hasCalculationErrors } from './common';
 
 	let { form }: { form: SuperForm<FoodEntryFormSchema> } = $props();
 	let formData = $derived(form.form);
@@ -36,18 +37,6 @@
 			if ($formErrors.find(({ path }) => path === field.key)) return true;
 		}
 		return false;
-	});
-
-	let hasCalculationErrors = $derived.by(() => {
-		// Example check: calories should be approximately equal to the sum of macros
-		const calculatedKcal =
-			$formData.carbohydratesG_100g * 4 + $formData.fatG_100g * 9 + $formData.proteinsG_100g * 4;
-
-		// Allow small margin of error due to rounding and variations in calorie calculations
-		return (
-			Math.abs(calculatedKcal - $formData.energyKcal_100g) >
-			Math.max(10, $formData.energyKcal_100g * 0.1)
-		);
 	});
 
 	function showErrorsToast() {
@@ -145,7 +134,7 @@
 				{m['foodDiary.nutritionFormErrors']()}
 				<XCircleIcon />
 			</Button>
-		{:else if hasCalculationErrors}
+		{:else if hasCalculationErrors($formData.energyKcal_100g, $formData.carbohydratesG_100g, $formData.proteinsG_100g, $formData.fatG_100g)}
 			<Button
 				class="mx-4 mb-4 bg-warning text-warning-foreground"
 				type="button"
