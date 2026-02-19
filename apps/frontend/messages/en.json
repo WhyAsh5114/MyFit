@@ -84,6 +84,7 @@
 	"foodDiary.searchPlaceholder": "apple pie",
 	"foodDiary.addManually": "Add manually",
 	"foodDiary.scanBarcode": "Scan barcode",
+	"foodDiary.headerViewGoals": "View goals",
 	"foodDiary.searchFoodsEmpty": "Search foods",
 	"foodDiary.searchFoodsEmptyDescription": "Type in the search box above to find foods to add to your diary",
 	"foodDiary.searching": "Searching",
