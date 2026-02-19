@@ -25,10 +25,7 @@
 		REQUIRED_NUTRIENTS
 	} from '$lib/features/food-diary/food-entry/nutrients';
 
-	let {
-		form,
-		hasCalculationErrors
-	}: { form: SuperForm<FoodEntryFormSchema>; hasCalculationErrors: boolean } = $props();
+	let { form }: { form: SuperForm<FoodEntryFormSchema> } = $props();
 	let formData = $derived(form.form);
 	let formErrors = $derived(form.allErrors);
 
@@ -39,6 +36,18 @@
 			if ($formErrors.find(({ path }) => path === field.key)) return true;
 		}
 		return false;
+	});
+
+	let hasCalculationErrors = $derived.by(() => {
+		// Example check: calories should be approximately equal to the sum of macros
+		const calculatedKcal =
+			$formData.carbohydratesG_100g * 4 + $formData.fatG_100g * 9 + $formData.proteinsG_100g * 4;
+
+		// Allow small margin of error due to rounding and variations in calorie calculations
+		return (
+			Math.abs(calculatedKcal - $formData.energyKcal_100g) >
+			Math.max(10, $formData.energyKcal_100g * 0.1)
+		);
 	});
 
 	function showErrorsToast() {
@@ -83,17 +92,17 @@
 		</Sheet.Header>
 		<span class="ml-4 font-semibold">{m['foodDiary.nutritionRequiredFields']()}</span>
 		<div class="grid grid-cols-2 gap-2 px-4">
-		{#each REQUIRED_NUTRIENTS as nutrient (nutrient.key)}
-			<Form.Field {form} name={nutrient.key}>
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>{nutrient.label}</Form.Label>
-						<InputGroup.Root>
-							<InputGroup.Input
-								{...props}
-								type="number"
-								step={0.01}
-								bind:value={$formData[nutrient.key]}
+			{#each REQUIRED_NUTRIENTS as nutrient (nutrient.key)}
+				<Form.Field {form} name={nutrient.key}>
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>{nutrient.label}</Form.Label>
+							<InputGroup.Root>
+								<InputGroup.Input
+									{...props}
+									type="number"
+									step={0.01}
+									bind:value={$formData[nutrient.key]}
 								/>
 								<InputGroup.Addon align="inline-end">
 									<InputGroup.Text>{nutrient.unit}</InputGroup.Text>

@@ -43,10 +43,6 @@
 	</div>
 {/snippet}
 
-<Card.Header>
-	<Card.Title>{food.productName === '' ? 'No name' : food.productName}</Card.Title>
-	<Card.Description>{food.brands ?? 'No brand'}</Card.Description>
-</Card.Header>
 <Card.Content class="flex items-center justify-around gap-4">
 	<MacrosPieChart {carbs} {fat} {protein} kcal={energyKcal} />
 	<div class="grid grow grid-cols-3">

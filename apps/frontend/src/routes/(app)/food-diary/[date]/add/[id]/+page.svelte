@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { useGetFoodByIdQuery } from '$lib/features/food-diary/nutrition-data/get-food-by-id';
+	import { useGetNutritionDataByIdQuery } from '$lib/features/food-diary/nutrition-data/get-nutrition-data-by-id';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import {
 		CircleCheckBigIcon,
@@ -20,9 +20,10 @@
 	import { useCreateFoodEntryMutation } from '$lib/features/food-diary/food-entry/create-food-entry';
 	import { goto } from '$app/navigation';
 	import { Spinner } from '$lib/components/ui/spinner';
+	import { nutritionDataToFoodEntryFormData } from '$lib/features/food-diary/nutrition-data/nutrition-data.mapper';
 
 	const getCurrentUserQuery = useGetCurrentUserQuery();
-	const getFoodByIdQuery = useGetFoodByIdQuery(() => page.params.id ?? '');
+	const getNutritionDataByIdQuery = useGetNutritionDataByIdQuery(() => page.params.id ?? '');
 
 	const createFoodEntryMutation = useCreateFoodEntryMutation();
 
@@ -40,11 +41,11 @@
 	}
 </script>
 
-{#if getFoodByIdQuery.data === undefined || !getCurrentUserQuery.data}
+{#if getNutritionDataByIdQuery.data === undefined || !getCurrentUserQuery.data}
 	<Skeleton class="h-70 w-full" />
 	<Skeleton class="h-65 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
-{:else if getFoodByIdQuery.data === null}
+{:else if getNutritionDataByIdQuery.data === null}
 	<Empty.Root>
 		<Empty.Header>
 			<Empty.Media variant="icon">
@@ -72,10 +73,9 @@
 	</Empty.Root>
 {:else}
 	<FoodEntryForm
-		initialData={getFoodByIdQuery.data}
+		initialData={nutritionDataToFoodEntryFormData(getNutritionDataByIdQuery.data, page.params.date)}
 		allowProductEdit={false}
 		formId="create-food-entry-form"
-		date={page.params.date}
 		onSubmit={handleSubmit}
 	>
 		{#snippet submit()}

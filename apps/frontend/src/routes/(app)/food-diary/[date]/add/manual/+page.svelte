@@ -35,16 +35,12 @@
 	<Skeleton class="h-65 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
 {:else}
-	<FoodEntryForm
-		allowProductEdit
-		formId="create-food-entry-form"
-		date={page.params.date}
-		onSubmit={handleSubmit}
-	>
+	<FoodEntryForm allowProductEdit formId="create-food-entry-form" onSubmit={handleSubmit}>
 		{#snippet submit()}
 			<Button
 				type="submit"
 				form="create-food-entry-form"
+				class="mt-auto"
 				disabled={createFoodEntryMutation.isPending}
 			>
 				{#if createFoodEntryMutation.isPending}

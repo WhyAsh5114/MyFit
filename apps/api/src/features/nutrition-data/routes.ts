@@ -25,8 +25,8 @@ const nutritionDataRoutes = new Hono()
 		}
 	)
 	/**
-	 * Nutrition data get by code endpoint
-	 * Retrieves nutrition data for a specific food item by its code
+	 * Nutrition data get by id endpoint
+	 * Retrieves nutrition data for a specific food item by its id
 	 * Public endpoint - no auth required
 	 */
 	.get(
@@ -44,6 +44,26 @@ const nutritionDataRoutes = new Hono()
 			if (!data) {
 				return c.json({ error: 'Food item not found' }, 404);
 			}
+
+			return c.json(data, 200);
+		}
+	)
+	/**
+	 * Nutrition data get by code endpoint
+	 * Retrieves nutrition data for a specific food item by its code
+	 * Public endpoint - no auth required
+	 */
+	.get(
+		'/code/:code',
+		zValidator(
+			'param',
+			z.object({
+				code: z.string().min(1, 'Code cannot be empty')
+			})
+		),
+		async (c) => {
+			const { code } = c.req.valid('param');
+			const data = await nutritionDataService.getFoodByCode(code);
 
 			return c.json(data, 200);
 		}

@@ -92,6 +92,7 @@
 	"foodDiary.noFoodsFoundDescription": "Try another search or add the food manually",
 	"foodDiary.addFood": "Add food",
 	"foodDiary.noFoodFound": "No food found",
+	"foodDiary.noItemFoundForCode": "No item found for this code",
 	"foodDiary.noFoodFoundDescription": "Food with this code couldn't be found. Try some other options?",
 	"foodDiary.searchForFoods": "Search for foods",
 	"foodDiary.searchFoodsOffline": "Search foods offline",

@@ -14,13 +14,13 @@
 	import { resolve } from '$app/paths';
 	import { m } from '$lib/paraglide/messages';
 	import { useGetFoodEntryByIdQuery } from '$lib/features/food-diary/food-entry/get-food-entry-by-id';
-	import { foodEntryToFoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.mapper';
 	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
 	import { useUpdateFoodEntryMutation } from '$lib/features/food-diary/food-entry/update-food-entry';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
+	import { foodEntryToFoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.mapper';
 
 	const getCurrentUserQuery = useGetCurrentUserQuery();
 	const getFoodEntryByIdQuery = useGetFoodEntryByIdQuery(() => page.params.entryId ?? '');
@@ -74,10 +74,9 @@
 	</Empty.Root>
 {:else}
 	<FoodEntryForm
-		initialData={foodEntryToFoodEntryFormSchema(getFoodEntryByIdQuery.data)}
+		initialData={foodEntryToFoodEntryFormSchema(getFoodEntryByIdQuery.data, page.params.date)}
 		allowProductEdit
 		formId="edit-food-entry-form"
-		date={page.params.date}
 		onSubmit={handleSubmit}
 	>
 		{#snippet submit()}

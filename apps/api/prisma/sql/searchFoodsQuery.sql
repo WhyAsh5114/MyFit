@@ -7,7 +7,9 @@ SELECT
   code,
   "productName",
   brands,
-  "energyKcal_100g"
+  "energyKcal_100g",
+  "servingSize",
+  "servingQuantity"
 FROM "NutritionData"
 WHERE
   "searchVector" @@ websearch_to_tsquery('english', unaccent($1::text))

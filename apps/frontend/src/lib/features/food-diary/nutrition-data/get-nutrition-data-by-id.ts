@@ -3,7 +3,7 @@ import { apiClient } from '$lib/clients/api-client';
 import { toast } from 'svelte-sonner';
 import { nutritionDataKeys } from './nutrition-data.keys';
 
-export const useGetFoodByIdQuery = (getId: () => string) =>
+export const useGetNutritionDataByIdQuery = (getId: () => string) =>
 	createQuery(() => {
 		const id = getId();
 		return {
@@ -11,8 +11,8 @@ export const useGetFoodByIdQuery = (getId: () => string) =>
 			queryFn: async () => {
 				const res = await apiClient.api['nutrition-data'][':id'].$get({ param: { id } });
 				if (!res.ok) {
-					toast.error('Failed to fetch food data');
-					console.error('Failed to fetch food data', res);
+					toast.error('Failed to fetch nutrition data');
+					console.error('Failed to fetch nutrition data', res);
 					return null;
 				}
 

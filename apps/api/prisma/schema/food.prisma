@@ -39,8 +39,10 @@ model FoodEntry {
   eatenAt   DateTime
   quantityG Float
 
-  productName String
-  brands      String?
+  productName   String
+  brands        String?
+  preferredUnit PreferrredFoodEntryUnit
+  meal          String?
 
   // Serving size metadata
   servingQuantity Float?
@@ -183,4 +185,9 @@ enum ActivityAdjustmentType {
   Static
   Dynamic
   Manual
+}
+
+enum PreferrredFoodEntryUnit {
+  g
+  serving
 }

@@ -49,11 +49,3 @@ function getCachedBestCamera(devices: MediaDeviceInfo[]) {
 
 	return devices.find((d) => d.deviceId === deviceId) ?? null;
 }
-
-export function onDetect(detectedCodes: DetectedBarcode[]) {
-	const detectedCode = detectedCodes[0].rawValue;
-	toast.success(m['foodDiary.barcodeDetected'](), {
-		description: m['foodDiary.barcodeDetectedValue']({ value: detectedCode })
-	});
-	goto(resolve(`/food-diary/${page.params.date}/add/${detectedCode}`));
-}

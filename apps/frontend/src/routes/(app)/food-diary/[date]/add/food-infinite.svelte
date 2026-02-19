@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { useInfiniteSearchFoodsQuery } from '$lib/features/food-diary/nutrition-data/search-foods';
+	import { useInfiniteSearchNutritionDataQuery } from '$lib/features/food-diary/nutrition-data/search-nutrition-data';
 	import { InfiniteLoader, LoaderState } from 'svelte-infinite';
 	import { CloudOffIcon, PlusIcon, SearchIcon } from '@lucide/svelte';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
@@ -14,18 +14,18 @@
 
 	let search = $derived(page.url.searchParams.get('search') ?? '');
 
-	const infiniteSearchFoodsQuery = useInfiniteSearchFoodsQuery(() => search);
+	const infiniteSearchNutritionDataQuery = useInfiniteSearchNutritionDataQuery(() => search);
 	const loaderState = new LoaderState();
 
 	const loadMore = async () => {
-		await infiniteSearchFoodsQuery.fetchNextPage();
+		await infiniteSearchNutritionDataQuery.fetchNextPage();
 	};
 
 	// Sync query state to loaderState
 	$effect(() => {
-		if (infiniteSearchFoodsQuery.isError) {
+		if (infiniteSearchNutritionDataQuery.isError) {
 			loaderState.error();
-		} else if (!infiniteSearchFoodsQuery.hasNextPage) {
+		} else if (!infiniteSearchNutritionDataQuery.hasNextPage) {
 			loaderState.complete();
 		} else {
 			loaderState.loaded();
@@ -57,7 +57,7 @@
 			</Empty.Description>
 		</Empty.Header>
 	</Empty.Root>
-{:else if infiniteSearchFoodsQuery.isLoading}
+{:else if infiniteSearchNutritionDataQuery.isLoading}
 	<Empty.Root class="h-full">
 		<Empty.Header>
 			<Empty.Media variant="icon">
@@ -67,7 +67,7 @@
 			<Empty.Description>{m['foodDiary.searchingDescription']()}</Empty.Description>
 		</Empty.Header>
 	</Empty.Root>
-{:else if infiniteSearchFoodsQuery.data?.pages[0]?.length === 0}
+{:else if infiniteSearchNutritionDataQuery.data?.pages[0]?.length === 0}
 	<Empty.Root class="h-full">
 		<Empty.Header>
 			<Empty.Media variant="icon">
@@ -81,13 +81,20 @@
 	<ScrollArea class="h-px grow">
 		<InfiniteLoader {loaderState} triggerLoad={loadMore}>
 			<div class="flex h-full flex-col gap-2">
-				{#each infiniteSearchFoodsQuery.data?.pages.flatMap((page) => page) as foodEntry (foodEntry.id)}
+				{#each infiniteSearchNutritionDataQuery.data?.pages.flatMap((page) => page) as foodEntry (foodEntry.id)}
 					<a href={resolve(`/food-diary/${page.params.date}/add/${foodEntry.id}`)}>
 						<Card.Root>
 							<Card.Header>
 								<Card.Title>{foodEntry.productName}</Card.Title>
 								<Card.Description>
-									{foodEntry.brands ?? 'No brand'}, {Math.round(foodEntry.energyKcal_100g)} kcal per 100g
+									{#if foodEntry.servingSize && foodEntry.servingQuantity}
+										{foodEntry.brands ?? 'No brand'}, {Math.round(
+											foodEntry.energyKcal_100g * (foodEntry.servingQuantity / 100)
+										)} kcal per {foodEntry.servingSize}
+									{:else}
+										{foodEntry.brands ?? 'No brand'}, {Math.round(foodEntry.energyKcal_100g)} kcal per
+										100g
+									{/if}
 								</Card.Description>
 								<Card.Action>
 									<Button

@@ -4,7 +4,7 @@ import { toast } from 'svelte-sonner';
 import { nutritionDataKeys } from './nutrition-data.keys';
 import { NUTRITION_DATA_SEARCH_PAGINATION_LIMIT } from '@myfit/api/constants';
 
-export const useInfiniteSearchFoodsQuery = (getSearch: () => string) =>
+export const useInfiniteSearchNutritionDataQuery = (getSearch: () => string) =>
 	createInfiniteQuery(() => {
 		const search = getSearch();
 		return {
@@ -14,8 +14,8 @@ export const useInfiniteSearchFoodsQuery = (getSearch: () => string) =>
 					query: { search, offset: pageParam.toString() }
 				});
 				if (!res.ok) {
-					toast.error('Failed to search foods');
-					console.error('Failed to search foods', res);
+					toast.error('Failed to search nutrition data');
+					console.error('Failed to search nutrition data', res);
 				}
 
 				const data = await res.json();

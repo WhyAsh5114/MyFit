@@ -18,7 +18,9 @@
 			goto(resolve(`/food-diary/${page.params.date}/add`));
 			return;
 		}
-		goto(resolve(`/food-diary/${page.params.date}/add?search=${debounced.current}`));
+		goto(resolve(`/food-diary/${page.params.date}/add?search=${debounced.current}`), {
+			replaceState: true
+		});
 	});
 </script>
 

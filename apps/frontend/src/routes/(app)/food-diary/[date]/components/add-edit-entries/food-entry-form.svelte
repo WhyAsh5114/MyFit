@@ -1,15 +1,15 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import {
-		AlertTriangleIcon,
+		ChevronDownIcon,
 		ClockIcon,
 		FolderPenIcon,
 		HexagonIcon,
 		WeightTildeIcon
 	} from '@lucide/svelte';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import * as Popover from '$lib/components/ui/popover/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { superForm, defaults, dateProxy, type SuperForm } from 'sveltekit-superforms';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
@@ -20,42 +20,24 @@
 	import ModifyNutritionalInfoSheet from './modify-nutritional-info-sheet.svelte';
 	import { toast } from 'svelte-sonner';
 	import { m } from '$lib/paraglide/messages';
-	import { REQUIRED_NUTRIENTS } from '$lib/features/food-diary/food-entry/nutrients';
-	import { round } from '$lib/my-utils';
 	import FoodCard from './food-card.svelte';
 	import type { Snippet } from 'svelte';
+	import { round } from '$lib/my-utils';
+	import { cn } from '$lib/utils';
 
 	type Props = {
-		initialData?: Partial<FoodEntryFormSchema>;
+		initialData?: FoodEntryFormSchema;
 		formId: string;
 		onSubmit: (data: FoodEntryFormSchema) => Promise<void>;
 		submit: Snippet<[{ form: SuperForm<FoodEntryFormSchema> }]>;
 		allowProductEdit: boolean;
-		date?: string;
 	};
-	let { initialData, onSubmit, submit, allowProductEdit, date, formId }: Props = $props();
-
-	// Combine date from page params with current time
-	const createDateWithParamsDateAndCurrentTime = (dateStr: string | undefined) => {
-		if (!dateStr) return new Date();
-		const [year, month, day] = dateStr.split('-').map(Number);
-		const now = new Date();
-		return new Date(year, month - 1, day, now.getHours(), now.getMinutes(), now.getSeconds());
-	};
-
-	// 100g quantity and eatenAt (page date with current time) are defaults for both manual and pre-filled entries
-	// svelte-ignore state_referenced_locally
-	const defaultValues = {
-		eatenAt: createDateWithParamsDateAndCurrentTime(date),
-		quantityG: 100
-	};
+	let { initialData, onSubmit, submit, allowProductEdit, formId }: Props = $props();
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(
 		defaults(
-			initialData
-				? foodEntryFormSchema.parse({ ...defaultValues, ...initialData })
-				: { ...defaultValues },
+			initialData ? foodEntryFormSchema.parse(initialData) : undefined,
 			zod4(foodEntryFormSchema)
 		),
 		{
@@ -74,19 +56,47 @@
 
 	const { form: formData, enhance } = form;
 
-	let hasCalculationErrors = $derived.by(() => {
-		const totalKcal =
-			$formData.carbohydratesG_100g * 4 + $formData.fatG_100g * 9 + $formData.proteinsG_100g * 4;
-		return Math.abs(totalKcal - $formData.energyKcal_100g) > 0.1 * $formData.energyKcal_100g; // allow 10% error margin
+	let hasServingData = $derived(
+		!!$formData.servingSize && !!$formData.servingQuantity && $formData.servingQuantity > 0
+	);
+
+	let displayQuantityG = $derived.by(() => {
+		if (($formData.quantityG as unknown) === '') return '';
+		if ($formData.preferredUnit === 'g') return round($formData.quantityG);
+		if ($formData.servingQuantity) return round($formData.quantityG / $formData.servingQuantity);
+		return round($formData.quantityG);
 	});
+
+	function handleQuantityGChange(e: Event & { currentTarget: EventTarget & HTMLInputElement }) {
+		const value = e.currentTarget.valueAsNumber;
+		if (!Number.isFinite(value)) return;
+
+		if (value <= 0) {
+			$formData.quantityG = 0;
+			return;
+		}
+
+		if ($formData.preferredUnit === 'g') {
+			$formData.quantityG = value;
+		} else if ($formData.servingQuantity) {
+			$formData.quantityG = value * $formData.servingQuantity;
+		}
+	}
 </script>
 
 <form use:enhance id={formId} class="contents">
 	<Card.Root>
+		<Card.Header>
+			<Card.Title>{$formData.productName === '' ? 'No name' : $formData.productName}</Card.Title>
+			<Card.Description>{$formData.brands ?? 'No brand'}</Card.Description>
+			<Card.Action>
+				<ModifyNutritionalInfoSheet {form} />
+			</Card.Action>
+		</Card.Header>
 		<FoodCard food={$formData} quantityG={$formData.quantityG} />
-		<Card.Content class="grid grid-cols-6 gap-2">
+		<Card.Content class="grid grid-cols-2 gap-2">
 			{#if allowProductEdit}
-				<Form.Field {form} name="productName" class="col-span-3">
+				<Form.Field {form} name="productName">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>
@@ -100,7 +110,7 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-				<Form.Field {form} name="brands" class="col-span-3">
+				<Form.Field {form} name="brands">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>
@@ -115,7 +125,7 @@
 					<Form.FieldErrors />
 				</Form.Field>
 			{/if}
-			<Form.Field {form} name="quantityG" class="col-span-3">
+			<Form.Field {form} name="quantityG" class="col-span-full">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>
@@ -127,17 +137,48 @@
 								{...props}
 								type="number"
 								step={0.01}
-								bind:value={$formData.quantityG}
+								value={displayQuantityG}
+								oninput={handleQuantityGChange}
 							/>
 							<InputGroup.Addon align="inline-end">
-								<InputGroup.Text>g</InputGroup.Text>
+								{#if hasServingData}
+									<DropdownMenu.Root>
+										<DropdownMenu.Trigger class="flex items-center gap-2">
+											{$formData.preferredUnit}
+											<ChevronDownIcon class="size-4" />
+										</DropdownMenu.Trigger>
+										<DropdownMenu.Content align="end">
+											<DropdownMenu.Item onclick={() => ($formData.preferredUnit = 'g')}>
+												g
+											</DropdownMenu.Item>
+											<DropdownMenu.Item onclick={() => ($formData.preferredUnit = 'serving')}>
+												serving <p class="text-sm text-muted-foreground">{$formData.servingSize}</p>
+											</DropdownMenu.Item>
+										</DropdownMenu.Content>
+									</DropdownMenu.Root>
+								{:else}
+									g
+								{/if}
 							</InputGroup.Addon>
 						</InputGroup.Root>
 					{/snippet}
 				</Form.Control>
+				{#if hasServingData && $formData.servingQuantity}
+					<Form.Description>
+						{#if $formData.preferredUnit === 'g'}
+							{@const servings = round($formData.quantityG / $formData.servingQuantity)}
+							≈ {servings}
+							{servings === 1 ? 'serving' : 'servings'}
+							<br />
+						{/if}
+						<p class={cn({ 'text-xs': $formData.preferredUnit === 'g' })}>
+							1 serving = {$formData.servingSize}
+						</p>
+					</Form.Description>
+				{/if}
 				<Form.FieldErrors />
 			</Form.Field>
-			<Form.Field {form} name="eatenAt" class="col-span-3">
+			<Form.Field {form} name="eatenAt" class="col-span-full">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>
@@ -149,69 +190,6 @@
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
-		</Card.Content>
-	</Card.Root>
-	<Card.Root>
-		<Card.Header>
-			<Card.Title class="flex items-center gap-2">
-				Macros
-				{#if hasCalculationErrors}
-					<Popover.Root>
-						<Popover.Trigger>
-							<AlertTriangleIcon class="size-4 text-warning" />
-						</Popover.Trigger>
-						<Popover.Content align="start" class="w-fit p-2 text-sm text-muted-foreground">
-							{m['foodDiary.nutritionInaccurateEntries']()}
-						</Popover.Content>
-					</Popover.Root>
-				{/if}
-			</Card.Title>
-			<Card.Description>
-				For {$formData.quantityG}g
-			</Card.Description>
-			<Card.Action>
-				<ModifyNutritionalInfoSheet {form} {hasCalculationErrors} />
-			</Card.Action>
-		</Card.Header>
-		<Card.Content class="grid grid-cols-6 gap-2">
-		{#each REQUIRED_NUTRIENTS as nutrient (nutrient.key)}
-			<Form.Field
-				{form}
-				name={nutrient.key}
-				class={nutrient.key === 'energyKcal_100g' ? 'col-span-6' : 'col-span-2'}
-				>
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>
-								<nutrient.icon class="size-4" />
-								{nutrient.label}
-							</Form.Label>
-							<InputGroup.Root>
-								<InputGroup.Input
-									{...props}
-									type="number"
-									step={0.01}
-									value={round(
-									$formData[nutrient.key] *
-										(($formData.quantityG > 0 ? $formData.quantityG : 100) / 100)
-								)}
-								onblur={(e) => {
-									const value = e.currentTarget.valueAsNumber;
-									if (!Number.isFinite(value)) return;
-
-									const factor = $formData.quantityG > 0 ? $formData.quantityG / 100 : 1;
-									$formData[nutrient.key] = round(value / factor, 2);
-									}}
-								/>
-								<InputGroup.Addon align="inline-end">
-									<InputGroup.Text>{nutrient.unit}</InputGroup.Text>
-								</InputGroup.Addon>
-							</InputGroup.Root>
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
-			{/each}
 		</Card.Content>
 	</Card.Root>
 
