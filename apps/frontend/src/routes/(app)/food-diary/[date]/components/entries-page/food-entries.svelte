@@ -20,21 +20,28 @@
 	};
 	let { foodEntries, selectedDay, timezone }: Props = $props();
 
-	function groupedFoodEntriesByHour(foodEntries: FoodEntry[]) {
-		const groups: { hour: number; entries: FoodEntry[] }[] = new Array(24)
-			.fill(null)
-			.map((_, index) => {
-				const hour = index;
-				return {
-					hour,
-					entries: foodEntries.filter((entry) => entry.eatenAt.getHours() === hour)
-				};
-			})
-			.filter((group) => group.entries.length > 0);
+	function groupedFoodEntriesByMeal(foodEntries: FoodEntry[]) {
+		const groups: { meal: string | null; mealLabel: string; entries: FoodEntry[] }[] = [];
+
+		for (const entry of foodEntries) {
+			const mealLabel = entry.meal ?? 'No meal';
+			const existingGroup = groups.find((g) => g.mealLabel === mealLabel);
+
+			if (existingGroup) {
+				existingGroup.entries.push(entry);
+			} else {
+				groups.push({
+					meal: entry.meal,
+					mealLabel,
+					entries: [entry]
+				});
+			}
+		}
+
 		return groups;
 	}
 
-	function getHourGroupSummary(group: { hour: number; entries: FoodEntry[] }) {
+	function getGroupSummary(group: { meal: string | null; entries: FoodEntry[] }) {
 		const calories = group.entries.reduce((sum, entry) => sum + entry.energyKcal_100g, 0);
 		const protein = group.entries.reduce((sum, entry) => sum + entry.proteinsG_100g, 0);
 		const carbs = group.entries.reduce((sum, entry) => sum + entry.carbohydratesG_100g, 0);
@@ -74,21 +81,20 @@
 {:else}
 	<ScrollArea class="h-px grow">
 		<div class="flex flex-col gap-2">
-			{#each groupedFoodEntriesByHour(foodEntries) as group (group.hour)}
-				{@const hourSummary = getHourGroupSummary(group)}
+			{#each groupedFoodEntriesByMeal(foodEntries) as group (group.mealLabel)}
+				{@const groupSummary = getGroupSummary(group)}
 				<div class="flex flex-col rounded-lg border">
-					<Item.Root class="rounded-none rounded-t-lg px-4 py-2 bg-secondary/75">
+					<Item.Root class="rounded-none rounded-t-lg bg-secondary/75 px-4 py-2">
 						<Item.Header>
 							<Item.Content>
 								<Item.Title class="flex w-full">
-									{group.hour % 12 === 0 ? 12 : group.hour % 12}
-									{group.hour < 12 ? 'AM' : 'PM'}
+									{group.mealLabel}
 									<p class="ml-auto font-normal">
-										{hourSummary.calories} kcal
+										{groupSummary.calories} kcal
 									</p>
 								</Item.Title>
 								<Item.Description class="flex w-full text-xs text-foreground">
-									C {hourSummary.carbs.toFixed()}g • F {hourSummary.fat.toFixed()}g • P {hourSummary.protein.toFixed()}g
+									C {groupSummary.carbs.toFixed()}g • F {groupSummary.fat.toFixed()}g • P {groupSummary.protein.toFixed()}g
 								</Item.Description>
 							</Item.Content>
 						</Item.Header>
@@ -107,7 +113,7 @@
 											<Item.Title class="flex w-full">
 												{foodEntry.productName}
 												<p
-													class="ml-auto flex items-center gap-2 font-normal text-muted-foreground"
+													class="ml-auto flex items-center gap-2 font-normal whitespace-nowrap text-muted-foreground"
 												>
 													{foodEntry.energyKcal_100g} kcal
 													<ChevronRightIcon class="size-4 p-0" />
