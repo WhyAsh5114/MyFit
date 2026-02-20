@@ -1,15 +1,17 @@
 import { createQuery } from '@tanstack/svelte-query';
 import { apiClient } from '$lib/clients/api-client';
 import { toast } from 'svelte-sonner';
-import { nutritionDataKeys } from './nutrition-data.keys';
+import { nutritionDataKeys } from '../keys';
 
-export const useGetNutritionDataByIdQuery = (getId: () => string) =>
+export const useNutritionDataByCode = (getCode: () => string) =>
 	createQuery(() => {
-		const id = getId();
+		const code = getCode();
 		return {
-			queryKey: nutritionDataKeys.getByIdQuery(id),
+			queryKey: nutritionDataKeys.byCode(code),
 			queryFn: async () => {
-				const res = await apiClient.api['nutrition-data'][':id'].$get({ param: { id } });
+				const res = await apiClient.api['nutrition-data']['code'][':code'].$get({
+					param: { code }
+				});
 				if (!res.ok) {
 					toast.error('Failed to fetch nutrition data');
 					console.error('Failed to fetch nutrition data', res);
@@ -22,6 +24,6 @@ export const useGetNutritionDataByIdQuery = (getId: () => string) =>
 			staleTime: 1000 * 60 * 10,
 			refetchOnWindowFocus: false,
 			refetchOnReconnect: false,
-			enabled: id.trim().length > 0
+			enabled: code.trim().length > 0
 		};
 	});

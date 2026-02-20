@@ -4,23 +4,27 @@ import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
 import type { Prisma } from '@myfit/api/prisma/client';
-import { macroTargetsKeys } from './macro-targets.keys';
+import { activityPreferencesKeys } from '../keys';
 
-export const useCreateMacroTargetsMutation = () =>
+export const useSaveActivityPreferences = () =>
 	createMutation(() => ({
-		mutationFn: async (data: Prisma.MacroTargetsUncheckedCreateInput) => {
+		mutationFn: async (data: Prisma.ActivityPreferencesUncheckedCreateInput) => {
 			const client = getClient();
-			return await client.macroTargets.create({ data });
+			return await client.activityPreferences.upsert({
+				where: { userId: data.userId },
+				update: data,
+				create: data
+			});
 		},
 
-		onSuccess: () => {
+		onSuccess: (data) => {
 			queryClient.invalidateQueries({
-				queryKey: macroTargetsKeys.all
+				queryKey: activityPreferencesKeys.byUser(data.userId)
 			});
 		},
 
 		onError: (error) => {
 			toast.error(m['unknownErrorOccurred']());
-			console.error('Failed to create macro targets:', error);
+			console.error('Failed to upsert activity preferences:', error);
 		}
 	}));

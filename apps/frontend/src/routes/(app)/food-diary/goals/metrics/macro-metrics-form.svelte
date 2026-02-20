@@ -9,7 +9,7 @@
 	import {
 		macroTrackingMetricsSchema,
 		type MacroTrackingMetricsSchema
-	} from '$lib/features/food-diary/macro-metrics/macro-metrics.schema';
+	} from '$lib/features/food-diary/macro-metrics/schema';
 	import { ChevronDownIcon } from '@lucide/svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { calculateBMR } from '$lib/domain/nutrition/bmr';

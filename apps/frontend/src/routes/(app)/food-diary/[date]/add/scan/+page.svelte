@@ -14,7 +14,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { useGetNutritionDataByCodeQuery } from '$lib/features/food-diary/nutrition-data/get-nutrition-data-by-code';
+	import { useNutritionDataByCode } from '$lib/features/food-diary/nutrition-data/queries/get-by-code';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 
 	let constraintOptions: { label: string; constraints: MediaTrackConstraints }[] = $state([]);
@@ -29,7 +29,7 @@
 	let manualCode = $state<number>();
 	let codeToSearch = $state('');
 
-	const getNutritionDataByCodeQuery = useGetNutritionDataByCodeQuery(() => codeToSearch);
+	const nutritionDataByCode = useNutritionDataByCode(() => codeToSearch);
 
 	async function initializeCameraOptions() {
 		await navigator.mediaDevices.getUserMedia({ video: true });
@@ -78,15 +78,15 @@
 	}
 
 	$effect(() => {
-		if (getNutritionDataByCodeQuery.isSuccess && getNutritionDataByCodeQuery.data) {
-			if (getNutritionDataByCodeQuery.data.length === 0) {
+		if (nutritionDataByCode.isSuccess && nutritionDataByCode.data) {
+			if (nutritionDataByCode.data.length === 0) {
 				toast.error(m['foodDiary.noItemFoundForCode']());
 				return;
 			}
 
 			// Defaulting to first item in case multiple items are returned for the same code, which can happen with some APIs
 			// Most of the time, barcodes will be unique. In the future, can add a dialog to let users choose if multiple items are returned.
-			const nutritionData = getNutritionDataByCodeQuery.data[0];
+			const nutritionData = nutritionDataByCode.data[0];
 			goto(resolve(`/food-diary/${page.params.date}/add/${nutritionData.id}`));
 		}
 	});
@@ -197,16 +197,16 @@
 					placeholder="Enter code manually"
 					required
 					bind:value={manualCode}
-					disabled={getNutritionDataByCodeQuery.isFetching}
-				/>
+				disabled={nutritionDataByCode.isFetching}
+			/>
 				<InputGroup.Addon align="inline-end">
 					<InputGroup.Button
 						variant="secondary"
 						type="submit"
 						aria-label="Submit manual code"
-						disabled={getNutritionDataByCodeQuery.isFetching}
+						disabled={nutritionDataByCode.isFetching}
 					>
-						{#if getNutritionDataByCodeQuery.isFetching}
+						{#if nutritionDataByCode.isFetching}
 							<Spinner />
 						{:else}
 							Search

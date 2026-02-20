@@ -19,22 +19,22 @@ datasource db {
 }
 
 model User {
-  id                               String                            @id
-  name                             String
-  email                            String
-  emailVerified                    Boolean                           @default(false)
-  image                            String?
-  createdAt                        DateTime                          @default(now())
-  updatedAt                        DateTime                          @updatedAt
-  isAnonymous                      Boolean?
-  sessions                         Session[]
-  accounts                         Account[]
-  macroTargets                     MacroTargets[]
-  macroMetrics                     MacroMetrics[]
-  macroActivityTrackingPreferences MacroActivityTrackingPreferences?
-  foodEntries                      FoodEntry[]
-  activityEntries                  ActivityEntry[]
-  foodDiaryMeals                   String[]                          @default(["Breakfast", "Lunch", "Dinner", "Snacks"])
+  id                  String               @id
+  name                String
+  email               String
+  emailVerified       Boolean              @default(false)
+  image               String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  isAnonymous         Boolean?
+  sessions            Session[]
+  accounts            Account[]
+  macroTargets        MacroTargets[]
+  macroMetrics        MacroMetrics[]
+  activityPreferences ActivityPreferences?
+  foodEntries         FoodEntry[]
+  activityEntries     ActivityEntry[]
+  foodDiaryMeals      String[]             @default(["Breakfast", "Lunch", "Dinner", "Snacks"])
 
   @@unique([email])
   @@map("user")

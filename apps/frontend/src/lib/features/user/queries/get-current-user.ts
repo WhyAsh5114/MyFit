@@ -1,8 +1,8 @@
 import { createQuery } from '@tanstack/svelte-query';
 import { getClient } from '$lib/clients/idb-client';
-import { userKeys } from '$lib/features/user/user.keys';
+import { userKeys } from '../keys';
 
-export const useGetCurrentUserQuery = () =>
+export const useCurrentUser = () =>
 	createQuery(() => ({
 		queryKey: userKeys.current(),
 		queryFn: async () => {

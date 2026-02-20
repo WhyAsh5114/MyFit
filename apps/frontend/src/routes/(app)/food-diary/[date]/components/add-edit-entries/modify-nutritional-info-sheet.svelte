@@ -15,7 +15,7 @@
 		optionalFields,
 		requiredFields,
 		type FoodEntryFormSchema
-	} from '$lib/features/food-diary/food-entry/food-entry.schema';
+	} from '$lib/features/food-diary/food-entry/model/schema';
 	import CustomScrollArea from '$lib/components/custom-scroll-area.svelte';
 	import { toast } from 'svelte-sonner';
 	import { cn } from '$lib/utils';
@@ -23,7 +23,7 @@
 	import {
 		OPTIONAL_NUTRIENTS,
 		REQUIRED_NUTRIENTS
-	} from '$lib/features/food-diary/food-entry/nutrients';
+	} from '$lib/features/food-diary/food-entry/model/nutrients';
 	import { hasCalculationErrors } from './common';
 
 	let { form }: { form: SuperForm<FoodEntryFormSchema> } = $props();

@@ -9,13 +9,13 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { SaveIcon } from '@lucide/svelte';
 	import DynamicActivity from './dynamic-activity.svelte';
-	import { useGetMacroActivityTrackingPreferencesQuery } from '$lib/features/food-diary/macro-activity-tracking-preferences/get-macro-activity-tracking-preferences';
-	import { useUpsertMacroActivityTrackingPreferencesMutation } from '$lib/features/food-diary/macro-activity-tracking-preferences/upsert-macro-activity-tracking-preferences';
-	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
+	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { useActivityPreferences } from '$lib/features/food-diary/activity-preferences/queries/get';
+	import { useSaveActivityPreferences } from '$lib/features/food-diary/activity-preferences/mutations/save';
 
 	const activityAdjustmentMetadata = {
 		Static: {
@@ -34,18 +34,17 @@
 		{ description: string; badge?: { text: string; variant: 'outline' | 'default' } }
 	>;
 
-	const getCurrentUserQuery = useGetCurrentUserQuery();
-	const getMacroActivityTrackingPreferencesQuery = useGetMacroActivityTrackingPreferencesQuery(
-		() => getCurrentUserQuery.data?.id ?? ''
+	const currentUser = useCurrentUser();
+	const activityPreferences = useActivityPreferences(
+		() => currentUser.data?.id ?? ''
 	);
-	const upsertMacroActivityTrackingPreferencesMutation =
-		useUpsertMacroActivityTrackingPreferencesMutation();
+	const saveActivityPreferences = useSaveActivityPreferences();
 
 	let selectedOption = $derived<keyof typeof ActivityAdjustmentType>(
-		getMacroActivityTrackingPreferencesQuery.data?.adjustmentType ?? 'Manual'
+		activityPreferences.data?.adjustmentType ?? 'Manual'
 	);
 	let staticCalories = $derived<number | undefined>(
-		getMacroActivityTrackingPreferencesQuery.data?.staticCalories ?? undefined
+		activityPreferences.data?.staticCalories ?? undefined
 	);
 
 	let dynamicDataStatus = $state<'unavailable' | 'granted' | 'denied'>();
@@ -57,27 +56,27 @@
 		if (selectedOption === 'Dynamic') {
 			return dynamicDataStatus !== 'granted';
 		}
-		return upsertMacroActivityTrackingPreferencesMutation.isPending;
+		return saveActivityPreferences.isPending;
 	});
 
 	async function saveSettings() {
-		if (!getCurrentUserQuery.data) return;
+		if (!currentUser.data) return;
 
 		if (selectedOption === 'Manual') {
-			await upsertMacroActivityTrackingPreferencesMutation.mutateAsync({
+			await saveActivityPreferences.mutateAsync({
 				adjustmentType: 'Manual',
-				userId: getCurrentUserQuery.data.id
+				userId: currentUser.data.id
 			});
 		} else if (selectedOption === 'Static') {
-			await upsertMacroActivityTrackingPreferencesMutation.mutateAsync({
+			await saveActivityPreferences.mutateAsync({
 				adjustmentType: 'Static',
 				staticCalories: staticCalories,
-				userId: getCurrentUserQuery.data.id
+				userId: currentUser.data.id
 			});
 		} else if (selectedOption === 'Dynamic') {
-			await upsertMacroActivityTrackingPreferencesMutation.mutateAsync({
+			await saveActivityPreferences.mutateAsync({
 				adjustmentType: 'Dynamic',
-				userId: getCurrentUserQuery.data.id
+				userId: currentUser.data.id
 			});
 		}
 
@@ -149,7 +148,7 @@
 </Card.Root>
 
 <Button class="mt-auto" disabled={isSaveButtonDisabled} onclick={saveSettings}>
-	{#if upsertMacroActivityTrackingPreferencesMutation.isPending}
+	{#if saveActivityPreferences.isPending}
 		<Spinner />
 	{:else}
 		Save <SaveIcon />

@@ -10,43 +10,46 @@
 		SquarePenIcon
 	} from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
+	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 	import { resolve } from '$app/paths';
 	import { m } from '$lib/paraglide/messages';
-	import { useGetFoodEntryByIdQuery } from '$lib/features/food-diary/food-entry/get-food-entry-by-id';
-	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
-	import { useUpdateFoodEntryMutation } from '$lib/features/food-diary/food-entry/update-food-entry';
+	import { useFoodEntryById } from '$lib/features/food-diary/food-entry/queries/get-by-id';
+	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
+	import { useUpdateFoodEntry } from '$lib/features/food-diary/food-entry/mutations/update';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
-	import { foodEntryToFoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.mapper';
+	import { foodEntryToFoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/mapper';
 
-	const getCurrentUserQuery = useGetCurrentUserQuery();
-	const getFoodEntryByIdQuery = useGetFoodEntryByIdQuery(() => page.params.entryId ?? '');
+	const currentUser = useCurrentUser();
+	const foodEntryById = useFoodEntryById(() => ({
+		userId: currentUser.data?.id ?? '',
+		id: page.params.entryId ?? ''
+	}));
 
-	const updateFoodEntryMutation = useUpdateFoodEntryMutation();
+	const updateFoodEntry = useUpdateFoodEntry();
 
 	async function handleSubmit(data: FoodEntryFormSchema) {
-		if (!page.params.entryId || !getCurrentUserQuery.data) {
+		if (!page.params.entryId || !currentUser.data) {
 			toast.error(m['unknownErrorOccurred']());
 			return;
 		}
-		await updateFoodEntryMutation.mutateAsync({
+		await updateFoodEntry.mutateAsync({
 			data,
 			id: page.params.entryId,
-			userId: getCurrentUserQuery.data.id
+			userId: currentUser.data.id
 		});
 		toast.success(m['foodDiary.foodEntryUpdated']());
 		await goto(resolve(`/food-diary/${page.params.date}`));
 	}
 </script>
 
-{#if getFoodEntryByIdQuery.data === undefined || !getCurrentUserQuery.data}
+{#if foodEntryById.data === undefined || !currentUser.data}
 	<Skeleton class="h-70 w-full" />
 	<Skeleton class="h-65 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
-{:else if getFoodEntryByIdQuery.data === null}
+{:else if foodEntryById.data === null}
 	<Empty.Root>
 		<Empty.Header>
 			<Empty.Media variant="icon">
@@ -74,20 +77,20 @@
 	</Empty.Root>
 {:else}
 	<FoodEntryForm
-		initialData={foodEntryToFoodEntryFormSchema(getFoodEntryByIdQuery.data, page.params.date)}
+		initialData={foodEntryToFoodEntryFormSchema(foodEntryById.data, page.params.date)}
 		allowProductEdit
 		formId="edit-food-entry-form"
 		onSubmit={handleSubmit}
-		meals={getCurrentUserQuery.data.foodDiaryMeals}
+		meals={currentUser.data.foodDiaryMeals}
 	>
 		{#snippet submit()}
 			<Button
 				type="submit"
 				form="edit-food-entry-form"
 				class="mt-auto"
-				disabled={updateFoodEntryMutation.isPending}
+				disabled={updateFoodEntry.isPending}
 			>
-				{#if updateFoodEntryMutation.isPending}
+				{#if updateFoodEntry.isPending}
 					<Spinner />
 				{:else}
 					Update entry

@@ -3,9 +3,9 @@ import { getClient } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
-import { userKeys } from '$lib/features/user/user.keys';
+import { userKeys } from '../keys';
 
-export const useUpdateUserNameMutation = () =>
+export const useUpdateUserName = () =>
 	createMutation(() => ({
 		mutationFn: async ({ userId, name }: { userId: string; name: string }) => {
 			const client = getClient();

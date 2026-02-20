@@ -3,9 +3,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { Spinner } from '$lib/components/ui/spinner';
-	import { useCreateFoodEntryMutation } from '$lib/features/food-diary/food-entry/create-food-entry';
-	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
-	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
+	import { useCreateFoodEntry } from '$lib/features/food-diary/food-entry/mutations/create';
+	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
+	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 	import { m } from '$lib/paraglide/messages';
 	import { CircleCheckBigIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
@@ -13,24 +13,24 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
-	const getCurrentUserQuery = useGetCurrentUserQuery();
-	const createFoodEntryMutation = useCreateFoodEntryMutation();
+	const currentUser = useCurrentUser();
+	const createFoodEntry = useCreateFoodEntry();
 
 	async function handleSubmit(data: FoodEntryFormSchema) {
-		if (!getCurrentUserQuery.data) {
+		if (!currentUser.data) {
 			toast.error(m['unknownErrorOccurred']());
 			return;
 		}
-		await createFoodEntryMutation.mutateAsync({
+		await createFoodEntry.mutateAsync({
 			data,
-			userId: getCurrentUserQuery.data.id
+			userId: currentUser.data.id
 		});
 		toast.success(m['foodDiary.foodEntryCreated']());
 		await goto(resolve(`/food-diary/${page.params.date}`));
 	}
 </script>
 
-{#if !getCurrentUserQuery.data}
+{#if !currentUser.data}
 	<Skeleton class="h-70 w-full" />
 	<Skeleton class="h-65 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
@@ -39,16 +39,16 @@
 		allowProductEdit
 		formId="create-food-entry-form"
 		onSubmit={handleSubmit}
-		meals={getCurrentUserQuery.data.foodDiaryMeals}
+		meals={currentUser.data.foodDiaryMeals}
 	>
 		{#snippet submit()}
 			<Button
 				type="submit"
 				form="create-food-entry-form"
 				class="mt-auto"
-				disabled={createFoodEntryMutation.isPending}
+				disabled={createFoodEntry.isPending}
 			>
-				{#if createFoodEntryMutation.isPending}
+				{#if createFoodEntry.isPending}
 					<Spinner />
 				{:else}
 					Log food

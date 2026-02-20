@@ -1,11 +1,11 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import SetupAccountForm from './setup-account-form.svelte';
-	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user.js';
+	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { m } from '$lib/paraglide/messages';
 
-	const getCurrentUserQuery = useGetCurrentUserQuery();
+	const currentUser = useCurrentUser();
 </script>
 
 <Card.Root>
@@ -14,10 +14,10 @@
 		<Card.Description>{m['onboarding.setupAccountDescription']()}</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		{#if !getCurrentUserQuery.data}
+		{#if !currentUser.data}
 			<Skeleton class="h-25.5" />
 		{:else}
-			<SetupAccountForm data={getCurrentUserQuery.data} />
+			<SetupAccountForm data={currentUser.data} />
 		{/if}
 	</Card.Content>
 </Card.Root>

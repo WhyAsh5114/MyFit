@@ -1,13 +1,15 @@
 import { createQuery } from '@tanstack/svelte-query';
 import { getLocalTimeZone, type CalendarDate } from '@internationalized/date';
 import { getClient } from '$lib/clients/idb-client';
-import { foodEntryKeys } from './food-entry.keys';
+import { foodEntryKeys } from '../keys';
 
-export const useGetFoodEntriesByDateQuery = (getDate: () => CalendarDate) =>
+export const useFoodEntriesByDate = (
+	getUserIdAndDate: () => { userId: string; date: CalendarDate }
+) =>
 	createQuery(() => {
-		const date = getDate();
+		const { userId, date } = getUserIdAndDate();
 		return {
-			queryKey: foodEntryKeys.getByDateQuery(date.toString()),
+			queryKey: foodEntryKeys.byDate(userId, date.toString()),
 			queryFn: async () => {
 				const timezone = getLocalTimeZone();
 				const dayAfter = date.add({ days: 1 }).toDate(timezone);
@@ -16,11 +18,13 @@ export const useGetFoodEntriesByDateQuery = (getDate: () => CalendarDate) =>
 					where: {
 						eatenAt: {
 							gte: date.toDate(timezone),
-							lte: dayAfter
-						}
+							lt: dayAfter
+						},
+						userId
 					},
 					orderBy: { eatenAt: 'asc' }
 				});
-			}
+			},
+			enabled: !!userId && !!date
 		};
 	});

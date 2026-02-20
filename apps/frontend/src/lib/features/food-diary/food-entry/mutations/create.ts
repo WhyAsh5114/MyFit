@@ -3,11 +3,11 @@ import { getClient } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
-import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
-import { foodEntryFormSchemaToFoodEntry } from '$lib/features/food-diary/food-entry/food-entry.mapper';
-import { foodEntryKeys } from './food-entry.keys';
+import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
+import { foodEntryFormSchemaToFoodEntry } from '$lib/features/food-diary/food-entry/model/mapper';
+import { foodEntryKeys } from '../keys';
 
-export const useCreateFoodEntryMutation = () =>
+export const useCreateFoodEntry = () =>
 	createMutation(() => ({
 		mutationFn: async ({ data, userId }: { data: FoodEntryFormSchema; userId: string }) => {
 			const client = getClient();
@@ -17,7 +17,7 @@ export const useCreateFoodEntryMutation = () =>
 
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({
-				queryKey: foodEntryKeys.getByDateQuery(data.eatenAt.toISOString().split('T')[0])
+				queryKey: foodEntryKeys.byDate(data.userId, data.eatenAt.toISOString().split('T')[0])
 			});
 		},
 

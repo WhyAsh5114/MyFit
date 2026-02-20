@@ -18,7 +18,7 @@
 	import {
 		foodEntryFormSchema,
 		type FoodEntryFormSchema
-	} from '$lib/features/food-diary/food-entry/food-entry.schema';
+	} from '$lib/features/food-diary/food-entry/model/schema';
 	import ModifyNutritionalInfoSheet from './modify-nutritional-info-sheet.svelte';
 	import { toast } from 'svelte-sonner';
 	import { m } from '$lib/paraglide/messages';

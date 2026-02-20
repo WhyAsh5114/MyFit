@@ -12,9 +12,9 @@
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
+	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 
-	const getCurrentUserQuery = useGetCurrentUserQuery();
+	const currentUser = useCurrentUser();
 
 	let search = $state(page.url.searchParams.get('search') ?? '');
 	const debounced = new Debounced(() => search, 500);
@@ -58,7 +58,7 @@
 						: params.get('meal')}
 				</Select.Trigger>
 				<Select.Content align="end">
-					{#each getCurrentUserQuery.data?.foodDiaryMeals as meal (meal)}
+					{#each currentUser.data?.foodDiaryMeals as meal (meal)}
 						<Select.Item value={meal}>
 							{meal}
 						</Select.Item>

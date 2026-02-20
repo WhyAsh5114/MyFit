@@ -1,46 +1,46 @@
 <script lang="ts">
 	import MacroMetricsForm from './macro-metrics-form.svelte';
-	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
+	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { useGetMacroMetricsQuery } from '$lib/features/food-diary/macro-metrics/get-macro-metrics';
+	import { useMacroMetrics } from '$lib/features/food-diary/macro-metrics/queries/get';
 	import { Spinner } from '$lib/components/ui/spinner';
-	import { useCreateMacroMetricsMutation } from '$lib/features/food-diary/macro-metrics/create-macro-metrics';
+	import { useCreateMacroMetrics } from '$lib/features/food-diary/macro-metrics/mutations/create';
 	import { m } from '$lib/paraglide/messages';
 	import { SaveIcon } from '@lucide/svelte';
-	import type { MacroTrackingMetricsSchema } from '$lib/features/food-diary/macro-metrics/macro-metrics.schema';
+	import type { MacroTrackingMetricsSchema } from '$lib/features/food-diary/macro-metrics/schema';
 	import { toast } from 'svelte-sonner';
 	import { Button } from '$lib/components/ui/button';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
-	const getCurrentUserQuery = useGetCurrentUserQuery();
-	const getMacroMetricsQuery = useGetMacroMetricsQuery(() => getCurrentUserQuery.data?.id ?? '');
+	const currentUser = useCurrentUser();
+	const macroMetrics = useMacroMetrics(() => currentUser.data?.id ?? '');
 
-	const createMacroMetricsMutation = useCreateMacroMetricsMutation();
+	const createMacroMetrics = useCreateMacroMetrics();
 
 	async function handleSubmit(data: MacroTrackingMetricsSchema) {
-		if (!getCurrentUserQuery.data) {
+		if (!currentUser.data) {
 			return toast.error(m['unknownErrorOccurred']());
 		}
-		await createMacroMetricsMutation.mutateAsync({ ...data, userId: getCurrentUserQuery.data.id });
+		await createMacroMetrics.mutateAsync({ ...data, userId: currentUser.data.id });
 		toast.success(m['foodDiary.metrics.saved']());
 		await goto(resolve('/food-diary/goals'));
 	}
 </script>
 
-{#if !getCurrentUserQuery.data || getMacroMetricsQuery.data === undefined}
+{#if !currentUser.data || macroMetrics.data === undefined}
 	<Skeleton class="h-67.5 w-full" />
 	<Skeleton class="h-27 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
 {:else}
 	<MacroMetricsForm
-		initialData={getMacroMetricsQuery.data}
+		initialData={macroMetrics.data}
 		formId="macro-tracking-metrics-form"
 		onSubmit={handleSubmit}
 	>
 		{#snippet submit()}
-			<Button class="mt-auto w-full" type="submit" disabled={createMacroMetricsMutation.isPending}>
-				{#if createMacroMetricsMutation.isPending}
+			<Button class="mt-auto w-full" type="submit" disabled={createMacroMetrics.isPending}>
+				{#if createMacroMetrics.isPending}
 					<Spinner />
 				{:else}
 					{m['foodDiary.metrics.save']()}

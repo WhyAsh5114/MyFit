@@ -1,4 +1,4 @@
-import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
+import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
 import type { Prisma } from '@myfit/api/prisma/client';
 
 export function foodEntryFormSchemaToFoodEntry(

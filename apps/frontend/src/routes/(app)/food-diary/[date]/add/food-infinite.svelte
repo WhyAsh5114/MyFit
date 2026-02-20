@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import * as Item from '$lib/components/ui/item/index.js';
-	import { useInfiniteSearchNutritionDataQuery } from '$lib/features/food-diary/nutrition-data/search-nutrition-data';
+	import { useSearchNutritionData } from '$lib/features/food-diary/nutrition-data/queries/search';
 	import { InfiniteLoader, LoaderState } from 'svelte-infinite';
 	import { CloudOffIcon, PlusIcon, SearchIcon } from '@lucide/svelte';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
@@ -16,18 +16,18 @@
 	let { params }: { params: SvelteURLSearchParams } = $props();
 	let search = $derived(page.url.searchParams.get('search') ?? '');
 
-	const infiniteSearchNutritionDataQuery = useInfiniteSearchNutritionDataQuery(() => search);
+	const searchNutritionData = useSearchNutritionData(() => search);
 	const loaderState = new LoaderState();
 
 	const loadMore = async () => {
-		await infiniteSearchNutritionDataQuery.fetchNextPage();
+		await searchNutritionData.fetchNextPage();
 	};
 
 	// Sync query state to loaderState
 	$effect(() => {
-		if (infiniteSearchNutritionDataQuery.isError) {
+		if (searchNutritionData.isError) {
 			loaderState.error();
-		} else if (!infiniteSearchNutritionDataQuery.hasNextPage) {
+		} else if (!searchNutritionData.hasNextPage) {
 			loaderState.complete();
 		} else {
 			loaderState.loaded();
@@ -59,7 +59,7 @@
 			</Empty.Description>
 		</Empty.Header>
 	</Empty.Root>
-{:else if infiniteSearchNutritionDataQuery.isLoading}
+{:else if searchNutritionData.isLoading}
 	<Empty.Root class="h-full">
 		<Empty.Header>
 			<Empty.Media variant="icon">
@@ -69,7 +69,7 @@
 			<Empty.Description>{m['foodDiary.searchingDescription']()}</Empty.Description>
 		</Empty.Header>
 	</Empty.Root>
-{:else if infiniteSearchNutritionDataQuery.data?.pages[0]?.length === 0}
+{:else if searchNutritionData.data?.pages[0]?.length === 0}
 	<Empty.Root class="h-full">
 		<Empty.Header>
 			<Empty.Media variant="icon">
@@ -83,7 +83,7 @@
 	<ScrollArea class="h-px grow">
 		<InfiniteLoader {loaderState} triggerLoad={loadMore}>
 			<div class="flex h-full flex-col gap-2">
-				{#each infiniteSearchNutritionDataQuery.data?.pages.flatMap((page) => page) as foodEntry (foodEntry.id)}
+				{#each searchNutritionData.data?.pages.flatMap((page) => page) as foodEntry (foodEntry.id)}
 					<a
 						href={resolve(
 							`/food-diary/${page.params.date}/add/${foodEntry.id}?${params.toString()}`

@@ -3,9 +3,9 @@ import { getClient } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
-import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/food-entry.schema';
-import { foodEntryFormSchemaToFoodEntry } from '$lib/features/food-diary/food-entry/food-entry.mapper';
-import { foodEntryKeys } from './food-entry.keys';
+import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
+import { foodEntryFormSchemaToFoodEntry } from '$lib/features/food-diary/food-entry/model/mapper';
+import { foodEntryKeys } from '../keys';
 
 type MutationProps = {
 	data: FoodEntryFormSchema;
@@ -13,7 +13,7 @@ type MutationProps = {
 	id: string;
 };
 
-export const useUpdateFoodEntryMutation = () =>
+export const useUpdateFoodEntry = () =>
 	createMutation(() => ({
 		mutationFn: async ({ data, userId, id }: MutationProps) => {
 			const client = getClient();
@@ -22,19 +22,15 @@ export const useUpdateFoodEntryMutation = () =>
 		},
 
 		onSuccess: (data) => {
-			const date = data.eatenAt.toISOString().split('T')[0];
+			queryClient.setQueryData(foodEntryKeys.byId(data.userId, data.id), data);
 
 			queryClient.invalidateQueries({
-				queryKey: foodEntryKeys.getByDateQuery(date)
-			});
-
-			queryClient.invalidateQueries({
-				queryKey: foodEntryKeys.getByIdQuery(data.id)
+				queryKey: foodEntryKeys.list(data.userId)
 			});
 		},
 
 		onError: (error) => {
 			toast.error(m['unknownErrorOccurred']());
-			console.error('Failed to create food entry:', error);
+			console.error('Failed to update food entry:', error);
 		}
 	}));

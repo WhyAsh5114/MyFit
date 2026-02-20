@@ -6,9 +6,9 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
 	import { dateFormatter } from '$lib/my-utils';
-	import { useGetMacroMetricsQuery } from '$lib/features/food-diary/macro-metrics/get-macro-metrics';
-	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
-	import { useGetMacroTargetsQuery } from '$lib/features/food-diary/macro-targets/get-macro-targets';
+	import { useMacroMetrics } from '$lib/features/food-diary/macro-metrics/queries/get';
+	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
+	import { useMacroTargets } from '$lib/features/food-diary/macro-targets/queries/get';
 	import { calculateDailyNutritionStats } from '$lib/domain/nutrition/stats';
 	import type { FoodEntry } from '@myfit/api/prisma/client';
 	import StackedCaloriesBar from './stacked-calories-bar.svelte';
@@ -20,9 +20,9 @@
 	};
 	let { foodEntries, selectedDay, timezone }: Props = $props();
 
-	const getCurrentUserQuery = useGetCurrentUserQuery();
-	const getMacroMetricsQuery = useGetMacroMetricsQuery(() => getCurrentUserQuery.data?.id ?? '');
-	const getMacroTargetsQuery = useGetMacroTargetsQuery(() => getCurrentUserQuery.data?.id ?? '');
+	const currentUser = useCurrentUser();
+	const macroMetrics = useMacroMetrics(() => currentUser.data?.id ?? '');
+	const macroTargets = useMacroTargets(() => currentUser.data?.id ?? '');
 
 	function changeDay(days: number) {
 		selectedDay = selectedDay.add({ days });
@@ -41,11 +41,11 @@
 	}
 
 	let dailyNutritionStats = $derived.by(() => {
-		if (!getMacroMetricsQuery.data || getMacroTargetsQuery.data === undefined) return undefined;
+		if (!macroMetrics.data || macroTargets.data === undefined) return undefined;
 
-		const weeklyCaloricChange = getMacroTargetsQuery.data?.weeklyCaloricChange ?? 0;
+		const weeklyCaloricChange = macroTargets.data?.weeklyCaloricChange ?? 0;
 		return calculateDailyNutritionStats({
-			metrics: getMacroMetricsQuery.data,
+			metrics: macroMetrics.data,
 			weeklyCaloricChange,
 			foodEntries: foodEntries
 		});

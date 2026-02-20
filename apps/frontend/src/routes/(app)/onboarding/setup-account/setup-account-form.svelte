@@ -2,7 +2,7 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import { useUpdateUserNameMutation } from '$lib/features/user/update-user-name.js';
+	import { useUpdateUserName } from '$lib/features/user/mutations/update-user-name';
 	import type { User } from 'better-auth';
 	import { defaults, superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
@@ -14,7 +14,7 @@
 
 	let { data }: { data: User } = $props();
 
-	const updateUserNameMutation = useUpdateUserNameMutation();
+	const updateUserName = useUpdateUserName();
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(defaults({ name: data.name }, zod4Client(setupAccountFormSchema)), {
@@ -23,7 +23,7 @@
 		async onUpdate({ form }) {
 			if (!form.valid) return;
 
-			await updateUserNameMutation.mutateAsync({
+			await updateUserName.mutateAsync({
 				userId: data.id,
 				name: form.data.name
 			});
@@ -44,8 +44,8 @@
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
-	<Form.Button disabled={updateUserNameMutation.isPending} class="ml-auto">
-		{#if updateUserNameMutation.isPending}
+	<Form.Button disabled={updateUserName.isPending} class="ml-auto">
+		{#if updateUserName.isPending}
 			<Spinner />
 		{:else}
 			Submit <SendIcon />

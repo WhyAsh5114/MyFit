@@ -26,7 +26,7 @@ model MacroMetrics {
   userId String
 }
 
-model MacroActivityTrackingPreferences {
+model ActivityPreferences {
   id             String                 @id @default(uuid())
   userId         String                 @unique
   adjustmentType ActivityAdjustmentType

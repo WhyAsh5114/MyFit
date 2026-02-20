@@ -9,11 +9,11 @@
 	import {
 		macroTargetsSchema,
 		type MacroTargetsSchema
-	} from '$lib/features/food-diary/macro-targets/macro-targets.schema';
+	} from '$lib/features/food-diary/macro-targets/schema';
 	import { pascalToNormal } from '$lib/my-utils';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
 	import { defaults, superForm, type SuperForm } from 'sveltekit-superforms';
-	import { REQUIRED_NUTRIENTS } from '$lib/features/food-diary/food-entry/nutrients';
+	import { REQUIRED_NUTRIENTS } from '$lib/features/food-diary/food-entry/model/nutrients';
 	import { CALORIES_PER_KILOGRAM } from '$lib/domain/nutrition/constants';
 	import type { Snippet } from 'svelte';
 
