@@ -9,7 +9,8 @@
 		"./prisma-idb/client": "./generated/prisma-idb/client/index.ts",
 		"./prisma-idb/server": "./generated/prisma-idb/server/index.ts",
 		"./validators": "./generated/prisma-idb/validators.ts",
-		"./constants": "./lib/constants.ts"
+		"./constants": "./lib/constants.ts",
+		"./enums": "./generated/prisma-idb/enums.ts"
 	},
 	"scripts": {
 		"dev": "tsx watch src/index.ts",

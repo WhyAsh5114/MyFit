@@ -11,6 +11,7 @@ generator prismaIDB {
   outboxSync            = true
   exclude               = ["Changelog", "Verification", "Session", "Account", "NutritionData"]
   rootModel             = "User"
+  exportEnums           = true
 }
 
 datasource db {
