@@ -11,6 +11,9 @@ CREATE TABLE IF NOT EXISTS nutrition_data_staging (
   -- Serving size metadata
   serving_quantity DOUBLE PRECISION,
   serving_size TEXT,
+  -- Data quality metrics
+  completeness DOUBLE PRECISION,
+  unique_scans INT,
   -- 100g macros (required)
   energy_kcal_100g DOUBLE PRECISION,
   proteins_g_100g DOUBLE PRECISION,
@@ -67,6 +70,8 @@ INSERT INTO "NutritionData" (
   brands,
   "servingQuantity",
   "servingSize",
+  "completeness",
+  "uniqueScans",
   "energyKcal_100g",
   "proteinsG_100g",
   "fatG_100g",
@@ -111,6 +116,8 @@ SELECT
   brands,
   serving_quantity,
   serving_size,
+  completeness,
+  unique_scans,
   energy_kcal_100g,
   proteins_g_100g,
   fat_g_100g,
@@ -164,6 +171,8 @@ COPY nutrition_data_staging (
   brands,
   serving_quantity,
   serving_size,
+  completeness,
+  unique_scans,
   energy_kcal_100g,
   proteins_g_100g,
   fat_g_100g,

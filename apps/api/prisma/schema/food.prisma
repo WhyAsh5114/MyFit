@@ -111,6 +111,9 @@ model NutritionData {
   brands       String?
   searchVector Unsupported("tsvector")
 
+  completeness Float
+  uniqueScans  Int
+
   // Serving size metadata
   servingQuantity Float?
   servingSize     String?

@@ -32,6 +32,10 @@ export function mapRawToProcessed(raw: RawNutritionData): ProcessedNutritionData
 		servingQuantity: raw.serving_quantity ? parseFloat(String(raw.serving_quantity)) : null,
 		servingSize: raw.serving_size || null,
 
+		// Data quality metrics
+		completeness: parseValue(raw.completeness),
+		uniqueScans: raw.unique_scans_n ? Math.round(parseFloat(String(raw.unique_scans_n))) : null,
+
 		// 100g macros (required)
 		energyKcal_100g: parseValue(raw['energy-kcal_100g']),
 		proteinsG_100g: parseValue(raw.proteins_100g),
@@ -92,6 +96,16 @@ export function toTsvRow(data: ProcessedNutritionData): string {
 		return v.toFixed(2);
 	};
 
+	const formatNum_RequiredField = (v: number | null): string => {
+		if (v === null || !isFinite(v)) return '0.00';
+		return v.toFixed(2);
+	};
+
+	const formatInt = (v: number | null): string => {
+		if (v === null || !isFinite(v)) return '0';
+		return String(Math.round(v));
+	};
+
 	return [
 		escapeText(data.code),
 		escapeText(data.productName),
@@ -99,6 +113,9 @@ export function toTsvRow(data: ProcessedNutritionData): string {
 		// Serving fields
 		formatNum(data.servingQuantity),
 		escapeText(data.servingSize),
+		// Data quality metrics
+		formatNum_RequiredField(data.completeness),
+		formatInt(data.uniqueScans),
 		// 100g macros
 		formatNum(data.energyKcal_100g),
 		formatNum(data.proteinsG_100g),

@@ -63,6 +63,10 @@ export function sanitizeRecord(record: ProcessedNutritionData): ProcessedNutriti
 		servingQuantity: sanitizeValue(record.servingQuantity),
 		servingSize: sanitizeString(record.servingSize),
 
+		// Data quality metrics
+		completeness: sanitizeValue(record.completeness),
+		uniqueScans: record.uniqueScans !== null && isFinite(record.uniqueScans) && record.uniqueScans >= 0 ? record.uniqueScans : null,
+
 		// 100g macros (required)
 		energyKcal_100g: sanitizeValue(record.energyKcal_100g),
 		proteinsG_100g: sanitizeValue(record.proteinsG_100g),

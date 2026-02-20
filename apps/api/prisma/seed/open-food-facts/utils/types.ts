@@ -44,6 +44,10 @@ export type RawNutritionData = {
 	manganese_100g: string;
 	caffeine_100g: string;
 
+	// Data quality metrics
+	completeness: string;
+	unique_scans_n: string;
+
 	// Serving size info
 	serving_quantity: number;
 	serving_quantity_unit: string;
@@ -99,6 +103,10 @@ export type ProcessedNutritionData = {
 	// Serving size metadata
 	servingQuantity: number | null;
 	servingSize: string | null;
+
+	// Data quality metrics
+	completeness: number | null;
+	uniqueScans: number | null;
 
 	// 100g macros (required)
 	energyKcal_100g: number | null;

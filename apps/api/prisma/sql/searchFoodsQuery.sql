@@ -16,17 +16,25 @@ WHERE
   OR "productName" % $1::text
   OR brands % $1::text
 ORDER BY
-  -- Full-text rank (weighted higher)
-  ts_rank_cd(
-    "searchVector",
-    websearch_to_tsquery('english', unaccent($1::text))
+  (
+    -- Full-text rank
+    ts_rank_cd(
+      "searchVector",
+      websearch_to_tsquery('english', unaccent($1::text))
+    ) * 0.7
+    +
+    -- Trigram similarity
+    GREATEST(
+      similarity("productName", $1::text),
+      similarity(COALESCE(brands, ''), $1::text)
+    ) * 0.3
   ) * 0.7
   +
-  -- Trigram similarity (weighted lower)
-  GREATEST(
-    similarity("productName", $1::text),
-    similarity(COALESCE(brands, ''), $1::text)
-  ) * 0.3
+  -- Scan popularity: log-normalized to prevent mega-popular items dominating
+  (LN(GREATEST("uniqueScans", 1)) / LN(10000)) * 0.2
+  +
+  -- Completeness: already 0–1 float
+  COALESCE(completeness, 0) * 0.1
   DESC,
   id ASC
 LIMIT $3
