@@ -4,8 +4,10 @@
 	import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
 	import FoodEntries from './components/entries-page/food-entries.svelte';
 	import HeaderCard from './components/entries-page/header-card.svelte';
+	import { useGetCurrentUserQuery } from '$lib/features/user/get-current-user';
 
 	const timezone = getLocalTimeZone();
+	const getCurrentUserQuery = useGetCurrentUserQuery();
 
 	let selectedDay = $derived.by(() => {
 		const dateParam = page.params.date;
@@ -24,4 +26,9 @@
 </script>
 
 <HeaderCard foodEntries={getFoodEntriesByDateQuery.data} {selectedDay} {timezone} />
-<FoodEntries foodEntries={getFoodEntriesByDateQuery.data} {selectedDay} {timezone} />
+<FoodEntries
+	foodEntries={getFoodEntriesByDateQuery.data}
+	{selectedDay}
+	{timezone}
+	meals={getCurrentUserQuery.data?.foodDiaryMeals ?? []}
+/>

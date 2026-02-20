@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Chart from '$lib/components/ui/chart/index.js';
 	import { round } from '$lib/my-utils';
+	import { ChevronRightIcon } from '@lucide/svelte';
 	import { BarChart } from 'layerchart';
 	import { cubicInOut } from 'svelte/easing';
 
@@ -42,11 +43,27 @@
 	const chartConfig = {
 		consumed: { label: 'Consumed', color: 'var(--chart-consumed)' },
 		remaining: { label: 'Remaining', color: 'var(--chart-remaining)' },
-		excess: { label: 'Excess', color: 'var(--destructive)' }
+		excess: { label: 'Excess', color: 'var(--warning)' }
 	} satisfies Chart.ChartConfig;
 </script>
 
 <div class="flex w-full flex-col items-center">
+	<div class="flex w-full justify-between">
+		<div class="flex w-full flex-col items-start text-xs">
+			<p class="text-sm font-medium">
+				{round(caloriesConsumed, 0)} /
+				{round(caloriesRemaining + caloriesConsumed + activityCalories, 0)} kcal
+			</p>
+			<p class={caloriesRemaining < 0 ? 'text-warning' : 'text-muted-foreground'}>
+				{Math.abs(round(caloriesRemaining + activityCalories, 0))} kcal
+				{caloriesRemaining < 0 ? 'over' : 'left'}
+				{activityCalories > 0 ? `(incl. ${round(activityCalories, 0)} burned)` : ''}
+			</p>
+		</div>	
+		<p class="flex items-center gap-2 text-sm whitespace-nowrap text-muted-foreground h-fit">
+			Edit goal <ChevronRightIcon class="size-4" />
+		</p>
+	</div>
 	<Chart.Container config={chartConfig} class="h-4 w-full">
 		<BarChart
 			orientation="horizontal"
@@ -92,17 +109,4 @@
 			}}
 		/>
 	</Chart.Container>
-	<div class="flex w-full items-center justify-between gap-2 text-xs">
-		<p class="text-sm font-medium">
-			{round(caloriesConsumed, 0)} /
-			<span class="text-xs font-normal">
-				{round(caloriesRemaining + caloriesConsumed + activityCalories, 0)} kcal
-			</span>
-		</p>
-		<p>
-			{Math.abs(round(caloriesRemaining + activityCalories, 0))}
-			{caloriesRemaining < 0 ? 'over' : 'left'}
-			{activityCalories > 0 ? `(incl. ${round(activityCalories, 0)} burned)` : ''}
-		</p>
-	</div>
 </div>

@@ -10,7 +10,8 @@ if (isDev) {
 	server = {
 		cleartext: true,
 		androidScheme: 'http',
-		iosScheme: 'http'
+		iosScheme: 'http',
+		url: 'http://localhost:5173'
 	};
 }
 
