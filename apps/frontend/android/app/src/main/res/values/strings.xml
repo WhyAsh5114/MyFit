@@ -4,4 +4,5 @@
     <string name="title_activity_main">MyFit</string>
     <string name="package_name">fit.myfit</string>
     <string name="custom_url_scheme">fit.myfit</string>
+    <string name="health_connect_privacy_policy_url">https://myfit.fit/privacy-policy</string>
 </resources>

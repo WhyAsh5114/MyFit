@@ -49,5 +49,9 @@
 		<true />
 		<key>NSCameraUsageDescription</key>
 		<string>This app needs camera access to scan food barcodes</string>
+		<key>NSHealthShareUsageDescription</key>
+		<string>This app reads your health data to personalize your nutrition and fitness experience.</string>
+		<key>NSHealthUpdateUsageDescription</key>
+		<string>This app writes new health entries that you explicitly create.</string>
 	</dict>
 </plist>

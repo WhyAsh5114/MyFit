@@ -7,3 +7,6 @@ project(':capacitor-app').projectDir = new File('../../../node_modules/.pnpm/@ca
 
 include ':capacitor-status-bar'
 project(':capacitor-status-bar').projectDir = new File('../../../node_modules/.pnpm/@capacitor+status-bar@8.0.0_@capacitor+core@8.0.2/node_modules/@capacitor/status-bar/android')
+
+include ':capgo-capacitor-health'
+project(':capgo-capacitor-health').projectDir = new File('../../../node_modules/.pnpm/@capgo+capacitor-health@8.2.15_@capacitor+core@8.0.2/node_modules/@capgo/capacitor-health/android')
