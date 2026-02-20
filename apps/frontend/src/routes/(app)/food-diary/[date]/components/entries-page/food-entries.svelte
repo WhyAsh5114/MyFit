@@ -112,10 +112,10 @@
 		<div class="flex flex-col gap-2">
 			{#each groupedFoodEntriesByMeal(foodEntries) as group (group.mealLabel)}
 				{@const groupSummary = getGroupSummary(group)}
-				<div class="flex flex-col rounded-lg shadow-sm">
+				<div class="flex flex-col rounded-lg border shadow-sm">
 					<Item.Root
-						class={cn('rounded-none rounded-t-lg bg-secondary px-4 py-3', {
-							'rounded-b-lg bg-card py-2': group.entries.length === 0
+						class={cn('rounded-none rounded-t-lg bg-card py-3', {
+							'rounded-b-lg py-2': group.entries.length === 0
 						})}
 					>
 						{#snippet child({ props })}
@@ -158,8 +158,9 @@
 					<div class="flex w-full flex-col">
 						{#each group.entries as foodEntry, index (foodEntry.id)}
 							<Item.Root
-								class={cn('rounded-none bg-card py-3', {
-									'rounded-b-lg': index === group.entries.length - 1
+								class={cn('rounded-none py-3 border-0 border-border', {
+									'rounded-b-lg': index === group.entries.length - 1,
+									'border-b': index < group.entries.length - 1
 								})}
 							>
 								{#snippet child({ props })}

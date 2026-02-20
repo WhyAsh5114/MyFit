@@ -6,6 +6,7 @@
 	import { shortDateFormatter } from '$lib/my-utils';
 	import { getLocalTimeZone, parseDate } from '@internationalized/date';
 	import { Slash } from '@lucide/svelte';
+	import z from 'zod';
 
 	type Item = {
 		label: string;
@@ -30,6 +31,16 @@
 					};
 				} catch {
 					// Not a date, continue processing
+				}
+
+				try {
+					z.uuid().parse(part);
+					return {
+						label: 'Item',
+						href: fullPath
+					};
+				} catch {
+					// Not a UUID, continue processing
 				}
 
 				label = part

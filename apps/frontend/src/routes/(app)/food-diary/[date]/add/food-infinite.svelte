@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Empty from '$lib/components/ui/empty/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Item from '$lib/components/ui/item/index.js';
 	import { useInfiniteSearchNutritionDataQuery } from '$lib/features/food-diary/nutrition-data/search-nutrition-data';
 	import { InfiniteLoader, LoaderState } from 'svelte-infinite';
 	import { CloudOffIcon, PlusIcon, SearchIcon } from '@lucide/svelte';
@@ -89,31 +89,31 @@
 							`/food-diary/${page.params.date}/add/${foodEntry.id}?${params.toString()}`
 						)}
 					>
-						<Card.Root>
-							<Card.Header>
-								<Card.Title>{foodEntry.productName}</Card.Title>
-								<Card.Description>
+						<Item.Root class="py-2 shadow-sm flex-nowrap bg-card" variant="outline">
+							<Item.Content class="gap-0 w-px grow">
+								<Item.Title class="w-full! min-w-0 block! truncate">{foodEntry.productName}</Item.Title>
+								<Item.Description>
 									{#if foodEntry.servingSize && foodEntry.servingQuantity}
-										{foodEntry.brands ?? 'No brand'}, {Math.round(
-											foodEntry.energyKcal_100g * (foodEntry.servingQuantity / 100)
-										)} kcal per {foodEntry.servingSize}
+										{foodEntry.brands ? `${foodEntry.brands} ·` : ''}
+										{Math.round(foodEntry.energyKcal_100g * (foodEntry.servingQuantity / 100))} kcal ·
+										{foodEntry.servingSize}
 									{:else}
-										{foodEntry.brands ?? 'No brand'}, {Math.round(foodEntry.energyKcal_100g)} kcal per
-										100g
+										{foodEntry.brands ? `${foodEntry.brands} ·` : ''}
+										{Math.round(foodEntry.energyKcal_100g)} kcal · 100g
 									{/if}
-								</Card.Description>
-								<Card.Action>
-									<Button
-										size="icon"
-										aria-label={m['foodDiary.addFood']()}
-										class="ml-2 rounded-full"
-										variant="outline"
-									>
-										<PlusIcon />
-									</Button>
-								</Card.Action>
-							</Card.Header>
-						</Card.Root>
+								</Item.Description>
+							</Item.Content>
+							<Item.Actions class="shrink-0">
+								<Button
+									size="icon"
+									aria-label={m['foodDiary.addFood']()}
+									class="ml-2 rounded-full"
+									variant="outline"
+								>
+									<PlusIcon />
+								</Button>
+							</Item.Actions>
+						</Item.Root>
 					</a>
 				{/each}
 			</div>

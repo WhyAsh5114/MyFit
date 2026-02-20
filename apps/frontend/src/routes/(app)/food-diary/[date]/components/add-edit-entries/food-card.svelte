@@ -29,7 +29,7 @@
 	}
 
 	function formatGrams(value: number) {
-		return value.toFixed(1).replace(/\.?0+$/, '') + 'g';
+		return value.toFixed() + 'g';
 	}
 </script>
 
