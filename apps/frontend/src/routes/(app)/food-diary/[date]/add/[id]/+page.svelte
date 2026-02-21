@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { useNutritionDataById } from '$lib/features/food-diary/nutrition-data/queries/get-by-id';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import {
@@ -41,11 +40,7 @@
 	}
 </script>
 
-{#if nutritionDataById.data === undefined || !currentUser.data}
-	<Skeleton class="h-70 w-full" />
-	<Skeleton class="h-65 w-full" />
-	<Skeleton class="mt-auto h-9 w-full" />
-{:else if nutritionDataById.data === null}
+{#if nutritionDataById.data === null}
 	<Empty.Root>
 		<Empty.Header>
 			<Empty.Media variant="icon">
@@ -71,7 +66,7 @@
 			</Button>
 		</Empty.Content>
 	</Empty.Root>
-{:else}
+{:else if nutritionDataById.data && currentUser.data}
 	<FoodEntryForm
 		initialData={nutritionDataToFoodEntryFormData(
 			nutritionDataById.data,

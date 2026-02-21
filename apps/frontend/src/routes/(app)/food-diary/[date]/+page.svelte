@@ -52,8 +52,6 @@
 		<FoodEntries
 			foodEntries={foodEntriesByDate.data}
 			meals={currentUser.data?.foodDiaryMeals ?? []}
-			{selectedDay}
-			{timezone}
 		/>
 		<ActivityEntries activityEntries={activityEntriesByDate.data} />
 	</div>
