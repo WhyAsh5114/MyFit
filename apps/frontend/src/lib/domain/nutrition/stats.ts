@@ -6,20 +6,10 @@ type CalculateDailyNutritionStatsArgs = {
 	weeklyCaloricChange: number;
 	foodEntries?: { energyKcal_100g: number; quantityG: number }[];
 	activityEntries?: { calories: number }[];
-	activityPreferences?: {
-		adjustmentType: ActivityAdjustmentType;
-		staticCalories: number | null;
-	} | null;
 };
 
 export function calculateDailyNutritionStats(data: CalculateDailyNutritionStatsArgs) {
-	const {
-		metrics,
-		weeklyCaloricChange,
-		foodEntries = [],
-		activityEntries = [],
-		activityPreferences = null
-	} = data;
+	const { metrics, weeklyCaloricChange, foodEntries = [], activityEntries = [] } = data;
 
 	const bmr = calculateBMR(metrics);
 	const caloriesConsumed = foodEntries.reduce(
@@ -27,10 +17,6 @@ export function calculateDailyNutritionStats(data: CalculateDailyNutritionStatsA
 		0
 	);
 	let caloriesBurned = activityEntries.reduce((sum, entry) => sum + entry.calories, 0);
-
-	if (activityPreferences?.adjustmentType === 'Static' && activityPreferences.staticCalories) {
-		caloriesBurned += activityPreferences.staticCalories;
-	}
 
 	const targetCalories = bmr + weeklyCaloricChange / 7;
 	const caloriesRemaining = targetCalories - caloriesConsumed + caloriesBurned;

@@ -41,7 +41,12 @@
 	<SyncHealthData {selectedDay} userId={currentUser.data?.id} />
 {/if}
 
-<HeaderCard foodEntries={foodEntriesByDate.data} {selectedDay} {timezone} />
+<HeaderCard
+	foodEntries={foodEntriesByDate.data}
+	activityEntries={activityEntriesByDate.data}
+	{selectedDay}
+	{timezone}
+/>
 <ScrollArea class="flex h-px grow">
 	<div class="flex h-full flex-col gap-2">
 		<FoodEntries

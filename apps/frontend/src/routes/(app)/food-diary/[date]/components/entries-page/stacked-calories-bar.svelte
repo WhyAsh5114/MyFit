@@ -52,15 +52,15 @@
 		<div class="flex w-full flex-col items-start text-xs">
 			<p class="text-sm font-medium">
 				{round(caloriesConsumed, 0)} /
-				{round(caloriesRemaining + caloriesConsumed + caloriesBurned, 0)} kcal
+				{round(caloriesRemaining + caloriesConsumed, 0)} kcal
 			</p>
 			<p class={caloriesRemaining < 0 ? 'text-warning' : 'text-muted-foreground'}>
-				{Math.abs(round(caloriesRemaining + caloriesBurned, 0))} kcal
+				{Math.abs(round(caloriesRemaining, 0))} kcal
 				{caloriesRemaining < 0 ? 'over' : 'left'}
 				{caloriesBurned > 0 ? `(incl. ${round(caloriesBurned, 0)} burned)` : ''}
 			</p>
-		</div>	
-		<p class="flex items-center gap-2 text-sm whitespace-nowrap text-muted-foreground h-fit">
+		</div>
+		<p class="flex h-fit items-center gap-2 text-sm whitespace-nowrap text-muted-foreground">
 			Edit goal <ChevronRightIcon class="size-4" />
 		</p>
 	</div>

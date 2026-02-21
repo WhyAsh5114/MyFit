@@ -8,7 +8,7 @@
 	import { dateFormatter } from '$lib/my-utils';
 	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 	import { calculateDailyNutritionStats } from '$lib/domain/nutrition/stats';
-	import type { ActivityEntry, ActivityPreferences, FoodEntry } from '@myfit/api/prisma/client';
+	import type { ActivityEntry, FoodEntry } from '@myfit/api/prisma/client';
 	import StackedCaloriesBar from './stacked-calories-bar.svelte';
 	import { useMacroMetricsByDate } from '$lib/features/food-diary/macro-metrics/queries/get-by-date';
 	import { useMacroTargetsByDate } from '$lib/features/food-diary/macro-targets/queries/get-by-date';
@@ -16,12 +16,10 @@
 	type Props = {
 		foodEntries?: FoodEntry[];
 		activityEntries?: ActivityEntry[];
-		activityPreferences?: ActivityPreferences | null;
 		selectedDay: CalendarDate;
 		timezone: string;
 	};
-	let { foodEntries, activityEntries, activityPreferences, selectedDay, timezone }: Props =
-		$props();
+	let { foodEntries, activityEntries, selectedDay, timezone }: Props = $props();
 
 	const currentUser = useCurrentUser();
 	const macroMetrics = useMacroMetricsByDate(() => ({
@@ -57,8 +55,7 @@
 			metrics: macroMetrics.data,
 			weeklyCaloricChange,
 			foodEntries,
-			activityEntries,
-			activityPreferences
+			activityEntries
 		});
 	});
 </script>
