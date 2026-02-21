@@ -35,9 +35,7 @@
 	>;
 
 	const currentUser = useCurrentUser();
-	const activityPreferences = useActivityPreferences(
-		() => currentUser.data?.id ?? ''
-	);
+	const activityPreferences = useActivityPreferences(() => currentUser.data?.id ?? '');
 	const saveActivityPreferences = useSaveActivityPreferences();
 
 	let selectedOption = $derived<keyof typeof ActivityAdjustmentType>(

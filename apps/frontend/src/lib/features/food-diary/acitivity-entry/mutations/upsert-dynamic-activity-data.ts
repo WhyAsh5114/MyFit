@@ -17,7 +17,6 @@ export const useUpsertDynamicActivityData = () =>
 		},
 
 		onSuccess: (data) => {
-			console.log(data);
 			queryClient.invalidateQueries({
 				queryKey: activityEntryKeys.byUser(data.userId)
 			});

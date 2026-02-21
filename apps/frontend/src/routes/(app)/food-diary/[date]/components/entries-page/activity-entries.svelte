@@ -11,7 +11,11 @@
 </script>
 
 <div class="flex flex-col rounded-lg border">
-	<Item.Root class={cn('rounded-none rounded-t-lg bg-card py-3')}>
+	<Item.Root
+		class={cn('rounded-none rounded-t-lg bg-card py-3', {
+			'rounded-b-lg py-2': activityEntries?.length === 0
+		})}
+	>
 		<Item.Content>
 			<Item.Title class="flex w-full font-semibold">
 				Activity
