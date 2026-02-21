@@ -2,11 +2,13 @@
 	import { page } from '$app/state';
 	import { useFoodEntriesByDate } from '$lib/features/food-diary/food-entry/queries/get-by-date';
 	import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
-	import FoodEntries from './components/entries-page/food-entries.svelte';
 	import HeaderCard from './components/entries-page/header-card.svelte';
 	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 	import { useActivityEntriesByDate } from '$lib/features/food-diary/acitivity-entry/queries/get-by-date';
 	import { useActivityPreferences } from '$lib/features/food-diary/activity-preferences/queries/get';
+	import FoodEntries from './components/entries-page/food-entries.svelte';
+	import { ScrollArea } from '$lib/components/ui/scroll-area';
+	import ActivityEntries from './components/entries-page/activity-entries.svelte';
 
 	const timezone = getLocalTimeZone();
 	const currentUser = useCurrentUser();
@@ -44,9 +46,18 @@
 	{selectedDay}
 	{timezone}
 />
-<FoodEntries
-	foodEntries={foodEntriesByDate.data}
-	{selectedDay}
-	{timezone}
-	meals={currentUser.data?.foodDiaryMeals ?? []}
-/>
+<ScrollArea class="flex h-px grow">
+	<div class="flex h-full flex-col gap-2">
+		<FoodEntries
+			foodEntries={foodEntriesByDate.data}
+			meals={currentUser.data?.foodDiaryMeals ?? []}
+			{selectedDay}
+			{timezone}
+		/>
+		<ActivityEntries
+			activityEntries={activityEntriesByDate.data}
+			activityPreferences={activityPreferences.data}
+			userId={currentUser.data?.id}
+		/>
+	</div>
+</ScrollArea>

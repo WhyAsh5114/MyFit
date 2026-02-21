@@ -102,8 +102,8 @@
 			disabled={requestingPermissions}
 		>
 			{#if requestingPermissions}
-				Requesting permissions...
-				<Spinner class="ml-2" />
+				Requesting permissions
+				<Spinner />
 			{:else}
 				Grant permissions
 				<HeartHandshakeIcon />
@@ -150,7 +150,7 @@
 			</div>
 		</div>
 	{:else if data === undefined}
-		<p>
+		<p class="flex items-center gap-2">
 			Checking health data permissions
 			<Spinner />
 		</p>

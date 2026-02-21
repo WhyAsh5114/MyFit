@@ -99,6 +99,7 @@ model FoodEntry {
 
 model ActivityEntry {
   id              String   @id @default(uuid())
+  name            String
   performedAt     DateTime
   calories        Int
   quantity        Int
