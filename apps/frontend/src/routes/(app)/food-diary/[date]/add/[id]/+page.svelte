@@ -20,7 +20,7 @@
 	import { useCreateFoodEntry } from '$lib/features/food-diary/food-entry/mutations/create';
 	import { goto } from '$app/navigation';
 	import { Spinner } from '$lib/components/ui/spinner';
-	import { nutritionDataToFoodEntryFormData } from '$lib/features/food-diary/nutrition-data/mapper';
+	import { nutritionDataToFoodEntryFormData } from '$lib/features/food-diary/nutrition-data/model/mapper';
 
 	const currentUser = useCurrentUser();
 	const nutritionDataById = useNutritionDataById(() => page.params.id ?? '');
