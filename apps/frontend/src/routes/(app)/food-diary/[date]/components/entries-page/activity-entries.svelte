@@ -2,46 +2,12 @@
 	import * as Item from '$lib/components/ui/item/index.js';
 	import { cn } from '$lib/utils';
 	import { FlameIcon, PlusIcon } from '@lucide/svelte';
-	import type { ActivityEntry, ActivityPreferences } from '@myfit/api/prisma/client';
+	import type { ActivityEntry } from '@myfit/api/prisma/client';
 
 	type Props = {
 		activityEntries?: ActivityEntry[];
-		activityPreferences?: ActivityPreferences | null;
-		userId?: string;
 	};
-	let { activityPreferences, activityEntries, userId }: Props = $props();
-
-	let allActivityEntries = $derived.by(() => {
-		if (!activityEntries || !userId) return [];
-
-		const allActivityEntries = activityEntries.slice();
-
-		if (activityPreferences?.adjustmentType === 'Static' && activityPreferences.staticCalories) {
-			allActivityEntries.unshift({
-				id: 'static-adjustment',
-				name: 'Daily fixed activity',
-				performedAt: new Date(),
-				calories: activityPreferences.staticCalories,
-				quantity: 1,
-				quantityUnit: 'day',
-				systemGenerated: true,
-				userId
-			});
-		} else if (activityPreferences?.adjustmentType === 'Dynamic') {
-			allActivityEntries.unshift({
-				id: 'dynamic-adjustment',
-				name: 'Daily dynamic calorie adjustment',
-				performedAt: new Date(),
-				calories: 100, // Placeholder value, replace with actual calculation
-				quantity: 1,
-				quantityUnit: 'steps',
-				systemGenerated: true,
-				userId
-			});
-		}
-
-		return allActivityEntries;
-	});
+	let { activityEntries }: Props = $props();
 </script>
 
 <div class="flex flex-col rounded-lg border">
@@ -54,7 +20,7 @@
 			</Item.Title>
 		</Item.Content>
 	</Item.Root>
-	{#each allActivityEntries as entry (entry.id)}
+	{#each activityEntries as entry (entry.id)}
 		<Item.Root class="rounded-none border-0 border-t border-border py-3">
 			<Item.Content>
 				<Item.Title class="flex w-full">

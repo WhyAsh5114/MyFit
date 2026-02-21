@@ -8,6 +8,7 @@
 	import { Capacitor } from '@capacitor/core';
 	import { App } from '@capacitor/app';
 	import { queryClient } from '$lib/clients/query-client';
+	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 
 	let { children } = $props();
@@ -31,6 +32,7 @@
 <Toaster />
 
 <QueryClientProvider client={queryClient}>
+	<SvelteQueryDevtools />
 	{@render children()}
 </QueryClientProvider>
 

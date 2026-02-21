@@ -19,9 +19,16 @@
 		activityPreferences?: ActivityPreferences | null;
 		selectedDay: CalendarDate;
 		timezone: string;
+		dynamicCaloriesBurned?: number;
 	};
-	let { foodEntries, activityEntries, activityPreferences, selectedDay, timezone }: Props =
-		$props();
+	let {
+		foodEntries,
+		activityEntries,
+		activityPreferences,
+		selectedDay,
+		timezone,
+		dynamicCaloriesBurned
+	}: Props = $props();
 
 	const currentUser = useCurrentUser();
 	const macroMetrics = useMacroMetrics(() => currentUser.data?.id ?? '');
@@ -72,10 +79,7 @@
 	</div>
 	{#if dailyNutritionStats}
 		<a class="w-full" href={resolve(`/food-diary/goals`)}>
-			<StackedCaloriesBar
-				day={selectedDay.toString()}
-				{...dailyNutritionStats}
-			/>
+			<StackedCaloriesBar day={selectedDay.toString()} {...dailyNutritionStats} />
 		</a>
 	{:else}
 		<a

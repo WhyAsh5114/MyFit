@@ -5,10 +5,10 @@
 	import HeaderCard from './components/entries-page/header-card.svelte';
 	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 	import { useActivityEntriesByDate } from '$lib/features/food-diary/acitivity-entry/queries/get-by-date';
-	import { useActivityPreferences } from '$lib/features/food-diary/activity-preferences/queries/get';
 	import FoodEntries from './components/entries-page/food-entries.svelte';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import ActivityEntries from './components/entries-page/activity-entries.svelte';
+	import SyncHealthData from './components/entries-page/sync-health-data.svelte';
 
 	const timezone = getLocalTimeZone();
 	const currentUser = useCurrentUser();
@@ -31,21 +31,17 @@
 		date: selectedDay
 	}));
 
-	const activityPreferences = useActivityPreferences(() => currentUser.data?.id ?? '');
-
 	const activityEntriesByDate = useActivityEntriesByDate(() => ({
 		userId: currentUser.data?.id ?? '',
 		date: selectedDay
 	}));
 </script>
 
-<HeaderCard
-	foodEntries={foodEntriesByDate.data}
-	activityEntries={activityEntriesByDate.data}
-	activityPreferences={activityPreferences.data}
-	{selectedDay}
-	{timezone}
-/>
+{#if currentUser.data?.id}
+	<SyncHealthData {selectedDay} userId={currentUser.data?.id} />
+{/if}
+
+<HeaderCard foodEntries={foodEntriesByDate.data} {selectedDay} {timezone} />
 <ScrollArea class="flex h-px grow">
 	<div class="flex h-full flex-col gap-2">
 		<FoodEntries
@@ -54,10 +50,6 @@
 			{selectedDay}
 			{timezone}
 		/>
-		<ActivityEntries
-			activityEntries={activityEntriesByDate.data}
-			activityPreferences={activityPreferences.data}
-			userId={currentUser.data?.id}
-		/>
+		<ActivityEntries activityEntries={activityEntriesByDate.data} />
 	</div>
 </ScrollArea>

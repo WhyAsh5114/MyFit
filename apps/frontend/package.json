@@ -26,6 +26,7 @@
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.18",
+		"@tanstack/svelte-query-devtools": "^6.0.4",
 		"@types/culori": "^4.0.1",
 		"@types/d3-scale": "^4.0.9",
 		"@types/node": "^20",

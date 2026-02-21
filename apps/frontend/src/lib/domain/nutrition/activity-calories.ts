@@ -15,36 +15,37 @@ export function calculateActivityCalories(data: CalculateActivityCaloriesArgs) {
 		stepCount
 	} = data;
 
-	let weightInKg = bodyweight;
-	if (bodyweightUnit === 'lb') {
-		weightInKg = bodyweight * 0.453592;
-	}
-	let heightInCm = height;
-	if (heightUnit === 'in') {
-		heightInCm = height * 2.54;
-	}
+	if (stepCount <= 0) return 0;
 
-	// ACSM Equation: Gold standard for walking energy expenditure
-	// Estimate stride length from height (typical ratio is ~0.43 × height in cm)
-	const strideLength = heightInCm * 0.43; // in cm
-	const distanceWalkedCm = stepCount * strideLength;
-	const distanceWalkedM = distanceWalkedCm / 100;
+	// Convert bodyweight to kg if needed
+	const bodyweightInKg =
+		bodyweightUnit === 'kg'
+			? bodyweight
+			: bodyweight * 0.453592; // lb to kg conversion
 
-	// Assume typical walking session of 1 hour (3600 seconds)
-	// This provides a reasonable baseline; can be adjusted if actual time is known
-	const timeInMinutes = 60;
-	const speedMetersPerMin = distanceWalkedM / timeInMinutes;
+	// Convert height to cm if needed
+	const heightInCm =
+		heightUnit === 'cm'
+			? height
+			: height * 2.54; // inches to cm conversion
 
-	// ACSM Walking Equation (level ground):
-	// VO2 (ml/kg/min) = 0.1 × speed(m/min) + 1.8 × speed(m/min) × grade + 3.5
-	// For level walking, grade = 0, so:
-	// VO2 = 0.1 × speed + 3.5
-	const vo2PerKg = 0.1 * speedMetersPerMin + 3.5;
+	// Calculate stride length based on height (rough estimation)
+	// Formula: stride length (cm) = height (cm) * 0.43
+	const strideLengthCm = heightInCm * 0.43;
 
-	// Convert VO2 to energy expenditure
-	// Energy (kcal) = VO2 (ml/kg/min) × weight (kg) × time (min) / 200
-	// The 200 is a conversion factor (1 liter O2 ≈ 5 kcal, 1000 ml per liter)
-	const caloriesBurned = (vo2PerKg * weightInKg * timeInMinutes) / 200;
+	// Calculate distance in km
+	const distanceKm = (stepCount * strideLengthCm) / 100000; // cm to km
 
-	return caloriesBurned;
+	// Base MET (Metabolic Equivalent) value for walking at moderate pace (~3.5 mph)
+	const baseMET = 3.5;
+
+	// Calculate calories using: calories = MET * weight(kg) * time(hours)
+	// Estimate time based on average walking speed of 5 km/h
+	const averageWalkingSpeedKmh = 5;
+	const timeHours = distanceKm / averageWalkingSpeedKmh;
+
+	const calories = baseMET * bodyweightInKg * timeHours;
+
+	// Return rounded calories (minimum 1 calorie for any steps > 0)
+	return Math.max(1, Math.round(calories));
 }
