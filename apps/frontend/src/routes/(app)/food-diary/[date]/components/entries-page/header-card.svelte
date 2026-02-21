@@ -10,15 +10,18 @@
 	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 	import { useMacroTargets } from '$lib/features/food-diary/macro-targets/queries/get';
 	import { calculateDailyNutritionStats } from '$lib/domain/nutrition/stats';
-	import type { FoodEntry } from '@myfit/api/prisma/client';
+	import type { ActivityEntry, ActivityPreferences, FoodEntry } from '@myfit/api/prisma/client';
 	import StackedCaloriesBar from './stacked-calories-bar.svelte';
 
 	type Props = {
 		foodEntries?: FoodEntry[];
+		activityEntries?: ActivityEntry[];
+		activityPreferences?: ActivityPreferences | null;
 		selectedDay: CalendarDate;
 		timezone: string;
 	};
-	let { foodEntries, selectedDay, timezone }: Props = $props();
+	let { foodEntries, activityEntries, activityPreferences, selectedDay, timezone }: Props =
+		$props();
 
 	const currentUser = useCurrentUser();
 	const macroMetrics = useMacroMetrics(() => currentUser.data?.id ?? '');
@@ -47,7 +50,9 @@
 		return calculateDailyNutritionStats({
 			metrics: macroMetrics.data,
 			weeklyCaloricChange,
-			foodEntries: foodEntries
+			foodEntries,
+			activityEntries,
+			activityPreferences
 		});
 	});
 </script>
@@ -70,7 +75,6 @@
 			<StackedCaloriesBar
 				day={selectedDay.toString()}
 				{...dailyNutritionStats}
-				activityCalories={0}
 			/>
 		</a>
 	{:else}

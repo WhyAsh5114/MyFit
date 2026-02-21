@@ -10,7 +10,7 @@ export const useMacroTargets = (getUserId: () => string) =>
 			queryFn: async () => {
 				return await getClient().macroTargets.findFirst({
 					where: { userId },
-					orderBy: { createdAt: 'desc' }
+					orderBy: { effectiveFrom: 'desc' }
 				});
 			},
 			enabled: !!userId

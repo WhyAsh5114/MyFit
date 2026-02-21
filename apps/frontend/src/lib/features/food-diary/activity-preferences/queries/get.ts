@@ -12,7 +12,8 @@ export const useActivityPreferences = (getUserId: () => string) =>
 				const client = getClient();
 				try {
 					return await client.activityPreferences.findFirst({
-						where: { userId }
+						where: { userId },
+						orderBy: { effectiveFrom: 'desc' }
 					});
 				} catch (error) {
 					toast.error('Failed to fetch activity preferences');

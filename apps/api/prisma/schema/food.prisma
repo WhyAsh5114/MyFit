@@ -1,6 +1,6 @@
 model MacroTargets {
   id                  String                @id @default(uuid())
-  createdAt           DateTime              @default(now())
+  effectiveFrom       DateTime              @default(now())
   proteinG            Float?
   carbsG              Float?
   fatG                Float?
@@ -13,7 +13,7 @@ model MacroTargets {
 
 model MacroMetrics {
   id                String     @id @default(uuid())
-  createdAt         DateTime   @default(now())
+  effectiveFrom     DateTime   @default(now())
   bodyweight        Float
   bodyweightUnit    WeightUnit
   height            Float
@@ -27,11 +27,16 @@ model MacroMetrics {
 }
 
 model ActivityPreferences {
-  id             String                 @id @default(uuid())
-  userId         String                 @unique
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  effectiveFrom  DateTime               @default(now())
   adjustmentType ActivityAdjustmentType
+
+  // used if STATIC
   staticCalories Int?
-  user           User                   @relation(fields: [userId], references: [id])
 }
 
 model FoodEntry {

@@ -10,7 +10,7 @@ export const useMacroMetrics = (getUserId: () => string) =>
 			queryFn: async () => {
 				return await getClient().macroMetrics.findFirst({
 					where: { userId },
-					orderBy: { createdAt: 'desc' }
+					orderBy: { effectiveFrom: 'desc' }
 				});
 			},
 			enabled: !!userId

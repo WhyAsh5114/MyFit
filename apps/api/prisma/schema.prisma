@@ -31,7 +31,7 @@ model User {
   accounts            Account[]
   macroTargets        MacroTargets[]
   macroMetrics        MacroMetrics[]
-  activityPreferences ActivityPreferences?
+  activityPreferences ActivityPreferences[]
   foodEntries         FoodEntry[]
   activityEntries     ActivityEntry[]
   foodDiaryMeals      String[]             @default(["Breakfast", "Lunch", "Dinner", "Snacks"])

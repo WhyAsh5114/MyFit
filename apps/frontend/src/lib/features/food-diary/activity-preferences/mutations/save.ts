@@ -10,10 +10,8 @@ export const useSaveActivityPreferences = () =>
 	createMutation(() => ({
 		mutationFn: async (data: Prisma.ActivityPreferencesUncheckedCreateInput) => {
 			const client = getClient();
-			return await client.activityPreferences.upsert({
-				where: { userId: data.userId },
-				update: data,
-				create: data
+			return await client.activityPreferences.create({
+				data
 			});
 		},
 

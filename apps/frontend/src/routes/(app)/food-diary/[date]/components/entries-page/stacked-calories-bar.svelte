@@ -8,10 +8,10 @@
 	type Props = {
 		caloriesConsumed: number;
 		caloriesRemaining: number;
-		activityCalories: number;
+		caloriesBurned: number;
 		day: string;
 	};
-	let { caloriesConsumed, caloriesRemaining, activityCalories, day }: Props = $props();
+	let { caloriesConsumed, caloriesRemaining, caloriesBurned, day }: Props = $props();
 
 	let chartData = $derived.by(() => {
 		const remaining = caloriesRemaining;
@@ -52,12 +52,12 @@
 		<div class="flex w-full flex-col items-start text-xs">
 			<p class="text-sm font-medium">
 				{round(caloriesConsumed, 0)} /
-				{round(caloriesRemaining + caloriesConsumed + activityCalories, 0)} kcal
+				{round(caloriesRemaining + caloriesConsumed + caloriesBurned, 0)} kcal
 			</p>
 			<p class={caloriesRemaining < 0 ? 'text-warning' : 'text-muted-foreground'}>
-				{Math.abs(round(caloriesRemaining + activityCalories, 0))} kcal
+				{Math.abs(round(caloriesRemaining + caloriesBurned, 0))} kcal
 				{caloriesRemaining < 0 ? 'over' : 'left'}
-				{activityCalories > 0 ? `(incl. ${round(activityCalories, 0)} burned)` : ''}
+				{caloriesBurned > 0 ? `(incl. ${round(caloriesBurned, 0)} burned)` : ''}
 			</p>
 		</div>	
 		<p class="flex items-center gap-2 text-sm whitespace-nowrap text-muted-foreground h-fit">

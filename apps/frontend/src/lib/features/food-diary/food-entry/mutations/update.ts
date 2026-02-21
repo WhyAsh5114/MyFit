@@ -25,7 +25,7 @@ export const useUpdateFoodEntry = () =>
 			queryClient.setQueryData(foodEntryKeys.byId(data.userId, data.id), data);
 
 			queryClient.invalidateQueries({
-				queryKey: foodEntryKeys.list(data.userId)
+				queryKey: foodEntryKeys.byUser(data.userId)
 			});
 		},
 
