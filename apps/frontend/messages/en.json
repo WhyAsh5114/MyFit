@@ -114,6 +114,7 @@
 	"foodDiary.nutritionInaccurateEntries": "Calories don't match macros",
 	"foodDiary.nutritionDone": "Done",
 	"foodDiary.foodEntryCreated": "Food entry created successfully!",
+	"foodDiary.foodEntryDeleted": "Food entry deleted successfully!",
 	"foodDiary.metrics.bodyweight": "Bodyweight",
 	"foodDiary.metrics.unit": "Unit",
 	"foodDiary.metrics.height": "Height",

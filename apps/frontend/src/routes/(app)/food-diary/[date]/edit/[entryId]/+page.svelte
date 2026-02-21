@@ -7,7 +7,8 @@
 		ScanBarcodeIcon,
 		SearchIcon,
 		SearchXIcon,
-		SquarePenIcon
+		SquarePenIcon,
+		TrashIcon
 	} from '@lucide/svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
@@ -21,6 +22,7 @@
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
 	import { foodEntryToFoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/mapper';
+	import { useDeleteFoodEntry } from '$lib/features/food-diary/food-entry/mutations/delete';
 
 	const currentUser = useCurrentUser();
 	const foodEntryById = useFoodEntryById(() => ({
@@ -28,6 +30,7 @@
 		id: page.params.entryId ?? ''
 	}));
 
+	const deleteFoodEntry = useDeleteFoodEntry();
 	const updateFoodEntry = useUpdateFoodEntry();
 
 	async function handleSubmit(data: FoodEntryFormSchema) {
@@ -43,11 +46,24 @@
 		toast.success(m['foodDiary.foodEntryUpdated']());
 		await goto(resolve(`/food-diary/${page.params.date}`));
 	}
+
+	async function deleteEntry() {
+		if (!page.params.entryId || !currentUser.data) {
+			toast.error(m['unknownErrorOccurred']());
+			return;
+		}
+
+		await deleteFoodEntry.mutateAsync({
+			id: page.params.entryId,
+			userId: currentUser.data.id
+		});
+		toast.success(m['foodDiary.foodEntryDeleted']());
+		await goto(resolve(`/food-diary/${page.params.date}`));
+	}
 </script>
 
 {#if foodEntryById.data === undefined || !currentUser.data}
-	<Skeleton class="h-70 w-full" />
-	<Skeleton class="h-65 w-full" />
+	<Skeleton class="h-134 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
 {:else if foodEntryById.data === null}
 	<Empty.Root>
@@ -84,19 +100,29 @@
 		meals={currentUser.data.foodDiaryMeals}
 	>
 		{#snippet submit()}
-			<Button
-				type="submit"
-				form="edit-food-entry-form"
-				class="mt-auto"
-				disabled={updateFoodEntry.isPending}
-			>
-				{#if updateFoodEntry.isPending}
-					<Spinner />
-				{:else}
-					Update entry
-					<SquarePenIcon />
-				{/if}
-			</Button>
+			<div class="mt-auto grid grid-cols-2 gap-2">
+				<Button
+					type="button"
+					disabled={deleteFoodEntry.isPending}
+					onclick={deleteEntry}
+					variant="destructive"
+				>
+					{#if deleteFoodEntry.isPending}
+						<Spinner />
+					{:else}
+						<TrashIcon />
+						Delete entry
+					{/if}
+				</Button>
+				<Button type="submit" form="edit-food-entry-form" disabled={updateFoodEntry.isPending}>
+					{#if updateFoodEntry.isPending}
+						<Spinner />
+					{:else}
+						Update entry
+						<SquarePenIcon />
+					{/if}
+				</Button>
+			</div>
 		{/snippet}
 	</FoodEntryForm>
 {/if}
