@@ -5,6 +5,7 @@
 	import AppSidebar from './components/app-sidebar.svelte';
 	import LinkBreadcrumbs from './components/link-breadcrumbs.svelte';
 	import SessionCacher from './components/session-cacher.svelte';
+	import SyncComponent from './components/sync-component.svelte';
 
 	let { children } = $props();
 </script>
@@ -20,6 +21,7 @@
 			<Sidebar.Trigger />
 			<Separator orientation="vertical" class="mr-2 h-6" />
 			<LinkBreadcrumbs />
+			<SyncComponent />
 		</header>
 		<CustomScrollArea class="h-px w-full grow">
 			<main class="flex w-full grow flex-col gap-2 p-4 pt-2">

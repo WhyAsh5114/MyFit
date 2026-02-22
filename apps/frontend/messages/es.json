@@ -50,5 +50,13 @@
 	"legal.termsOfService": "Términos de Servicio",
 	"dashboard.betaTitle": "V4 beta",
 	"dashboard.betaDescription": "Esta compilación es solo para validación de UI y características. Los modelos de datos pueden cambiar y las entradas pueden borrarse entre actualizaciones. No use esto como su rastreador de macros principal. Si estás aquí, la retroalimentación > la perfección. Gracias por probar.",
-	"dashboard.reportBugs": "Reportar errores"
+	"dashboard.reportBugs": "Reportar errores",
+	"sync.title": "Sincronización de datos",
+	"sync.statusIdle": "Sincronizado",
+	"sync.statusPulling": "Descargando",
+	"sync.statusPushing": "Subiendo",
+	"sync.statusStopped": "Detenido",
+	"sync.statusConnecting": "Conectando",
+	"sync.lastSynced": "Último sincronizado",
+	"sync.neverSynced": "Nunca sincronizado"
 }

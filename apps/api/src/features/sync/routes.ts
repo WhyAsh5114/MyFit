@@ -59,7 +59,7 @@ const syncRoutes = new Hono()
 			});
 			return c.json(
 				{
-					cursor: logsWithRecords.at(-1)?.id ?? lastChangelogId ?? null,
+					cursor: logsWithRecords.at(-1)?.id ?? lastChangelogId,
 					logsWithRecords
 				},
 				200

@@ -148,5 +148,13 @@
 	"feedback.foodLogged": "Food logged successfully!",
 	"feedback.cameraError": "Error accessing cameras",
 	"validation.errors": "There are errors in the form",
-	"validation.errorFields": "In the fields: {fields}"
+	"validation.errorFields": "In the fields: {fields}",
+	"sync.title": "Data sync",
+	"sync.statusIdle": "Synced",
+	"sync.statusPulling": "Pulling",
+	"sync.statusPushing": "Pushing",
+	"sync.statusStopped": "Stopped",
+	"sync.statusConnecting": "Connecting",
+	"sync.lastSynced": "Last synced",
+	"sync.neverSynced": "Never synced"
 }
