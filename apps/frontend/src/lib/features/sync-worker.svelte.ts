@@ -1,13 +1,15 @@
 import { apiClient } from '$lib/clients/api-client';
 import { getClient } from '$lib/clients/idb-client';
+import { queryClient } from '$lib/clients/query-client';
 import { type SyncWorkerStatus, type SyncWorker } from '@myfit/api/prisma-idb/client';
+
+const SYNC_WORKER_STATE_KEY = '__myfit_sync_worker_state__';
 
 class SyncWorkerState {
 	syncWorker = $state<SyncWorker>();
 	syncStatus = $state<SyncWorkerStatus>();
 
 	constructor() {
-		if (this.syncWorker) return;
 		this.syncWorker = getClient().createSyncWorker({
 			push: {
 				handler: async (events) => {
@@ -35,6 +37,12 @@ class SyncWorkerState {
 			this.syncStatus = this.syncWorker!.status;
 		});
 
+		this.syncWorker.on('pullcompleted', async (e) => {
+			if (e.detail.totalAppliedRecords > 0) {
+				await queryClient.invalidateQueries({ refetchType: 'active' });
+			}
+		});
+
 		this.syncWorker.start();
 	}
 
@@ -51,4 +59,8 @@ class SyncWorkerState {
 	}
 }
 
-export const syncWorkerState = new SyncWorkerState();
+const g = globalThis as Record<string, unknown>;
+if (!g[SYNC_WORKER_STATE_KEY]) {
+	g[SYNC_WORKER_STATE_KEY] = new SyncWorkerState();
+}
+export const syncWorkerState = g[SYNC_WORKER_STATE_KEY] as SyncWorkerState;
