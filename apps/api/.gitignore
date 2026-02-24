@@ -31,5 +31,11 @@ lerna-debug.log*
 dist/
 
 # Prisma
-generated/
+# Keep only typed SQL in VCS; other generated artifacts are regenerated in Docker/CI
+generated/*
+!generated/prisma/
+generated/prisma/*
+!generated/prisma/sql/
+!generated/prisma/sql/**
+
 prisma/seed/open-food-facts/data
