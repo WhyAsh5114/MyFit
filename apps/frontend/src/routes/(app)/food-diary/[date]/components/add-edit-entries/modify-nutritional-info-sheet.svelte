@@ -106,6 +106,33 @@
 		<span class="ml-4 font-semibold">{m['foodDiary.nutritionOptionalFields']()}</span>
 		<CustomScrollArea class="h-px grow px-4" viewportClass="scroll-shadow">
 			<div class="grid grid-cols-2 gap-2">
+				<Form.Field {form} name="servingSize">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>{m['foodDiary.servingSizeLabel']()}</Form.Label>
+							<InputGroup.Root>
+								<InputGroup.Input {...props} type="text" bind:value={$formData.servingSize} />
+							</InputGroup.Root>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="servingQuantity">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>{m['foodDiary.servingQuantityLabel']()}</Form.Label>
+							<InputGroup.Root>
+								<InputGroup.Input {...props} type="number" bind:value={$formData.servingQuantity} />
+								<InputGroup.Addon align="inline-end">
+									<InputGroup.Text>
+										{m['foodDiary.servingQuantityUnit']()}
+									</InputGroup.Text>
+								</InputGroup.Addon>
+							</InputGroup.Root>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 				{#each OPTIONAL_NUTRIENTS as nutrient (nutrient.key)}
 					<Form.Field {form} name={nutrient.key}>
 						<Form.Control>
