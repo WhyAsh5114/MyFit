@@ -56,11 +56,11 @@
 			</Empty.Description>
 		</Empty.Header>
 		<Empty.Content class="grid gap-2">
-			<Button href={resolve(`/food-diary/${page.params.date}/add/scan`)}>
+			<Button href={resolve(`/food-diary/${page.params.date}/add-food/scan`)}>
 				<ScanBarcodeIcon />
 				{m['foodDiary.scanBarcode']()}
 			</Button>
-			<Button variant="secondary" href={resolve(`/food-diary/${page.params.date}/add`)}>
+			<Button variant="secondary" href={resolve(`/food-diary/${page.params.date}/add-food`)}>
 				<SearchIcon />
 				{m['foodDiary.searchForFoods']()}
 			</Button>

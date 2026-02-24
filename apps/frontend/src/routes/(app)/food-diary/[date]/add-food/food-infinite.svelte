@@ -86,7 +86,7 @@
 				{#each searchNutritionData.data?.pages.flatMap((page) => page) as foodEntry (foodEntry.id)}
 					<a
 						href={resolve(
-							`/food-diary/${page.params.date}/add/${foodEntry.id}?${params.toString()}`
+							`/food-diary/${page.params.date}/add-food/${foodEntry.id}?${params.toString()}`
 						)}
 					>
 						<Item.Root class="flex-nowrap bg-card py-2 shadow-sm" variant="outline">

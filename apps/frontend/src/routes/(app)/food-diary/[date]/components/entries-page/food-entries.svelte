@@ -72,7 +72,7 @@
 			>
 				{#snippet child({ props })}
 					<a
-						href={resolve(`/food-diary/${page.params.date}/add?meal=${group.meal ?? ''}`)}
+						href={resolve(`/food-diary/${page.params.date}/add-food?meal=${group.meal ?? ''}`)}
 						{...props}
 					>
 						<Item.Content>
@@ -112,7 +112,10 @@
 						})}
 					>
 						{#snippet child({ props })}
-							<a href={resolve(`/food-diary/${page.params.date}/edit/${foodEntry.id}`)} {...props}>
+							<a
+								href={resolve(`/food-diary/${page.params.date}/edit-food/${foodEntry.id}`)}
+								{...props}
+							>
 								<Item.Content>
 									<Item.Title class="flex w-full">
 										{foodEntry.productName}

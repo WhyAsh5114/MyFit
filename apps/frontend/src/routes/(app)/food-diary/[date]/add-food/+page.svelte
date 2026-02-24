@@ -27,7 +27,7 @@
 			params.set('search', debounced.current);
 		}
 
-		goto(resolve(`/food-diary/${page.params.date}/add?${params.toString()}`), {
+		goto(resolve(`/food-diary/${page.params.date}/add-food?${params.toString()}`), {
 			replaceState: true
 		});
 	});
@@ -70,12 +70,12 @@
 	</Label>
 	<Button
 		variant="secondary"
-		href={resolve(`/food-diary/${page.params.date}/add/manual?${params.toString()}`)}
+		href={resolve(`/food-diary/${page.params.date}/add-food/manual?${params.toString()}`)}
 	>
 		<PlusCircleIcon />
 		{m['foodDiary.addManually']()}
 	</Button>
-	<Button href={resolve(`/food-diary/${page.params.date}/add/scan?${params.toString()}`)}>
+	<Button href={resolve(`/food-diary/${page.params.date}/add-food/scan?${params.toString()}`)}>
 		{m['foodDiary.scanBarcode']()}
 		<ScanBarcodeIcon />
 	</Button>

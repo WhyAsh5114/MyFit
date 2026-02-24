@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import * as Item from '$lib/components/ui/item/index.js';
 	import { cn } from '$lib/utils';
 	import { FlameIcon, PlusIcon } from '@lucide/svelte';
@@ -16,13 +18,17 @@
 			'rounded-b-lg py-2': activityEntries?.length === 0
 		})}
 	>
-		<Item.Content>
-			<Item.Title class="flex w-full font-semibold">
-				Activity
-				<FlameIcon class="size-4" />
-				<PlusIcon class="ml-auto size-4" strokeWidth={2.5} />
-			</Item.Title>
-		</Item.Content>
+		{#snippet child({ props })}
+			<a href={resolve(`/food-diary/${page.params.date}/add-activity`)} {...props}>
+				<Item.Content>
+					<Item.Title class="flex w-full font-semibold">
+						Activity
+						<FlameIcon class="size-4" />
+						<PlusIcon class="ml-auto size-4" strokeWidth={2.5} />
+					</Item.Title>
+				</Item.Content>
+			</a>
+		{/snippet}
 	</Item.Root>
 	{#each activityEntries as entry (entry.id)}
 		<Item.Root class="rounded-none border-0 border-t border-border py-3">

@@ -87,7 +87,7 @@
 			// Defaulting to first item in case multiple items are returned for the same code, which can happen with some APIs
 			// Most of the time, barcodes will be unique. In the future, can add a dialog to let users choose if multiple items are returned.
 			const nutritionData = nutritionDataByCode.data[0];
-			goto(resolve(`/food-diary/${page.params.date}/add/${nutritionData.id}`));
+			goto(resolve(`/food-diary/${page.params.date}/add-food/${nutritionData.id}`));
 		}
 	});
 </script>
