@@ -7,6 +7,8 @@ FROM node:24-slim AS builder
 
 WORKDIR /build
 
+RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+
 RUN corepack enable
 
 # Copy workspace lockfile + root manifest
@@ -23,7 +25,8 @@ COPY apps/api ./apps/api
 
 # Regenerate Prisma client for container platform (typed SQL remains from VCS)
 WORKDIR /build/apps/api
-RUN DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder pnpm exec prisma generate
+RUN rm -rf ./generated/prisma && \
+  DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder pnpm exec prisma generate
 
 # Re-copy typed SQL from VCS (prisma generate without --sql does not emit generated/prisma/sql)
 COPY apps/api/generated/prisma/sql ./generated/prisma/sql
@@ -37,6 +40,8 @@ COPY --from=oven/bun:1 /usr/local/bin/bun /usr/local/bin/bun
 
 ENV NODE_ENV=production
 ENV PORT=3000
+
+RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -u 1001 -s /sbin/nologin appuser
 
