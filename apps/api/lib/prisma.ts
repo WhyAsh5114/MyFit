@@ -4,5 +4,5 @@ import 'dotenv/config';
 
 const connectionString = process.env.DATABASE_URL as string;
 
-const adapter = new PrismaPg({ connectionString, ssl: { rejectUnauthorized: false } });
+const adapter = new PrismaPg({ connectionString, ssl: false });
 export const prisma = new PrismaClient({ adapter });
