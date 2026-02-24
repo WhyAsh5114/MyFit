@@ -15,7 +15,7 @@
 	"scripts": {
 		"dev": "bun run src/index.ts",
 		"build": "bun build src/index.ts --outdir dist --target bun",
-		"start": "bun dist/index.js",
+		"start": "prisma migrate deploy && bun dist/index.js",
 		"generate": "prisma generate --sql",
 		"push": "prisma db push",
 		"studio": "prisma studio",

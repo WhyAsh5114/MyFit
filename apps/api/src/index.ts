@@ -2,9 +2,9 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { authRoutes } from './features/auth/auth.js';
 import { healthRoutes } from './features/health/routes.js';
-import 'dotenv/config';
 import { nutritionDataRoutes } from './features/nutrition-data/routes.js';
 import { syncRoutes } from './features/sync/routes.js';
+import 'dotenv/config';
 
 const app = new Hono();
 
@@ -43,4 +43,3 @@ Bun.serve({
 });
 
 console.log(`🚀 API server running on port ${port}`);
-

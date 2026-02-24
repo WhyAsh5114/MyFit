@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { AlertCircleIcon, CloudAlertIcon, CloudCheckIcon, CloudSyncIcon, ClockIcon } from '@lucide/svelte';
+	import {
+		AlertCircleIcon,
+		CloudAlertIcon,
+		CloudCheckIcon,
+		CloudSyncIcon,
+		ClockIcon,
+		RefreshCcwIcon
+	} from '@lucide/svelte';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import { Separator } from '$lib/components/ui/separator/index.js';
@@ -7,10 +14,38 @@
 	import { syncWorkerState } from '$lib/features/sync-worker.svelte';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { m } from '$lib/paraglide/messages';
+	import { getClient } from '$lib/clients/idb-client';
+	import { onMount } from 'svelte';
+
+	let hasAnyRetryableUnsynced = $state<boolean>();
+	let outboxStats = $state<{
+		unsynced: number;
+		failed: number;
+		lastError?: string;
+	}>();
+
+	async function updateOutboxStats() {
+		outboxStats = await getClient().$outbox.stats();
+		hasAnyRetryableUnsynced = await getClient().$outbox.hasAnyRetryableUnsynced();
+	}
+
+	onMount(() => {
+		updateOutboxStats();
+		const unsubscribe = getClient().$outbox.subscribe(
+			['create', 'update', 'delete'],
+			updateOutboxStats
+		);
+
+		return () => {
+			unsubscribe();
+		};
+	});
 
 	let syncStatus = $derived(syncWorkerState.syncStatus?.status);
 	let lastSyncTime = $derived(syncWorkerState.syncStatus?.lastSyncTime ?? null);
-	let lastError = $derived(syncWorkerState.syncStatus?.lastError ?? null);
+	let lastError = $derived(
+		syncWorkerState.syncStatus?.lastError?.message ?? outboxStats?.lastError ?? null
+	);
 
 	let statusLabel = $derived(
 		syncStatus === undefined
@@ -54,22 +89,32 @@
 			</Button>
 		{/snippet}
 	</Popover.Trigger>
-	<Popover.Content align="end" class="w-56 p-3">
+	<Popover.Content align="end" class="flex w-56 flex-col gap-2 p-3">
 		<div class="flex items-center justify-between gap-3">
 			<p class="text-sm font-medium">{m['sync.title']()}</p>
 			<Badge variant={statusVariant}>{statusLabel}</Badge>
 		</div>
-		<Separator class="my-2" />
+		<Separator />
 		<div class="flex items-center gap-2 text-xs text-muted-foreground">
 			<ClockIcon class="size-3.5 shrink-0" />
 			<span>{m['sync.lastSynced']()}</span>
 			<span class="ml-auto font-medium tabular-nums">{lastSyncDisplay}</span>
 		</div>
 		{#if lastError}
-			<div class="mt-2 flex items-start gap-2 rounded-md bg-destructive/10 p-2 text-xs text-destructive">
+			<div class="flex items-start gap-2 rounded-md bg-destructive/10 p-2 text-xs text-destructive">
 				<AlertCircleIcon class="mt-0.5 size-3.5 shrink-0" />
-				<span class="break-all">{lastError.message}</span>
+				<span class="break-all">{lastError}</span>
 			</div>
+		{/if}
+		{#if hasAnyRetryableUnsynced && syncWorkerState.syncWorker !== null && (syncStatus === 'PULLING' || syncStatus === 'PUSHING')}
+			<Button
+				size="sm"
+				class="w-full"
+				variant="secondary"
+				onclick={() => syncWorkerState.syncWorker?.forceSync({ overrideBackoff: true })}
+			>
+				Sync now <RefreshCcwIcon />
+			</Button>
 		{/if}
 	</Popover.Content>
 </Popover.Root>
