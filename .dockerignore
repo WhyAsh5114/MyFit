@@ -1,0 +1,29 @@
+# VCS
+.git
+.gitignore
+
+# Dependencies
+**/node_modules
+**/.pnpm-store
+
+# Build outputs
+**/dist
+**/build
+**/.turbo
+
+# Env files
+**/.env
+**/.env.*
+
+# Editor/OS
+**/.DS_Store
+**/.vscode
+**/.idea
+
+# Logs
+**/*.log
+
+# Docs and misc
+README.md
+LICENSE
+todo.md

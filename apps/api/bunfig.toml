@@ -1,0 +1,23 @@
+# Bun configuration for MyFit API
+[build]
+# Use ESM modules for Bun runtime compatibility
+format = "esm"
+# Target Bun runtime for optimal performance
+target = "bun"
+# Minify production builds
+minify = true
+# Generate source maps for debugging
+sourcemap = "external"
+
+[env]
+# Environment variable prefix for accessing in code
+prefix = ""
+
+# PostgreSQL adapter compatibility
+[trustedDependencies]
+prisma = true
+
+[packages]
+# Optimize module resolution for Node.js compatibility
+"@prisma/client" = { root = "node_modules/@prisma/client" }
+"@hono/node-server" = { root = "node_modules/@hono/node-server" }

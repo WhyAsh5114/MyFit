@@ -1,6 +1,5 @@
-import { serve } from '@hono/node-server';
-import { cors } from 'hono/cors';
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import { authRoutes } from './features/auth/auth.js';
 import { healthRoutes } from './features/health/routes.js';
 import 'dotenv/config';
@@ -36,4 +35,12 @@ const routes = app
 
 export type AppType = typeof routes;
 
-serve(app);
+const port = parseInt(process.env.PORT || '3000', 10);
+
+Bun.serve({
+	fetch: app.fetch,
+	port
+});
+
+console.log(`🚀 API server running on port ${port}`);
+

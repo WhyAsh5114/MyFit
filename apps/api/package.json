@@ -13,29 +13,28 @@
 		"./enums": "./generated/prisma-idb/enums.ts"
 	},
 	"scripts": {
-		"dev": "tsx watch src/index.ts",
-		"build": "tsc",
-		"start": "node dist/src/index.js",
+		"dev": "bun run src/index.ts",
+		"build": "bun build src/index.ts --outdir dist --target bun",
+		"start": "bun dist/index.js",
 		"generate": "prisma generate --sql",
 		"push": "prisma db push",
 		"studio": "prisma studio"
 	},
 	"dependencies": {
-		"@hono/node-server": "^1.19.9",
 		"@hono/zod-validator": "^0.7.6",
 		"@prisma-idb/idb-client-generator": "^0.31.0",
 		"@prisma/adapter-pg": "^7.3.0",
 		"@prisma/client": "^7.3.0",
 		"better-auth": "^1.4.18",
 		"dotenv": "^17.2.4",
-		"hono": "^4.11.8",
+		"hono": "^4.12.0",
 		"idb": "^8.0.3",
 		"resend": "^6.9.1",
 		"uuid": "^13.0.0",
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {
-		"@types/node": "^20.19.32",
+		"@types/bun": "latest",
 		"@types/pg": "^8.16.0",
 		"@types/pg-copy-streams": "^1.2.5",
 		"chalk": "^5.6.2",
@@ -43,7 +42,6 @@
 		"pg": "^8.18.0",
 		"pg-copy-streams": "^7.0.0",
 		"prisma": "^7.3.0",
-		"tsx": "^4.21.0",
 		"typescript": "^5.9.3"
 	}
 }
