@@ -18,14 +18,8 @@
 	import { onMount } from 'svelte';
 
 	let hasAnyRetryableUnsynced = $state<boolean>();
-	let outboxStats = $state<{
-		unsynced: number;
-		failed: number;
-		lastError?: string;
-	}>();
 
 	async function updateOutboxStats() {
-		outboxStats = await getClient().$outbox.stats();
 		hasAnyRetryableUnsynced = await getClient().$outbox.hasAnyRetryableUnsynced();
 	}
 
@@ -43,9 +37,7 @@
 
 	let syncStatus = $derived(syncWorkerState.syncStatus?.status);
 	let lastSyncTime = $derived(syncWorkerState.syncStatus?.lastSyncTime ?? null);
-	let lastError = $derived(
-		syncWorkerState.syncStatus?.lastError?.message ?? outboxStats?.lastError ?? null
-	);
+	let lastError = $derived(syncWorkerState.syncStatus?.lastError?.message ?? null);
 
 	let statusLabel = $derived(
 		syncStatus === undefined

@@ -53,6 +53,8 @@ WORKDIR /build/apps/api
 
 USER appuser
 
+RUN npx prisma migrate deploy
+
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD bun run --eval "await fetch('http://localhost:3000/api/health').then(r => { if (!r.ok) throw new Error() })" || exit 1
 
