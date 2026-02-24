@@ -1,4 +1,4 @@
-import type { ActivityAdjustmentType, MacroMetrics } from '@myfit/api/prisma/client';
+import type { MacroMetrics } from '@myfit/api/prisma/client';
 import { calculateBMR } from './bmr';
 
 type CalculateDailyNutritionStatsArgs = {
@@ -16,7 +16,7 @@ export function calculateDailyNutritionStats(data: CalculateDailyNutritionStatsA
 		(sum, entry) => sum + entry.energyKcal_100g * (entry.quantityG / 100),
 		0
 	);
-	let caloriesBurned = activityEntries.reduce((sum, entry) => sum + entry.calories, 0);
+	const caloriesBurned = activityEntries.reduce((sum, entry) => sum + entry.calories, 0);
 
 	const targetCalories = bmr + weeklyCaloricChange / 7;
 	const caloriesRemaining = targetCalories - caloriesConsumed + caloriesBurned;

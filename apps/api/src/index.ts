@@ -27,6 +27,7 @@ app.use(
 	})
 );
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const routes = app
 	.route('/api/health', healthRoutes)
 	.route('/api/auth', authRoutes)

@@ -111,10 +111,10 @@
 		</Button>
 	{:else if data === 'granted'}
 		<div class="w-full">
-			<span class="text-sm font-medium text-primary flex items-center gap-2">
-        <CheckIcon class="size-4" />
-        Health data access granted!
-      </span>
+			<span class="flex items-center gap-2 text-sm font-medium text-primary">
+				<CheckIcon class="size-4" />
+				Health data access granted!
+			</span>
 			<Separator class="my-2 bg-secondary" />
 			<div class="grid grid-cols-2 gap-1">
 				<p class="text-foreground">Today's steps</p>

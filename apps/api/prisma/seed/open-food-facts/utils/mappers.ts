@@ -4,7 +4,7 @@
  */
 
 import type { ProcessedNutritionData, RawNutritionData } from './types.js';
-import { parseNutrientValue, calculateUnsaturatedFat } from './unit-conversion.js';
+import { calculateUnsaturatedFat } from './unit-conversion.js';
 
 /**
  * Map raw CSV field names to processed field names and values
@@ -106,53 +106,55 @@ export function toTsvRow(data: ProcessedNutritionData): string {
 		return String(Math.round(v));
 	};
 
-	return [
-		escapeText(data.code),
-		escapeText(data.productName),
-		escapeText(data.brands),
-		// Serving fields
-		formatNum(data.servingQuantity),
-		escapeText(data.servingSize),
-		// Data quality metrics
-		formatNum_RequiredField(data.completeness),
-		formatInt(data.uniqueScans),
-		// 100g macros
-		formatNum(data.energyKcal_100g),
-		formatNum(data.proteinsG_100g),
-		formatNum(data.fatG_100g),
-		formatNum(data.carbohydratesG_100g),
-		// 100g micronutrients
-		formatNum(data.saturatedFatG_100g),
-		formatNum(data.unsaturatedFatG_100g),
-		formatNum(data.monounsaturatedFatG_100g),
-		formatNum(data.polyunsaturatedFatG_100g),
-		formatNum(data.transFatG_100g),
-		formatNum(data.cholesterolMg_100g),
-		formatNum(data.sugarsG_100g),
-		formatNum(data.polyolsG_100g),
-		formatNum(data.fiberG_100g),
-		formatNum(data.saltG_100g),
-		formatNum(data.sodiumMg_100g),
-		formatNum(data.alcoholG_100g),
-		formatNum(data.vitaminAIU_100g),
-		formatNum(data.vitaminDIU_100g),
-		formatNum(data.vitaminEMg_100g),
-		formatNum(data.vitaminKMcg_100g),
-		formatNum(data.vitaminCMg_100g),
-		formatNum(data.vitaminB1Mg_100g),
-		formatNum(data.vitaminB2Mg_100g),
-		formatNum(data.vitaminB6Mg_100g),
-		formatNum(data.vitaminB9Mcg_100g),
-		formatNum(data.folatesMcg_100g),
-		formatNum(data.vitaminB12Mcg_100g),
-		formatNum(data.potassiumMg_100g),
-		formatNum(data.calciumMg_100g),
-		formatNum(data.phosphorusMg_100g),
-		formatNum(data.ironMg_100g),
-		formatNum(data.magnesiumMg_100g),
-		formatNum(data.zincMg_100g),
-		formatNum(data.copperMg_100g),
-		formatNum(data.manganeseMg_100g),
-		formatNum(data.caffeineMg_100g)
-	].join('\t') + '\n';
+	return (
+		[
+			escapeText(data.code),
+			escapeText(data.productName),
+			escapeText(data.brands),
+			// Serving fields
+			formatNum(data.servingQuantity),
+			escapeText(data.servingSize),
+			// Data quality metrics
+			formatNum_RequiredField(data.completeness),
+			formatInt(data.uniqueScans),
+			// 100g macros
+			formatNum(data.energyKcal_100g),
+			formatNum(data.proteinsG_100g),
+			formatNum(data.fatG_100g),
+			formatNum(data.carbohydratesG_100g),
+			// 100g micronutrients
+			formatNum(data.saturatedFatG_100g),
+			formatNum(data.unsaturatedFatG_100g),
+			formatNum(data.monounsaturatedFatG_100g),
+			formatNum(data.polyunsaturatedFatG_100g),
+			formatNum(data.transFatG_100g),
+			formatNum(data.cholesterolMg_100g),
+			formatNum(data.sugarsG_100g),
+			formatNum(data.polyolsG_100g),
+			formatNum(data.fiberG_100g),
+			formatNum(data.saltG_100g),
+			formatNum(data.sodiumMg_100g),
+			formatNum(data.alcoholG_100g),
+			formatNum(data.vitaminAIU_100g),
+			formatNum(data.vitaminDIU_100g),
+			formatNum(data.vitaminEMg_100g),
+			formatNum(data.vitaminKMcg_100g),
+			formatNum(data.vitaminCMg_100g),
+			formatNum(data.vitaminB1Mg_100g),
+			formatNum(data.vitaminB2Mg_100g),
+			formatNum(data.vitaminB6Mg_100g),
+			formatNum(data.vitaminB9Mcg_100g),
+			formatNum(data.folatesMcg_100g),
+			formatNum(data.vitaminB12Mcg_100g),
+			formatNum(data.potassiumMg_100g),
+			formatNum(data.calciumMg_100g),
+			formatNum(data.phosphorusMg_100g),
+			formatNum(data.ironMg_100g),
+			formatNum(data.magnesiumMg_100g),
+			formatNum(data.zincMg_100g),
+			formatNum(data.copperMg_100g),
+			formatNum(data.manganeseMg_100g),
+			formatNum(data.caffeineMg_100g)
+		].join('\t') + '\n'
+	);
 }

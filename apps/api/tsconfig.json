@@ -15,9 +15,5 @@
 		"allowSyntheticDefaultImports": true
 	},
 	"include": ["src/**/*", "prisma.config.ts"],
-	"exclude": [
-		"node_modules",
-		"dist",
-		"generated/prisma-idb"
-	]
+	"exclude": ["node_modules", "dist", "generated/prisma-idb"]
 }

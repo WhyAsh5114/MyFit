@@ -25,7 +25,13 @@
 	// effect will re-run when fetching completes (false→true), rather than being
 	// blocked mid-flight by a guard that prevents a re-run.
 	let shouldSyncDynamic = $derived.by(() => {
-		if (activityEntriesByDate.isFetching || activityPreferences.isFetching || macroMetrics.isFetching || daySteps.isFetching) return false;
+		if (
+			activityEntriesByDate.isFetching ||
+			activityPreferences.isFetching ||
+			macroMetrics.isFetching ||
+			daySteps.isFetching
+		)
+			return false;
 
 		const entries = activityEntriesByDate.data;
 		const prefs = activityPreferences.data;

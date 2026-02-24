@@ -1,10 +1,3 @@
-import { goto } from '$app/navigation';
-import { page } from '$app/state';
-import { m } from '$lib/paraglide/messages';
-import type { DetectedBarcode } from 'barqode';
-import { resolve } from '$app/paths';
-import { toast } from 'svelte-sonner';
-
 export async function pickBestCamera(devices: MediaDeviceInfo[]) {
 	const cachedBestCamera = getCachedBestCamera(devices);
 	if (cachedBestCamera) return cachedBestCamera;

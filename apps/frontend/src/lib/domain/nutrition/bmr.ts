@@ -1,12 +1,12 @@
 type CalculateBMRArgs = {
-  bodyweight: number;
-  bodyweightUnit: 'kg' | 'lb';
-  height: number;
-  heightUnit: 'cm' | 'in';
-  age: number;
-  bodyFatPercentage: number;
-  gender: 'Male' | 'Female';
-}
+	bodyweight: number;
+	bodyweightUnit: 'kg' | 'lb';
+	height: number;
+	heightUnit: 'cm' | 'in';
+	age: number;
+	bodyFatPercentage: number;
+	gender: 'Male' | 'Female';
+};
 
 export function calculateBMR(data: CalculateBMRArgs) {
 	const { bodyweight, bodyweightUnit, height, heightUnit, age, bodyFatPercentage, gender } = data;

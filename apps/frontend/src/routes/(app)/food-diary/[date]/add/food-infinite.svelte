@@ -89,9 +89,11 @@
 							`/food-diary/${page.params.date}/add/${foodEntry.id}?${params.toString()}`
 						)}
 					>
-						<Item.Root class="py-2 shadow-sm flex-nowrap bg-card" variant="outline">
-							<Item.Content class="gap-0 w-px grow">
-								<Item.Title class="w-full! min-w-0 block! truncate">{foodEntry.productName}</Item.Title>
+						<Item.Root class="flex-nowrap bg-card py-2 shadow-sm" variant="outline">
+							<Item.Content class="w-px grow gap-0">
+								<Item.Title class="block! w-full! min-w-0 truncate"
+									>{foodEntry.productName}</Item.Title
+								>
 								<Item.Description>
 									{#if foodEntry.servingSize && foodEntry.servingQuantity}
 										{foodEntry.brands ? `${foodEntry.brands} ·` : ''}

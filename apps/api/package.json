@@ -19,7 +19,9 @@
 		"generate": "prisma generate --sql",
 		"push": "prisma db push",
 		"studio": "prisma studio",
-		"seed:off": "bun run prisma/seed/open-food-facts/main.ts"
+		"seed:off": "bun run prisma/seed/open-food-facts/main.ts",
+		"lint": "prettier --check . && eslint .",
+		"format": "prettier --write ."
 	},
 	"dependencies": {
 		"@hono/zod-validator": "^0.7.6",

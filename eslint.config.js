@@ -10,6 +10,7 @@ import svelteConfig from './apps/frontend/svelte.config.js';
 
 const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
 const frontendGitignorePath = path.resolve(import.meta.dirname, 'apps/frontend/.gitignore');
+const apiGitignorePath = path.resolve(import.meta.dirname, 'apps/api/.gitignore');
 
 export default defineConfig(
 	includeIgnoreFile(gitignorePath),
@@ -21,6 +22,10 @@ export default defineConfig(
 			'ios',
 			'src/lib/components/ui'
 		]
+	},
+	{
+		basePath: 'apps/api',
+		ignores: [...includeIgnoreFile(apiGitignorePath).ignores]
 	},
 	js.configs.recommended,
 	...ts.configs.recommended,

@@ -3,78 +3,76 @@
  * Converts nutrition data to canonical units (mg, IU, mcg, etc.)
  */
 
-import type { ProcessedNutritionData, RawNutritionData } from './types.js';
-
 /**
  * Maps of unit conversions by nutrient
  * Key format: "nutrient_baseUnit" -> conversion factor and target unit
  */
 const UNIT_CONVERSIONS: Record<string, { factor: number; unit: string }> = {
 	// Cholesterol conversions
-	'cholesterol_mg': { factor: 1, unit: 'mg' },
-	'cholesterol_g': { factor: 1000, unit: 'mg' },
+	cholesterol_mg: { factor: 1, unit: 'mg' },
+	cholesterol_g: { factor: 1000, unit: 'mg' },
 
 	// Sodium conversions
-	'sodium_mg': { factor: 1, unit: 'mg' },
-	'sodium_g': { factor: 1000, unit: 'mg' },
+	sodium_mg: { factor: 1, unit: 'mg' },
+	sodium_g: { factor: 1000, unit: 'mg' },
 
 	// Vitamin A conversions (to IU)
-	'vitaminA_iu': { factor: 1, unit: 'IU' },
-	'vitaminA_mcg': { factor: 3.33, unit: 'IU' }, // 1 mcg RAE = 3.33 IU
-	'vitaminA_rae': { factor: 3.33, unit: 'IU' },
+	vitaminA_iu: { factor: 1, unit: 'IU' },
+	vitaminA_mcg: { factor: 3.33, unit: 'IU' }, // 1 mcg RAE = 3.33 IU
+	vitaminA_rae: { factor: 3.33, unit: 'IU' },
 
 	// Vitamin D conversions (to IU)
-	'vitaminD_iu': { factor: 1, unit: 'IU' },
-	'vitaminD_mcg': { factor: 40, unit: 'IU' }, // 1 mcg = 40 IU
+	vitaminD_iu: { factor: 1, unit: 'IU' },
+	vitaminD_mcg: { factor: 40, unit: 'IU' }, // 1 mcg = 40 IU
 
 	// Vitamin E conversions (to mg)
-	'vitaminE_mg': { factor: 1, unit: 'mg' },
-	'vitaminE_iu': { factor: 0.67, unit: 'mg' }, // 1 IU = 0.67 mg
+	vitaminE_mg: { factor: 1, unit: 'mg' },
+	vitaminE_iu: { factor: 0.67, unit: 'mg' }, // 1 IU = 0.67 mg
 
 	// Vitamin K conversions (to mcg)
-	'vitaminK_mcg': { factor: 1, unit: 'mcg' },
-	'vitaminK_ng': { factor: 0.001, unit: 'mcg' },
+	vitaminK_mcg: { factor: 1, unit: 'mcg' },
+	vitaminK_ng: { factor: 0.001, unit: 'mcg' },
 
 	// Vitamin C conversions (to mg)
-	'vitaminC_mg': { factor: 1, unit: 'mg' },
-	'vitaminC_g': { factor: 1000, unit: 'mg' },
+	vitaminC_mg: { factor: 1, unit: 'mg' },
+	vitaminC_g: { factor: 1000, unit: 'mg' },
 
 	// B vitamins in mg
-	'vitaminB1_mg': { factor: 1, unit: 'mg' },
-	'vitaminB2_mg': { factor: 1, unit: 'mg' },
-	'vitaminB6_mg': { factor: 1, unit: 'mg' },
-	'vitaminB6_mcg': { factor: 0.001, unit: 'mg' },
+	vitaminB1_mg: { factor: 1, unit: 'mg' },
+	vitaminB2_mg: { factor: 1, unit: 'mg' },
+	vitaminB6_mg: { factor: 1, unit: 'mg' },
+	vitaminB6_mcg: { factor: 0.001, unit: 'mg' },
 
 	// Folate conversions (to mcg)
-	'vitaminB9_mcg': { factor: 1, unit: 'mcg' },
-	'vitaminB9_ng': { factor: 0.001, unit: 'mcg' },
-	'folates_mcg': { factor: 1, unit: 'mcg' },
-	'folates_ng': { factor: 0.001, unit: 'mcg' },
+	vitaminB9_mcg: { factor: 1, unit: 'mcg' },
+	vitaminB9_ng: { factor: 0.001, unit: 'mcg' },
+	folates_mcg: { factor: 1, unit: 'mcg' },
+	folates_ng: { factor: 0.001, unit: 'mcg' },
 
 	// Vitamin B12 conversions (to mcg)
-	'vitaminB12_mcg': { factor: 1, unit: 'mcg' },
-	'vitaminB12_ng': { factor: 0.001, unit: 'mcg' },
-	'vitaminB12_pg': { factor: 0.000001, unit: 'mcg' },
+	vitaminB12_mcg: { factor: 1, unit: 'mcg' },
+	vitaminB12_ng: { factor: 0.001, unit: 'mcg' },
+	vitaminB12_pg: { factor: 0.000001, unit: 'mcg' },
 
 	// Minerals in mg
-	'potassium_mg': { factor: 1, unit: 'mg' },
-	'potassium_g': { factor: 1000, unit: 'mg' },
-	'calcium_mg': { factor: 1, unit: 'mg' },
-	'calcium_g': { factor: 1000, unit: 'mg' },
-	'phosphorus_mg': { factor: 1, unit: 'mg' },
-	'phosphorus_g': { factor: 1000, unit: 'mg' },
-	'iron_mg': { factor: 1, unit: 'mg' },
-	'iron_g': { factor: 1000, unit: 'mg' },
-	'magnesium_mg': { factor: 1, unit: 'mg' },
-	'magnesium_g': { factor: 1000, unit: 'mg' },
-	'zinc_mg': { factor: 1, unit: 'mg' },
-	'zinc_g': { factor: 1000, unit: 'mg' },
-	'copper_mg': { factor: 1, unit: 'mg' },
-	'copper_mcg': { factor: 0.001, unit: 'mg' },
-	'manganese_mg': { factor: 1, unit: 'mg' },
-	'manganese_mcg': { factor: 0.001, unit: 'mg' },
-	'caffeine_mg': { factor: 1, unit: 'mg' },
-	'caffeine_g': { factor: 1000, unit: 'mg' }
+	potassium_mg: { factor: 1, unit: 'mg' },
+	potassium_g: { factor: 1000, unit: 'mg' },
+	calcium_mg: { factor: 1, unit: 'mg' },
+	calcium_g: { factor: 1000, unit: 'mg' },
+	phosphorus_mg: { factor: 1, unit: 'mg' },
+	phosphorus_g: { factor: 1000, unit: 'mg' },
+	iron_mg: { factor: 1, unit: 'mg' },
+	iron_g: { factor: 1000, unit: 'mg' },
+	magnesium_mg: { factor: 1, unit: 'mg' },
+	magnesium_g: { factor: 1000, unit: 'mg' },
+	zinc_mg: { factor: 1, unit: 'mg' },
+	zinc_g: { factor: 1000, unit: 'mg' },
+	copper_mg: { factor: 1, unit: 'mg' },
+	copper_mcg: { factor: 0.001, unit: 'mg' },
+	manganese_mg: { factor: 1, unit: 'mg' },
+	manganese_mcg: { factor: 0.001, unit: 'mg' },
+	caffeine_mg: { factor: 1, unit: 'mg' },
+	caffeine_g: { factor: 1000, unit: 'mg' }
 };
 
 /**
@@ -159,10 +157,7 @@ function convertUnit(
 /**
  * Extract numeric value and handle special cases
  */
-export function parseNutrientValue(
-	rawValue: string | number | undefined,
-	fieldName: string
-): number | null {
+export function parseNutrientValue(rawValue: string | number | undefined): number | null {
 	if (!rawValue || rawValue === '') return null;
 
 	const numVal = typeof rawValue === 'string' ? parseFloat(rawValue) : rawValue;

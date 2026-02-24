@@ -7,27 +7,15 @@ type CalculateActivityCaloriesArgs = {
 };
 
 export function calculateActivityCalories(data: CalculateActivityCaloriesArgs) {
-	const {
-		bodyweight,
-		bodyweightUnit,
-		height,
-		heightUnit,
-		stepCount
-	} = data;
+	const { bodyweight, bodyweightUnit, height, heightUnit, stepCount } = data;
 
 	if (stepCount <= 0) return 0;
 
 	// Convert bodyweight to kg if needed
-	const bodyweightInKg =
-		bodyweightUnit === 'kg'
-			? bodyweight
-			: bodyweight * 0.453592; // lb to kg conversion
+	const bodyweightInKg = bodyweightUnit === 'kg' ? bodyweight : bodyweight * 0.453592; // lb to kg conversion
 
 	// Convert height to cm if needed
-	const heightInCm =
-		heightUnit === 'cm'
-			? height
-			: height * 2.54; // inches to cm conversion
+	const heightInCm = heightUnit === 'cm' ? height : height * 2.54; // inches to cm conversion
 
 	// Calculate stride length based on height (rough estimation)
 	// Formula: stride length (cm) = height (cm) * 0.43

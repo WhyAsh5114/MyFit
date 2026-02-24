@@ -68,6 +68,7 @@ import { myQuery } from '../generated/prisma/sql/myQuery.js';
 
 const results = await prisma.$queryRawTyped(myQuery(params));
 ```
+
 - `pnpm start` - Run compiled app
 - `pnpm lint` - ESLint
 - `pnpm format` - Prettier formatting

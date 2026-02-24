@@ -21,7 +21,7 @@ export const useCreateActivityEntry = () =>
 		},
 
 		onError: (error) => {
-      toast.error(m['unknownErrorOccurred']());
+			toast.error(m['unknownErrorOccurred']());
 			console.error('Failed to create activity entry:', error);
 		}
 	}));

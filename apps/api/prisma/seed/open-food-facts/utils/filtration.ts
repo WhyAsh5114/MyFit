@@ -22,8 +22,10 @@ function hasRequiredMacros(record: ProcessedNutritionData): boolean {
  * Check if record has basic required fields
  */
 function hasRequiredFields(record: ProcessedNutritionData): boolean {
-	return Boolean(record.code && record.code.trim()) &&
-		Boolean(record.productName && record.productName.trim());
+	return (
+		Boolean(record.code && record.code.trim()) &&
+		Boolean(record.productName && record.productName.trim())
+	);
 }
 
 /**
@@ -65,7 +67,10 @@ export function sanitizeRecord(record: ProcessedNutritionData): ProcessedNutriti
 
 		// Data quality metrics
 		completeness: sanitizeValue(record.completeness),
-		uniqueScans: record.uniqueScans !== null && isFinite(record.uniqueScans) && record.uniqueScans >= 0 ? record.uniqueScans : null,
+		uniqueScans:
+			record.uniqueScans !== null && isFinite(record.uniqueScans) && record.uniqueScans >= 0
+				? record.uniqueScans
+				: null,
 
 		// 100g macros (required)
 		energyKcal_100g: sanitizeValue(record.energyKcal_100g),

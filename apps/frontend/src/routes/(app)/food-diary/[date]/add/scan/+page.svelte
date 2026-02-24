@@ -131,23 +131,31 @@
 				<ZapOffIcon />
 			{/if}
 		</Button>
-		
+
 		<svg
-			class="absolute left-1/2 top-[calc(50%+36px)] -translate-x-1/2 -translate-y-1/2 w-48 h-48 pointer-events-none"
+			class="pointer-events-none absolute top-[calc(50%+36px)] left-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2"
 			viewBox="0 0 200 200"
 			xmlns="http://www.w3.org/2000/svg"
 		>
 			<style>
 				@keyframes scan {
-					0% { transform: translateY(-80px); opacity: 0; }
-					50% { opacity: 1; }
-					100% { transform: translateY(80px); opacity: 0; }
+					0% {
+						transform: translateY(-80px);
+						opacity: 0;
+					}
+					50% {
+						opacity: 1;
+					}
+					100% {
+						transform: translateY(80px);
+						opacity: 0;
+					}
 				}
 				.scan-line {
 					animation: scan 2s infinite;
 				}
 			</style>
-			
+
 			<!-- Corner brackets -->
 			<g stroke="currentColor" stroke-width="2" fill="none" class="text-foreground">
 				<!-- Top-left corner -->
@@ -159,9 +167,18 @@
 				<!-- Bottom-right corner -->
 				<path d="M 180 160 L 180 140 M 180 160 L 155 160" />
 			</g>
-			
+
 			<!-- Scanning line -->
-			<line x1="20" y1="100" x2="180" y2="100" stroke="currentColor" stroke-width="2" class="scan-line text-primary" opacity="0.6" />
+			<line
+				x1="20"
+				y1="100"
+				x2="180"
+				y2="100"
+				stroke="currentColor"
+				stroke-width="2"
+				class="scan-line text-primary"
+				opacity="0.6"
+			/>
 		</svg>
 	</div>
 {/if}
@@ -186,7 +203,7 @@
 				</Select.Content>
 			</Select.Root>
 		{/if}
-	<Separator class="my-4" />
+		<Separator class="my-4" />
 		<form class="contents" onsubmit={handleManualCodeSubmit}>
 			<InputGroup.Root>
 				<InputGroup.Addon>
@@ -197,8 +214,8 @@
 					placeholder="Enter code manually"
 					required
 					bind:value={manualCode}
-				disabled={nutritionDataByCode.isFetching}
-			/>
+					disabled={nutritionDataByCode.isFetching}
+				/>
 				<InputGroup.Addon align="inline-end">
 					<InputGroup.Button
 						variant="secondary"

@@ -243,7 +243,7 @@ async function main() {
 						const remainingSeconds = speed > 0 ? remainingBytes / 1024 / 1024 / speed : 0;
 						logProgressWithETA(validRows, bytesRead, fileSize, speed.toFixed(2), remainingSeconds);
 					}
-				} catch (err) {
+				} catch {
 					// Log and skip records that fail processing
 					skippedRows++;
 					continue;
@@ -253,9 +253,12 @@ async function main() {
 
 		try {
 			await pipeline(fileStream, createGunzip(), csv, transform, copy);
-		} catch (err: any) {
+		} catch (err) {
 			// If it's an abort error from our row limit cleanup, it's expected and safe to ignore
 			if (
+				typeof err === 'object' &&
+				err !== null &&
+				'code' in err &&
 				err.code !== 'ERR_STREAM_DESTROYED' &&
 				err.code !== 'ABORT_ERR' &&
 				err.code !== 'ERR_STREAM_PREMATURE_CLOSE'

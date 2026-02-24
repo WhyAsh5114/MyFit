@@ -67,7 +67,8 @@
 								step={0.25}
 								max={2}
 								value={$formData.weeklyCaloricChange / CALORIES_PER_KILOGRAM}
-								onValueChange={(value) => ($formData.weeklyCaloricChange = value * CALORIES_PER_KILOGRAM)}
+								onValueChange={(value) =>
+									($formData.weeklyCaloricChange = value * CALORIES_PER_KILOGRAM)}
 								{...props}
 							/>
 							<span class="text-muted-foreground">{$formData.weeklyCaloricChange} kcal</span>
@@ -101,7 +102,7 @@
 					<Form.Field {form} name={formField}>
 						<Form.Control>
 							{#snippet children({ props })}
-								{@const nutrient = REQUIRED_NUTRIENTS.find(n => n.label === label)}
+								{@const nutrient = REQUIRED_NUTRIENTS.find((n) => n.label === label)}
 								{#if nutrient}
 									<ButtonGroup.Root>
 										<InputGroup.Root class="w-fit">
