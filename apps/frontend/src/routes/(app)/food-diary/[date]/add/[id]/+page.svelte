@@ -42,8 +42,7 @@
 </script>
 
 {#if nutritionDataById.data === undefined || !currentUser.data}
-	<Skeleton class="h-70 w-full" />
-	<Skeleton class="h-65 w-full" />
+	<Skeleton class="h-115 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
 {:else if nutritionDataById.data === null}
 	<Empty.Root>
