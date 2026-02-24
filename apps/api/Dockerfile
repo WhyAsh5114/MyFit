@@ -45,15 +45,11 @@ RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /v
 
 RUN useradd -m -u 1001 -s /sbin/nologin appuser
 
-WORKDIR /build/apps/api
+WORKDIR /build
 
-COPY --from=builder --chown=appuser:appuser /build/node_modules /build/node_modules
-COPY --from=builder --chown=appuser:appuser /build/apps/api/generated ./generated
-COPY --from=builder --chown=appuser:appuser /build/apps/api/prisma ./prisma
-COPY --from=builder --chown=appuser:appuser /build/apps/api/node_modules ./node_modules
-COPY --from=builder --chown=appuser:appuser /build/apps/api/src ./src
-COPY --from=builder --chown=appuser:appuser /build/apps/api/lib ./lib
-COPY --from=builder --chown=appuser:appuser /build/apps/api/package.json ./package.json
+COPY --from=builder --chown=appuser:appuser /build /build
+
+WORKDIR /build/apps/api
 
 USER appuser
 
