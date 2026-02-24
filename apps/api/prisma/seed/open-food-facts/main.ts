@@ -1,4 +1,4 @@
-/// <reference types="node" />
+/// <reference types="bun" />
 
 import fs from 'node:fs';
 import { pipeline } from 'node:stream/promises';
@@ -163,7 +163,7 @@ async function main() {
 
 	const client = new Client({
 		connectionString: process.env.DATABASE_URL,
-		ssl: { rejectUnauthorized: false }
+		ssl: false
 	});
 
 	logInfo('Connecting to database...');
@@ -255,12 +255,22 @@ async function main() {
 			await pipeline(fileStream, createGunzip(), csv, transform, copy);
 		} catch (err: any) {
 			// If it's an abort error from our row limit cleanup, it's expected and safe to ignore
-			if (err.code !== 'ERR_STREAM_DESTROYED' && err.code !== 'ABORT_ERR' && err.code !== 'ERR_STREAM_PREMATURE_CLOSE') {
+			if (
+				err.code !== 'ERR_STREAM_DESTROYED' &&
+				err.code !== 'ABORT_ERR' &&
+				err.code !== 'ERR_STREAM_PREMATURE_CLOSE'
+			) {
 				throw err;
 			}
 		}
 
-		logSuccess('CSV import complete: ' + validRows.toLocaleString() + ' valid rows | ' + skippedRows.toLocaleString() + ' skipped');
+		logSuccess(
+			'CSV import complete: ' +
+				validRows.toLocaleString() +
+				' valid rows | ' +
+				skippedRows.toLocaleString() +
+				' skipped'
+		);
 
 		logInfo('Inserting data into NutritionData table...');
 		const resultInsert = await client.query(INSERT_INTO_NUTRITION_DATA_SQL);

@@ -18,7 +18,8 @@
 		"start": "bun dist/index.js",
 		"generate": "prisma generate --sql",
 		"push": "prisma db push",
-		"studio": "prisma studio"
+		"studio": "prisma studio",
+		"seed:off": "bun run prisma/seed/open-food-facts/main.ts"
 	},
 	"dependencies": {
 		"@hono/zod-validator": "^0.7.6",

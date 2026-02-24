@@ -49,6 +49,7 @@ WORKDIR /build/apps/api
 
 COPY --from=builder --chown=appuser:appuser /build/node_modules /build/node_modules
 COPY --from=builder --chown=appuser:appuser /build/apps/api/generated ./generated
+COPY --from=builder --chown=appuser:appuser /build/apps/api/prisma ./prisma
 COPY --from=builder --chown=appuser:appuser /build/apps/api/node_modules ./node_modules
 COPY --from=builder --chown=appuser:appuser /build/apps/api/src ./src
 COPY --from=builder --chown=appuser:appuser /build/apps/api/lib ./lib
