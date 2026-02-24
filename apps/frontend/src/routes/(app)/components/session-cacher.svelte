@@ -14,6 +14,7 @@
 
 	const session = authClient.useSession();
 	let client = $state<PrismaIDBClient>()!;
+	let creatingUser = $state(false);
 
 	$effect(() => {
 		if (page.url) {
@@ -37,8 +38,10 @@
 			}
 		}
 
-		if ($session.data && !existingUser) {
+		if ($session.data && !existingUser && !creatingUser) {
+			creatingUser = true;
 			await createUserForCurrentSession(client, $session.data);
+			creatingUser = false;
 		}
 	}
 </script>

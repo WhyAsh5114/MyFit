@@ -16,6 +16,7 @@
 	import { goto } from '$app/navigation';
 	import * as m from '$lib/paraglide/messages';
 	import { resolve } from '$app/paths';
+	import { onMount } from 'svelte';
 
 	let email = $state('');
 	let otp = $state('');
@@ -23,7 +24,7 @@
 
 	const authData = authClient.useSession();
 
-	$effect(() => {
+	onMount(() => {
 		if ($authData.isPending) return;
 		if ($authData.data?.user) {
 			toast.warning(m['login.alreadyLoggedIn']());
