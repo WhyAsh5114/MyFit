@@ -6,30 +6,21 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
 	import { dateFormatter } from '$lib/my-utils';
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
-	import { calculateDailyNutritionStats } from '$lib/domain/nutrition/stats';
-	import type { ActivityEntry, FoodEntry } from '@myfit/api/prisma/client';
-	import StackedCaloriesBar from './stacked-calories-bar.svelte';
 	import { useMacroMetricsByDate } from '$lib/features/food-diary/macro-metrics/queries/get-by-date';
 	import { useMacroTargetsByDate } from '$lib/features/food-diary/macro-targets/queries/get-by-date';
+	import type { ActivityEntry, FoodEntry } from '@myfit/api/prisma/client';
+	import StackedCaloriesBar from './stacked-calories-bar.svelte';
+	import { calculateDailyNutritionStats } from '$lib/domain/nutrition/stats';
 
 	type Props = {
 		foodEntries?: FoodEntry[];
 		activityEntries?: ActivityEntry[];
 		selectedDay: CalendarDate;
 		timezone: string;
+		macroMetrics: ReturnType<typeof useMacroMetricsByDate>;
+		macroTargets: ReturnType<typeof useMacroTargetsByDate>;
 	};
-	let { foodEntries, activityEntries, selectedDay, timezone }: Props = $props();
-
-	const currentUser = useCurrentUser();
-	const macroMetrics = useMacroMetricsByDate(() => ({
-		userId: currentUser.data?.id ?? '',
-		date: selectedDay
-	}));
-	const macroTargets = useMacroTargetsByDate(() => ({
-		userId: currentUser.data?.id ?? '',
-		date: selectedDay
-	}));
+	let { foodEntries, activityEntries, selectedDay, timezone, macroMetrics, macroTargets }: Props = $props();
 
 	function changeDay(days: number) {
 		selectedDay = selectedDay.add({ days });

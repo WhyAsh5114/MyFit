@@ -11,12 +11,12 @@
 	type Props = {
 		selectedDay: CalendarDate;
 		userId: string;
+		activityEntriesByDate: ReturnType<typeof useActivityEntriesByDate>;
+		macroMetrics: ReturnType<typeof useMacroMetricsByDate>;
 	};
-	let { selectedDay, userId }: Props = $props();
+	let { selectedDay, userId, activityEntriesByDate, macroMetrics }: Props = $props();
 
 	const activityPreferences = useActivityPreferencesByDate(() => ({ userId, date: selectedDay }));
-	const activityEntriesByDate = useActivityEntriesByDate(() => ({ userId, date: selectedDay }));
-	const macroMetrics = useMacroMetricsByDate(() => ({ userId, date: selectedDay }));
 	const daySteps = useGetDaySteps(() => selectedDay);
 	const upsertDynamicActivityData = useUpsertDynamicActivityData();
 
@@ -72,7 +72,7 @@
 			upsertDynamicActivityData.mutate({
 				id: existing?.id,
 				name: 'Daily steps',
-				performedAt: existing?.performedAt ?? new Date(),
+				performedAt: existing?.performedAt ?? selectedDay.toDate(getLocalTimeZone()),
 				calories: calculateActivityCalories({ ...macroMetrics.data!, stepCount: sample.value }),
 				quantity: sample.value,
 				quantityUnit: 'steps',
