@@ -8,17 +8,22 @@ export const useFoodEntriesByDate = (
 ) =>
 	createQuery(() => {
 		const { userId, date } = getUserIdAndDate();
+		const timezone = getLocalTimeZone();
+
+		const dayStart = date.toDate(timezone);
+		dayStart.setHours(0, 0, 0, 0);
+
+		const dayEnd = date.add({ days: 1 }).toDate(timezone);
+		dayEnd.setHours(0, 0, 0, 0);
+
 		return {
 			queryKey: foodEntryKeys.byDate(userId, date.toString()),
 			queryFn: async () => {
-				const timezone = getLocalTimeZone();
-				const dayAfter = date.add({ days: 1 }).toDate(timezone);
-
 				return await getClient().foodEntry.findMany({
 					where: {
 						eatenAt: {
-							gte: date.toDate(timezone),
-							lt: dayAfter
+							gte: dayStart,
+							lt: dayEnd
 						},
 						userId
 					},
