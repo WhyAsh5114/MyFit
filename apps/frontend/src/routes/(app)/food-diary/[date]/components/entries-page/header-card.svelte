@@ -20,7 +20,8 @@
 		macroMetrics: ReturnType<typeof useMacroMetricsByDate>;
 		macroTargets: ReturnType<typeof useMacroTargetsByDate>;
 	};
-	let { foodEntries, activityEntries, selectedDay, timezone, macroMetrics, macroTargets }: Props = $props();
+	let { foodEntries, activityEntries, selectedDay, timezone, macroMetrics, macroTargets }: Props =
+		$props();
 
 	function changeDay(days: number) {
 		selectedDay = selectedDay.add({ days });
@@ -51,7 +52,7 @@
 	});
 </script>
 
-<div class="flex min-h-13 flex-col gap-4">
+<div class="flex h-24 flex-col gap-4">
 	<div class="flex w-full">
 		<Button size="icon-sm" variant="secondary" onclick={() => changeDay(-1)}>
 			<ChevronLeftIcon />
@@ -68,7 +69,7 @@
 		<a class="w-full" href={resolve(`/food-diary/goals`)}>
 			<StackedCaloriesBar day={selectedDay.toString()} {...dailyNutritionStats} />
 		</a>
-	{:else}
+	{:else if !macroTargets.isLoading && !macroMetrics.isLoading}
 		<a
 			class="w-full text-center text-sm text-muted-foreground underline"
 			href={resolve('/food-diary/goals')}
