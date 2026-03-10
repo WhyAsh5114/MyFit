@@ -12,7 +12,7 @@ export const useMacroTargetsByDate = (
 			queryKey: macroTargetsKeys.byDate(userId, date.toString()),
 			queryFn: async () => {
 				return await getClient().macroTargets.findFirst({
-					where: { userId, effectiveFrom: { gte: date.toString() } },
+					where: { userId, effectiveFrom: { lte: date.toString() } },
 					orderBy: { effectiveFrom: 'desc' }
 				});
 			},

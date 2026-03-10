@@ -15,7 +15,7 @@ export const useActivityPreferencesByDate = (
 				const client = getClient();
 				try {
 					return await client.activityPreferences.findFirst({
-						where: { userId, effectiveFrom: { gte: date.toString() } },
+						where: { userId, effectiveFrom: { lte: date.toString() } },
 						orderBy: { effectiveFrom: 'desc' }
 					});
 				} catch (error) {

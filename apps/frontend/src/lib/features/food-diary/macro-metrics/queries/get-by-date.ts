@@ -12,7 +12,7 @@ export const useMacroMetricsByDate = (
 			queryKey: macroMetricsKeys.byUser(userId),
 			queryFn: async () => {
 				return await getClient().macroMetrics.findFirst({
-					where: { userId, effectiveFrom: { gte: date.toString() } },
+					where: { userId, effectiveFrom: { lte: date.toString() } },
 					orderBy: { effectiveFrom: 'desc' }
 				});
 			},
