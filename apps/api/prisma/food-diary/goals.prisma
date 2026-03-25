@@ -1,0 +1,45 @@
+model MacroTargets {
+  id                  String                @id @default(uuid())
+  effectiveFrom       DateTime              @default(now())
+  proteinG            Float?
+  carbsG              Float?
+  fatG                Float?
+  quantifier          MacroTargetQuantifier
+  weeklyCaloricChange Int
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@unique([userId, effectiveFrom])
+}
+
+model MacroMetrics {
+  id                String     @id @default(uuid())
+  effectiveFrom     DateTime   @default(now())
+  bodyweight        Float
+  bodyweightUnit    WeightUnit
+  height            Float
+  heightUnit        HeightUnit
+  bodyFatPercentage Float
+  age               Int
+  gender            Gender
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@unique([userId, effectiveFrom])
+}
+
+model ActivityPreferences {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  effectiveFrom  DateTime               @default(now())
+  adjustmentType ActivityAdjustmentType
+
+  staticCalories Int?
+
+  @@unique([userId, effectiveFrom])
+}

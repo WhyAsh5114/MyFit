@@ -4,11 +4,11 @@
 // biome-ignore-all lint: generated file
 // @ts-nocheck 
 export interface $DbEnums {
+  PreferredFoodEntryUnit: "g" | "serving"
   MacroTargetQuantifier: "Percentage" | "Absolute"
   Gender: "Male" | "Female"
   WeightUnit: "kg" | "lb"
   HeightUnit: "cm" | "in"
   ActivityAdjustmentType: "Static" | "Dynamic" | "Manual"
-  PreferrredFoodEntryUnit: "g" | "serving"
   ChangeOperation: "create" | "update" | "delete"
 }

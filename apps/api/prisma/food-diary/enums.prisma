@@ -1,0 +1,30 @@
+enum PreferredFoodEntryUnit {
+  g
+  serving
+}
+
+enum MacroTargetQuantifier {
+  Percentage
+  Absolute
+}
+
+enum Gender {
+  Male
+  Female
+}
+
+enum WeightUnit {
+  kg
+  lb
+}
+
+enum HeightUnit {
+  cm
+  in
+}
+
+enum ActivityAdjustmentType {
+  Static
+  Dynamic
+  Manual
+}

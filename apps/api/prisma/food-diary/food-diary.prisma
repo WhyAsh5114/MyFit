@@ -1,42 +1,28 @@
-model MacroTargets {
-  id                  String                @id @default(uuid())
-  effectiveFrom       DateTime              @default(now())
-  proteinG            Float?
-  carbsG              Float?
-  fatG                Float?
-  quantifier          MacroTargetQuantifier
-  weeklyCaloricChange Int
+model ActivityEntry {
+  id              String   @id @default(uuid())
+  name            String
+  performedAt     DateTime
+  calories        Int
+  quantity        Int
+  quantityUnit    String
+  systemGenerated Boolean  @default(false)
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
 }
 
-model MacroMetrics {
-  id                String     @id @default(uuid())
-  effectiveFrom     DateTime   @default(now())
-  bodyweight        Float
-  bodyweightUnit    WeightUnit
-  height            Float
-  heightUnit        HeightUnit
-  bodyFatPercentage Float
-  age               Int
-  gender            Gender
+model Meal {
+  id        String  @id @default(uuid())
+  name      String
+  sortOrder Int
+  active    Boolean @default(true)
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
-}
 
-model ActivityPreferences {
-  id String @id @default(uuid())
+  foodEntries FoodEntry[]
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  effectiveFrom  DateTime               @default(now())
-  adjustmentType ActivityAdjustmentType
-
-  // used if STATIC
-  staticCalories Int?
+  @@unique([userId, name])
 }
 
 model FoodEntry {
@@ -46,20 +32,26 @@ model FoodEntry {
 
   productName   String
   brands        String?
-  preferredUnit PreferrredFoodEntryUnit
-  meal          String?
+  preferredUnit PreferredFoodEntryUnit
 
-  // Serving size metadata
   servingQuantity Float?
   servingSize     String?
 
-  // Required 100g macros
+  meal   Meal?   @relation(fields: [mealId], references: [id])
+  mealId String?
+
+  recipe   Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  // Nutrition snapshot (per 100g)
   energyKcal_100g     Float
   proteinsG_100g      Float
   fatG_100g           Float
   carbohydratesG_100g Float
 
-  // Optional 100g micronutrients
   saturatedFatG_100g       Float?
   unsaturatedFatG_100g     Float?
   monounsaturatedFatG_100g Float?
@@ -92,22 +84,74 @@ model FoodEntry {
   copperMg_100g            Float?
   manganeseMg_100g         Float?
   caffeineMg_100g          Float?
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
 }
 
-model ActivityEntry {
-  id              String   @id @default(uuid())
-  name            String
-  performedAt     DateTime
-  calories        Int
-  quantity        Int
-  quantityUnit    String
-  systemGenerated Boolean  @default(false)
+model Recipe {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
+
+  ingredients RecipeIngredient[]
+  foodEntries FoodEntry[]
+
+  @@unique([userId, name])
+}
+
+model RecipeIngredient {
+  id String @id @default(uuid())
+
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId String
+
+  productName   String
+  brands        String?
+  quantityG     Float
+  preferredUnit PreferredFoodEntryUnit
+
+  servingQuantity Float?
+  servingSize     String?
+
+  // Nutrition snapshot (per 100g)
+  energyKcal_100g     Float
+  proteinsG_100g      Float
+  fatG_100g           Float
+  carbohydratesG_100g Float
+
+  saturatedFatG_100g       Float?
+  unsaturatedFatG_100g     Float?
+  monounsaturatedFatG_100g Float?
+  polyunsaturatedFatG_100g Float?
+  transFatG_100g           Float?
+  cholesterolMg_100g       Float?
+  sugarsG_100g             Float?
+  polyolsG_100g            Float?
+  fiberG_100g              Float?
+  saltG_100g               Float?
+  sodiumMg_100g            Float?
+  alcoholG_100g            Float?
+  vitaminAIU_100g          Float?
+  vitaminDIU_100g          Float?
+  vitaminEMg_100g          Float?
+  vitaminKMcg_100g         Float?
+  vitaminCMg_100g          Float?
+  vitaminB1Mg_100g         Float?
+  vitaminB2Mg_100g         Float?
+  vitaminB6Mg_100g         Float?
+  vitaminB9Mcg_100g        Float?
+  folatesMcg_100g          Float?
+  vitaminB12Mcg_100g       Float?
+  potassiumMg_100g         Float?
+  calciumMg_100g           Float?
+  phosphorusMg_100g        Float?
+  ironMg_100g              Float?
+  magnesiumMg_100g         Float?
+  zincMg_100g              Float?
+  copperMg_100g            Float?
+  manganeseMg_100g         Float?
+  caffeineMg_100g          Float?
 }
 
 model NutritionData {
@@ -120,17 +164,15 @@ model NutritionData {
   completeness Float
   uniqueScans  Int
 
-  // Serving size metadata
   servingQuantity Float?
   servingSize     String?
 
-  // Required 100g macros
+  // Nutrition data (per 100g)
   energyKcal_100g     Float
   proteinsG_100g      Float
   fatG_100g           Float
   carbohydratesG_100g Float
 
-  // Optional 100g micronutrients
   saturatedFatG_100g       Float?
   unsaturatedFatG_100g     Float?
   monounsaturatedFatG_100g Float?
@@ -168,35 +210,4 @@ model NutritionData {
   @@index([brands(ops: raw("gin_trgm_ops"))], map: "nutrition_brands_trgm_idx", type: Gin)
   @@index([productName(ops: raw("gin_trgm_ops"))], map: "nutrition_product_name_trgm_idx", type: Gin)
   @@index([searchVector], map: "nutrition_search_vector_idx", type: Gin)
-}
-
-enum MacroTargetQuantifier {
-  Percentage
-  Absolute
-}
-
-enum Gender {
-  Male
-  Female
-}
-
-enum WeightUnit {
-  kg
-  lb
-}
-
-enum HeightUnit {
-  cm
-  in
-}
-
-enum ActivityAdjustmentType {
-  Static
-  Dynamic
-  Manual
-}
-
-enum PreferrredFoodEntryUnit {
-  g
-  serving
 }

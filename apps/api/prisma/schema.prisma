@@ -19,13 +19,13 @@ datasource db {
 }
 
 model User {
-  id                  String               @id
+  id                  String                @id
   name                String
   email               String
-  emailVerified       Boolean              @default(false)
+  emailVerified       Boolean               @default(false)
   image               String?
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
   isAnonymous         Boolean?
   sessions            Session[]
   accounts            Account[]
@@ -34,7 +34,8 @@ model User {
   activityPreferences ActivityPreferences[]
   foodEntries         FoodEntry[]
   activityEntries     ActivityEntry[]
-  foodDiaryMeals      String[]             @default(["Breakfast", "Lunch", "Dinner", "Snacks"])
+  meals               Meal[]
+  recipes             Recipe[]
 
   @@unique([email])
   @@map("user")
