@@ -279,6 +279,16 @@ async function main() {
 		const resultInsert = await client.query(INSERT_INTO_NUTRITION_DATA_SQL);
 		logSuccess(`Inserted ${resultInsert.rowCount} records into NutritionData`);
 
+		logInfo('Backfilling searchVector for any rows with empty tsvector...');
+		const resultVector = await client.query(`
+			UPDATE "NutritionData"
+			SET "searchVector" =
+				setweight(to_tsvector('english', unaccent(coalesce("productName", ''))), 'A') ||
+				setweight(to_tsvector('english', unaccent(coalesce(brands, ''))), 'B')
+			WHERE "searchVector" = ''::tsvector
+		`);
+		logSuccess(`Updated searchVector for ${resultVector.rowCount} records`);
+
 		logInfo('Cleaning up staging table...');
 		await client.query(DROP_STAGING_TABLE_SQL);
 		logSuccess('Staging table dropped');

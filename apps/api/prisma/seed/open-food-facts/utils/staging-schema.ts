@@ -61,6 +61,8 @@ export const DROP_STAGING_TABLE_SQL = 'DROP TABLE IF EXISTS nutrition_data_stagi
 
 /**
  * Insert directly into NutritionData table from staging
+ * Generates searchVector from product_name (weight A) and brands (weight B)
+ * using unaccent to normalize diacritics.
  */
 export const INSERT_INTO_NUTRITION_DATA_SQL = `
 INSERT INTO "NutritionData" (
@@ -68,6 +70,7 @@ INSERT INTO "NutritionData" (
   code,
   "productName",
   brands,
+  "searchVector",
   "servingQuantity",
   "servingSize",
   "completeness",
@@ -114,6 +117,8 @@ SELECT
   code,
   product_name,
   brands,
+  setweight(to_tsvector('english', unaccent(coalesce(product_name, ''))), 'A') ||
+    setweight(to_tsvector('english', unaccent(coalesce(brands, ''))), 'B'),
   serving_quantity,
   serving_size,
   completeness,
