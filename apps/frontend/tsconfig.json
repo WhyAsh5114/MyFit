@@ -1,5 +1,6 @@
 {
 	"extends": "./.svelte-kit/tsconfig.json",
+	"exclude": ["src/lib/components/ui"],
 	"compilerOptions": {
 		"rewriteRelativeImportExtensions": true,
 		"allowJs": true,

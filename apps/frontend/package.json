@@ -29,7 +29,7 @@
 		"@tanstack/svelte-query-devtools": "^6.0.4",
 		"@types/culori": "^4.0.1",
 		"@types/d3-scale": "^4.0.9",
-		"@types/node": "^20.19.33",
+		"@types/node": "^25.3.0",
 		"bits-ui": "^2.16.2",
 		"clsx": "^2.1.1",
 		"dotenv": "^17.3.1",
