@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 /**
  * Logging utilities for the seed script
  */
@@ -62,7 +64,7 @@ export function logDownloadProgress(current: number, total: number, speed: strin
 export function logBanner(title: string): void {
 	console.log();
 	console.log(chalk.cyan.bold('╔════════════════════════════════════════╗'));
-	console.log(chalk.cyan.bold(`║   ${title.padEnd(36)}   ║`));
+	console.log(chalk.cyan.bold(`║   ${title.padEnd(34)}   ║`));
 	console.log(chalk.cyan.bold('╚════════════════════════════════════════╝'));
 	console.log();
 }
@@ -70,7 +72,7 @@ export function logBanner(title: string): void {
 export function logSuccessBanner(title: string): void {
 	console.log();
 	console.log(chalk.green.bold('╔════════════════════════════════════════╗'));
-	console.log(chalk.green.bold(`║   ${title.padEnd(36)}   ║`));
+	console.log(chalk.green.bold(`║   ${title.padEnd(34)}   ║`));
 	console.log(chalk.green.bold('╚════════════════════════════════════════╝'));
 	console.log();
 }
