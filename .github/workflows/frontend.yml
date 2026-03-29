@@ -1,0 +1,41 @@
+name: Frontend CI
+
+on: push
+
+jobs:
+  ci:
+    name: Lint / Check / Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma clients
+        run: |
+          rm -rf apps/api/generated/prisma
+          pnpm --filter @myfit/api exec prisma generate
+          git checkout -- apps/api/generated/prisma/sql
+        env:
+          DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
+
+      - name: Generate Paraglide messages
+        run: pnpm --filter @myfit/frontend exec paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide
+
+      - name: Lint & format check
+        run: pnpm --filter @myfit/frontend run lint
+
+      - name: Type check
+        run: pnpm --filter @myfit/frontend run check
+
+      - name: Build
+        run: pnpm --filter @myfit/frontend run build

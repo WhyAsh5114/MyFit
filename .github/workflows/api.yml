@@ -1,0 +1,37 @@
+name: API CI
+
+on: push
+
+jobs:
+  ci:
+    name: Lint / Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma clients
+        run: |
+          rm -rf apps/api/generated/prisma
+          pnpm --filter @myfit/api exec prisma generate
+          git checkout -- apps/api/generated/prisma/sql
+        env:
+          DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
+
+      - name: Lint & format check
+        run: pnpm --filter @myfit/api run lint
+
+      - name: Build
+        run: pnpm --filter @myfit/api run build

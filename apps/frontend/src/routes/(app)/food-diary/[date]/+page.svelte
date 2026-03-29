@@ -50,7 +50,12 @@
 </script>
 
 {#if currentUser.data?.id}
-	<SyncHealthData {selectedDay} userId={currentUser.data?.id} {activityEntriesByDate} {macroMetrics} />
+	<SyncHealthData
+		{selectedDay}
+		userId={currentUser.data?.id}
+		{activityEntriesByDate}
+		{macroMetrics}
+	/>
 {/if}
 
 <HeaderCard
