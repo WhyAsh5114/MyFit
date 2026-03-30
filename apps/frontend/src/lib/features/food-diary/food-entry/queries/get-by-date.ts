@@ -27,7 +27,8 @@ export const useFoodEntriesByDate = (
 						},
 						userId
 					},
-					orderBy: { eatenAt: 'asc' }
+					orderBy: { eatenAt: 'asc' },
+					include: { meal: true }
 				});
 			},
 			enabled: !!userId && !!date

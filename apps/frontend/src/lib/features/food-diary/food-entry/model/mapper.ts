@@ -17,9 +17,5 @@ export function foodEntryToFoodEntryFormSchema(
 	const now = new Date();
 	eatenAt.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
 
-	return {
-		...foodEntry,
-		eatenAt,
-		meal
-	};
+	return { ...foodEntry, eatenAt };
 }
