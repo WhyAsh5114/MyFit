@@ -38,11 +38,24 @@ export async function redirectToLogin(client: PrismaIDBClient, url: URL) {
 	return toast.info('Please login to continue');
 }
 
+const DEFAULT_MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
+
 export async function createUserForCurrentSession(
 	client: PrismaIDBClient,
 	sessionData: AuthSessionData
 ) {
 	if (sessionData?.user) {
 		await client.user.create({ data: sessionData.user }, { addToOutbox: false });
+
+		// Seed default meals for brand new users (existing users have a name set)
+		if (sessionData.user.name.trim() === '') {
+			await Promise.all(
+				DEFAULT_MEALS.map((name, index) =>
+					client.meal.create({
+						data: { name, sortOrder: index, userId: sessionData.user.id }
+					})
+				)
+			);
+		}
 	}
 }
