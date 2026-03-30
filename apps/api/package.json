@@ -13,7 +13,7 @@
 		"./enums": "./generated/prisma-idb/enums.ts"
 	},
 	"scripts": {
-		"dev": "bun run src/index.ts",
+		"dev": "bun --watch run src/index.ts",
 		"build": "bun build src/index.ts --outdir dist --target bun",
 		"start": "bun dist/index.js",
 		"generate": "prisma generate --sql",
@@ -25,7 +25,7 @@
 	},
 	"dependencies": {
 		"@hono/zod-validator": "^0.7.6",
-		"@prisma-idb/idb-client-generator": "^0.34.1",
+		"@prisma-idb/idb-client-generator": "^0.35.1",
 		"@prisma/adapter-pg": "^7.3.0",
 		"@prisma/client": "^7.3.0",
 		"better-auth": "^1.4.18",
