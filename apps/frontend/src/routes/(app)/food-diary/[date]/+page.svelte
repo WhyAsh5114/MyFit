@@ -11,6 +11,7 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import ActivityEntries from './components/entries-page/activity-entries.svelte';
 	import SyncHealthData from './components/entries-page/sync-health-data.svelte';
+	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
 
 	const timezone = getLocalTimeZone();
 	const currentUser = useCurrentUser();
@@ -27,6 +28,8 @@
 		}
 		return today(timezone);
 	});
+
+	const meals = useMeals(() => currentUser.data?.id ?? '');
 
 	const foodEntriesByDate = useFoodEntriesByDate(() => ({
 		userId: currentUser.data?.id ?? '',
@@ -68,10 +71,7 @@
 />
 <ScrollArea class="flex h-px grow">
 	<div class="flex h-full flex-col gap-2">
-		<FoodEntries
-			foodEntries={foodEntriesByDate.data}
-			meals={currentUser.data?.foodDiaryMeals ?? []}
-		/>
+		<FoodEntries foodEntries={foodEntriesByDate.data} meals={meals.data} />
 		<ActivityEntries activityEntries={activityEntriesByDate.data} />
 	</div>
 </ScrollArea>

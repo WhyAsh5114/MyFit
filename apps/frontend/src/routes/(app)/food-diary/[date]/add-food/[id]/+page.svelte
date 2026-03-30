@@ -21,8 +21,10 @@
 	import { goto } from '$app/navigation';
 	import { Spinner } from '$lib/components/ui/spinner';
 	import { nutritionDataToFoodEntryFormData } from '$lib/features/food-diary/nutrition-data/model/mapper';
+	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
 
 	const currentUser = useCurrentUser();
+	const meals = useMeals(() => currentUser.data?.id ?? '');
 	const nutritionDataById = useNutritionDataById(() => page.params.id ?? '');
 
 	const createFoodEntry = useCreateFoodEntry();
@@ -41,7 +43,7 @@
 	}
 </script>
 
-{#if nutritionDataById.data === undefined || !currentUser.data}
+{#if nutritionDataById.data === undefined || meals.data === undefined || !currentUser.data}
 	<Skeleton class="h-115 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
 {:else if nutritionDataById.data === null}
@@ -80,7 +82,7 @@
 		allowProductEdit={false}
 		formId="create-food-entry-form"
 		onSubmit={handleSubmit}
-		meals={currentUser.data.foodDiaryMeals}
+		meals={meals.data}
 	>
 		{#snippet submit()}
 			<Button

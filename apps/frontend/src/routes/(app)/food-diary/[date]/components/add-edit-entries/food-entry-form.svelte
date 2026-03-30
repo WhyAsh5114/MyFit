@@ -26,6 +26,7 @@
 	import type { Snippet } from 'svelte';
 	import { round } from '$lib/my-utils';
 	import { cn } from '$lib/utils';
+	import type { Meal } from '@myfit/api/prisma/client';
 
 	type Props = {
 		initialData?: FoodEntryFormSchema;
@@ -33,7 +34,7 @@
 		onSubmit: (data: FoodEntryFormSchema) => Promise<void>;
 		submit: Snippet<[{ form: SuperForm<FoodEntryFormSchema> }]>;
 		allowProductEdit: boolean;
-		meals: string[];
+		meals: Meal[];
 	};
 	let { initialData, onSubmit, submit, allowProductEdit, formId, meals }: Props = $props();
 
@@ -193,7 +194,7 @@
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
-			<Form.Field {form} name="meal" class="col-span-full">
+			<Form.Field {form} name="mealId" class="col-span-full">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>
@@ -202,19 +203,19 @@
 						</Form.Label>
 						<Select.Root
 							type="single"
-							value={$formData.meal ?? undefined}
-							onValueChange={(value) => ($formData.meal = value === '' ? null : value)}
+							value={$formData.mealId ?? undefined}
+							onValueChange={(value) => ($formData.mealId = value === '' ? null : value)}
 							allowDeselect
 							{...props}
 						>
 							<Select.Trigger class="w-full">
-								{$formData.meal ?? 'None'}
+								{meals.find((meal) => meal.id === $formData.mealId)?.name ?? 'None'}
 							</Select.Trigger>
 							<Select.Content>
 								<Select.Group>
-									{#each meals as meal (meal)}
-										<Select.Item value={meal} label={meal}>
-											{meal}
+									{#each meals as meal (meal.id)}
+										<Select.Item value={meal.id} label={meal.name}>
+											{meal.name}
 										</Select.Item>
 									{/each}
 								</Select.Group>

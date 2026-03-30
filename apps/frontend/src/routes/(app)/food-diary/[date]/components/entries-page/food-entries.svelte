@@ -1,29 +1,25 @@
 <script lang="ts">
 	import { round } from '$lib/my-utils';
 	import { PlusIcon } from '@lucide/svelte';
-	import type { FoodEntry } from '@myfit/api/prisma/client';
+	import type { Meal, Prisma } from '@myfit/api/prisma/client';
 	import * as Item from '$lib/components/ui/item/index.js';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { cn } from '$lib/utils';
 
-	type Props = {
-		foodEntries?: FoodEntry[];
-		meals: string[];
-	};
-	let { foodEntries, meals }: Props = $props();
+	type FoodEntryWithMeal = Prisma.FoodEntryGetPayload<{ include: { meal: true } }>;
+	let { foodEntries, meals = [] }: { foodEntries?: FoodEntryWithMeal[]; meals?: Meal[] } = $props();
 
-	function groupedFoodEntriesByMeal(foodEntries?: FoodEntry[]) {
-		const groups: { meal: string | null; mealLabel: string; entries: FoodEntry[] }[] = meals.map(
-			(meal) => ({
+	function groupedFoodEntriesByMeal(foodEntries?: FoodEntryWithMeal[]) {
+		const groups: { meal: Meal | null; mealLabel: string; entries: FoodEntryWithMeal[] }[] =
+			meals.map((meal) => ({
 				meal,
-				mealLabel: meal,
+				mealLabel: meal.name,
 				entries: []
-			})
-		);
+			}));
 
 		for (const entry of foodEntries ?? []) {
-			const mealLabel = entry.meal ?? 'No meal';
+			const mealLabel = entry.meal?.name ?? 'No meal';
 			const existingGroup = groups.find((g) => g.mealLabel === mealLabel);
 
 			if (existingGroup) {
@@ -40,7 +36,7 @@
 		return groups;
 	}
 
-	function getGroupSummary(group: { meal: string | null; entries: FoodEntry[] }) {
+	function getGroupSummary(group: { entries: FoodEntryWithMeal[] }) {
 		const calories = group.entries.reduce(
 			(sum, entry) => sum + entry.energyKcal_100g * (entry.quantityG / 100),
 			0
@@ -72,7 +68,7 @@
 			>
 				{#snippet child({ props })}
 					<a
-						href={resolve(`/food-diary/${page.params.date}/add-food?meal=${group.meal ?? ''}`)}
+						href={resolve(`/food-diary/${page.params.date}/add-food?meal=${group.meal?.name ?? ''}`)}
 						{...props}
 					>
 						<Item.Content>

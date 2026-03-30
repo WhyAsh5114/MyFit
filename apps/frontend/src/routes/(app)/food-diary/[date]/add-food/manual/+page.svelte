@@ -12,8 +12,10 @@
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
 
 	const currentUser = useCurrentUser();
+	const meals = useMeals(() => currentUser.data?.id ?? '');
 	const createFoodEntry = useCreateFoodEntry();
 
 	async function handleSubmit(data: FoodEntryFormSchema) {
@@ -30,7 +32,7 @@
 	}
 </script>
 
-{#if !currentUser.data}
+{#if !currentUser.data || !meals.data}
 	<Skeleton class="h-70 w-full" />
 	<Skeleton class="h-65 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
@@ -39,7 +41,7 @@
 		allowProductEdit
 		formId="create-food-entry-form"
 		onSubmit={handleSubmit}
-		meals={currentUser.data.foodDiaryMeals}
+		meals={meals.data}
 	>
 		{#snippet submit()}
 			<Button

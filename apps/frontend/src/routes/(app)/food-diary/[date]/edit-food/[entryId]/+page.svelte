@@ -23,8 +23,10 @@
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
 	import { foodEntryToFoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/mapper';
 	import { useDeleteFoodEntry } from '$lib/features/food-diary/food-entry/mutations/delete';
+	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
 
 	const currentUser = useCurrentUser();
+	const meals = useMeals(() => currentUser.data?.id ?? '');
 	const foodEntryById = useFoodEntryById(() => ({
 		userId: currentUser.data?.id ?? '',
 		id: page.params.entryId ?? ''
@@ -62,7 +64,7 @@
 	}
 </script>
 
-{#if foodEntryById.data === undefined || !currentUser.data}
+{#if foodEntryById.data === undefined || meals.data === undefined || !currentUser.data}
 	<Skeleton class="h-134 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
 {:else if foodEntryById.data === null}
@@ -97,7 +99,7 @@
 		allowProductEdit
 		formId="edit-food-entry-form"
 		onSubmit={handleSubmit}
-		meals={currentUser.data.foodDiaryMeals}
+		meals={meals.data}
 	>
 		{#snippet submit()}
 			<div class="mt-auto grid grid-cols-2 gap-2">

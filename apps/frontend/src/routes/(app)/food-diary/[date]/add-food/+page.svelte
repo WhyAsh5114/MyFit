@@ -13,8 +13,10 @@
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
+	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
 
 	const currentUser = useCurrentUser();
+	const meals = useMeals(() => currentUser.data?.id ?? '');
 
 	let search = $state(page.url.searchParams.get('search') ?? '');
 	const debounced = new Debounced(() => search, 500);
@@ -58,9 +60,9 @@
 						: params.get('meal')}
 				</Select.Trigger>
 				<Select.Content align="end">
-					{#each currentUser.data?.foodDiaryMeals as meal (meal)}
-						<Select.Item value={meal}>
-							{meal}
+					{#each meals.data ?? [] as meal (meal.name)}
+						<Select.Item value={meal.name}>
+							{meal.name}
 						</Select.Item>
 					{/each}
 					<Select.Item value="">No meal</Select.Item>
