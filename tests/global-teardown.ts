@@ -1,3 +1,5 @@
+import { config } from 'dotenv';
+config();
 import { prisma } from '../src/lib/prisma';
 import type { UserData } from './global-setup';
 

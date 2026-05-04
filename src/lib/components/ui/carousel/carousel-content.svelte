@@ -4,7 +4,7 @@
 	import { getEmblaContext } from './context.js';
 	import { cn } from '$lib/utils.js';
 
-	type $$Props = HTMLAttributes<HTMLDivElement>;
+	type $$Props = HTMLAttributes<HTMLDivElement> & { class?: string | null | undefined };
 
 	let className: string | undefined | null = undefined;
 	export { className as class };

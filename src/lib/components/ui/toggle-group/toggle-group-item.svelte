@@ -4,7 +4,7 @@
 	import { cn } from '$lib/utils.js';
 	import { toggleVariants } from '$lib/components/ui/toggle/index.js';
 
-	type $$Props = ToggleGroupPrimitive.ItemProps & ToggleVariants;
+	type $$Props = ToggleGroupPrimitive.ItemProps & ToggleVariants & { class?: string | null | undefined };
 
 	let className: string | undefined | null = undefined;
 
