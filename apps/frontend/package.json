@@ -37,6 +37,7 @@
 		"layerchart": "2.0.0-next.43",
 		"svelte": "^5.53.3",
 		"svelte-check": "^4.4.3",
+		"svelte-dnd-action": "^0.9.69",
 		"svelte-sonner": "^1.0.7",
 		"sveltekit-superforms": "^2.30.0",
 		"tailwind-merge": "^3.5.0",
