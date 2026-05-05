@@ -19,6 +19,7 @@ export default [
 	},
 	{
 		rules: {
+			'svelte/state-referenced-locally': 'off',
 			'@typescript-eslint/no-unused-vars': [
 				'error',
 				{

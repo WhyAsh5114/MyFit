@@ -8,12 +8,14 @@
 		"build": "vite build",
 		"preview": "vite preview --host",
 		"test": "playwright test",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --compiler-warnings \"state_referenced_locally:ignore\"",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch --compiler-warnings \"state_referenced_locally:ignore\"",
 		"format": "prettier --write .",
 		"postinstall": "prisma generate",
 		"lint": "eslint . && prettier --check .",
-		"release": "release-it"
+		"release": "release-it",
+		"create-user": "tsx src/lib/utils/userCreation.ts",
+		"ci:full": "pnpm format && pnpm lint && pnpm check && pnpm test"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.4",
@@ -55,6 +57,7 @@
 		"svelte-sonner": "^0.3.28",
 		"tailwindcss": "^3.4.4",
 		"tslib": "^2.6.3",
+		"tsx": "^4.21.0",
 		"typescript": "^5.5.3",
 		"typescript-eslint": "^8.0.0",
 		"unplugin-icons": "^22.0.0",
@@ -100,7 +103,13 @@
 			"ajv@8": "8.20.0",
 			"brace-expansion@1": "1.1.14",
 			"brace-expansion@2": "2.0.3",
-			"yaml@1": "1.10.3"
+			"yaml@1": "1.10.3",
+			"conventional-commits-parser": ">=6.4.0"
+		},
+		"peerDependencyRules": {
+			"allowedVersions": {
+				"@melt-ui/svelte>svelte": "5"
+			}
 		}
 	},
 	"dependencies": {
