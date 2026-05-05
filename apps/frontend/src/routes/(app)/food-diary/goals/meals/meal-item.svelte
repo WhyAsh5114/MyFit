@@ -17,8 +17,14 @@
 		onDelete?: () => void;
 	};
 
-	let { name, class: className, gripAttachment, inputProps = {}, onchange, onDelete }: Props =
-		$props();
+	let {
+		name,
+		class: className,
+		gripAttachment,
+		inputProps = {},
+		onchange,
+		onDelete
+	}: Props = $props();
 </script>
 
 <Item.Root class={cn('bg-card p-2', className)}>

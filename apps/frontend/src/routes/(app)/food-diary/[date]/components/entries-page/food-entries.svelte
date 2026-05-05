@@ -68,7 +68,9 @@
 			>
 				{#snippet child({ props })}
 					<a
-						href={resolve(`/food-diary/${page.params.date}/add-food?meal=${group.meal?.name ?? ''}`)}
+						href={resolve(
+							`/food-diary/${page.params.date}/add-food?meal=${group.meal?.name ?? ''}`
+						)}
 						{...props}
 					>
 						<Item.Content>
