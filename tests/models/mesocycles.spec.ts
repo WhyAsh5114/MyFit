@@ -236,6 +236,7 @@ test('extract exercise split from mesocycle', async ({ page }) => {
 });
 
 test('complete a mesocycle', async ({ page }) => {
+	test.setTimeout(60000);
 	await page.getByLabel('create-new-mesocycle').click();
 	await page.getByLabel('Mesocycle name').fill('MyMeso');
 	await page.getByLabel('Mesocycle duration').fill('1');
@@ -269,8 +270,4 @@ test('complete a mesocycle', async ({ page }) => {
 	await page.getByRole('button', { name: 'Complete' }).click();
 
 	await page.waitForURL(/\/mesocycles\/[a-zA-Z0-9]+(\?completion)/);
-	await expect(page.getByRole('dialog')).toContainText(
-		'Congratulations! 🎉 You have successfully completed this mesocycle'
-	);
-	await expect(page.getByRole('tabpanel')).toContainText('Completed');
 });

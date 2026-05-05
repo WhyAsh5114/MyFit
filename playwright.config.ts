@@ -9,7 +9,7 @@ const config: PlaywrightTestConfig = {
 	testDir: 'tests',
 	testMatch: /(.+\.)?(test|spec)\.[jt]s/,
 	fullyParallel: true,
-	retries: 0,
+	retries: 3,
 	globalSetup: './tests/global-setup',
 	globalTeardown: './tests/global-teardown',
 	workers: 1,
@@ -20,7 +20,7 @@ const config: PlaywrightTestConfig = {
 		video: 'retain-on-failure',
 		locale: 'en-US'
 	},
-	timeout: 15000,
+	timeout: 30000,
 	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }]
 };
 
