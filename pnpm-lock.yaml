@@ -193,8 +193,8 @@ importers:
         specifier: ^0.9.49
         version: 0.9.55(svelte@5.55.5(@typescript-eslint/types@8.21.0))
       svelte-sonner:
-        specifier: ^0.3.28
-        version: 0.3.28(svelte@5.55.5(@typescript-eslint/types@8.21.0))
+        specifier: ^1.1.1
+        version: 1.1.1(svelte@5.55.5(@typescript-eslint/types@8.21.0))
       tailwindcss:
         specifier: ^3.4.4
         version: 3.4.17
@@ -4205,6 +4205,11 @@ packages:
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
 
+  runed@0.28.0:
+    resolution: {integrity: sha512-k2xx7RuO9hWcdd9f+8JoBeqWtYrm5CALfgpkg2YDB80ds/QE4w0qqu34A7fqiAwiBBSBQOid7TLxwxVC27ymWQ==}
+    peerDependencies:
+      svelte: ^5.7.0
+
   sade@1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
     engines: {node: '>=6'}
@@ -4449,10 +4454,10 @@ packages:
   svelte-infinite-loading@1.4.0:
     resolution: {integrity: sha512-Jo+f/yr/HmZQuIiiKKzAHVFXdAUWHW2RBbrcQTil8JVk1sCm/riy7KTJVzjBgQvHasrFQYKF84zvtc9/Y4lFYg==}
 
-  svelte-sonner@0.3.28:
-    resolution: {integrity: sha512-K3AmlySeFifF/cKgsYNv5uXqMVNln0NBAacOYgmkQStLa/UoU0LhfAACU6Gr+YYC8bOCHdVmFNoKuDbMEsppJg==}
+  svelte-sonner@1.1.1:
+    resolution: {integrity: sha512-5cd3p7wa4cq0NsqslMwdlPb7x1JglEZ/GKrLePWNr5bCxR1nagAVrY01FRFrXfUGs41miLt3C327+8XJo5BzZw==}
     peerDependencies:
-      svelte: ^3.0.0 || ^4.0.0 || ^5.0.0-next.1
+      svelte: ^5.0.0
 
   svelte@5.55.5:
     resolution: {integrity: sha512-2uCs/LZ9us+AktdzYJM8OcxQ8qnPS1kpaO7syGT/MgO+6Qr1Ybl+TqPq+97u7PHqmmMlye5ZkoyXONy5mjjAbw==}
@@ -8893,6 +8898,11 @@ snapshots:
     dependencies:
       queue-microtask: 1.2.3
 
+  runed@0.28.0(svelte@5.55.5(@typescript-eslint/types@8.21.0)):
+    dependencies:
+      esm-env: 1.2.2
+      svelte: 5.55.5(@typescript-eslint/types@8.21.0)
+
   sade@1.8.1:
     dependencies:
       mri: 1.2.0
@@ -9180,8 +9190,9 @@ snapshots:
 
   svelte-infinite-loading@1.4.0: {}
 
-  svelte-sonner@0.3.28(svelte@5.55.5(@typescript-eslint/types@8.21.0)):
+  svelte-sonner@1.1.1(svelte@5.55.5(@typescript-eslint/types@8.21.0)):
     dependencies:
+      runed: 0.28.0(svelte@5.55.5(@typescript-eslint/types@8.21.0))
       svelte: 5.55.5(@typescript-eslint/types@8.21.0)
 
   svelte@5.55.5(@typescript-eslint/types@8.21.0):
