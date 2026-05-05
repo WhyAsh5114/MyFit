@@ -5,7 +5,7 @@
 	import Loader from 'virtual:icons/lucide/loader';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Button } from '$lib/components/ui/button';
-	import { QuotesDisplayMode } from '@prisma/client';
+	import { QuotesDisplayMode } from '$lib/utils/prismaEnums';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 
 	interface Props {

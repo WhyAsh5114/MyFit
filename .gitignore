@@ -21,3 +21,4 @@ apps
 src/lib/generated/prisma
 .turbo
 todo.md
+.playwright-cli

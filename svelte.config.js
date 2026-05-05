@@ -21,7 +21,7 @@ const config = {
 		serviceWorker: { register: false },
 		files: { serviceWorker: 'src/service-worker.ts' },
 		alias: { '.prisma/client/index-browser': require.resolve('@prisma/client/index-browser') }
-	}
+	},
 };
 
 export default config;

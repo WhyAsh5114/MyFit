@@ -27,7 +27,8 @@
 		items: itemList,
 		flipDurationMs: 200,
 		dropTargetClasses: ['border-none'],
-		dropTargetStyle: {}
+		dropTargetStyle: {},
+		autoAriaDisabled: true
 	}}
 >
 	{#each itemList as exercise, idx (exercise.name)}

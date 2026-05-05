@@ -12,7 +12,8 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { trpc } from '$lib/trpc/client';
 	import { convertCamelCaseToNormal } from '$lib/utils';
-	import { ChangeType, MuscleGroup, SetType, type Mesocycle } from '@prisma/client';
+	import { ChangeType, MuscleGroup, SetType } from '$lib/utils/prismaEnums';
+	import type { Mesocycle } from '@prisma/client';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import CheckIcon from 'virtual:icons/lucide/check';
@@ -355,25 +356,27 @@
 				</div>
 			</div>
 			<div class="flex w-full flex-col gap-1.5">
-				<Select.Root
-					name="exercise-set-type"
-					onSelectedChange={(v) => (currentExercise.setType = v?.value ?? 'Straight')}
-					required
-					selected={{
-						value: currentExercise.setType,
-						label: convertCamelCaseToNormal(currentExercise.setType)
-					}}
-				>
-					<Select.Label class="p-0 text-sm font-medium leading-none">Set type</Select.Label>
-					<Select.Trigger>
-						<Select.Value placeholder="Pick one" />
-					</Select.Trigger>
-					<Select.Content>
-						{#each Object.values(SetType) as setTemplate}
-							<Select.Item label={convertCamelCaseToNormal(setTemplate)} value={setTemplate} />
-						{/each}
-					</Select.Content>
-				</Select.Root>
+				{#key currentExercise}
+					<Select.Root
+						name="exercise-set-type"
+						onSelectedChange={(v) => (currentExercise.setType = v?.value ?? 'Straight')}
+						required
+						selected={{
+							value: currentExercise.setType,
+							label: convertCamelCaseToNormal(currentExercise.setType)
+						}}
+					>
+						<Select.Label class="p-0 text-sm font-medium leading-none">Set type</Select.Label>
+						<Select.Trigger>
+							<Select.Value placeholder="Pick one" />
+						</Select.Trigger>
+						<Select.Content>
+							{#each Object.values(SetType) as setTemplate}
+								<Select.Item label={convertCamelCaseToNormal(setTemplate)} value={setTemplate} />
+							{/each}
+						</Select.Content>
+					</Select.Root>
+				{/key}
 			</div>
 			{#if currentExercise.setType === 'Drop' || currentExercise.setType === 'Down' || currentExercise.setType === 'MyorepMatchDown'}
 				<div class="flex w-full flex-col gap-1.5">
