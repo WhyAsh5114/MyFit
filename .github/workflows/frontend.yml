@@ -36,6 +36,10 @@ jobs:
 
       - name: Type check
         run: pnpm --filter @myfit/frontend run check
+        env:
+          PUBLIC_API_URL: http://localhost:3000
 
       - name: Build
         run: pnpm --filter @myfit/frontend run build
+        env:
+          PUBLIC_API_URL: http://localhost:3000
