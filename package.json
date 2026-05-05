@@ -19,7 +19,7 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.4",
-		"@iconify/json": "^2.2.227",
+		"@iconify/json": "^2.2.469",
 		"@internationalized/date": "^3.6.0",
 		"@paralleldrive/cuid2": "^2.2.2",
 		"@playwright/test": "^1.55.1",
