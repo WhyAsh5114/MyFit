@@ -190,8 +190,8 @@ importers:
         specifier: ^4.0.0
         version: 4.1.4(picomatch@4.0.4)(svelte@5.55.5(@typescript-eslint/types@8.21.0))(typescript@5.7.3)
       svelte-dnd-action:
-        specifier: ^0.9.49
-        version: 0.9.55(svelte@5.55.5(@typescript-eslint/types@8.21.0))
+        specifier: ^0.9.69
+        version: 0.9.69(svelte@5.55.5(@typescript-eslint/types@8.21.0))
       svelte-sonner:
         specifier: ^0.3.28
         version: 0.3.28(svelte@5.55.5(@typescript-eslint/types@8.21.0))
@@ -4432,8 +4432,8 @@ packages:
       svelte: ^4.0.0 || ^5.0.0-next.0
       typescript: '>=5.0.0'
 
-  svelte-dnd-action@0.9.55:
-    resolution: {integrity: sha512-ljAp1VFwigYCGb+eqnjt+kIkzawGtpUJ/KjapXYkzVZMkoofOWtnU3DVnnx0fo7CpcS4iPfPR7gM6cixh7iQfw==}
+  svelte-dnd-action@0.9.69:
+    resolution: {integrity: sha512-NAmSOH7htJoYraTQvr+q5whlIuVoq88vEuHr4NcFgscDRUxfWPPxgie2OoxepBCQCikrXZV4pqV86aun60wVyw==}
     peerDependencies:
       svelte: '>=3.23.0 || ^5.0.0-next.0'
 
@@ -9164,7 +9164,7 @@ snapshots:
     transitivePeerDependencies:
       - picomatch
 
-  svelte-dnd-action@0.9.55(svelte@5.55.5(@typescript-eslint/types@8.21.0)):
+  svelte-dnd-action@0.9.69(svelte@5.55.5(@typescript-eslint/types@8.21.0)):
     dependencies:
       svelte: 5.55.5(@typescript-eslint/types@8.21.0)
 
