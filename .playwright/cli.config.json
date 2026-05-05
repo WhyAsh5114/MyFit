@@ -1,8 +1,8 @@
 {
-  "browser": {
-    "browserName": "chromium",
-    "launchOptions": {
-      "channel": "chromium"
-    }
-  }
+	"browser": {
+		"browserName": "chromium",
+		"launchOptions": {
+			"channel": "chromium"
+		}
+	}
 }

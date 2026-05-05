@@ -32,27 +32,27 @@ The saved file contains:
 
 ```json
 {
-  "cookies": [
-    {
-      "name": "session_id",
-      "value": "abc123",
-      "domain": "example.com",
-      "path": "/",
-      "expires": 1735689600,
-      "httpOnly": true,
-      "secure": true,
-      "sameSite": "Lax"
-    }
-  ],
-  "origins": [
-    {
-      "origin": "https://example.com",
-      "localStorage": [
-        { "name": "theme", "value": "dark" },
-        { "name": "user_id", "value": "12345" }
-      ]
-    }
-  ]
+	"cookies": [
+		{
+			"name": "session_id",
+			"value": "abc123",
+			"domain": "example.com",
+			"path": "/",
+			"expires": 1735689600,
+			"httpOnly": true,
+			"secure": true,
+			"sameSite": "Lax"
+		}
+	],
+	"origins": [
+		{
+			"origin": "https://example.com",
+			"localStorage": [
+				{ "name": "theme", "value": "dark" },
+				{ "name": "user_id", "value": "12345" }
+			]
+		}
+	]
 }
 ```
 

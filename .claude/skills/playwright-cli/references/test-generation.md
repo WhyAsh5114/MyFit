@@ -39,14 +39,14 @@ Collect the generated code into a Playwright test:
 import { test, expect } from '@playwright/test';
 
 test('login flow', async ({ page }) => {
-  // Generated code from playwright-cli session:
-  await page.goto('https://example.com/login');
-  await page.getByRole('textbox', { name: 'Email' }).fill('user@example.com');
-  await page.getByRole('textbox', { name: 'Password' }).fill('password123');
-  await page.getByRole('button', { name: 'Sign In' }).click();
+	// Generated code from playwright-cli session:
+	await page.goto('https://example.com/login');
+	await page.getByRole('textbox', { name: 'Email' }).fill('user@example.com');
+	await page.getByRole('textbox', { name: 'Password' }).fill('password123');
+	await page.getByRole('button', { name: 'Sign In' }).click();
 
-  // Add assertions
-  await expect(page).toHaveURL(/.*dashboard/);
+	// Add assertions
+	await expect(page).toHaveURL(/.*dashboard/);
 });
 ```
 

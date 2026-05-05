@@ -5,12 +5,7 @@
  * circular dependency that causes the enum module to resolve to `undefined` at runtime.
  * Use these re-exports instead.
  */
-import {
-	ChangeTypeSchema,
-	MuscleGroupSchema,
-	QuotesDisplayModeSchema,
-	SetTypeSchema
-} from '$lib/zodSchemas';
+import { ChangeTypeSchema, MuscleGroupSchema, QuotesDisplayModeSchema, SetTypeSchema } from '$lib/zodSchemas';
 
 export const MuscleGroup = MuscleGroupSchema.enum;
 export type MuscleGroup = keyof typeof MuscleGroup;
