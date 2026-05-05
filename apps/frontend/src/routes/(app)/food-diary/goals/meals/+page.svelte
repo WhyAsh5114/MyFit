@@ -1,76 +1,44 @@
 <script lang="ts">
-	import * as Item from '$lib/components/ui/item/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { flip } from 'svelte/animate';
-	import { dragHandle, dragHandleZone, type DndEvent } from 'svelte-dnd-action';
 	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
+	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
+	import MacroMealsForm from './macro-meals-form.svelte';
 	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
-	import type { Meal } from '@myfit/api/prisma/client';
-	import { Button } from '$lib/components/ui/button';
-	import { GripVerticalIcon, PlusIcon, SaveIcon, TrashIcon } from '@lucide/svelte';
-	import Input from '$lib/components/ui/input/input.svelte';
+	import { useSaveMeals } from '$lib/features/food-diary/meals/mutations/save';
 	import { m } from '$lib/paraglide/messages';
+	import { SaveIcon } from '@lucide/svelte';
+	import type { MealsFormSchema } from '$lib/features/food-diary/meals/schema';
+	import { toast } from 'svelte-sonner';
+	import { Button } from '$lib/components/ui/button';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { Spinner } from '$lib/components/ui/spinner';
 
-	const flipDurationMs = 300;
-	const user = useCurrentUser();
-	const meals = useMeals(() => user.data?.id ?? '');
+	const currentUser = useCurrentUser();
+	const meals = useMeals(() => currentUser.data?.id ?? '');
+	const saveMeals = useSaveMeals();
 
-	let interactiveMeals = $derived(meals.data);
-
-	function handleDndConsider(e: CustomEvent<DndEvent<Meal>>) {
-		interactiveMeals = e.detail.items;
-	}
-
-	function handleDndFinalize(e: CustomEvent<DndEvent<Meal>>) {
-		interactiveMeals = e.detail.items;
+	async function handleSubmit(data: MealsFormSchema) {
+		if (!currentUser.data) return toast.error(m['unknownErrorOccurred']());
+		await saveMeals.mutateAsync({ meals: data.meals, userId: currentUser.data.id });
+		toast.success('Meals saved');
+		await goto(resolve('/food-diary/goals'));
 	}
 </script>
 
-<Card.Root>
-	<Card.Header>
-		<Card.Title>{m['foodDiary.mealsTitle']()}</Card.Title>
-		<Card.Description>{m['foodDiary.mealsDescription']()}</Card.Description>
-	</Card.Header>
-	<Card.Content>
-		{#if interactiveMeals !== undefined}
-			<div
-				use:dragHandleZone={{
-					items: interactiveMeals,
-					flipDurationMs,
-					dropTargetStyle: {},
-					dropTargetClasses: ['bg-muted']
-				}}
-				onconsider={handleDndConsider}
-				onfinalize={handleDndFinalize}
-				class="flex flex-col gap-2 rounded-lg border p-2"
-			>
-				{#each interactiveMeals as meal (meal.id)}
-					<div animate:flip={{ duration: flipDurationMs }}>
-						<Item.Root class="bg-card p-2">
-							<Item.Actions>
-								<div use:dragHandle>
-									<Button class="pointer-events-none" size="icon-sm" variant="secondary">
-										<GripVerticalIcon class="size-4" />
-									</Button>
-								</div>
-							</Item.Actions>
-							<Item.Content>
-								<Input type="text" value={meal.name} />
-							</Item.Content>
-							<Item.Actions>
-								<Button size="icon-sm" variant="destructive">
-									<TrashIcon />
-								</Button>
-							</Item.Actions>
-						</Item.Root>
-					</div>
-				{/each}
-			</div>
-		{/if}
-	</Card.Content>
-	<Card.Footer>
-		<Button class="w-full" variant="secondary">Add more <PlusIcon /></Button>
-	</Card.Footer>
-</Card.Root>
-
-<Button class="mt-auto w-full">Save <SaveIcon /></Button>
+{#if !currentUser.data || meals.data === undefined}
+	<Skeleton class="h-67.5 w-full" />
+	<Skeleton class="mt-auto h-9 w-full" />
+{:else}
+	<MacroMealsForm initialData={meals.data} onSubmit={handleSubmit}>
+		{#snippet submit()}
+			<Button class="mt-auto w-full" type="submit" disabled={saveMeals.isPending}>
+				{#if saveMeals.isPending}
+					<Spinner />
+				{:else}
+					{m['foodDiary.metrics.save']()}
+					<SaveIcon />
+				{/if}
+			</Button>
+		{/snippet}
+	</MacroMealsForm>
+{/if}

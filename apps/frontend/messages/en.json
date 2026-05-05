@@ -70,6 +70,7 @@
 	"foodDiary.metricsDescription": "Your bodyweight, height, and other metrics",
 	"foodDiary.mealsTitle": "Meals",
 	"foodDiary.mealsDescription": "Your daily meals like breakfast, lunch, dinner, and snacks",
+	"foodDiary.mealNamePlaceholder": "Meal name",
 	"foodDiary.recipesTitle": "Recipes",
 	"foodDiary.recipesDescription": "Your custom recipes made from multiple food items",
 	"foodDiary.activityTitle": "Activity",

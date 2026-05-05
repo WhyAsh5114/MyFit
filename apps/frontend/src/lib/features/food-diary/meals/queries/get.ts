@@ -9,7 +9,7 @@ export const useMeals = (getUserId: () => string) =>
 			queryKey: mealKeys.byUser(userId),
 			queryFn: async () => {
 				return await getClient().meal.findMany({
-					where: { userId },
+					where: { userId, active: true },
 					orderBy: { sortOrder: 'asc' }
 				});
 			},
