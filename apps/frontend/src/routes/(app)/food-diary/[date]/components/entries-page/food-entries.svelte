@@ -69,7 +69,7 @@
 				{#snippet child({ props })}
 					<a
 						href={resolve(
-							`/food-diary/${page.params.date}/add-food?meal=${group.meal?.name ?? ''}`
+							`/food-diary/${page.params.date}/add-food?meal-id=${group.meal?.id ?? ''}`
 						)}
 						{...props}
 					>

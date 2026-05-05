@@ -86,6 +86,7 @@
 	"foodDiary.noCamerasFound": "No cameras found",
 	"foodDiary.cameraAccessError": "Error accessing cameras",
 	"foodDiary.searchPlaceholder": "apple pie",
+	"foodDiary.noMealFilter": "No meal",
 	"foodDiary.addManually": "Add manually",
 	"foodDiary.scanBarcode": "Scan barcode",
 	"foodDiary.headerViewGoals": "View goals",

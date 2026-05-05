@@ -77,7 +77,7 @@
 		initialData={nutritionDataToFoodEntryFormData(
 			nutritionDataById.data,
 			page.params.date,
-			page.url.searchParams.get('meal')
+			page.url.searchParams.get('meal-id')
 		)}
 		allowProductEdit={false}
 		formId="create-food-entry-form"

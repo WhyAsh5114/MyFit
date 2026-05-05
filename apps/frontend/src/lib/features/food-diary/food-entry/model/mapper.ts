@@ -10,8 +10,7 @@ export function foodEntryFormSchemaToFoodEntry(
 
 export function foodEntryToFoodEntryFormSchema(
 	foodEntry: Prisma.FoodEntryUncheckedCreateInput,
-	date?: string,
-	meal?: string
+	date?: string
 ): FoodEntryFormSchema {
 	const eatenAt = date ? new Date(date) : new Date();
 	const now = new Date();

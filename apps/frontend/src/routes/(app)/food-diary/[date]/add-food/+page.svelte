@@ -22,6 +22,12 @@
 	const debounced = new Debounced(() => search, 500);
 	const params = new SvelteURLSearchParams(page.url.searchParams);
 
+	let searchParamMeal = $derived.by(() => {
+		const mealId = params.get('meal-id');
+		if (!mealId) return null;
+		return meals.data?.find((meal) => meal.id === mealId) ?? null;
+	});
+
 	$effect(() => {
 		if (debounced.current.trim().length === 0) {
 			params.delete('search');
@@ -51,17 +57,15 @@
 			</InputGroup.Root>
 			<Select.Root
 				type="single"
-				value={params.get('meal') ?? ''}
-				onValueChange={(value) => params.set('meal', value)}
+				value={params.get('meal-id') ?? ''}
+				onValueChange={(value) => params.set('meal-id', value)}
 			>
 				<Select.Trigger>
-					{params.get('meal') === '' || params.get('meal') === null
-						? 'No meal'
-						: params.get('meal')}
+					{searchParamMeal?.name ?? m['foodDiary.noMealFilter']()}
 				</Select.Trigger>
 				<Select.Content align="end">
-					{#each meals.data ?? [] as meal (meal.name)}
-						<Select.Item value={meal.name}>
+					{#each meals.data ?? [] as meal (meal.id)}
+						<Select.Item value={meal.id} label={meal.name}>
 							{meal.name}
 						</Select.Item>
 					{/each}
