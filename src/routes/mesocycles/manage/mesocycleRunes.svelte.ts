@@ -1,4 +1,5 @@
-import { MuscleGroup, type Prisma, type Mesocycle } from '@prisma/client';
+import { MuscleGroup } from '$lib/utils/prismaEnums';
+import type { Prisma, Mesocycle } from '@prisma/client';
 import type { FullExerciseSplit } from '../../exercise-splits/manage/exerciseSplitRunes.svelte';
 
 type MesocycleWithoutIds = Omit<Mesocycle, 'id' | 'exerciseSplitId' | 'userId'>;

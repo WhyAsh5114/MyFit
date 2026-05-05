@@ -159,7 +159,7 @@
 			<Card.Header>
 				<Card.Title>Last workout for the mesocycle &nbsp;🎉</Card.Title>
 				<Card.Description>
-					If you complete this workout, this mescycle will be marked as completed and you'll have to start a new one to
+					If you complete this workout, this mesocycle will be marked as completed and you'll have to start a new one to
 					continue training. If you don't want to go through that hassle, you can edit the duration and extend it now.
 				</Card.Description>
 			</Card.Header>

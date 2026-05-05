@@ -2,14 +2,14 @@ import { devices, type PlaywrightTestConfig } from '@playwright/test';
 
 const config: PlaywrightTestConfig = {
 	webServer: {
-		command: 'npm run build && npm run preview',
+		command: 'pnpm build && pnpm preview',
 		port: 4173,
 		reuseExistingServer: !process.env.CI
 	},
 	testDir: 'tests',
 	testMatch: /(.+\.)?(test|spec)\.[jt]s/,
 	fullyParallel: true,
-	retries: 2,
+	retries: 3,
 	globalSetup: './tests/global-setup',
 	globalTeardown: './tests/global-teardown',
 	workers: 1,
@@ -20,7 +20,7 @@ const config: PlaywrightTestConfig = {
 		video: 'retain-on-failure',
 		locale: 'en-US'
 	},
-	timeout: 60000,
+	timeout: 30000,
 	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }]
 };
 

@@ -2,7 +2,7 @@
 	import { Command as CommandPrimitive } from 'cmdk-sv';
 	import { cn } from '$lib/utils.js';
 
-	type $$Props = CommandPrimitive.CommandProps;
+	type $$Props = CommandPrimitive.CommandProps & { class?: string | null | undefined };
 
 	export let value: $$Props['value'] = undefined;
 

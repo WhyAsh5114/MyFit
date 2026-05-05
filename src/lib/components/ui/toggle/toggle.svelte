@@ -6,10 +6,11 @@
 	type $$Props = TogglePrimitive.Props & {
 		variant?: Variant;
 		size?: Size;
+		class?: string | null | undefined;
 	};
 	type $$Events = TogglePrimitive.Events;
 
-	let className: $$Props['class'] = undefined;
+	let className: string | undefined | null = undefined;
 	export let variant: $$Props['variant'] = 'default';
 	export let size: $$Props['size'] = 'default';
 	export let pressed: $$Props['pressed'] = undefined;

@@ -3,8 +3,10 @@ import ts from 'typescript-eslint';
 import svelte from 'eslint-plugin-svelte';
 import prettier from 'eslint-config-prettier';
 import globals from 'globals';
+import gitignore from 'eslint-config-flat-gitignore';
 
 export default [
+	gitignore(),
 	{ ignores: ['.vercel/', '.svelte-kit/', 'postcss.config.cjs', 'playwright-report/'] },
 	js.configs.recommended,
 	prettier,
@@ -17,6 +19,7 @@ export default [
 	},
 	{
 		rules: {
+			'svelte/state-referenced-locally': 'off',
 			'@typescript-eslint/no-unused-vars': [
 				'error',
 				{

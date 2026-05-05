@@ -3,7 +3,7 @@
 	import Search from 'virtual:icons/lucide/search';
 	import { cn } from '$lib/utils.js';
 
-	type $$Props = CommandPrimitive.InputProps;
+	type $$Props = CommandPrimitive.InputProps & { class?: string | null | undefined };
 
 	let className: string | undefined | null = undefined;
 	export { className as class };

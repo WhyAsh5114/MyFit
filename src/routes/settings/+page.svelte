@@ -7,7 +7,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Button } from '$lib/components/ui/button';
-	import { QuotesDisplayMode } from '@prisma/client';
+	import { QuotesDisplayMode } from '$lib/utils/prismaEnums';
 	import BellRing from 'virtual:icons/lucide/bell-ring';
 	import { settingsRunes } from './settingsRunes.svelte';
 	import H2 from '$lib/components/ui/typography/H2.svelte';

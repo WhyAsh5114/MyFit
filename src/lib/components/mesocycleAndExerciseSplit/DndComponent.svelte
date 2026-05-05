@@ -29,6 +29,7 @@
 </script>
 
 <div
+	role="list"
 	class="flex h-px grow flex-col gap-1 overflow-y-auto"
 	onconsider={handleSort}
 	onfinalize={handleSort}
@@ -36,7 +37,8 @@
 		items: itemList,
 		flipDurationMs: 200,
 		dropTargetClasses: ['border-none'],
-		dropTargetStyle: {}
+		dropTargetStyle: {},
+		autoAriaDisabled: true
 	}}
 >
 	{#each itemList as exerciseTemplate, idx (exerciseTemplate.name)}

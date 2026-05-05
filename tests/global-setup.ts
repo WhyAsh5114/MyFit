@@ -1,3 +1,5 @@
+import { config } from 'dotenv';
+config();
 import { prisma } from '../src/lib/prisma';
 import type { FullConfig } from '@playwright/test';
 import { randomUUID } from 'crypto';

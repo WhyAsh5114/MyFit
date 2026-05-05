@@ -746,7 +746,7 @@ function getBasicDayInfo(
 				customMuscleGroup: string | null;
 			}[];
 		})[];
-		workoutsOfMesocycle: WorkoutOfMesocycle[];
+		RIRProgression: number[];
 	},
 	totalWorkouts: number
 ) {
@@ -756,7 +756,7 @@ function getBasicDayInfo(
 	const isRestDay = todaysSplitDay.isRestDay;
 	const splitDayIndex = totalWorkouts % splitLength;
 	const cycleNumber = 1 + Math.floor(totalWorkouts / splitLength);
-	const isLastWorkout = totalWorkouts === mesocycleData.workoutsOfMesocycle.length;
+	const isLastWorkout = totalWorkouts === arraySum(mesocycleData.RIRProgression) * splitLength - 1;
 	return { isRestDay, splitDayIndex, cycleNumber, todaysSplitDay, isLastWorkout };
 }
 

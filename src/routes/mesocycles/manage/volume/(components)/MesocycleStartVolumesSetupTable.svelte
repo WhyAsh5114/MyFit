@@ -10,7 +10,7 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import ChevronDown from 'virtual:icons/lucide/chevron-down';
 	import Plus from 'virtual:icons/lucide/plus';
-	import { MuscleGroup } from '@prisma/client';
+	import { MuscleGroup } from '$lib/utils/prismaEnums';
 	import type { Selected } from 'bits-ui';
 	import { toast } from 'svelte-sonner';
 
