@@ -8,7 +8,8 @@
 		"build": "turbo run build",
 		"lint": "turbo run lint",
 		"format": "turbo run format",
-		"check": "turbo run check"
+		"check": "turbo run check",
+		"prepare": "husky"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.3",
@@ -17,10 +18,19 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.15.0",
 		"globals": "^17.4.0",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.4.0",
 		"prettier": "^3.8.1",
 		"prettier-plugin-svelte": "^3.5.1",
 		"prettier-plugin-tailwindcss": "^0.7.2",
 		"turbo": "^2.8.14",
 		"typescript-eslint": "^8.56.1"
+	},
+	"lint-staged": {
+		"*.{ts,js,svelte}": [
+			"prettier --write",
+			"eslint --fix"
+		],
+		"*.{json,css,md}": "prettier --write"
 	}
 }
