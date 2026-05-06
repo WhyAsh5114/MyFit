@@ -45,6 +45,10 @@
 
 <form use:enhance id={formId} class="contents">
 	<Card.Root>
+		<Card.Header>
+			<Card.Title>{m['foodDiary.metricsTitle']()}</Card.Title>
+			<Card.Description>{m['foodDiary.metricsDescription']()}</Card.Description>
+		</Card.Header>
 		<Card.Content class="grid grid-cols-2 gap-2">
 			<Form.Field {form} name="bodyweight">
 				<Form.Control>

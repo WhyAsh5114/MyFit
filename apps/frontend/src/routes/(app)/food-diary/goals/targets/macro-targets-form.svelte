@@ -15,6 +15,7 @@
 	import { defaults, superForm, type SuperForm } from 'sveltekit-superforms';
 	import { REQUIRED_NUTRIENTS } from '$lib/features/food-diary/food-entry/model/nutrients';
 	import { CALORIES_PER_KILOGRAM } from '$lib/domain/nutrition/constants';
+	import { m } from '$lib/paraglide/messages';
 	import type { Snippet } from 'svelte';
 
 	type Props = {
@@ -54,6 +55,10 @@
 
 <form use:enhance id={formId} class="contents">
 	<Card.Root>
+		<Card.Header>
+			<Card.Title>{m['foodDiary.targetsTitle']()}</Card.Title>
+			<Card.Description>{m['foodDiary.targetsDescription']()}</Card.Description>
+		</Card.Header>
 		<Card.Content class="flex flex-col gap-2">
 			<Form.Field {form} name="weeklyCaloricChange" class="flex flex-col items-start">
 				<Form.Control>
