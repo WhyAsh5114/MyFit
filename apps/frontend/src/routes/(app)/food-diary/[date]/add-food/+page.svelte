@@ -36,7 +36,8 @@
 		}
 
 		goto(resolve(`/food-diary/${page.params.date}/add-food?${params.toString()}`), {
-			replaceState: true
+			replaceState: true,
+			keepFocus: true
 		});
 	});
 </script>

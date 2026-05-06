@@ -12,6 +12,7 @@
 	import { online } from 'svelte/reactivity/window';
 	import { m } from '$lib/paraglide/messages';
 	import type { SvelteURLSearchParams } from 'svelte/reactivity';
+	import type { Component } from 'svelte';
 
 	let { params }: { params: SvelteURLSearchParams } = $props();
 	let search = $derived(page.url.searchParams.get('search') ?? '');
@@ -35,50 +36,42 @@
 	});
 </script>
 
+{#snippet empty(data: { title: string; description: string; icon: Component })}
+	<Empty.Root class="h-full">
+		<Empty.Header>
+			<Empty.Media variant="icon">
+				<data.icon />
+			</Empty.Media>
+			<Empty.Title>{data.title}</Empty.Title>
+			<Empty.Description>{data.description}</Empty.Description>
+		</Empty.Header>
+	</Empty.Root>
+{/snippet}
+
 {#if !online.current}
-	<Empty.Root class="h-full">
-		<Empty.Header>
-			<Empty.Media variant="icon">
-				<CloudOffIcon />
-			</Empty.Media>
-			<Empty.Title>{m['foodDiary.searchFoodsOffline']()}</Empty.Title>
-			<Empty.Description>
-				{m['foodDiary.searchFoodsOfflineDescription']()}
-			</Empty.Description>
-		</Empty.Header>
-	</Empty.Root>
+	{@render empty({
+		title: m['foodDiary.searchFoodsOffline'](),
+		description: m['foodDiary.searchFoodsOfflineDescription'](),
+		icon: CloudOffIcon
+	})}
 {:else if search.trim().length === 0}
-	<Empty.Root class="h-full">
-		<Empty.Header>
-			<Empty.Media variant="icon">
-				<SearchIcon />
-			</Empty.Media>
-			<Empty.Title>{m['foodDiary.searchFoodsEmpty']()}</Empty.Title>
-			<Empty.Description>
-				{m['foodDiary.searchFoodsEmptyDescription']()}
-			</Empty.Description>
-		</Empty.Header>
-	</Empty.Root>
+	{@render empty({
+		title: m['foodDiary.searchFoodsEmpty'](),
+		description: m['foodDiary.searchFoodsEmptyDescription'](),
+		icon: SearchIcon
+	})}
 {:else if searchNutritionData.isLoading}
-	<Empty.Root class="h-full">
-		<Empty.Header>
-			<Empty.Media variant="icon">
-				<Spinner />
-			</Empty.Media>
-			<Empty.Title>{m['foodDiary.searching']()}</Empty.Title>
-			<Empty.Description>{m['foodDiary.searchingDescription']()}</Empty.Description>
-		</Empty.Header>
-	</Empty.Root>
+	{@render empty({
+		title: m['foodDiary.searching'](),
+		description: m['foodDiary.searchingDescription'](),
+		icon: Spinner
+	})}
 {:else if searchNutritionData.data?.pages[0]?.length === 0}
-	<Empty.Root class="h-full">
-		<Empty.Header>
-			<Empty.Media variant="icon">
-				<SearchIcon />
-			</Empty.Media>
-			<Empty.Title>{m['foodDiary.noFoodsFound']()}</Empty.Title>
-			<Empty.Description>{m['foodDiary.noFoodsFoundDescription']()}</Empty.Description>
-		</Empty.Header>
-	</Empty.Root>
+	{@render empty({
+		title: m['foodDiary.noFoodsFound'](),
+		description: m['foodDiary.noFoodsFoundDescription'](),
+		icon: SearchIcon
+	})}
 {:else}
 	<ScrollArea class="h-px grow">
 		<InfiniteLoader {loaderState} triggerLoad={loadMore}>
@@ -91,9 +84,9 @@
 					>
 						<Item.Root class="flex-nowrap bg-card py-2 shadow-sm" variant="outline">
 							<Item.Content class="w-px grow gap-0">
-								<Item.Title class="block! w-full! min-w-0 truncate"
-									>{foodEntry.productName}</Item.Title
-								>
+								<Item.Title class="block! w-full! min-w-0 truncate">
+									{foodEntry.productName}
+								</Item.Title>
 								<Item.Description>
 									{#if foodEntry.servingSize && foodEntry.servingQuantity}
 										{foodEntry.brands ? `${foodEntry.brands} ·` : ''}
