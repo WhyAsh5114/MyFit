@@ -11,17 +11,17 @@ export const useSaveMeals = () =>
 		mutationFn: async ({ meals, userId }: { meals: MealsFormSchema['meals']; userId: string }) => {
 			const client = getClient();
 			const existingMeals = await client.meal.findMany({ where: { userId } });
-			const submittedIds = new Set(meals.map((m) => m.id));
+			const submittedNames = new Set(meals.map((meal) => meal.name));
 
-			const removedMeals = existingMeals.filter((m) => !submittedIds.has(m.id));
+			const removedMeals = existingMeals.filter((meal) => !submittedNames.has(meal.name));
 
 			await Promise.all([
-				...removedMeals.map((m) =>
-					client.meal.update({ where: { id: m.id }, data: { active: false } })
+				...removedMeals.map((meal) =>
+					client.meal.update({ where: { id: meal.id }, data: { active: false } })
 				),
 				...meals.map((meal, index) =>
 					client.meal.upsert({
-						where: { id: meal.id },
+						where: { userId_name: { userId, name: meal.name } },
 						update: { name: meal.name, sortOrder: index, active: true },
 						create: { id: meal.id, name: meal.name, userId, sortOrder: index }
 					})
