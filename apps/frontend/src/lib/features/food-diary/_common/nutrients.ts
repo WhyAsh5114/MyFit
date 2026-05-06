@@ -1,5 +1,6 @@
 import { AmphoraIcon, BeefIcon, FlameIcon, WheatIcon } from '@lucide/svelte';
 import type { NutritionData, FoodEntry } from '@myfit/api/prisma/client';
+import z from 'zod';
 
 /**
  * Single source of truth for nutrient field mappings
@@ -194,3 +195,33 @@ export const OPTIONAL_NUTRIENTS = [
 		unit: 'mg'
 	}
 ] as const;
+
+export const requiredNutrientsFields = REQUIRED_NUTRIENTS.map((n) => ({
+	key: n.key,
+	label: n.label
+}));
+
+export const optionalNutrientsFields = OPTIONAL_NUTRIENTS.map((n) => ({
+	key: n.key,
+	label: n.label
+}));
+
+export const requiredNutrientsShape = Object.fromEntries(
+	requiredNutrientsFields.map((field) => [
+		field.key,
+		z
+			.number()
+			.nonnegative(`${field.label} must be non-negative`)
+			.default('' as unknown as number)
+	])
+) as Record<(typeof requiredNutrientsFields)[number]['key'], z.ZodDefault<z.ZodNumber>>;
+
+export const optionalNutrientsShape = Object.fromEntries(
+	optionalNutrientsFields.map((field) => [
+		field.key,
+		z.number().nonnegative(`${field.label} must be non-negative`).optional().nullable()
+	])
+) as Record<
+	(typeof optionalNutrientsFields)[number]['key'],
+	z.ZodNullable<z.ZodOptional<z.ZodNumber>>
+>;

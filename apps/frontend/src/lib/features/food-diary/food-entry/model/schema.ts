@@ -1,32 +1,5 @@
 import z from 'zod';
-import { REQUIRED_NUTRIENTS, OPTIONAL_NUTRIENTS } from './nutrients.js';
-
-export const requiredFields = REQUIRED_NUTRIENTS.map((n) => ({
-	key: n.key,
-	label: n.label
-}));
-
-export const optionalFields = OPTIONAL_NUTRIENTS.map((n) => ({
-	key: n.key,
-	label: n.label
-}));
-
-const requiredShape = Object.fromEntries(
-	requiredFields.map((field) => [
-		field.key,
-		z
-			.number()
-			.nonnegative(`${field.label} must be non-negative`)
-			.default('' as unknown as number)
-	])
-) as Record<(typeof requiredFields)[number]['key'], z.ZodDefault<z.ZodNumber>>;
-
-const optionalShape = Object.fromEntries(
-	optionalFields.map((field) => [
-		field.key,
-		z.number().nonnegative(`${field.label} must be non-negative`).optional().nullable()
-	])
-) as Record<(typeof optionalFields)[number]['key'], z.ZodNullable<z.ZodOptional<z.ZodNumber>>>;
+import { optionalNutrientsShape, requiredNutrientsShape } from '../../_common/nutrients';
 
 export const foodEntryFormSchema = z.object({
 	productName: z.string().min(1, 'Product name is required'),
@@ -44,8 +17,8 @@ export const foodEntryFormSchema = z.object({
 		.transform((val) => (val === '' ? null : val))
 		.optional()
 		.nullable(),
-	...requiredShape,
-	...optionalShape
+	...requiredNutrientsShape,
+	...optionalNutrientsShape
 });
 
 export type FoodEntryFormSchema = z.infer<typeof foodEntryFormSchema>;

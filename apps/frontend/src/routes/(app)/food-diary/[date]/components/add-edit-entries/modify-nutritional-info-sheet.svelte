@@ -11,19 +11,17 @@
 	} from '@lucide/svelte';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { type SuperForm } from 'sveltekit-superforms';
-	import {
-		optionalFields,
-		requiredFields,
-		type FoodEntryFormSchema
-	} from '$lib/features/food-diary/food-entry/model/schema';
+	import { type FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
 	import CustomScrollArea from '$lib/components/custom-scroll-area.svelte';
 	import { toast } from 'svelte-sonner';
 	import { cn } from '$lib/utils';
 	import { m } from '$lib/paraglide/messages';
 	import {
 		OPTIONAL_NUTRIENTS,
-		REQUIRED_NUTRIENTS
-	} from '$lib/features/food-diary/food-entry/model/nutrients';
+		optionalNutrientsFields,
+		REQUIRED_NUTRIENTS,
+		requiredNutrientsFields
+	} from '$lib/features/food-diary/_common/nutrients';
 	import { hasCalculationErrors } from './common';
 
 	let { form }: { form: SuperForm<FoodEntryFormSchema> } = $props();
@@ -33,7 +31,7 @@
 	let open = $state(false);
 
 	let hasFieldErrors = $derived.by(() => {
-		for (const field of [...requiredFields, ...optionalFields]) {
+		for (const field of [...requiredNutrientsFields, ...optionalNutrientsFields]) {
 			if ($formErrors.find(({ path }) => path === field.key)) return true;
 		}
 		return false;
@@ -48,7 +46,9 @@
 	}
 
 	function getLabelForField(key: string) {
-		const field = [...requiredFields, ...optionalFields].find((field) => field.key === key);
+		const field = [...requiredNutrientsFields, ...optionalNutrientsFields].find(
+			(field) => field.key === key
+		);
 		return field ? field.label : key;
 	}
 </script>

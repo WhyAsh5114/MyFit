@@ -13,7 +13,7 @@
 	import { pascalToNormal } from '$lib/my-utils';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
 	import { defaults, superForm, type SuperForm } from 'sveltekit-superforms';
-	import { REQUIRED_NUTRIENTS } from '$lib/features/food-diary/food-entry/model/nutrients';
+	import { REQUIRED_NUTRIENTS } from '$lib/features/food-diary/_common/nutrients';
 	import { CALORIES_PER_KILOGRAM } from '$lib/domain/nutrition/constants';
 	import { m } from '$lib/paraglide/messages';
 	import type { Snippet } from 'svelte';
