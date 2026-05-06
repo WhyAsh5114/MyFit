@@ -24,10 +24,12 @@
 		"format": "prettier --write ."
 	},
 	"dependencies": {
+		"@ai-sdk/openai-compatible": "^2.0.46",
 		"@hono/zod-validator": "^0.7.6",
 		"@prisma-idb/idb-client-generator": "^0.38.0",
 		"@prisma/adapter-pg": "^7.8.0",
 		"@prisma/client": "^7.8.0",
+		"ai": "^6.0.175",
 		"better-auth": "^1.6.9",
 		"dotenv": "^17.4.2",
 		"hono": "^4.12.17",
