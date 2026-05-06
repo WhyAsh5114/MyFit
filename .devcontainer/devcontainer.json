@@ -6,9 +6,7 @@
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [
-		5432
-	],
+	"forwardPorts": [5432],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "pnpm install && pnpm exec tsx scripts/populate-env.ts && pnpm exec prisma migrate deploy",
 	// Configure tool-specific properties.
@@ -22,8 +20,8 @@
 				"esbenp.prettier-vscode"
 			],
 			"settings": {
-				"typescript.preferences.includePackageJsonAutoImports": "on",
-				"typescript.suggest.autoImports": true
+				"js/ts.preferences.includePackageJsonAutoImports": "on",
+				"js/ts.suggest.autoImports": true
 			}
 		}
 	},
