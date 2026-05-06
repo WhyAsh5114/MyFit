@@ -3,7 +3,7 @@
 	import * as Item from '$lib/components/ui/item/index.js';
 	import { useSearchNutritionData } from '$lib/features/food-diary/nutrition-data/queries/search';
 	import { InfiniteLoader, LoaderState } from 'svelte-infinite';
-	import { CloudOffIcon, PlusIcon, SaladIcon, SearchIcon } from '@lucide/svelte';
+	import { CloudOffIcon, PlusIcon, SearchIcon } from '@lucide/svelte';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -36,22 +36,12 @@
 	});
 </script>
 
-{#snippet empty(data: { title: string; description: string; icon: Component })}
-	<Button
-		variant="outline"
-		class="h-fit py-4 text-left"
-		href={resolve('/food-diary/goals/recipes')}
-	>
-		<Item.Content>
-			<Item.Title>
-				<SaladIcon />
-				Create a recipe
-			</Item.Title>
-			<Item.Description>
-				Recipes allow you to group multiple food items together and log them as a single entry.
-			</Item.Description>
-		</Item.Content>
-	</Button>
+{#snippet empty(data: {
+	title: string;
+	description: string;
+	icon: Component;
+	showRecipePrompt?: boolean;
+})}
 	<Empty.Root class="h-full">
 		<Empty.Header>
 			<Empty.Media variant="icon">
@@ -59,6 +49,13 @@
 			</Empty.Media>
 			<Empty.Title>{data.title}</Empty.Title>
 			<Empty.Description>{data.description}</Empty.Description>
+			{#if data.showRecipePrompt}
+				<Empty.Description class="italic">
+					<a href={resolve('/food-diary/goals/recipes')}>
+						🥣 Create a custom recipe to log groups of foods faster!
+					</a>
+				</Empty.Description>
+			{/if}
 		</Empty.Header>
 	</Empty.Root>
 {/snippet}
@@ -73,7 +70,8 @@
 	{@render empty({
 		title: m['foodDiary.searchFoodsEmpty'](),
 		description: m['foodDiary.searchFoodsEmptyDescription'](),
-		icon: SearchIcon
+		icon: SearchIcon,
+		showRecipePrompt: true
 	})}
 {:else if searchNutritionData.isLoading}
 	{@render empty({
@@ -85,7 +83,8 @@
 	{@render empty({
 		title: m['foodDiary.noFoodsFound'](),
 		description: m['foodDiary.noFoodsFoundDescription'](),
-		icon: SearchIcon
+		icon: SearchIcon,
+		showRecipePrompt: true
 	})}
 {:else}
 	<ScrollArea class="h-px grow">
