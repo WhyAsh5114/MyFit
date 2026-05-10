@@ -126,7 +126,7 @@
 		"marked": "^15.0.4",
 		"posthog-js": "^1.372.8",
 		"svelte-infinite-loading": "^1.4.0",
-		"tailwind-merge": "^2.5.0",
+		"tailwind-merge": "^3.6.0",
 		"tailwind-variants": "^0.3.0",
 		"trpc-sveltekit": "^3.6.2",
 		"trpc-transformer": "^3.2.2"
