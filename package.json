@@ -31,7 +31,7 @@
 		"@types/node": "^22.0.2",
 		"@typescript-eslint/parser": "^8.0.0",
 		"@vite-pwa/sveltekit": "^1.1.0",
-		"autoprefixer": "^10.4.19",
+		"autoprefixer": "^10.5.0",
 		"bits-ui": "^0.22.0",
 		"cmdk-sv": "^0.0.18",
 		"dotenv": "^16.4.5",
