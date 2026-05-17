@@ -71,7 +71,7 @@
 		"workbox-window": "^7.4.0",
 		"yaml": "^2.8.3",
 		"zod": "^3.23.8",
-		"zod-prisma-types": "^3.1.8"
+		"zod-prisma-types": "^3.2.4"
 	},
 	"type": "module",
 	"pnpm": {
