@@ -50,11 +50,14 @@
 			<Empty.Title>{data.title}</Empty.Title>
 			<Empty.Description>{data.description}</Empty.Description>
 			{#if data.showRecipePrompt}
-				<Empty.Description class="italic">
-					<a href={resolve('/food-diary/goals/recipes')}>
-						🥣 Create a custom recipe to log groups of foods faster!
-					</a>
-				</Empty.Description>
+				<Button
+					variant="outline"
+					size="sm"
+					href={resolve('/food-diary/goals/recipes')}
+					class="mt-1"
+				>
+					🥣 Create a custom recipe
+				</Button>
 			{/if}
 		</Empty.Header>
 	</Empty.Root>

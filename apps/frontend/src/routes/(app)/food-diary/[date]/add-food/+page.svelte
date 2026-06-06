@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
-	import { PlusCircleIcon, ScanBarcodeIcon, SearchIcon } from '@lucide/svelte';
-	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
+	import { ChevronDownIcon, CirclePlusIcon, ScanBarcodeIcon, SearchIcon } from '@lucide/svelte';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Debounced } from 'runed';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
@@ -11,7 +11,6 @@
 	import { goto } from '$app/navigation';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
 	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
 
@@ -45,41 +44,44 @@
 <div class="grid grid-cols-2 gap-2">
 	<Label class="col-span-2 flex flex-col items-start">
 		{m['foodDiary.searchForFoods']()}
-		<ButtonGroup.Root class="w-full">
-			<InputGroup.Root class="w-full">
-				<InputGroup.Addon>
-					<SearchIcon />
-				</InputGroup.Addon>
-				<InputGroup.Input
-					type="text"
-					placeholder={m['foodDiary.searchPlaceholder']()}
-					bind:value={search}
-				/>
-			</InputGroup.Root>
-			<Select.Root
-				type="single"
-				value={params.get('meal-id') ?? ''}
-				onValueChange={(value) => params.set('meal-id', value)}
-			>
-				<Select.Trigger>
-					{searchParamMeal?.name ?? m['foodDiary.noMealFilter']()}
-				</Select.Trigger>
-				<Select.Content align="end">
-					{#each meals.data ?? [] as meal (meal.id)}
-						<Select.Item value={meal.id} label={meal.name}>
-							{meal.name}
-						</Select.Item>
-					{/each}
-					<Select.Item value="">No meal</Select.Item>
-				</Select.Content>
-			</Select.Root>
-		</ButtonGroup.Root>
+		<InputGroup.Root class="w-full">
+			<InputGroup.Addon>
+				<SearchIcon />
+			</InputGroup.Addon>
+			<InputGroup.Input
+				type="text"
+				placeholder={m['foodDiary.searchPlaceholder']()}
+				bind:value={search}
+			/>
+			<InputGroup.Addon align="inline-end">
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger>
+						{#snippet child({ props })}
+							<InputGroup.Button {...props} variant="ghost" class="pe-1.5! text-xs">
+								{searchParamMeal?.name ?? m['foodDiary.noMealFilter']()}
+								<ChevronDownIcon class="size-3" />
+							</InputGroup.Button>
+						{/snippet}
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content align="end">
+						{#each meals.data ?? [] as meal (meal.id)}
+							<DropdownMenu.Item onclick={() => params.set('meal-id', meal.id)}>
+								{meal.name}
+							</DropdownMenu.Item>
+						{/each}
+						<DropdownMenu.Item onclick={() => params.delete('meal-id')}>
+							{m['foodDiary.noMealFilter']()}
+						</DropdownMenu.Item>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+			</InputGroup.Addon>
+		</InputGroup.Root>
 	</Label>
 	<Button
 		variant="secondary"
 		href={resolve(`/food-diary/${page.params.date}/add-food/manual?${params.toString()}`)}
 	>
-		<PlusCircleIcon />
+		<CirclePlusIcon />
 		{m['foodDiary.addManually']()}
 	</Button>
 	<Button href={resolve(`/food-diary/${page.params.date}/add-food/scan?${params.toString()}`)}>
