@@ -4,8 +4,8 @@ import 'dotenv/config';
 const provider = createOpenAICompatible({
 	name: 'digitalocean',
 	apiKey: process.env.OPENAI_API_KEY,
-	baseURL: 'https://inference.do-ai.run/v1',
+	baseURL: process.env.OPENAI_BASE_URL!,
 	includeUsage: true
 });
 
-export const model = provider.chatModel('openai-gpt-oss-120b');
+export const model = provider.chatModel('google.gemma-3-12b-it');
