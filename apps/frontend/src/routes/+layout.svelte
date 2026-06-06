@@ -32,7 +32,7 @@
 <Toaster />
 
 <QueryClientProvider client={queryClient}>
-	<SvelteQueryDevtools />
+	<SvelteQueryDevtools buttonPosition="top-right" />
 	{@render children()}
 </QueryClientProvider>
 

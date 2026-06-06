@@ -12,6 +12,8 @@
 	import ActivityEntries from './components/entries-page/activity-entries.svelte';
 	import SyncHealthData from './components/entries-page/sync-health-data.svelte';
 	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { BotMessageSquareIcon } from '@lucide/svelte';
 
 	const timezone = getLocalTimeZone();
 	const currentUser = useCurrentUser();
@@ -69,9 +71,20 @@
 	{macroMetrics}
 	{macroTargets}
 />
-<ScrollArea class="flex h-px grow">
-	<div class="flex h-full flex-col gap-2">
-		<FoodEntries foodEntries={foodEntriesByDate.data} meals={meals.data} />
-		<ActivityEntries activityEntries={activityEntriesByDate.data} />
-	</div>
-</ScrollArea>
+
+<div class="relative flex h-px w-full grow">
+	<ScrollArea class="h-full w-full">
+		<div class="flex h-full flex-col gap-2">
+			<FoodEntries foodEntries={foodEntriesByDate.data} meals={meals.data} />
+			<ActivityEntries activityEntries={activityEntriesByDate.data} />
+		</div>
+	</ScrollArea>
+
+	<Button
+		class="absolute right-2 bottom-2"
+		size="icon-lg"
+		href="/chat?screen=food-diary&date={page.params.date}"
+	>
+		<BotMessageSquareIcon class="size-6" />
+	</Button>
+</div>
