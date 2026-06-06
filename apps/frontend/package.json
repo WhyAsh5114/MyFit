@@ -60,6 +60,7 @@
 		"ai": "^6.0.197",
 		"barqode": "^0.0.2",
 		"better-auth": "^1.6.9",
+		"browser-image-compression": "^2.0.2",
 		"culori": "^4.0.2",
 		"d3-scale": "^4.0.2",
 		"hono": "^4.12.17",
