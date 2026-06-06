@@ -181,7 +181,10 @@
 	<Card.Root>
 		<Card.Header>
 			<Card.Description>Basal Metabolic Rate (BMR)</Card.Description>
-			<Card.Title class="text-2xl">{calculateBMR($formData)?.toFixed()} kcal</Card.Title>
+			<Card.Title class="text-2xl">
+				{@const bmr = calculateBMR($formData)}
+				{bmr ? `${bmr.toFixed()} kcal` : 'Fill in metrics to calculate'}
+			</Card.Title>
 		</Card.Header>
 	</Card.Root>
 

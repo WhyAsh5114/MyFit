@@ -11,6 +11,11 @@ type CalculateBMRArgs = {
 export function calculateBMR(data: CalculateBMRArgs) {
 	const { bodyweight, bodyweightUnit, height, heightUnit, age, bodyFatPercentage, gender } = data;
 
+	const numericInputs = [bodyweight, height, age, bodyFatPercentage] as const;
+	if (numericInputs.some((input) => typeof input !== 'number' || isNaN(input))) {
+		return null;
+	}
+
 	let weightInKg = bodyweight;
 	if (bodyweightUnit === 'lb') {
 		weightInKg = bodyweight * 0.453592;
