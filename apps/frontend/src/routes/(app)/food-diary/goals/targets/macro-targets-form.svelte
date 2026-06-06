@@ -64,7 +64,7 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Weight change per week</Form.Label>
-						<div class="grid w-full grid-cols-2 gap-2 rounded-md border bg-background p-4">
+						<div class="bg-outline grid w-full gap-2 rounded-md border p-4">
 							<Slider
 								class="col-span-full"
 								type="single"
@@ -76,10 +76,13 @@
 									($formData.weeklyCaloricChange = value * CALORIES_PER_KILOGRAM)}
 								{...props}
 							/>
-							<span class="text-muted-foreground">{$formData.weeklyCaloricChange} kcal</span>
-							<span class="place-self-end text-muted-foreground">
+							<p class="w-fit place-self-end text-right">
 								{$formData.weeklyCaloricChange / CALORIES_PER_KILOGRAM} kg
-							</span>
+								<br />
+								<span class="text-sm">
+									{$formData.weeklyCaloricChange} kcal (weekly balance)
+								</span>
+							</p>
 						</div>
 					{/snippet}
 				</Form.Control>
@@ -102,7 +105,7 @@
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
-			<div class="grid">
+			<div class="grid place-items-center">
 				{#each macroFields as { label, formField } (label)}
 					<Form.Field {form} name={formField}>
 						<Form.Control>
