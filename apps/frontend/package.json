@@ -48,6 +48,7 @@
 		"vite-plugin-devtools-json": "^1.0.0"
 	},
 	"dependencies": {
+		"@ai-sdk/svelte": "^4.0.197",
 		"@capacitor/app": "^8.1.0",
 		"@capacitor/core": "^8.3.1",
 		"@capacitor/status-bar": "^8.0.2",
@@ -56,11 +57,14 @@
 		"@dnd-kit/svelte": "^0.4.0",
 		"@internationalized/date": "^3.12.1",
 		"@tanstack/svelte-query": "^6.1.28",
+		"ai": "^6.0.197",
 		"barqode": "^0.0.2",
 		"better-auth": "^1.6.9",
 		"culori": "^4.0.2",
 		"d3-scale": "^4.0.2",
 		"hono": "^4.12.17",
+		"isomorphic-dompurify": "^3.16.0",
+		"marked": "^18.0.5",
 		"mode-watcher": "^1.1.0",
 		"runed": "^0.37.1",
 		"svelte-infinite": "^0.5.2",
