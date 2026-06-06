@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { Button } from '$lib/components/ui/button';
 	import * as Chart from '$lib/components/ui/chart/index.js';
 	import { round } from '$lib/my-utils';
-	import { ChevronRightIcon } from '@lucide/svelte';
+	import { PencilIcon } from '@lucide/svelte';
 	import { BarChart } from 'layerchart';
 	import { cubicInOut } from 'svelte/easing';
 
@@ -60,9 +61,9 @@
 				{caloriesBurned > 0 ? `(incl. ${round(caloriesBurned, 0)} burned)` : ''}
 			</p>
 		</div>
-		<p class="flex h-fit items-center gap-2 text-sm whitespace-nowrap text-muted-foreground">
-			Edit goal <ChevronRightIcon class="size-4" />
-		</p>
+		<Button size="sm" variant="outline" href="/food-diary/goals">
+			Edit goal <PencilIcon class="size-4" />
+		</Button>
 	</div>
 	<Chart.Container config={chartConfig} class="h-4 w-full">
 		<BarChart
