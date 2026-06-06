@@ -1,7 +1,6 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import {
-		ChevronDownIcon,
 		ClockIcon,
 		FolderPenIcon,
 		GroupIcon,
@@ -10,7 +9,6 @@
 	} from '@lucide/svelte';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { superForm, defaults, dateProxy, type SuperForm } from 'sveltekit-superforms';
@@ -146,20 +144,15 @@
 							/>
 							<InputGroup.Addon align="inline-end">
 								{#if hasServingData}
-									<DropdownMenu.Root>
-										<DropdownMenu.Trigger class="flex items-center gap-2">
-											{$formData.preferredUnit}
-											<ChevronDownIcon class="size-4" />
-										</DropdownMenu.Trigger>
-										<DropdownMenu.Content align="end">
-											<DropdownMenu.Item onclick={() => ($formData.preferredUnit = 'g')}>
-												g
-											</DropdownMenu.Item>
-											<DropdownMenu.Item onclick={() => ($formData.preferredUnit = 'serving')}>
-												serving <p class="text-sm text-muted-foreground">{$formData.servingSize}</p>
-											</DropdownMenu.Item>
-										</DropdownMenu.Content>
-									</DropdownMenu.Root>
+									<InputGroup.Button
+										type="button"
+										variant="ghost"
+										class="pe-1.5! text-xs"
+										onclick={() =>
+											($formData.preferredUnit = $formData.preferredUnit === 'g' ? 'serving' : 'g')}
+									>
+										{$formData.preferredUnit}
+									</InputGroup.Button>
 								{:else}
 									g
 								{/if}
