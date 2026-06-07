@@ -1,6 +1,9 @@
 import { Hono } from 'hono';
 import { streamText, convertToModelMessages } from 'ai';
 import { model } from './provider';
+import { tools } from './tools';
+import { systemPrompt } from './system-prompt';
+import { resolveMessages } from './helpers';
 
 const chatRoutes = new Hono()
 	/**
@@ -12,8 +15,9 @@ const chatRoutes = new Hono()
 
 		const result = streamText({
 			model,
-			messages: await convertToModelMessages(messages),
-			system: 'You are a helpful assistant.'
+			messages: await convertToModelMessages(resolveMessages(messages)),
+			system: systemPrompt,
+			tools
 		});
 
 		return result.toUIMessageStreamResponse();

@@ -8,4 +8,4 @@ const provider = createOpenAICompatible({
 	includeUsage: true
 });
 
-export const model = provider.chatModel('google.gemma-3-12b-it');
+export const model = provider.chatModel(process.env.OPENAI_MODEL_ID!);

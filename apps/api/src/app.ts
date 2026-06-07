@@ -36,4 +36,7 @@ const routes = app
 
 export type AppType = typeof routes;
 
+export type { MyUIMessage } from './features/chat/helpers.js';
+export type { MyUITools } from './features/chat/tools.js';
+
 export { app };
