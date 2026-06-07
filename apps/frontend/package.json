@@ -19,7 +19,7 @@
 		"@capacitor/cli": "^8.3.1",
 		"@capacitor/ios": "^8.3.1",
 		"@inlang/paraglide-js": "^2.18.0",
-		"@lucide/svelte": "^1.14.0",
+		"@lucide/svelte": "^1.17.0",
 		"@myfit/api": "workspace:*",
 		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.59.1",

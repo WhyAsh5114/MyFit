@@ -3,22 +3,16 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Button } from '$lib/components/ui/button';
 	import { CameraIcon, FileIcon, PlusIcon, SendIcon, XIcon } from '@lucide/svelte';
-	import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 	import imageCompression from 'browser-image-compression';
-
-	interface Props {
-		status: string;
-		onsendmessage: (parts: UIMessagePart<UIDataTypes, UITools>[]) => void;
-	}
-
-	const { status, onsendmessage }: Props = $props();
+	import { chat } from './chat.svelte';
+	import type { MyUIMessage } from '@myfit/api';
 
 	let input = $state('');
 	let selectedImage = $state<{ dataUrl: string; mediaType: string } | null>(null);
 	let fileInputEl: HTMLInputElement;
 	let cameraInputEl: HTMLInputElement;
 
-	const disabled = $derived(status !== 'ready' || (!input.trim() && !selectedImage));
+	const disabled = $derived(chat.status !== 'ready' || (!input.trim() && !selectedImage));
 
 	async function handleFileChange(event: Event) {
 		const file = (event.target as HTMLInputElement).files?.[0];
@@ -45,7 +39,7 @@
 	function handleSubmit() {
 		if (!input.trim() && !selectedImage) return;
 
-		const parts: UIMessagePart<UIDataTypes, UITools>[] = [];
+		const parts: MyUIMessage['parts'] = [];
 
 		if (selectedImage) {
 			parts.push({
@@ -59,7 +53,7 @@
 			parts.push({ type: 'text' as const, text: input.trim() });
 		}
 
-		onsendmessage(parts);
+		chat.sendMessage({ role: 'user', parts });
 		input = '';
 		selectedImage = null;
 	}
