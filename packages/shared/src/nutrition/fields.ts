@@ -1,0 +1,41 @@
+export const REQUIRED_NUTRIENT_FIELDS = [
+	{ key: 'energyKcal_100g', label: 'Calories', unit: 'kcal' },
+	{ key: 'carbohydratesG_100g', label: 'Carbs', unit: 'g' },
+	{ key: 'fatG_100g', label: 'Fat', unit: 'g' },
+	{ key: 'proteinsG_100g', label: 'Protein', unit: 'g' }
+] as const;
+
+export const OPTIONAL_NUTRIENT_FIELDS = [
+	{ key: 'saturatedFatG_100g', label: 'Saturated fat', unit: 'g' },
+	{ key: 'unsaturatedFatG_100g', label: 'Unsaturated fat', unit: 'g' },
+	{ key: 'monounsaturatedFatG_100g', label: 'Monounsaturated fat', unit: 'g' },
+	{ key: 'polyunsaturatedFatG_100g', label: 'Polyunsaturated fat', unit: 'g' },
+	{ key: 'transFatG_100g', label: 'Trans fat', unit: 'g' },
+	{ key: 'cholesterolMg_100g', label: 'Cholesterol', unit: 'mg' },
+	{ key: 'sugarsG_100g', label: 'Sugars', unit: 'g' },
+	{ key: 'polyolsG_100g', label: 'Polyols', unit: 'g' },
+	{ key: 'fiberG_100g', label: 'Fiber', unit: 'g' },
+	{ key: 'saltG_100g', label: 'Salt', unit: 'g' },
+	{ key: 'sodiumMg_100g', label: 'Sodium', unit: 'mg' },
+	{ key: 'alcoholG_100g', label: 'Alcohol', unit: 'g' },
+	{ key: 'vitaminAIU_100g', label: 'Vitamin A', unit: 'IU' },
+	{ key: 'vitaminDIU_100g', label: 'Vitamin D', unit: 'IU' },
+	{ key: 'vitaminEMg_100g', label: 'Vitamin E', unit: 'mg' },
+	{ key: 'vitaminKMcg_100g', label: 'Vitamin K', unit: 'µg' },
+	{ key: 'vitaminCMg_100g', label: 'Vitamin C', unit: 'mg' },
+	{ key: 'vitaminB1Mg_100g', label: 'Vitamin B1', unit: 'mg' },
+	{ key: 'vitaminB2Mg_100g', label: 'Vitamin B2', unit: 'mg' },
+	{ key: 'vitaminB6Mg_100g', label: 'Vitamin B6', unit: 'mg' },
+	{ key: 'vitaminB9Mcg_100g', label: 'Vitamin B9', unit: 'µg' },
+	{ key: 'folatesMcg_100g', label: 'Folates', unit: 'µg' },
+	{ key: 'vitaminB12Mcg_100g', label: 'Vitamin B12', unit: 'µg' },
+	{ key: 'potassiumMg_100g', label: 'Potassium', unit: 'mg' },
+	{ key: 'calciumMg_100g', label: 'Calcium', unit: 'mg' },
+	{ key: 'phosphorusMg_100g', label: 'Phosphorus', unit: 'mg' },
+	{ key: 'ironMg_100g', label: 'Iron', unit: 'mg' },
+	{ key: 'magnesiumMg_100g', label: 'Magnesium', unit: 'mg' },
+	{ key: 'zincMg_100g', label: 'Zinc', unit: 'mg' },
+	{ key: 'copperMg_100g', label: 'Copper', unit: 'mg' },
+	{ key: 'manganeseMg_100g', label: 'Manganese', unit: 'mg' },
+	{ key: 'caffeineMg_100g', label: 'Caffeine', unit: 'mg' }
+] as const;

@@ -24,6 +24,7 @@
 		"format": "prettier --write ."
 	},
 	"dependencies": {
+		"@myfit/shared": "workspace:*",
 		"@ai-sdk/openai-compatible": "^2.0.46",
 		"@hono/zod-validator": "^0.7.6",
 		"@prisma-idb/idb-client-generator": "^0.38.0",

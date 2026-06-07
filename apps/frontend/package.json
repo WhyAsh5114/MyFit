@@ -21,6 +21,7 @@
 		"@inlang/paraglide-js": "^2.18.0",
 		"@lucide/svelte": "^1.17.0",
 		"@myfit/api": "workspace:*",
+		"@myfit/shared": "workspace:*",
 		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.59.1",
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",

@@ -1,227 +1,53 @@
 import { AmphoraIcon, BeefIcon, FlameIcon, WheatIcon } from '@lucide/svelte';
-import type { NutritionData, FoodEntry } from '@myfit/api/prisma/client';
+import type { FoodEntry, NutritionData } from '@myfit/api/prisma/client';
+import {
+	OPTIONAL_NUTRIENT_FIELDS,
+	REQUIRED_NUTRIENT_FIELDS,
+	optionalNutrientsShape as sharedOptionalNutrientsShape
+} from '@myfit/shared/nutrition';
 import z from 'zod';
 
-/**
- * Single source of truth for nutrient field mappings
- * Type-checked against Prisma schema to catch drift at compile time
- */
-export const REQUIRED_NUTRIENTS = [
-	{
-		key: 'energyKcal_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Calories',
-		unit: 'kcal',
-		icon: FlameIcon
-	},
-	{
-		key: 'carbohydratesG_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Carbs',
-		unit: 'g',
-		icon: WheatIcon
-	},
-	{
-		key: 'fatG_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Fat',
-		unit: 'g',
-		icon: AmphoraIcon
-	},
-	{
-		key: 'proteinsG_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Protein',
-		unit: 'g',
-		icon: BeefIcon
-	}
-] as const;
+const REQUIRED_ICONS = {
+	energyKcal_100g: FlameIcon,
+	carbohydratesG_100g: WheatIcon,
+	fatG_100g: AmphoraIcon,
+	proteinsG_100g: BeefIcon
+} as const satisfies Record<(typeof REQUIRED_NUTRIENT_FIELDS)[number]['key'], unknown>;
 
-export const OPTIONAL_NUTRIENTS = [
-	{
-		key: 'saturatedFatG_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Saturated fat',
-		unit: 'g'
-	},
-	{
-		key: 'unsaturatedFatG_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Unsaturated fat',
-		unit: 'g'
-	},
-	{
-		key: 'monounsaturatedFatG_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Monounsaturated fat',
-		unit: 'g'
-	},
-	{
-		key: 'polyunsaturatedFatG_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Polyunsaturated fat',
-		unit: 'g'
-	},
-	{
-		key: 'transFatG_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Trans fat',
-		unit: 'g'
-	},
-	{
-		key: 'cholesterolMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Cholesterol',
-		unit: 'mg'
-	},
-	{
-		key: 'sugarsG_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Sugars',
-		unit: 'g'
-	},
-	{
-		key: 'polyolsG_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Polyols',
-		unit: 'g'
-	},
-	{
-		key: 'fiberG_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Fiber',
-		unit: 'g'
-	},
-	{
-		key: 'saltG_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Salt',
-		unit: 'g'
-	},
-	{
-		key: 'sodiumMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Sodium',
-		unit: 'mg'
-	},
-	{
-		key: 'alcoholG_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Alcohol',
-		unit: 'g'
-	},
-	{
-		key: 'vitaminAIU_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Vitamin A',
-		unit: 'IU'
-	},
-	{
-		key: 'vitaminDIU_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Vitamin D',
-		unit: 'IU'
-	},
-	{
-		key: 'vitaminEMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Vitamin E',
-		unit: 'mg'
-	},
-	{
-		key: 'vitaminKMcg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Vitamin K',
-		unit: 'µg'
-	},
-	{
-		key: 'vitaminCMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Vitamin C',
-		unit: 'mg'
-	},
-	{
-		key: 'vitaminB1Mg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Vitamin B1',
-		unit: 'mg'
-	},
-	{
-		key: 'vitaminB2Mg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Vitamin B2',
-		unit: 'mg'
-	},
-	{
-		key: 'vitaminB6Mg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Vitamin B6',
-		unit: 'mg'
-	},
-	{
-		key: 'vitaminB9Mcg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Vitamin B9',
-		unit: 'µg'
-	},
-	{
-		key: 'folatesMcg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Folates',
-		unit: 'µg'
-	},
-	{
-		key: 'vitaminB12Mcg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Vitamin B12',
-		unit: 'µg'
-	},
-	{
-		key: 'potassiumMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Potassium',
-		unit: 'mg'
-	},
-	{
-		key: 'calciumMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Calcium',
-		unit: 'mg'
-	},
-	{
-		key: 'phosphorusMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Phosphorus',
-		unit: 'mg'
-	},
-	{
-		key: 'ironMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Iron',
-		unit: 'mg'
-	},
-	{
-		key: 'magnesiumMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Magnesium',
-		unit: 'mg'
-	},
-	{
-		key: 'zincMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Zinc',
-		unit: 'mg'
-	},
-	{
-		key: 'copperMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Copper',
-		unit: 'mg'
-	},
-	{
-		key: 'manganeseMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Manganese',
-		unit: 'mg'
-	},
-	{
-		key: 'caffeineMg_100g' satisfies keyof NutritionData & keyof FoodEntry,
-		label: 'Caffeine',
-		unit: 'mg'
-	}
-] as const;
+export const REQUIRED_NUTRIENTS = REQUIRED_NUTRIENT_FIELDS.map((n) => ({
+	...n,
+	icon: REQUIRED_ICONS[n.key]
+})) satisfies Array<{
+	key: keyof NutritionData & keyof FoodEntry;
+	label: string;
+	unit: string;
+	icon: unknown;
+}>;
 
-export const requiredNutrientsFields = REQUIRED_NUTRIENTS.map((n) => ({
+export const OPTIONAL_NUTRIENTS = OPTIONAL_NUTRIENT_FIELDS satisfies ReadonlyArray<{
+	key: keyof NutritionData & keyof FoodEntry;
+	label: string;
+	unit: string;
+}>;
+
+export const requiredNutrientsFields = REQUIRED_NUTRIENT_FIELDS.map((n) => ({
 	key: n.key,
 	label: n.label
 }));
 
-export const optionalNutrientsFields = OPTIONAL_NUTRIENTS.map((n) => ({
+export const optionalNutrientsFields = OPTIONAL_NUTRIENT_FIELDS.map((n) => ({
 	key: n.key,
 	label: n.label
 }));
 
 export const requiredNutrientsShape = Object.fromEntries(
-	requiredNutrientsFields.map((field) => [
+	REQUIRED_NUTRIENT_FIELDS.map((field) => [
 		field.key,
 		z
 			.number()
 			.nonnegative(`${field.label} must be non-negative`)
 			.default('' as unknown as number)
 	])
-) as Record<(typeof requiredNutrientsFields)[number]['key'], z.ZodDefault<z.ZodNumber>>;
+) as Record<(typeof REQUIRED_NUTRIENT_FIELDS)[number]['key'], z.ZodDefault<z.ZodNumber>>;
 
-export const optionalNutrientsShape = Object.fromEntries(
-	optionalNutrientsFields.map((field) => [
-		field.key,
-		z.number().nonnegative(`${field.label} must be non-negative`).optional().nullable()
-	])
-) as Record<
-	(typeof optionalNutrientsFields)[number]['key'],
-	z.ZodNullable<z.ZodOptional<z.ZodNumber>>
->;
+export const optionalNutrientsShape = sharedOptionalNutrientsShape;

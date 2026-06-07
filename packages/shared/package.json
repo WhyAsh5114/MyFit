@@ -1,0 +1,17 @@
+{
+	"name": "@myfit/shared",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./src/index.ts",
+			"default": "./src/index.ts"
+		},
+		"./nutrition": {
+			"types": "./src/nutrition/index.ts",
+			"default": "./src/nutrition/index.ts"
+		}
+	},
+	"peerDependencies": {
+		"zod": "^4.0.0"
+	}
+}
