@@ -6,7 +6,8 @@ import {
 	LockIcon,
 	HeartHandshakeIcon,
 	BookOpenIcon,
-	AppleIcon
+	AppleIcon,
+	BotMessageSquareIcon
 } from '@lucide/svelte';
 import GithubIcon from '$lib/icons/github-icon.svelte';
 
@@ -18,6 +19,11 @@ export const sidebarLinks = [
 				title: m['nav.dashboard'](),
 				url: '/dashboard',
 				icon: BlocksIcon
+			},
+			{
+				title: m['nav.chat'](),
+				url: '/chat',
+				icon: BotMessageSquareIcon
 			},
 			{
 				title: m['nav.foodDiary'](),

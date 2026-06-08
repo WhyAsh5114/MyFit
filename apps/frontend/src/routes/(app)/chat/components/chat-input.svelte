@@ -2,10 +2,19 @@
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Button } from '$lib/components/ui/button';
-	import { CameraIcon, FileIcon, PlusIcon, SendIcon, XIcon } from '@lucide/svelte';
+	import {
+		CameraIcon,
+		ClipboardCopyIcon,
+		FileIcon,
+		PlusIcon,
+		SendIcon,
+		XIcon
+	} from '@lucide/svelte';
 	import imageCompression from 'browser-image-compression';
+	import { toast } from 'svelte-sonner';
 	import { chat } from './chat.svelte';
 	import type { MyUIMessage } from '@myfit/api';
+	import { dev } from '$app/environment';
 
 	let input = $state('');
 	let selectedImage = $state<{ dataUrl: string; mediaType: string } | null>(null);
@@ -34,6 +43,11 @@
 		reader.readAsDataURL(compressed);
 
 		(event.target as HTMLInputElement).value = '';
+	}
+
+	function copyChat() {
+		navigator.clipboard.writeText(JSON.stringify(chat.messages, null, 2));
+		toast.success('Chat copied to clipboard');
 	}
 
 	function handleSubmit() {
@@ -79,8 +93,8 @@
 	<div class="relative w-fit px-2 pt-2">
 		<img src={selectedImage.dataUrl} alt="Selected" class="max-h-20 rounded-md object-cover" />
 		<Button
-			class="absolute top-0 right-0 size-6 rounded-full p-0.5 opacity-100 shadow"
-			variant="destructive"
+			class="absolute top-0 right-0 size-6 rounded-full border p-0.5 shadow"
+			variant="secondary"
 			onclick={() => (selectedImage = null)}
 		>
 			<XIcon class="size-3" />
@@ -94,7 +108,7 @@
 		placeholder="Ask, Search or Chat..."
 		class="max-h-40"
 		onkeydown={(event) => {
-			if (event.key === 'Enter' && !event.shiftKey) {
+			if (event.key === 'Enter' && !event.shiftKey && !disabled) {
 				event.preventDefault();
 				handleSubmit();
 			}
@@ -120,6 +134,17 @@
 				</DropdownMenu.Group>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
+
+		{#if dev}
+			<InputGroup.Button
+				variant="ghost"
+				size="icon-sm"
+				disabled={chat.messages.length === 0}
+				onclick={copyChat}
+			>
+				<ClipboardCopyIcon />
+			</InputGroup.Button>
+		{/if}
 
 		<InputGroup.Button
 			variant="default"
