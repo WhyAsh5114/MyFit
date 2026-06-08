@@ -6,7 +6,8 @@ import type { MyUIMessage } from '@myfit/api';
 export const chat = $state(
 	new Chat<MyUIMessage>({
 		transport: new DefaultChatTransport({
-			api: `${PUBLIC_API_URL}/api/chat`
+			api: `${PUBLIC_API_URL}/api/chat`,
+			credentials: 'include'
 		}),
 		sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls
 	})
