@@ -11,3 +11,10 @@ export const chat = $state(
 		sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls
 	})
 );
+
+export function resetChat() {
+	if (chat.status !== 'ready') {
+		chat.stop();
+	}
+	chat.messages = [];
+}

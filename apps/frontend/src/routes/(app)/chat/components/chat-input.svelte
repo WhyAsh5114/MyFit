@@ -7,12 +7,13 @@
 		ClipboardCopyIcon,
 		FileIcon,
 		PlusIcon,
+		RotateCcwIcon,
 		SendIcon,
 		XIcon
 	} from '@lucide/svelte';
 	import imageCompression from 'browser-image-compression';
 	import { toast } from 'svelte-sonner';
-	import { chat } from './chat.svelte';
+	import { chat, resetChat } from './chat.svelte';
 	import type { MyUIMessage } from '@myfit/api';
 	import { dev } from '$app/environment';
 
@@ -135,6 +136,14 @@
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 
+		<InputGroup.Button
+			variant="ghost"
+			size="icon-sm"
+			disabled={chat.messages.length === 0}
+			onclick={resetChat}
+		>
+			<RotateCcwIcon />
+		</InputGroup.Button>
 		{#if dev}
 			<InputGroup.Button
 				variant="ghost"

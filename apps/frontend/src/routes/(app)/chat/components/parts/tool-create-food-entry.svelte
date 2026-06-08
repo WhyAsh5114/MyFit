@@ -65,7 +65,7 @@
 		chat.addToolOutput({
 			tool: 'createFoodEntry',
 			toolCallId: part.toolCallId,
-			output: 'cancelled'
+			output: 'cancelled by user'
 		});
 	}
 </script>
@@ -112,7 +112,7 @@
 				>
 					{#if mutation.isPending}
 						<Spinner />
-					{:else if part.state === 'output-available'}
+					{:else if part.state === 'output-available' && part.output === 'created'}
 						Logged <CheckIcon />
 					{:else}
 						Log
