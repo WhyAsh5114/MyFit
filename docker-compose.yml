@@ -1,0 +1,66 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: myfit
+      POSTGRES_USER: myfit
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myfit -d myfit"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://myfit:${POSTGRES_PASSWORD}@postgres:5432/myfit
+      PORT: 3000
+      NODE_ENV: production
+      AUTH_SECRET: ${AUTH_SECRET}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      TRUSTED_ORIGINS: ${TRUSTED_ORIGINS}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - internal
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.myfit-api.rule=Host(`${API_DOMAIN}`)"
+      - "traefik.http.routers.myfit-api.entrypoints=websecure"
+      - "traefik.http.routers.myfit-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.myfit-api.loadbalancer.server.port=3000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+      args:
+        PUBLIC_API_URL: https://${API_DOMAIN}
+    restart: unless-stopped
+    networks:
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.myfit-frontend.rule=Host(`${FRONTEND_DOMAIN}`)"
+      - "traefik.http.routers.myfit-frontend.entrypoints=websecure"
+      - "traefik.http.routers.myfit-frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.myfit-frontend.loadbalancer.server.port=80"
+
+volumes:
+  postgres_data:
+
+networks:
+  internal:
+  dokploy-network:
+    external: true

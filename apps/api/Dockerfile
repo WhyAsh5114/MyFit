@@ -1,7 +1,8 @@
-# MyFit Hono API - Multi-stage Dockerfile (Node 24 + pnpm install, Bun runtime)
+# MyFit API — Multi-stage Dockerfile
+# Build: node:24-slim + pnpm  |  Runtime: node:24-slim + bun
 
 # ============================================================================
-# STAGE 1: Builder - Install dependencies and build
+# STAGE 1: Builder
 # ============================================================================
 FROM node:24-slim AS builder
 
@@ -11,28 +12,28 @@ RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /v
 
 RUN corepack enable
 
-# Copy workspace lockfile + root manifest
+# Manifests first — maximises layer cache on dependency changes
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
-
-# Copy API package.json first — isolates install as a cacheable layer
 COPY apps/api/package.json ./apps/api/
-WORKDIR /build/apps/api
-RUN pnpm install --frozen-lockfile
+COPY packages/shared/package.json ./packages/shared/
 
-# Copy all API source (node_modules excluded via root .dockerignore)
-WORKDIR /build
+# Install only the API and its workspace deps
+RUN pnpm install --frozen-lockfile --filter @myfit/api...
+
+# Copy sources (node_modules excluded via root .dockerignore)
 COPY apps/api ./apps/api
+COPY packages/shared ./packages/shared
 
-# Regenerate Prisma client for container platform (typed SQL remains from VCS)
+# Regenerate Prisma client for the container platform
+# (typed SQL files stay from VCS — prisma generate without --sql doesn't emit them)
 WORKDIR /build/apps/api
 RUN rm -rf ./generated/prisma && \
-  DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder pnpm exec prisma generate
-
-# Re-copy typed SQL from VCS (prisma generate without --sql does not emit generated/prisma/sql)
+    DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder \
+    pnpm exec prisma generate
 COPY apps/api/generated/prisma/sql ./generated/prisma/sql
 
 # ============================================================================
-# STAGE 2: Runtime - Minimal production image
+# STAGE 2: Runtime
 # ============================================================================
 FROM node:24-slim
 
@@ -46,17 +47,15 @@ RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /v
 RUN useradd -m -u 1001 -s /sbin/nologin appuser
 
 WORKDIR /build
-
 COPY --from=builder --chown=appuser:appuser /build /build
 
 WORKDIR /build/apps/api
+COPY apps/api/entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
 
-USER appuser
-
-RUN npx prisma migrate deploy
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD bun run --eval "await fetch('http://localhost:3000/api/health').then(r => { if (!r.ok) throw new Error() })" || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=5 \
+    CMD bun run --eval "await fetch('http://localhost:3000/api/health').then(r => { if (!r.ok) throw new Error() })" || exit 1
 
 EXPOSE 3000
-CMD ["bun", "src/index.ts"]
+USER appuser
+ENTRYPOINT ["./entrypoint.sh"]
