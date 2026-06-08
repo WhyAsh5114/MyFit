@@ -10,7 +10,8 @@
 	import ReasoningPart from './parts/reasoning.svelte';
 	import TextPart from './parts/text.svelte';
 	import RequireClarificationPart from './parts/tool-require-clarification.svelte';
-	import type { Component } from 'svelte';
+	import CreateFoodEntryPart from './parts/tool-create-food-entry.svelte';
+	import { type Component } from 'svelte';
 
 	type PartComponent = Component<{ part: MyUIMessage['parts'][number]; role: MyUIMessage['role'] }>;
 
@@ -18,11 +19,20 @@
 		file: FilePart,
 		reasoning: ReasoningPart,
 		text: TextPart,
-		'tool-requireClarification': RequireClarificationPart
+		'tool-requireClarification': RequireClarificationPart,
+		'tool-createFoodEntry': CreateFoodEntryPart
 	} as const;
+
+	let viewport = $state<HTMLElement | null>(null);
+
+	$effect(() => {
+		void chat.messages;
+		void chat.status;
+		viewport?.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
+	});
 </script>
 
-<ScrollArea class="flex h-px grow flex-col pr-2">
+<ScrollArea bind:viewportRef={viewport} class="flex h-px grow flex-col pr-2">
 	{#each chat.messages as message (message.id)}
 		{#each message.parts as part, i (i)}
 			{@const Component = PART_COMPONENTS[

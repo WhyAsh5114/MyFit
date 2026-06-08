@@ -1,6 +1,20 @@
 import type { InferUITools } from 'ai';
-import { requiredNutrientsShape, optionalNutrientsShape } from '@myfit/shared/nutrition';
+import { REQUIRED_NUTRIENT_FIELDS, OPTIONAL_NUTRIENT_FIELDS } from '@myfit/shared/nutrition';
 import z from 'zod';
+
+type RequiredNutrientKey = (typeof REQUIRED_NUTRIENT_FIELDS)[number]['key'];
+type OptionalNutrientKey = (typeof OPTIONAL_NUTRIENT_FIELDS)[number]['key'];
+
+const coercedRequiredNutrientsShape = Object.fromEntries(
+	REQUIRED_NUTRIENT_FIELDS.map((f) => [f.key, z.coerce.number().nonnegative()])
+) as { [K in RequiredNutrientKey]: z.ZodNumber };
+
+const coercedOptionalNutrientsShape = Object.fromEntries(
+	OPTIONAL_NUTRIENT_FIELDS.map((f) => [
+		f.key,
+		z.coerce.number().nonnegative().optional().nullable()
+	])
+) as { [K in OptionalNutrientKey]: z.ZodNullable<z.ZodOptional<z.ZodNumber>> };
 
 export const tools = {
 	requireClarification: {
@@ -16,10 +30,9 @@ export const tools = {
 		description: 'Create a food entry for the user.',
 		inputSchema: z.object({
 			name: z.string().describe('The name of the food.'),
-			quantityG: z.number().positive().describe('Amount eaten in grams.'),
-			mealId: z.string().optional().describe('The meal to add this entry to.'),
-			...requiredNutrientsShape,
-			...optionalNutrientsShape
+			quantityG: z.coerce.number().positive().describe('Amount eaten in grams.'),
+			...coercedRequiredNutrientsShape,
+			...coercedOptionalNutrientsShape
 		})
 	}
 };
