@@ -43,6 +43,9 @@ ARG PUBLIC_API_URL=http://localhost:3000
 ENV PUBLIC_API_URL=$PUBLIC_API_URL
 
 WORKDIR /build/apps/frontend
+# Vite's client bundle peaks at ~2 GB on this codebase. Raise the V8 heap limit
+# so the GC doesn't abort on a 4 GB droplet where two images may build in parallel.
+ENV NODE_OPTIONS="--max-old-space-size=3072"
 RUN pnpm build
 
 # ============================================================================
