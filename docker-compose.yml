@@ -22,12 +22,17 @@ services:
       dockerfile: apps/api/Dockerfile
     restart: unless-stopped
     environment:
+      # Constructed from POSTGRES_PASSWORD — do NOT set DATABASE_URL in the env file
       DATABASE_URL: postgresql://myfit:${POSTGRES_PASSWORD}@postgres:5432/myfit
       PORT: 3000
       NODE_ENV: production
-      AUTH_SECRET: ${AUTH_SECRET}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
       RESEND_API_KEY: ${RESEND_API_KEY}
       TRUSTED_ORIGINS: ${TRUSTED_ORIGINS}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL}
+      OPENAI_MODEL_ID: ${OPENAI_MODEL_ID}
     depends_on:
       postgres:
         condition: service_healthy
@@ -46,7 +51,8 @@ services:
       context: .
       dockerfile: apps/frontend/Dockerfile
       args:
-        PUBLIC_API_URL: https://${API_DOMAIN}
+        # PUBLIC_API_URL is baked into the static bundle — must be the API domain, not frontend
+        PUBLIC_API_URL: ${PUBLIC_API_URL}
     restart: unless-stopped
     networks:
       - dokploy-network
