@@ -24,18 +24,18 @@
 		"format": "prettier --write ."
 	},
 	"dependencies": {
+		"@ai-sdk/openai-compatible": "^2.0.48",
+		"@hono/zod-validator": "^0.8.0",
 		"@myfit/shared": "workspace:*",
-		"@ai-sdk/openai-compatible": "^2.0.46",
-		"@hono/zod-validator": "^0.7.6",
 		"@prisma-idb/idb-client-generator": "^0.38.0",
 		"@prisma/adapter-pg": "^7.8.0",
 		"@prisma/client": "^7.8.0",
-		"ai": "^6.0.175",
-		"better-auth": "^1.6.9",
+		"ai": "^6.0.197",
+		"better-auth": "^1.6.15",
 		"dotenv": "^17.4.2",
-		"hono": "^4.12.17",
+		"hono": "^4.12.24",
 		"idb": "^8.0.3",
-		"resend": "^6.12.2",
+		"resend": "^6.12.4",
 		"uuid": "^14.0.0",
 		"zod": "^4.4.3"
 	},
@@ -45,7 +45,7 @@
 		"@types/pg-copy-streams": "^1.2.5",
 		"chalk": "^5.6.2",
 		"csv-parse": "^6.2.1",
-		"pg": "^8.20.0",
+		"pg": "^8.21.0",
 		"pg-copy-streams": "^7.0.0",
 		"prisma": "^7.8.0",
 		"typescript": "^6.0.3"
