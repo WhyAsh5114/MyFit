@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
-import 'dotenv/config';
+import { env } from '../lib/env.js';
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+const resend = new Resend(env.RESEND_API_KEY!);
 
 export function sendOTPEmail(to: string, otp: string) {
 	return resend.emails.send({

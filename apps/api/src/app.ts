@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import 'dotenv/config';
+import { env } from '../lib/env.js';
 
 const app = new Hono();
 
@@ -14,7 +14,7 @@ app.onError((err, c) => {
 app.use(
 	'*',
 	cors({
-		origin: JSON.parse(process.env.TRUSTED_ORIGINS!),
+		origin: env.TRUSTED_ORIGINS,
 		allowHeaders: ['Content-Type', 'Authorization'],
 		allowMethods: ['POST', 'GET', 'OPTIONS'],
 		exposeHeaders: ['Content-Length'],
@@ -32,7 +32,8 @@ const routes = app
 		(await import('./features/nutrition-data/routes.js')).nutritionDataRoutes
 	)
 	.route('/api/sync', (await import('./features/sync/routes.js')).syncRoutes)
-	.route('/api/chat', (await import('./features/chat/routes.js')).chatRoutes);
+	.route('/api/chat', (await import('./features/chat/routes.js')).chatRoutes)
+	.route('/api/ota', (await import('./features/ota/routes.js')).otaRoutes);
 
 export type AppType = typeof routes;
 

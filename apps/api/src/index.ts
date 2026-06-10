@@ -1,7 +1,8 @@
 import { app } from './app.js';
+import { env } from '../lib/env.js';
 export type { AppType } from './app.js';
 
-const port = parseInt(process.env.PORT || '3000', 10);
+const port = env.PORT;
 
 Bun.serve({
 	fetch: app.fetch,

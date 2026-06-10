@@ -3,12 +3,13 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { prisma } from './prisma.js';
 import { anonymous, emailOTP } from 'better-auth/plugins';
 import { sendOTPEmail } from '../src/mailer.js';
+import { env } from './env.js';
 
 export const auth = betterAuth({
 	database: prismaAdapter(prisma, {
 		provider: 'postgresql'
 	}),
-	trustedOrigins: JSON.parse(process.env.TRUSTED_ORIGINS!),
+	trustedOrigins: env.TRUSTED_ORIGINS,
 	plugins: [
 		anonymous(),
 		emailOTP({

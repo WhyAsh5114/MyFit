@@ -1,11 +1,11 @@
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
-import 'dotenv/config';
+import { env } from '../../../lib/env.js';
 
 const provider = createOpenAICompatible({
 	name: 'digitalocean',
-	apiKey: process.env.OPENAI_API_KEY,
-	baseURL: process.env.OPENAI_BASE_URL!,
+	apiKey: env.OPENAI_API_KEY,
+	baseURL: env.OPENAI_BASE_URL!,
 	includeUsage: true
 });
 
-export const model = provider.chatModel(process.env.OPENAI_MODEL_ID!);
+export const model = provider.chatModel(env.OPENAI_MODEL_ID!);
