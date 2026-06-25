@@ -22,6 +22,7 @@
 	import { Spinner } from '$lib/components/ui/spinner';
 	import { nutritionDataToFoodEntryFormData } from '$lib/features/food-diary/nutrition-data/model/mapper';
 	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
+	import posthog from 'posthog-js';
 
 	const currentUser = useCurrentUser();
 	const meals = useMeals(() => currentUser.data?.id ?? '');
@@ -37,6 +38,11 @@
 		await createFoodEntry.mutateAsync({
 			data,
 			userId: currentUser.data.id
+		});
+		posthog.capture('food_entry_created', {
+			source: 'search',
+			product_name: data.productName,
+			quantity_g: data.quantityG
 		});
 		toast.success(m['foodDiary.foodEntryCreated']());
 		await goto(resolve(`/food-diary/${page.params.date}`));

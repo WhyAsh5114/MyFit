@@ -14,6 +14,7 @@
 	import { resetDatabaseState } from './db';
 	import { getClient } from '$lib/clients/idb-client';
 	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
+	import posthog from 'posthog-js';
 
 	const sidebar = useSidebar();
 	let authData = useCurrentUser();
@@ -31,6 +32,8 @@
 	}
 
 	async function logout() {
+		posthog.capture('user_logged_out');
+		posthog.reset();
 		await resetDatabaseState(getClient());
 		await authClient.signOut();
 	}

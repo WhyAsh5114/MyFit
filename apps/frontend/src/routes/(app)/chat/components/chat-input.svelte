@@ -16,6 +16,7 @@
 	import { chat, resetChat } from './chat.svelte';
 	import type { MyUIMessage } from '@myfit/api';
 	import { dev } from '$app/environment';
+	import posthog from 'posthog-js';
 
 	let input = $state('');
 	let selectedImage = $state<{ dataUrl: string; mediaType: string } | null>(null);
@@ -40,10 +41,16 @@
 				dataUrl: e.target?.result as string,
 				mediaType: compressed.type || 'image/jpeg'
 			};
+			posthog.capture('chat_image_attached');
 		};
 		reader.readAsDataURL(compressed);
 
 		(event.target as HTMLInputElement).value = '';
+	}
+
+	function handleReset() {
+		posthog.capture('chat_reset');
+		resetChat();
 	}
 
 	function copyChat() {
@@ -68,6 +75,10 @@
 			parts.push({ type: 'text' as const, text: input.trim() });
 		}
 
+		posthog.capture('chat_message_sent', {
+			has_image: !!selectedImage,
+			message_length: input.trim().length
+		});
 		chat.sendMessage({ role: 'user', parts });
 		input = '';
 		selectedImage = null;
@@ -140,7 +151,7 @@
 			variant="ghost"
 			size="icon-sm"
 			disabled={chat.messages.length === 0}
-			onclick={resetChat}
+			onclick={handleReset}
 		>
 			<RotateCcwIcon />
 		</InputGroup.Button>

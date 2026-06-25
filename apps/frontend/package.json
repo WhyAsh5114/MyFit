@@ -70,6 +70,7 @@
 		"isomorphic-dompurify": "^3.16.0",
 		"marked": "^18.0.5",
 		"mode-watcher": "^1.1.0",
+		"posthog-js": "^1.393.1",
 		"runed": "^0.37.1",
 		"svelte-infinite": "^0.5.2",
 		"zod": "^4.4.3"

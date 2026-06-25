@@ -24,6 +24,7 @@
 	import { foodEntryToFoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/mapper';
 	import { useDeleteFoodEntry } from '$lib/features/food-diary/food-entry/mutations/delete';
 	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
+	import posthog from 'posthog-js';
 
 	const currentUser = useCurrentUser();
 	const meals = useMeals(() => currentUser.data?.id ?? '');
@@ -45,6 +46,10 @@
 			id: page.params.entryId,
 			userId: currentUser.data.id
 		});
+		posthog.capture('food_entry_updated', {
+			product_name: data.productName,
+			quantity_g: data.quantityG
+		});
 		toast.success(m['foodDiary.foodEntryUpdated']());
 		await goto(resolve(`/food-diary/${page.params.date}`));
 	}
@@ -59,6 +64,7 @@
 			id: page.params.entryId,
 			userId: currentUser.data.id
 		});
+		posthog.capture('food_entry_deleted');
 		toast.success(m['foodDiary.foodEntryDeleted']());
 		await goto(resolve(`/food-diary/${page.params.date}`));
 	}

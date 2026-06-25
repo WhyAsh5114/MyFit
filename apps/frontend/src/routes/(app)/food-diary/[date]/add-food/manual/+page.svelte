@@ -9,6 +9,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import { CircleCheckBigIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
+	import posthog from 'posthog-js';
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
@@ -26,6 +27,11 @@
 		await createFoodEntry.mutateAsync({
 			data,
 			userId: currentUser.data.id
+		});
+		posthog.capture('food_entry_created', {
+			source: 'manual',
+			product_name: data.productName,
+			quantity_g: data.quantityG
 		});
 		toast.success(m['foodDiary.foodEntryCreated']());
 		await goto(resolve(`/food-diary/${page.params.date}`));

@@ -16,6 +16,7 @@
 	import { resolve } from '$app/paths';
 	import { useNutritionDataByCode } from '$lib/features/food-diary/nutrition-data/queries/get-by-code';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import posthog from 'posthog-js';
 
 	let constraintOptions: { label: string; constraints: MediaTrackConstraints }[] = $state([]);
 	let selectedConstraintsValue = $state<string>();
@@ -53,6 +54,7 @@
 	}
 
 	$effect(() => {
+		posthog.capture('barcode_scan_initiated');
 		initializeCameraOptions().catch((e) => {
 			toast.error(m['foodDiary.cameraAccessError']());
 			console.error(e);
@@ -65,6 +67,7 @@
 
 	function onDetect(detectedCodes: DetectedBarcode[]) {
 		const detectedCode = detectedCodes[0].rawValue;
+		posthog.capture('barcode_scanned', { method: 'camera' });
 		toast.success(m['foodDiary.barcodeDetected'](), {
 			description: m['foodDiary.barcodeDetectedValue']({ value: detectedCode })
 		});
@@ -74,6 +77,7 @@
 	function handleManualCodeSubmit(e: Event) {
 		e.preventDefault();
 		if (!manualCode) return;
+		posthog.capture('barcode_scanned', { method: 'manual' });
 		codeToSearch = manualCode.toString();
 	}
 

@@ -17,6 +17,7 @@
 	import * as m from '$lib/paraglide/messages';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
+	import posthog from 'posthog-js';
 
 	let email = $state('');
 	let otp = $state('');
@@ -58,6 +59,11 @@
 
 			// Re-fetch session to let state sync
 			await authClient.getSession();
+
+			posthog.identify(data.user.id, { email: data.user.email, name: data.user.name });
+			posthog.capture(data.user.name.trim() === '' ? 'user_signed_up' : 'user_logged_in', {
+				email: data.user.email
+			});
 
 			if (data.user.name.trim() === '') {
 				toast.success(m['login.registerSuccess']());

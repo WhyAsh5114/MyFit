@@ -11,6 +11,7 @@
 	import { resolve } from '$app/paths';
 	import { m } from '$lib/paraglide/messages';
 	import { setupAccountFormSchema } from '$lib/features/user/setup-account.schema';
+	import posthog from 'posthog-js';
 
 	let { data }: { data: User } = $props();
 
@@ -27,6 +28,8 @@
 				userId: data.id,
 				name: form.data.name
 			});
+			posthog.capture('onboarding_completed');
+			posthog.identify(data.id, { name: form.data.name });
 			await goto(resolve('/dashboard'));
 		}
 	});

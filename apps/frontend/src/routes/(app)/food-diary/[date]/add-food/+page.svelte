@@ -13,6 +13,7 @@
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
+	import posthog from 'posthog-js';
 
 	const currentUser = useCurrentUser();
 	const meals = useMeals(() => currentUser.data?.id ?? '');
@@ -32,6 +33,7 @@
 			params.delete('search');
 		} else {
 			params.set('search', debounced.current);
+			posthog.capture('food_searched', { query_length: debounced.current.trim().length });
 		}
 
 		goto(resolve(`/food-diary/${page.params.date}/add-food?${params.toString()}`), {
