@@ -6,6 +6,10 @@ jobs:
   ci:
     name: Lint / Check / Build
     runs-on: ubuntu-latest
+    env:
+      PUBLIC_API_URL: http://localhost:3000
+      PUBLIC_POSTHOG_KEY: test_key
+      PUBLIC_POSTHOG_HOST: https://test.posthog.com
 
     steps:
       - uses: actions/checkout@v6
@@ -36,14 +40,10 @@ jobs:
 
       - name: Type check
         run: pnpm --filter @myfit/frontend run check
-        env:
-          PUBLIC_API_URL: http://localhost:3000
 
       - name: Build
         if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/v4-turborepo'
         run: pnpm --filter @myfit/frontend run build
-        env:
-          PUBLIC_API_URL: http://localhost:3000
 
       - name: Build API-backed artifact
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/v4-turborepo'
@@ -55,6 +55,8 @@ jobs:
           pnpm --filter @myfit/frontend run build
         env:
           PUBLIC_API_URL: ${{ secrets.OTA_API_URL }}
+          PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
+          PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
 
       - name: Upload build artifact
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/v4-turborepo'
