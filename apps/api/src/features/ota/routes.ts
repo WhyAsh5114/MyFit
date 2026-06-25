@@ -234,6 +234,9 @@ const otaRoutes = new Hono()
 			};
 			manifest.latest = version;
 			await writeManifest(manifest);
+		} catch (error) {
+			console.error('OTA: Failed to store uploaded bundle:', error);
+			return c.json({ error: 'Failed to store OTA bundle' }, 500);
 		} finally {
 			release();
 		}

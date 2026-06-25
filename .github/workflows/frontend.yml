@@ -79,8 +79,9 @@ jobs:
 
       - name: Upload OTA bundle
         run: |
-          cd apps/frontend
-          zip -r ota-bundle.zip build/ -x '*.DS_Store'
+          cd apps/frontend/build
+          zip -r ../ota-bundle.zip . -x '*.DS_Store'
+          cd ..
           CHECKSUM=$(sha256sum ota-bundle.zip | awk '{print $1}')
           echo "Bundle SHA-256: $CHECKSUM"
           HTTP_CODE=$(curl -s -o /dev/stderr -w "%{http_code}" \

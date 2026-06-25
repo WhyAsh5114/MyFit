@@ -1,4 +1,13 @@
 services:
+  ota-volume-init:
+    image: busybox:1.37
+    restart: "no"
+    command: sh -c "mkdir -p /data/ota-bundles && chown -R 1001:1001 /data/ota-bundles"
+    volumes:
+      - ota_bundles:/data/ota-bundles
+    networks:
+      - internal
+
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
@@ -39,6 +48,8 @@ services:
     volumes:
       - ota_bundles:/data/ota-bundles
     depends_on:
+      ota-volume-init:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
     networks:
