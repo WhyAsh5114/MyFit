@@ -64,5 +64,12 @@
 	"ota.updateReady": "Actualización lista, reinicia para aplicar",
 	"ota.restart": "Reiniciar",
 	"ota.download": "Descargar",
-	"ota.updateAvailable": "Nueva actualización disponible"
+	"ota.updateAvailable": "Nueva actualización disponible",
+	"ota.card.title": "Actualizaciones",
+	"ota.card.description": "Gestiona las actualizaciones y la versión de la app",
+	"ota.card.currentVersion": "Versión actual",
+	"ota.card.checkForUpdates": "Buscar actualizaciones",
+	"ota.card.checking": "Comprobando…",
+	"ota.card.autoUpdate": "Actualización automática",
+	"ota.card.autoUpdateDescription": "Descargar actualizaciones en segundo plano"
 }

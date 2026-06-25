@@ -171,5 +171,12 @@
 	"ota.updateReady": "Update ready, restart to apply",
 	"ota.restart": "Restart",
 	"ota.download": "Download",
-	"ota.updateAvailable": "A new update is available"
+	"ota.updateAvailable": "A new update is available",
+	"ota.card.title": "App Updates",
+	"ota.card.description": "Manage app updates and version",
+	"ota.card.currentVersion": "Current version",
+	"ota.card.checkForUpdates": "Check for updates",
+	"ota.card.checking": "Checking…",
+	"ota.card.autoUpdate": "Auto-update",
+	"ota.card.autoUpdateDescription": "Download updates silently in the background"
 }
