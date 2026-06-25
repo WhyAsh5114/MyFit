@@ -24,7 +24,8 @@ export const tools = {
 			choices: z
 				.array(z.string())
 				.describe('The multiple choice options for the user to pick from.')
-		})
+		}),
+		outputSchema: z.string()
 	},
 	createFoodEntry: {
 		description: 'Create a food entry for the user.',
@@ -33,7 +34,8 @@ export const tools = {
 			quantityG: z.coerce.number().positive().describe('Amount eaten in grams.'),
 			...coercedRequiredNutrientsShape,
 			...coercedOptionalNutrientsShape
-		})
+		}),
+		outputSchema: z.string()
 	}
 };
 

@@ -16,6 +16,7 @@ export const useSearchNutritionData = (getSearch: () => string) =>
 				if (!res.ok) {
 					toast.error('Failed to search nutrition data');
 					console.error('Failed to search nutrition data', res);
+					throw new Error('Failed to search nutrition data');
 				}
 
 				const data = await res.json();

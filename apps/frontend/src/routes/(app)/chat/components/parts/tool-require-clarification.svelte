@@ -22,7 +22,7 @@
 				</article>
 			{/await}
 			<div class="mt-2 flex flex-wrap gap-1">
-				{#each part.input?.choices ?? [] as choice (choice)}
+				{#each (part.input?.choices ?? []).filter((c): c is string => c !== undefined) as choice (choice)}
 					<Button
 						size="sm"
 						class="h-fit w-full py-1 whitespace-break-spaces"

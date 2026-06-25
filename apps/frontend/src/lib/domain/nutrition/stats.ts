@@ -12,6 +12,8 @@ export function calculateDailyNutritionStats(data: CalculateDailyNutritionStatsA
 	const { metrics, weeklyCaloricChange, foodEntries = [], activityEntries = [] } = data;
 
 	const bmr = calculateBMR(metrics);
+	if (bmr === null) return null;
+
 	const caloriesConsumed = foodEntries.reduce(
 		(sum, entry) => sum + entry.energyKcal_100g * (entry.quantityG / 100),
 		0
