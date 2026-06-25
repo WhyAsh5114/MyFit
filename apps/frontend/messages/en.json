@@ -166,5 +166,10 @@
 	"sync.statusStopped": "Stopped",
 	"sync.statusConnecting": "Connecting",
 	"sync.lastSynced": "Last synced",
-	"sync.neverSynced": "Never synced"
+	"sync.neverSynced": "Never synced",
+	"ota.downloadingUpdate": "Downloading update…",
+	"ota.updateReady": "Update ready, restart to apply",
+	"ota.restart": "Restart",
+	"ota.download": "Download",
+	"ota.updateAvailable": "A new update is available"
 }

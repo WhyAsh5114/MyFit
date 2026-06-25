@@ -27,6 +27,7 @@ model User {
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   isAnonymous         Boolean?
+  autoUpdate          Boolean               @default(true)
   sessions            Session[]
   accounts            Account[]
   macroTargets        MacroTargets[]

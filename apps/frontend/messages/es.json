@@ -59,5 +59,10 @@
 	"sync.statusStopped": "Detenido",
 	"sync.statusConnecting": "Conectando",
 	"sync.lastSynced": "Último sincronizado",
-	"sync.neverSynced": "Nunca sincronizado"
+	"sync.neverSynced": "Nunca sincronizado",
+	"ota.downloadingUpdate": "Descargando actualización…",
+	"ota.updateReady": "Actualización lista, reinicia para aplicar",
+	"ota.restart": "Reiniciar",
+	"ota.download": "Descargar",
+	"ota.updateAvailable": "Nueva actualización disponible"
 }

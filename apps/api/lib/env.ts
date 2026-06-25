@@ -21,6 +21,18 @@ function optional(key: string, fallback: string): string {
 	return process.env[key] ?? fallback;
 }
 
+/** Optional URL — normalizes to an origin and fails fast if invalid. */
+function optionalUrlOrigin(key: string): string | undefined {
+	const value = process.env[key];
+	if (!value) return undefined;
+
+	try {
+		return new URL(value).origin;
+	} catch {
+		throw new Error(`Invalid URL in environment variable: ${key}`);
+	}
+}
+
 /** Required JSON-encoded value. Fails fast on missing or invalid JSON. */
 function requiredJson<T>(key: string): T {
 	const raw = required(key);
@@ -56,5 +68,6 @@ export const env = {
 
 	// --- OTA (upload endpoint returns 501 without OTA_UPLOAD_KEY) ---
 	OTA_BUNDLES_DIR: optional('OTA_BUNDLES_DIR', 'data/ota-bundles'),
-	OTA_UPLOAD_KEY: process.env.OTA_UPLOAD_KEY
+	OTA_UPLOAD_KEY: process.env.OTA_UPLOAD_KEY,
+	PUBLIC_API_URL: optionalUrlOrigin('PUBLIC_API_URL')
 } as const;

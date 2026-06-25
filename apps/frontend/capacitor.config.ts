@@ -20,7 +20,10 @@ const config: CapacitorConfig = {
 	appName: 'MyFit',
 	webDir: 'build',
 	plugins: {
-		StatusBar: { overlaysWebView: false }
+		StatusBar: { overlaysWebView: false },
+		CapacitorUpdater: {
+			autoUpdate: false
+		}
 	},
 	server
 };

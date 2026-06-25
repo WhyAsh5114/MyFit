@@ -11,7 +11,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"ota:upload": "bash scripts/ota-upload.sh"
 	},
 	"devDependencies": {
 		"@capacitor/android": "^8.4.0",
@@ -54,6 +55,7 @@
 		"@capacitor/core": "^8.4.0",
 		"@capacitor/status-bar": "^8.0.2",
 		"@capgo/capacitor-health": "^8.6.2",
+		"@capgo/capacitor-updater": "^8.49.0",
 		"@dnd-kit/helpers": "^0.4.0",
 		"@dnd-kit/svelte": "^0.4.0",
 		"@internationalized/date": "^3.12.2",

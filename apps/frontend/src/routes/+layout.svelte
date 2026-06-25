@@ -10,6 +10,7 @@
 	import { queryClient } from '$lib/clients/query-client';
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
+	import { initOta } from '$lib/services/ota';
 
 	let { children } = $props();
 
@@ -19,6 +20,11 @@
 			if (canGoBack) window.history.back();
 			else App.exitApp();
 		});
+	});
+
+	// Initialize OTA updates on mount (native only — no-op on web)
+	$effect(() => {
+		initOta();
 	});
 </script>
 

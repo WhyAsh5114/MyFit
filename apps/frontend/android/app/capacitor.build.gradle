@@ -12,6 +12,7 @@ dependencies {
     implementation project(':capacitor-app')
     implementation project(':capacitor-status-bar')
     implementation project(':capgo-capacitor-health')
+    implementation project(':capgo-capacitor-updater')
 
 }
 

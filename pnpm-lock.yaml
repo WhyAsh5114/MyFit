@@ -147,6 +147,9 @@ importers:
       '@capgo/capacitor-health':
         specifier: ^8.6.2
         version: 8.6.2(@capacitor/core@8.4.0)
+      '@capgo/capacitor-updater':
+        specifier: ^8.49.0
+        version: 8.49.0(@capacitor/core@8.4.0)
       '@dnd-kit/helpers':
         specifier: ^0.4.0
         version: 0.4.0
@@ -248,7 +251,7 @@ importers:
         specifier: ^4.0.9
         version: 4.0.9
       '@types/node':
-        specifier: ^25.9.2
+        specifier: ^25.3.0
         version: 25.9.2
       bits-ui:
         specifier: ^2.18.1
@@ -493,6 +496,11 @@ packages:
     resolution: {integrity: sha512-ojzkLzjoNqMHx5OK6xSUz9DjP5TfBPWsfchFY04vibg4u7L57emIGcsKLSeBty3N4mkKDxOSV5dLx+53Uk1rqg==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
+
+  '@capgo/capacitor-updater@8.49.0':
+    resolution: {integrity: sha512-1s2+JvVGKMa20hctJkkmhVEdEHQ+sMnxJIgjZbHNJwEBOIqjA2Hh9YWINc+IUp7qAEYX+cVWmLxqRSNPBzThIQ==}
+    peerDependencies:
+      '@capacitor/core': ^8.0.0
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -4881,6 +4889,10 @@ snapshots:
       '@capacitor/core': 8.4.0
 
   '@capgo/capacitor-health@8.6.2(@capacitor/core@8.4.0)':
+    dependencies:
+      '@capacitor/core': 8.4.0
+
+  '@capgo/capacitor-updater@8.49.0(@capacitor/core@8.4.0)':
     dependencies:
       '@capacitor/core': 8.4.0
 
