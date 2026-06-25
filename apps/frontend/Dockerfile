@@ -38,9 +38,15 @@ RUN rm -rf ./generated/prisma && \
 # Re-copy typed SQL from VCS (generation without --sql does not emit these)
 COPY apps/api/generated/prisma/sql ./generated/prisma/sql
 
-# PUBLIC_API_URL is baked into the static bundle at build time
+# PUBLIC_* vars are baked into the static bundle at build time
 ARG PUBLIC_API_URL=http://localhost:3000
 ENV PUBLIC_API_URL=$PUBLIC_API_URL
+
+ARG PUBLIC_POSTHOG_KEY
+ENV PUBLIC_POSTHOG_KEY=$PUBLIC_POSTHOG_KEY
+
+ARG PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
+ENV PUBLIC_POSTHOG_HOST=$PUBLIC_POSTHOG_HOST
 
 WORKDIR /build/apps/frontend
 RUN NODE_OPTIONS="--max-old-space-size=3072" pnpm build

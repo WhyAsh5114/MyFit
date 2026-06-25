@@ -67,8 +67,10 @@ services:
       context: .
       dockerfile: apps/frontend/Dockerfile
       args:
-        # PUBLIC_API_URL is baked into the static bundle — must be the API domain, not frontend
+        # PUBLIC_* vars are baked into the static bundle at build time
         PUBLIC_API_URL: ${PUBLIC_API_URL}
+        PUBLIC_POSTHOG_KEY: ${PUBLIC_POSTHOG_KEY}
+        PUBLIC_POSTHOG_HOST: ${PUBLIC_POSTHOG_HOST}
     restart: unless-stopped
     networks:
       - dokploy-network
