@@ -6,6 +6,7 @@
 
 	const TERMS_ACCEPTED_KEY = 'myfit_terms_accepted';
 	let open = $state(false);
+	let scrollContainer: HTMLDivElement | undefined = $state();
 
 	onMount(() => {
 		if (browser) {
@@ -16,6 +17,12 @@
 					open = true;
 				}, 500);
 			}
+		}
+	});
+
+	$effect(() => {
+		if (open && scrollContainer) {
+			scrollContainer.scrollTop = 0;
 		}
 	});
 
@@ -40,7 +47,11 @@
 		<span class="text-sm">Please read and accept our Terms of Service to continue using MyFit.</span>
 	{/snippet}
 
-	<div class="mt-4 max-h-[50vh] space-y-4 overflow-y-auto rounded-lg border bg-muted/30 p-4 text-sm">
+	<div
+		bind:this={scrollContainer}
+		class="mt-4 max-h-[50vh] space-y-4 overflow-y-auto rounded-lg border bg-muted/30 p-4 text-sm"
+		style="overflow-anchor: none;"
+	>
 		<div>
 			<h3 class="mb-2 font-semibold text-foreground">Medical Disclaimer</h3>
 			<p class="text-muted-foreground">
@@ -87,7 +98,7 @@
 		</div>
 
 		<div class="rounded-lg border-2 border-destructive bg-destructive/10 p-3">
-			<p class="font-semibold text-destructive-foreground">
+			<p class="font-semibold text-foreground">
 				⚠️ STOP EXERCISING IMMEDIATELY and seek emergency medical attention if you experience chest pain, difficulty
 				breathing, dizziness, severe pain, or any other concerning symptoms.
 			</p>
@@ -96,7 +107,7 @@
 		<div class="rounded-lg border bg-primary/10 p-3">
 			<p class="text-xs text-muted-foreground">
 				For complete Terms of Service, please visit:
-				<a href="/terms-of-service" class="font-semibold text-primary hover:underline" target="_blank">
+				<a href="/terms-of-service" class="font-semibold text-primary hover:underline" target="_blank" tabindex="-1">
 					myfit.fit/terms-of-service
 				</a>
 			</p>
