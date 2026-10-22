@@ -4,7 +4,6 @@ import type { Contract } from './contract';
 export type { Contract };
 export { contractSpace } from './contract-space.generated';
 export * from './enums';
-export { STORAGE_HASH_HEADER } from './sync-protocol';
 
 /** A stored row of model `M`, e.g. `Row<'Meal'>`. */
 export type Row<M extends string> = DefaultModelRow<Contract, M>;

@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { STORAGE_HASH_HEADER } from '@myfit/schema/server';
+import { STORAGE_HASH_HEADER } from '@prisma-idb/sync-extension-idb/schemas';
 import { env } from '../lib/env.js';
 
 const app = new Hono();

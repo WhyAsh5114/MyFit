@@ -5,7 +5,6 @@ import type { Contract as ServerContract } from './schema.postgres.generated';
 import clientContractJson from './contract.json' with { type: 'json' };
 import serverContractJson from './schema.postgres.generated.json' with { type: 'json' };
 
-export { STORAGE_HASH_HEADER } from './sync-protocol';
 export type { ServerContract };
 
 // The contract JSON's branded id types don't survive the JSON import, hence the casts.

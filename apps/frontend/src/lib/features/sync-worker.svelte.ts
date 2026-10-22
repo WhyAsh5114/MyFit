@@ -1,22 +1,14 @@
-import { apiClient } from '$lib/clients/api-client';
+import { PUBLIC_API_URL } from '$env/static/public';
 import { getDb, type DbClient } from '$lib/clients/idb-client';
 import { queryClient } from '$lib/clients/query-client';
 import { loadPullCursor, savePullCursor } from './sync-cursor';
-import { STORAGE_HASH_HEADER } from '@myfit/schema/client';
 import {
-	ContractMismatchError,
-	type LogWithRecord,
-	type PushResult,
-	type SyncRequestContext,
+	createSyncFetchHandlers,
 	type SyncWorker,
 	type SyncWorkerStatus
 } from '@prisma-idb/sync-extension-idb/client';
 
 const SYNC_WORKER_STATE_KEY = '__myfit_sync_worker_state__';
-
-const storageHashHeader = ({ storageHash }: SyncRequestContext) => ({
-	[STORAGE_HASH_HEADER]: storageHash
-});
 
 /**
  * Owns the app's single sync worker and the reactive state the sync indicator reads.
@@ -55,38 +47,49 @@ class SyncWorkerState {
 		this.lastError = null;
 	}
 
+	/**
+	 * Waits for the database to open, then binds and starts a worker on it. Returns without
+	 * doing anything if `stop()` or another `start()` ran in the meantime, so a superseded
+	 * startup never leaves a worker on a database that was reset.
+	 */
 	private async bindWorker(generation: number) {
 		const db = await getDb();
 		if (generation !== this.generation) return;
 
-		const worker = this.createWorker(db);
+		const worker = this.createWorker(db, generation);
 		this.unsubscribe = this.listenTo(worker);
 		this.syncWorker = worker;
 		this.syncStatus = worker.status;
 		worker.start();
 	}
 
-	/** Creates a worker that pushes and pulls through the API, resuming from the saved pull cursor. */
-	private createWorker(db: DbClient): SyncWorker {
+	/**
+	 * Creates a worker that pushes and pulls through the API, resuming from the saved pull cursor.
+	 *
+	 * `stop()` does not cancel a cycle that is already running, so the callbacks of an
+	 * older `generation` do nothing. Otherwise that cycle could write its cursor after the
+	 * database reset cleared it, and the next account would skip history.
+	 */
+	private createWorker(db: DbClient, generation: number): SyncWorker {
+		const isCurrent = () => generation === this.generation;
 		return db.createSyncWorker({
-			pushHandler: async (events, signal, context) => {
-				const res = await apiClient.api.sync.push.$post(
-					{ json: { events } },
-					{ headers: storageHashHeader(context), init: { signal } }
-				);
-				if (!res.ok) throw this.fail(`Push failed: ${res.statusText}`, res.status);
-				return (await res.json()) as PushResult[];
-			},
-			pullHandler: async (since, signal, context) => {
-				const res = await apiClient.api.sync.pull.$get(
-					{ query: since ? { since } : {} },
-					{ headers: storageHashHeader(context), init: { signal } }
-				);
-				if (!res.ok) throw this.fail(`Pull failed: ${res.statusText}`, res.status);
-				return (await res.json()) as LogWithRecord[];
-			},
+			...createSyncFetchHandlers({
+				pushUrl: `${PUBLIC_API_URL}/api/sync/push`,
+				pullUrl: `${PUBLIC_API_URL}/api/sync/pull`,
+				credentials: 'include',
+				fetch: async (input, init) => {
+					const response = await fetch(input, init);
+					// A 409 is reported through the worker's `contractmismatch` event instead.
+					if (!response.ok && response.status !== 409 && isCurrent()) {
+						this.lastError = `Sync failed: ${response.statusText || response.status}`;
+					}
+					return response;
+				}
+			}),
 			getCursor: loadPullCursor,
-			setCursor: savePullCursor,
+			setCursor: (changelogId) => {
+				if (isCurrent()) savePullCursor(changelogId);
+			},
 			batchSize: 50,
 			intervalMs: 10000
 		});
@@ -115,14 +118,6 @@ class SyncWorkerState {
 				}
 			})
 		];
-	}
-
-	/** The worker only exposes a status string, so remember handler failures to show them. */
-	private fail(message: string, httpStatus: number): Error {
-		// The server answers 409 when the bundle's contract differs from its own.
-		if (httpStatus === 409) return new ContractMismatchError();
-		this.lastError = message;
-		return new Error(message);
 	}
 }
 
