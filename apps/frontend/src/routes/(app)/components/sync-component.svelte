@@ -26,6 +26,7 @@
 	}
 
 	onMount(() => {
+		syncWorkerState.start();
 		updateOutboxStats();
 		let unsubscribe: (() => void) | undefined;
 		let destroyed = false;
@@ -37,6 +38,7 @@
 		return () => {
 			destroyed = true;
 			unsubscribe?.();
+			syncWorkerState.stop();
 		};
 	});
 
