@@ -1,12 +1,14 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { userKeys } from '../keys';
 
 export const useCurrentUser = () =>
 	createQuery(() => ({
 		queryKey: userKeys.current(),
 		queryFn: async () => {
-			const client = getClient();
-			return await client.user.findFirstOrThrow();
+			const { orm } = await getDb();
+			const user = await orm.user.first();
+			if (!user) throw new Error('No local user');
+			return user;
 		}
 	}));

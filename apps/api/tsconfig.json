@@ -14,6 +14,6 @@
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true
 	},
-	"include": ["src/**/*", "prisma.config.ts"],
+	"include": ["src/**/*", "lib/**/*", "scripts/**/*"],
 	"exclude": ["node_modules", "dist", "generated/prisma-idb"]
 }

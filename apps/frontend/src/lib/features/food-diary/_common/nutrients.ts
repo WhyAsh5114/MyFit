@@ -1,5 +1,6 @@
 import { AmphoraIcon, BeefIcon, FlameIcon, WheatIcon } from '@lucide/svelte';
-import type { FoodEntry, NutritionData } from '@myfit/api/prisma/client';
+import type { FoodEntry } from '@myfit/schema/client';
+import type { NutritionData } from '@myfit/shared/nutrition';
 import {
 	OPTIONAL_NUTRIENT_FIELDS,
 	REQUIRED_NUTRIENT_FIELDS,

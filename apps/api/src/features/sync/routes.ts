@@ -1,13 +1,19 @@
 import { Hono } from 'hono';
 import { authMiddleware, getUserId } from '../../shared/middleware/auth.js';
 import { zValidator } from '@hono/zod-validator';
-import { outboxEventSchema } from '../../../generated/prisma-idb/validators.js';
-import {
-	applyPush,
-	pullAndMaterializeLogs
-} from '../../../generated/prisma-idb/server/batch-processor.js';
+import { pushRequestBodySchema } from '@prisma-idb/sync-extension-idb/schemas';
+import { sqlSyncAdapter, STORAGE_HASH_HEADER } from '@myfit/schema/server';
+
 import z from 'zod';
-import { prisma } from '../../../lib/prisma.js';
+import { getDb } from '../../../lib/db.js';
+
+// Generous headroom over the client's push batch size (50); just a bound so a
+// crafted request can't force an unbounded number of sequential transactions.
+const MAX_PUSH_BATCH_SIZE = 1000;
+
+// A 409 tells the client its bundle's contract differs from the server's, so it keeps its
+// queued edits and cursor and asks the user to reload instead of dropping them.
+const CONTRACT_MISMATCH_ERROR = 'Client contract is out of date';
 
 const syncRoutes = new Hono()
 	/**
@@ -17,53 +23,60 @@ const syncRoutes = new Hono()
 	 * Handles bidirectional sync between client and server
 	 * Client pushes outbox changes, server returns changes since last sync
 	 */
-	.post(
-		'/push',
-		authMiddleware,
-		zValidator('json', z.object({ events: z.array(outboxEventSchema) })),
-		async (c) => {
-			const userId = getUserId(c);
-			const { events } = c.req.valid('json');
+	.post('/push', authMiddleware, async (c) => {
+		const scopeKey = getUserId(c);
 
-			let pushResults;
-			try {
-				pushResults = await applyPush({
-					events,
-					scopeKey: userId,
-					prisma
-				});
-			} catch (error) {
-				const message = error instanceof Error ? error.message : 'Unknown error';
-				const status = message.startsWith('Batch size') ? 413 : 500;
-				return c.json({ error: message }, status);
-			}
-			return c.json(pushResults, 200);
+		// Not zValidator: sync-extension-idb ships its own zod instance, whose types
+		// zValidator's overloads reject.
+		const body = pushRequestBodySchema.safeParse(await c.req.json().catch(() => null));
+		if (!body.success) {
+			return c.json({ error: 'Malformed request body', details: body.error.issues }, 400);
 		}
-	)
+
+		const outcome = await sqlSyncAdapter.applyPush(await getDb(), {
+			events: body.data.events,
+			scopeKey,
+			clientStorageHash: c.req.header(STORAGE_HASH_HEADER),
+			maxBatchSize: MAX_PUSH_BATCH_SIZE
+		});
+		if (!outcome.ok) {
+			switch (outcome.reason) {
+				case 'batch-too-large':
+					return c.json(
+						{ error: `Batch size exceeds the maximum of ${outcome.maxBatchSize} events` },
+						413
+					);
+				case 'duplicate-event-id':
+					return c.json({ error: 'Duplicate event id in push batch' }, 400);
+				case 'contract-mismatch':
+					return c.json({ error: CONTRACT_MISMATCH_ERROR }, 409);
+			}
+		}
+		return c.json(outcome.results, 200);
+	})
 	/**
-	 * Accept lastChangelogId from client
-	 * Return server changes since that timestamp
-	 * Handle pagination if needed
+	 * Accept `since` (the last changelog id the client received)
+	 * Return the next page of server changes, each re-authorized against live data
 	 */
 	.get(
 		'/pull',
 		authMiddleware,
-		zValidator('query', z.object({ lastChangelogId: z.uuidv7().optional() })),
+		zValidator('query', z.object({ since: z.uuidv7().optional() })),
 		async (c) => {
-			const userId = getUserId(c);
-			const { lastChangelogId } = c.req.valid('query');
-			const logsWithRecords = await pullAndMaterializeLogs({
-				prisma,
-				scopeKey: userId,
-				lastChangelogId
+			const scopeKey = getUserId(c);
+			const { since } = c.req.valid('query');
+
+			const outcome = await sqlSyncAdapter.pull(await getDb(), {
+				scopeKey,
+				clientStorageHash: c.req.header(STORAGE_HASH_HEADER),
+				lastChangelogId: since ?? null
 			});
-			return c.json(
-				{
-					cursor: logsWithRecords.at(-1)?.id ?? lastChangelogId,
-					logsWithRecords
-				},
-				200
-			);
+			if (!outcome.ok) {
+				return outcome.reason === 'contract-mismatch'
+					? c.json({ error: CONTRACT_MISMATCH_ERROR }, 409)
+					: c.json({ error: 'since must be a changelog id' }, 400);
+			}
+			return c.json(outcome.logs, 200);
 		}
 	);
 

@@ -23,3 +23,8 @@ allowBuilds:
   esbuild: true
   prisma: true
   sharp: true
+  workerd: false
+
+minimumReleaseAgeExclude:
+  - '@prisma-idb/sync-server-sql@0.7.1'
+  - '@prisma-idb/sync-server@0.8.1'

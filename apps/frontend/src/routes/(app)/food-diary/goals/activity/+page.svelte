@@ -5,7 +5,7 @@
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { cn } from '$lib/utils';
-	import { ActivityAdjustmentType } from '@myfit/api/enums';
+	import { ActivityAdjustmentType } from '@myfit/schema/client';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { SaveIcon } from '@lucide/svelte';
 	import DynamicActivity from './dynamic-activity.svelte';
@@ -63,17 +63,19 @@
 		if (selectedOption === 'Manual') {
 			await saveActivityPreferences.mutateAsync({
 				adjustmentType: 'Manual',
+				staticCalories: null,
 				userId: currentUser.data.id
 			});
 		} else if (selectedOption === 'Static') {
 			await saveActivityPreferences.mutateAsync({
 				adjustmentType: 'Static',
-				staticCalories: staticCalories,
+				staticCalories: staticCalories ?? null,
 				userId: currentUser.data.id
 			});
 		} else if (selectedOption === 'Dynamic') {
 			await saveActivityPreferences.mutateAsync({
 				adjustmentType: 'Dynamic',
+				staticCalories: null,
 				userId: currentUser.data.id
 			});
 		}

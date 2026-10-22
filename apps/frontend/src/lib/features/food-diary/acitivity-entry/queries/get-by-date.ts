@@ -1,6 +1,7 @@
 import { createQuery } from '@tanstack/svelte-query';
 import { activityEntryKeys } from '../keys';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
+import { and } from '@prisma-idb/client-idb/orm';
 import { getLocalTimeZone, type CalendarDate } from '@internationalized/date';
 
 export function useActivityEntriesByDate(
@@ -19,9 +20,11 @@ export function useActivityEntriesByDate(
 		return {
 			queryKey: activityEntryKeys.byDate(userId, date.toString()),
 			queryFn: async () => {
-				return await getClient().activityEntry.findMany({
-					where: { userId, performedAt: { gte: dayStart, lt: dayEnd } }
-				});
+				const { orm } = await getDb();
+				return await orm.activityEntry
+					.where({ userId })
+					.where((a) => and(a.performedAt.gte(dayStart), a.performedAt.lt(dayEnd)))
+					.all();
 			},
 			enabled: !!userId && !!date
 		};

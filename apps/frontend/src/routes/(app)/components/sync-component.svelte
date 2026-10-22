@@ -14,47 +14,53 @@
 	import { syncWorkerState } from '$lib/features/sync-worker.svelte';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { m } from '$lib/paraglide/messages';
-	import { getClient } from '$lib/clients/idb-client';
+	import { getDb } from '$lib/clients/idb-client';
+	import { getNextBatch } from '@prisma-idb/sync-extension-idb/client';
 	import { onMount } from 'svelte';
 
 	let hasAnyRetryableUnsynced = $state<boolean>();
 
 	async function updateOutboxStats() {
-		hasAnyRetryableUnsynced = await getClient().$outbox.hasAnyRetryableUnsynced();
+		const db = await getDb();
+		hasAnyRetryableUnsynced = (await getNextBatch(db.rawClient, { limit: 1 })).length > 0;
 	}
 
 	onMount(() => {
 		updateOutboxStats();
-		const unsubscribe = getClient().$outbox.subscribe(
-			['create', 'update', 'delete'],
-			updateOutboxStats
-		);
+		let unsubscribe: (() => void) | undefined;
+		let destroyed = false;
+		getDb().then((db) => {
+			if (destroyed) return;
+			unsubscribe = db.on('outboxwrite', updateOutboxStats);
+		});
 
 		return () => {
-			unsubscribe();
+			destroyed = true;
+			unsubscribe?.();
 		};
 	});
 
-	let syncStatus = $derived(syncWorkerState.syncStatus?.status);
-	let lastSyncTime = $derived(syncWorkerState.syncStatus?.lastSyncTime ?? null);
-	let lastError = $derived(syncWorkerState.syncStatus?.lastError?.message ?? null);
+	let syncStatus = $derived(syncWorkerState.syncStatus);
+	let lastSyncTime = $derived(syncWorkerState.lastSyncTime);
+	let lastError = $derived(syncWorkerState.lastError);
 
 	let statusLabel = $derived(
 		syncStatus === undefined
 			? m['sync.statusConnecting']()
-			: syncStatus === 'IDLE'
+			: syncStatus === 'idle'
 				? m['sync.statusIdle']()
-				: syncStatus === 'PULLING'
+				: syncStatus === 'pulling'
 					? m['sync.statusPulling']()
-					: syncStatus === 'PUSHING'
+					: syncStatus === 'pushing'
 						? m['sync.statusPushing']()
 						: m['sync.statusStopped']()
 	);
 
 	let statusVariant = $derived.by(() => {
-		if (syncStatus === 'IDLE' || syncStatus === 'PULLING') return 'secondary' as const;
-		if (syncStatus === 'PUSHING') return 'default' as const;
-		if (syncStatus === 'STOPPED' && lastError) return 'destructive' as const;
+		if (syncStatus === 'idle' || syncStatus === 'pulling') return 'secondary' as const;
+		if (syncStatus === 'pushing') return 'default' as const;
+		if ((syncStatus === 'stopped' || syncStatus === 'error') && lastError)
+			return 'destructive' as const;
 		return 'outline' as const;
 	});
 
@@ -71,11 +77,11 @@
 			<Button variant="ghost" {...props} class="h-3 w-3 p-0 pr-2 text-muted-foreground">
 				{#if syncStatus === undefined}
 					<Spinner class="size-5" strokeWidth={1.5} />
-				{:else if syncStatus === 'IDLE' || syncStatus === 'PULLING'}
+				{:else if syncStatus === 'idle' || syncStatus === 'pulling'}
 					<CloudCheckIcon class="size-5" strokeWidth={1.5} />
-				{:else if syncStatus === 'PUSHING'}
+				{:else if syncStatus === 'pushing'}
 					<CloudSyncIcon class="size-5 animate-pulse" strokeWidth={1.5} />
-				{:else if syncStatus === 'STOPPED'}
+				{:else if syncStatus === 'stopped' || syncStatus === 'error'}
 					<CloudAlertIcon class="size-5" strokeWidth={1.5} />
 				{/if}
 			</Button>
@@ -98,12 +104,12 @@
 				<span class="break-all">{lastError}</span>
 			</div>
 		{/if}
-		{#if hasAnyRetryableUnsynced && syncWorkerState.syncWorker !== null && (syncStatus === 'PULLING' || syncStatus === 'PUSHING')}
+		{#if hasAnyRetryableUnsynced && syncWorkerState.syncWorker && (syncStatus === 'idle' || syncStatus === 'error')}
 			<Button
 				size="sm"
 				class="w-full"
 				variant="secondary"
-				onclick={() => syncWorkerState.syncWorker?.forceSync({ overrideBackoff: true })}
+				onclick={() => syncWorkerState.syncWorker?.forceSync()}
 			>
 				Sync now <RefreshCcwIcon />
 			</Button>

@@ -1,5 +1,5 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { foodEntryKeys } from '../keys';
 
 export const useFoodEntryById = (getUserIdAndId: () => { userId: string; id: string }) =>
@@ -8,9 +8,8 @@ export const useFoodEntryById = (getUserIdAndId: () => { userId: string; id: str
 		return {
 			queryKey: foodEntryKeys.byId(userId, id),
 			queryFn: async () => {
-				return await getClient().foodEntry.findUnique({
-					where: { id, userId }
-				});
+				const { orm } = await getDb();
+				return await orm.foodEntry.where({ id, userId }).first();
 			},
 			enabled: !!id && !!userId
 		};

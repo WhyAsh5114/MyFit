@@ -9,7 +9,7 @@ This is a monorepo managed with [Turborepo](https://turbo.build) and [pnpm](http
 ```
 .
 ├── apps/
-│   ├── api/          # Backend API (Hono + Better Auth + Prisma)
+│   ├── api/          # Backend API (Hono + Better Auth + Prisma 8)
 │   └── frontend/     # Web/mobile app (SvelteKit + Capacitor)
 ├── packages/
 └── turbo.json        # Turborepo configuration
@@ -17,7 +17,7 @@ This is a monorepo managed with [Turborepo](https://turbo.build) and [pnpm](http
 
 ## 📦 What's Inside
 
-- **[API](./apps/api/README.md)** - REST API with authentication and database (Hono + Prisma)
+- **[API](./apps/api/README.md)** - REST API with authentication and database (Hono + Prisma 8)
 - **[Frontend](./apps/frontend/README.md)** - Web app and mobile clients (iOS/Android via Capacitor)
 
 ## 🚀 Quick Start
@@ -72,9 +72,9 @@ Packages reference each other using `workspace:*`:
 
 ```json
 {
-  "dependencies": {
-    "@myfit/api": "workspace:*"
-  }
+	"dependencies": {
+		"@myfit/api": "workspace:*"
+	}
 }
 ```
 
@@ -84,11 +84,11 @@ All tasks (build, lint, dev) run in dependency order. The `^` prefix ensures dep
 
 ```json
 {
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"]
-    }
-  }
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"]
+		}
+	}
 }
 ```
 
@@ -112,22 +112,16 @@ See [Frontend README](./apps/frontend/README.md) for detailed mobile setup.
 
 ## 🗄️ Database
 
-MyFit uses [Prisma](https://www.prisma.io) with a PostgreSQL database. Database files are in `apps/api/prisma/`:
-
-- **Server-side** - Standard Prisma Client for the API
-- **Browser-side** - Prisma-IDB for offline-first capabilities (used by frontend)
+MyFit uses [Prisma 8](https://www.prisma.io) with a PostgreSQL database on the server and [Prisma-IDB](https://prisma-idb.dev) (IndexedDB) in the browser, both generated from one schema in `packages/schema/src/schema.prisma`. The browser's outbox syncs to the API through `/api/sync/push` and `/api/sync/pull`.
 
 ```bash
-cd apps/api
+# After editing schema.prisma: re-emit both contracts and plan migrations
+pnpm --filter @myfit/schema contract:emit
+pnpm --filter @myfit/schema contract:emit:postgres
 
-# Generate Prisma client and Prisma-IDB
-pnpm generate
-
-# Push schema changes
-pnpm push
-
-# Open Prisma Studio
-pnpm studio
+# Apply Postgres migrations, then create the food search table
+pnpm --filter @myfit/schema db:migrate
+pnpm --filter @myfit/api db:nutrition-data
 ```
 
 See [API README](./apps/api/README.md) for schema and usage details.
@@ -137,11 +131,13 @@ See [API README](./apps/api/README.md) for schema and usage details.
 Create a `.env` file in each app directory. Examples:
 
 **API** (`.env` in `apps/api`):
+
 ```
 DATABASE_URL=postgresql://user:password@localhost:5432/myfit
 ```
 
 **Frontend** (`.env` in `apps/frontend`):
+
 ```
 PUBLIC_API_URL=http://localhost:3000
 ```
@@ -166,7 +162,7 @@ pnpm build
 ## 📚 Tech Stack
 
 - **Frontend** - SvelteKit, Tailwind CSS, Capacitor, Paraglide (i18n)
-- **Backend** - Hono, Better Auth, Prisma
+- **Backend** - Hono, Better Auth, Prisma 8
 - **Database** - PostgreSQL
 - **Tooling** - TypeScript, Turbo, pnpm, ESLint, Prettier
 

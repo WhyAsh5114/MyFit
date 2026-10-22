@@ -96,12 +96,13 @@ pnpm exec cap open android
 
 ## Database
 
-Uses Prisma-IDB (offline-first browser database) exported from the API package:
+Uses Prisma-IDB (offline-first browser database). The schema and generated contract live in `packages/schema`; `getDb()` in `src/lib/clients/idb-client.ts` migrates IndexedDB on first use and returns a sync-tracked client:
 
 ```typescript
-import { PrismaIDBClient } from '@myfit/api/prisma-idb/client';
+import { getDb } from '$lib/clients/idb-client';
 
-const users = await PrismaIDBClient.user.findMany();
+const { orm } = await getDb();
+const meals = await orm.meal.where({ userId }).all();
 ```
 
 ## Internationalization

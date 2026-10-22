@@ -1,5 +1,6 @@
 import { goto } from '$app/navigation';
-import type { PrismaIDBClient } from '@myfit/api/prisma-idb/client';
+import { resetDb, type DbClient } from '$lib/clients/idb-client';
+import { clearPullCursor } from '$lib/features/sync-cursor';
 import type { Session, User } from 'better-auth';
 import { toast } from 'svelte-sonner';
 
@@ -8,29 +9,26 @@ type AuthSessionData = {
 	session: Session;
 };
 
-export async function getCachedUserOnClient(
-	client: PrismaIDBClient,
-	sessionData: AuthSessionData | null
-) {
+export async function getCachedUserOnClient(db: DbClient, sessionData: AuthSessionData | null) {
 	const existingUser = sessionData?.user?.id
-		? await client.user.findUnique({ where: { id: sessionData.user.id } })
+		? await db.orm.user.where({ id: sessionData.user.id }).first()
 		: null;
 
 	return { existingUser };
 }
 
-export async function getOfflineUser(client: PrismaIDBClient) {
-	const offlineUser = await client.user.findFirst();
+export async function getOfflineUser(db: DbClient) {
+	const offlineUser = await db.orm.user.first();
 	return offlineUser;
 }
 
-export async function resetDatabaseState(client: PrismaIDBClient) {
-	localStorage.removeItem('lastSyncedAt');
-	await client.resetDatabase();
+export async function resetDatabaseState() {
+	await resetDb();
+	clearPullCursor();
 }
 
-export async function redirectToLogin(client: PrismaIDBClient, url: URL) {
-	await resetDatabaseState(client);
+export async function redirectToLogin(url: URL) {
+	await resetDatabaseState();
 	const redirect = `${url.pathname}${url.search}${url.hash}`;
 
 	// eslint-disable-next-line svelte/no-navigation-without-resolve
@@ -40,20 +38,28 @@ export async function redirectToLogin(client: PrismaIDBClient, url: URL) {
 
 const DEFAULT_MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
 
-export async function createUserForCurrentSession(
-	client: PrismaIDBClient,
-	sessionData: AuthSessionData
-) {
+export async function createUserForCurrentSession(db: DbClient, sessionData: AuthSessionData) {
 	if (sessionData?.user) {
-		await client.user.create({ data: sessionData.user }, { addToOutbox: false });
+		// The server already owns this row, so it must not be pushed back through the outbox.
+		const { id, name, email, emailVerified, image, createdAt, updatedAt } = sessionData.user;
+		await db.withoutTracking((orm) =>
+			orm.user.create({
+				id,
+				name,
+				email,
+				emailVerified,
+				image: image ?? null,
+				createdAt,
+				updatedAt,
+				isAnonymous: null
+			})
+		);
 
 		// Seed default meals for brand new users (existing users have a name set)
 		if (sessionData.user.name.trim() === '') {
 			await Promise.all(
 				DEFAULT_MEALS.map((name, index) =>
-					client.meal.create({
-						data: { name, sortOrder: index, userId: sessionData.user.id }
-					})
+					db.orm.meal.create({ name, sortOrder: index, userId: sessionData.user.id })
 				)
 			);
 		}

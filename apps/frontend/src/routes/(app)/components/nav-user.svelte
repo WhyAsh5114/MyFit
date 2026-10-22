@@ -12,7 +12,6 @@
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 	import { resetDatabaseState } from './db';
-	import { getClient } from '$lib/clients/idb-client';
 	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 	import posthog from 'posthog-js';
 
@@ -34,7 +33,7 @@
 	async function logout() {
 		posthog.capture('user_logged_out');
 		posthog.reset();
-		await resetDatabaseState(getClient());
+		await resetDatabaseState();
 		await authClient.signOut();
 	}
 </script>

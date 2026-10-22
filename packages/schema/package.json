@@ -1,0 +1,45 @@
+{
+	"name": "@myfit/schema",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./client": {
+			"types": "./src/client.ts",
+			"default": "./src/client.ts"
+		},
+		"./server": {
+			"types": "./src/server.ts",
+			"default": "./src/server.ts"
+		}
+	},
+	"scripts": {
+		"contract:emit": "prisma contract emit --config prisma.config.ts",
+		"contract:emit:postgres": "prisma contract emit --config prisma.config.postgres.ts",
+		"migration:plan": "prisma-idb migration plan",
+		"migration:contract-space": "prisma-idb migration contract-space",
+		"migration:preflight": "prisma-idb migration preflight",
+		"migration:postgres:new": "prisma migration new --config prisma.config.postgres.ts",
+		"migration:postgres:status": "prisma migration status --config prisma.config.postgres.ts",
+		"db:migrate": "prisma db migrate --config prisma.config.postgres.ts",
+		"lint": "prettier --check . && eslint ."
+	},
+	"dependencies": {
+		"@prisma-idb/client-idb": "^0.14.0",
+		"@prisma-idb/sync-extension-idb": "^0.8.1",
+		"@prisma-idb/sync-server": "^0.8.1",
+		"@prisma-idb/sync-server-sql": "^0.7.1",
+		"@prisma/cli-engine": "0.7.0",
+		"@prisma/orm-framework": "8.0.0-rc.18",
+		"@prisma/orm-postgres": "8.0.0-rc.18",
+		"@prisma/orm-toolchain": "8.0.0-rc.18",
+		"dotenv": "^17.4.2",
+		"prisma": "8.0.0-rc.23"
+	},
+	"devDependencies": {
+		"@prisma-idb/adapter-idb": "^0.14.0",
+		"@prisma-idb/driver-idb": "^0.14.0",
+		"@prisma-idb/family-idb": "^0.14.0",
+		"@prisma-idb/target-idb": "^0.14.0",
+		"typescript": "^6.0.3"
+	}
+}

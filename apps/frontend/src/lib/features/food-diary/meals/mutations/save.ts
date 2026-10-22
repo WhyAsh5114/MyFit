@@ -1,5 +1,5 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
@@ -9,21 +9,19 @@ import { mealKeys } from '../keys';
 export const useSaveMeals = () =>
 	createMutation(() => ({
 		mutationFn: async ({ meals, userId }: { meals: MealsFormSchema['meals']; userId: string }) => {
-			const client = getClient();
-			const existingMeals = await client.meal.findMany({ where: { userId } });
+			const { orm } = await getDb();
+			const existingMeals = await orm.meal.where({ userId }).all();
 			const submittedNames = new Set(meals.map((meal) => meal.name));
 
 			const removedMeals = existingMeals.filter((meal) => !submittedNames.has(meal.name));
 
 			await Promise.all([
-				...removedMeals.map((meal) =>
-					client.meal.update({ where: { id: meal.id }, data: { active: false } })
-				),
+				...removedMeals.map((meal) => orm.meal.where({ id: meal.id }).update({ active: false })),
 				...meals.map((meal, index) =>
-					client.meal.upsert({
-						where: { userId_name: { userId, name: meal.name } },
+					orm.meal.upsert({
+						where: { userId, name: meal.name },
 						update: { name: meal.name, sortOrder: index, active: true },
-						create: { id: meal.id, name: meal.name, userId, sortOrder: index }
+						create: { id: meal.id, name: meal.name, userId, sortOrder: index, active: true }
 					})
 				)
 			]);

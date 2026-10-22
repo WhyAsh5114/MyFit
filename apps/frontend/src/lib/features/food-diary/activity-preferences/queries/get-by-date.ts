@@ -1,5 +1,5 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { activityPreferencesKeys } from '../keys';
 import { getLocalTimeZone, type CalendarDate } from '@internationalized/date';
@@ -17,12 +17,13 @@ export const useActivityPreferencesByDate = (
 		return {
 			queryKey: activityPreferencesKeys.byDate(userId, date.toString()),
 			queryFn: async () => {
-				const client = getClient();
 				try {
-					return await client.activityPreferences.findFirst({
-						where: { userId, effectiveFrom: { lt: dayEnd } },
-						orderBy: { effectiveFrom: 'desc' }
-					});
+					const { orm } = await getDb();
+					return await orm.activityPreferences
+						.where({ userId })
+						.where((row) => row.effectiveFrom.lt(dayEnd))
+						.orderBy({ effectiveFrom: 'desc' })
+						.first();
 				} catch (error) {
 					toast.error('Failed to fetch activity preferences');
 					console.error('Error fetching activity preferences:', error);

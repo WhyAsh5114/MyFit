@@ -13,11 +13,6 @@ sourcemap = "external"
 # Environment variable prefix for accessing in code
 prefix = ""
 
-# PostgreSQL adapter compatibility
-[trustedDependencies]
-prisma = true
-
 [packages]
 # Optimize module resolution for Node.js compatibility
-"@prisma/client" = { root = "node_modules/@prisma/client" }
 "@hono/node-server" = { root = "node_modules/@hono/node-server" }
