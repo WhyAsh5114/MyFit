@@ -3,6 +3,7 @@ import { getDb, type DbClient } from '$lib/clients/idb-client';
 import { queryClient } from '$lib/clients/query-client';
 import { loadPullCursor, savePullCursor } from './sync-cursor';
 import {
+	ContractMismatchError,
 	createSyncFetchHandlers,
 	type SyncWorker,
 	type SyncWorkerStatus
@@ -76,15 +77,7 @@ class SyncWorkerState {
 			...createSyncFetchHandlers({
 				pushUrl: `${PUBLIC_API_URL}/api/sync/push`,
 				pullUrl: `${PUBLIC_API_URL}/api/sync/pull`,
-				credentials: 'include',
-				fetch: async (input, init) => {
-					const response = await fetch(input, init);
-					// A 409 is reported through the worker's `contractmismatch` event instead.
-					if (!response.ok && response.status !== 409 && isCurrent()) {
-						this.lastError = `Sync failed: ${response.statusText || response.status}`;
-					}
-					return response;
-				}
+				credentials: 'include'
 			}),
 			getCursor: loadPullCursor,
 			setCursor: (changelogId) => {
@@ -100,6 +93,9 @@ class SyncWorkerState {
 		return [
 			worker.on('statuschange', (status) => {
 				this.syncStatus = status;
+			}),
+			worker.on('error', (error) => {
+				if (!(error instanceof ContractMismatchError)) this.lastError = error.message;
 			}),
 			worker.on('contractmismatch', () => {
 				this.lastError = 'This version of the app is out of date. Reload to keep syncing.';
