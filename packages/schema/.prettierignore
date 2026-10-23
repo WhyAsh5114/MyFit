@@ -1,0 +1,6 @@
+# Emitted by `prisma contract emit` / `prisma-idb migration`; content-hashed, so never reformat.
+migrations
+migrations-postgres
+src/*.generated.*
+src/contract.json
+src/contract.d.ts
