@@ -5,8 +5,8 @@ type OptionalNutrientKey = (typeof OPTIONAL_NUTRIENT_FIELDS)[number]['key'];
 
 /**
  * A row of the Open Food Facts `NutritionData` search table, as served by the
- * API. The table lives outside the Prisma contract (it needs `tsvector` and
- * trigram indexes), so this is the one hand-written definition of its shape.
+ * API. The server contract owns the table; this hand-written copy keeps the
+ * server-only contract types out of the browser bundle.
  */
 export type NutritionData = {
 	id: string;

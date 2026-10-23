@@ -119,9 +119,8 @@ MyFit uses [Prisma 8](https://www.prisma.io) with a PostgreSQL database on the s
 pnpm --filter @myfit/schema contract:emit
 pnpm --filter @myfit/schema contract:emit:postgres
 
-# Apply Postgres migrations, then create the food search table
+# Apply the Postgres migrations (this also creates the food search table)
 pnpm --filter @myfit/schema db:migrate
-pnpm --filter @myfit/api db:nutrition-data
 ```
 
 See [API README](./apps/api/README.md) for schema and usage details.
