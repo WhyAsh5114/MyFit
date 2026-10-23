@@ -2,6 +2,13 @@ import type { getDb } from '../../../lib/db.js';
 
 type Db = Awaited<ReturnType<typeof getDb>>;
 
+const MAX_SEARCH_LENGTH = 120;
+const MAX_SEARCH_TOKENS = 8;
+const MIN_SEARCH_TOKEN_LENGTH = 2;
+const MIN_FUZZY_TOKEN_LENGTH = 3;
+const MIN_TRANSPOSITION_LENGTH = 3;
+const MAX_TRANSPOSITION_LENGTH = 24;
+
 /** One ranked search hit: the columns the food list shows. */
 export type FoodSearchHit = {
 	id: string;
@@ -22,7 +29,7 @@ function quoteLexeme(token: string): string {
 function transpositions(token: string): string[] {
 	const letters = [...token];
 	const variants = new Set([token]);
-	if (letters.length >= 3 && letters.length <= 24) {
+	if (letters.length >= MIN_TRANSPOSITION_LENGTH && letters.length <= MAX_TRANSPOSITION_LENGTH) {
 		for (let i = 0; i < letters.length - 1; i++) {
 			const swapped = [...letters];
 			[swapped[i], swapped[i + 1]] = [swapped[i + 1], swapped[i]];
@@ -48,12 +55,15 @@ function spellingCandidates(tokens: string[]): string[] {
 /** Normalize search-box input and bound prefix and spelling expansion work. */
 function prepareSearch(search: string) {
 	const raw = search.normalize('NFKC').trim().replace(/\s+/g, ' ');
-	if (raw.length > 120) return null;
+	if (raw.length > MAX_SEARCH_LENGTH) return null;
 	const tokens = raw.toLowerCase().match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu) ?? [];
-	if (tokens.length > 8 || !tokens.some((token) => [...token].length >= 2)) {
+	if (
+		tokens.length > MAX_SEARCH_TOKENS ||
+		!tokens.some((token) => [...token].length >= MIN_SEARCH_TOKEN_LENGTH)
+	) {
 		return null;
 	}
-	const operators = /"|(?:^|\s)-[\p{L}\p{N}]|(?:^|\s)OR(?:\s|$)/u.test(raw);
+	const operators = /"|(?:^|\s)-[\p{L}\p{N}]|(?:^|\s)OR(?:\s|$)/iu.test(raw);
 	const prefix = tokens
 		.map((token, i) => quoteLexeme(token) + (i === tokens.length - 1 ? ':*' : ''))
 		.join(' & ');
@@ -61,7 +71,7 @@ function prepareSearch(search: string) {
 	const corrections = spellings
 		.map((spelling) => '(' + spelling.split(' ').map(quoteLexeme).join(' & ') + ')')
 		.join(' | ');
-	const fuzzy = !operators && tokens.every((token) => [...token].length >= 3);
+	const fuzzy = !operators && tokens.every((token) => [...token].length >= MIN_FUZZY_TOKEN_LENGTH);
 	return { raw, tokens, operators, prefix, corrections, spellings, fuzzy };
 }
 
@@ -125,7 +135,7 @@ SELECT n.id, n.code, n."productName", n.brands, n."energyKcal_100g",
   n."servingSize", n."servingQuantity"
 FROM candidates n, query q
 ORDER BY
-  CASE WHEN ${tokens.length === 1 && tokens[0].length === 2}::boolean
+  CASE WHEN ${tokens.length === 1 && [...tokens[0]].length === MIN_SEARCH_TOKEN_LENGTH}::boolean
     THEN similarity(q.raw, n."productName") ELSE 0 END DESC,
   CASE WHEN n.mode = 2 THEN strict_word_similarity(q.raw, n."productName")
     ELSE ts_rank_cd('{0.1, 0.2, 0.4, 1.0}', n.document,
@@ -135,6 +145,8 @@ ORDER BY
         SELECT max(similarity(spelling.value, n."productName"))
         FROM jsonb_array_elements_text(q.spellings) AS spelling(value)
       ) END
+      -- Reduce popularity (0.2 to 0.05) and completeness (0.1 to 0.025)
+      -- so strong name matches outrank popular ingredient-based products.
       + LEAST(LN(GREATEST(n."uniqueScans", 1)) / LN(10000), 1.0) * 0.05
       + coalesce(n.completeness, 0) * 0.025
   END DESC,

@@ -111,7 +111,15 @@ test('normalizes Unicode and whitespace and rejects non-searchable or excessive 
 	assert.deepEqual(await searchFoods(db, 'zzzzzzzz', 0, 5), []);
 });
 
-test('honors phrases and exclusions without fuzzy recovery or operator-only scans', async () => {
+test('honors phrases, OR and exclusions without fuzzy recovery or operator-only scans', async () => {
+	for (const operator of ['or', 'OR', 'Or']) {
+		const hits = await searchFoods(db, `whey ${operator} oats`, 0, 10);
+		assert.deepEqual(
+			hits.map((hit) => hit.id).sort(),
+			['oats', 'quaker', 'quaker-syrup', 'whey', 'whey-protein'],
+			operator
+		);
+	}
 	assert.deepEqual(
 		(await searchFoods(db, 'milk -chocolate', 0, 10)).map((hit) => hit.id),
 		['milk']
