@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-	StorageHashBase<'818a2238897d8b712f4de89a15b5018676a9e943ee7fedff429314691705364f'>;
+	StorageHashBase<'20668c294305a05ca2cab6567a067382f9267afe79e0e4f3d2bfd6a5fe8488a7'>;
 export type ExecutionHash =
 	ExecutionHashBase<'9b0ec966f1397f6b3ef25f4a1a23de2c45c37bc7cc8df5fc4c96d8354ad09503'>;
 export type ProfileHash =
@@ -353,6 +353,52 @@ export type FieldOutputTypes = {
 			readonly sortOrder: CodecTypes['pg/int4@1']['output'];
 			readonly userId: CodecTypes['pg/text@1']['output'];
 		};
+		readonly NutritionData: {
+			readonly alcoholG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly brands: CodecTypes['pg/text@1']['output'] | null;
+			readonly caffeineMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly calciumMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly carbohydratesG_100g: CodecTypes['pg/float8@1']['output'];
+			readonly cholesterolMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly code: CodecTypes['pg/text@1']['output'];
+			readonly completeness: CodecTypes['pg/float8@1']['output'];
+			readonly copperMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly energyKcal_100g: CodecTypes['pg/float8@1']['output'];
+			readonly fatG_100g: CodecTypes['pg/float8@1']['output'];
+			readonly fiberG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly folatesMcg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly id: CodecTypes['pg/text@1']['output'];
+			readonly ironMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly magnesiumMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly manganeseMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly monounsaturatedFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly phosphorusMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly polyolsG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly polyunsaturatedFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly potassiumMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly productName: CodecTypes['pg/text@1']['output'];
+			readonly proteinsG_100g: CodecTypes['pg/float8@1']['output'];
+			readonly saltG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly saturatedFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly servingQuantity: CodecTypes['pg/float8@1']['output'] | null;
+			readonly servingSize: CodecTypes['pg/text@1']['output'] | null;
+			readonly sodiumMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly sugarsG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly transFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly uniqueScans: CodecTypes['pg/int4@1']['output'];
+			readonly unsaturatedFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminAIU_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminB12Mcg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminB1Mg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminB2Mg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminB6Mg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminB9Mcg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminCMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminDIU_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminEMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminKMcg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly zincMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		};
 		readonly Recipe: {
 			readonly description: CodecTypes['pg/text@1']['output'] | null;
 			readonly id: CodecTypes['pg/text@1']['output'];
@@ -556,6 +602,52 @@ export type FieldInputTypes = {
 			readonly name: CodecTypes['pg/text@1']['input'];
 			readonly sortOrder: CodecTypes['pg/int4@1']['input'];
 			readonly userId: CodecTypes['pg/text@1']['input'];
+		};
+		readonly NutritionData: {
+			readonly alcoholG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly brands: CodecTypes['pg/text@1']['input'] | null;
+			readonly caffeineMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly calciumMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly carbohydratesG_100g: CodecTypes['pg/float8@1']['input'];
+			readonly cholesterolMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly code: CodecTypes['pg/text@1']['input'];
+			readonly completeness: CodecTypes['pg/float8@1']['input'];
+			readonly copperMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly energyKcal_100g: CodecTypes['pg/float8@1']['input'];
+			readonly fatG_100g: CodecTypes['pg/float8@1']['input'];
+			readonly fiberG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly folatesMcg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly id: CodecTypes['pg/text@1']['input'];
+			readonly ironMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly magnesiumMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly manganeseMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly monounsaturatedFatG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly phosphorusMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly polyolsG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly polyunsaturatedFatG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly potassiumMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly productName: CodecTypes['pg/text@1']['input'];
+			readonly proteinsG_100g: CodecTypes['pg/float8@1']['input'];
+			readonly saltG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly saturatedFatG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly servingQuantity: CodecTypes['pg/float8@1']['input'] | null;
+			readonly servingSize: CodecTypes['pg/text@1']['input'] | null;
+			readonly sodiumMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly sugarsG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly transFatG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly uniqueScans: CodecTypes['pg/int4@1']['input'];
+			readonly unsaturatedFatG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminAIU_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminB12Mcg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminB1Mg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminB2Mg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminB6Mg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminB9Mcg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminCMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminDIU_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminEMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminKMcg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly zincMg_100g: CodecTypes['pg/float8@1']['input'] | null;
 		};
 		readonly Recipe: {
 			readonly description: CodecTypes['pg/text@1']['input'] | null;
@@ -761,6 +853,52 @@ export type StorageColumnTypes = {
 			readonly sortOrder: CodecTypes['pg/int4@1']['output'];
 			readonly userId: CodecTypes['pg/text@1']['output'];
 		};
+		readonly NutritionData: {
+			readonly alcoholG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly brands: CodecTypes['pg/text@1']['output'] | null;
+			readonly caffeineMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly calciumMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly carbohydratesG_100g: CodecTypes['pg/float8@1']['output'];
+			readonly cholesterolMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly code: CodecTypes['pg/text@1']['output'];
+			readonly completeness: CodecTypes['pg/float8@1']['output'];
+			readonly copperMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly energyKcal_100g: CodecTypes['pg/float8@1']['output'];
+			readonly fatG_100g: CodecTypes['pg/float8@1']['output'];
+			readonly fiberG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly folatesMcg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly id: CodecTypes['pg/text@1']['output'];
+			readonly ironMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly magnesiumMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly manganeseMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly monounsaturatedFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly phosphorusMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly polyolsG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly polyunsaturatedFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly potassiumMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly productName: CodecTypes['pg/text@1']['output'];
+			readonly proteinsG_100g: CodecTypes['pg/float8@1']['output'];
+			readonly saltG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly saturatedFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly servingQuantity: CodecTypes['pg/float8@1']['output'] | null;
+			readonly servingSize: CodecTypes['pg/text@1']['output'] | null;
+			readonly sodiumMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly sugarsG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly transFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly uniqueScans: CodecTypes['pg/int4@1']['output'];
+			readonly unsaturatedFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminAIU_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminB12Mcg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminB1Mg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminB2Mg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminB6Mg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminB9Mcg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminCMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminDIU_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminEMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly vitaminKMcg_100g: CodecTypes['pg/float8@1']['output'] | null;
+			readonly zincMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		};
 		readonly Recipe: {
 			readonly description: CodecTypes['pg/text@1']['output'] | null;
 			readonly id: CodecTypes['pg/text@1']['output'];
@@ -964,6 +1102,52 @@ export type StorageColumnInputTypes = {
 			readonly name: CodecTypes['pg/text@1']['input'];
 			readonly sortOrder: CodecTypes['pg/int4@1']['input'];
 			readonly userId: CodecTypes['pg/text@1']['input'];
+		};
+		readonly NutritionData: {
+			readonly alcoholG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly brands: CodecTypes['pg/text@1']['input'] | null;
+			readonly caffeineMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly calciumMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly carbohydratesG_100g: CodecTypes['pg/float8@1']['input'];
+			readonly cholesterolMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly code: CodecTypes['pg/text@1']['input'];
+			readonly completeness: CodecTypes['pg/float8@1']['input'];
+			readonly copperMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly energyKcal_100g: CodecTypes['pg/float8@1']['input'];
+			readonly fatG_100g: CodecTypes['pg/float8@1']['input'];
+			readonly fiberG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly folatesMcg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly id: CodecTypes['pg/text@1']['input'];
+			readonly ironMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly magnesiumMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly manganeseMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly monounsaturatedFatG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly phosphorusMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly polyolsG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly polyunsaturatedFatG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly potassiumMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly productName: CodecTypes['pg/text@1']['input'];
+			readonly proteinsG_100g: CodecTypes['pg/float8@1']['input'];
+			readonly saltG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly saturatedFatG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly servingQuantity: CodecTypes['pg/float8@1']['input'] | null;
+			readonly servingSize: CodecTypes['pg/text@1']['input'] | null;
+			readonly sodiumMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly sugarsG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly transFatG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly uniqueScans: CodecTypes['pg/int4@1']['input'];
+			readonly unsaturatedFatG_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminAIU_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminB12Mcg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminB1Mg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminB2Mg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminB6Mg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminB9Mcg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminCMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminDIU_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminEMg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly vitaminKMcg_100g: CodecTypes['pg/float8@1']['input'] | null;
+			readonly zincMg_100g: CodecTypes['pg/float8@1']['input'] | null;
 		};
 		readonly Recipe: {
 			readonly description: CodecTypes['pg/text@1']['input'] | null;
@@ -1187,6 +1371,53 @@ export namespace Models {
 		user: public_User;
 		readonly [RelationKeys]?: 'foodEntries' | 'user';
 	};
+	export type public_NutritionData = {
+		alcoholG_100g: CodecTypes['pg/float8@1']['output'] | null;
+		brands: CodecTypes['pg/text@1']['output'] | null;
+		caffeineMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		calciumMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		carbohydratesG_100g: CodecTypes['pg/float8@1']['output'];
+		cholesterolMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		code: CodecTypes['pg/text@1']['output'];
+		completeness: CodecTypes['pg/float8@1']['output'];
+		copperMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		energyKcal_100g: CodecTypes['pg/float8@1']['output'];
+		fatG_100g: CodecTypes['pg/float8@1']['output'];
+		fiberG_100g: CodecTypes['pg/float8@1']['output'] | null;
+		folatesMcg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		id: CodecTypes['pg/text@1']['output'];
+		ironMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		magnesiumMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		manganeseMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		monounsaturatedFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+		phosphorusMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		polyolsG_100g: CodecTypes['pg/float8@1']['output'] | null;
+		polyunsaturatedFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+		potassiumMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		productName: CodecTypes['pg/text@1']['output'];
+		proteinsG_100g: CodecTypes['pg/float8@1']['output'];
+		saltG_100g: CodecTypes['pg/float8@1']['output'] | null;
+		saturatedFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+		servingQuantity: CodecTypes['pg/float8@1']['output'] | null;
+		servingSize: CodecTypes['pg/text@1']['output'] | null;
+		sodiumMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		sugarsG_100g: CodecTypes['pg/float8@1']['output'] | null;
+		transFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+		uniqueScans: CodecTypes['pg/int4@1']['output'];
+		unsaturatedFatG_100g: CodecTypes['pg/float8@1']['output'] | null;
+		vitaminAIU_100g: CodecTypes['pg/float8@1']['output'] | null;
+		vitaminB12Mcg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		vitaminB1Mg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		vitaminB2Mg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		vitaminB6Mg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		vitaminB9Mcg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		vitaminCMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		vitaminDIU_100g: CodecTypes['pg/float8@1']['output'] | null;
+		vitaminEMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		vitaminKMcg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		zincMg_100g: CodecTypes['pg/float8@1']['output'] | null;
+		readonly [RelationKeys]?: never;
+	};
 	export type public_Recipe = {
 		description: CodecTypes['pg/text@1']['output'] | null;
 		id: CodecTypes['pg/text@1']['output'];
@@ -1308,6 +1539,7 @@ export declare const models: {
 		MacroMetrics: Models.public_MacroMetrics;
 		MacroTargets: Models.public_MacroTargets;
 		Meal: Models.public_Meal;
+		NutritionData: Models.public_NutritionData;
 		Recipe: Models.public_Recipe;
 		RecipeIngredient: Models.public_RecipeIngredient;
 		Session: Models.public_Session;
@@ -2212,6 +2444,310 @@ type ContractBase = Omit<
 								}
 							];
 						};
+						readonly NutritionData: {
+							columns: {
+								readonly alcoholG_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly brands: {
+									readonly dataType: 'pg/text';
+									readonly codecId: 'pg/text@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly caffeineMg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly calciumMg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly carbohydratesG_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly cholesterolMg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly code: {
+									readonly dataType: 'pg/text';
+									readonly codecId: 'pg/text@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly completeness: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly copperMg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly energyKcal_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly fatG_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly fiberG_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly folatesMcg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly id: {
+									readonly dataType: 'pg/text';
+									readonly codecId: 'pg/text@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly ironMg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly magnesiumMg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly manganeseMg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly monounsaturatedFatG_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly phosphorusMg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly polyolsG_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly polyunsaturatedFatG_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly potassiumMg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly productName: {
+									readonly dataType: 'pg/text';
+									readonly codecId: 'pg/text@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly proteinsG_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly saltG_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly saturatedFatG_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly servingQuantity: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly servingSize: {
+									readonly dataType: 'pg/text';
+									readonly codecId: 'pg/text@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly sodiumMg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly sugarsG_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly transFatG_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly uniqueScans: {
+									readonly dataType: 'pg/int4';
+									readonly codecId: 'pg/int4@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly unsaturatedFatG_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly vitaminAIU_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly vitaminB12Mcg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly vitaminB1Mg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly vitaminB2Mg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly vitaminB6Mg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly vitaminB9Mcg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly vitaminCMg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly vitaminDIU_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly vitaminEMg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly vitaminKMcg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly zincMg_100g: {
+									readonly dataType: 'pg/float8';
+									readonly codecId: 'pg/float8@1';
+									readonly nullable: true;
+									readonly many: false;
+								};
+							};
+							primaryKey: { readonly columns: readonly ['id'] };
+							uniques: readonly [];
+							indexes: readonly [
+								{
+									readonly name: 'NutritionData_code_idx_8e43b86b';
+									readonly prefix: 'NutritionData_code_idx';
+									readonly columns: readonly ['code'];
+									readonly unique: false;
+								},
+								{
+									readonly name: 'nutrition_data_brands_trgm_bfc86f7b';
+									readonly prefix: 'nutrition_data_brands_trgm';
+									readonly expression: 'brands gin_trgm_ops';
+									readonly unique: false;
+									readonly type: 'gin';
+								},
+								{
+									readonly name: 'nutrition_data_product_name_trgm_85e6f92c';
+									readonly prefix: 'nutrition_data_product_name_trgm';
+									readonly expression: '"productName" gin_trgm_ops';
+									readonly unique: false;
+									readonly type: 'gin';
+								},
+								{
+									readonly name: 'nutrition_data_search_5d8ee8f9';
+									readonly prefix: 'nutrition_data_search';
+									readonly columns: readonly ['productName', 'brands'];
+									readonly unique: false;
+									readonly type: 'fullText';
+									readonly options: {
+										readonly language: 'english';
+										readonly weightGroups: readonly [readonly ['productName'], readonly ['brands']];
+									};
+								}
+							];
+							foreignKeys: readonly [];
+						};
 						readonly Recipe: {
 							columns: {
 								readonly description: {
@@ -2816,6 +3352,10 @@ type ContractBase = Omit<
 			readonly model: 'MacroTargets';
 		};
 		readonly Meal: { readonly namespace: 'public' & NamespaceId; readonly model: 'Meal' };
+		readonly NutritionData: {
+			readonly namespace: 'public' & NamespaceId;
+			readonly model: 'NutritionData';
+		};
 		readonly Recipe: { readonly namespace: 'public' & NamespaceId; readonly model: 'Recipe' };
 		readonly RecipeIngredient: {
 			readonly namespace: 'public' & NamespaceId;
@@ -3565,6 +4105,237 @@ type ContractBase = Omit<
 								readonly name: { readonly column: 'name' };
 								readonly sortOrder: { readonly column: 'sortOrder' };
 								readonly userId: { readonly column: 'userId' };
+							};
+						};
+					};
+					readonly NutritionData: {
+						readonly fields: {
+							readonly alcoholG_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly brands: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+							};
+							readonly caffeineMg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly calciumMg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly carbohydratesG_100g: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly cholesterolMg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly code: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+							};
+							readonly completeness: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly copperMg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly energyKcal_100g: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly fatG_100g: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly fiberG_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly folatesMcg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly id: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+							};
+							readonly ironMg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly magnesiumMg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly manganeseMg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly monounsaturatedFatG_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly phosphorusMg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly polyolsG_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly polyunsaturatedFatG_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly potassiumMg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly productName: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+							};
+							readonly proteinsG_100g: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly saltG_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly saturatedFatG_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly servingQuantity: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly servingSize: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+							};
+							readonly sodiumMg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly sugarsG_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly transFatG_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly uniqueScans: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+							};
+							readonly unsaturatedFatG_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly vitaminAIU_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly vitaminB12Mcg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly vitaminB1Mg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly vitaminB2Mg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly vitaminB6Mg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly vitaminB9Mcg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly vitaminCMg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly vitaminDIU_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly vitaminEMg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly vitaminKMcg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+							readonly zincMg_100g: {
+								readonly nullable: true;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+							};
+						};
+						readonly relations: Record<string, never>;
+						readonly storage: {
+							readonly table: 'NutritionData';
+							readonly namespaceId: 'public';
+							readonly fields: {
+								readonly alcoholG_100g: { readonly column: 'alcoholG_100g' };
+								readonly brands: { readonly column: 'brands' };
+								readonly caffeineMg_100g: { readonly column: 'caffeineMg_100g' };
+								readonly calciumMg_100g: { readonly column: 'calciumMg_100g' };
+								readonly carbohydratesG_100g: { readonly column: 'carbohydratesG_100g' };
+								readonly cholesterolMg_100g: { readonly column: 'cholesterolMg_100g' };
+								readonly code: { readonly column: 'code' };
+								readonly completeness: { readonly column: 'completeness' };
+								readonly copperMg_100g: { readonly column: 'copperMg_100g' };
+								readonly energyKcal_100g: { readonly column: 'energyKcal_100g' };
+								readonly fatG_100g: { readonly column: 'fatG_100g' };
+								readonly fiberG_100g: { readonly column: 'fiberG_100g' };
+								readonly folatesMcg_100g: { readonly column: 'folatesMcg_100g' };
+								readonly id: { readonly column: 'id' };
+								readonly ironMg_100g: { readonly column: 'ironMg_100g' };
+								readonly magnesiumMg_100g: { readonly column: 'magnesiumMg_100g' };
+								readonly manganeseMg_100g: { readonly column: 'manganeseMg_100g' };
+								readonly monounsaturatedFatG_100g: { readonly column: 'monounsaturatedFatG_100g' };
+								readonly phosphorusMg_100g: { readonly column: 'phosphorusMg_100g' };
+								readonly polyolsG_100g: { readonly column: 'polyolsG_100g' };
+								readonly polyunsaturatedFatG_100g: { readonly column: 'polyunsaturatedFatG_100g' };
+								readonly potassiumMg_100g: { readonly column: 'potassiumMg_100g' };
+								readonly productName: { readonly column: 'productName' };
+								readonly proteinsG_100g: { readonly column: 'proteinsG_100g' };
+								readonly saltG_100g: { readonly column: 'saltG_100g' };
+								readonly saturatedFatG_100g: { readonly column: 'saturatedFatG_100g' };
+								readonly servingQuantity: { readonly column: 'servingQuantity' };
+								readonly servingSize: { readonly column: 'servingSize' };
+								readonly sodiumMg_100g: { readonly column: 'sodiumMg_100g' };
+								readonly sugarsG_100g: { readonly column: 'sugarsG_100g' };
+								readonly transFatG_100g: { readonly column: 'transFatG_100g' };
+								readonly uniqueScans: { readonly column: 'uniqueScans' };
+								readonly unsaturatedFatG_100g: { readonly column: 'unsaturatedFatG_100g' };
+								readonly vitaminAIU_100g: { readonly column: 'vitaminAIU_100g' };
+								readonly vitaminB12Mcg_100g: { readonly column: 'vitaminB12Mcg_100g' };
+								readonly vitaminB1Mg_100g: { readonly column: 'vitaminB1Mg_100g' };
+								readonly vitaminB2Mg_100g: { readonly column: 'vitaminB2Mg_100g' };
+								readonly vitaminB6Mg_100g: { readonly column: 'vitaminB6Mg_100g' };
+								readonly vitaminB9Mcg_100g: { readonly column: 'vitaminB9Mcg_100g' };
+								readonly vitaminCMg_100g: { readonly column: 'vitaminCMg_100g' };
+								readonly vitaminDIU_100g: { readonly column: 'vitaminDIU_100g' };
+								readonly vitaminEMg_100g: { readonly column: 'vitaminEMg_100g' };
+								readonly vitaminKMcg_100g: { readonly column: 'vitaminKMcg_100g' };
+								readonly zincMg_100g: { readonly column: 'zincMg_100g' };
 							};
 						};
 					};

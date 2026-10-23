@@ -9,7 +9,7 @@ This is a monorepo managed with [Turborepo](https://turbo.build) and [pnpm](http
 ```
 .
 ├── apps/
-│   ├── api/          # Backend API (Hono + Better Auth + Prisma)
+│   ├── api/          # Backend API (Hono + Better Auth + Prisma 8)
 │   └── frontend/     # Web/mobile app (SvelteKit + Capacitor)
 ├── packages/
 └── turbo.json        # Turborepo configuration
@@ -17,7 +17,7 @@ This is a monorepo managed with [Turborepo](https://turbo.build) and [pnpm](http
 
 ## 📦 What's Inside
 
-- **[API](./apps/api/README.md)** - REST API with authentication and database (Hono + Prisma)
+- **[API](./apps/api/README.md)** - REST API with authentication and database (Hono + Prisma 8)
 - **[Frontend](./apps/frontend/README.md)** - Web app and mobile clients (iOS/Android via Capacitor)
 
 ## 🚀 Quick Start
@@ -139,7 +139,7 @@ If a change drops or renames data, the planners refuse and list the questions. R
 pnpm --filter @myfit/schema migration:postgres:new --from <hash> --name <name>
 ```
 
-Apply the Postgres migrations with `pnpm --filter @myfit/schema db:migrate`.
+Apply the Postgres migrations with `pnpm --filter @myfit/schema db:migrate`. This also creates the `NutritionData` food search table.
 
 See the [API README](./apps/api/README.md) for the server side.
 
@@ -179,7 +179,7 @@ pnpm build
 ## 📚 Tech Stack
 
 - **Frontend** - SvelteKit, Tailwind CSS, Capacitor, Paraglide (i18n)
-- **Backend** - Hono, Better Auth, Prisma
+- **Backend** - Hono, Better Auth, Prisma 8
 - **Database** - PostgreSQL
 - **Tooling** - TypeScript, Turbo, pnpm, ESLint, Prettier
 

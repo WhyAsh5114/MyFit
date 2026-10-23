@@ -5,8 +5,7 @@
 		".": {
 			"types": "./src/app.ts"
 		},
-		"./constants": "./lib/constants.ts",
-		"./prisma/client": "./src/prisma-types.ts"
+		"./constants": "./lib/constants.ts"
 	},
 	"scripts": {
 		"dev": "bun --watch run src/index.ts",
@@ -15,8 +14,7 @@
 		"seed:off": "bun run prisma/seed/open-food-facts/main.ts",
 		"check": "tsc --noEmit",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write .",
-		"db:nutrition-data": "bun scripts/nutrition-data.ts"
+		"format": "prettier --write ."
 	},
 	"dependencies": {
 		"@ai-sdk/openai-compatible": "^2.0.48",
