@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { STORAGE_HASH_HEADER } from '@prisma-idb/sync-extension-idb/schemas';
 import { env } from '../lib/env.js';
 
 const app = new Hono();
@@ -15,7 +16,7 @@ app.use(
 	'*',
 	cors({
 		origin: env.TRUSTED_ORIGINS,
-		allowHeaders: ['Content-Type', 'Authorization'],
+		allowHeaders: ['Content-Type', 'Authorization', STORAGE_HASH_HEADER],
 		allowMethods: ['POST', 'GET', 'OPTIONS'],
 		exposeHeaders: ['Content-Length'],
 		maxAge: 600,

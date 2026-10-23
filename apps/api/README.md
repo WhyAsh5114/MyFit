@@ -31,44 +31,47 @@ pnpm start    # Run production build
 ## API Structure
 
 - **lib/auth.ts** - Better Auth setup
-- **lib/prisma.ts** - Prisma client instance
+- **lib/db.ts** - Prisma 8 Postgres client for the synced models
+- **lib/pool.ts** - `pg` pool for Better Auth and the `NutritionData` search table
 - **src/index.ts** - Main server and route definitions
 
 ## Key Features
 
 - 🔐 **Authentication** - Google & GitHub OAuth via Better Auth
-- 🗄️ **Database** - PostgreSQL + Prisma ORM
+- 🗄️ **Database** - PostgreSQL + Prisma 8
 - ⚡ **Fast** - Built on Hono's minimal footprint
 - 📝 **Type-safe** - Full TypeScript support
 
 ## Database
 
-Prisma ORM with PostgreSQL. The schema, migrations, and Prisma config are in this package:
+The schema is shared with the browser and lives in `packages/schema` (`src/schema.prisma`). The API talks to Postgres through Prisma 8 (`@prisma/orm-postgres`) and syncs with the browser's IndexedDB via `@prisma-idb/sync-server`.
 
 ```typescript
-import { prisma } from './lib/prisma.js';
+import { getDb } from './lib/db.js';
 
-const users = await prisma.user.findMany();
+const db = await getDb();
 ```
 
-### Prisma Commands
+Better Auth's tables and the Open Food Facts `NutritionData` table are not part of the synced contract: they use the plain `pg` pool in `lib/pool.ts`.
+
+### Database commands
 
 ```bash
-pnpm generate     # Generate Prisma client and Prisma-IDB
-pnpm push         # Push schema changes to database
-pnpm studio       # Open Prisma Studio
+pnpm --filter @myfit/schema db:migrate     # Apply the on-disk Postgres migrations
+pnpm --filter @myfit/api db:nutrition-data # Create/refresh the NutritionData search table
+pnpm --filter @myfit/schema contract:emit:postgres # Re-emit the server contract after editing schema.prisma
 ```
 
-### TypedSQL Queries
-
-Define SQL queries in `prisma/sql/` and use them with full type safety:
-
-```typescript
-import { myQuery } from '../generated/prisma/sql/myQuery.js';
-
-const results = await prisma.$queryRawTyped(myQuery(params));
-```
+Do not use `prisma db update` against a real database: it would drop `NutritionData`, which lives outside the Prisma contract.
 
 - `pnpm start` - Run compiled app
 - `pnpm lint` - ESLint
 - `pnpm format` - Prettier formatting
+
+### Existing databases
+
+The baseline migration creates a Prisma 8 database. It cannot adopt a database
+created by the legacy migrations: column types, enum representation, indexes,
+and the sync changelog differ. `db migrate` attempts to add existing constraints,
+and `db sign` rejects the schema differences. A data-preserving upgrade must land
+before this entrypoint can be deployed against an existing database.

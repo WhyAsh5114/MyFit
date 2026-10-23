@@ -1,7 +1,10 @@
--- @param {String} $1:search - The search term to look for
--- @param {Int} $2:offset - Number of results to skip (for pagination)
--- @param {Int} $3:limit - Number of results to return
-
+/**
+ * Ranked food search over `NutritionData`: full-text (weighted tsvector) plus
+ * trigram similarity for typos, nudged by scan popularity and completeness.
+ *
+ * Parameters: $1 search term, $2 offset, $3 limit.
+ */
+export const SEARCH_FOODS_SQL = `
 WITH query AS (
   SELECT
     websearch_to_tsquery('english', unaccent($1::text)) AS tsq,
@@ -48,3 +51,4 @@ ORDER BY
   n.id ASC
 LIMIT $3
 OFFSET $2;
+`;

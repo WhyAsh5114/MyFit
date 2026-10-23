@@ -16,6 +16,7 @@ RUN corepack enable
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/shared/package.json ./packages/shared/
+COPY packages/schema/package.json ./packages/schema/
 
 # Install only the API and its workspace deps
 RUN pnpm install --frozen-lockfile --filter @myfit/api...
@@ -23,14 +24,7 @@ RUN pnpm install --frozen-lockfile --filter @myfit/api...
 # Copy sources (node_modules excluded via root .dockerignore)
 COPY apps/api ./apps/api
 COPY packages/shared ./packages/shared
-
-# Regenerate Prisma client for the container platform
-# (typed SQL files stay from VCS — prisma generate without --sql doesn't emit them)
-WORKDIR /build/apps/api
-RUN rm -rf ./generated/prisma && \
-    DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder \
-    pnpm exec prisma generate
-COPY apps/api/generated/prisma/sql ./generated/prisma/sql
+COPY packages/schema ./packages/schema
 
 # ============================================================================
 # STAGE 2: Runtime
