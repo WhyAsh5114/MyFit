@@ -60,9 +60,9 @@ export const TRUNCATE_STAGING_TABLE_SQL = 'TRUNCATE nutrition_data_staging';
 export const DROP_STAGING_TABLE_SQL = 'DROP TABLE IF EXISTS nutrition_data_staging';
 
 /**
- * Insert directly into NutritionData table from staging
- * Generates searchVector from product_name (weight A) and brands (weight B)
- * using unaccent to normalize diacritics.
+ * Insert directly into NutritionData table from staging.
+ * The full-text document is not stored: the `nutrition_data_search` index builds
+ * it from `productName` (weight A) and `brands` (weight B) as rows arrive.
  */
 export const INSERT_INTO_NUTRITION_DATA_SQL = `
 INSERT INTO "NutritionData" (
@@ -70,7 +70,6 @@ INSERT INTO "NutritionData" (
   code,
   "productName",
   brands,
-  "searchVector",
   "servingQuantity",
   "servingSize",
   "completeness",
@@ -117,8 +116,6 @@ SELECT
   code,
   product_name,
   brands,
-  setweight(to_tsvector('english', unaccent(coalesce(product_name, ''))), 'A') ||
-    setweight(to_tsvector('english', unaccent(coalesce(brands, ''))), 'B'),
   serving_quantity,
   serving_size,
   completeness,

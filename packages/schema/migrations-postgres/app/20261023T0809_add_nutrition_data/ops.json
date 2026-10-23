@@ -1,0 +1,211 @@
+[
+	{
+		"id": "extension.pg_trgm",
+		"label": "Install the pg_trgm extension",
+		"operationClass": "additive",
+		"invariantId": "install-pg-trgm",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "dependency",
+				"name": "pg_trgm"
+			}
+		},
+		"precheck": [
+			{
+				"description": "verify extension \"pg_trgm\" is not already enabled",
+				"sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_extension\" WHERE \"extname\" = $1) AS \"result\"",
+				"params": ["pg_trgm"]
+			}
+		],
+		"execute": [
+			{
+				"description": "create extension \"pg_trgm\"",
+				"sql": "CREATE EXTENSION IF NOT EXISTS pg_trgm"
+			}
+		],
+		"postcheck": [
+			{
+				"description": "confirm extension \"pg_trgm\" is enabled",
+				"sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_extension\" WHERE \"extname\" = $1) AS \"result\"",
+				"params": ["pg_trgm"]
+			}
+		]
+	},
+	{
+		"id": "table.NutritionData",
+		"label": "Create table \"NutritionData\"",
+		"summary": "Creates table \"NutritionData\"",
+		"operationClass": "additive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "table",
+				"name": "NutritionData"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure table \"NutritionData\" does not exist",
+				"sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+				"params": ["\"public\".\"NutritionData\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "create table \"NutritionData\"",
+				"sql": "CREATE TABLE \"public\".\"NutritionData\" (\n  \"alcoholG_100g\" float8,\n  \"brands\" text,\n  \"caffeineMg_100g\" float8,\n  \"calciumMg_100g\" float8,\n  \"carbohydratesG_100g\" float8 NOT NULL,\n  \"cholesterolMg_100g\" float8,\n  \"code\" text NOT NULL,\n  \"completeness\" float8 NOT NULL,\n  \"copperMg_100g\" float8,\n  \"energyKcal_100g\" float8 NOT NULL,\n  \"fatG_100g\" float8 NOT NULL,\n  \"fiberG_100g\" float8,\n  \"folatesMcg_100g\" float8,\n  \"id\" text NOT NULL,\n  \"ironMg_100g\" float8,\n  \"magnesiumMg_100g\" float8,\n  \"manganeseMg_100g\" float8,\n  \"monounsaturatedFatG_100g\" float8,\n  \"phosphorusMg_100g\" float8,\n  \"polyolsG_100g\" float8,\n  \"polyunsaturatedFatG_100g\" float8,\n  \"potassiumMg_100g\" float8,\n  \"productName\" text NOT NULL,\n  \"proteinsG_100g\" float8 NOT NULL,\n  \"saltG_100g\" float8,\n  \"saturatedFatG_100g\" float8,\n  \"servingQuantity\" float8,\n  \"servingSize\" text,\n  \"sodiumMg_100g\" float8,\n  \"sugarsG_100g\" float8,\n  \"transFatG_100g\" float8,\n  \"uniqueScans\" int4 NOT NULL,\n  \"unsaturatedFatG_100g\" float8,\n  \"vitaminAIU_100g\" float8,\n  \"vitaminB12Mcg_100g\" float8,\n  \"vitaminB1Mg_100g\" float8,\n  \"vitaminB2Mg_100g\" float8,\n  \"vitaminB6Mg_100g\" float8,\n  \"vitaminB9Mcg_100g\" float8,\n  \"vitaminCMg_100g\" float8,\n  \"vitaminDIU_100g\" float8,\n  \"vitaminEMg_100g\" float8,\n  \"vitaminKMcg_100g\" float8,\n  \"zincMg_100g\" float8,\n  PRIMARY KEY (\"id\")\n)",
+				"params": []
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify table \"NutritionData\" exists",
+				"sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+				"params": ["\"public\".\"NutritionData\""]
+			}
+		]
+	},
+	{
+		"id": "index.NutritionData.NutritionData_code_idx_8e43b86b",
+		"label": "Create index \"NutritionData_code_idx_8e43b86b\" on \"NutritionData\"",
+		"operationClass": "additive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "index",
+				"name": "NutritionData_code_idx_8e43b86b",
+				"table": "NutritionData"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure index \"NutritionData_code_idx_8e43b86b\" does not exist",
+				"sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+				"params": ["\"public\".\"NutritionData_code_idx_8e43b86b\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "create index \"NutritionData_code_idx_8e43b86b\"",
+				"sql": "CREATE INDEX \"NutritionData_code_idx_8e43b86b\" ON \"public\".\"NutritionData\" (\"code\")",
+				"params": []
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify index \"NutritionData_code_idx_8e43b86b\" exists",
+				"sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+				"params": ["\"public\".\"NutritionData_code_idx_8e43b86b\""]
+			}
+		]
+	},
+	{
+		"id": "index.NutritionData.nutrition_data_brands_trgm_bfc86f7b",
+		"label": "Create index \"nutrition_data_brands_trgm_bfc86f7b\" on \"NutritionData\"",
+		"operationClass": "additive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "index",
+				"name": "nutrition_data_brands_trgm_bfc86f7b",
+				"table": "NutritionData"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure index \"nutrition_data_brands_trgm_bfc86f7b\" does not exist",
+				"sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+				"params": ["\"public\".\"nutrition_data_brands_trgm_bfc86f7b\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "create index \"nutrition_data_brands_trgm_bfc86f7b\"",
+				"sql": "CREATE INDEX \"nutrition_data_brands_trgm_bfc86f7b\" ON \"public\".\"NutritionData\" USING \"gin\" (brands gin_trgm_ops)",
+				"params": []
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify index \"nutrition_data_brands_trgm_bfc86f7b\" exists",
+				"sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+				"params": ["\"public\".\"nutrition_data_brands_trgm_bfc86f7b\""]
+			}
+		]
+	},
+	{
+		"id": "index.NutritionData.nutrition_data_product_name_trgm_85e6f92c",
+		"label": "Create index \"nutrition_data_product_name_trgm_85e6f92c\" on \"NutritionData\"",
+		"operationClass": "additive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "index",
+				"name": "nutrition_data_product_name_trgm_85e6f92c",
+				"table": "NutritionData"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure index \"nutrition_data_product_name_trgm_85e6f92c\" does not exist",
+				"sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+				"params": ["\"public\".\"nutrition_data_product_name_trgm_85e6f92c\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "create index \"nutrition_data_product_name_trgm_85e6f92c\"",
+				"sql": "CREATE INDEX \"nutrition_data_product_name_trgm_85e6f92c\" ON \"public\".\"NutritionData\" USING \"gin\" (\"productName\" gin_trgm_ops)",
+				"params": []
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify index \"nutrition_data_product_name_trgm_85e6f92c\" exists",
+				"sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+				"params": ["\"public\".\"nutrition_data_product_name_trgm_85e6f92c\""]
+			}
+		]
+	},
+	{
+		"id": "index.NutritionData.nutrition_data_search_5d8ee8f9",
+		"label": "Create index \"nutrition_data_search_5d8ee8f9\" on \"NutritionData\"",
+		"operationClass": "additive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "index",
+				"name": "nutrition_data_search_5d8ee8f9",
+				"table": "NutritionData"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure index \"nutrition_data_search_5d8ee8f9\" does not exist",
+				"sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+				"params": ["\"public\".\"nutrition_data_search_5d8ee8f9\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "create index \"nutrition_data_search_5d8ee8f9\"",
+				"sql": "CREATE INDEX \"nutrition_data_search_5d8ee8f9\" ON \"public\".\"NutritionData\" USING \"gin\" ((setweight(to_tsvector('english', coalesce(\"productName\", '')), 'A') || setweight(to_tsvector('english', coalesce(\"brands\", '')), 'B')))",
+				"params": []
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify index \"nutrition_data_search_5d8ee8f9\" exists",
+				"sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+				"params": ["\"public\".\"nutrition_data_search_5d8ee8f9\""]
+			}
+		]
+	}
+]

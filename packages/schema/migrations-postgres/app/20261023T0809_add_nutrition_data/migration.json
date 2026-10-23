@@ -1,0 +1,7 @@
+{
+	"from": "818a2238897d8b712f4de89a15b5018676a9e943ee7fedff429314691705364f",
+	"to": "20668c294305a05ca2cab6567a067382f9267afe79e0e4f3d2bfd6a5fe8488a7",
+	"providedInvariants": ["install-pg-trgm"],
+	"createdAt": "2026-10-23T08:09:17.577Z",
+	"migrationHash": "cd315bd5af39c2d76308bc3aabecb385e24e36ce6a566c8c7fb91ac8a0e01996"
+}
