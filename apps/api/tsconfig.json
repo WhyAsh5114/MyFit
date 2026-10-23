@@ -5,6 +5,7 @@
 		"lib": ["ESNext"],
 		"types": ["bun"],
 		"moduleResolution": "bundler",
+		"rewriteRelativeImportExtensions": true,
 		"strict": true,
 		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
