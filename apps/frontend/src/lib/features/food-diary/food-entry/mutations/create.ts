@@ -1,5 +1,5 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
@@ -10,9 +10,8 @@ import { foodEntryKeys } from '../keys';
 export const useCreateFoodEntry = () =>
 	createMutation(() => ({
 		mutationFn: async ({ data, userId }: { data: FoodEntryFormSchema; userId: string }) => {
-			const client = getClient();
-			const foodEntry = foodEntryFormSchemaToFoodEntry(data, userId);
-			return await client.foodEntry.create({ data: foodEntry });
+			const { orm } = await getDb();
+			return await orm.foodEntry.create(foodEntryFormSchemaToFoodEntry(data, userId));
 		},
 
 		onSuccess: (data) => {

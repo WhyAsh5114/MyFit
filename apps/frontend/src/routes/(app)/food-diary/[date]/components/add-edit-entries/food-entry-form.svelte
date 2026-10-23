@@ -24,7 +24,7 @@
 	import type { Snippet } from 'svelte';
 	import { round } from '$lib/my-utils';
 	import { cn } from '$lib/utils';
-	import type { Meal } from '@myfit/api/prisma/client';
+	import type { Meal } from '@myfit/schema/client';
 
 	type Props = {
 		initialData?: FoodEntryFormSchema;

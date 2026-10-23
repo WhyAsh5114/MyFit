@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Meal } from '@myfit/api/prisma/client';
+	import type { Meal } from '@myfit/schema/client';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button';
 	import { DragDropProvider, DragOverlay } from '@dnd-kit/svelte';

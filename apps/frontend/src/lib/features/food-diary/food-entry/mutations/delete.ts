@@ -1,5 +1,5 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
@@ -13,8 +13,12 @@ type MutationProps = {
 export const useDeleteFoodEntry = () =>
 	createMutation(() => ({
 		mutationFn: async ({ userId, id }: MutationProps) => {
-			const client = getClient();
-			return await client.foodEntry.delete({ where: { id, userId } });
+			const { orm } = await getDb();
+			// delete() resolves to void, but onSuccess needs the row to invalidate the right day.
+			const entry = await orm.foodEntry.where({ id, userId }).first();
+			if (!entry) throw new Error(`Food entry ${id} not found`);
+			await orm.foodEntry.delete(id);
+			return entry;
 		},
 
 		onSuccess: (data) => {

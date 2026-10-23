@@ -1,7 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import { CapacitorUpdater, type BundleInfo } from '@capgo/capacitor-updater';
 import { apiClient } from '$lib/clients/api-client';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 
@@ -110,7 +110,8 @@ export async function checkForUpdates(): Promise<void> {
 
 async function readAutoUpdatePreference(): Promise<boolean> {
 	try {
-		const user = await getClient().user.findFirst();
+		const { orm } = await getDb();
+		const user = await orm.user.first();
 		return user?.autoUpdate ?? true;
 	} catch {
 		return true;

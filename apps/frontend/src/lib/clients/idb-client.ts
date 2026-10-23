@@ -1,21 +1,18 @@
-import { browser } from '$app/environment';
-import { PrismaIDBClient } from '@myfit/api/prisma-idb/client';
+import { createManagedAutoSyncIdbClient } from '@prisma-idb/sync-extension-idb/client';
+import type { SyncIdbClient } from '@prisma-idb/sync-extension-idb/client';
+import { idbSyncExtension } from '@prisma-idb/sync-extension-idb/control';
+import { contractSpace, type Contract } from '@myfit/schema/client';
 
-let client: PrismaIDBClient | undefined;
-let initPromise: Promise<PrismaIDBClient> | undefined;
+export type DbClient = SyncIdbClient<Contract>;
 
-async function initializeClient() {
-	if (!browser) throw new Error('PrismaIDBClient can only be initialized in the browser');
-	if (!initPromise) {
-		initPromise = PrismaIDBClient.createClient().then((c) => (client = c));
-	}
-	await initPromise;
-	return client;
-}
+const managedDb = createManagedAutoSyncIdbClient<Contract>({
+	contractSpace,
+	dbName: 'myfit',
+	extensions: [idbSyncExtension]
+});
 
-function getClient(): PrismaIDBClient {
-	if (!client) throw new Error('PrismaIDBClient not initialized. Call initializeClient() first.');
-	return client;
-}
+/** Migrates on first call, then returns the shared sync-tracked client: `db.orm.*` writes also land in the outbox. */
+export const getDb = (): Promise<DbClient> => managedDb.get();
 
-export { initializeClient, getClient };
+/** Closes and deletes the local database. Used on logout so the next account never sees this one's data. */
+export const resetDb = (): Promise<void> => managedDb.reset();

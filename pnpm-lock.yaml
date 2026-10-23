@@ -160,6 +160,12 @@ importers:
       '@internationalized/date':
         specifier: ^3.12.2
         version: 3.12.2
+      '@prisma-idb/client-idb':
+        specifier: ^0.15.0
+        version: 0.15.0(@prisma/cli-engine@0.7.0(@prisma/management-api-sdk@1.80.0)(magicast@0.5.5))(magicast@0.5.5)(typanion@3.14.0)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.9.0))
+      '@prisma-idb/sync-extension-idb':
+        specifier: ^0.10.0
+        version: 0.10.0(@prisma/cli-engine@0.7.0(@prisma/management-api-sdk@1.80.0)(magicast@0.5.5))(@prisma/management-api-sdk@1.80.0)(magicast@0.5.5)(typanion@3.14.0)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.9.0))
       '@tanstack/svelte-query':
         specifier: ^6.1.34
         version: 6.1.34(svelte@5.56.3(@typescript-eslint/types@8.60.1))
@@ -227,6 +233,9 @@ importers:
       '@myfit/api':
         specifier: workspace:*
         version: link:../api
+      '@myfit/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
       '@myfit/shared':
         specifier: workspace:*
         version: link:../../packages/shared

@@ -1,5 +1,5 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
@@ -16,9 +16,12 @@ type MutationProps = {
 export const useUpdateFoodEntry = () =>
 	createMutation(() => ({
 		mutationFn: async ({ data, userId, id }: MutationProps) => {
-			const client = getClient();
-			const foodEntry = foodEntryFormSchemaToFoodEntry(data, userId);
-			return await client.foodEntry.update({ data: foodEntry, where: { id, userId } });
+			const { orm } = await getDb();
+			const updated = await orm.foodEntry
+				.where({ id, userId })
+				.update(foodEntryFormSchemaToFoodEntry(data, userId));
+			if (!updated) throw new Error(`Food entry ${id} not found`);
+			return updated;
 		},
 
 		onSuccess: (data) => {
