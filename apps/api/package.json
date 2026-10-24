@@ -5,8 +5,7 @@
 		".": {
 			"types": "./src/app.ts"
 		},
-		"./constants": "./lib/constants.ts",
-		"./prisma/client": "./src/prisma-types.ts"
+		"./constants": "./lib/constants.ts"
 	},
 	"scripts": {
 		"dev": "bun --watch run src/index.ts",
@@ -14,16 +13,15 @@
 		"start": "bun dist/index.js",
 		"seed:off": "bun run prisma/seed/open-food-facts/main.ts",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write .",
-		"db:nutrition-data": "bun scripts/nutrition-data.ts"
+		"format": "prettier --write ."
 	},
 	"dependencies": {
 		"@ai-sdk/openai-compatible": "^2.0.48",
 		"@hono/zod-validator": "^0.8.0",
 		"@myfit/schema": "workspace:*",
 		"@myfit/shared": "workspace:*",
-		"@prisma-idb/sync-extension-idb": "^0.10.0",
-		"@prisma-idb/sync-server-sql": "^0.8.1",
+		"@prisma-idb/sync-extension-idb": "^0.10.1",
+		"@prisma-idb/sync-server-sql": "^0.8.2",
 		"@prisma/orm-postgres": "8.0.0-rc.18",
 		"ai": "^6.0.197",
 		"better-auth": "^1.6.15",

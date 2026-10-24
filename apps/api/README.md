@@ -32,7 +32,7 @@ pnpm start    # Run production build
 
 - **lib/auth.ts** - Better Auth setup
 - **lib/db.ts** - Prisma 8 Postgres client for the synced models
-- **lib/pool.ts** - `pg` pool for Better Auth and the `NutritionData` search table
+- **lib/pool.ts** - `pg` pool for Better Auth
 - **src/index.ts** - Main server and route definitions
 
 ## Key Features
@@ -52,17 +52,18 @@ import { getDb } from './lib/db.js';
 const db = await getDb();
 ```
 
-Better Auth's tables and the Open Food Facts `NutritionData` table are not part of the synced contract: they use the plain `pg` pool in `lib/pool.ts`.
+Better Auth reads and writes its own tables through the plain `pg` pool in `lib/pool.ts`. The Open Food Facts `NutritionData` table is part of the server contract (marked `@@idb.exclude`, so it never reaches the browser). Its weighted full-text and trigram indexes are declared with `@@index(expression: ...)` to fold accents through `public.immutable_unaccent(...)`. The migrations create those indexes and the search extensions. Fill it with the Open Food Facts seed under `prisma/seed/open-food-facts`.
+
+This release requires a fresh Postgres database. Create an empty database before deploying; the baseline replaces the earlier migration history. Existing databases cannot migrate in place. After migration, reload Open Food Facts data and use fresh browser storage before reconnecting clients.
+
+The baseline installs `pg_trgm` and `unaccent` before creating the full-text and trigram indexes on `public.immutable_unaccent(...)`. The wrapper pins the `public.unaccent` dictionary; rebuild those indexes if the dictionary changes.
 
 ### Database commands
 
 ```bash
 pnpm --filter @myfit/schema db:migrate     # Apply the on-disk Postgres migrations
-pnpm --filter @myfit/api db:nutrition-data # Create/refresh the NutritionData search table
 pnpm --filter @myfit/schema contract:emit:postgres # Re-emit the server contract after editing schema.prisma
 ```
-
-Do not use `prisma db update` against a real database: it would drop `NutritionData`, which lives outside the Prisma contract.
 
 - `pnpm start` - Run compiled app
 - `pnpm lint` - ESLint

@@ -4,6 +4,7 @@
 	"language.es": "Español",
 	"inProgress": "En progreso",
 	"app.name": "MyFit",
+	"foodDiary.foodEntryNotFound": "Esta entrada de comida ya no existe.",
 	"app.iconAlt": "Logo de MyFit",
 	"home.openApp": "Abrir aplicación",
 	"nav.dashboard": "Panel de control",

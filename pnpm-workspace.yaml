@@ -27,12 +27,12 @@ allowBuilds:
   workerd: false
 
 minimumReleaseAgeExclude:
-  - '@prisma-idb/adapter-idb@0.15.0'
-  - '@prisma-idb/client-idb@0.15.0'
-  - '@prisma-idb/driver-idb@0.15.0'
-  - '@prisma-idb/family-idb@0.15.0'
-  - '@prisma-idb/runtime-idb@0.15.0'
-  - '@prisma-idb/sync-extension-idb@0.10.0'
-  - '@prisma-idb/sync-server-sql@0.8.1'
-  - '@prisma-idb/sync-server@0.8.3'
-  - '@prisma-idb/target-idb@0.15.0'
+  - '@prisma-idb/adapter-idb@0.15.1'
+  - '@prisma-idb/client-idb@0.15.1'
+  - '@prisma-idb/driver-idb@0.15.1'
+  - '@prisma-idb/family-idb@0.15.1'
+  - '@prisma-idb/runtime-idb@0.15.1'
+  - '@prisma-idb/sync-extension-idb@0.10.1'
+  - '@prisma-idb/sync-server-sql@0.8.2'
+  - '@prisma-idb/sync-server@0.8.4'
+  - '@prisma-idb/target-idb@0.15.1'

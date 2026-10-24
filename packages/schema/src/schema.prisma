@@ -1,13 +1,10 @@
+// use prisma-8
+
 // One schema for both databases. The browser reads it through the IndexedDB
 // family with `projection: "client"` (see ../prisma.config.ts), which leaves out
 // everything marked `@idb.exclude`/`@@idb.exclude`. The server reads the same file
 // through the Postgres SQL family (see ../prisma.config.postgres.ts), which strips
 // those attributes and appends the sync `Changelog` model.
-//
-// `NutritionData` (the Open Food Facts search table) is deliberately NOT modelled
-// here: it needs `tsvector` and GIN/trigram indexes, which the SQL family can't
-// express. It is created by `apps/api/prisma/nutrition-data/*.sql` and queried with
-// plain SQL.
 //
 // `updatedAt` columns carry no `@updatedAt`: the SQL family's parser doesn't know
 // the attribute, and the writers (better-auth on the server, the session user on
@@ -318,4 +315,61 @@ model RecipeIngredient {
   copperMg_100g            Float?
   manganeseMg_100g         Float?
   caffeineMg_100g          Float?
+}
+
+// The Open Food Facts search table. Server only: it is far too large to sync, so the
+// browser asks the API (`/api/nutrition-data`) instead. The weighted full-text index
+// weights productName strongest and brands next. The API uses the matching
+// accent-folded document in its raw search query through the Postgres ORM.
+model NutritionData {
+  id                       String @id
+  code                     String
+  productName              String
+  brands                   String?
+  completeness             Float
+  uniqueScans              Int
+  servingQuantity          Float?
+  servingSize              String?
+  energyKcal_100g          Float
+  proteinsG_100g           Float
+  fatG_100g                Float
+  carbohydratesG_100g      Float
+  saturatedFatG_100g       Float?
+  unsaturatedFatG_100g     Float?
+  monounsaturatedFatG_100g Float?
+  polyunsaturatedFatG_100g Float?
+  transFatG_100g           Float?
+  cholesterolMg_100g       Float?
+  sugarsG_100g             Float?
+  polyolsG_100g            Float?
+  fiberG_100g              Float?
+  saltG_100g               Float?
+  sodiumMg_100g            Float?
+  alcoholG_100g            Float?
+  vitaminAIU_100g          Float?
+  vitaminDIU_100g          Float?
+  vitaminEMg_100g          Float?
+  vitaminKMcg_100g         Float?
+  vitaminCMg_100g          Float?
+  vitaminB1Mg_100g         Float?
+  vitaminB2Mg_100g         Float?
+  vitaminB6Mg_100g         Float?
+  vitaminB9Mcg_100g        Float?
+  folatesMcg_100g          Float?
+  vitaminB12Mcg_100g       Float?
+  potassiumMg_100g         Float?
+  calciumMg_100g           Float?
+  phosphorusMg_100g        Float?
+  ironMg_100g              Float?
+  magnesiumMg_100g         Float?
+  zincMg_100g              Float?
+  copperMg_100g            Float?
+  manganeseMg_100g         Float?
+  caffeineMg_100g          Float?
+
+  @@index([code])
+  @@index(expression: sql`(setweight(to_tsvector('english', public.immutable_unaccent(coalesce("productName", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce("brands", ''))), 'B'))`, type: "gin", name: "nutrition_data_search")
+  @@index(expression: sql`public.immutable_unaccent("productName") gin_trgm_ops`, type: "gin", name: "nutrition_data_product_name_trgm")
+  @@index(expression: sql`public.immutable_unaccent(brands) gin_trgm_ops`, type: "gin", name: "nutrition_data_brands_trgm")
+  @@idb.exclude
 }

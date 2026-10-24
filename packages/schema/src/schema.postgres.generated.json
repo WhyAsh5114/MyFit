@@ -32,6 +32,10 @@
 			"model": "Meal",
 			"namespace": "public"
 		},
+		"NutritionData": {
+			"model": "NutritionData",
+			"namespace": "public"
+		},
 		"Recipe": {
 			"model": "Recipe",
 			"namespace": "public"
@@ -1446,6 +1450,457 @@
 							},
 							"namespaceId": "public",
 							"table": "Meal"
+						}
+					},
+					"NutritionData": {
+						"fields": {
+							"alcoholG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"brands": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							},
+							"caffeineMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"calciumMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"carbohydratesG_100g": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"cholesterolMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"code": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							},
+							"completeness": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"copperMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"energyKcal_100g": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"fatG_100g": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"fiberG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"folatesMcg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							},
+							"ironMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"magnesiumMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"manganeseMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"monounsaturatedFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"phosphorusMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"polyolsG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"polyunsaturatedFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"potassiumMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"productName": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							},
+							"proteinsG_100g": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"saltG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"saturatedFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"servingQuantity": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"servingSize": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							},
+							"sodiumMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"sugarsG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"transFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"uniqueScans": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/int4@1",
+									"kind": "scalar"
+								}
+							},
+							"unsaturatedFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminAIU_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB12Mcg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB1Mg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB2Mg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB6Mg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB9Mcg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminCMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminDIU_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminEMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminKMcg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							},
+							"zincMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/float8@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {},
+						"storage": {
+							"fields": {
+								"alcoholG_100g": {
+									"column": "alcoholG_100g"
+								},
+								"brands": {
+									"column": "brands"
+								},
+								"caffeineMg_100g": {
+									"column": "caffeineMg_100g"
+								},
+								"calciumMg_100g": {
+									"column": "calciumMg_100g"
+								},
+								"carbohydratesG_100g": {
+									"column": "carbohydratesG_100g"
+								},
+								"cholesterolMg_100g": {
+									"column": "cholesterolMg_100g"
+								},
+								"code": {
+									"column": "code"
+								},
+								"completeness": {
+									"column": "completeness"
+								},
+								"copperMg_100g": {
+									"column": "copperMg_100g"
+								},
+								"energyKcal_100g": {
+									"column": "energyKcal_100g"
+								},
+								"fatG_100g": {
+									"column": "fatG_100g"
+								},
+								"fiberG_100g": {
+									"column": "fiberG_100g"
+								},
+								"folatesMcg_100g": {
+									"column": "folatesMcg_100g"
+								},
+								"id": {
+									"column": "id"
+								},
+								"ironMg_100g": {
+									"column": "ironMg_100g"
+								},
+								"magnesiumMg_100g": {
+									"column": "magnesiumMg_100g"
+								},
+								"manganeseMg_100g": {
+									"column": "manganeseMg_100g"
+								},
+								"monounsaturatedFatG_100g": {
+									"column": "monounsaturatedFatG_100g"
+								},
+								"phosphorusMg_100g": {
+									"column": "phosphorusMg_100g"
+								},
+								"polyolsG_100g": {
+									"column": "polyolsG_100g"
+								},
+								"polyunsaturatedFatG_100g": {
+									"column": "polyunsaturatedFatG_100g"
+								},
+								"potassiumMg_100g": {
+									"column": "potassiumMg_100g"
+								},
+								"productName": {
+									"column": "productName"
+								},
+								"proteinsG_100g": {
+									"column": "proteinsG_100g"
+								},
+								"saltG_100g": {
+									"column": "saltG_100g"
+								},
+								"saturatedFatG_100g": {
+									"column": "saturatedFatG_100g"
+								},
+								"servingQuantity": {
+									"column": "servingQuantity"
+								},
+								"servingSize": {
+									"column": "servingSize"
+								},
+								"sodiumMg_100g": {
+									"column": "sodiumMg_100g"
+								},
+								"sugarsG_100g": {
+									"column": "sugarsG_100g"
+								},
+								"transFatG_100g": {
+									"column": "transFatG_100g"
+								},
+								"uniqueScans": {
+									"column": "uniqueScans"
+								},
+								"unsaturatedFatG_100g": {
+									"column": "unsaturatedFatG_100g"
+								},
+								"vitaminAIU_100g": {
+									"column": "vitaminAIU_100g"
+								},
+								"vitaminB12Mcg_100g": {
+									"column": "vitaminB12Mcg_100g"
+								},
+								"vitaminB1Mg_100g": {
+									"column": "vitaminB1Mg_100g"
+								},
+								"vitaminB2Mg_100g": {
+									"column": "vitaminB2Mg_100g"
+								},
+								"vitaminB6Mg_100g": {
+									"column": "vitaminB6Mg_100g"
+								},
+								"vitaminB9Mcg_100g": {
+									"column": "vitaminB9Mcg_100g"
+								},
+								"vitaminCMg_100g": {
+									"column": "vitaminCMg_100g"
+								},
+								"vitaminDIU_100g": {
+									"column": "vitaminDIU_100g"
+								},
+								"vitaminEMg_100g": {
+									"column": "vitaminEMg_100g"
+								},
+								"vitaminKMcg_100g": {
+									"column": "vitaminKMcg_100g"
+								},
+								"zincMg_100g": {
+									"column": "zincMg_100g"
+								}
+							},
+							"namespaceId": "public",
+							"table": "NutritionData"
 						}
 					},
 					"Recipe": {
@@ -3227,6 +3682,264 @@
 								}
 							]
 						},
+						"NutritionData": {
+							"columns": {
+								"alcoholG_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"brands": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": true
+								},
+								"caffeineMg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"calciumMg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"carbohydratesG_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": false
+								},
+								"cholesterolMg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"code": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
+								},
+								"completeness": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": false
+								},
+								"copperMg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"energyKcal_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": false
+								},
+								"fatG_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": false
+								},
+								"fiberG_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"folatesMcg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"id": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
+								},
+								"ironMg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"magnesiumMg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"manganeseMg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"monounsaturatedFatG_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"phosphorusMg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"polyolsG_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"polyunsaturatedFatG_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"potassiumMg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"productName": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
+								},
+								"proteinsG_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": false
+								},
+								"saltG_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"saturatedFatG_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"servingQuantity": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"servingSize": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": true
+								},
+								"sodiumMg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"sugarsG_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"transFatG_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"uniqueScans": {
+									"codecId": "pg/int4@1",
+									"dataType": "pg/int4",
+									"nullable": false
+								},
+								"unsaturatedFatG_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"vitaminAIU_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"vitaminB12Mcg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"vitaminB1Mg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"vitaminB2Mg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"vitaminB6Mg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"vitaminB9Mcg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"vitaminCMg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"vitaminDIU_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"vitaminEMg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"vitaminKMcg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								},
+								"zincMg_100g": {
+									"codecId": "pg/float8@1",
+									"dataType": "pg/float8",
+									"nullable": true
+								}
+							},
+							"foreignKeys": [],
+							"indexes": [
+								{
+									"columns": ["code"],
+									"name": "NutritionData_code_idx_8e43b86b",
+									"prefix": "NutritionData_code_idx",
+									"unique": false
+								},
+								{
+									"expression": "public.immutable_unaccent(brands) gin_trgm_ops",
+									"name": "nutrition_data_brands_trgm_0357fbfa",
+									"prefix": "nutrition_data_brands_trgm",
+									"type": "gin",
+									"unique": false
+								},
+								{
+									"expression": "public.immutable_unaccent(\"productName\") gin_trgm_ops",
+									"name": "nutrition_data_product_name_trgm_7f9a87bc",
+									"prefix": "nutrition_data_product_name_trgm",
+									"type": "gin",
+									"unique": false
+								},
+								{
+									"expression": "(setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"productName\", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"brands\", ''))), 'B'))",
+									"name": "nutrition_data_search_aa01b8a8",
+									"prefix": "nutrition_data_search",
+									"type": "gin",
+									"unique": false
+								}
+							],
+							"primaryKey": {
+								"columns": ["id"]
+							},
+							"uniques": []
+						},
 						"Recipe": {
 							"columns": {
 								"description": {
@@ -3894,7 +4607,7 @@
 				"kind": "postgres-schema"
 			}
 		},
-		"storageHash": "818a2238897d8b712f4de89a15b5018676a9e943ee7fedff429314691705364f"
+		"storageHash": "52513ac073657030ce7026329ba07799eeeed6e0605c8a2b42554290fdef4c82"
 	},
 	"execution": {
 		"executionHash": "9b0ec966f1397f6b3ef25f4a1a23de2c45c37bc7cc8df5fc4c96d8354ad09503",
