@@ -1306,37 +1306,37 @@
 		]
 	},
 	{
-		"id": "index.NutritionData.nutrition_data_search_5d8ee8f9",
-		"label": "Create index \"nutrition_data_search_5d8ee8f9\" on \"NutritionData\"",
+		"id": "index.NutritionData.nutrition_data_search_aa01b8a8",
+		"label": "Create index \"nutrition_data_search_aa01b8a8\" on \"NutritionData\"",
 		"operationClass": "additive",
 		"target": {
 			"id": "postgres",
 			"details": {
 				"schema": "public",
 				"objectType": "index",
-				"name": "nutrition_data_search_5d8ee8f9",
+				"name": "nutrition_data_search_aa01b8a8",
 				"table": "NutritionData"
 			}
 		},
 		"precheck": [
 			{
-				"description": "ensure index \"nutrition_data_search_5d8ee8f9\" does not exist",
+				"description": "ensure index \"nutrition_data_search_aa01b8a8\" does not exist",
 				"sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-				"params": ["\"public\".\"nutrition_data_search_5d8ee8f9\""]
+				"params": ["\"public\".\"nutrition_data_search_aa01b8a8\""]
 			}
 		],
 		"execute": [
 			{
-				"description": "create index \"nutrition_data_search_5d8ee8f9\"",
-				"sql": "CREATE INDEX \"nutrition_data_search_5d8ee8f9\" ON \"public\".\"NutritionData\" USING \"gin\" ((setweight(to_tsvector('english', coalesce(\"productName\", '')), 'A') || setweight(to_tsvector('english', coalesce(\"brands\", '')), 'B')))",
+				"description": "create index \"nutrition_data_search_aa01b8a8\"",
+				"sql": "CREATE INDEX \"nutrition_data_search_aa01b8a8\" ON \"public\".\"NutritionData\" USING \"gin\" ((setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"productName\", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"brands\", ''))), 'B')))",
 				"params": []
 			}
 		],
 		"postcheck": [
 			{
-				"description": "verify index \"nutrition_data_search_5d8ee8f9\" exists",
+				"description": "verify index \"nutrition_data_search_aa01b8a8\" exists",
 				"sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-				"params": ["\"public\".\"nutrition_data_search_5d8ee8f9\""]
+				"params": ["\"public\".\"nutrition_data_search_aa01b8a8\""]
 			}
 		]
 	},

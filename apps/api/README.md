@@ -52,11 +52,11 @@ import { getDb } from './lib/db.js';
 const db = await getDb();
 ```
 
-Better Auth reads and writes its own tables through the plain `pg` pool in `lib/pool.ts`. The Open Food Facts `NutritionData` table is part of the server contract (marked `@@idb.exclude`, so it never reaches the browser). Its weighted full-text index is declared with `@@fullTextIndex`, and its trigram indexes and the search extensions come from the migrations. Fill it with the Open Food Facts seed under `prisma/seed/open-food-facts`.
+Better Auth reads and writes its own tables through the plain `pg` pool in `lib/pool.ts`. The Open Food Facts `NutritionData` table is part of the server contract (marked `@@idb.exclude`, so it never reaches the browser). Its weighted full-text and trigram indexes are declared with `@@index(expression: ...)` to fold accents through `public.immutable_unaccent(...)`. The migrations create those indexes and the search extensions. Fill it with the Open Food Facts seed under `prisma/seed/open-food-facts`.
 
 This release requires a fresh Postgres database. Create an empty database before deploying; the baseline replaces the earlier migration history. Existing databases cannot migrate in place. After migration, reload Open Food Facts data and use fresh browser storage before reconnecting clients.
 
-The baseline installs `pg_trgm` and `unaccent` before creating the trigram indexes on `public.immutable_unaccent(...)`. The wrapper pins the `public.unaccent` dictionary; rebuild those indexes if the dictionary changes.
+The baseline installs `pg_trgm` and `unaccent` before creating the full-text and trigram indexes on `public.immutable_unaccent(...)`. The wrapper pins the `public.unaccent` dictionary; rebuild those indexes if the dictionary changes.
 
 ### Database commands
 
