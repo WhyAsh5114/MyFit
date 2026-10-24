@@ -20,11 +20,14 @@
 
 	let hasAnyRetryableUnsynced = $state<boolean>();
 
-	/** Refreshes the indicator after local edits change the retryable outbox. */
+	/** Refreshes the indicator after local edits or a push change the retryable outbox. */
 	async function updateOutboxStats() {
 		const db = await getDb();
 		hasAnyRetryableUnsynced = (await getNextBatch(db.rawClient, { limit: 1 })).length > 0;
 	}
+
+	// A push marks events synced without an `outboxwrite`, so re-check after each push.
+	$effect(() => syncWorkerState.syncWorker?.on('pushcompleted', updateOutboxStats));
 
 	onMount(() => {
 		syncWorkerState.start();
@@ -112,7 +115,9 @@
 				size="sm"
 				class="w-full"
 				variant="secondary"
-				onclick={() => syncWorkerState.syncWorker?.forceSync()}
+				onclick={() =>
+					// The worker's `error` event already reports the failure to `lastError`.
+					syncWorkerState.syncWorker?.forceSync().catch(() => {})}
 			>
 				Sync now <RefreshCcwIcon />
 			</Button>

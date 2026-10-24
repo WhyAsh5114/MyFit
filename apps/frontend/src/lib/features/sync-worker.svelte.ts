@@ -102,9 +102,11 @@ class SyncWorkerState {
 			}),
 			// The worker also emits this after a rejected push, so only a push that left
 			// nothing waiting counts as a sync. It never clears `lastError`: a pull does, once
-			// the outbox is clear and the server is reachable again.
-			worker.on('pushcompleted', ({ failed, pullBlocked }) => {
+			// the outbox is clear and the server is reachable again. A stalled event blocks
+			// every later pull, so surface it instead of retrying silently.
+			worker.on('pushcompleted', ({ failed, pullBlocked, stalled }) => {
 				if (failed === 0 && !pullBlocked) this.lastSyncTime = new Date();
+				if (stalled) this.lastError = stalled.lastError ?? 'Some changes keep failing to sync.';
 			}),
 			worker.on('pullcompleted', async ({ applied }) => {
 				this.lastSyncTime = new Date();
