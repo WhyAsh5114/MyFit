@@ -26,6 +26,11 @@ const foods = [
 	['flakes', "Flocons d'avoine", 'Bjorg', 10],
 	['oat-bread', "Pain aux flocons d'avoine et graines", 'Bio', 10000],
 	['jalapeno', 'Jalapeño', 'Crème Brûlée', 10],
+	['jalapeno-sauce', 'Jalapeno sauce', 'Creme Brulee', 20],
+	['cafe', 'Café au lait', null, 10],
+	['cafe-plain', 'Cafe au lait', null, 20],
+	['pate', 'Pâté', null, 10],
+	['pate-plain', 'Pate', null, 20],
 	['milk', 'Milk', 'Milbona', 10],
 	['chocolate-milk', 'Chocolate milk', 'Milbona', 10000]
 ] as const;
@@ -91,11 +96,28 @@ test('labelled food intents lead their ingredient, brand and fuzzy distractors',
 	assert.deepEqual(exactHits.map((hit) => hit.id).sort(), ['whey', 'whey-protein']);
 });
 
-test('finds accented names and brands with unaccented input', async () => {
-	for (const query of ['jalapeno', 'jalapeño', 'creme brulee', 'crème brule']) {
-		const hits = await searchFoods(db, query, 0, 5);
-		assert.equal(hits[0]?.id, 'jalapeno', query);
-		assert.equal(hits[0]?.productName, 'Jalapeño', query);
+test('finds both accent spellings even when full-text matches compete', async () => {
+	const cases = [
+		['jalapeno', ['jalapeno', 'jalapeno-sauce']],
+		['jalapeño', ['jalapeno', 'jalapeno-sauce']],
+		['jalap', ['jalapeno', 'jalapeno-sauce']],
+		['jlaapeño', ['jalapeno', 'jalapeno-sauce']],
+		['creme brulee', ['jalapeno', 'jalapeno-sauce']],
+		['crème brule', ['jalapeno', 'jalapeno-sauce']],
+		['cafe au lait', ['cafe', 'cafe-plain']],
+		['café au lait', ['cafe', 'cafe-plain']],
+		['pate', ['pate', 'pate-plain']],
+		['pâté', ['pate', 'pate-plain']],
+		['"cafe au lait"', ['cafe', 'cafe-plain']],
+		['"crème brûlée"', ['jalapeno', 'jalapeno-sauce']],
+		['jalapeño OR pâté', ['jalapeno', 'jalapeno-sauce', 'pate', 'pate-plain']],
+		['jalapeno -"creme brulee"', []]
+	] as const;
+	for (const [query, expected] of cases) {
+		const hits = await searchFoods(db, query, 0, 10);
+		assert.deepEqual(hits.map((hit) => hit.id).sort(), [...expected].sort(), query);
+		const accented = hits.find((hit) => hit.id === 'jalapeno');
+		if (accented) assert.equal(accented.productName, 'Jalapeño', query);
 	}
 });
 
