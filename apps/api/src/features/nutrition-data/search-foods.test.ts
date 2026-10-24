@@ -25,6 +25,7 @@ const foods = [
 	['oasis', 'Oasis tropical drink', 'Oasis', 10000],
 	['flakes', "Flocons d'avoine", 'Bjorg', 10],
 	['oat-bread', "Pain aux flocons d'avoine et graines", 'Bio', 10000],
+	['jalapeno', 'Jalapeño', 'Crème Brûlée', 10],
 	['milk', 'Milk', 'Milbona', 10],
 	['chocolate-milk', 'Chocolate milk', 'Milbona', 10000]
 ] as const;
@@ -46,7 +47,6 @@ const db = postgres<ServerContract>({ contractJson });
 
 before(async () => {
 	await admin.connect();
-	await admin.query('CREATE EXTENSION IF NOT EXISTS pg_trgm');
 	await admin.query(`CREATE SCHEMA "${schema}"`);
 	await admin.query(`CREATE TABLE "${schema}"."NutritionData" (
 		id text PRIMARY KEY, code text NOT NULL, "productName" text NOT NULL, brands text,
@@ -89,6 +89,14 @@ test('labelled food intents lead their ingredient, brand and fuzzy distractors',
 	assert.ok(typoHits.every((hit) => hit.id !== 'breakfast'));
 	const exactHits = await searchFoods(db, 'whey', 0, 10);
 	assert.deepEqual(exactHits.map((hit) => hit.id).sort(), ['whey', 'whey-protein']);
+});
+
+test('finds accented names and brands with unaccented input', async () => {
+	for (const query of ['jalapeno', 'jalapeño', 'creme brulee', 'crème brule']) {
+		const hits = await searchFoods(db, query, 0, 5);
+		assert.equal(hits[0]?.id, 'jalapeno', query);
+		assert.equal(hits[0]?.productName, 'Jalapeño', query);
+	}
 });
 
 test('normalizes Unicode and whitespace and rejects non-searchable or excessive input', async () => {
