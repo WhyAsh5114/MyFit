@@ -1,6 +1,6 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
-import type { Prisma } from '@myfit/api/prisma/client';
+import { getDb } from '$lib/clients/idb-client';
+import type { NewRow } from '@myfit/schema/client';
 import { activityEntryKeys } from '../keys';
 import { queryClient } from '$lib/clients/query-client';
 import { toast } from 'svelte-sonner';
@@ -8,10 +8,9 @@ import { m } from '$lib/paraglide/messages';
 
 export const useCreateActivityEntry = () =>
 	createMutation(() => ({
-		mutationFn: async (data: Prisma.ActivityEntryUncheckedCreateInput) => {
-			return await getClient().activityEntry.create({
-				data
-			});
+		mutationFn: async (data: NewRow<'ActivityEntry'>) => {
+			const { orm } = await getDb();
+			return await orm.activityEntry.create(data);
 		},
 
 		onSuccess: (data) => {

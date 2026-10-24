@@ -1,0 +1,2936 @@
+{
+	"schemaVersion": "1",
+	"targetFamily": "idb",
+	"target": "idb",
+	"profileHash": "40329830af4e39e0774683fbebcdc24dcf983a5da02c5fe6079a2a57579f861c",
+	"roots": {
+		"activityEntry": {
+			"model": "ActivityEntry",
+			"namespace": "__unbound__"
+		},
+		"activityPreferences": {
+			"model": "ActivityPreferences",
+			"namespace": "__unbound__"
+		},
+		"foodEntry": {
+			"model": "FoodEntry",
+			"namespace": "__unbound__"
+		},
+		"macroMetrics": {
+			"model": "MacroMetrics",
+			"namespace": "__unbound__"
+		},
+		"macroTargets": {
+			"model": "MacroTargets",
+			"namespace": "__unbound__"
+		},
+		"meal": {
+			"model": "Meal",
+			"namespace": "__unbound__"
+		},
+		"recipe": {
+			"model": "Recipe",
+			"namespace": "__unbound__"
+		},
+		"recipeIngredient": {
+			"model": "RecipeIngredient",
+			"namespace": "__unbound__"
+		},
+		"user": {
+			"model": "User",
+			"namespace": "__unbound__"
+		}
+	},
+	"domain": {
+		"namespaces": {
+			"__unbound__": {
+				"enum": {
+					"ActivityAdjustmentType": {
+						"codecId": "idb/string@1",
+						"members": [
+							{
+								"name": "Static",
+								"value": "Static"
+							},
+							{
+								"name": "Dynamic",
+								"value": "Dynamic"
+							},
+							{
+								"name": "Manual",
+								"value": "Manual"
+							}
+						]
+					},
+					"Gender": {
+						"codecId": "idb/string@1",
+						"members": [
+							{
+								"name": "Male",
+								"value": "Male"
+							},
+							{
+								"name": "Female",
+								"value": "Female"
+							}
+						]
+					},
+					"HeightUnit": {
+						"codecId": "idb/string@1",
+						"members": [
+							{
+								"name": "cm",
+								"value": "cm"
+							},
+							{
+								"name": "in",
+								"value": "in"
+							}
+						]
+					},
+					"MacroTargetQuantifier": {
+						"codecId": "idb/string@1",
+						"members": [
+							{
+								"name": "Percentage",
+								"value": "Percentage"
+							},
+							{
+								"name": "Absolute",
+								"value": "Absolute"
+							}
+						]
+					},
+					"PreferredFoodEntryUnit": {
+						"codecId": "idb/string@1",
+						"members": [
+							{
+								"name": "g",
+								"value": "g"
+							},
+							{
+								"name": "serving",
+								"value": "serving"
+							}
+						]
+					},
+					"WeightUnit": {
+						"codecId": "idb/string@1",
+						"members": [
+							{
+								"name": "kg",
+								"value": "kg"
+							},
+							{
+								"name": "lb",
+								"value": "lb"
+							}
+						]
+					}
+				},
+				"models": {
+					"ActivityEntry": {
+						"fields": {
+							"calories": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/int32@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"name": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"performedAt": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/date@1",
+									"kind": "scalar"
+								}
+							},
+							"quantity": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/int32@1",
+									"kind": "scalar"
+								}
+							},
+							"quantityUnit": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"systemGenerated": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/bool@1",
+									"kind": "scalar"
+								}
+							},
+							"userId": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"user": {
+								"cardinality": "N:1",
+								"nullable": false,
+								"on": {
+									"localFields": ["userId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "User",
+									"namespace": "__unbound__"
+								}
+							}
+						},
+						"storage": {
+							"fieldDefaults": {},
+							"keyPath": "id",
+							"storeName": "activityEntry"
+						}
+					},
+					"ActivityPreferences": {
+						"fields": {
+							"adjustmentType": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								},
+								"valueSet": {
+									"entityKind": "enum",
+									"entityName": "ActivityAdjustmentType",
+									"namespaceId": "__unbound__",
+									"plane": "domain"
+								}
+							},
+							"effectiveFrom": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/date@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"staticCalories": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/int32@1",
+									"kind": "scalar"
+								}
+							},
+							"userId": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"user": {
+								"cardinality": "N:1",
+								"nullable": false,
+								"on": {
+									"localFields": ["userId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "User",
+									"namespace": "__unbound__"
+								}
+							}
+						},
+						"storage": {
+							"keyPath": "id",
+							"storeName": "activityPreferences"
+						}
+					},
+					"FoodEntry": {
+						"fields": {
+							"alcoholG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"brands": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"caffeineMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"calciumMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"carbohydratesG_100g": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"cholesterolMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"copperMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"eatenAt": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/date@1",
+									"kind": "scalar"
+								}
+							},
+							"energyKcal_100g": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"fatG_100g": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"fiberG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"folatesMcg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"ironMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"magnesiumMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"manganeseMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"mealId": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"monounsaturatedFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"phosphorusMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"polyolsG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"polyunsaturatedFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"potassiumMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"preferredUnit": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								},
+								"valueSet": {
+									"entityKind": "enum",
+									"entityName": "PreferredFoodEntryUnit",
+									"namespaceId": "__unbound__",
+									"plane": "domain"
+								}
+							},
+							"productName": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"proteinsG_100g": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"quantityG": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"recipeId": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"saltG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"saturatedFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"servingQuantity": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"servingSize": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"sodiumMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"sugarsG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"transFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"unsaturatedFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"userId": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminAIU_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB12Mcg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB1Mg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB2Mg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB6Mg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB9Mcg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminCMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminDIU_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminEMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminKMcg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"zincMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"meal": {
+								"cardinality": "N:1",
+								"nullable": true,
+								"on": {
+									"localFields": ["mealId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "Meal",
+									"namespace": "__unbound__"
+								}
+							},
+							"recipe": {
+								"cardinality": "N:1",
+								"nullable": true,
+								"on": {
+									"localFields": ["recipeId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "Recipe",
+									"namespace": "__unbound__"
+								}
+							},
+							"user": {
+								"cardinality": "N:1",
+								"nullable": false,
+								"on": {
+									"localFields": ["userId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "User",
+									"namespace": "__unbound__"
+								}
+							}
+						},
+						"storage": {
+							"keyPath": "id",
+							"storeName": "foodEntry"
+						}
+					},
+					"MacroMetrics": {
+						"fields": {
+							"age": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/int32@1",
+									"kind": "scalar"
+								}
+							},
+							"bodyFatPercentage": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"bodyweight": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"bodyweightUnit": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								},
+								"valueSet": {
+									"entityKind": "enum",
+									"entityName": "WeightUnit",
+									"namespaceId": "__unbound__",
+									"plane": "domain"
+								}
+							},
+							"effectiveFrom": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/date@1",
+									"kind": "scalar"
+								}
+							},
+							"gender": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								},
+								"valueSet": {
+									"entityKind": "enum",
+									"entityName": "Gender",
+									"namespaceId": "__unbound__",
+									"plane": "domain"
+								}
+							},
+							"height": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"heightUnit": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								},
+								"valueSet": {
+									"entityKind": "enum",
+									"entityName": "HeightUnit",
+									"namespaceId": "__unbound__",
+									"plane": "domain"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"userId": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"user": {
+								"cardinality": "N:1",
+								"nullable": false,
+								"on": {
+									"localFields": ["userId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "User",
+									"namespace": "__unbound__"
+								}
+							}
+						},
+						"storage": {
+							"keyPath": "id",
+							"storeName": "macroMetrics"
+						}
+					},
+					"MacroTargets": {
+						"fields": {
+							"carbsG": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"effectiveFrom": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/date@1",
+									"kind": "scalar"
+								}
+							},
+							"fatG": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"proteinG": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"quantifier": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								},
+								"valueSet": {
+									"entityKind": "enum",
+									"entityName": "MacroTargetQuantifier",
+									"namespaceId": "__unbound__",
+									"plane": "domain"
+								}
+							},
+							"userId": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"weeklyCaloricChange": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/int32@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"user": {
+								"cardinality": "N:1",
+								"nullable": false,
+								"on": {
+									"localFields": ["userId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "User",
+									"namespace": "__unbound__"
+								}
+							}
+						},
+						"storage": {
+							"keyPath": "id",
+							"storeName": "macroTargets"
+						}
+					},
+					"Meal": {
+						"fields": {
+							"active": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/bool@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"name": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"sortOrder": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/int32@1",
+									"kind": "scalar"
+								}
+							},
+							"userId": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"foodEntries": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["mealId"]
+								},
+								"to": {
+									"model": "FoodEntry",
+									"namespace": "__unbound__"
+								}
+							},
+							"user": {
+								"cardinality": "N:1",
+								"nullable": false,
+								"on": {
+									"localFields": ["userId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "User",
+									"namespace": "__unbound__"
+								}
+							}
+						},
+						"storage": {
+							"fieldDefaults": {
+								"active": true
+							},
+							"keyPath": "id",
+							"storeName": "meal"
+						}
+					},
+					"Recipe": {
+						"fields": {
+							"description": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"name": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"userId": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"foodEntries": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["recipeId"]
+								},
+								"to": {
+									"model": "FoodEntry",
+									"namespace": "__unbound__"
+								}
+							},
+							"ingredients": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["recipeId"]
+								},
+								"to": {
+									"model": "RecipeIngredient",
+									"namespace": "__unbound__"
+								}
+							},
+							"user": {
+								"cardinality": "N:1",
+								"nullable": false,
+								"on": {
+									"localFields": ["userId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "User",
+									"namespace": "__unbound__"
+								}
+							}
+						},
+						"storage": {
+							"keyPath": "id",
+							"storeName": "recipe"
+						}
+					},
+					"RecipeIngredient": {
+						"fields": {
+							"alcoholG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"brands": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"caffeineMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"calciumMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"carbohydratesG_100g": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"cholesterolMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"copperMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"energyKcal_100g": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"fatG_100g": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"fiberG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"folatesMcg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"ironMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"magnesiumMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"manganeseMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"monounsaturatedFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"phosphorusMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"polyolsG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"polyunsaturatedFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"potassiumMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"preferredUnit": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								},
+								"valueSet": {
+									"entityKind": "enum",
+									"entityName": "PreferredFoodEntryUnit",
+									"namespaceId": "__unbound__",
+									"plane": "domain"
+								}
+							},
+							"productName": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"proteinsG_100g": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"quantityG": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"recipeId": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"saltG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"saturatedFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"servingQuantity": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"servingSize": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"sodiumMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"sugarsG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"transFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"unsaturatedFatG_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminAIU_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB12Mcg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB1Mg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB2Mg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB6Mg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminB9Mcg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminCMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminDIU_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminEMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"vitaminKMcg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							},
+							"zincMg_100g": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/double@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"recipe": {
+								"cardinality": "N:1",
+								"nullable": false,
+								"on": {
+									"localFields": ["recipeId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "Recipe",
+									"namespace": "__unbound__"
+								}
+							}
+						},
+						"storage": {
+							"keyPath": "id",
+							"relations": {
+								"recipe": {
+									"onDelete": "cascade"
+								}
+							},
+							"storeName": "recipeIngredient"
+						}
+					},
+					"User": {
+						"fields": {
+							"autoUpdate": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/bool@1",
+									"kind": "scalar"
+								}
+							},
+							"createdAt": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/date@1",
+									"kind": "scalar"
+								}
+							},
+							"email": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"emailVerified": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/bool@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"image": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"isAnonymous": {
+								"nullable": true,
+								"type": {
+									"codecId": "idb/bool@1",
+									"kind": "scalar"
+								}
+							},
+							"name": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"updatedAt": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/date@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"activityEntries": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["userId"]
+								},
+								"to": {
+									"model": "ActivityEntry",
+									"namespace": "__unbound__"
+								}
+							},
+							"activityPreferences": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["userId"]
+								},
+								"to": {
+									"model": "ActivityPreferences",
+									"namespace": "__unbound__"
+								}
+							},
+							"foodEntries": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["userId"]
+								},
+								"to": {
+									"model": "FoodEntry",
+									"namespace": "__unbound__"
+								}
+							},
+							"macroMetrics": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["userId"]
+								},
+								"to": {
+									"model": "MacroMetrics",
+									"namespace": "__unbound__"
+								}
+							},
+							"macroTargets": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["userId"]
+								},
+								"to": {
+									"model": "MacroTargets",
+									"namespace": "__unbound__"
+								}
+							},
+							"meals": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["userId"]
+								},
+								"to": {
+									"model": "Meal",
+									"namespace": "__unbound__"
+								}
+							},
+							"recipes": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["userId"]
+								},
+								"to": {
+									"model": "Recipe",
+									"namespace": "__unbound__"
+								}
+							}
+						},
+						"storage": {
+							"fieldDefaults": {
+								"autoUpdate": true
+							},
+							"keyPath": "id",
+							"storeName": "user"
+						}
+					}
+				}
+			}
+		}
+	},
+	"storage": {
+		"namespaces": {
+			"__unbound__": {
+				"entries": {},
+				"id": "__unbound__"
+			}
+		},
+		"storageHash": "329bd9102170df5a3a05c5e27e6b5a45a1ea2b27f5828426f2c890c38fc8c0b5",
+		"stores": {
+			"activityEntry": {
+				"indexes": {
+					"userId": {
+						"keyPath": "userId"
+					}
+				},
+				"keyPath": "id",
+				"record": {
+					"fields": {
+						"calories": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/int32@1",
+								"kind": "scalar"
+							}
+						},
+						"id": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"name": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"performedAt": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/date@1",
+								"kind": "scalar"
+							}
+						},
+						"quantity": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/int32@1",
+								"kind": "scalar"
+							}
+						},
+						"quantityUnit": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"systemGenerated": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/bool@1",
+								"kind": "scalar"
+							}
+						},
+						"userId": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						}
+					},
+					"model": "ActivityEntry"
+				}
+			},
+			"activityPreferences": {
+				"indexes": {
+					"userId": {
+						"keyPath": "userId"
+					},
+					"userId_effectiveFrom_unique": {
+						"keyPath": ["userId", "effectiveFrom"],
+						"unique": true
+					}
+				},
+				"keyPath": "id",
+				"record": {
+					"fields": {
+						"adjustmentType": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							},
+							"valueSet": {
+								"codecId": "idb/string@1",
+								"members": [
+									{
+										"name": "Dynamic",
+										"value": "Dynamic"
+									},
+									{
+										"name": "Manual",
+										"value": "Manual"
+									},
+									{
+										"name": "Static",
+										"value": "Static"
+									}
+								],
+								"name": "ActivityAdjustmentType"
+							}
+						},
+						"effectiveFrom": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/date@1",
+								"kind": "scalar"
+							}
+						},
+						"id": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"staticCalories": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/int32@1",
+								"kind": "scalar"
+							}
+						},
+						"userId": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						}
+					},
+					"model": "ActivityPreferences"
+				}
+			},
+			"foodEntry": {
+				"indexes": {
+					"mealId": {
+						"keyPath": "mealId"
+					},
+					"recipeId": {
+						"keyPath": "recipeId"
+					},
+					"userId": {
+						"keyPath": "userId"
+					}
+				},
+				"keyPath": "id",
+				"record": {
+					"fields": {
+						"alcoholG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"brands": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"caffeineMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"calciumMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"carbohydratesG_100g": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"cholesterolMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"copperMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"eatenAt": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/date@1",
+								"kind": "scalar"
+							}
+						},
+						"energyKcal_100g": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"fatG_100g": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"fiberG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"folatesMcg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"id": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"ironMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"magnesiumMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"manganeseMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"mealId": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"monounsaturatedFatG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"phosphorusMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"polyolsG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"polyunsaturatedFatG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"potassiumMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"preferredUnit": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							},
+							"valueSet": {
+								"codecId": "idb/string@1",
+								"members": [
+									{
+										"name": "g",
+										"value": "g"
+									},
+									{
+										"name": "serving",
+										"value": "serving"
+									}
+								],
+								"name": "PreferredFoodEntryUnit"
+							}
+						},
+						"productName": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"proteinsG_100g": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"quantityG": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"recipeId": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"saltG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"saturatedFatG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"servingQuantity": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"servingSize": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"sodiumMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"sugarsG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"transFatG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"unsaturatedFatG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"userId": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminAIU_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminB12Mcg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminB1Mg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminB2Mg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminB6Mg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminB9Mcg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminCMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminDIU_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminEMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminKMcg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"zincMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						}
+					},
+					"model": "FoodEntry"
+				}
+			},
+			"macroMetrics": {
+				"indexes": {
+					"userId": {
+						"keyPath": "userId"
+					},
+					"userId_effectiveFrom_unique": {
+						"keyPath": ["userId", "effectiveFrom"],
+						"unique": true
+					}
+				},
+				"keyPath": "id",
+				"record": {
+					"fields": {
+						"age": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/int32@1",
+								"kind": "scalar"
+							}
+						},
+						"bodyFatPercentage": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"bodyweight": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"bodyweightUnit": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							},
+							"valueSet": {
+								"codecId": "idb/string@1",
+								"members": [
+									{
+										"name": "kg",
+										"value": "kg"
+									},
+									{
+										"name": "lb",
+										"value": "lb"
+									}
+								],
+								"name": "WeightUnit"
+							}
+						},
+						"effectiveFrom": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/date@1",
+								"kind": "scalar"
+							}
+						},
+						"gender": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							},
+							"valueSet": {
+								"codecId": "idb/string@1",
+								"members": [
+									{
+										"name": "Female",
+										"value": "Female"
+									},
+									{
+										"name": "Male",
+										"value": "Male"
+									}
+								],
+								"name": "Gender"
+							}
+						},
+						"height": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"heightUnit": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							},
+							"valueSet": {
+								"codecId": "idb/string@1",
+								"members": [
+									{
+										"name": "cm",
+										"value": "cm"
+									},
+									{
+										"name": "in",
+										"value": "in"
+									}
+								],
+								"name": "HeightUnit"
+							}
+						},
+						"id": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"userId": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						}
+					},
+					"model": "MacroMetrics"
+				}
+			},
+			"macroTargets": {
+				"indexes": {
+					"userId": {
+						"keyPath": "userId"
+					},
+					"userId_effectiveFrom_unique": {
+						"keyPath": ["userId", "effectiveFrom"],
+						"unique": true
+					}
+				},
+				"keyPath": "id",
+				"record": {
+					"fields": {
+						"carbsG": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"effectiveFrom": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/date@1",
+								"kind": "scalar"
+							}
+						},
+						"fatG": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"id": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"proteinG": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"quantifier": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							},
+							"valueSet": {
+								"codecId": "idb/string@1",
+								"members": [
+									{
+										"name": "Absolute",
+										"value": "Absolute"
+									},
+									{
+										"name": "Percentage",
+										"value": "Percentage"
+									}
+								],
+								"name": "MacroTargetQuantifier"
+							}
+						},
+						"userId": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"weeklyCaloricChange": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/int32@1",
+								"kind": "scalar"
+							}
+						}
+					},
+					"model": "MacroTargets"
+				}
+			},
+			"meal": {
+				"indexes": {
+					"userId": {
+						"keyPath": "userId"
+					},
+					"userId_name_unique": {
+						"keyPath": ["userId", "name"],
+						"unique": true
+					}
+				},
+				"keyPath": "id",
+				"record": {
+					"fields": {
+						"active": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/bool@1",
+								"kind": "scalar"
+							}
+						},
+						"id": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"name": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"sortOrder": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/int32@1",
+								"kind": "scalar"
+							}
+						},
+						"userId": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						}
+					},
+					"model": "Meal"
+				}
+			},
+			"recipe": {
+				"indexes": {
+					"userId": {
+						"keyPath": "userId"
+					},
+					"userId_name_unique": {
+						"keyPath": ["userId", "name"],
+						"unique": true
+					}
+				},
+				"keyPath": "id",
+				"record": {
+					"fields": {
+						"description": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"id": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"name": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"userId": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						}
+					},
+					"model": "Recipe"
+				}
+			},
+			"recipeIngredient": {
+				"indexes": {
+					"recipeId": {
+						"keyPath": "recipeId"
+					}
+				},
+				"keyPath": "id",
+				"record": {
+					"fields": {
+						"alcoholG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"brands": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"caffeineMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"calciumMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"carbohydratesG_100g": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"cholesterolMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"copperMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"energyKcal_100g": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"fatG_100g": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"fiberG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"folatesMcg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"id": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"ironMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"magnesiumMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"manganeseMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"monounsaturatedFatG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"phosphorusMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"polyolsG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"polyunsaturatedFatG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"potassiumMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"preferredUnit": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							},
+							"valueSet": {
+								"codecId": "idb/string@1",
+								"members": [
+									{
+										"name": "g",
+										"value": "g"
+									},
+									{
+										"name": "serving",
+										"value": "serving"
+									}
+								],
+								"name": "PreferredFoodEntryUnit"
+							}
+						},
+						"productName": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"proteinsG_100g": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"quantityG": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"recipeId": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"saltG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"saturatedFatG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"servingQuantity": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"servingSize": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"sodiumMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"sugarsG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"transFatG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"unsaturatedFatG_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminAIU_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminB12Mcg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminB1Mg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminB2Mg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminB6Mg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminB9Mcg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminCMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminDIU_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminEMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"vitaminKMcg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						},
+						"zincMg_100g": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/double@1",
+								"kind": "scalar"
+							}
+						}
+					},
+					"model": "RecipeIngredient"
+				}
+			},
+			"user": {
+				"indexes": {
+					"email_unique": {
+						"keyPath": "email",
+						"unique": true
+					}
+				},
+				"keyPath": "id",
+				"record": {
+					"fields": {
+						"autoUpdate": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/bool@1",
+								"kind": "scalar"
+							}
+						},
+						"createdAt": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/date@1",
+								"kind": "scalar"
+							}
+						},
+						"email": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"emailVerified": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/bool@1",
+								"kind": "scalar"
+							}
+						},
+						"id": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"image": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"isAnonymous": {
+							"nullable": true,
+							"type": {
+								"codecId": "idb/bool@1",
+								"kind": "scalar"
+							}
+						},
+						"name": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"updatedAt": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/date@1",
+								"kind": "scalar"
+							}
+						}
+					},
+					"model": "User"
+				}
+			}
+		}
+	},
+	"execution": {
+		"executionHash": "f707a208dc86266e1e0a02c7ff79cad6fd8940dbd6d0a7d3b85bb36d68990dd6",
+		"mutations": {
+			"defaults": [
+				{
+					"onCreate": {
+						"id": "literal",
+						"kind": "generator",
+						"params": {
+							"value": false
+						}
+					},
+					"ref": {
+						"entry": "user",
+						"field": "emailVerified",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "timestampNow",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "user",
+						"field": "createdAt",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "literal",
+						"kind": "generator",
+						"params": {
+							"value": true
+						}
+					},
+					"ref": {
+						"entry": "user",
+						"field": "autoUpdate",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "uuidv4",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "macroTargets",
+						"field": "id",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "timestampNow",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "macroTargets",
+						"field": "effectiveFrom",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "uuidv4",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "macroMetrics",
+						"field": "id",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "timestampNow",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "macroMetrics",
+						"field": "effectiveFrom",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "uuidv4",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "activityPreferences",
+						"field": "id",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "timestampNow",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "activityPreferences",
+						"field": "effectiveFrom",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "uuidv4",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "activityEntry",
+						"field": "id",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "literal",
+						"kind": "generator",
+						"params": {
+							"value": false
+						}
+					},
+					"ref": {
+						"entry": "activityEntry",
+						"field": "systemGenerated",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "uuidv4",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "meal",
+						"field": "id",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "literal",
+						"kind": "generator",
+						"params": {
+							"value": true
+						}
+					},
+					"ref": {
+						"entry": "meal",
+						"field": "active",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "uuidv4",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "foodEntry",
+						"field": "id",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "uuidv4",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "recipe",
+						"field": "id",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "uuidv4",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "recipeIngredient",
+						"field": "id",
+						"namespace": "__unbound__"
+					}
+				}
+			]
+		}
+	},
+	"capabilities": {
+		"idb": {
+			"compoundKeys": true,
+			"ddlOnlyInUpgrade": true,
+			"transactionalDDL": true
+		}
+	},
+	"extensions": {},
+	"meta": {},
+	"_generated": {
+		"warning": "⚠️  GENERATED FILE - DO NOT EDIT",
+		"message": "This file is automatically generated by \"prisma contract emit\".",
+		"regenerate": "To regenerate, run: prisma contract emit"
+	}
+}

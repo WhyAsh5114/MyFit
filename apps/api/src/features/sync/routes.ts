@@ -1,72 +1,33 @@
 import { Hono } from 'hono';
+import { createSqlSyncHandlers } from '@prisma-idb/sync-server-sql';
+import { sqlSyncAdapter } from '@myfit/schema/server';
 import { authMiddleware, getUserId } from '../../shared/middleware/auth.js';
-import { zValidator } from '@hono/zod-validator';
-import { outboxEventSchema } from '../../../generated/prisma-idb/validators.js';
-import {
-	applyPush,
-	pullAndMaterializeLogs
-} from '../../../generated/prisma-idb/server/batch-processor.js';
-import z from 'zod';
-import { prisma } from '../../../lib/prisma.js';
+import { getDb } from '../../../lib/db.js';
 
+// Generous headroom over the client's push batch size (50); just a bound so a
+// crafted request can't force an unbounded number of sequential transactions.
+const MAX_PUSH_BATCH_SIZE = 1000;
+
+// The handlers check the client's storage hash and answer 409 on a mismatch, so a
+// client with an out-of-date bundle keeps its queued edits and cursor.
+const syncHandlers = createSqlSyncHandlers({
+	adapter: sqlSyncAdapter,
+	maxBatchSize: MAX_PUSH_BATCH_SIZE
+});
+
+/**
+ * Sync endpoints
+ * Protected - requires authentication
+ *
+ * The client pushes its outbox, then pulls the changes made since its last cursor.
+ * Both endpoints are scoped to the authenticated user.
+ */
 const syncRoutes = new Hono()
-	/**
-	 * Sync endpoint
-	 * Protected - requires authentication
-	 *
-	 * Handles bidirectional sync between client and server
-	 * Client pushes outbox changes, server returns changes since last sync
-	 */
-	.post(
-		'/push',
-		authMiddleware,
-		zValidator('json', z.object({ events: z.array(outboxEventSchema) })),
-		async (c) => {
-			const userId = getUserId(c);
-			const { events } = c.req.valid('json');
-
-			let pushResults;
-			try {
-				pushResults = await applyPush({
-					events,
-					scopeKey: userId,
-					prisma
-				});
-			} catch (error) {
-				const message = error instanceof Error ? error.message : 'Unknown error';
-				const status = message.startsWith('Batch size') ? 413 : 500;
-				return c.json({ error: message }, status);
-			}
-			return c.json(pushResults, 200);
-		}
+	.post('/push', authMiddleware, async (c) =>
+		syncHandlers.push(c.req.raw, { db: await getDb(), scopeKey: getUserId(c) })
 	)
-	/**
-	 * Accept lastChangelogId from client
-	 * Return server changes since that timestamp
-	 * Handle pagination if needed
-	 */
-	.get(
-		'/pull',
-		authMiddleware,
-		zValidator('query', z.object({ lastChangelogId: z.uuidv7().optional() })),
-		async (c) => {
-			const userId = getUserId(c);
-			const { lastChangelogId } = c.req.valid('query');
-			const logsWithRecords = await pullAndMaterializeLogs({
-				prisma,
-				scopeKey: userId,
-				lastChangelogId
-			});
-			return c.json(
-				{
-					cursor: logsWithRecords.at(-1)?.id ?? lastChangelogId,
-					logsWithRecords
-				},
-				200
-			);
-		}
+	.get('/pull', authMiddleware, async (c) =>
+		syncHandlers.pull(c.req.raw, { db: await getDb(), scopeKey: getUserId(c) })
 	);
-
-export type SyncRoutesType = typeof syncRoutes;
 
 export { syncRoutes };

@@ -1,4 +1,4 @@
-import type { MacroMetrics } from '@myfit/api/prisma/client';
+import type { MacroMetrics } from '@myfit/schema/client';
 import { calculateBMR } from './bmr';
 
 type CalculateDailyNutritionStatsArgs = {

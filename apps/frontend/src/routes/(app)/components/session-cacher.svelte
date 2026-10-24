@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { authClient } from '$lib/clients/auth-client';
-	import { getClient } from '$lib/clients/idb-client';
+	import { getDb } from '$lib/clients/idb-client';
 	import { toast } from 'svelte-sonner';
 	import { isUnprotectedRoute } from './constants';
-	import { PrismaIDBClient } from '@myfit/api/prisma-idb/client';
 	import {
 		createUserForCurrentSession,
 		getCachedUserOnClient,
@@ -13,12 +12,10 @@
 	} from './db';
 
 	const session = authClient.useSession();
-	let client = $state<PrismaIDBClient>()!;
 	let creatingUser = $state(false);
 
 	$effect(() => {
 		if (page.url) {
-			client = getClient();
 			syncIdbWithSession().catch((error) => {
 				console.error('Error syncing session:', error);
 				toast.error('Failed to sync session');
@@ -28,19 +25,20 @@
 
 	async function syncIdbWithSession() {
 		if ($session.isPending || $session.isRefetching) return;
-		const { existingUser } = await getCachedUserOnClient(client, $session.data);
+		const db = await getDb();
+		const { existingUser } = await getCachedUserOnClient(db, $session.data);
 
 		if (!$session.data && !existingUser) {
-			if (await getOfflineUser(client)) return;
+			if (await getOfflineUser(db)) return;
 
 			if (!isUnprotectedRoute(page.url.pathname)) {
-				await redirectToLogin(client, page.url);
+				await redirectToLogin(page.url);
 			}
 		}
 
 		if ($session.data && !existingUser && !creatingUser) {
 			creatingUser = true;
-			await createUserForCurrentSession(client, $session.data);
+			await createUserForCurrentSession(db, $session.data);
 			creatingUser = false;
 		}
 	}

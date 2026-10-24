@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { round } from '$lib/my-utils';
 	import { PlusIcon } from '@lucide/svelte';
-	import type { Meal, Prisma } from '@myfit/api/prisma/client';
+	import type { FoodEntryWithMeal, Meal } from '@myfit/schema/client';
 	import * as Item from '$lib/components/ui/item/index.js';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { cn } from '$lib/utils';
 
-	type FoodEntryWithMeal = Prisma.FoodEntryGetPayload<{ include: { meal: true } }>;
 	let { foodEntries, meals = [] }: { foodEntries?: FoodEntryWithMeal[]; meals?: Meal[] } = $props();
 
 	function groupedFoodEntriesByMeal(foodEntries?: FoodEntryWithMeal[]) {

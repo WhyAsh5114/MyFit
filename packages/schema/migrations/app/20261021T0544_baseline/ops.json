@@ -1,0 +1,356 @@
+[
+	{
+		"kind": "createObjectStore",
+		"id": "object-store._prisma_next_marker.create",
+		"label": "Create internal marker store \"_prisma_next_marker\"",
+		"operationClass": "additive",
+		"storeName": "_prisma_next_marker",
+		"def": {
+			"keyPath": "space"
+		}
+	},
+	{
+		"kind": "createObjectStore",
+		"id": "object-store.activityEntry.create",
+		"label": "Create object store \"activityEntry\"",
+		"operationClass": "additive",
+		"storeName": "activityEntry",
+		"def": {
+			"keyPath": "id",
+			"indexes": {
+				"userId": {
+					"keyPath": "userId"
+				}
+			}
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.activityEntry.userId.create",
+		"label": "Create index \"userId\" on \"activityEntry\"",
+		"operationClass": "additive",
+		"storeName": "activityEntry",
+		"indexName": "userId",
+		"def": {
+			"keyPath": "userId"
+		}
+	},
+	{
+		"kind": "createObjectStore",
+		"id": "object-store.activityPreferences.create",
+		"label": "Create object store \"activityPreferences\"",
+		"operationClass": "additive",
+		"storeName": "activityPreferences",
+		"def": {
+			"keyPath": "id",
+			"indexes": {
+				"userId": {
+					"keyPath": "userId"
+				},
+				"userId_effectiveFrom_unique": {
+					"keyPath": ["userId", "effectiveFrom"],
+					"unique": true
+				}
+			}
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.activityPreferences.userId.create",
+		"label": "Create index \"userId\" on \"activityPreferences\"",
+		"operationClass": "additive",
+		"storeName": "activityPreferences",
+		"indexName": "userId",
+		"def": {
+			"keyPath": "userId"
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.activityPreferences.userId_effectiveFrom_unique.create",
+		"label": "Create index \"userId_effectiveFrom_unique\" on \"activityPreferences\"",
+		"operationClass": "additive",
+		"storeName": "activityPreferences",
+		"indexName": "userId_effectiveFrom_unique",
+		"def": {
+			"keyPath": ["userId", "effectiveFrom"],
+			"unique": true
+		}
+	},
+	{
+		"kind": "createObjectStore",
+		"id": "object-store.foodEntry.create",
+		"label": "Create object store \"foodEntry\"",
+		"operationClass": "additive",
+		"storeName": "foodEntry",
+		"def": {
+			"keyPath": "id",
+			"indexes": {
+				"mealId": {
+					"keyPath": "mealId"
+				},
+				"recipeId": {
+					"keyPath": "recipeId"
+				},
+				"userId": {
+					"keyPath": "userId"
+				}
+			}
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.foodEntry.mealId.create",
+		"label": "Create index \"mealId\" on \"foodEntry\"",
+		"operationClass": "additive",
+		"storeName": "foodEntry",
+		"indexName": "mealId",
+		"def": {
+			"keyPath": "mealId"
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.foodEntry.recipeId.create",
+		"label": "Create index \"recipeId\" on \"foodEntry\"",
+		"operationClass": "additive",
+		"storeName": "foodEntry",
+		"indexName": "recipeId",
+		"def": {
+			"keyPath": "recipeId"
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.foodEntry.userId.create",
+		"label": "Create index \"userId\" on \"foodEntry\"",
+		"operationClass": "additive",
+		"storeName": "foodEntry",
+		"indexName": "userId",
+		"def": {
+			"keyPath": "userId"
+		}
+	},
+	{
+		"kind": "createObjectStore",
+		"id": "object-store.macroMetrics.create",
+		"label": "Create object store \"macroMetrics\"",
+		"operationClass": "additive",
+		"storeName": "macroMetrics",
+		"def": {
+			"keyPath": "id",
+			"indexes": {
+				"userId": {
+					"keyPath": "userId"
+				},
+				"userId_effectiveFrom_unique": {
+					"keyPath": ["userId", "effectiveFrom"],
+					"unique": true
+				}
+			}
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.macroMetrics.userId.create",
+		"label": "Create index \"userId\" on \"macroMetrics\"",
+		"operationClass": "additive",
+		"storeName": "macroMetrics",
+		"indexName": "userId",
+		"def": {
+			"keyPath": "userId"
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.macroMetrics.userId_effectiveFrom_unique.create",
+		"label": "Create index \"userId_effectiveFrom_unique\" on \"macroMetrics\"",
+		"operationClass": "additive",
+		"storeName": "macroMetrics",
+		"indexName": "userId_effectiveFrom_unique",
+		"def": {
+			"keyPath": ["userId", "effectiveFrom"],
+			"unique": true
+		}
+	},
+	{
+		"kind": "createObjectStore",
+		"id": "object-store.macroTargets.create",
+		"label": "Create object store \"macroTargets\"",
+		"operationClass": "additive",
+		"storeName": "macroTargets",
+		"def": {
+			"keyPath": "id",
+			"indexes": {
+				"userId": {
+					"keyPath": "userId"
+				},
+				"userId_effectiveFrom_unique": {
+					"keyPath": ["userId", "effectiveFrom"],
+					"unique": true
+				}
+			}
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.macroTargets.userId.create",
+		"label": "Create index \"userId\" on \"macroTargets\"",
+		"operationClass": "additive",
+		"storeName": "macroTargets",
+		"indexName": "userId",
+		"def": {
+			"keyPath": "userId"
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.macroTargets.userId_effectiveFrom_unique.create",
+		"label": "Create index \"userId_effectiveFrom_unique\" on \"macroTargets\"",
+		"operationClass": "additive",
+		"storeName": "macroTargets",
+		"indexName": "userId_effectiveFrom_unique",
+		"def": {
+			"keyPath": ["userId", "effectiveFrom"],
+			"unique": true
+		}
+	},
+	{
+		"kind": "createObjectStore",
+		"id": "object-store.meal.create",
+		"label": "Create object store \"meal\"",
+		"operationClass": "additive",
+		"storeName": "meal",
+		"def": {
+			"keyPath": "id",
+			"indexes": {
+				"userId": {
+					"keyPath": "userId"
+				},
+				"userId_name_unique": {
+					"keyPath": ["userId", "name"],
+					"unique": true
+				}
+			}
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.meal.userId.create",
+		"label": "Create index \"userId\" on \"meal\"",
+		"operationClass": "additive",
+		"storeName": "meal",
+		"indexName": "userId",
+		"def": {
+			"keyPath": "userId"
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.meal.userId_name_unique.create",
+		"label": "Create index \"userId_name_unique\" on \"meal\"",
+		"operationClass": "additive",
+		"storeName": "meal",
+		"indexName": "userId_name_unique",
+		"def": {
+			"keyPath": ["userId", "name"],
+			"unique": true
+		}
+	},
+	{
+		"kind": "createObjectStore",
+		"id": "object-store.recipe.create",
+		"label": "Create object store \"recipe\"",
+		"operationClass": "additive",
+		"storeName": "recipe",
+		"def": {
+			"keyPath": "id",
+			"indexes": {
+				"userId": {
+					"keyPath": "userId"
+				},
+				"userId_name_unique": {
+					"keyPath": ["userId", "name"],
+					"unique": true
+				}
+			}
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.recipe.userId.create",
+		"label": "Create index \"userId\" on \"recipe\"",
+		"operationClass": "additive",
+		"storeName": "recipe",
+		"indexName": "userId",
+		"def": {
+			"keyPath": "userId"
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.recipe.userId_name_unique.create",
+		"label": "Create index \"userId_name_unique\" on \"recipe\"",
+		"operationClass": "additive",
+		"storeName": "recipe",
+		"indexName": "userId_name_unique",
+		"def": {
+			"keyPath": ["userId", "name"],
+			"unique": true
+		}
+	},
+	{
+		"kind": "createObjectStore",
+		"id": "object-store.recipeIngredient.create",
+		"label": "Create object store \"recipeIngredient\"",
+		"operationClass": "additive",
+		"storeName": "recipeIngredient",
+		"def": {
+			"keyPath": "id",
+			"indexes": {
+				"recipeId": {
+					"keyPath": "recipeId"
+				}
+			}
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.recipeIngredient.recipeId.create",
+		"label": "Create index \"recipeId\" on \"recipeIngredient\"",
+		"operationClass": "additive",
+		"storeName": "recipeIngredient",
+		"indexName": "recipeId",
+		"def": {
+			"keyPath": "recipeId"
+		}
+	},
+	{
+		"kind": "createObjectStore",
+		"id": "object-store.user.create",
+		"label": "Create object store \"user\"",
+		"operationClass": "additive",
+		"storeName": "user",
+		"def": {
+			"keyPath": "id",
+			"indexes": {
+				"email_unique": {
+					"keyPath": "email",
+					"unique": true
+				}
+			}
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.user.email_unique.create",
+		"label": "Create index \"email_unique\" on \"user\"",
+		"operationClass": "additive",
+		"storeName": "user",
+		"indexName": "email_unique",
+		"def": {
+			"keyPath": "email",
+			"unique": true
+		}
+	}
+]

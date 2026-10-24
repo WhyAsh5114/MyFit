@@ -1,5 +1,5 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { m } from '$lib/paraglide/messages';
 import { toast } from 'svelte-sonner';
 import { queryClient } from '$lib/clients/query-client';
@@ -8,10 +8,8 @@ import { userKeys } from '$lib/features/user/keys';
 export const useUpdateAutoUpdate = () =>
 	createMutation(() => ({
 		mutationFn: async ({ userId, autoUpdate }: { userId: string; autoUpdate: boolean }) => {
-			await getClient().user.update({
-				where: { id: userId },
-				data: { autoUpdate }
-			});
+			const { orm } = await getDb();
+			await orm.user.where({ id: userId }).update({ autoUpdate });
 		},
 
 		onSuccess: (_, { userId }) => {

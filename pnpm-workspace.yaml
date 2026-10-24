@@ -10,6 +10,7 @@ overrides:
   '@hono/node-server': '>=2.0.1'
   cookie: '>=1.1.1'
   kysely: 0.28.17
+  arktype: 2.2.8
 
 onlyBuiltDependencies:
   - '@prisma/engines'
@@ -23,3 +24,15 @@ allowBuilds:
   esbuild: true
   prisma: true
   sharp: true
+  workerd: false
+
+minimumReleaseAgeExclude:
+  - '@prisma-idb/adapter-idb@0.15.0'
+  - '@prisma-idb/client-idb@0.15.0'
+  - '@prisma-idb/driver-idb@0.15.0'
+  - '@prisma-idb/family-idb@0.15.0'
+  - '@prisma-idb/runtime-idb@0.15.0'
+  - '@prisma-idb/sync-extension-idb@0.10.0'
+  - '@prisma-idb/sync-server-sql@0.8.1'
+  - '@prisma-idb/sync-server@0.8.3'
+  - '@prisma-idb/target-idb@0.15.0'

@@ -1,18 +1,16 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
-import type { Prisma } from '@myfit/api/prisma/client';
+import type { NewRow } from '@myfit/schema/client';
 import { activityPreferencesKeys } from '../keys';
 
 export const useSaveActivityPreferences = () =>
 	createMutation(() => ({
-		mutationFn: async (data: Prisma.ActivityPreferencesUncheckedCreateInput) => {
-			const client = getClient();
-			return await client.activityPreferences.create({
-				data
-			});
+		mutationFn: async (data: NewRow<'ActivityPreferences'>) => {
+			const { orm } = await getDb();
+			return await orm.activityPreferences.create(data);
 		},
 
 		onSuccess: (data) => {

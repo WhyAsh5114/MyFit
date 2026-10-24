@@ -8,7 +8,7 @@
 	import { dateFormatter } from '$lib/my-utils';
 	import { useMacroMetricsByDate } from '$lib/features/food-diary/macro-metrics/queries/get-by-date';
 	import { useMacroTargetsByDate } from '$lib/features/food-diary/macro-targets/queries/get-by-date';
-	import type { ActivityEntry, FoodEntry } from '@myfit/api/prisma/client';
+	import type { ActivityEntry, FoodEntry } from '@myfit/schema/client';
 	import StackedCaloriesBar from './stacked-calories-bar.svelte';
 	import { calculateDailyNutritionStats } from '$lib/domain/nutrition/stats';
 

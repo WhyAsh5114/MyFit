@@ -1,5 +1,5 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
@@ -8,12 +8,8 @@ import { userKeys } from '../keys';
 export const useUpdateUserName = () =>
 	createMutation(() => ({
 		mutationFn: async ({ userId, name }: { userId: string; name: string }) => {
-			const client = getClient();
-
-			await client.user.update({
-				where: { id: userId },
-				data: { name: name.trim() }
-			});
+			const { orm } = await getDb();
+			await orm.user.where({ id: userId }).update({ name: name.trim() });
 		},
 
 		onSuccess: (_, { userId }) => {

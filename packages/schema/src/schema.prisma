@@ -1,0 +1,321 @@
+// One schema for both databases. The browser reads it through the IndexedDB
+// family with `projection: "client"` (see ../prisma.config.ts), which leaves out
+// everything marked `@idb.exclude`/`@@idb.exclude`. The server reads the same file
+// through the Postgres SQL family (see ../prisma.config.postgres.ts), which strips
+// those attributes and appends the sync `Changelog` model.
+//
+// `NutritionData` (the Open Food Facts search table) is deliberately NOT modelled
+// here: it needs `tsvector` and GIN/trigram indexes, which the SQL family can't
+// express. It is created by `apps/api/prisma/nutrition-data/*.sql` and queried with
+// plain SQL.
+//
+// `updatedAt` columns carry no `@updatedAt`: the SQL family's parser doesn't know
+// the attribute, and the writers (better-auth on the server, the session user on
+// the client) always set it explicitly.
+
+model User {
+  id                  String                @id
+  name                String
+  email               String                @unique
+  emailVerified       Boolean               @default(false)
+  image               String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime
+  isAnonymous         Boolean?
+  autoUpdate          Boolean               @default(true)
+  sessions            Session[]
+  accounts            Account[]
+  macroTargets        MacroTargets[]
+  macroMetrics        MacroMetrics[]
+  activityPreferences ActivityPreferences[]
+  foodEntries         FoodEntry[]
+  activityEntries     ActivityEntry[]
+  meals               Meal[]
+  recipes             Recipe[]
+
+  @@map("user")
+}
+
+// better-auth's own tables never reach the browser.
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+  @@idb.exclude
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime
+
+  @@index([userId])
+  @@map("account")
+  @@idb.exclude
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+
+  @@index([identifier])
+  @@map("verification")
+  @@idb.exclude
+}
+
+enum PreferredFoodEntryUnit {
+  g
+  serving
+}
+
+enum MacroTargetQuantifier {
+  Percentage
+  Absolute
+}
+
+enum Gender {
+  Male
+  Female
+}
+
+enum WeightUnit {
+  kg
+  lb
+}
+
+enum HeightUnit {
+  cm
+  in
+}
+
+enum ActivityAdjustmentType {
+  Static
+  Dynamic
+  Manual
+}
+
+model MacroTargets {
+  id                  String                @id @default(uuid())
+  effectiveFrom       DateTime              @default(now())
+  proteinG            Float?
+  carbsG              Float?
+  fatG                Float?
+  quantifier          MacroTargetQuantifier
+  weeklyCaloricChange Int
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@unique([userId, effectiveFrom])
+}
+
+model MacroMetrics {
+  id                String     @id @default(uuid())
+  effectiveFrom     DateTime   @default(now())
+  bodyweight        Float
+  bodyweightUnit    WeightUnit
+  height            Float
+  heightUnit        HeightUnit
+  bodyFatPercentage Float
+  age               Int
+  gender            Gender
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@unique([userId, effectiveFrom])
+}
+
+model ActivityPreferences {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  effectiveFrom  DateTime               @default(now())
+  adjustmentType ActivityAdjustmentType
+
+  staticCalories Int?
+
+  @@unique([userId, effectiveFrom])
+}
+
+model ActivityEntry {
+  id              String   @id @default(uuid())
+  name            String
+  performedAt     DateTime
+  calories        Int
+  quantity        Int
+  quantityUnit    String
+  systemGenerated Boolean  @default(false)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model Meal {
+  id        String  @id @default(uuid())
+  name      String
+  sortOrder Int
+  active    Boolean @default(true)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  foodEntries FoodEntry[]
+
+  @@unique([userId, name])
+}
+
+model FoodEntry {
+  id        String   @id @default(uuid())
+  eatenAt   DateTime
+  quantityG Float
+
+  productName   String
+  brands        String?
+  preferredUnit PreferredFoodEntryUnit
+
+  servingQuantity Float?
+  servingSize     String?
+
+  meal   Meal?   @relation(fields: [mealId], references: [id])
+  mealId String?
+
+  recipe   Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  // Nutrition snapshot (per 100g)
+  energyKcal_100g     Float
+  proteinsG_100g      Float
+  fatG_100g           Float
+  carbohydratesG_100g Float
+
+  saturatedFatG_100g       Float?
+  unsaturatedFatG_100g     Float?
+  monounsaturatedFatG_100g Float?
+  polyunsaturatedFatG_100g Float?
+  transFatG_100g           Float?
+  cholesterolMg_100g       Float?
+  sugarsG_100g             Float?
+  polyolsG_100g            Float?
+  fiberG_100g              Float?
+  saltG_100g               Float?
+  sodiumMg_100g            Float?
+  alcoholG_100g            Float?
+  vitaminAIU_100g          Float?
+  vitaminDIU_100g          Float?
+  vitaminEMg_100g          Float?
+  vitaminKMcg_100g         Float?
+  vitaminCMg_100g          Float?
+  vitaminB1Mg_100g         Float?
+  vitaminB2Mg_100g         Float?
+  vitaminB6Mg_100g         Float?
+  vitaminB9Mcg_100g        Float?
+  folatesMcg_100g          Float?
+  vitaminB12Mcg_100g       Float?
+  potassiumMg_100g         Float?
+  calciumMg_100g           Float?
+  phosphorusMg_100g        Float?
+  ironMg_100g              Float?
+  magnesiumMg_100g         Float?
+  zincMg_100g              Float?
+  copperMg_100g            Float?
+  manganeseMg_100g         Float?
+  caffeineMg_100g          Float?
+}
+
+model Recipe {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  ingredients RecipeIngredient[]
+  foodEntries FoodEntry[]
+
+  @@unique([userId, name])
+}
+
+model RecipeIngredient {
+  id String @id @default(uuid())
+
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId String
+
+  productName   String
+  brands        String?
+  quantityG     Float
+  preferredUnit PreferredFoodEntryUnit
+
+  servingQuantity Float?
+  servingSize     String?
+
+  // Nutrition snapshot (per 100g)
+  energyKcal_100g     Float
+  proteinsG_100g      Float
+  fatG_100g           Float
+  carbohydratesG_100g Float
+
+  saturatedFatG_100g       Float?
+  unsaturatedFatG_100g     Float?
+  monounsaturatedFatG_100g Float?
+  polyunsaturatedFatG_100g Float?
+  transFatG_100g           Float?
+  cholesterolMg_100g       Float?
+  sugarsG_100g             Float?
+  polyolsG_100g            Float?
+  fiberG_100g              Float?
+  saltG_100g               Float?
+  sodiumMg_100g            Float?
+  alcoholG_100g            Float?
+  vitaminAIU_100g          Float?
+  vitaminDIU_100g          Float?
+  vitaminEMg_100g          Float?
+  vitaminKMcg_100g         Float?
+  vitaminCMg_100g          Float?
+  vitaminB1Mg_100g         Float?
+  vitaminB2Mg_100g         Float?
+  vitaminB6Mg_100g         Float?
+  vitaminB9Mcg_100g        Float?
+  folatesMcg_100g          Float?
+  vitaminB12Mcg_100g       Float?
+  potassiumMg_100g         Float?
+  calciumMg_100g           Float?
+  phosphorusMg_100g        Float?
+  ironMg_100g              Float?
+  magnesiumMg_100g         Float?
+  zincMg_100g              Float?
+  copperMg_100g            Float?
+  manganeseMg_100g         Float?
+  caffeineMg_100g          Float?
+}

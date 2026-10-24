@@ -1,6 +1,7 @@
 import { createQuery } from '@tanstack/svelte-query';
 import { getLocalTimeZone, type CalendarDate } from '@internationalized/date';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
+import { and } from '@prisma-idb/client-idb/orm';
 import { foodEntryKeys } from '../keys';
 
 export const useFoodEntriesByDate = (
@@ -19,17 +20,13 @@ export const useFoodEntriesByDate = (
 		return {
 			queryKey: foodEntryKeys.byDate(userId, date.toString()),
 			queryFn: async () => {
-				return await getClient().foodEntry.findMany({
-					where: {
-						eatenAt: {
-							gte: dayStart,
-							lt: dayEnd
-						},
-						userId
-					},
-					orderBy: { eatenAt: 'asc' },
-					include: { meal: true }
-				});
+				const { orm } = await getDb();
+				return await orm.foodEntry
+					.where({ userId })
+					.where((f) => and(f.eatenAt.gte(dayStart), f.eatenAt.lt(dayEnd)))
+					.orderBy({ eatenAt: 'asc' })
+					.include('meal')
+					.all();
 			},
 			enabled: !!userId && !!date
 		};

@@ -4,7 +4,7 @@
 	import * as Item from '$lib/components/ui/item/index.js';
 	import { cn } from '$lib/utils';
 	import { FlameIcon, PlusIcon } from '@lucide/svelte';
-	import type { ActivityEntry } from '@myfit/api/prisma/client';
+	import type { ActivityEntry } from '@myfit/schema/client';
 
 	type Props = {
 		activityEntries?: ActivityEntry[];
