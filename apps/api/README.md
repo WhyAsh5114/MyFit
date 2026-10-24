@@ -59,7 +59,7 @@ Better Auth's tables and the Open Food Facts `NutritionData` table are not part 
 ```bash
 pnpm --filter @myfit/schema db:migrate     # Apply the on-disk Postgres migrations
 pnpm --filter @myfit/api db:nutrition-data # Create/refresh the NutritionData search table
-pnpm --filter @myfit/schema contract:emit:postgres # Re-emit the server contract after editing schema.prisma
+pnpm --filter @myfit/schema schema:sync <name>     # After editing schema.prisma: emit contracts and plan both migrations
 ```
 
 Do not use `prisma db update` against a real database: it would drop `NutritionData`, which lives outside the Prisma contract.

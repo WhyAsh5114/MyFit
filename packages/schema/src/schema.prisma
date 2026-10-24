@@ -9,9 +9,11 @@
 // express. It is created by `apps/api/prisma/nutrition-data/*.sql` and queried with
 // plain SQL.
 //
-// `updatedAt` columns carry no `@updatedAt`: the SQL family's parser doesn't know
-// the attribute, and the writers (better-auth on the server, the session user on
-// the client) always set it explicitly.
+// `updatedAt` columns carry no automatic default (Prisma 8 spells it
+// `temporal.updatedAt()`, not `@updatedAt`). Every `updatedAt` column sits on a
+// better-auth table, which better-auth writes through its own `pg` pool, so the ORM
+// would never fill it in. The writers (better-auth on the server, the session user
+// on the client) always set it explicitly.
 
 model User {
   id                  String                @id
