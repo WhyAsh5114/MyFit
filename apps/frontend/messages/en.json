@@ -125,6 +125,7 @@
 	"foodDiary.nutritionDone": "Done",
 	"foodDiary.foodEntryCreated": "Food entry created successfully!",
 	"foodDiary.foodEntryDeleted": "Food entry deleted successfully!",
+	"foodDiary.foodEntryNotFound": "This food entry no longer exists.",
 	"foodDiary.metrics.bodyweight": "Bodyweight",
 	"foodDiary.metrics.unit": "Unit",
 	"foodDiary.metrics.height": "Height",

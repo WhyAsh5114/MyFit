@@ -1,4 +1,5 @@
 import { createMutation } from '@tanstack/svelte-query';
+import { PrismaClientKnownRequestError } from '@prisma-idb/client-idb/orm';
 import { getDb } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
@@ -30,7 +31,14 @@ export const useDeleteFoodEntry = () =>
 			});
 		},
 
-		onError: (error) => {
+		onError: (error, { userId }) => {
+			if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+				// Another write may have removed the entry since the diary was loaded.
+				queryClient.invalidateQueries({ queryKey: foodEntryKeys.byUser(userId) });
+				toast.error(m['foodDiary.foodEntryNotFound']());
+				return;
+			}
+
 			toast.error(m['unknownErrorOccurred']());
 			console.error('Failed to delete food entry:', error);
 		}
