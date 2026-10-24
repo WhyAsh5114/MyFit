@@ -1,6 +1,6 @@
 #!/usr/bin/env -S node
-import type { Contract as End } from '../../snapshots/d92b07230c47c32ee3a127f23ce76241b30432d6da9baf6dec3f54aad6659fb5/contract';
-import endContract from '../../snapshots/d92b07230c47c32ee3a127f23ce76241b30432d6da9baf6dec3f54aad6659fb5/contract.json' with { type: 'json' };
+import type { Contract as End } from '../../snapshots/52513ac073657030ce7026329ba07799eeeed6e0605c8a2b42554290fdef4c82/contract';
+import endContract from '../../snapshots/52513ac073657030ce7026329ba07799eeeed6e0605c8a2b42554290fdef4c82/contract.json' with { type: 'json' };
 import {
 	Migration,
 	MigrationCLI,
@@ -640,8 +640,8 @@ AS $$ SELECT public.unaccent('public.unaccent'::regdictionary, $1) $$`
 			this.createIndex({
 				schema: 'public',
 				table: 'NutritionData',
-				index: 'nutrition_data_search_5d8ee8f9',
-				expression: sql`(setweight(to_tsvector('english', coalesce("productName", '')), 'A') || setweight(to_tsvector('english', coalesce("brands", '')), 'B'))`,
+				index: 'nutrition_data_search_aa01b8a8',
+				expression: sql`(setweight(to_tsvector('english', public.immutable_unaccent(coalesce("productName", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce("brands", ''))), 'B'))`,
 				extras: { type: 'gin' }
 			}),
 			this.createIndex({

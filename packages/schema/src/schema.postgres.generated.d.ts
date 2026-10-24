@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-	StorageHashBase<'d92b07230c47c32ee3a127f23ce76241b30432d6da9baf6dec3f54aad6659fb5'>;
+	StorageHashBase<'52513ac073657030ce7026329ba07799eeeed6e0605c8a2b42554290fdef4c82'>;
 export type ExecutionHash =
 	ExecutionHashBase<'9b0ec966f1397f6b3ef25f4a1a23de2c45c37bc7cc8df5fc4c96d8354ad09503'>;
 export type ProfileHash =
@@ -2735,15 +2735,11 @@ type ContractBase = Omit<
 									readonly type: 'gin';
 								},
 								{
-									readonly name: 'nutrition_data_search_5d8ee8f9';
+									readonly name: 'nutrition_data_search_aa01b8a8';
 									readonly prefix: 'nutrition_data_search';
-									readonly columns: readonly ['productName', 'brands'];
+									readonly expression: "(setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"productName\", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"brands\", ''))), 'B'))";
 									readonly unique: false;
-									readonly type: 'fullText';
-									readonly options: {
-										readonly language: 'english';
-										readonly weightGroups: readonly [readonly ['productName'], readonly ['brands']];
-									};
+									readonly type: 'gin';
 								}
 							];
 							foreignKeys: readonly [];
