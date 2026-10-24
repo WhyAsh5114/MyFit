@@ -1,3 +1,5 @@
+// use prisma-8
+
 // One schema for both databases. The browser reads it through the IndexedDB
 // family with `projection: "client"` (see ../prisma.config.ts), which leaves out
 // everything marked `@idb.exclude`/`@@idb.exclude`. The server reads the same file
