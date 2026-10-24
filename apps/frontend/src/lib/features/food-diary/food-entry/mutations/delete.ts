@@ -5,20 +5,23 @@ import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
 import { foodEntryKeys } from '../keys';
 
+/** Identifies a food entry within its owner's diary. */
 type MutationProps = {
 	userId: string;
 	id: string;
 };
 
+/** Deletes an owned entry and invalidates its diary day after the tracked write commits. */
 export const useDeleteFoodEntry = () =>
 	createMutation(() => ({
 		mutationFn: async ({ userId, id }: MutationProps) => {
-			const { orm } = await getDb();
-			// delete() resolves to void, but onSuccess needs the row to invalidate the right day.
-			const entry = await orm.foodEntry.where({ id, userId }).first();
-			if (!entry) throw new Error(`Food entry ${id} not found`);
-			await orm.foodEntry.delete(id);
-			return entry;
+			const db = await getDb();
+			// An ownership mismatch must roll back both the deletion and its outbox entry.
+			return db.transaction(['foodEntry'], async (tx) => {
+				const entry = await tx.foodEntry.delete(id);
+				if (entry.userId !== userId) throw new Error(`Food entry ${id} not found`);
+				return entry;
+			});
 		},
 
 		onSuccess: (data) => {
