@@ -133,7 +133,11 @@ pnpm --filter @myfit/schema schema:sync add-meal-notes
 
 Commit everything the command changes. When the schema did not change, the command changes nothing.
 
-If a change drops or renames data, the planners refuse and list the questions. Run the steps individually and pass the `--rename` or `--delete` flags the planner prints. To write a Postgres data migration by hand, use `pnpm --filter @myfit/schema migration:postgres:new`.
+If a change drops or renames data, the planners refuse and list the questions. Run the steps individually and pass the `--rename` or `--delete` flags the planner prints. To write a Postgres data migration by hand, scaffold it from the latest migration's target hash. That hash is the `storageHash` in `packages/schema/src/schema.postgres.generated.json`. A bare `migration:postgres:new` fails on an unchanged schema, because it needs a starting hash.
+
+```bash
+pnpm --filter @myfit/schema migration:postgres:new --from <hash> --name <name>
+```
 
 Apply the Postgres migrations with `pnpm --filter @myfit/schema db:migrate`.
 
