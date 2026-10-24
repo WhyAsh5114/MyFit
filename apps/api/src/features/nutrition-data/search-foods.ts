@@ -20,11 +20,6 @@ export type FoodSearchHit = {
 	servingQuantity: number | null;
 };
 
-/** Quote a token as a tsquery lexeme, independently of SQL parameter binding. */
-function quoteLexeme(token: string): string {
-	return `'${token.replace(/\\/g, '\\\\').replace(/'/g, "''")}'`;
-}
-
 /** Try one adjacent-letter swap; keep short words and long identifiers literal. */
 function transpositions(token: string): string[] {
 	const letters = [...token];
@@ -64,15 +59,9 @@ function prepareSearch(search: string) {
 		return null;
 	}
 	const operators = /"|(?:^|\s)-[\p{L}\p{N}]|(?:^|\s)OR(?:\s|$)/iu.test(raw);
-	const prefix = tokens
-		.map((token, i) => quoteLexeme(token) + (i === tokens.length - 1 ? ':*' : ''))
-		.join(' & ');
 	const spellings = operators ? [tokens.join(' ')] : spellingCandidates(tokens);
-	const corrections = spellings
-		.map((spelling) => '(' + spelling.split(' ').map(quoteLexeme).join(' & ') + ')')
-		.join(' | ');
 	const fuzzy = !operators && tokens.every((token) => [...token].length >= MIN_FUZZY_TOKEN_LENGTH);
-	return { raw, tokens, operators, prefix, corrections, spellings, fuzzy };
+	return { raw, tokens, operators, spellings, fuzzy };
 }
 
 /**
@@ -90,21 +79,35 @@ export async function searchFoods(
 ): Promise<FoodSearchHit[]> {
 	const query = prepareSearch(search);
 	if (!query) return [];
-	const { raw, tokens, operators, prefix, corrections, spellings, fuzzy } = query;
+	const { raw, tokens, operators, spellings, fuzzy } = query;
 	const plan = db.raw.sql`
-WITH query AS (
+WITH lexemes AS (
+  -- Fold before quoting: unaccent can turn punctuation into tsquery syntax.
+  SELECT spelling.ordinal AS spelling, token.ordinal AS position,
+    quote_literal(public.immutable_unaccent(token.value)) AS lexeme
+  FROM jsonb_array_elements(${JSON.stringify(spellings.map((spelling) => spelling.split(' ')))}::jsonb)
+    WITH ORDINALITY AS spelling(words, ordinal),
+    jsonb_array_elements_text(spelling.words) WITH ORDINALITY AS token(value, ordinal)
+),
+spellings AS (
+  SELECT spelling, string_agg(lexeme, ' & ' ORDER BY position) AS exact,
+    string_agg(lexeme || CASE WHEN position = ${tokens.length} THEN ':*' ELSE '' END,
+      ' & ' ORDER BY position) AS prefix
+  FROM lexemes GROUP BY spelling
+),
+query AS (
   SELECT
-    CASE WHEN ${operators}::boolean THEN websearch_to_tsquery('english', ${raw}::text)
-      ELSE to_tsquery('english', ${prefix}::text) END AS tsq,
-    to_tsquery('english', ${corrections}::text) AS corrections,
+    CASE WHEN ${operators}::boolean THEN websearch_to_tsquery('english', public.immutable_unaccent(${raw}::text))
+      ELSE to_tsquery('english', (SELECT prefix FROM spellings WHERE spelling = 1)) END AS tsq,
+    to_tsquery('english', (SELECT string_agg('(' || exact || ')', ' | ') FROM spellings)) AS corrections,
     public.immutable_unaccent(${raw}::text) AS raw, ${JSON.stringify(tokens)}::jsonb AS tokens,
     ${JSON.stringify(spellings)}::jsonb AS spellings
 ),
 doc AS NOT MATERIALIZED (
   SELECT n.id, n.code, n."productName", n.brands, n."energyKcal_100g",
     n."servingSize", n."servingQuantity", n."uniqueScans", n.completeness,
-    setweight(to_tsvector('english', coalesce(n."productName", '')), 'A') ||
-      setweight(to_tsvector('english', coalesce(n.brands, '')), 'B') AS document
+    setweight(to_tsvector('english', public.immutable_unaccent(coalesce(n."productName", ''))), 'A') ||
+      setweight(to_tsvector('english', public.immutable_unaccent(coalesce(n.brands, ''))), 'B') AS document
   FROM "NutritionData" n
 ),
 matched AS MATERIALIZED (
