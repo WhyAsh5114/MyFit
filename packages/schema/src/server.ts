@@ -6,6 +6,7 @@ import clientContractJson from './contract.json' with { type: 'json' };
 import serverContractJson from './schema.postgres.generated.json' with { type: 'json' };
 
 export type { ServerContract };
+export type { Models as ServerModels } from './schema.postgres.generated';
 
 // The contract JSON's branded id types don't survive the JSON import, hence the casts.
 export const serverContract = serverContractJson as unknown as ServerContract;
