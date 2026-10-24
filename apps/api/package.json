@@ -13,7 +13,8 @@
 		"start": "bun dist/index.js",
 		"seed:off": "bun run prisma/seed/open-food-facts/main.ts",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"test:nutrition-search": "node --test src/features/nutrition-data/search-foods.test.ts"
 	},
 	"dependencies": {
 		"@ai-sdk/openai-compatible": "^2.0.48",
