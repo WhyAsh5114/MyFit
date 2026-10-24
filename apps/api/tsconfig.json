@@ -3,6 +3,7 @@
 		"target": "ESNext",
 		"module": "ESNext",
 		"lib": ["ESNext"],
+		"types": ["bun"],
 		"moduleResolution": "bundler",
 		"strict": true,
 		"verbatimModuleSyntax": true,

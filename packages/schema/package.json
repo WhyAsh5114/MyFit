@@ -21,6 +21,7 @@
 		"migration:postgres:new": "prisma migration new --config prisma.config.postgres.ts",
 		"migration:postgres:status": "prisma migration status --config prisma.config.postgres.ts",
 		"db:migrate": "prisma db migrate --config prisma.config.postgres.ts",
+		"check": "tsc --noEmit",
 		"lint": "prettier --check . && eslint ."
 	},
 	"dependencies": {
