@@ -72,9 +72,9 @@ Packages reference each other using `workspace:*`:
 
 ```json
 {
-  "dependencies": {
-    "@myfit/api": "workspace:*"
-  }
+	"dependencies": {
+		"@myfit/api": "workspace:*"
+	}
 }
 ```
 
@@ -84,11 +84,11 @@ All tasks (build, lint, dev) run in dependency order. The `^` prefix ensures dep
 
 ```json
 {
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"]
-    }
-  }
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"]
+		}
+	}
 }
 ```
 
@@ -112,36 +112,49 @@ See [Frontend README](./apps/frontend/README.md) for detailed mobile setup.
 
 ## 🗄️ Database
 
-MyFit uses [Prisma](https://www.prisma.io) with a PostgreSQL database. Database files are in `apps/api/prisma/`:
+MyFit uses [Prisma 8](https://www.prisma.io) with a PostgreSQL database on the server and [Prisma IDB](https://github.com/prisma-idb/prisma-idb) (IndexedDB) in the browser for offline-first use. Both read one schema: `packages/schema/src/schema.prisma`.
 
-- **Server-side** - Standard Prisma Client for the API
-- **Browser-side** - Prisma-IDB for offline-first capabilities (used by frontend)
+### Change the schema
+
+After you edit `schema.prisma`, run one command from the repository root. Pick a short name for the migration:
 
 ```bash
-cd apps/api
-
-# Generate Prisma client and Prisma-IDB
-pnpm generate
-
-# Push schema changes
-pnpm push
-
-# Open Prisma Studio
-pnpm studio
+pnpm --filter @myfit/schema schema:sync add-meal-notes
 ```
 
-See [API README](./apps/api/README.md) for schema and usage details.
+`schema:sync` runs these steps in order, then formats the generated files:
+
+1. `contract:emit` writes the browser contract.
+2. `migration:plan` plans the IndexedDB migration.
+3. `migration:contract-space` bundles the IndexedDB migration chain for the browser. If you skip this step, the browser sends the old chain and every sync request fails with a contract mismatch.
+4. `migration:preflight` applies the chain to a fake IndexedDB and checks it matches the new contract.
+5. `contract:emit:postgres` writes the server contract.
+6. `migration:postgres:plan` plans the Postgres migration.
+
+Commit everything the command changes. When the schema did not change, the command changes nothing.
+
+If a change drops or renames data, the planners refuse and list the questions. Run the steps individually and pass the `--rename` or `--delete` flags the planner prints. To write a Postgres data migration by hand, scaffold it from the latest migration's target hash. That hash is the `storageHash` in `packages/schema/src/schema.postgres.generated.json`. A bare `migration:postgres:new` fails on an unchanged schema, because it needs a starting hash.
+
+```bash
+pnpm --filter @myfit/schema migration:postgres:new --from <hash> --name <name>
+```
+
+Apply the Postgres migrations with `pnpm --filter @myfit/schema db:migrate`.
+
+See the [API README](./apps/api/README.md) for the server side.
 
 ## 🔐 Environment Variables
 
 Create a `.env` file in each app directory. Examples:
 
 **API** (`.env` in `apps/api`):
+
 ```
 DATABASE_URL=postgresql://user:password@localhost:5432/myfit
 ```
 
 **Frontend** (`.env` in `apps/frontend`):
+
 ```
 PUBLIC_API_URL=http://localhost:3000
 ```
