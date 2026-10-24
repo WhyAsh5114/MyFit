@@ -14,8 +14,8 @@ const nutritionDataRoutes = new Hono()
 		zValidator(
 			'query',
 			z.object({
-				search: z.string().min(1, 'Search query cannot be empty'),
-				offset: z.coerce.number().min(0).optional().default(0)
+				search: z.string().min(1, 'Search query cannot be empty').max(200),
+				offset: z.coerce.number().int().min(0).optional().default(0)
 			})
 		),
 		async (c) => {
