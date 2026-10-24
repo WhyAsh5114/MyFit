@@ -3914,15 +3914,15 @@
 									"unique": false
 								},
 								{
-									"expression": "brands gin_trgm_ops",
-									"name": "nutrition_data_brands_trgm_bfc86f7b",
+									"expression": "public.immutable_unaccent(brands) gin_trgm_ops",
+									"name": "nutrition_data_brands_trgm_0357fbfa",
 									"prefix": "nutrition_data_brands_trgm",
 									"type": "gin",
 									"unique": false
 								},
 								{
-									"expression": "\"productName\" gin_trgm_ops",
-									"name": "nutrition_data_product_name_trgm_85e6f92c",
+									"expression": "public.immutable_unaccent(\"productName\") gin_trgm_ops",
+									"name": "nutrition_data_product_name_trgm_7f9a87bc",
 									"prefix": "nutrition_data_product_name_trgm",
 									"type": "gin",
 									"unique": false
@@ -4611,7 +4611,7 @@
 				"kind": "postgres-schema"
 			}
 		},
-		"storageHash": "20668c294305a05ca2cab6567a067382f9267afe79e0e4f3d2bfd6a5fe8488a7"
+		"storageHash": "d92b07230c47c32ee3a127f23ce76241b30432d6da9baf6dec3f54aad6659fb5"
 	},
 	"execution": {
 		"executionHash": "9b0ec966f1397f6b3ef25f4a1a23de2c45c37bc7cc8df5fc4c96d8354ad09503",

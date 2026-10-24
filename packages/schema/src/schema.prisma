@@ -371,7 +371,7 @@ model NutritionData {
 
   @@index([code])
   @@fullTextIndex([productName, brands], name: "nutrition_data_search")
-  @@index(expression: sql`"productName" gin_trgm_ops`, type: "gin", name: "nutrition_data_product_name_trgm")
-  @@index(expression: sql`brands gin_trgm_ops`, type: "gin", name: "nutrition_data_brands_trgm")
+  @@index(expression: sql`public.immutable_unaccent("productName") gin_trgm_ops`, type: "gin", name: "nutrition_data_product_name_trgm")
+  @@index(expression: sql`public.immutable_unaccent(brands) gin_trgm_ops`, type: "gin", name: "nutrition_data_brands_trgm")
   @@idb.exclude
 }

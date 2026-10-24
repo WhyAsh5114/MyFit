@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-	StorageHashBase<'20668c294305a05ca2cab6567a067382f9267afe79e0e4f3d2bfd6a5fe8488a7'>;
+	StorageHashBase<'d92b07230c47c32ee3a127f23ce76241b30432d6da9baf6dec3f54aad6659fb5'>;
 export type ExecutionHash =
 	ExecutionHashBase<'9b0ec966f1397f6b3ef25f4a1a23de2c45c37bc7cc8df5fc4c96d8354ad09503'>;
 export type ProfileHash =
@@ -2721,16 +2721,16 @@ type ContractBase = Omit<
 									readonly unique: false;
 								},
 								{
-									readonly name: 'nutrition_data_brands_trgm_bfc86f7b';
+									readonly name: 'nutrition_data_brands_trgm_0357fbfa';
 									readonly prefix: 'nutrition_data_brands_trgm';
-									readonly expression: 'brands gin_trgm_ops';
+									readonly expression: 'public.immutable_unaccent(brands) gin_trgm_ops';
 									readonly unique: false;
 									readonly type: 'gin';
 								},
 								{
-									readonly name: 'nutrition_data_product_name_trgm_85e6f92c';
+									readonly name: 'nutrition_data_product_name_trgm_7f9a87bc';
 									readonly prefix: 'nutrition_data_product_name_trgm';
-									readonly expression: '"productName" gin_trgm_ops';
+									readonly expression: 'public.immutable_unaccent("productName") gin_trgm_ops';
 									readonly unique: false;
 									readonly type: 'gin';
 								},
