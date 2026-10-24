@@ -79,6 +79,7 @@ function prepareSearch(search: string) {
  * Search names and brands with final-word typeahead, then bounded typo recovery.
  * Quotes, OR and exclusions retain web-search semantics and disable recovery.
  * Recovery runs only when the preceding candidate set is empty, across all pages.
+ * Trigram expressions must match the immutable wrapper indexes in schema.prisma.
  * The document expression must match the schema's nutrition_data_search index.
  */
 export async function searchFoods(
@@ -96,7 +97,7 @@ WITH query AS (
     CASE WHEN ${operators}::boolean THEN websearch_to_tsquery('english', ${raw}::text)
       ELSE to_tsquery('english', ${prefix}::text) END AS tsq,
     to_tsquery('english', ${corrections}::text) AS corrections,
-    ${raw}::text AS raw, ${JSON.stringify(tokens)}::jsonb AS tokens,
+    public.immutable_unaccent(${raw}::text) AS raw, ${JSON.stringify(tokens)}::jsonb AS tokens,
     ${JSON.stringify(spellings)}::jsonb AS spellings
 ),
 doc AS NOT MATERIALIZED (
@@ -124,11 +125,11 @@ candidates AS (
     AND numnode(q.tsq) > 0
     AND NOT EXISTS (SELECT 1 FROM matched)
     AND NOT EXISTS (SELECT 1 FROM corrected)
-    AND (n."productName" % q.raw OR n.brands % q.raw)
+    AND (public.immutable_unaccent(n."productName") % q.raw OR public.immutable_unaccent(n.brands) % q.raw)
     -- Require every word so unrelated popular products cannot fill missing intent.
     AND NOT EXISTS (
       SELECT 1 FROM jsonb_array_elements_text(q.tokens) AS token(value)
-      WHERE strict_word_similarity(token.value, n."productName" || ' ' || coalesce(n.brands, '')) < 0.35
+      WHERE strict_word_similarity(public.immutable_unaccent(token.value), public.immutable_unaccent(n."productName" || ' ' || coalesce(n.brands, ''))) < 0.35
     )
 )
 SELECT n.id, n.code, n."productName", n.brands, n."energyKcal_100g",
@@ -136,13 +137,13 @@ SELECT n.id, n.code, n."productName", n.brands, n."energyKcal_100g",
 FROM candidates n, query q
 ORDER BY
   CASE WHEN ${tokens.length === 1 && [...tokens[0]].length === MIN_SEARCH_TOKEN_LENGTH}::boolean
-    THEN similarity(q.raw, n."productName") ELSE 0 END DESC,
-  CASE WHEN n.mode = 2 THEN strict_word_similarity(q.raw, n."productName")
+    THEN similarity(q.raw, public.immutable_unaccent(n."productName")) ELSE 0 END DESC,
+  CASE WHEN n.mode = 2 THEN strict_word_similarity(q.raw, public.immutable_unaccent(n."productName"))
     ELSE ts_rank_cd('{0.1, 0.2, 0.4, 1.0}', n.document,
       CASE WHEN n.mode = 0 THEN q.tsq ELSE q.corrections END,
       2) * 0.4 -- Divide cover-density rank by document length.
-      + 0.6 * CASE WHEN n.mode = 0 THEN similarity(q.raw, n."productName") ELSE (
-        SELECT max(similarity(spelling.value, n."productName"))
+      + 0.6 * CASE WHEN n.mode = 0 THEN similarity(q.raw, public.immutable_unaccent(n."productName")) ELSE (
+        SELECT max(similarity(public.immutable_unaccent(spelling.value), public.immutable_unaccent(n."productName")))
         FROM jsonb_array_elements_text(q.spellings) AS spelling(value)
       ) END
       -- Reduce popularity (0.2 to 0.05) and completeness (0.1 to 0.025)
