@@ -13,11 +13,13 @@
 		}
 	},
 	"scripts": {
+		"schema:sync": "node scripts/schema-sync.mjs",
 		"contract:emit": "prisma contract emit --config prisma.config.ts",
 		"contract:emit:postgres": "prisma contract emit --config prisma.config.postgres.ts",
 		"migration:plan": "prisma-idb migration plan",
 		"migration:contract-space": "prisma-idb migration contract-space",
 		"migration:preflight": "prisma-idb migration preflight",
+		"migration:postgres:plan": "prisma migration plan --config prisma.config.postgres.ts",
 		"migration:postgres:new": "prisma migration new --config prisma.config.postgres.ts",
 		"migration:postgres:status": "prisma migration status --config prisma.config.postgres.ts",
 		"db:migrate": "prisma db migrate --config prisma.config.postgres.ts",
