@@ -165,6 +165,8 @@
 	"sync.statusPulling": "Pulling",
 	"sync.statusPushing": "Pushing",
 	"sync.statusStopped": "Stopped",
+	"sync.statusError": "Error",
+	"sync.syncNow": "Sync now",
 	"sync.statusConnecting": "Connecting",
 	"sync.lastSynced": "Last synced",
 	"sync.neverSynced": "Never synced",

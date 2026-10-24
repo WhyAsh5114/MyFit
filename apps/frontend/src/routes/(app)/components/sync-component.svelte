@@ -59,7 +59,9 @@
 					? m['sync.statusPulling']()
 					: syncStatus === 'pushing'
 						? m['sync.statusPushing']()
-						: m['sync.statusStopped']()
+						: syncStatus === 'error'
+							? m['sync.statusError']()
+							: m['sync.statusStopped']()
 	);
 
 	let statusVariant = $derived.by(() => {
@@ -119,7 +121,8 @@
 					// The worker's `error` event already reports the failure to `lastError`.
 					syncWorkerState.syncWorker?.forceSync().catch(() => {})}
 			>
-				Sync now <RefreshCcwIcon />
+				{m['sync.syncNow']()}
+				<RefreshCcwIcon />
 			</Button>
 		{/if}
 	</Popover.Content>

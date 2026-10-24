@@ -11,6 +11,9 @@
 			"default": "./src/nutrition/index.ts"
 		}
 	},
+	"dependencies": {
+		"@myfit/schema": "workspace:*"
+	},
 	"peerDependencies": {
 		"zod": "^4.0.0"
 	}

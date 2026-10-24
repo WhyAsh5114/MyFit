@@ -17,12 +17,14 @@ export const useDeleteFoodEntry = () =>
 	createMutation(() => ({
 		mutationFn: async ({ userId, id }: MutationProps) => {
 			const db = await getDb();
-			// An ownership mismatch must roll back both the deletion and its outbox entry.
-			return db.transaction(['foodEntry'], async (tx) => {
-				const entry = await tx.foodEntry.delete(id);
-				if (entry.userId !== userId) throw new Error(`Food entry ${id} not found`);
-				return entry;
-			});
+			const [entry] = await db.orm.foodEntry.where({ id, userId }).deleteAll();
+			if (!entry) {
+				throw new PrismaClientKnownRequestError(`Food entry ${id} not found`, {
+					code: 'P2025',
+					clientVersion: 'myfit'
+				});
+			}
+			return entry;
 		},
 
 		onSuccess: (data) => {
