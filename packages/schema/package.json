@@ -27,10 +27,10 @@
 		"lint": "prettier --check . && eslint ."
 	},
 	"dependencies": {
-		"@prisma-idb/client-idb": "^0.15.0",
-		"@prisma-idb/sync-extension-idb": "^0.10.0",
-		"@prisma-idb/sync-server": "^0.8.3",
-		"@prisma-idb/sync-server-sql": "^0.8.1",
+		"@prisma-idb/client-idb": "^0.15.1",
+		"@prisma-idb/sync-extension-idb": "^0.10.1",
+		"@prisma-idb/sync-server": "^0.8.4",
+		"@prisma-idb/sync-server-sql": "^0.8.2",
 		"@prisma/cli-engine": "0.7.0",
 		"@prisma/orm-framework": "8.0.0-rc.18",
 		"@prisma/orm-postgres": "8.0.0-rc.18",
@@ -39,10 +39,10 @@
 		"prisma": "8.0.0-rc.23"
 	},
 	"devDependencies": {
-		"@prisma-idb/adapter-idb": "^0.15.0",
-		"@prisma-idb/driver-idb": "^0.15.0",
-		"@prisma-idb/family-idb": "^0.15.0",
-		"@prisma-idb/target-idb": "^0.15.0",
+		"@prisma-idb/adapter-idb": "^0.15.1",
+		"@prisma-idb/driver-idb": "^0.15.1",
+		"@prisma-idb/family-idb": "^0.15.1",
+		"@prisma-idb/target-idb": "^0.15.1",
 		"@types/node": "^25.9.2",
 		"typescript": "^6.0.3"
 	}

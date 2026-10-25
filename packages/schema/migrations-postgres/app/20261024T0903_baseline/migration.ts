@@ -1,6 +1,6 @@
 #!/usr/bin/env -S node
-import type { Contract as End } from '../../snapshots/818a2238897d8b712f4de89a15b5018676a9e943ee7fedff429314691705364f/contract';
-import endContract from '../../snapshots/818a2238897d8b712f4de89a15b5018676a9e943ee7fedff429314691705364f/contract.json' with { type: 'json' };
+import type { Contract as End } from '../../snapshots/52513ac073657030ce7026329ba07799eeeed6e0605c8a2b42554290fdef4c82/contract';
+import endContract from '../../snapshots/52513ac073657030ce7026329ba07799eeeed6e0605c8a2b42554290fdef4c82/contract.json' with { type: 'json' };
 import {
 	Migration,
 	MigrationCLI,
@@ -9,6 +9,7 @@ import {
 	fn,
 	lit,
 	primaryKey,
+	rawSql,
 	sql
 } from '@prisma/orm-postgres/migration';
 
@@ -18,6 +19,54 @@ export default class M extends Migration<never, End> {
 	override get operations() {
 		return [
 			this.createSchema({ schema: 'public' }),
+			// Install dependencies before expression indexes refer to them.
+			this.installExtension({
+				extensionName: 'pg_trgm',
+				invariantId: 'install-pg-trgm',
+				id: 'extension.pg_trgm',
+				label: 'Install the pg_trgm extension'
+			}),
+			this.installExtension({
+				extensionName: 'unaccent',
+				invariantId: 'install-unaccent',
+				id: 'extension.unaccent',
+				label: 'Install the unaccent extension'
+			}),
+			// Index expressions require immutability. Pin the dictionary and function
+			// to public; changing that dictionary requires rebuilding these indexes.
+			rawSql({
+				id: 'function.immutable_unaccent',
+				label: 'Create the immutable unaccent wrapper',
+				operationClass: 'additive',
+				target: {
+					id: 'postgres',
+					details: {
+						schema: 'public',
+						objectType: 'dependency',
+						name: 'immutable_unaccent'
+					}
+				},
+				precheck: [
+					{
+						description: 'Verify the wrapper does not exist',
+						sql: "SELECT to_regprocedure('public.immutable_unaccent(text)') IS NULL AS result"
+					}
+				],
+				execute: [
+					{
+						description: 'Create the schema-qualified immutable wrapper',
+						sql: `CREATE FUNCTION public.immutable_unaccent(text) RETURNS text
+LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE
+AS $$ SELECT public.unaccent('public.unaccent'::regdictionary, $1) $$`
+					}
+				],
+				postcheck: [
+					{
+						description: 'Verify the wrapper is immutable',
+						sql: "SELECT EXISTS (SELECT 1 FROM pg_proc WHERE oid = to_regprocedure('public.immutable_unaccent(text)') AND provolatile = 'i') AS result"
+					}
+				]
+			}),
 			this.createTable({
 				schema: 'public',
 				table: 'ActivityEntry',
@@ -228,6 +277,60 @@ export default class M extends Migration<never, End> {
 					col('name', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
 					col('sortOrder', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
 					col('userId', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } })
+				],
+				constraints: [primaryKey(['id'])]
+			}),
+			this.createTable({
+				schema: 'public',
+				table: 'NutritionData',
+				columns: [
+					col('alcoholG_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('brands', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+					col('caffeineMg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('calciumMg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('carbohydratesG_100g', 'float8', {
+						notNull: true,
+						codecRef: { codecId: 'pg/float8@1' }
+					}),
+					col('cholesterolMg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('code', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+					col('completeness', 'float8', { notNull: true, codecRef: { codecId: 'pg/float8@1' } }),
+					col('copperMg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('energyKcal_100g', 'float8', { notNull: true, codecRef: { codecId: 'pg/float8@1' } }),
+					col('fatG_100g', 'float8', { notNull: true, codecRef: { codecId: 'pg/float8@1' } }),
+					col('fiberG_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('folatesMcg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('id', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+					col('ironMg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('magnesiumMg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('manganeseMg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('monounsaturatedFatG_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('phosphorusMg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('polyolsG_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('polyunsaturatedFatG_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('potassiumMg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('productName', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+					col('proteinsG_100g', 'float8', { notNull: true, codecRef: { codecId: 'pg/float8@1' } }),
+					col('saltG_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('saturatedFatG_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('servingQuantity', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('servingSize', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+					col('sodiumMg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('sugarsG_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('transFatG_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('uniqueScans', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+					col('unsaturatedFatG_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('vitaminAIU_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('vitaminB12Mcg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('vitaminB1Mg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('vitaminB2Mg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('vitaminB6Mg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('vitaminB9Mcg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('vitaminCMg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('vitaminDIU_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('vitaminEMg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('vitaminKMcg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } }),
+					col('zincMg_100g', 'float8', { codecRef: { codecId: 'pg/float8@1' } })
 				],
 				constraints: [primaryKey(['id'])]
 			}),
@@ -513,6 +616,33 @@ export default class M extends Migration<never, End> {
 				table: 'Meal',
 				index: 'Meal_userId_idx_a489d58a',
 				columns: ['userId']
+			}),
+			this.createIndex({
+				schema: 'public',
+				table: 'NutritionData',
+				index: 'NutritionData_code_idx_8e43b86b',
+				columns: ['code']
+			}),
+			this.createIndex({
+				schema: 'public',
+				table: 'NutritionData',
+				index: 'nutrition_data_brands_trgm_0357fbfa',
+				expression: sql`public.immutable_unaccent(brands) gin_trgm_ops`,
+				extras: { type: 'gin' }
+			}),
+			this.createIndex({
+				schema: 'public',
+				table: 'NutritionData',
+				index: 'nutrition_data_product_name_trgm_7f9a87bc',
+				expression: sql`public.immutable_unaccent("productName") gin_trgm_ops`,
+				extras: { type: 'gin' }
+			}),
+			this.createIndex({
+				schema: 'public',
+				table: 'NutritionData',
+				index: 'nutrition_data_search_aa01b8a8',
+				expression: sql`(setweight(to_tsvector('english', public.immutable_unaccent(coalesce("productName", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce("brands", ''))), 'B'))`,
+				extras: { type: 'gin' }
 			}),
 			this.createIndex({
 				schema: 'public',

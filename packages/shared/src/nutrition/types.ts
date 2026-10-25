@@ -1,12 +1,12 @@
-import type { OPTIONAL_NUTRIENT_FIELDS, REQUIRED_NUTRIENT_FIELDS } from '@myfit/shared/nutrition';
+import type { OPTIONAL_NUTRIENT_FIELDS, REQUIRED_NUTRIENT_FIELDS } from './fields';
 
 type RequiredNutrientKey = (typeof REQUIRED_NUTRIENT_FIELDS)[number]['key'];
 type OptionalNutrientKey = (typeof OPTIONAL_NUTRIENT_FIELDS)[number]['key'];
 
 /**
  * A row of the Open Food Facts `NutritionData` search table, as served by the
- * API. The table remains outside the server contract; this shape also keeps
- * the frontend nutrition forms independent of a generated client.
+ * API. The server contract owns the table; this hand-written copy keeps the
+ * server-only contract types out of the browser bundle.
  */
 export type NutritionData = {
 	id: string;
