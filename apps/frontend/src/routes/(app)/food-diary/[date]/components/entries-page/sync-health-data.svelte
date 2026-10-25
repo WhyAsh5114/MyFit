@@ -70,7 +70,7 @@
 			const existing = activityEntriesByDate.data!.find((e) => e.systemGenerated);
 
 			upsertDynamicActivityData.mutate({
-				id: existing?.id,
+				date: selectedDay,
 				name: 'Daily steps',
 				performedAt: existing?.performedAt ?? selectedDay.toDate(getLocalTimeZone()),
 				calories: calculateActivityCalories({ ...macroMetrics.data!, stepCount: sample.value }),
@@ -90,7 +90,7 @@
 			const existing = activityEntriesByDate.data!.find((e) => e.systemGenerated);
 
 			upsertDynamicActivityData.mutate({
-				id: existing?.id,
+				date: selectedDay,
 				name: 'Daily fixed activity',
 				performedAt: existing?.performedAt ?? selectedDay.toDate(getLocalTimeZone()),
 				calories: prefs.staticCalories!,
