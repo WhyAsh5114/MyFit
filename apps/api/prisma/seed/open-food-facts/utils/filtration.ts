@@ -52,7 +52,8 @@ export function sanitizeRecord(record: ProcessedNutritionData): ProcessedNutriti
 
 	const sanitizeString = (val: string | null): string | null => {
 		if (!val || typeof val !== 'string') return null;
-		const trimmed = val.trim();
+		// Postgres text cannot store NUL bytes
+		const trimmed = val.replace(/\0/g, '').trim();
 		return trimmed.length > 0 ? trimmed : null;
 	};
 

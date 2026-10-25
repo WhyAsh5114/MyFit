@@ -83,8 +83,10 @@ export function mapRawToProcessed(raw: RawNutritionData): ProcessedNutritionData
  */
 export function toTsvRow(data: ProcessedNutritionData): string {
 	const escapeText = (v: string | null): string => {
-		if (!v) return '\\N';
-		return v
+		// Postgres text cannot store NUL bytes (error 22021); some OFF rows contain them
+		const cleaned = v?.replace(/\0/g, '');
+		if (!cleaned) return '\\N';
+		return cleaned
 			.replace(/\\/g, '\\\\')
 			.replace(/\n/g, '\\n')
 			.replace(/\r/g, '\\r')
