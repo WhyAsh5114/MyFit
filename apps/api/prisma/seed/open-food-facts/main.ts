@@ -3,7 +3,6 @@
 import fs from 'node:fs';
 import { pipeline } from 'node:stream/promises';
 import { createGunzip } from 'node:zlib';
-import https from 'node:https';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import 'dotenv/config';
@@ -12,33 +11,32 @@ import { Client } from 'pg';
 import copyFrom from 'pg-copy-streams';
 import chalk from 'chalk';
 
-import type { RawNutritionData } from './utils/types.js';
-import { mapRawToProcessed, toTsvRow } from './utils/mappers.js';
-import { isValidRecord, sanitizeRecord } from './utils/filtration.js';
+import type { RawNutritionData } from './utils/types.ts';
+import { mapRawToProcessed, toTsvRow } from './utils/mappers.ts';
+import { isValidRecord, sanitizeRecord } from './utils/filtration.ts';
 import {
 	CREATE_STAGING_TABLE_SQL,
-	TRUNCATE_STAGING_TABLE_SQL,
-	DROP_STAGING_TABLE_SQL,
 	INSERT_INTO_NUTRITION_DATA_SQL,
 	COPY_INTO_STAGING_SQL
-} from './utils/staging-schema.js';
+} from './utils/staging-schema.ts';
 import {
 	logSuccess,
 	logWarning,
 	logInfo,
 	logError,
 	logProgressWithETA,
-	logDownloadProgress,
 	logBanner,
 	logSuccessBanner
-} from './utils/logging.js';
+} from './utils/logging.ts';
+
+import { prepareDownload } from './utils/download.ts';
 
 const { from } = copyFrom;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = process.env.OFF_DATA_DIR ?? path.join(__dirname, 'data');
 const GZ_PATH = path.join(DATA_DIR, 'products.csv.gz');
 const CSV_URL = 'https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz';
 
@@ -68,6 +66,7 @@ function parseRowLimit(): number | undefined {
 	return undefined; // Default: no limit
 }
 
+/** Create the download cache directory before writing files. */
 function ensureDir() {
 	if (!fs.existsSync(DATA_DIR)) {
 		logInfo(`Creating data directory at ${DATA_DIR}`);
@@ -75,74 +74,84 @@ function ensureDir() {
 	}
 }
 
-function download(url: string, dest: string, maxRedirects: number = 5): Promise<void> {
-	return new Promise((resolve, reject) => {
-		if (maxRedirects <= 0) {
-			reject(new Error('Too many redirects'));
-			return;
-		}
+/** Validate and stream the cached export into the transaction-local staging table. */
+async function copyCsvToStaging(client: Client, rowLimit: number | undefined) {
+	logInfo('Starting CSV import with validation and unit conversion...');
+	console.log();
 
-		logInfo('Starting download...');
-		const file = fs.createWriteStream(dest);
-		https
-			.get(url, (res) => {
-				// Handle redirects (301, 302, 303, 307, 308)
-				if (res.statusCode && [301, 302, 303, 307, 308].includes(res.statusCode)) {
-					const redirectUrl = res.headers.location;
-					if (!redirectUrl) {
-						reject(new Error(`Redirect without location header`));
-						return;
-					}
-					logInfo(`Following redirect to ${redirectUrl}`);
-					file.destroy();
-					// Recursively call download with the new URL
-					download(redirectUrl, dest, maxRedirects - 1)
-						.then(resolve)
-						.catch(reject);
-					return;
-				}
+	const startTime = Date.now();
+	const fileSize = fs.statSync(GZ_PATH).size;
+	let bytesRead = 0;
 
-				if (res.statusCode !== 200) {
-					reject(new Error(`Download failed: ${res.statusCode}`));
-					return;
-				}
+	const copy = client.query(from(COPY_INTO_STAGING_SQL));
 
-				const totalSize = parseInt(res.headers['content-length'] || '0', 10);
-				logInfo(`Total size: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
-
-				let downloadedSize = 0;
-				let lastUpdate = Date.now();
-				let lastSize = 0;
-
-				res.on('data', (chunk) => {
-					downloadedSize += chunk.length;
-					const now = Date.now();
-					const timeDiff = (now - lastUpdate) / 1000;
-
-					// Update progress every 500ms
-					if (timeDiff >= 0.5) {
-						const sizeDiff = downloadedSize - lastSize;
-						const speed = (sizeDiff / 1024 / 1024 / timeDiff).toFixed(2);
-						logDownloadProgress(downloadedSize, totalSize, `${speed} MB/s`);
-						lastUpdate = now;
-						lastSize = downloadedSize;
-					}
-				});
-
-				res.pipe(file);
-				file.on('finish', () => {
-					file.close(() => {
-						// Clear the progress line
-						process.stdout.write('\r' + ' '.repeat(100) + '\r');
-						logSuccess('Download complete');
-						resolve();
-					});
-				});
-			})
-			.on('error', reject);
+	const csv = parse({
+		columns: true,
+		delimiter: '\t',
+		relax_quotes: true,
+		relax_column_count: true
 	});
+
+	let processedRows = 0;
+	let validRows = 0;
+	let skippedRows = 0;
+
+	const fileStream = fs.createReadStream(GZ_PATH);
+	fileStream.on('data', (chunk) => {
+		bytesRead += chunk.length;
+	});
+
+	/** Map valid rows while allowing stream failures to reach the transaction. */
+	const transform = async function* (src: AsyncIterable<RawNutritionData>) {
+		for await (const raw of src) {
+			processedRows++;
+			let sanitized;
+			try {
+				sanitized = sanitizeRecord(mapRawToProcessed(raw));
+			} catch {
+				skippedRows++;
+				continue;
+			}
+			if (!isValidRecord(sanitized)) {
+				skippedRows++;
+				continue;
+			}
+
+			validRows++;
+			yield toTsvRow(sanitized);
+			if (rowLimit && validRows >= rowLimit) return;
+
+			if (validRows % 10_000 === 0) {
+				const elapsed = (Date.now() - startTime) / 1000;
+				const speed = bytesRead / 1024 / 1024 / elapsed;
+				const remainingBytes = fileSize - bytesRead;
+				const remainingSeconds = speed > 0 ? remainingBytes / 1024 / 1024 / speed : 0;
+				logProgressWithETA(validRows, bytesRead, fileSize, speed.toFixed(2), remainingSeconds);
+			}
+		}
+	};
+
+	// Keep COPY outside the input pipeline so reaching ROW_LIMIT finishes COPY
+	// normally instead of aborting the database transaction with the input streams.
+	await Promise.all([
+		pipeline(fileStream, createGunzip(), csv).catch((error: NodeJS.ErrnoException) => {
+			if (!(rowLimit && validRows >= rowLimit && error.code === 'ABORT_ERR')) throw error;
+		}),
+		pipeline(transform(csv), copy)
+	]);
+
+	logSuccess(
+		'CSV import complete: ' +
+			validRows.toLocaleString() +
+			' valid rows | ' +
+			skippedRows.toLocaleString() +
+			' skipped'
+	);
+
+	return { processedRows, validRows };
 }
 
+/** Import validated OFF rows atomically and refresh planner statistics. */
 async function main() {
 	const rowLimit = parseRowLimit();
 
@@ -153,138 +162,45 @@ async function main() {
 		console.log();
 	}
 
-	ensureDir();
-
-	if (!fs.existsSync(GZ_PATH)) {
-		await download(CSV_URL, GZ_PATH);
-	} else {
-		logWarning('CSV already downloaded, skipping download step');
-	}
-
-	const client = new Client({
-		connectionString: process.env.DATABASE_URL,
-		ssl: false
-	});
+	const client = new Client({ connectionString: process.env.DATABASE_URL });
+	let inTransaction = false;
 
 	logInfo('Connecting to database...');
 	await client.connect();
 	logSuccess('Database connected');
 
-	console.log();
-	logInfo('Starting transaction...');
-	await client.query('BEGIN');
-	logSuccess('Transaction started');
-
 	try {
-		logInfo('Creating staging table if not exists...');
-		await client.query(CREATE_STAGING_TABLE_SQL);
-		logSuccess('Staging table ready');
-
-		logInfo('Truncating staging table...');
-		await client.query(TRUNCATE_STAGING_TABLE_SQL);
-		logSuccess('Staging table truncated');
-
-		logInfo('Starting CSV import with validation and unit conversion...');
-		console.log();
-
-		const startTime = Date.now();
-		const fileSize = fs.statSync(GZ_PATH).size;
-		let bytesRead = 0;
-
-		const copy = client.query(from(COPY_INTO_STAGING_SQL));
-
-		const csv = parse({
-			columns: true,
-			delimiter: '\t',
-			relax_quotes: true,
-			relax_column_count: true
-		});
-
-		let processedRows = 0;
-		let validRows = 0;
-		let skippedRows = 0;
-
-		const fileStream = fs.createReadStream(GZ_PATH);
-		fileStream.on('data', (chunk) => {
-			bytesRead += chunk.length;
-		});
-
-		const transform = async function* (src: AsyncIterable<RawNutritionData>) {
-			for await (const raw of src) {
-				try {
-					// Map raw data to processed format with unit conversion
-					const processed = mapRawToProcessed(raw);
-					processedRows++;
-
-					// Sanitize the record
-					const sanitized = sanitizeRecord(processed);
-
-					// Validate against filtration criteria
-					if (!isValidRecord(sanitized)) {
-						skippedRows++;
-						continue;
-					}
-
-					validRows++;
-					yield toTsvRow(sanitized);
-
-					// Check if we've reached the row limit after successfully yielding
-					if (rowLimit && validRows >= rowLimit) {
-						// Destroy input streams to stop processing
-						fileStream.destroy();
-						return;
-					}
-
-					if (validRows % 10_000 === 0) {
-						const now = Date.now();
-						const elapsed = (now - startTime) / 1000;
-						const speed = bytesRead / 1024 / 1024 / elapsed;
-						const remainingBytes = fileSize - bytesRead;
-						const remainingSeconds = speed > 0 ? remainingBytes / 1024 / 1024 / speed : 0;
-						logProgressWithETA(validRows, bytesRead, fileSize, speed.toFixed(2), remainingSeconds);
-					}
-				} catch {
-					// Log and skip records that fail processing
-					skippedRows++;
-					continue;
-				}
-			}
-		};
-
-		try {
-			await pipeline(fileStream, createGunzip(), csv, transform, copy);
-		} catch (err) {
-			// If it's an abort error from our row limit cleanup, it's expected and safe to ignore
-			if (
-				typeof err === 'object' &&
-				err !== null &&
-				'code' in err &&
-				err.code !== 'ERR_STREAM_DESTROYED' &&
-				err.code !== 'ABORT_ERR' &&
-				err.code !== 'ERR_STREAM_PREMATURE_CLOSE'
-			) {
-				throw err;
+		// Deploys populate a fresh database once; explicit imports always refresh it.
+		if (process.env.SEED_IF_EMPTY === '1') {
+			const { rows } = await client.query(
+				'SELECT EXISTS (SELECT 1 FROM "NutritionData") AS populated'
+			);
+			if (rows[0].populated) {
+				logInfo('NutritionData is already populated, skipping deploy seed');
+				return;
 			}
 		}
 
-		logSuccess(
-			'CSV import complete: ' +
-				validRows.toLocaleString() +
-				' valid rows | ' +
-				skippedRows.toLocaleString() +
-				' skipped'
-		);
+		ensureDir();
+		await prepareDownload(CSV_URL, GZ_PATH, process.env.REFRESH_OFF_DATA === '1');
+		logInfo('Starting transaction...');
+		await client.query('BEGIN');
+		inTransaction = true;
+		logInfo('Creating temporary staging table...');
+		await client.query(CREATE_STAGING_TABLE_SQL);
+		logSuccess('Staging table ready');
+
+		const { processedRows, validRows } = await copyCsvToStaging(client, rowLimit);
 
 		logInfo('Inserting data into NutritionData table...');
 		const resultInsert = await client.query(INSERT_INTO_NUTRITION_DATA_SQL);
-		logSuccess(`Inserted ${resultInsert.rowCount} records into NutritionData`);
-
-		logInfo('Cleaning up staging table...');
-		await client.query(DROP_STAGING_TABLE_SQL);
-		logSuccess('Staging table dropped');
+		logSuccess(`Upserted ${resultInsert.rowCount} records into NutritionData`);
 
 		await client.query('COMMIT');
+		inTransaction = false;
 		logSuccess('Transaction committed');
+		await client.query('ANALYZE "NutritionData"');
+		logSuccess('Planner statistics updated');
 
 		logSuccessBanner('Import Successful! ✓');
 		console.log();
@@ -295,10 +211,11 @@ async function main() {
 		);
 		console.log();
 	} catch (error) {
-		console.log('\n');
-		logError('An error occurred during import, rolling back transaction...');
-		await client.query('ROLLBACK');
-		logSuccess('Transaction rolled back');
+		if (inTransaction) {
+			logError('Import failed, rolling back transaction...');
+			await client.query('ROLLBACK');
+			logSuccess('Transaction rolled back');
+		}
 		throw error;
 	} finally {
 		await client.end();

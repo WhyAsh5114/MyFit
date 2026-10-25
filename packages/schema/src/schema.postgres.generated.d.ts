@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-	StorageHashBase<'52513ac073657030ce7026329ba07799eeeed6e0605c8a2b42554290fdef4c82'>;
+	StorageHashBase<'629292428441ee1057e4b6a6806b7e244d6a24514218d74d22927aabe29e9b0c'>;
 export type ExecutionHash =
 	ExecutionHashBase<'9b0ec966f1397f6b3ef25f4a1a23de2c45c37bc7cc8df5fc4c96d8354ad09503'>;
 export type ProfileHash =
@@ -2712,14 +2712,8 @@ type ContractBase = Omit<
 								};
 							};
 							primaryKey: { readonly columns: readonly ['id'] };
-							uniques: readonly [];
+							uniques: readonly [{ readonly columns: readonly ['code'] }];
 							indexes: readonly [
-								{
-									readonly name: 'NutritionData_code_idx_8e43b86b';
-									readonly prefix: 'NutritionData_code_idx';
-									readonly columns: readonly ['code'];
-									readonly unique: false;
-								},
 								{
 									readonly name: 'nutrition_data_brands_trgm_0357fbfa';
 									readonly prefix: 'nutrition_data_brands_trgm';

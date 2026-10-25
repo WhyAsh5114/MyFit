@@ -1,10 +1,10 @@
 /**
  * SQL schema for staging nutrition data
- * Direct insert into NutritionData table (no complex staging needed)
+ * Transaction-local staging keeps concurrent imports separate.
  */
 
 export const CREATE_STAGING_TABLE_SQL = `
-CREATE TABLE IF NOT EXISTS nutrition_data_staging (
+CREATE TEMP TABLE nutrition_data_staging (
   code TEXT,
   product_name TEXT NOT NULL,
   brands TEXT,
@@ -52,19 +52,26 @@ CREATE TABLE IF NOT EXISTS nutrition_data_staging (
   copper_mg_100g DOUBLE PRECISION,
   manganese_mg_100g DOUBLE PRECISION,
   caffeine_mg_100g DOUBLE PRECISION
-)
+) ON COMMIT DROP
 `;
 
-export const TRUNCATE_STAGING_TABLE_SQL = 'TRUNCATE nutrition_data_staging';
-
-export const DROP_STAGING_TABLE_SQL = 'DROP TABLE IF EXISTS nutrition_data_staging';
-
 /**
- * Insert directly into NutritionData table from staging.
+ * Upsert one row per code, preserving the existing id on refresh.
+ * Prefer the most-scanned duplicate, then completeness and name for ties.
  * The full-text document is not stored: the `nutrition_data_search` index builds
  * it from `productName` (weight A) and `brands` (weight B) as rows arrive.
  */
 export const INSERT_INTO_NUTRITION_DATA_SQL = `
+WITH deduplicated AS (
+  SELECT DISTINCT ON (code) *
+  FROM nutrition_data_staging
+  WHERE code IS NOT NULL AND product_name IS NOT NULL AND
+    completeness IS NOT NULL AND unique_scans IS NOT NULL AND
+    energy_kcal_100g IS NOT NULL AND proteins_g_100g IS NOT NULL AND
+    fat_g_100g IS NOT NULL AND carbohydrates_g_100g IS NOT NULL
+  ORDER BY code, unique_scans DESC NULLS LAST, completeness DESC NULLS LAST,
+    product_name, brands NULLS LAST, ctid
+)
 INSERT INTO "NutritionData" (
   id,
   code,
@@ -156,14 +163,50 @@ SELECT
   copper_mg_100g,
   manganese_mg_100g,
   caffeine_mg_100g
-FROM nutrition_data_staging
-WHERE 
-  code IS NOT NULL AND 
-  product_name IS NOT NULL AND
-  energy_kcal_100g IS NOT NULL AND
-  proteins_g_100g IS NOT NULL AND
-  fat_g_100g IS NOT NULL AND
-  carbohydrates_g_100g IS NOT NULL
+FROM deduplicated
+ON CONFLICT (code) DO UPDATE SET
+  "productName" = EXCLUDED."productName",
+  brands = EXCLUDED.brands,
+  "servingQuantity" = EXCLUDED."servingQuantity",
+  "servingSize" = EXCLUDED."servingSize",
+  "completeness" = EXCLUDED."completeness",
+  "uniqueScans" = EXCLUDED."uniqueScans",
+  "energyKcal_100g" = EXCLUDED."energyKcal_100g",
+  "proteinsG_100g" = EXCLUDED."proteinsG_100g",
+  "fatG_100g" = EXCLUDED."fatG_100g",
+  "carbohydratesG_100g" = EXCLUDED."carbohydratesG_100g",
+  "saturatedFatG_100g" = EXCLUDED."saturatedFatG_100g",
+  "unsaturatedFatG_100g" = EXCLUDED."unsaturatedFatG_100g",
+  "monounsaturatedFatG_100g" = EXCLUDED."monounsaturatedFatG_100g",
+  "polyunsaturatedFatG_100g" = EXCLUDED."polyunsaturatedFatG_100g",
+  "transFatG_100g" = EXCLUDED."transFatG_100g",
+  "cholesterolMg_100g" = EXCLUDED."cholesterolMg_100g",
+  "sugarsG_100g" = EXCLUDED."sugarsG_100g",
+  "polyolsG_100g" = EXCLUDED."polyolsG_100g",
+  "fiberG_100g" = EXCLUDED."fiberG_100g",
+  "saltG_100g" = EXCLUDED."saltG_100g",
+  "sodiumMg_100g" = EXCLUDED."sodiumMg_100g",
+  "alcoholG_100g" = EXCLUDED."alcoholG_100g",
+  "vitaminAIU_100g" = EXCLUDED."vitaminAIU_100g",
+  "vitaminDIU_100g" = EXCLUDED."vitaminDIU_100g",
+  "vitaminEMg_100g" = EXCLUDED."vitaminEMg_100g",
+  "vitaminKMcg_100g" = EXCLUDED."vitaminKMcg_100g",
+  "vitaminCMg_100g" = EXCLUDED."vitaminCMg_100g",
+  "vitaminB1Mg_100g" = EXCLUDED."vitaminB1Mg_100g",
+  "vitaminB2Mg_100g" = EXCLUDED."vitaminB2Mg_100g",
+  "vitaminB6Mg_100g" = EXCLUDED."vitaminB6Mg_100g",
+  "vitaminB9Mcg_100g" = EXCLUDED."vitaminB9Mcg_100g",
+  "folatesMcg_100g" = EXCLUDED."folatesMcg_100g",
+  "vitaminB12Mcg_100g" = EXCLUDED."vitaminB12Mcg_100g",
+  "potassiumMg_100g" = EXCLUDED."potassiumMg_100g",
+  "calciumMg_100g" = EXCLUDED."calciumMg_100g",
+  "phosphorusMg_100g" = EXCLUDED."phosphorusMg_100g",
+  "ironMg_100g" = EXCLUDED."ironMg_100g",
+  "magnesiumMg_100g" = EXCLUDED."magnesiumMg_100g",
+  "zincMg_100g" = EXCLUDED."zincMg_100g",
+  "copperMg_100g" = EXCLUDED."copperMg_100g",
+  "manganeseMg_100g" = EXCLUDED."manganeseMg_100g",
+  "caffeineMg_100g" = EXCLUDED."caffeineMg_100g"
 `;
 
 export const COPY_INTO_STAGING_SQL = `
