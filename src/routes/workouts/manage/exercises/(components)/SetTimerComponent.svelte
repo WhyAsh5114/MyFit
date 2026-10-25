@@ -2,8 +2,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Popover from '$lib/components/ui/popover';
 	import { cn } from '$lib/utils';
+	import { formatDuration } from '$lib/utils/duration';
+	import { onMount } from 'svelte';
 	import TimerIcon from 'virtual:icons/lucide/timer';
-	import MinusIcon from 'virtual:icons/lucide/minus';
 	import { workoutRunes } from '../../workoutRunes.svelte';
 
 	let lastCompletedSet = $derived(
@@ -12,39 +13,57 @@
 			.filter((s) => s.completed)
 			.at(-1)
 	);
-	let secondsSinceLastSet = $state(0);
+	let now = $state(Date.now());
+	let lastSetCompletedAt = $state<number | null>(null);
 	let showAnimation = $state(false);
+	let startedAt = $derived(workoutRunes.workoutData?.startedAt);
+	let totalDuration = $derived(startedAt ? formatDuration((now - new Date(startedAt).getTime()) / 1000) : '0:00');
+	let restDuration = $derived(lastSetCompletedAt === null ? '—' : formatDuration((now - lastSetCompletedAt) / 1000));
+	let timerLabel = $derived(
+		`Workout timers: ${lastSetCompletedAt === null ? 'no completed sets' : `${restDuration} since last set`}, ${totalDuration} total`
+	);
 
 	$effect(() => {
-		if (lastCompletedSet) secondsSinceLastSet = 0;
+		lastSetCompletedAt = lastCompletedSet ? Date.now() : null;
 		showAnimation = true;
-		setTimeout(() => {
+		const timeout = setTimeout(() => {
 			showAnimation = false;
 		}, 500);
+		return () => clearTimeout(timeout);
 	});
 
-	setInterval(() => {
-		secondsSinceLastSet += 1;
-	}, 1000);
+	onMount(() => {
+		/** Recompute from wall time so background throttling does not lose elapsed time. */
+		function updateTime() {
+			now = Date.now();
+		}
 
-	function secondsToMS(seconds: number) {
-		const minutes = Math.floor(seconds / 60);
-		const remainingSeconds = seconds % 60;
-		return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-	}
+		updateTime();
+		const interval = setInterval(updateTime, 1000);
+		document.addEventListener('visibilitychange', updateTime);
+		return () => {
+			clearInterval(interval);
+			document.removeEventListener('visibilitychange', updateTime);
+		};
+	});
 </script>
 
 <Popover.Root>
 	<Popover.Trigger let:builder asChild>
-		<Button builders={[builder]} aria-label="time-since-last-set" size="icon" variant="outline">
+		<Button builders={[builder]} aria-label={timerLabel} size="icon" variant="outline">
 			<TimerIcon class={cn({ 'animate-bounce': showAnimation })} />
 		</Button>
 	</Popover.Trigger>
-	<Popover.Content class="w-20 text-center font-semibold">
-		{#if lastCompletedSet}
-			{secondsToMS(secondsSinceLastSet)}
-		{:else}
-			<MinusIcon class="mx-auto" />
-		{/if}
+	<Popover.Content class="w-56" aria-label={timerLabel}>
+		<dl class="grid grid-cols-2 divide-x text-center">
+			<div class="flex flex-col pr-3">
+				<dt class="order-last text-xs text-muted-foreground">Since set</dt>
+				<dd class="font-mono text-lg font-semibold tabular-nums">{restDuration}</dd>
+			</div>
+			<div class="flex flex-col pl-3">
+				<dt class="order-last text-xs text-muted-foreground">Total</dt>
+				<dd class="font-mono text-lg tabular-nums text-muted-foreground">{totalDuration}</dd>
+			</div>
+		</dl>
 	</Popover.Content>
 </Popover.Root>
