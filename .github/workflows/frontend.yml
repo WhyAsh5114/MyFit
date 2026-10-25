@@ -4,11 +4,16 @@ on:
   push:
     paths:
       - 'apps/frontend/**'
+      # The frontend imports the API's types and shared constants.
+      - 'apps/api/**'
       - 'packages/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - 'pnpm-workspace.yaml'
       - 'turbo.json'
+      - 'eslint.config.js'
+      - '.prettierrc'
+      - '.gitignore'
       - '.github/workflows/frontend.yml'
 
 # A newer push to the same branch makes the older run obsolete. Runs on the deploy

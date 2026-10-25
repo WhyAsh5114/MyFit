@@ -4,11 +4,17 @@ on:
   push:
     paths:
       - 'apps/api/**'
+      # The root ESLint config imports the frontend's Svelte config and ignore file.
+      - 'apps/frontend/svelte.config.js'
+      - 'apps/frontend/.gitignore'
       - 'packages/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - 'pnpm-workspace.yaml'
       - 'turbo.json'
+      - 'eslint.config.js'
+      - '.prettierrc'
+      - '.gitignore'
       - '.github/workflows/api.yml'
 
 # A newer push to the same branch makes the older run obsolete. Runs on the deploy
