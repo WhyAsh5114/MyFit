@@ -3908,12 +3908,6 @@
 							"foreignKeys": [],
 							"indexes": [
 								{
-									"columns": ["code"],
-									"name": "NutritionData_code_idx_8e43b86b",
-									"prefix": "NutritionData_code_idx",
-									"unique": false
-								},
-								{
 									"expression": "public.immutable_unaccent(brands) gin_trgm_ops",
 									"name": "nutrition_data_brands_trgm_0357fbfa",
 									"prefix": "nutrition_data_brands_trgm",
@@ -3938,7 +3932,11 @@
 							"primaryKey": {
 								"columns": ["id"]
 							},
-							"uniques": []
+							"uniques": [
+								{
+									"columns": ["code"]
+								}
+							]
 						},
 						"Recipe": {
 							"columns": {
@@ -4607,7 +4605,7 @@
 				"kind": "postgres-schema"
 			}
 		},
-		"storageHash": "52513ac073657030ce7026329ba07799eeeed6e0605c8a2b42554290fdef4c82"
+		"storageHash": "629292428441ee1057e4b6a6806b7e244d6a24514218d74d22927aabe29e9b0c"
 	},
 	"execution": {
 		"executionHash": "9b0ec966f1397f6b3ef25f4a1a23de2c45c37bc7cc8df5fc4c96d8354ad09503",

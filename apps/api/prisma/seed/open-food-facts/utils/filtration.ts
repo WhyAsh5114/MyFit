@@ -7,10 +7,10 @@ import type { ProcessedNutritionData } from './types.js';
 
 /**
  * Check if record has all 4 required macros (100g only)
- * Requires: energy, carbs, protein, AND fat (all non-null and > 0)
+ * Zero energy is valid for water, tea and diet drinks; missing macros are not.
  */
 function hasRequiredMacros(record: ProcessedNutritionData): boolean {
-	const hasEnergy = record.energyKcal_100g !== null && record.energyKcal_100g > 0;
+	const hasEnergy = record.energyKcal_100g !== null && record.energyKcal_100g >= 0;
 	const hasCarbs = record.carbohydratesG_100g !== null && record.carbohydratesG_100g >= 0;
 	const hasProtein = record.proteinsG_100g !== null && record.proteinsG_100g >= 0;
 	const hasFat = record.fatG_100g !== null && record.fatG_100g >= 0;

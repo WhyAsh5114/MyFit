@@ -325,7 +325,7 @@ model RecipeIngredient {
 // accent-folded document in its raw search query through the Postgres ORM.
 model NutritionData {
   id                       String @id
-  code                     String
+  code                     String @unique
   productName              String
   brands                   String?
   completeness             Float
@@ -369,7 +369,6 @@ model NutritionData {
   manganeseMg_100g         Float?
   caffeineMg_100g          Float?
 
-  @@index([code])
   @@index(expression: sql`(setweight(to_tsvector('english', public.immutable_unaccent(coalesce("productName", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce("brands", ''))), 'B'))`, type: "gin", name: "nutrition_data_search")
   @@index(expression: sql`public.immutable_unaccent("productName") gin_trgm_ops`, type: "gin", name: "nutrition_data_product_name_trgm")
   @@index(expression: sql`public.immutable_unaccent(brands) gin_trgm_ops`, type: "gin", name: "nutrition_data_brands_trgm")

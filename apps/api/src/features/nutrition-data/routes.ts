@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import z from 'zod';
 import { nutritionDataService } from './service.js';
+import { nutritionSearchQuery } from './search-query.js';
 
 const nutritionDataRoutes = new Hono()
 	/**
@@ -9,21 +10,11 @@ const nutritionDataRoutes = new Hono()
 	 * Searches food database using full-text search
 	 * Public endpoint - no auth required
 	 */
-	.get(
-		'/',
-		zValidator(
-			'query',
-			z.object({
-				search: z.string().min(1, 'Search query cannot be empty').max(200),
-				offset: z.coerce.number().int().min(0).optional().default(0)
-			})
-		),
-		async (c) => {
-			const { search, offset } = c.req.valid('query');
-			const results = await nutritionDataService.searchFoods(search, offset);
-			return c.json({ results }, 200);
-		}
-	)
+	.get('/', zValidator('query', nutritionSearchQuery), async (c) => {
+		const { search, offset } = c.req.valid('query');
+		const results = await nutritionDataService.searchFoods(search, offset);
+		return c.json({ results }, 200);
+	})
 	/**
 	 * Nutrition data get by id endpoint
 	 * Retrieves nutrition data for a specific food item by its id

@@ -16,6 +16,6 @@
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true
 	},
-	"include": ["src/**/*", "lib/**/*"],
+	"include": ["src/**/*", "lib/**/*", "prisma/seed/**/*.ts"],
 	"exclude": ["node_modules", "dist"]
 }

@@ -4,13 +4,35 @@ packages:
 
 overrides:
   '@types/node': ^25.3.0
-  tar: '>=7.5.13'
+  tar: '>=7.5.21'
   minimatch: '>=10.2.5'
-  '@xmldom/xmldom': '>=0.9.10'
-  '@hono/node-server': '>=2.0.1'
+  '@xmldom/xmldom': '>=0.9.12'
+  '@hono/node-server': '>=2.0.10'
   cookie: '>=1.1.1'
   kysely: 0.28.17
   arktype: 2.2.8
+  '@ai-sdk/provider-utils@4': ^4.0.33
+  '@vitest/mocker@5': ^5.0.3
+  brace-expansion@5: ^5.0.12
+  deepmerge-ts@7: ^8.0.0
+  devalue@5: ^5.9.3
+  dompurify@3: ^3.4.17
+  esbuild@0.27: ^0.28.1
+  fflate@0.4: ^0.4.9
+  handlebars@4: ^4.7.10
+  hono@4: ^4.13.13
+  joi@17: ^17.13.8
+  lodash@4: ^4.17.24
+  mysql2@3: ^3.23.1
+  nanoid@3: ^3.3.18
+  postcss@8: ^8.5.23
+  postcss-selector-parser@6: ^7.1.6
+  postcss-selector-parser@7: ^7.1.6
+  sharp@0.32: ^0.35.5
+  source-map-js@1: ^1.2.2
+  ts-deepmerge@7: ^8.0.0
+  uuid@7: ^11.1.1
+  valibot@1: ^1.4.2
 
 onlyBuiltDependencies:
   - '@prisma/engines'
