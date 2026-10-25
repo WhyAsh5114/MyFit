@@ -66,6 +66,7 @@ WITH deduplicated AS (
   SELECT DISTINCT ON (code) *
   FROM nutrition_data_staging
   WHERE code IS NOT NULL AND product_name IS NOT NULL AND
+    completeness IS NOT NULL AND unique_scans IS NOT NULL AND
     energy_kcal_100g IS NOT NULL AND proteins_g_100g IS NOT NULL AND
     fat_g_100g IS NOT NULL AND carbohydrates_g_100g IS NOT NULL
   ORDER BY code, unique_scans DESC NULLS LAST, completeness DESC NULLS LAST,

@@ -9,6 +9,10 @@ import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import { gzipSync } from 'node:zlib';
 import { Client } from 'pg';
+import {
+	CREATE_STAGING_TABLE_SQL,
+	INSERT_INTO_NUTRITION_DATA_SQL
+} from './utils/staging-schema.ts';
 
 const execute = promisify(execFile);
 const databaseUrl = process.env.NUTRITION_SEED_TEST_DATABASE_URL;
@@ -112,5 +116,40 @@ test('seed deduplicates, refreshes without changing ids, and keeps zero-energy f
 		await client.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`);
 		await client.end();
 		await rm(directory, { recursive: true, force: true });
+	}
+});
+
+test('upsert skips null quality metrics before selecting duplicate food codes', async () => {
+	const schema = `nutrition_seed_test_${randomUUID().replaceAll('-', '')}`;
+	const client = new Client({ connectionString: databaseUrl });
+	await client.connect();
+	try {
+		await client.query('BEGIN');
+		await client.query(`CREATE SCHEMA "${schema}"`);
+		await client.query(`SET LOCAL search_path TO "${schema}", public`);
+		await client.query('CREATE TABLE "NutritionData" (LIKE public."NutritionData" INCLUDING ALL)');
+		await client.query(CREATE_STAGING_TABLE_SQL);
+		await client.query(`
+			INSERT INTO nutrition_data_staging (
+				code, product_name, completeness, unique_scans,
+				energy_kcal_100g, proteins_g_100g, fat_g_100g, carbohydrates_g_100g
+			) VALUES
+				('milk', 'Milk', 1, 10, 45, 3, 2, 4),
+				('milk', 'Invalid duplicate', NULL, 500, 40, 3, 1, 4),
+				('missing-completeness', 'Missing completeness', NULL, 0, 40, 3, 1, 4),
+				('missing-scans', 'Missing scans', 1, NULL, 40, 3, 1, 4),
+				('water', 'Water', 0, 0, 0, 0, 0, 0)
+		`);
+		await client.query(INSERT_INTO_NUTRITION_DATA_SQL);
+		assert.deepEqual(
+			(await client.query('SELECT code, "productName" FROM "NutritionData" ORDER BY code')).rows,
+			[
+				{ code: 'milk', productName: 'Milk' },
+				{ code: 'water', productName: 'Water' }
+			]
+		);
+	} finally {
+		await client.query('ROLLBACK');
+		await client.end();
 	}
 });

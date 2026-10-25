@@ -54,7 +54,7 @@ const db = await getDb();
 
 Better Auth reads and writes its own tables through the plain `pg` pool in `lib/pool.ts`. The Open Food Facts `NutritionData` table is part of the server contract (marked `@@idb.exclude`, so it never reaches the browser). Its weighted full-text and trigram indexes are declared with `@@index(expression: ...)` to fold accents through `public.immutable_unaccent(...)`. The migrations create those indexes and the search extensions. The container seeds an empty food table after migration. See [Load and refresh nutrition data](docs/seeding-nutrition-data.md) for provisioning, refreshes, and index maintenance.
 
-This release requires a fresh Postgres database. Create an empty database before deploying; the baseline replaces the earlier migration history. Existing databases cannot migrate in place. After migration, reload Open Food Facts data and use fresh browser storage before reconnecting clients.
+Databases on the current Postgres baseline can migrate in place. The nutrition repair migration removes duplicate food codes, preserves the most-scanned existing row for each code, and adds a unique constraint. Databases using the earlier migration history still require a fresh database because the baseline replaces that history. After creating a fresh database, reload Open Food Facts data and use fresh browser storage before reconnecting clients.
 
 The baseline installs `pg_trgm` and `unaccent` before creating the full-text and trigram indexes on `public.immutable_unaccent(...)`. The wrapper pins the `public.unaccent` dictionary; rebuild those indexes if the dictionary changes.
 

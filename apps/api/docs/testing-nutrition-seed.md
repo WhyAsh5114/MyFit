@@ -9,7 +9,7 @@ DATABASE_URL="$NUTRITION_SEED_TEST_DATABASE_URL" pnpm --filter @myfit/schema db:
 pnpm --filter @myfit/api test:nutrition-seed
 ```
 
-The integration test creates an isolated schema and copies the migrated food table definition. It invokes the real importer with tiny cached exports. It verifies duplicate selection, repeated imports, stable IDs, refreshed nutrient values, zero-energy foods, invalid macros, rollback after a COPY failure, row limits, and skipping an already populated database during deployment. Cleanup removes the schema and fixture files. The test never downloads the public export or changes application food rows.
+The integration test creates an isolated schema and copies the migrated food table definition. It invokes the real importer with tiny cached exports. It verifies duplicate selection, repeated imports, stable IDs, refreshed nutrient values, zero-energy foods, invalid macros, rollback after a COPY failure, row limits, and skipping an already populated database during deployment. A staging integration test verifies that rows with null quality metrics are skipped before duplicate selection, while zero values remain valid. Cleanup removes the schema and fixture files. The test never downloads the public export or changes application food rows.
 
 The download test uses a local HTTP server. It verifies cache reuse, redirect handling, replacement after corruption, and preservation of the old cache after HTTP errors or truncated gzip responses.
 
