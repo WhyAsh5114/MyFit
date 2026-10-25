@@ -1,11 +1,44 @@
 name: API CI
 
-on: push
+on:
+  push:
+    paths:
+      - 'apps/api/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - '.github/workflows/api.yml'
+
+# A newer push to the same branch makes the older run obsolete. Runs on the deploy
+# branches always finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/v4-turborepo' }}
 
 jobs:
   ci:
-    name: Lint / Build
+    name: Lint / Test / Build
     runs-on: ubuntu-latest
+    env:
+      TEST_DATABASE_URL: postgresql://myfit:password@localhost:5432/myfit
+
+    services:
+      # The version production runs, so the migrations and the search extensions match.
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: myfit
+          POSTGRES_USER: myfit
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U myfit"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
       - uses: actions/checkout@v6
@@ -14,7 +47,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
 
       - uses: oven-sh/setup-bun@v2
@@ -27,6 +60,14 @@ jobs:
 
       - name: Type check
         run: pnpm turbo run check --filter=@myfit/api
+
+      - name: Migrate the test database
+        run: pnpm --filter @myfit/schema run db:migrate
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+
+      - name: Test
+        run: pnpm --filter @myfit/api run test
 
       - name: Build
         run: pnpm --filter @myfit/api run build

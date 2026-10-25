@@ -13,12 +13,7 @@ API runs on `http://localhost:3000`.
 
 ## Environment Setup
 
-Create a `.env` file:
-
-```
-DATABASE_URL=postgresql://user:password@localhost:5432/myfit_dev
-BETTER_AUTH_SECRET=your-secret-key-here
-```
+Copy `.env.example` to `.env` and fill in the values. `DATABASE_URL`, `TRUSTED_ORIGINS`, `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` are required.
 
 ## Development
 
@@ -64,11 +59,7 @@ The baseline installs `pg_trgm` and `unaccent` before creating the full-text and
 
 The SQL sync adapter enforces this allowlist through its `writePolicies` option. A forbidden User write returns HTTP 403 and rejects the entire batch before any SQL writes. The current client retains that batch for retry. Other model writes and sync pulls retain their existing ownership checks.
 
-Run the HTTP write-policy tests with Node 24 or later. They use the real sync handler and contracts with an in-memory database stand-in, so they need no database or auth credentials:
-
-```bash
-pnpm --filter @myfit/api test:sync
-```
+The HTTP write-policy tests use the real sync handler and contracts with an in-memory database stand-in, so they need no database or auth credentials. See [Run the API tests](docs/testing.md) for how to run them with the rest of the API suite.
 
 ### Database commands
 

@@ -24,7 +24,7 @@ This is a monorepo managed with [Turborepo](https://turbo.build) and [pnpm](http
 
 ### Prerequisites
 
-- **Node.js** 18+
+- **Node.js** 24+
 - **pnpm** 10+
 - **PostgreSQL** (for development)
 
@@ -144,19 +144,7 @@ See the [API README](./apps/api/README.md) for the server side.
 
 ## 🔐 Environment Variables
 
-Create a `.env` file in each app directory. Examples:
-
-**API** (`.env` in `apps/api`):
-
-```
-DATABASE_URL=postgresql://user:password@localhost:5432/myfit
-```
-
-**Frontend** (`.env` in `apps/frontend`):
-
-```
-PUBLIC_API_URL=http://localhost:3000
-```
+Copy `.env.example` to `.env` in each app directory (`apps/api` and `apps/frontend`), then fill in the values. The example files list every variable and say which are required.
 
 ## 🏗️ Building for Production
 

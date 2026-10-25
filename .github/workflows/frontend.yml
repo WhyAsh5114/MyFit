@@ -1,10 +1,25 @@
 name: Frontend CI
 
-on: push
+on:
+  push:
+    paths:
+      - 'apps/frontend/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - '.github/workflows/frontend.yml'
+
+# A newer push to the same branch makes the older run obsolete. Runs on the deploy
+# branches finish, so a superseded OTA upload is never cut off halfway.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/v4-turborepo' }}
 
 jobs:
   ci:
-    name: Lint / Check / Build
+    name: Lint / Check / Test / Build
     runs-on: ubuntu-latest
     env:
       PUBLIC_API_URL: http://localhost:3000
@@ -18,7 +33,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
 
       - name: Install dependencies
@@ -32,6 +47,9 @@ jobs:
 
       - name: Type check
         run: pnpm --filter @myfit/frontend run check
+
+      - name: Test
+        run: pnpm --filter @myfit/frontend run test
 
       - name: Build
         if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/v4-turborepo'
