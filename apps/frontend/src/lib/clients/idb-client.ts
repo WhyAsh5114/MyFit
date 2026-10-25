@@ -7,9 +7,13 @@ export type DbClient = SyncIdbClient<Contract>;
 
 const managedDb = createManagedAutoSyncIdbClient<Contract>({
 	contractSpace,
-	dbName: 'myfit',
+	// The sync stores were squashed into one baseline, which an older `myfit` database cannot upgrade to.
+	dbName: 'myfit-v2',
 	extensions: [idbSyncExtension]
 });
+
+/** The schema enums. Available at once, even while prerendering, because reading them never opens IndexedDB. */
+export const enums = managedDb.enums;
 
 /** Migrates on first call, then returns the shared sync-tracked client: `db.orm.*` writes also land in the outbox. */
 export const getDb = (): Promise<DbClient> => managedDb.get();

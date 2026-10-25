@@ -1,6 +1,5 @@
 import { goto } from '$app/navigation';
 import { resetDb, type DbClient } from '$lib/clients/idb-client';
-import { clearPullCursor } from '$lib/features/sync-cursor';
 import { syncWorkerState } from '$lib/features/sync-worker.svelte';
 import type { Session, User } from 'better-auth';
 import { toast } from 'svelte-sonner';
@@ -23,11 +22,10 @@ export async function getOfflineUser(db: DbClient) {
 	return offlineUser;
 }
 
-/** Stops sync, then wipes the local database and pull cursor. The next sign-in starts a new worker on the fresh database. */
+/** Stops sync, then wipes the local database, which holds the pull cursor too. The next sign-in starts a new worker on the fresh database. */
 export async function resetDatabaseState() {
-	syncWorkerState.stop();
+	await syncWorkerState.stop();
 	await resetDb();
-	clearPullCursor();
 }
 
 export async function redirectToLogin(url: URL) {

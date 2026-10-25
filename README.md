@@ -125,11 +125,10 @@ pnpm --filter @myfit/schema schema:sync add-meal-notes
 `schema:sync` runs these steps in order, then formats the generated files:
 
 1. `contract:emit` writes the browser contract.
-2. `migration:plan` plans the IndexedDB migration.
-3. `migration:contract-space` bundles the IndexedDB migration chain for the browser. If you skip this step, the browser sends the old chain and every sync request fails with a contract mismatch.
-4. `migration:preflight` applies the chain to a fake IndexedDB and checks it matches the new contract.
-5. `contract:emit:postgres` writes the server contract.
-6. `migration:postgres:plan` plans the Postgres migration.
+2. `migration:plan` plans the IndexedDB migration and bundles the migration chain for the browser. If the bundle is stale, the browser sends the old chain and every sync request fails with a contract mismatch.
+3. `migration:preflight` applies the chain to a fake IndexedDB and checks it matches the new contract.
+4. `contract:emit:postgres` writes the server contract.
+5. `migration:postgres:plan` plans the Postgres migration.
 
 Commit everything the command changes. When the schema did not change, the command changes nothing.
 

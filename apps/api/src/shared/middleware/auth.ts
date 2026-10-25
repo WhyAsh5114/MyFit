@@ -24,3 +24,13 @@ export function getUserId(c: Context): string {
 	if (!userId) throw new Error('userId not found in context');
 	return userId;
 }
+
+/**
+ * Resolves the signed-in user's id from a raw request, for libraries that take a `Request`
+ * instead of a Hono context. Throws when there is no session, so it never yields an empty scope.
+ */
+export async function requireSessionUserId(request: Request): Promise<string> {
+	const session = await auth.api.getSession({ headers: request.headers });
+	if (!session?.user) throw new Error('No authenticated session');
+	return session.user.id;
+}

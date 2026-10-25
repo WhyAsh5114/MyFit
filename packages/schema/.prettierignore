@@ -3,4 +3,5 @@ migrations
 migrations-postgres
 src/*.generated.*
 src/contract.json
+src/contract.runtime.ts
 src/contract.d.ts
