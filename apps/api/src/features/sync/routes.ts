@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { createSqlSync } from '@prisma-idb/sync-server-sql';
 import { clientContract, serverContract } from '@myfit/schema/server';
 import { authMiddleware, requireSessionUserId } from '../../shared/middleware/auth.js';
+import { requireSyncOwner } from './session-owner.js';
 import { getDb } from '../../../lib/db.js';
 import { writePolicies } from './write-policies.ts';
 
@@ -16,7 +17,7 @@ const syncHandlers = createSqlSync({
 	clientContract,
 	rootModel: 'User',
 	db: getDb,
-	scopeKey: requireSessionUserId,
+	scopeKey: async (request) => requireSyncOwner(request, await requireSessionUserId(request)),
 	writePolicies,
 	maxBatchSize: MAX_PUSH_BATCH_SIZE
 });

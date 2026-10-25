@@ -5,6 +5,7 @@ import { toast } from 'svelte-sonner';
 import { queryClient } from '$lib/clients/query-client';
 import { userKeys } from '$lib/features/user/keys';
 
+/** Updates the OTA preference and refreshes the matching account queries. */
 export const useUpdateAutoUpdate = () =>
 	createMutation(() => ({
 		mutationFn: async ({ userId, autoUpdate }: { userId: string; autoUpdate: boolean }) => {
@@ -14,7 +15,7 @@ export const useUpdateAutoUpdate = () =>
 
 		onSuccess: (_, { userId }) => {
 			queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) });
-			queryClient.invalidateQueries({ queryKey: userKeys.current() });
+			queryClient.invalidateQueries({ queryKey: userKeys.current(userId) });
 		},
 
 		onError: (error) => {

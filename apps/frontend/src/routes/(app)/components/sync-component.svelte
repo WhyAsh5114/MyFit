@@ -16,6 +16,17 @@
 	import { m } from '$lib/paraglide/messages';
 	import { getDb } from '$lib/clients/idb-client';
 	import { onMount } from 'svelte';
+	import { authClient } from '$lib/clients/auth-client';
+	import { accountSession } from '$lib/features/account-session.svelte';
+
+	const session = authClient.useSession();
+	$effect(() => {
+		if ($session.data?.user.id === accountSession.ownerId && accountSession.ready) {
+			syncWorkerState.start();
+		} else {
+			void syncWorkerState.stop();
+		}
+	});
 
 	let hasAnyRetryableUnsynced = $state<boolean>();
 
@@ -26,7 +37,6 @@
 	}
 
 	onMount(() => {
-		syncWorkerState.start();
 		updateOutboxStats();
 		let unsubscribe: (() => void) | undefined;
 		let destroyed = false;

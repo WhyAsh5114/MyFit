@@ -63,6 +63,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Account isolation regression tests
+        run: pnpm --filter @myfit/api run test:sync-owner
+
       - name: Lint & format check
         run: pnpm --filter @myfit/api run lint
 

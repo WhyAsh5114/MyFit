@@ -5,6 +5,7 @@ import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
 import { userKeys } from '../keys';
 
+/** Updates the profile name and refreshes the matching account queries. */
 export const useUpdateUserName = () =>
 	createMutation(() => ({
 		mutationFn: async ({ userId, name }: { userId: string; name: string }) => {
@@ -17,7 +18,7 @@ export const useUpdateUserName = () =>
 				queryKey: userKeys.detail(userId)
 			});
 			queryClient.invalidateQueries({
-				queryKey: userKeys.current()
+				queryKey: userKeys.current(userId)
 			});
 		},
 

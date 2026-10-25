@@ -1,5 +1,5 @@
 import { PUBLIC_API_URL } from '$env/static/public';
-import { getDb, type DbClient } from '$lib/clients/idb-client';
+import { getAccountDatabase, getDb, type DbClient } from '$lib/clients/idb-client';
 import { queryClient } from '$lib/clients/query-client';
 import { invalidatePulledChanges } from './sync-invalidation';
 import {
@@ -14,7 +14,7 @@ const SYNC_WORKER_STATE_KEY = '__myfit_sync_worker_state__';
  * Owns the app's single sync worker and the reactive state the sync indicator reads.
  *
  * The worker is bound to one database client. Call `start()` once the user is signed in and
- * `stop()` before the database is reset, so the next `start()` binds a new worker to the fresh client.
+ * `stop()` before switching accounts, so the next `start()` binds a new worker to the selected account.
  */
 class SyncWorkerState {
 	syncWorker = $state<SyncWorker>();
@@ -47,7 +47,7 @@ class SyncWorkerState {
 	/**
 	 * Stops the worker and forgets it, along with its status and error. The returned promise
 	 * settles once the active cycle of every stopped worker has, including one that an earlier
-	 * `stop()` call is still waiting on, so await it before resetting the database.
+	 * `stop()` call is still waiting on, so await it before switching accounts.
 	 */
 	stop(): Promise<void> {
 		this.pendingStart = undefined;
@@ -57,6 +57,7 @@ class SyncWorkerState {
 		this.syncWorker = undefined;
 		this.syncStatus = undefined;
 		this.lastError = null;
+		this.lastSyncTime = null;
 		if (worker) this.shutdown = Promise.all([this.shutdown, worker.stop()]).then(() => undefined);
 		return this.shutdown;
 	}
@@ -64,7 +65,7 @@ class SyncWorkerState {
 	/**
 	 * Waits for the database to open, then binds and starts a worker on it. Returns without
 	 * doing anything if `stop()` ran in the meantime, so a stopped startup never leaves a
-	 * worker on a database that was reset.
+	 * worker on the previous account database.
 	 */
 	private async bindWorker(attempt: object) {
 		const db = await getDb();
@@ -84,7 +85,8 @@ class SyncWorkerState {
 			...createSyncFetchHandlers({
 				pushUrl: `${PUBLIC_API_URL}/api/sync/push`,
 				pullUrl: `${PUBLIC_API_URL}/api/sync/pull`,
-				credentials: 'include'
+				credentials: 'include',
+				headers: { 'X-Sync-Owner': getAccountDatabase().ownerId! }
 			}),
 			batchSize: 50,
 			intervalMs: 10000,

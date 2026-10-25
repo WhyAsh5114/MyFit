@@ -1,44 +1,55 @@
 import { goto } from '$app/navigation';
-import { resetDb, type DbClient } from '$lib/clients/idb-client';
+import { getAccountDatabase, type DbClient } from '$lib/clients/idb-client';
 import { syncWorkerState } from '$lib/features/sync-worker.svelte';
 import type { Session, User } from 'better-auth';
+import { queryClient } from '$lib/clients/query-client';
+import { accountSession } from '$lib/features/account-session.svelte';
+import { authClient } from '$lib/clients/auth-client';
+import { resolve } from '$app/paths';
 import { toast } from 'svelte-sonner';
 
+/** The authenticated identity cached for local and offline use. */
 type AuthSessionData = {
 	user: User;
 	session: Session;
 };
 
-export async function getCachedUserOnClient(db: DbClient, sessionData: AuthSessionData | null) {
-	const existingUser = sessionData?.user?.id
-		? await db.orm.user.where({ id: sessionData.user.id }).first()
-		: null;
-
-	return { existingUser };
+/** Stops sync before signing out; failed sign-out keeps the account and all local edits available. */
+export async function logout() {
+	accountSession.signingOut = true;
+	accountSession.ready = false;
+	try {
+		await syncWorkerState.stop();
+		await queryClient.cancelQueries();
+		const { error } = await authClient.signOut();
+		if (error) throw new Error(error.message ?? 'Could not sign out');
+		await getAccountDatabase().deactivate();
+		accountSession.ownerId = null;
+		queryClient.clear();
+		await goto(resolve('/login'));
+		return true;
+	} catch (error) {
+		accountSession.ready = getAccountDatabase().ownerId !== null;
+		toast.error(
+			error instanceof Error ? error.message : 'Could not sign out. Your local edits are safe.'
+		);
+		return false;
+	} finally {
+		accountSession.signingOut = false;
+	}
 }
 
-export async function getOfflineUser(db: DbClient) {
-	const offlineUser = await db.orm.user.first();
-	return offlineUser;
-}
-
-/** Stops sync, then wipes the local database, which holds the pull cursor too. The next sign-in starts a new worker on the fresh database. */
-export async function resetDatabaseState() {
-	await syncWorkerState.stop();
-	await resetDb();
-}
-
+/** Sends users without a session or offline account to login without deleting any data. */
 export async function redirectToLogin(url: URL) {
-	await resetDatabaseState();
 	const redirect = `${url.pathname}${url.search}${url.hash}`;
-
 	// eslint-disable-next-line svelte/no-navigation-without-resolve
-	goto(`/login?redirect=${encodeURIComponent(redirect)}`);
+	await goto(`/login?redirect=${encodeURIComponent(redirect)}`);
 	return toast.info('Please login to continue');
 }
 
 const DEFAULT_MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
 
+/** Caches the server identity without tracking it, then seeds meals for new accounts. */
 export async function createUserForCurrentSession(db: DbClient, sessionData: AuthSessionData) {
 	if (sessionData?.user) {
 		// The server already owns this row, so it must not be pushed back through the outbox.

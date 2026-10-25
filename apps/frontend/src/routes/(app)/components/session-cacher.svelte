@@ -1,45 +1,86 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { authClient } from '$lib/clients/auth-client';
-	import { getDb } from '$lib/clients/idb-client';
-	import { toast } from 'svelte-sonner';
+	import { getAccountDatabase, OWNER_STORAGE_KEY } from '$lib/clients/idb-client';
+	import { queryClient } from '$lib/clients/query-client';
+	import { accountSession } from '$lib/features/account-session.svelte';
+	import { syncWorkerState } from '$lib/features/sync-worker.svelte';
+	import { onMount, untrack, type Snippet } from 'svelte';
 	import { isUnprotectedRoute } from './constants';
-	import {
-		createUserForCurrentSession,
-		getCachedUserOnClient,
-		getOfflineUser,
-		redirectToLogin
-	} from './db';
+	import { createUserForCurrentSession, redirectToLogin } from './db';
 
+	let { children }: { children: Snippet } = $props();
 	const session = authClient.useSession();
-	let creatingUser = $state(false);
+	const sessionOwner = $derived($session.data?.user.id);
+	const canShowContent = $derived(
+		!$session.isPending &&
+			!accountSession.signingOut &&
+			accountSession.ready &&
+			(!sessionOwner || sessionOwner === accountSession.ownerId) &&
+			(accountSession.ownerId !== null || isUnprotectedRoute(page.url.pathname))
+	);
+	let error = $state<string | null>(null);
+	let transition = Promise.resolve();
 
 	$effect(() => {
-		if (page.url) {
-			syncIdbWithSession().catch((error) => {
-				console.error('Error syncing session:', error);
-				toast.error('Failed to sync session');
+		const owner = sessionOwner;
+		if ($session.isPending || accountSession.signingOut) return;
+		const sessionData = untrack(() => $session.data);
+		let cancelled = false;
+		accountSession.ready = false;
+		error = null;
+
+		// Serialize switches so an older database open cannot overtake a newer session.
+		transition = transition
+			.then(async () => {
+				if (cancelled) return;
+				await syncWorkerState.stop();
+				await queryClient.cancelQueries();
+				queryClient.clear();
+				const accounts = getAccountDatabase();
+				const db = await accounts.activate(owner);
+				if (cancelled) return;
+				if (db && sessionData && !(await db.orm.user.where({ id: owner }).first())) {
+					await createUserForCurrentSession(db, sessionData);
+				}
+				if (cancelled) return;
+				accountSession.ownerId = accounts.ownerId;
+				accountSession.ready = true;
+			})
+			.catch((cause) => {
+				if (!cancelled)
+					error = cause instanceof Error ? cause.message : 'Failed to open local account';
 			});
+
+		return () => {
+			cancelled = true;
+		};
+	});
+
+	$effect(() => {
+		if (accountSession.ready && !accountSession.ownerId && !isUnprotectedRoute(page.url.pathname)) {
+			void redirectToLogin(page.url);
 		}
 	});
 
-	async function syncIdbWithSession() {
-		if ($session.isPending || $session.isRefetching) return;
-		const db = await getDb();
-		const { existingUser } = await getCachedUserOnClient(db, $session.data);
-
-		if (!$session.data && !existingUser) {
-			if (await getOfflineUser(db)) return;
-
-			if (!isUnprotectedRoute(page.url.pathname)) {
-				await redirectToLogin(page.url);
-			}
+	onMount(() => {
+		/** Hides stale views immediately when another tab logs out or selects another account. */
+		function onAccountChange(event: StorageEvent) {
+			if (event.key !== OWNER_STORAGE_KEY && event.key !== null) return;
+			accountSession.ready = false;
+			void syncWorkerState.stop();
+			queryClient.clear();
+			window.location.reload();
 		}
-
-		if ($session.data && !existingUser && !creatingUser) {
-			creatingUser = true;
-			await createUserForCurrentSession(db, $session.data);
-			creatingUser = false;
-		}
-	}
+		window.addEventListener('storage', onAccountChange);
+		return () => window.removeEventListener('storage', onAccountChange);
+	});
 </script>
+
+{#if error}
+	<p role="alert" class="p-4">{error}</p>
+{:else if canShowContent}
+	{#key accountSession.ownerId}
+		{@render children()}
+	{/key}
+{/if}

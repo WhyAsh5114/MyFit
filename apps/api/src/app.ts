@@ -15,7 +15,7 @@ app.use(
 	'*',
 	cors({
 		origin: env.TRUSTED_ORIGINS,
-		allowHeaders: ['Content-Type', 'Authorization'],
+		allowHeaders: ['Content-Type', 'Authorization', 'X-Sync-Owner'],
 		allowMethods: ['POST', 'GET', 'OPTIONS'],
 		exposeHeaders: ['Content-Length'],
 		maxAge: 600,

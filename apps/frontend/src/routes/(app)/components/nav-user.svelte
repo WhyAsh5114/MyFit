@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { authClient } from '$lib/clients/auth-client';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -11,7 +10,7 @@
 	import BadgeCheckIcon from '@lucide/svelte/icons/badge-check';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
-	import { resetDatabaseState } from './db';
+	import { logout as signOut } from './db';
 	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
 	import posthog from 'posthog-js';
 
@@ -30,11 +29,12 @@
 		return initials.toUpperCase();
 	}
 
+	/** Resets analytics after a successful sign-out. */
 	async function logout() {
-		posthog.capture('user_logged_out');
-		posthog.reset();
-		await resetDatabaseState();
-		await authClient.signOut();
+		if (await signOut()) {
+			posthog.capture('user_logged_out');
+			posthog.reset();
+		}
 	}
 </script>
 
