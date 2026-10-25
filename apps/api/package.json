@@ -15,6 +15,7 @@
 		"check": "tsc --noEmit",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
+		"test:sync": "node --test src/features/sync/user-write-policy.test.ts",
 		"test:nutrition-search": "node --test src/features/nutrition-data/search-foods.test.ts"
 	},
 	"dependencies": {
