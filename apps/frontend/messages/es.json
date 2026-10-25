@@ -74,5 +74,11 @@
 	"ota.card.checkForUpdates": "Buscar actualizaciones",
 	"ota.card.checking": "Comprobando…",
 	"ota.card.autoUpdate": "Actualización automática",
-	"ota.card.autoUpdateDescription": "Descargar actualizaciones en segundo plano"
+	"ota.card.autoUpdateDescription": "Descargar actualizaciones en segundo plano",
+	"account.loggingOut": "Guardando cambios y cerrando sesión…",
+	"account.logoutFailed": "No se pudo cerrar sesión",
+	"account.logoutUnsynced": "Tus datos locales siguen en este dispositivo. Reintenta para guardar los cambios pendientes, cancela para seguir trabajando o descarta los cambios sin sincronizar y cierra sesión. Los cambios descartados no se pueden recuperar.",
+	"account.logoutCancel": "Cancelar",
+	"account.logoutRetry": "Reintentar cierre de sesión",
+	"account.logoutDiscard": "Descartar cambios y cerrar sesión"
 }

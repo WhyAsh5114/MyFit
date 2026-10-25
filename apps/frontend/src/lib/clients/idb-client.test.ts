@@ -5,6 +5,7 @@ import { createManagedAutoSyncIdbClient } from '@prisma-idb/sync-extension-idb/c
 import { idbSyncExtension } from '@prisma-idb/sync-extension-idb/control';
 import { contractSpace, type Contract } from '@myfit/schema/client';
 import { AccountDatabase, OWNER_STORAGE_KEY, type DbClient } from './idb-client.ts';
+import { flushLogoutChanges, logoutAccount } from '../features/logout.ts';
 
 /** Supplies persistent storage shared by simulated tabs without requiring a browser. */
 function createStorage() {
@@ -40,39 +41,152 @@ afterEach(async () => {
 	}
 });
 
-test('logout preserves an offline edit and its outbox until its owner signs in again', async () => {
+/** Queues a realistic edit and uses the actual sync worker to exercise logout ordering. */
+async function createOfflineAccount() {
 	const storage = createStorage();
 	const accounts = new AccountDatabase(storage);
-	try {
-		const db = (await accounts.activate('user-a'))!;
-		await cacheUser(db, 'user-a');
-		await db.orm.activityEntry.create({
-			id: 'offline-walk',
-			userId: 'user-a',
-			name: 'Walk',
-			performedAt: new Date(),
-			calories: 100,
-			quantity: 1,
-			quantityUnit: 'session'
-		});
-		assert.equal(await db.outbox.pendingCount(), 1);
+	const db = (await accounts.activate('user-a'))!;
+	await cacheUser(db, 'user-a');
+	await db.orm.meal.create({ name: 'Offline meal', sortOrder: 0, userId: 'user-a' });
+	return { storage, accounts, db };
+}
 
-		await accounts.deactivate();
+/** Exercises real outbox acknowledgement with an in-memory server transport. */
+async function syncChanges(
+	db: DbClient,
+	pushHandler: Parameters<DbClient['createSyncWorker']>[0]['pushHandler'] = async (events) =>
+		events.map(({ id }) => ({ id, success: true }))
+) {
+	await flushLogoutChanges(
+		db.createSyncWorker({ pushHandler, pullHandler: async () => [], backoffBaseMs: 0 })
+	);
+}
+
+test('logout saves pending edits before signing out, then deletes account storage', async () => {
+	const { storage, accounts, db } = await createOfflineAccount();
+	const savedMeals: unknown[] = [];
+	try {
+		await logoutAccount(accounts, {
+			sync: (db) =>
+				syncChanges(db, async (events) => {
+					savedMeals.push(...events.map(({ payload }) => payload));
+					return events.map(({ id }) => ({ id, success: true }));
+				}),
+			signOut: async () => {
+				assert.equal(await db.outbox.pendingCount(), 0);
+				assert.equal(savedMeals.length, 1);
+				assert.equal((await db.orm.meal.all())[0]?.name, 'Offline meal');
+			}
+		});
+		assert.equal(
+			(await indexedDB.databases()).some(({ name }) => name?.startsWith('myfit:account:')),
+			false
+		);
 		await assert.rejects(accounts.get(), /No active local account/);
 		const reloaded = new AccountDatabase(storage);
-		assert.equal(await reloaded.activate(), null, 'explicit logout disables offline access');
+		assert.equal(await reloaded.activate(), null);
 		try {
 			const reopened = (await reloaded.activate('user-a'))!;
-			assert.equal(
-				(await reopened.orm.activityEntry.where({ id: 'offline-walk' }).first())?.calories,
-				100
-			);
-			assert.equal(await reopened.outbox.pendingCount(), 1);
+			assert.deepEqual(await reopened.orm.meal.all(), []);
+			assert.deepEqual(await reopened.orm.user.all(), []);
+			assert.equal(await reopened.outbox.pendingCount(), 0);
 		} finally {
-			await reloaded.deactivate();
+			await reloaded.close();
 		}
 	} finally {
-		await accounts.deactivate();
+		await accounts.close();
+	}
+});
+
+test('failed sync keeps the session and edits available offline, and a retry can finish logout', async () => {
+	const { storage, accounts, db } = await createOfflineAccount();
+	let signedIn = true;
+	try {
+		await assert.rejects(
+			logoutAccount(accounts, {
+				sync: (db) =>
+					syncChanges(db, async () => {
+						throw new Error('Offline');
+					}),
+				signOut: async () => {
+					signedIn = false;
+				}
+			}),
+			/Offline/
+		);
+		assert.equal(signedIn, true);
+		assert.equal(await db.outbox.pendingCount(), 1);
+		await accounts.close();
+		const reloaded = new AccountDatabase(storage);
+		try {
+			const offline = (await reloaded.activate())!;
+			assert.equal((await offline.orm.meal.all())[0]?.name, 'Offline meal');
+			assert.equal(await offline.outbox.pendingCount(), 1);
+			await logoutAccount(reloaded, {
+				sync: syncChanges,
+				signOut: async () => {
+					signedIn = false;
+				}
+			});
+			assert.equal(signedIn, false);
+		} finally {
+			await reloaded.close();
+		}
+	} finally {
+		await accounts.close();
+	}
+});
+
+test('a permanent push rejection blocks logout even though the pending outbox becomes empty', async () => {
+	const { accounts, db } = await createOfflineAccount();
+	let signedIn = true;
+	try {
+		await assert.rejects(
+			logoutAccount(accounts, {
+				sync: (db) =>
+					syncChanges(db, async (events) =>
+						events.map(({ id }) => ({
+							id,
+							success: false,
+							retryable: false,
+							error: 'Not allowed',
+							record: null
+						}))
+					),
+				signOut: async () => {
+					signedIn = false;
+				}
+			}),
+			/could not be saved/
+		);
+		assert.equal(signedIn, true);
+		assert.equal(await db.outbox.pendingCount(), 0);
+		assert.equal((await (await accounts.get()).orm.user.all())[0]?.id, 'user-a');
+	} finally {
+		await accounts.close();
+	}
+});
+
+test('explicit discard deletes unsynced edits; failed sign-out still preserves them', async () => {
+	const { accounts, db } = await createOfflineAccount();
+	const options = {
+		discard: true,
+		sync: syncChanges,
+		signOut: async () => {
+			throw new Error('Sign-out failed');
+		}
+	};
+	try {
+		await assert.rejects(logoutAccount(accounts, options), /Sign-out failed/);
+		assert.equal(await db.outbox.pendingCount(), 1);
+		assert.equal((await db.orm.meal.all())[0]?.name, 'Offline meal');
+		await logoutAccount(accounts, { ...options, signOut: async () => {} });
+		assert.equal(
+			(await indexedDB.databases()).some(({ name }) => name?.startsWith('myfit:account:')),
+			false
+		);
+	} finally {
+		await accounts.close();
 	}
 });
 
@@ -108,8 +222,14 @@ test('expired legacy account stays offline-capable and never shares rows or queu
 		);
 		assert.equal((await original.orm.meal.all())[0]?.name, 'Offline meal');
 		assert.equal(await original.outbox.pendingCount(), 1);
+		await logoutAccount(accounts, { discard: true, sync: syncChanges, signOut: async () => {} });
+		assert.equal(
+			(await indexedDB.databases()).some(({ name }) => name === 'myfit'),
+			false
+		);
+		assert.equal(await accounts.activate(), null);
 	} finally {
-		await accounts.deactivate();
+		await accounts.close();
 	}
 });
 
@@ -142,6 +262,6 @@ test('a tab loses database access when another tab changes the active owner', as
 		storage.setItem(OWNER_STORAGE_KEY, 'user-b');
 		await assert.rejects(accounts.get(), /No active local account/);
 	} finally {
-		await accounts.deactivate();
+		await accounts.close();
 	}
 });

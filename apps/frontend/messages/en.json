@@ -181,5 +181,11 @@
 	"ota.card.checkForUpdates": "Check for updates",
 	"ota.card.checking": "Checking…",
 	"ota.card.autoUpdate": "Auto-update",
-	"ota.card.autoUpdateDescription": "Download updates silently in the background"
+	"ota.card.autoUpdateDescription": "Download updates silently in the background",
+	"account.loggingOut": "Saving changes and logging out…",
+	"account.logoutFailed": "Could not finish logging out",
+	"account.logoutUnsynced": "Your local data is still on this device. Retry to save pending changes, cancel to keep working, or discard unsynced changes and log out. Discarded changes cannot be recovered.",
+	"account.logoutCancel": "Cancel",
+	"account.logoutRetry": "Retry logout",
+	"account.logoutDiscard": "Discard changes and log out"
 }

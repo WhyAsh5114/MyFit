@@ -21,7 +21,7 @@ function createDatabase(dbName: string) {
 /** The schema enums are available during prerendering without opening IndexedDB. */
 export const enums = createDatabase('myfit').enums;
 
-/** Keeps each account's rows, outbox and pull cursor together, including after logout. */
+/** Keeps each account's rows, outbox and pull cursor together until explicit logout. */
 export class AccountDatabase {
 	ownerId: string | null = null;
 	private database: ReturnType<typeof createDatabase> | undefined;
@@ -90,11 +90,22 @@ export class AccountDatabase {
 		return db;
 	}
 
-	/** Removes offline access on explicit logout while preserving every account's unsynced edits. */
-	async deactivate(): Promise<void> {
-		this.storage.setItem(OWNER_STORAGE_KEY, '');
+	/** Closes the connection without deleting offline edits or changing the remembered account. */
+	async close(): Promise<void> {
 		this.ownerId = null;
 		await this.database?.close();
+		this.database = undefined;
+	}
+
+	/** Deletes the active account database after sync or an explicit discard decision. */
+	async clear(): Promise<void> {
+		const owner = this.ownerId;
+		this.storage.setItem(OWNER_STORAGE_KEY, '');
+		if (owner && this.storage.getItem(LEGACY_OWNER_STORAGE_KEY) === owner) {
+			this.storage.setItem(LEGACY_OWNER_STORAGE_KEY, '');
+		}
+		this.ownerId = null;
+		await this.database?.reset();
 		this.database = undefined;
 	}
 }

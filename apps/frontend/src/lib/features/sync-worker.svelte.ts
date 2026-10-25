@@ -2,6 +2,7 @@ import { PUBLIC_API_URL } from '$env/static/public';
 import { getAccountDatabase, getDb, type DbClient } from '$lib/clients/idb-client';
 import { queryClient } from '$lib/clients/query-client';
 import { invalidatePulledChanges } from './sync-invalidation';
+import { flushLogoutChanges } from './logout';
 import {
 	createSyncFetchHandlers,
 	type SyncWorker,
@@ -77,6 +78,11 @@ class SyncWorkerState {
 		this.syncWorker = worker;
 		this.syncStatus = worker.status;
 		worker.start();
+	}
+
+	/** Flushes pending edits using the same account-bound transport as background sync. */
+	async flushForLogout(db: DbClient): Promise<void> {
+		await flushLogoutChanges(this.createWorker(db));
 	}
 
 	/** Creates a worker that pushes and pulls through the API and syncs again when the browser comes back online. */

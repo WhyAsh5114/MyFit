@@ -7,6 +7,7 @@ import { accountSession } from '$lib/features/account-session.svelte';
 import { authClient } from '$lib/clients/auth-client';
 import { resolve } from '$app/paths';
 import { toast } from 'svelte-sonner';
+import { logoutAccount } from '$lib/features/logout';
 
 /** The authenticated identity cached for local and offline use. */
 type AuthSessionData = {
@@ -14,29 +15,41 @@ type AuthSessionData = {
 	session: Session;
 };
 
-/** Stops sync before signing out; failed sign-out keeps the account and all local edits available. */
-export async function logout() {
+/** Syncs edits before sign-out and keeps the logout choices visible when any step fails. */
+export async function logout(discard = false) {
+	if (accountSession.logoutBusy) return false;
 	accountSession.signingOut = true;
+	accountSession.logoutBusy = true;
+	accountSession.logoutError = null;
 	accountSession.ready = false;
 	try {
 		await syncWorkerState.stop();
 		await queryClient.cancelQueries();
-		const { error } = await authClient.signOut();
-		if (error) throw new Error(error.message ?? 'Could not sign out');
-		await getAccountDatabase().deactivate();
+		await logoutAccount(getAccountDatabase(), {
+			discard,
+			sync: (db) => syncWorkerState.flushForLogout(db),
+			signOut: async () => {
+				const { error } = await authClient.signOut();
+				if (error) throw new Error(error.message ?? 'Could not sign out');
+			}
+		});
 		accountSession.ownerId = null;
 		queryClient.clear();
 		await goto(resolve('/login'));
+		accountSession.signingOut = false;
 		return true;
 	} catch (error) {
-		accountSession.ready = getAccountDatabase().ownerId !== null;
-		toast.error(
-			error instanceof Error ? error.message : 'Could not sign out. Your local edits are safe.'
-		);
+		accountSession.logoutError = error instanceof Error ? error.message : 'Could not sign out.';
 		return false;
 	} finally {
-		accountSession.signingOut = false;
+		accountSession.logoutBusy = false;
 	}
+}
+
+/** Returns to the account without deleting pending edits after a failed logout. */
+export function cancelLogout() {
+	accountSession.logoutError = null;
+	accountSession.signingOut = false;
 }
 
 /** Sends users without a session or offline account to login without deleting any data. */

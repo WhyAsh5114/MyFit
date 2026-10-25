@@ -7,7 +7,10 @@
 	import { syncWorkerState } from '$lib/features/sync-worker.svelte';
 	import { onMount, untrack, type Snippet } from 'svelte';
 	import { isUnprotectedRoute } from './constants';
-	import { createUserForCurrentSession, redirectToLogin } from './db';
+	import { cancelLogout, createUserForCurrentSession, logout, redirectToLogin } from './db';
+	import { Button } from '$lib/components/ui/button';
+	import { m } from '$lib/paraglide/messages';
+	import posthog from 'posthog-js';
 
 	let { children }: { children: Snippet } = $props();
 	const session = authClient.useSession();
@@ -63,6 +66,14 @@
 		}
 	});
 
+	/** Resets analytics when a retry or an explicit discard finishes logout. */
+	async function retryLogout(discard = false) {
+		if (await logout(discard)) {
+			posthog.capture('user_logged_out');
+			posthog.reset();
+		}
+	}
+
 	onMount(() => {
 		/** Hides stale views immediately when another tab logs out or selects another account. */
 		function onAccountChange(event: StorageEvent) {
@@ -77,7 +88,24 @@
 	});
 </script>
 
-{#if error}
+{#if accountSession.signingOut}
+	<section class="mx-auto flex max-w-md flex-col gap-4 p-6" aria-busy={accountSession.logoutBusy}>
+		{#if accountSession.logoutError}
+			<h1 class="text-lg font-semibold">{m['account.logoutFailed']()}</h1>
+			<p>{m['account.logoutUnsynced']()}</p>
+			<p role="alert" class="text-sm text-muted-foreground">{accountSession.logoutError}</p>
+			<div class="flex flex-wrap gap-2">
+				<Button variant="outline" onclick={cancelLogout}>{m['account.logoutCancel']()}</Button>
+				<Button onclick={() => retryLogout()}>{m['account.logoutRetry']()}</Button>
+				<Button variant="destructive" onclick={() => retryLogout(true)}>
+					{m['account.logoutDiscard']()}
+				</Button>
+			</div>
+		{:else}
+			<p role="status">{m['account.loggingOut']()}</p>
+		{/if}
+	</section>
+{:else if error}
 	<p role="alert" class="p-4">{error}</p>
 {:else if canShowContent}
 	{#key accountSession.ownerId}

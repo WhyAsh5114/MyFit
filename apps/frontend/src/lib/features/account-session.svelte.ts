@@ -2,5 +2,7 @@
 export const accountSession = $state({
 	ownerId: null as string | null,
 	ready: false,
-	signingOut: false
+	signingOut: false,
+	logoutBusy: false,
+	logoutError: null as string | null
 });

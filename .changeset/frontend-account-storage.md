@@ -2,4 +2,4 @@
 '@myfit/frontend': patch
 ---
 
-Preserve offline edits and pending sync work on logout. Isolate account databases, bind the existing local database to its cached owner, and resolve the current user and query cache only after account selection.
+Sync pending edits before explicit logout, then delete the local account database and clear query caches. Offer retry, cancel, or explicit discard when logout cannot finish. Keep offline edits on session expiry and isolate each account's storage.
