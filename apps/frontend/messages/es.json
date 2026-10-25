@@ -58,6 +58,8 @@
 	"sync.statusPulling": "Descargando",
 	"sync.statusPushing": "Subiendo",
 	"sync.statusStopped": "Detenido",
+	"sync.statusError": "Error",
+	"sync.syncNow": "Sincronizar ahora",
 	"sync.statusConnecting": "Conectando",
 	"sync.lastSynced": "Último sincronizado",
 	"sync.neverSynced": "Nunca sincronizado",
