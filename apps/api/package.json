@@ -15,10 +15,8 @@
 		"check": "tsc --noEmit",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"bench:nutrition-search": "node src/features/nutrition-data/search-foods.bench.ts",
-		"test:nutrition-seed": "node --test prisma/seed/open-food-facts/*.test.ts",
-		"test:sync": "node --test src/features/sync/user-write-policy.test.ts",
-		"test:nutrition-search": "node --test src/features/nutrition-data/search-foods.test.ts"
+		"test": "vitest run",
+		"bench:nutrition-search": "node src/features/nutrition-data/search-foods.bench.ts"
 	},
 	"dependencies": {
 		"@ai-sdk/openai-compatible": "^2.0.87",
@@ -43,6 +41,7 @@
 		"chalk": "^5.6.2",
 		"csv-parse": "^7.0.3",
 		"pg-copy-streams": "^7.0.0",
-		"typescript": "^6.0.3"
+		"typescript": "^6.0.3",
+		"vitest": "^5.0.5"
 	}
 }

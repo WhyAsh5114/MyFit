@@ -6,9 +6,8 @@ import type { ServerContract } from '@myfit/schema/server';
 
 /** Create an isolated food table shared by integration tests and the benchmark. */
 export async function createSearchFixture() {
-	const databaseUrl = process.env.NUTRITION_SEARCH_TEST_DATABASE_URL;
-	if (!databaseUrl)
-		throw new Error('Set NUTRITION_SEARCH_TEST_DATABASE_URL to a test Postgres database.');
+	const databaseUrl = process.env.TEST_DATABASE_URL;
+	if (!databaseUrl) throw new Error('Set TEST_DATABASE_URL to a test Postgres database.');
 	const schema = `nutrition_search_test_${randomUUID().replaceAll('-', '')}`;
 	const admin = new Client({ connectionString: databaseUrl });
 	const url = new URL(databaseUrl);
