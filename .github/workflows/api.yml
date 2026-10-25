@@ -4,9 +4,11 @@ on:
   push:
     paths:
       - 'apps/api/**'
-      # The root ESLint config imports the frontend's Svelte config and ignore file.
+      # The root ESLint config imports the frontend's Svelte config and ignore file,
+      # and the root Prettier config reads the frontend's Tailwind stylesheet.
       - 'apps/frontend/svelte.config.js'
       - 'apps/frontend/.gitignore'
+      - 'apps/frontend/src/routes/layout.css'
       - 'packages/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
