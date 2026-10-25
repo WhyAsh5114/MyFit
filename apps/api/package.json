@@ -18,26 +18,26 @@
 		"test:nutrition-search": "node --test src/features/nutrition-data/search-foods.test.ts"
 	},
 	"dependencies": {
-		"@ai-sdk/openai-compatible": "^2.0.48",
+		"@ai-sdk/openai-compatible": "^2.0.87",
 		"@hono/zod-validator": "^0.8.0",
 		"@myfit/schema": "workspace:*",
 		"@myfit/shared": "workspace:*",
 		"@prisma-idb/sync-server-sql": "^0.9.0",
 		"@prisma/orm-postgres": "8.0.0-rc.18",
 		"ai": "^6.0.197",
-		"better-auth": "^1.6.15",
+		"better-auth": "^1.6.33",
 		"dotenv": "^17.4.2",
-		"hono": "^4.12.24",
+		"hono": "^4.13.13",
 		"pg": "^8.21.0",
 		"resend": "^6.12.4",
-		"zod": "^4.4.3"
+		"zod": "^4.6.7"
 	},
 	"devDependencies": {
 		"@types/bun": "^1.4.3",
 		"@types/pg": "^8.20.0",
 		"@types/pg-copy-streams": "^1.2.5",
 		"chalk": "^5.6.2",
-		"csv-parse": "^6.2.1",
+		"csv-parse": "^7.0.3",
 		"pg-copy-streams": "^7.0.0",
 		"typescript": "^6.0.3"
 	}
