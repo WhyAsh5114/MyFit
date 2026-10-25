@@ -10,8 +10,8 @@ import idbDriver from '@prisma-idb/driver-idb/control';
  * Browser (IndexedDB) side. `projection: "client"` drops every
  * `@idb.exclude` member so server-only state (auth tables) never reaches the bundle.
  *
- * `pnpm schema:sync <name>` runs `contract:emit`, `migration:plan`,
- * `migration:contract-space` and `migration:preflight` in that order.
+ * `pnpm schema:sync <name>` runs `contract:emit`, `migration:plan` and
+ * `migration:preflight` in that order.
  */
 export default definePrismaConfig({
 	orm: ormConfig({

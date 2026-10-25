@@ -1,9 +1,8 @@
 import { PUBLIC_API_URL } from '$env/static/public';
 import { getDb, type DbClient } from '$lib/clients/idb-client';
 import { queryClient } from '$lib/clients/query-client';
-import { loadPullCursor, savePullCursor } from './sync-cursor';
+import { invalidatePulledChanges } from './sync-invalidation';
 import {
-	ContractMismatchError,
 	createSyncFetchHandlers,
 	type SyncWorker,
 	type SyncWorkerStatus
@@ -23,68 +22,73 @@ class SyncWorkerState {
 	lastSyncTime = $state<Date | null>(null);
 	lastError = $state<string | null>(null);
 
-	/** Bumped by every `start()` and `stop()`, so a start that was overtaken while awaiting the database can bail out. */
-	private generation = 0;
+	/**
+	 * Identifies the startup that is waiting for the database. `stop()` clears it, so an overtaken
+	 * startup sees that it is no longer current and does nothing, even if a newer one began meanwhile.
+	 */
+	private pendingStart: object | undefined;
+	/** Settles once every worker that `stop()` has detached has finished its active cycle. */
+	private shutdown: Promise<void> = Promise.resolve();
 	private unsubscribe: Array<() => void> = [];
 
 	/** Binds a new worker to the current database and starts it. Does nothing if one is already running. */
 	start() {
-		if (this.syncWorker) return;
-		const generation = ++this.generation;
-		void this.bindWorker(generation).catch((error) => {
+		if (this.syncWorker || this.pendingStart) return;
+		const attempt = {};
+		this.pendingStart = attempt;
+		void this.bindWorker(attempt).catch((error) => {
 			console.error('Failed to start sync worker:', error);
+			if (this.pendingStart !== attempt) return;
+			this.pendingStart = undefined;
 			this.lastError = error instanceof Error ? error.message : String(error);
 		});
 	}
 
-	/** Stops the worker and forgets it, along with its status and error. */
-	stop() {
-		this.generation++;
+	/**
+	 * Stops the worker and forgets it, along with its status and error. The returned promise
+	 * settles once the active cycle of every stopped worker has, including one that an earlier
+	 * `stop()` call is still waiting on, so await it before resetting the database.
+	 */
+	stop(): Promise<void> {
+		this.pendingStart = undefined;
 		this.unsubscribe.forEach((off) => off());
 		this.unsubscribe = [];
-		this.syncWorker?.stop();
+		const worker = this.syncWorker;
 		this.syncWorker = undefined;
 		this.syncStatus = undefined;
 		this.lastError = null;
+		if (worker) this.shutdown = Promise.all([this.shutdown, worker.stop()]).then(() => undefined);
+		return this.shutdown;
 	}
 
 	/**
 	 * Waits for the database to open, then binds and starts a worker on it. Returns without
-	 * doing anything if `stop()` or another `start()` ran in the meantime, so a superseded
-	 * startup never leaves a worker on a database that was reset.
+	 * doing anything if `stop()` ran in the meantime, so a stopped startup never leaves a
+	 * worker on a database that was reset.
 	 */
-	private async bindWorker(generation: number) {
+	private async bindWorker(attempt: object) {
 		const db = await getDb();
-		if (generation !== this.generation) return;
+		if (this.pendingStart !== attempt) return;
+		this.pendingStart = undefined;
 
-		const worker = this.createWorker(db, generation);
+		const worker = this.createWorker(db);
 		this.unsubscribe = this.listenTo(worker);
 		this.syncWorker = worker;
 		this.syncStatus = worker.status;
 		worker.start();
 	}
 
-	/**
-	 * Creates a worker that pushes and pulls through the API, resuming from the saved pull cursor.
-	 *
-	 * `stop()` does not cancel a cycle that is already running, so the callbacks of an
-	 * older `generation` do nothing. Otherwise that cycle could write its cursor after the
-	 * database reset cleared it, and the next account would skip history.
-	 */
-	private createWorker(db: DbClient, generation: number): SyncWorker {
-		const isCurrent = () => generation === this.generation;
+	/** Creates a worker that pushes and pulls through the API and syncs again when the browser comes back online. */
+	private createWorker(db: DbClient): SyncWorker {
 		return db.createSyncWorker({
 			...createSyncFetchHandlers({
 				pushUrl: `${PUBLIC_API_URL}/api/sync/push`,
 				pullUrl: `${PUBLIC_API_URL}/api/sync/pull`,
 				credentials: 'include'
 			}),
-			getCursor: loadPullCursor,
-			setCursor: (changelogId) => {
-				if (isCurrent()) savePullCursor(changelogId);
-			},
 			batchSize: 50,
-			intervalMs: 10000
+			intervalMs: 10000,
+			syncOnReconnect: true
 		});
 	}
 
@@ -95,7 +99,7 @@ class SyncWorkerState {
 				this.syncStatus = status;
 			}),
 			worker.on('error', (error) => {
-				if (!(error instanceof ContractMismatchError)) this.lastError = error.message;
+				this.lastError = error.message;
 			}),
 			worker.on('contractmismatch', () => {
 				this.lastError = 'This version of the app is out of date. Reload to keep syncing.';
@@ -108,12 +112,10 @@ class SyncWorkerState {
 				if (failed === 0 && !pullBlocked) this.lastSyncTime = new Date();
 				if (stalled) this.lastError = stalled.lastError ?? 'Some changes keep failing to sync.';
 			}),
-			worker.on('pullcompleted', async ({ applied }) => {
+			worker.on('pullcompleted', async ({ changes }) => {
 				this.lastSyncTime = new Date();
 				this.lastError = null;
-				if (applied > 0) {
-					await queryClient.invalidateQueries({ refetchType: 'active' });
-				}
+				await invalidatePulledChanges(queryClient, changes);
 			})
 		];
 	}

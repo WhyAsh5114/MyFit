@@ -15,19 +15,15 @@
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { getDb } from '$lib/clients/idb-client';
-	import { getNextBatch } from '@prisma-idb/sync-extension-idb/client';
 	import { onMount } from 'svelte';
 
 	let hasAnyRetryableUnsynced = $state<boolean>();
 
-	/** Refreshes the indicator after local edits or a push change the retryable outbox. */
+	/** Refreshes the indicator whenever the outbox gains, loses or fails an event. */
 	async function updateOutboxStats() {
 		const db = await getDb();
-		hasAnyRetryableUnsynced = (await getNextBatch(db.rawClient, { limit: 1 })).length > 0;
+		hasAnyRetryableUnsynced = await db.outbox.hasPending();
 	}
-
-	// A push marks events synced without an `outboxwrite`, so re-check after each push.
-	$effect(() => syncWorkerState.syncWorker?.on('pushcompleted', updateOutboxStats));
 
 	onMount(() => {
 		syncWorkerState.start();
@@ -36,13 +32,13 @@
 		let destroyed = false;
 		getDb().then((db) => {
 			if (destroyed) return;
-			unsubscribe = db.on('outboxwrite', updateOutboxStats);
+			unsubscribe = db.on('outboxchange', updateOutboxStats);
 		});
 
 		return () => {
 			destroyed = true;
 			unsubscribe?.();
-			syncWorkerState.stop();
+			void syncWorkerState.stop();
 		};
 	});
 

@@ -4,12 +4,12 @@
 //
 // The steps depend on each other, so the order matters:
 //   1. emit the browser contract, which the IndexedDB planner reads;
-//   2. plan the IndexedDB migration;
-//   3. bundle the migration chain into `contract-space.generated.ts`. Skipping this
-//      ships the old chain, and every sync request then fails with a contract mismatch;
-//   4. preflight the chain against fake-indexeddb;
-//   5. emit the server contract, which the Postgres planner reads;
-//   6. plan the Postgres migration.
+//   2. plan the IndexedDB migration, which also bundles the migration chain into
+//      `contract-space.generated.ts`. A stale chain makes every sync request fail with a
+//      contract mismatch;
+//   3. preflight the chain against fake-indexeddb;
+//   4. emit the server contract, which the Postgres planner reads;
+//   5. plan the Postgres migration.
 // On an unchanged schema every planner reports "nothing to do" and the working tree stays clean.
 import { spawnSync } from 'node:child_process';
 
@@ -18,6 +18,8 @@ const GENERATED_FILES = [
 	'src/contract.json',
 	'src/contract.d.ts',
 	'src/contract-space.generated.ts',
+	'src/contract.runtime.ts',
+	'src/schema.postgres.generated.runtime.ts',
 	'src/schema.postgres.generated.json',
 	'src/schema.postgres.generated.d.ts'
 ];
@@ -41,7 +43,6 @@ function pnpm(args) {
 
 pnpm(['run', 'contract:emit']);
 pnpm(['run', 'migration:plan', '--name', name]);
-pnpm(['run', 'migration:contract-space']);
 pnpm(['run', 'migration:preflight']);
 pnpm(['run', 'contract:emit:postgres']);
 pnpm(['run', 'migration:postgres:plan', '--name', name]);

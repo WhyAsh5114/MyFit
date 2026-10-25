@@ -6,7 +6,7 @@
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { cn } from '$lib/utils';
 	import type { Row } from '@myfit/schema/client';
-	import type { PageData } from './$types';
+	import { enums } from '$lib/clients/idb-client';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { SaveIcon } from '@lucide/svelte';
 	import DynamicActivity from './dynamic-activity.svelte';
@@ -17,8 +17,6 @@
 	import { resolve } from '$app/paths';
 	import { useActivityPreferences } from '$lib/features/food-diary/activity-preferences/queries/get';
 	import { useSaveActivityPreferences } from '$lib/features/food-diary/activity-preferences/mutations/save';
-
-	let { data }: { data: PageData } = $props();
 
 	type ActivityAdjustmentType = Row<'ActivityPreferences'>['adjustmentType'];
 
@@ -53,7 +51,6 @@
 	let dynamicDataStatus = $state<'unavailable' | 'granted' | 'denied'>();
 
 	let isSaveButtonDisabled = $derived.by(() => {
-		if (data.activityAdjustmentTypes.length === 0) return true;
 		if (selectedOption === 'Static') {
 			return !staticCalories || staticCalories <= 0;
 		}
@@ -98,63 +95,59 @@
 		<Card.Description>How should activity be added to your daily calorie budget?</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		{#if data.activityAdjustmentTypes.length === 0}
-			<Spinner class="mx-auto" />
-		{:else}
-			<RadioGroup.Root bind:value={selectedOption} class="gap-2">
-				{#each data.activityAdjustmentTypes as option (option)}
-					<Label
-						for={option}
-						class="flex items-start rounded-lg border bg-secondary/50 p-3 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/10"
-					>
-						<RadioGroup.Item value={option} id={option} class="mt-0.5 bg-card!" />
-						<div class="flex flex-col items-start gap-1">
-							<p>
-								{option}
-								{#if activityAdjustmentMetadata[option].badge}
-									<Badge
-										variant={activityAdjustmentMetadata[option].badge.variant}
-										class={cn('ml-2 h-5', {
-											'bg-card': activityAdjustmentMetadata[option].badge.variant === 'outline'
-										})}
-									>
-										{activityAdjustmentMetadata[option].badge.text}
-									</Badge>
-								{/if}
-							</p>
-							<p class="text-xs font-normal text-muted-foreground">
-								{activityAdjustmentMetadata[option].description}
-							</p>
-						</div>
-					</Label>
-				{/each}
-			</RadioGroup.Root>
-			<div class="mt-4 flex flex-col gap-2 rounded-lg border bg-secondary/50 p-3">
-				{#if selectedOption === 'Manual'}
-					<p class="text-xs text-muted-foreground">
-						Your calorie budget stays fixed each day. You can log individual exercises on the diary
-						page if you want to account for them.
-					</p>
-				{:else if selectedOption === 'Static'}
-					<InputGroup.Root>
-						<InputGroup.Input
-							placeholder="daily cals"
-							type="number"
-							bind:value={staticCalories}
-							min={0}
-						/>
-						<InputGroup.Addon align="inline-end">
-							<InputGroup.Button>kcal / day</InputGroup.Button>
-						</InputGroup.Addon>
-					</InputGroup.Root>
-					<p class="text-xs text-muted-foreground">
-						Added to your budget every day regardless of actual activity.
-					</p>
-				{:else if selectedOption === 'Dynamic'}
-					<DynamicActivity bind:data={dynamicDataStatus} />
-				{/if}
-			</div>
-		{/if}
+		<RadioGroup.Root bind:value={selectedOption} class="gap-2">
+			{#each enums.__unbound__.ActivityAdjustmentType.values as option (option)}
+				<Label
+					for={option}
+					class="flex items-start rounded-lg border bg-secondary/50 p-3 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/10"
+				>
+					<RadioGroup.Item value={option} id={option} class="mt-0.5 bg-card!" />
+					<div class="flex flex-col items-start gap-1">
+						<p>
+							{option}
+							{#if activityAdjustmentMetadata[option].badge}
+								<Badge
+									variant={activityAdjustmentMetadata[option].badge.variant}
+									class={cn('ml-2 h-5', {
+										'bg-card': activityAdjustmentMetadata[option].badge.variant === 'outline'
+									})}
+								>
+									{activityAdjustmentMetadata[option].badge.text}
+								</Badge>
+							{/if}
+						</p>
+						<p class="text-xs font-normal text-muted-foreground">
+							{activityAdjustmentMetadata[option].description}
+						</p>
+					</div>
+				</Label>
+			{/each}
+		</RadioGroup.Root>
+		<div class="mt-4 flex flex-col gap-2 rounded-lg border bg-secondary/50 p-3">
+			{#if selectedOption === 'Manual'}
+				<p class="text-xs text-muted-foreground">
+					Your calorie budget stays fixed each day. You can log individual exercises on the diary
+					page if you want to account for them.
+				</p>
+			{:else if selectedOption === 'Static'}
+				<InputGroup.Root>
+					<InputGroup.Input
+						placeholder="daily cals"
+						type="number"
+						bind:value={staticCalories}
+						min={0}
+					/>
+					<InputGroup.Addon align="inline-end">
+						<InputGroup.Button>kcal / day</InputGroup.Button>
+					</InputGroup.Addon>
+				</InputGroup.Root>
+				<p class="text-xs text-muted-foreground">
+					Added to your budget every day regardless of actual activity.
+				</p>
+			{:else if selectedOption === 'Dynamic'}
+				<DynamicActivity bind:data={dynamicDataStatus} />
+			{/if}
+		</div>
 	</Card.Content>
 </Card.Root>
 
