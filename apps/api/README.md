@@ -58,6 +58,18 @@ Databases on the current Postgres baseline can migrate in place. The nutrition r
 
 The baseline installs `pg_trgm` and `unaccent` before creating the full-text and trigram indexes on `public.immutable_unaccent(...)`. The wrapper pins the `public.unaccent` dictionary; rebuild those indexes if the dictionary changes.
 
+### Synced User writes
+
+`POST /api/sync/push` allows User updates only to `name`, `image`, and `autoUpdate`. Other User fields, including `email`, `emailVerified`, and `isAnonymous`, belong to Better Auth. Account creation and deletion must also use Better Auth.
+
+The SQL sync adapter enforces this allowlist through its `writePolicies` option. A forbidden User write returns HTTP 403 and rejects the entire batch before any SQL writes. The current client retains that batch for retry. Other model writes and sync pulls retain their existing ownership checks.
+
+Run the HTTP write-policy tests with Node 24 or later. They use the real sync handler and contracts with an in-memory database stand-in, so they need no database or auth credentials:
+
+```bash
+pnpm --filter @myfit/api test:sync
+```
+
 ### Database commands
 
 ```bash

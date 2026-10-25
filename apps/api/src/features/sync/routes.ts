@@ -3,6 +3,7 @@ import { createSqlSync } from '@prisma-idb/sync-server-sql';
 import { clientContract, serverContract } from '@myfit/schema/server';
 import { authMiddleware, requireSessionUserId } from '../../shared/middleware/auth.js';
 import { getDb } from '../../../lib/db.js';
+import { writePolicies } from './write-policies.ts';
 
 // Generous headroom over the client's push batch size (50); just a bound so a
 // crafted request can't force an unbounded number of sequential transactions.
@@ -16,6 +17,7 @@ const syncHandlers = createSqlSync({
 	rootModel: 'User',
 	db: getDb,
 	scopeKey: requireSessionUserId,
+	writePolicies,
 	maxBatchSize: MAX_PUSH_BATCH_SIZE
 });
 
