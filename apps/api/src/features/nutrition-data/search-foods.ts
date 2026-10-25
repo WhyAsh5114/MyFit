@@ -1,7 +1,10 @@
 import type { getDb } from '../../../lib/db.js';
+import { NUTRITION_DATA_SEARCH_MAX_OFFSET } from '../../../lib/constants.ts';
 
+/** Connected database client used by the search query. */
 type Db = Awaited<ReturnType<typeof getDb>>;
 
+const MAX_SEARCH_CANDIDATES = 1_000;
 const MAX_SEARCH_LENGTH = 120;
 const MAX_SEARCH_TOKENS = 8;
 const MIN_SEARCH_TOKEN_LENGTH = 2;
@@ -68,6 +71,8 @@ function prepareSearch(search: string) {
  * Search names and brands with final-word typeahead, then bounded typo recovery.
  * Quotes, OR and exclusions retain web-search semantics and disable recovery.
  * Recovery runs only when the preceding candidate set is empty, across all pages.
+ * Each mode selects a stable popularity pool before scoring or fuzzy word checks.
+ * Broad queries trade recall for bounded ranking work; refine input for rarer foods.
  * Trigram expressions must match the immutable wrapper indexes in schema.prisma.
  * The document expression must match the schema's nutrition_data_search index.
  */
@@ -77,6 +82,14 @@ export async function searchFoods(
 	offset: number,
 	limit: number
 ): Promise<FoodSearchHit[]> {
+	if (
+		!Number.isInteger(offset) ||
+		offset < 0 ||
+		offset >= NUTRITION_DATA_SEARCH_MAX_OFFSET ||
+		!Number.isInteger(limit) ||
+		limit <= 0
+	)
+		return [];
 	const query = prepareSearch(search);
 	if (!query) return [];
 	const { raw, tokens, operators, spellings, fuzzy } = query;
@@ -111,41 +124,50 @@ doc AS NOT MATERIALIZED (
   FROM "NutritionData" n
 ),
 matched AS MATERIALIZED (
-  SELECT n.*, 0 AS mode FROM doc n, query q
+  SELECT n.id FROM doc n, query q
   WHERE querytree(q.tsq) <> 'T' AND n.document @@ q.tsq
+  ORDER BY n."uniqueScans" DESC, n.id ASC
+  LIMIT ${MAX_SEARCH_CANDIDATES}
 ),
 corrected AS MATERIALIZED (
-  SELECT n.*, 1 AS mode FROM doc n, query q
+  SELECT n.id FROM doc n, query q
   WHERE ${!operators}::boolean AND NOT EXISTS (SELECT 1 FROM matched)
     AND numnode(q.tsq) > 0 AND n.document @@ q.corrections
+  ORDER BY n."uniqueScans" DESC, n.id ASC
+  LIMIT ${MAX_SEARCH_CANDIDATES}
 ),
-candidates AS (
-  SELECT * FROM matched
-  UNION ALL SELECT * FROM corrected
-  UNION ALL
-  SELECT n.*, 2 AS mode FROM doc n, query q
+fuzzy_pool AS MATERIALIZED (
+  SELECT n.id FROM "NutritionData" n, query q
   WHERE ${fuzzy}::boolean
     AND numnode(q.tsq) > 0
     AND NOT EXISTS (SELECT 1 FROM matched)
     AND NOT EXISTS (SELECT 1 FROM corrected)
     AND (public.immutable_unaccent(n."productName") % q.raw OR public.immutable_unaccent(n.brands) % q.raw)
+  ORDER BY n."uniqueScans" DESC, n.id ASC
+  LIMIT ${MAX_SEARCH_CANDIDATES}
+),
+candidates AS MATERIALIZED (
+  SELECT id, 0 AS mode FROM matched
+  UNION ALL SELECT id, 1 AS mode FROM corrected
+  UNION ALL
+  SELECT n.id, 2 AS mode FROM fuzzy_pool f JOIN "NutritionData" n ON n.id = f.id CROSS JOIN query q
     -- Require every word so unrelated popular products cannot fill missing intent.
-    AND NOT EXISTS (
+  WHERE NOT EXISTS (
       SELECT 1 FROM jsonb_array_elements_text(q.tokens) AS token(value)
       WHERE strict_word_similarity(public.immutable_unaccent(token.value), public.immutable_unaccent(n."productName" || ' ' || coalesce(n.brands, ''))) < 0.35
     )
 )
 SELECT n.id, n.code, n."productName", n.brands, n."energyKcal_100g",
   n."servingSize", n."servingQuantity"
-FROM candidates n, query q
+FROM candidates c JOIN doc n ON n.id = c.id CROSS JOIN query q
 ORDER BY
   CASE WHEN ${tokens.length === 1 && [...tokens[0]].length === MIN_SEARCH_TOKEN_LENGTH}::boolean
     THEN similarity(q.raw, public.immutable_unaccent(n."productName")) ELSE 0 END DESC,
-  CASE WHEN n.mode = 2 THEN strict_word_similarity(q.raw, public.immutable_unaccent(n."productName"))
+  CASE WHEN c.mode = 2 THEN strict_word_similarity(q.raw, public.immutable_unaccent(n."productName"))
     ELSE ts_rank_cd('{0.1, 0.2, 0.4, 1.0}', n.document,
-      CASE WHEN n.mode = 0 THEN q.tsq ELSE q.corrections END,
+      CASE WHEN c.mode = 0 THEN q.tsq ELSE q.corrections END,
       2) * 0.4 -- Divide cover-density rank by document length.
-      + 0.6 * CASE WHEN n.mode = 0 THEN similarity(q.raw, public.immutable_unaccent(n."productName")) ELSE (
+      + 0.6 * CASE WHEN c.mode = 0 THEN similarity(q.raw, public.immutable_unaccent(n."productName")) ELSE (
         SELECT max(similarity(public.immutable_unaccent(spelling.value), public.immutable_unaccent(n."productName")))
         FROM jsonb_array_elements_text(q.spellings) AS spelling(value)
       ) END
@@ -155,7 +177,7 @@ ORDER BY
       + coalesce(n.completeness, 0) * 0.025
   END DESC,
   n."uniqueScans" DESC, n.completeness DESC, n.id ASC
-LIMIT ${limit} OFFSET ${offset}`
+LIMIT ${Math.min(limit, NUTRITION_DATA_SEARCH_MAX_OFFSET - offset)} OFFSET ${offset}`
 		.returnsRow({
 			id: 'pg/text@1',
 			code: 'pg/text@1',

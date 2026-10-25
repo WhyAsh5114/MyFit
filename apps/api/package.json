@@ -15,6 +15,7 @@
 		"check": "tsc --noEmit",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
+		"bench:nutrition-search": "node src/features/nutrition-data/search-foods.bench.ts",
 		"test:nutrition-search": "node --test src/features/nutrition-data/search-foods.test.ts"
 	},
 	"dependencies": {

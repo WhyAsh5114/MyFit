@@ -1,11 +1,8 @@
 import assert from 'node:assert/strict';
-import { randomUUID } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
 import { after, before, test } from 'node:test';
-import postgres from '@prisma/orm-postgres/runtime';
-import { Client } from 'pg';
-import type { ServerContract } from '@myfit/schema/server';
 import { searchFoods } from './search-foods.ts';
+import { createSearchFixture } from './search-foods.fixture.ts';
+import { nutritionSearchQuery } from './search-query.ts';
 
 // Small synthetic counterparts to the labelled food-search intents and distractors.
 // Keep popular ingredient-based products: they exposed the original ranking failures.
@@ -35,43 +32,23 @@ const foods = [
 	['chocolate-milk', 'Chocolate milk', 'Milbona', 10000]
 ] as const;
 
-const databaseUrl = process.env.NUTRITION_SEARCH_TEST_DATABASE_URL;
-if (!databaseUrl)
-	throw new Error('Set NUTRITION_SEARCH_TEST_DATABASE_URL to a test Postgres database.');
-const schema = `nutrition_search_test_${randomUUID().replaceAll('-', '')}`;
-const admin = new Client({ connectionString: databaseUrl });
-const url = new URL(databaseUrl);
-url.searchParams.set('options', `-csearch_path=${schema},public`);
-const contractJson = JSON.parse(
-	await readFile(
-		new URL('../../../../../packages/schema/src/schema.postgres.generated.json', import.meta.url),
-		'utf8'
-	)
-);
-const db = postgres<ServerContract>({ contractJson });
+let fixture: Awaited<ReturnType<typeof createSearchFixture>>;
+let db: Awaited<ReturnType<typeof createSearchFixture>>['db'];
 
 before(async () => {
-	await admin.connect();
-	await admin.query(`CREATE SCHEMA "${schema}"`);
-	await admin.query(`CREATE TABLE "${schema}"."NutritionData" (
-		id text PRIMARY KEY, code text NOT NULL, "productName" text NOT NULL, brands text,
-		"energyKcal_100g" float8 NOT NULL DEFAULT 100, "servingSize" text,
-		"servingQuantity" float8, "uniqueScans" int NOT NULL, completeness float8 DEFAULT 1
-	)`);
+	fixture = await createSearchFixture();
+	db = fixture.db;
 	for (const [id, name, brands, scans] of foods) {
-		await admin.query(
-			`INSERT INTO "${schema}"."NutritionData" (id, code, "productName", brands, "uniqueScans")
+		await fixture.admin.query(
+			`INSERT INTO ${fixture.table} (id, code, "productName", brands, "uniqueScans")
 			 VALUES ($1, $1, $2, $3, $4)`,
 			[id, name, brands, scans]
 		);
 	}
-	await db.connect({ url: url.toString() });
 });
 
 after(async () => {
-	await db.close();
-	await admin.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`);
-	await admin.end();
+	await fixture?.close();
 });
 
 test('labelled food intents lead their ingredient, brand and fuzzy distractors', async () => {
@@ -166,5 +143,45 @@ test('paginates each candidate mode without falling through to a different mode'
 		assert.ok(all.length >= 2, query);
 		assert.deepEqual(await searchFoods(db, query, 1, 1), all.slice(1, 2), query);
 		assert.deepEqual(await searchFoods(db, query, all.length, 5), [], query);
+	}
+});
+
+test('bounds broad candidate modes and ends pagination without switching recovery modes', async () => {
+	await fixture.admin
+		.query(`INSERT INTO ${fixture.table} (id, code, "productName", brands, "uniqueScans")
+		SELECT 'budget-' || i, 'budget-' || i, 'Lentil soup ' || i, 'Lentil', 100
+		FROM generate_series(1, 1200) i
+		UNION ALL SELECT 'budget-exact', 'budget-exact', 'Lentil', 'Lentil', 1`);
+	try {
+		for (const query of ['lentil', 'lnetil', 'lentel']) {
+			const all = await searchFoods(db, query, 0, 500);
+			assert.equal(all.length, 500, query);
+			assert.deepEqual(await searchFoods(db, query, 0, 1000), all, query);
+			assert.ok(
+				all.every((hit) => hit.id !== 'budget-exact'),
+				query
+			);
+			assert.deepEqual(await searchFoods(db, query, 480, 20), all.slice(480), query);
+			assert.deepEqual(await searchFoods(db, query, 500, 20), [], query);
+		}
+	} finally {
+		await fixture.admin.query(`DELETE FROM ${fixture.table} WHERE id LIKE 'budget-%'`);
+	}
+});
+
+test('validates the pagination ceiling and defaults at the API boundary', () => {
+	assert.equal(nutritionSearchQuery.parse({ search: 'milk' }).offset, 0);
+	assert.equal(nutritionSearchQuery.parse({ search: 'milk', offset: '500' }).offset, 500);
+	for (const offset of ['501', '-1', '1.5', 'Infinity', 'nope']) {
+		assert.equal(nutritionSearchQuery.safeParse({ search: 'milk', offset }).success, false, offset);
+	}
+});
+
+test('rejects invalid pagination for internal callers', async () => {
+	for (const offset of [-1, 501, 1.5, Infinity, NaN]) {
+		assert.deepEqual(await searchFoods(db, 'milk', offset, 20), []);
+	}
+	for (const limit of [-1, 0, 1.5, Infinity, NaN]) {
+		assert.deepEqual(await searchFoods(db, 'milk', 0, limit), []);
 	}
 });
