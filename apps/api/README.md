@@ -52,7 +52,7 @@ import { getDb } from './lib/db.js';
 const db = await getDb();
 ```
 
-Better Auth reads and writes its own tables through the plain `pg` pool in `lib/pool.ts`. The Open Food Facts `NutritionData` table is part of the server contract (marked `@@idb.exclude`, so it never reaches the browser). Its weighted full-text and trigram indexes are declared with `@@index(expression: ...)` to fold accents through `public.immutable_unaccent(...)`. The migrations create those indexes and the search extensions. Fill it with the Open Food Facts seed under `prisma/seed/open-food-facts`.
+Better Auth reads and writes its own tables through the plain `pg` pool in `lib/pool.ts`. The Open Food Facts `NutritionData` table is part of the server contract (marked `@@idb.exclude`, so it never reaches the browser). Its weighted full-text and trigram indexes are declared with `@@index(expression: ...)` to fold accents through `public.immutable_unaccent(...)`. The migrations create those indexes and the search extensions. The container seeds an empty food table after migration. See [Load and refresh nutrition data](docs/seeding-nutrition-data.md) for provisioning, refreshes, and index maintenance.
 
 This release requires a fresh Postgres database. Create an empty database before deploying; the baseline replaces the earlier migration history. Existing databases cannot migrate in place. After migration, reload Open Food Facts data and use fresh browser storage before reconnecting clients.
 
