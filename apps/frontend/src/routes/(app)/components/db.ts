@@ -7,7 +7,7 @@ import { accountSession } from '$lib/features/account-session.svelte';
 import { authClient } from '$lib/clients/auth-client';
 import { resolve } from '$app/paths';
 import { toast } from 'svelte-sonner';
-import { logoutAccount } from '$lib/features/logout';
+import { logoutAccount, signOutAndRefreshSession } from '$lib/features/logout';
 
 /** The authenticated identity cached for local and offline use. */
 type AuthSessionData = {
@@ -28,10 +28,7 @@ export async function logout(discard = false) {
 		await logoutAccount(getAccountDatabase(), {
 			discard,
 			sync: (db) => syncWorkerState.flushForLogout(db),
-			signOut: async () => {
-				const { error } = await authClient.signOut();
-				if (error) throw new Error(error.message ?? 'Could not sign out');
-			}
+			signOut: () => signOutAndRefreshSession(authClient)
 		});
 		accountSession.ownerId = null;
 		queryClient.clear();

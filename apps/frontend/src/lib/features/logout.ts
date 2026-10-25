@@ -1,5 +1,20 @@
 import type { SyncWorker } from '@prisma-idb/sync-extension-idb/client';
+import type { createAuthClient } from 'better-auth/svelte';
 import type { AccountDatabase, DbClient } from '../clients/idb-client';
+
+/** Confirms the session boundary has observed sign-out before local account deletion. */
+export async function signOutAndRefreshSession(
+	auth: Pick<ReturnType<typeof createAuthClient>, 'signOut' | 'useSession'>
+): Promise<void> {
+	const { error } = await auth.signOut();
+	if (error) throw new Error(error.message ?? 'Could not sign out');
+	// Sign-out only schedules a refetch; its cached session can otherwise recreate the account.
+	const session = auth.useSession();
+	await session.get().refetch({ query: { disableCookieCache: true } });
+	const current = session.get();
+	if (current.error) throw new Error(current.error.message ?? 'Could not confirm sign-out');
+	if (current.data) throw new Error('The session is still active. Please retry logging out.');
+}
 
 /** Supplies the existing sync transport and authenticated sign-out to the logout boundary. */
 type LogoutOptions = {

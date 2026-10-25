@@ -4,8 +4,9 @@ import { afterEach, test } from 'node:test';
 import { createManagedAutoSyncIdbClient } from '@prisma-idb/sync-extension-idb/client';
 import { idbSyncExtension } from '@prisma-idb/sync-extension-idb/control';
 import { contractSpace, type Contract } from '@myfit/schema/client';
+import { createAuthClient } from 'better-auth/svelte';
 import { AccountDatabase, OWNER_STORAGE_KEY, type DbClient } from './idb-client.ts';
-import { flushLogoutChanges, logoutAccount } from '../features/logout.ts';
+import { flushLogoutChanges, logoutAccount, signOutAndRefreshSession } from '../features/logout.ts';
 
 /** Supplies persistent storage shared by simulated tabs without requiring a browser. */
 function createStorage() {
@@ -60,6 +61,97 @@ async function syncChanges(
 	await flushLogoutChanges(
 		db.createSyncWorker({ pushHandler, pullHandler: async () => [], backoffBaseMs: 0 })
 	);
+}
+
+/** Keeps the real auth client's cached session stale until its post-sign-out refetch finishes. */
+function createLogoutAuth(readSignedOutSession: () => Promise<Response>) {
+	let signedIn = true;
+	return createAuthClient({
+		baseURL: 'https://auth.example.test',
+		fetchOptions: {
+			customFetchImpl: async (input) => {
+				const path = new URL(String(input)).pathname;
+				if (path.endsWith('/sign-out')) {
+					signedIn = false;
+					return Response.json({ success: true });
+				}
+				assert.ok(path.endsWith('/get-session'));
+				return signedIn
+					? Response.json({ user: { id: 'user-a' }, session: {} })
+					: readSignedOutSession();
+			}
+		}
+	});
+}
+
+test('logout clears the auth session before the session boundary can reactivate the local owner', async () => {
+	const { storage, accounts } = await createOfflineAccount();
+	const refreshStarted = Promise.withResolvers<void>();
+	const refresh = Promise.withResolvers<Response>();
+	const auth = createLogoutAuth(() => {
+		refreshStarted.resolve();
+		return refresh.promise;
+	});
+	const session = auth.useSession();
+	await session.get().refetch();
+	assert.equal(session.get().data?.user.id, 'user-a');
+	try {
+		const logout = logoutAccount(accounts, {
+			sync: syncChanges,
+			signOut: () => signOutAndRefreshSession(auth)
+		});
+		await Promise.race([
+			refreshStarted.promise,
+			logout.then(() => assert.fail('Logout finished before confirming the session'))
+		]);
+		assert.equal(session.get().data?.user.id, 'user-a');
+		assert.equal(accounts.ownerId, 'user-a');
+		assert.equal((await (await accounts.get()).orm.meal.all())[0]?.name, 'Offline meal');
+		refresh.resolve(Response.json(null));
+		await logout;
+		// The mounted session boundary selects its owner again when signingOut becomes false.
+		await accounts.activate(session.get().data?.user.id);
+		assert.equal(accounts.ownerId, null);
+		assert.equal(storage.getItem(OWNER_STORAGE_KEY), '');
+		assert.equal(
+			(await indexedDB.databases()).some(({ name }) => name?.startsWith('myfit:account:')),
+			false
+		);
+	} finally {
+		await accounts.close();
+	}
+});
+
+for (const outcome of ['unavailable', 'still active']) {
+	test(`logout preserves local data when session confirmation is ${outcome}, and a retry succeeds`, async () => {
+		const { storage, accounts } = await createOfflineAccount();
+		let retry = false;
+		const auth = createLogoutAuth(async () => {
+			if (retry) return Response.json(null);
+			return outcome === 'unavailable'
+				? Response.json({ message: 'Session check unavailable' }, { status: 503 })
+				: Response.json({ user: { id: 'user-a' }, session: {} });
+		});
+		await auth.useSession().get().refetch();
+		const options = {
+			sync: syncChanges,
+			signOut: () => signOutAndRefreshSession(auth)
+		};
+		try {
+			await assert.rejects(
+				logoutAccount(accounts, options),
+				outcome === 'unavailable' ? /Session check unavailable/ : /session is still active/
+			);
+			assert.equal(storage.getItem(OWNER_STORAGE_KEY), 'user-a');
+			assert.equal((await (await accounts.get()).orm.meal.all())[0]?.name, 'Offline meal');
+			retry = true;
+			await logoutAccount(accounts, options);
+			assert.equal(auth.useSession().get().data, null);
+			assert.equal(await accounts.activate(), null);
+		} finally {
+			await accounts.close();
+		}
+	});
 }
 
 test('logout saves pending edits before signing out, then deletes account storage', async () => {
