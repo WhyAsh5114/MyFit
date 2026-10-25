@@ -22,34 +22,43 @@ class SyncWorkerState {
 	lastSyncTime = $state<Date | null>(null);
 	lastError = $state<string | null>(null);
 
-	/** True from `start()` until the worker is bound or `stop()` runs, so a start that `stop()` overtook while awaiting the database does nothing. */
-	private starting = false;
+	/**
+	 * Identifies the startup that is waiting for the database. `stop()` clears it, so an overtaken
+	 * startup sees that it is no longer current and does nothing, even if a newer one began meanwhile.
+	 */
+	private pendingStart: object | undefined;
+	/** Settles once every worker that `stop()` has detached has finished its active cycle. */
+	private shutdown: Promise<void> = Promise.resolve();
 	private unsubscribe: Array<() => void> = [];
 
 	/** Binds a new worker to the current database and starts it. Does nothing if one is already running. */
 	start() {
-		if (this.syncWorker || this.starting) return;
-		this.starting = true;
-		void this.bindWorker().catch((error) => {
-			this.starting = false;
+		if (this.syncWorker || this.pendingStart) return;
+		const attempt = {};
+		this.pendingStart = attempt;
+		void this.bindWorker(attempt).catch((error) => {
 			console.error('Failed to start sync worker:', error);
+			if (this.pendingStart !== attempt) return;
+			this.pendingStart = undefined;
 			this.lastError = error instanceof Error ? error.message : String(error);
 		});
 	}
 
 	/**
 	 * Stops the worker and forgets it, along with its status and error. The returned promise
-	 * settles once the worker's active cycle has, so await it before resetting the database.
+	 * settles once the active cycle of every stopped worker has, including one that an earlier
+	 * `stop()` call is still waiting on, so await it before resetting the database.
 	 */
-	async stop() {
-		this.starting = false;
+	stop(): Promise<void> {
+		this.pendingStart = undefined;
 		this.unsubscribe.forEach((off) => off());
 		this.unsubscribe = [];
 		const worker = this.syncWorker;
 		this.syncWorker = undefined;
 		this.syncStatus = undefined;
 		this.lastError = null;
-		await worker?.stop();
+		if (worker) this.shutdown = Promise.all([this.shutdown, worker.stop()]).then(() => undefined);
+		return this.shutdown;
 	}
 
 	/**
@@ -57,10 +66,10 @@ class SyncWorkerState {
 	 * doing anything if `stop()` ran in the meantime, so a stopped startup never leaves a
 	 * worker on a database that was reset.
 	 */
-	private async bindWorker() {
+	private async bindWorker(attempt: object) {
 		const db = await getDb();
-		if (!this.starting) return;
-		this.starting = false;
+		if (this.pendingStart !== attempt) return;
+		this.pendingStart = undefined;
 
 		const worker = this.createWorker(db);
 		this.unsubscribe = this.listenTo(worker);
