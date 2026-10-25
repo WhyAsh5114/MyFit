@@ -293,6 +293,7 @@ toast.error(m['unknownErrorOccurred']());
 - Capacitor plugins are initialized at layout level (`+layout.svelte`). Don't re-initialize plugins in child routes.
 - Use `Capacitor.getPlatform()` to gate platform-specific code (`'android'`, `'ios'`, `'web'`).
 - `viewport-fit=cover` is set in `app.html` for safe-area insets — don't override it.
+- The app targets Android 16 (API 36), which enforces edge-to-edge: the `windowOptOutEdgeToEdgeEnforcement` opt-out and the StatusBar plugin's `overlaysWebView` / `backgroundColor` no longer work, so the app doesn't use the StatusBar plugin. The webview extends under the system bars, so screen roots pad themselves with `env(safe-area-inset-*)` (Capacitor's built-in SystemBars handles older WebViews). The root layout sets the system bar icon style from the in-app theme, since it can differ from the device's.
 - The static adapter outputs to `build/` which Capacitor's `webDir` points at.
 
 ### Native is an enhancement

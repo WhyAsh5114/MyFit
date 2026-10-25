@@ -90,6 +90,18 @@ pnpm exec cap open android
    ```
 4. Open in Xcode/Android Studio and run
 
+To load the Vite dev server in the native app instead of the bundled build, set `CAPACITOR_DEV_SERVER_URL` before `cap sync`. Use `http://localhost:5173` for both. On the Android emulator, first run `adb reverse tcp:5173 tcp:5173` (and `tcp:3000` for a local API); `http://10.0.2.2` is not a secure context, so the app fails without `crypto.randomUUID`. Leave it unset for release builds.
+
+### Releases
+
+The `version` in `package.json` is the app version for both platforms. It is bumped by hand in the release commit. Web-only changes ship over the air and don't need a new version.
+
+Android's `versionName` and `versionCode` are read from it by `android/app/build.gradle`. An Xcode project can't read it, so `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in the project (`1.0` and `1`) are placeholders. Pass the real values when archiving:
+
+```bash
+xcodebuild archive -project ios/App/App.xcodeproj -scheme App $(node scripts/native-version.js)
+```
+
 ## Database
 
 Uses Prisma-IDB (offline-first browser database). The schema and generated contract live in `packages/shared`; `getDb()` in `src/lib/clients/idb-client.ts` migrates IndexedDB on first use and returns a sync-tracked client:

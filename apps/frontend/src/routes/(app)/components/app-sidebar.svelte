@@ -14,7 +14,7 @@
 </script>
 
 <Sidebar.Root {...restProps} bind:ref>
-	<Sidebar.Header>
+	<Sidebar.Header class="pt-[calc(env(safe-area-inset-top)+0.5rem)]">
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
 				<Sidebar.MenuButton
@@ -67,7 +67,7 @@
 			</Sidebar.Group>
 		{/each}
 	</Sidebar.Content>
-	<Sidebar.Footer>
+	<Sidebar.Footer class="pb-[calc(env(safe-area-inset-bottom)+0.5rem)]">
 		<NavUser />
 	</Sidebar.Footer>
 </Sidebar.Root>

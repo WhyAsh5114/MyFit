@@ -7,7 +7,9 @@
 	import { m } from '$lib/paraglide/messages';
 </script>
 
-<div class="grid min-h-svh lg:grid-cols-2">
+<div
+	class="grid min-h-svh pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] lg:grid-cols-2"
+>
 	<div class="relative hidden bg-muted lg:block">
 		<img
 			src={loginFood}
