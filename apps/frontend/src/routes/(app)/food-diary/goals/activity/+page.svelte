@@ -6,7 +6,7 @@
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { cn } from '$lib/utils';
 	import type { Row } from '@myfit/schema/client';
-	import type { PageData } from './$types';
+	import { enums } from '$lib/clients/idb-client';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { SaveIcon } from '@lucide/svelte';
 	import DynamicActivity from './dynamic-activity.svelte';
@@ -17,8 +17,6 @@
 	import { resolve } from '$app/paths';
 	import { useActivityPreferences } from '$lib/features/food-diary/activity-preferences/queries/get';
 	import { useSaveActivityPreferences } from '$lib/features/food-diary/activity-preferences/mutations/save';
-
-	let { data }: { data: PageData } = $props();
 
 	type ActivityAdjustmentType = Row<'ActivityPreferences'>['adjustmentType'];
 
@@ -98,7 +96,7 @@
 	</Card.Header>
 	<Card.Content>
 		<RadioGroup.Root bind:value={selectedOption} class="gap-2">
-			{#each data.activityAdjustmentTypes as option (option)}
+			{#each enums.__unbound__.ActivityAdjustmentType.values as option (option)}
 				<Label
 					for={option}
 					class="flex items-start rounded-lg border bg-secondary/50 p-3 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/10"

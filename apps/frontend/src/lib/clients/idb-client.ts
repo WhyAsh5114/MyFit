@@ -7,8 +7,7 @@ export type DbClient = SyncIdbClient<Contract>;
 
 const managedDb = createManagedAutoSyncIdbClient<Contract>({
 	contractSpace,
-	// The sync stores were squashed into one baseline, which an older `myfit` database cannot upgrade to.
-	dbName: 'myfit-v2',
+	dbName: 'myfit',
 	extensions: [idbSyncExtension]
 });
 
