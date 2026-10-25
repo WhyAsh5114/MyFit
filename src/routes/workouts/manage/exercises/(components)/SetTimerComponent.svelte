@@ -20,7 +20,7 @@
 	let totalDuration = $derived(startedAt ? formatDuration((now - new Date(startedAt).getTime()) / 1000) : '0:00');
 	let restDuration = $derived(lastSetCompletedAt === null ? '—' : formatDuration((now - lastSetCompletedAt) / 1000));
 	let timerLabel = $derived(
-		`Workout timers: ${lastSetCompletedAt === null ? 'no completed sets' : `${restDuration} since last set`}, ${totalDuration} total`
+		`Workout timers: ${lastSetCompletedAt === null ? 'no set completed yet' : `${restDuration} since last set`}, ${totalDuration} total`
 	);
 
 	$effect(() => {
