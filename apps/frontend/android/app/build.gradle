@@ -1,4 +1,14 @@
+import groovy.json.JsonSlurper
+
 apply plugin: 'com.android.application'
+
+// The frontend package.json version (bumped by hand in the release commit) is the single source of
+// truth. iOS takes the same values from `scripts/native-version.js` when archiving.
+// versionCode packs it as major * 1,000,000 + minor * 1,000 + patch, so it rises with every
+// release, which Google Play requires. Pre-release suffixes such as "-beta.1" are ignored.
+def appVersion = new JsonSlurper().parse(file('../../package.json')).version
+def (versionMajor, versionMinor, versionPatch) =
+    appVersion.tokenize('.').take(3).collect { it.replaceAll(/\D.*/, '').toInteger() }
 
 android {
     namespace = "fit.myfit"
@@ -7,8 +17,8 @@ android {
         applicationId "fit.myfit"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode versionMajor * 1000000 + versionMinor * 1000 + versionPatch
+        versionName appVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

@@ -59,7 +59,6 @@
 		"@ai-sdk/svelte": "^4.0.315",
 		"@capacitor/app": "^8.1.2",
 		"@capacitor/core": "^8.5.3",
-		"@capacitor/status-bar": "^8.0.4",
 		"@capgo/capacitor-health": "^8.11.12",
 		"@capgo/capacitor-updater": "^8.53.1",
 		"@dnd-kit/helpers": "^0.4.0",

@@ -3,9 +3,9 @@
 	import { locales, localizeHref } from '$lib/paraglide/runtime';
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.webp';
-	import { ModeWatcher } from 'mode-watcher';
+	import { mode, ModeWatcher } from 'mode-watcher';
 	import { QueryClientProvider } from '@tanstack/svelte-query';
-	import { Capacitor } from '@capacitor/core';
+	import { Capacitor, SystemBars, SystemBarsStyle } from '@capacitor/core';
 	import { App } from '@capacitor/app';
 	import { queryClient } from '$lib/clients/query-client';
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
@@ -29,6 +29,14 @@
 		App.addListener('backButton', ({ canGoBack }) => {
 			if (canGoBack) window.history.back();
 			else App.exitApp();
+		});
+	});
+
+	// The in-app theme can differ from the device's, so set the system bar icons to match it.
+	$effect(() => {
+		if (!Capacitor.isNativePlatform() || !mode.current) return;
+		SystemBars.setStyle({
+			style: mode.current === 'dark' ? SystemBarsStyle.Dark : SystemBarsStyle.Light
 		});
 	});
 
