@@ -1,10 +1,30 @@
 name: Frontend CI
 
-on: push
+on:
+  push:
+    paths:
+      - 'apps/frontend/**'
+      # The frontend imports the API's types and shared constants.
+      - 'apps/api/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - 'eslint.config.js'
+      - '.prettierrc'
+      - '.gitignore'
+      - '.github/workflows/frontend.yml'
+
+# A newer push to the same branch makes the older run obsolete. Runs on the deploy
+# branches finish, so a superseded OTA upload is never cut off halfway.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/v4-turborepo' }}
 
 jobs:
   ci:
-    name: Lint / Check / Build
+    name: Lint / Check / Test / Build
     runs-on: ubuntu-latest
     env:
       PUBLIC_API_URL: http://localhost:3000
@@ -18,19 +38,11 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Generate Prisma clients
-        run: |
-          rm -rf apps/api/generated/prisma
-          pnpm --filter @myfit/api exec prisma generate
-          git checkout -- apps/api/generated/prisma/sql
-        env:
-          DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
 
       - name: Generate Paraglide messages
         run: pnpm --filter @myfit/frontend exec paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide
@@ -40,6 +52,9 @@ jobs:
 
       - name: Type check
         run: pnpm --filter @myfit/frontend run check
+
+      - name: Test
+        run: pnpm --filter @myfit/frontend run test
 
       - name: Build
         if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/v4-turborepo'
@@ -65,10 +80,69 @@ jobs:
           name: frontend-build
           path: apps/frontend/build/
 
+  e2e:
+    name: End-to-end
+    runs-on: ubuntu-latest
+    env:
+      TEST_DATABASE_URL: postgresql://myfit:password@localhost:5432/myfit
+      PUBLIC_POSTHOG_KEY: e2e
+
+    services:
+      # The version production runs, so the migrations match.
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: myfit
+          POSTGRES_USER: myfit
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U myfit"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # Playwright starts the API with Bun.
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm --filter @myfit/frontend exec playwright install --with-deps chromium
+
+      - name: Migrate the test database
+        run: pnpm --filter @myfit/shared run db:migrate
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+
+      - name: End-to-end tests
+        run: pnpm --filter @myfit/frontend run test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: playwright-report
+          path: |
+            apps/frontend/playwright-report/
+            apps/frontend/test-results/
+
   ota:
     name: OTA Upload
     runs-on: ubuntu-latest
-    needs: ci
+    needs: [ci, e2e]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/v4-turborepo'
     steps:
       - uses: actions/checkout@v6
