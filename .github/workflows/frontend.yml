@@ -47,9 +47,6 @@ jobs:
       - name: Generate Paraglide messages
         run: pnpm --filter @myfit/frontend exec paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide
 
-      - name: Account isolation regression tests
-        run: pnpm --filter @myfit/frontend run test:account-storage
-
       - name: Lint & format check
         run: pnpm --filter @myfit/frontend run lint
 

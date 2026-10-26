@@ -21,6 +21,10 @@ The fixture covers the labelled search intents: common foods, final-word prefixe
 
 `src/features/sync/user-write-policy.test.ts` pushes User updates through the real sync handler and contracts. An in-memory stand-in replaces the database, so this suite needs no PostgreSQL. It verifies that identity fields, account creation, and account deletion are rejected with HTTP 403, that profile and preference updates apply, and that a forbidden event rejects the whole batch.
 
+## Sync account ownership
+
+`src/features/sync/session-owner.test.ts` checks that push and pull requests from a stale tab receive HTTP 401 after another tab changes the authenticated account. Requests from the current owner and older clients without an owner header remain session-scoped. This suite needs no PostgreSQL.
+
 ## Nutrition seeding
 
 `prisma/seed/open-food-facts/seed.test.ts` creates an isolated schema and copies the migrated food table definition. It invokes the real importer with tiny cached exports. It verifies duplicate selection, repeated imports, stable IDs, refreshed nutrient values, zero-energy foods, invalid macros, rollback after a COPY failure, row limits, and skipping an already populated database during deployment. A staging test verifies that rows with null quality metrics are skipped before duplicate selection, while zero values remain valid. Cleanup removes the schema and fixture files. The test never downloads the public export or changes application food rows.

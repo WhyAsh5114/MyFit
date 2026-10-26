@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 import { Hono } from 'hono';
 import { requireSyncOwner } from './session-owner.ts';
 
