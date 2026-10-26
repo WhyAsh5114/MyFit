@@ -1,0 +1,9 @@
+# Collapse generated files in GitHub diffs. Hand-written files stay visible.
+pnpm-lock.yaml linguist-generated
+
+# Emitted by `prisma contract emit` and the IndexedDB migration planner.
+packages/shared/src/generated/** linguist-generated
+packages/shared/migrations/snapshots/** linguist-generated
+packages/shared/migrations-postgres/snapshots/** linguist-generated
+packages/shared/migrations/**/ops.json linguist-generated
+packages/shared/migrations-postgres/**/ops.json linguist-generated

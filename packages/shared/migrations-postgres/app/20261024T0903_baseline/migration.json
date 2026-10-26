@@ -1,0 +1,7 @@
+{
+	"from": null,
+	"to": "52513ac073657030ce7026329ba07799eeeed6e0605c8a2b42554290fdef4c82",
+	"providedInvariants": ["install-pg-trgm", "install-unaccent"],
+	"createdAt": "2026-10-24T09:03:17.622Z",
+	"migrationHash": "b546034453211cc005a7791396fc152e2b560f5c112de2f422115929670edc71"
+}
