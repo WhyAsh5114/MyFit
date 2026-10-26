@@ -2,7 +2,7 @@ import { createInfiniteQuery } from '@tanstack/svelte-query';
 import { apiClient } from '$lib/clients/api-client';
 import { toast } from 'svelte-sonner';
 import { nutritionDataKeys } from '../keys';
-import { NUTRITION_DATA_SEARCH_PAGINATION_LIMIT } from '@myfit/api/constants';
+import { NUTRITION_DATA_SEARCH_PAGINATION_LIMIT } from '@myfit/shared/constants';
 
 export const useSearchNutritionData = (getSearch: () => string) =>
 	createInfiniteQuery(() => {

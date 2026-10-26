@@ -24,7 +24,7 @@
 	import type { Snippet } from 'svelte';
 	import { round } from '$lib/my-utils';
 	import { cn } from '$lib/utils';
-	import type { Meal } from '@myfit/api/prisma/client';
+	import type { Row } from '@myfit/shared/client';
 
 	type Props = {
 		initialData?: FoodEntryFormSchema;
@@ -32,7 +32,7 @@
 		onSubmit: (data: FoodEntryFormSchema) => Promise<void>;
 		submit: Snippet<[{ form: SuperForm<FoodEntryFormSchema> }]>;
 		allowProductEdit: boolean;
-		meals: Meal[];
+		meals: Row<'Meal'>[];
 	};
 	let { initialData, onSubmit, submit, allowProductEdit, formId, meals }: Props = $props();
 

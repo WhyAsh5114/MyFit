@@ -1,5 +1,5 @@
 # MyFit Frontend — Multi-stage Dockerfile
-# Build: node:24-slim + pnpm (SvelteKit adapter-static + Prisma codegen)
+# Build: node:24-slim + pnpm (SvelteKit adapter-static)
 # Runtime: nginx:alpine serving static files
 
 # ============================================================================
@@ -9,8 +9,7 @@ FROM node:24-slim AS builder
 
 WORKDIR /build
 
-# openssl required by Prisma client generation
-RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
 RUN corepack enable
 
@@ -20,23 +19,13 @@ COPY apps/frontend/package.json ./apps/frontend/
 COPY apps/api/package.json ./apps/api/
 COPY packages/shared/package.json ./packages/shared/
 
-# Install frontend and its workspace deps (api is a devDep for types + prisma-idb client)
+# Install frontend and its workspace deps (api is a devDep for the typed RPC client)
 RUN pnpm install --frozen-lockfile --filter @myfit/frontend...
 
 # Copy sources
 COPY apps/frontend ./apps/frontend
 COPY apps/api ./apps/api
 COPY packages/shared ./packages/shared
-
-# Generate Prisma client and prisma-idb client for the container platform.
-# DATABASE_URL only needs to be syntactically valid for generation (no real DB required).
-WORKDIR /build/apps/api
-RUN rm -rf ./generated/prisma && \
-    DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder \
-    pnpm exec prisma generate
-
-# Re-copy typed SQL from VCS (generation without --sql does not emit these)
-COPY apps/api/generated/prisma/sql ./generated/prisma/sql
 
 # PUBLIC_* vars are baked into the static bundle at build time
 ARG PUBLIC_API_URL=http://localhost:3000

@@ -4,10 +4,10 @@
 	import * as Item from '$lib/components/ui/item/index.js';
 	import { cn } from '$lib/utils';
 	import { FlameIcon, PlusIcon } from '@lucide/svelte';
-	import type { ActivityEntry } from '@myfit/api/prisma/client';
+	import type { Row } from '@myfit/shared/client';
 
 	type Props = {
-		activityEntries?: ActivityEntry[];
+		activityEntries?: Row<'ActivityEntry'>[];
 	};
 	let { activityEntries }: Props = $props();
 </script>

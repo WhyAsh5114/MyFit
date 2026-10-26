@@ -1,61 +1,91 @@
-import { apiClient } from '$lib/clients/api-client';
-import { getClient } from '$lib/clients/idb-client';
+import { PUBLIC_API_URL } from '$env/static/public';
+import type { DbClient } from '$lib/clients/idb-client';
 import { queryClient } from '$lib/clients/query-client';
-import { type SyncWorkerStatus, type SyncWorker } from '@myfit/api/prisma-idb/client';
+import { invalidatePulledChanges } from './sync-invalidation';
+import {
+	createSyncFetchHandlers,
+	type SyncWorker,
+	type SyncWorkerStatus
+} from '@prisma-idb/sync-extension-idb/client';
 
 const SYNC_WORKER_STATE_KEY = '__myfit_sync_worker_state__';
 
+/**
+ * Owns the app's single sync worker and the reactive state the sync indicator reads.
+ *
+ * The session cacher binds it to the open database once the account is ready and stops it before
+ * the database or the account changes.
+ */
 class SyncWorkerState {
 	syncWorker = $state<SyncWorker>();
 	syncStatus = $state<SyncWorkerStatus>();
+	lastSyncTime = $state<Date | null>(null);
+	lastError = $state<string | null>(null);
 
-	constructor() {
-		this.syncWorker = getClient().createSyncWorker({
-			push: {
-				handler: async (events) => {
-					const res = await apiClient.api.sync.push.$post({ json: { events } });
-					if (!res.ok) throw new Error(`Push failed: ${res.statusText}`);
-					return await res.json();
-				},
-				batchSize: 50
-			},
-			pull: {
-				handler: async (lastChangelogId) => {
-					const res = await apiClient.api.sync.pull.$get({ query: { lastChangelogId } });
-					if (!res.ok) throw new Error(`Pull failed: ${res.statusText}`);
-					return await res.json();
-				},
-				getCursor: () => this.getCursor(),
-				setCursor: (cursor) => this.setCursor(cursor)
-			},
-			schedule: {
-				intervalMs: 10000
-			}
-		});
+	private unsubscribe: Array<() => void> = [];
 
-		this.syncWorker.on('statuschange', () => {
-			this.syncStatus = this.syncWorker!.status;
-		});
-
-		this.syncWorker.on('pullcompleted', async (e) => {
-			if (e.detail.totalAppliedRecords > 0) {
-				await queryClient.invalidateQueries({ refetchType: 'active' });
-			}
-		});
-
-		this.syncWorker.start();
+	/** Binds a new worker to `db` and starts it. Does nothing if one is already running. */
+	start(db: DbClient) {
+		if (this.syncWorker) return;
+		const worker = this.createWorker(db);
+		this.unsubscribe = this.listenTo(worker);
+		this.syncWorker = worker;
+		this.syncStatus = worker.status;
+		worker.start();
 	}
 
-	getCursor(): string | undefined {
-		return localStorage.getItem('lastSyncedAt') ?? undefined;
+	/** Stops the worker and forgets it, along with its status and error. Settles once its active cycle has. */
+	async stop() {
+		this.unsubscribe.forEach((off) => off());
+		this.unsubscribe = [];
+		const worker = this.syncWorker;
+		this.syncWorker = undefined;
+		this.syncStatus = undefined;
+		this.lastError = null;
+		this.lastSyncTime = null;
+		await worker?.stop();
 	}
 
-	setCursor(cursor: string | undefined): void {
-		if (cursor !== undefined) {
-			localStorage.setItem('lastSyncedAt', cursor);
-		} else {
-			localStorage.removeItem('lastSyncedAt');
-		}
+	/** Creates a worker that pushes and pulls through the API and syncs again when the browser comes back online. */
+	private createWorker(db: DbClient): SyncWorker {
+		return db.createSyncWorker({
+			...createSyncFetchHandlers({
+				pushUrl: `${PUBLIC_API_URL}/api/sync/push`,
+				pullUrl: `${PUBLIC_API_URL}/api/sync/pull`,
+				credentials: 'include'
+			}),
+			batchSize: 50,
+			intervalMs: 10000,
+			syncOnReconnect: true
+		});
+	}
+
+	/** Mirrors the worker's status and outcomes into reactive state. Returns the unsubscribe functions. */
+	private listenTo(worker: SyncWorker): Array<() => void> {
+		return [
+			worker.on('statuschange', (status) => {
+				this.syncStatus = status;
+			}),
+			worker.on('error', (error) => {
+				this.lastError = error.message;
+			}),
+			worker.on('contractmismatch', () => {
+				this.lastError = 'This version of the app is out of date. Reload to keep syncing.';
+			}),
+			// The worker also emits this after a rejected push, so only a push that left
+			// nothing waiting counts as a sync. It never clears `lastError`: a pull does, once
+			// the outbox is clear and the server is reachable again. A stalled event blocks
+			// every later pull, so surface it instead of retrying silently.
+			worker.on('pushcompleted', ({ failed, pullBlocked, stalled }) => {
+				if (failed === 0 && !pullBlocked) this.lastSyncTime = new Date();
+				if (stalled) this.lastError = stalled.lastError ?? 'Some changes keep failing to sync.';
+			}),
+			worker.on('pullcompleted', async ({ changes }) => {
+				this.lastSyncTime = new Date();
+				this.lastError = null;
+				await invalidatePulledChanges(queryClient, changes);
+			})
+		];
 	}
 }
 

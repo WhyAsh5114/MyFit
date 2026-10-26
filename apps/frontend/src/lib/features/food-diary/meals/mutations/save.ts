@@ -1,32 +1,32 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
 import type { MealsFormSchema } from '../schema';
 import { mealKeys } from '../keys';
 
+/** Saves the complete meal configuration atomically before refreshing the cache. */
 export const useSaveMeals = () =>
 	createMutation(() => ({
 		mutationFn: async ({ meals, userId }: { meals: MealsFormSchema['meals']; userId: string }) => {
-			const client = getClient();
-			const existingMeals = await client.meal.findMany({ where: { userId } });
-			const submittedNames = new Set(meals.map((meal) => meal.name));
+			const db = await getDb();
+			await db.transaction(['meal'], async (tx) => {
+				const existingMeals = await tx.meal.where({ userId }).all();
+				const submittedNames = new Set(meals.map((meal) => meal.name));
+				const removedMeals = existingMeals.filter((meal) => !submittedNames.has(meal.name));
 
-			const removedMeals = existingMeals.filter((meal) => !submittedNames.has(meal.name));
-
-			await Promise.all([
-				...removedMeals.map((meal) =>
-					client.meal.update({ where: { id: meal.id }, data: { active: false } })
-				),
-				...meals.map((meal, index) =>
-					client.meal.upsert({
-						where: { userId_name: { userId, name: meal.name } },
+				for (const meal of removedMeals) {
+					await tx.meal.where({ id: meal.id }).update({ active: false });
+				}
+				for (const [index, meal] of meals.entries()) {
+					await tx.meal.upsert({
+						where: { userId, name: meal.name },
 						update: { name: meal.name, sortOrder: index, active: true },
-						create: { id: meal.id, name: meal.name, userId, sortOrder: index }
-					})
-				)
-			]);
+						create: { id: meal.id, name: meal.name, userId, sortOrder: index, active: true }
+					});
+				}
+			});
 			return { userId };
 		},
 		onSuccess: ({ userId }) => {

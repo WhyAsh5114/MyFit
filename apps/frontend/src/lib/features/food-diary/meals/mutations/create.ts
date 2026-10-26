@@ -1,15 +1,16 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
-import type { Prisma } from '@myfit/api/prisma/client';
+import type { NewRow } from '@myfit/shared/client';
 import { mealKeys } from '../keys';
 
 export const useCreateMeal = () =>
 	createMutation(() => ({
-		mutationFn: async (data: Prisma.MealUncheckedCreateInput) => {
-			return await getClient().meal.create({ data });
+		mutationFn: async (data: NewRow<'Meal'>) => {
+			const db = await getDb();
+			return await db.orm.meal.create(data);
 		},
 
 		onSuccess: (data) => {

@@ -5,7 +5,8 @@
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
 	import { cn } from '$lib/utils';
-	import { ActivityAdjustmentType } from '@myfit/api/enums';
+	import type { Row } from '@myfit/shared/client';
+	import { enums } from '$lib/clients/idb-client';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { SaveIcon } from '@lucide/svelte';
 	import DynamicActivity from './dynamic-activity.svelte';
@@ -16,6 +17,8 @@
 	import { resolve } from '$app/paths';
 	import { useActivityPreferences } from '$lib/features/food-diary/activity-preferences/queries/get';
 	import { useSaveActivityPreferences } from '$lib/features/food-diary/activity-preferences/mutations/save';
+
+	type ActivityAdjustmentType = Row<'ActivityPreferences'>['adjustmentType'];
 
 	const activityAdjustmentMetadata = {
 		Static: {
@@ -30,7 +33,7 @@
 			description: 'No activity calories added automatically'
 		}
 	} as Record<
-		keyof typeof ActivityAdjustmentType,
+		ActivityAdjustmentType,
 		{ description: string; badge?: { text: string; variant: 'outline' | 'default' } }
 	>;
 
@@ -38,7 +41,7 @@
 	const activityPreferences = useActivityPreferences(() => currentUser.data?.id ?? '');
 	const saveActivityPreferences = useSaveActivityPreferences();
 
-	let selectedOption = $derived<keyof typeof ActivityAdjustmentType>(
+	let selectedOption = $derived<ActivityAdjustmentType>(
 		activityPreferences.data?.adjustmentType ?? 'Manual'
 	);
 	let staticCalories = $derived<number | undefined>(
@@ -57,23 +60,26 @@
 		return saveActivityPreferences.isPending;
 	});
 
+	/** Persists the selected activity adjustment and returns to the goals page. */
 	async function saveSettings() {
 		if (!currentUser.data) return;
 
 		if (selectedOption === 'Manual') {
 			await saveActivityPreferences.mutateAsync({
 				adjustmentType: 'Manual',
+				staticCalories: null,
 				userId: currentUser.data.id
 			});
 		} else if (selectedOption === 'Static') {
 			await saveActivityPreferences.mutateAsync({
 				adjustmentType: 'Static',
-				staticCalories: staticCalories,
+				staticCalories: staticCalories ?? null,
 				userId: currentUser.data.id
 			});
 		} else if (selectedOption === 'Dynamic') {
 			await saveActivityPreferences.mutateAsync({
 				adjustmentType: 'Dynamic',
+				staticCalories: null,
 				userId: currentUser.data.id
 			});
 		}
@@ -90,7 +96,7 @@
 	</Card.Header>
 	<Card.Content>
 		<RadioGroup.Root bind:value={selectedOption} class="gap-2">
-			{#each Object.values(ActivityAdjustmentType) as option (option)}
+			{#each enums.__unbound__.ActivityAdjustmentType.values as option (option)}
 				<Label
 					for={option}
 					class="flex items-start rounded-lg border bg-secondary/50 p-3 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/10"

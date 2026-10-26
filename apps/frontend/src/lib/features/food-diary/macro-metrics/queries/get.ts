@@ -1,5 +1,5 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { macroMetricsKeys } from '../keys';
 
 export const useMacroMetrics = (getUserId: () => string) =>
@@ -8,10 +8,8 @@ export const useMacroMetrics = (getUserId: () => string) =>
 		return {
 			queryKey: macroMetricsKeys.byUser(userId),
 			queryFn: async () => {
-				return await getClient().macroMetrics.findFirst({
-					where: { userId },
-					orderBy: { effectiveFrom: 'desc' }
-				});
+				const { orm } = await getDb();
+				return await orm.macroMetrics.where({ userId }).orderBy({ effectiveFrom: 'desc' }).first();
 			},
 			enabled: !!userId
 		};

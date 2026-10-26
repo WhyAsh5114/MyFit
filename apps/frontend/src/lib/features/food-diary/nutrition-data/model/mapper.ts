@@ -1,4 +1,4 @@
-import type { NutritionData } from '@myfit/api/prisma/client';
+import type { NutritionData } from '@myfit/shared/nutrition';
 import type { FoodEntryFormSchema } from '../../food-entry/model/schema';
 
 export function nutritionDataToFoodEntryFormData(

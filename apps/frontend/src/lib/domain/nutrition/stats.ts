@@ -1,8 +1,8 @@
-import type { MacroMetrics } from '@myfit/api/prisma/client';
+import type { Row } from '@myfit/shared/client';
 import { calculateBMR } from './bmr';
 
 type CalculateDailyNutritionStatsArgs = {
-	metrics: MacroMetrics;
+	metrics: Row<'MacroMetrics'>;
 	weeklyCaloricChange: number;
 	foodEntries?: { energyKcal_100g: number; quantityG: number }[];
 	activityEntries?: { calories: number }[];
