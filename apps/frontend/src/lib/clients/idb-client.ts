@@ -20,10 +20,10 @@ function createDatabase() {
 /** The schema enums are available during prerendering without opening IndexedDB. */
 export const enums = createDatabase().enums;
 
-/** Requires a deletion decision before another user's data can enter the database. */
+/** Blocks an unexpected session from accessing the previous user's data. */
 export class LocalAccountConflict extends Error {
 	constructor() {
-		super('Clear the previous account’s local data before using another account on this device.');
+		super('The authenticated session does not own the local database.');
 	}
 }
 
@@ -40,6 +40,11 @@ export class AccountDatabase {
 		const savedOwner = this.storage.getItem(OWNER_STORAGE_KEY);
 		if (!authenticatedOwner && savedOwner === '') return null;
 		const users = await (await this.database.get()).orm.user.all();
+		// Another tab can log out while this open is pending. Never restore its revoked owner.
+		if (this.storage.getItem(OWNER_STORAGE_KEY) !== savedOwner) {
+			await this.close();
+			throw new LocalAccountConflict();
+		}
 		// Inspect the existing shared database too; metadata alone cannot authorize replacing it.
 		const existingOwner = users[0]?.id || savedOwner;
 		if (

@@ -287,7 +287,7 @@ test('explicit discard deletes unsynced edits; failed sign-out still preserves t
 	}
 });
 
-test('session expiry retains edits in the sole database and a new account must wait for deletion', async () => {
+test('an unexpected login preserves edits for reauthentication, then logout permits a new sign-in', async () => {
 	const legacy = createManagedAutoSyncIdbClient<Contract>({
 		contractSpace,
 		dbName: 'myfit',
@@ -324,8 +324,8 @@ test('session expiry retains edits in the sole database and a new account must w
 		assert.equal((await original.orm.meal.all())[0]?.name, 'Offline meal');
 		assert.equal(await original.outbox.pendingCount(), 1);
 
-		// An explicit discard deletes the same database before the other user can populate it.
-		await accounts.clear();
+		// The original owner logs out and saves edits before a different user signs in.
+		await logoutAccount(accounts, { sync: syncChanges, signOut: async () => {} });
 		assert.deepEqual(await indexedDB.databases(), []);
 		const next = (await accounts.activate('user-b'))!;
 		assert.deepEqual(await next.orm.user.all(), []);
@@ -371,6 +371,57 @@ test('a tab loses database access when another tab changes the active owner', as
 		storage.setItem(OWNER_STORAGE_KEY, 'user-b');
 		await assert.rejects(accounts.get(), /No active local account/);
 	} finally {
+		await accounts.close();
+	}
+});
+
+test('logout in another tab revokes an in-flight activation without restoring ownership', async () => {
+	const { storage, accounts } = await createOfflineAccount();
+	try {
+		const activation = accounts.activate('user-a');
+		storage.setItem(OWNER_STORAGE_KEY, '');
+		await assert.rejects(activation, LocalAccountConflict);
+		assert.equal(storage.getItem(OWNER_STORAGE_KEY), '');
+		assert.equal(accounts.ownerId, null);
+		await assert.rejects(accounts.get(), /No active local account/);
+	} finally {
+		await accounts.close();
+	}
+});
+
+test('logout waits for a newer session refresh that superseded its own confirmation', async () => {
+	const { accounts } = await createOfflineAccount();
+	const firstStarted = Promise.withResolvers<void>();
+	const first = Promise.withResolvers<Response>();
+	const latest = Promise.withResolvers<Response>();
+	let refreshCount = 0;
+	const auth = createLogoutAuth(() => {
+		refreshCount += 1;
+		firstStarted.resolve();
+		return refreshCount === 1 ? first.promise : latest.promise;
+	});
+	await auth.useSession().get().refetch();
+	try {
+		const logout = logoutAccount(accounts, {
+			sync: syncChanges,
+			signOut: () => signOutAndRefreshSession(auth)
+		});
+		await firstStarted.promise;
+		const newerRefresh = auth.useSession().get().refetch();
+		first.resolve(Response.json(null));
+		await Promise.race([
+			Promise.resolve().then(() => Promise.resolve()),
+			logout.then(() => assert.fail('Logout finished before the newest session refresh'))
+		]);
+		assert.equal(accounts.ownerId, 'user-a');
+		latest.resolve(Response.json(null));
+		await newerRefresh;
+		await logout;
+		assert.equal(accounts.ownerId, null);
+		assert.deepEqual(await indexedDB.databases(), []);
+	} finally {
+		first.resolve(Response.json(null));
+		latest.resolve(Response.json(null));
 		await accounts.close();
 	}
 });

@@ -77,14 +77,11 @@
 	"ota.card.autoUpdateDescription": "Descargar actualizaciones en segundo plano",
 	"account.loggingOut": "Guardando cambios y cerrando sesión…",
 	"account.logoutFailed": "No se pudo cerrar sesión",
-	"account.logoutUnsynced": "Tus datos locales siguen en este dispositivo. Reintenta para guardar los cambios pendientes, cancela para seguir trabajando o descarta los cambios sin sincronizar y cierra sesión. Los cambios descartados no se pueden recuperar.",
-	"account.logoutCancel": "Cancelar",
-	"account.logoutRetry": "Reintentar cierre de sesión",
-	"account.logoutDiscard": "Descartar cambios y cerrar sesión",
-	"account.previousDataTitle": "Los datos de la cuenta anterior siguen en este dispositivo",
-	"account.previousDataDescription": "Inicia sesión en la cuenta anterior para sincronizar sus cambios o descarta sus datos locales para continuar con esta cuenta. Los cambios descartados no se pueden recuperar.",
-	"account.previousDataKeep": "Conservar datos y volver al inicio de sesión",
-	"account.previousDataDiscard": "Descartar datos locales y continuar",
-	"account.changedInAnotherTab": "Los datos locales de la cuenta cambiaron en otra pestaña. Recarga para continuar.",
-	"account.reload": "Recargar"
+	"account.logoutUnsynced": "Inténtalo de nuevo para guardar tus últimos cambios antes de salir. Si cierras sesión sin guardarlos, los perderás.",
+	"account.logoutCancel": "Cancelar cierre de sesión",
+	"account.logoutRetry": "Intentar de nuevo",
+	"account.logoutDiscard": "Cerrar sesión de todos modos",
+	"account.changedInAnotherTab": "Cerraste sesión en otra pestaña. Recarga para continuar.",
+	"account.reload": "Recargar",
+	"account.reloadTitle": "Recargar MyFit"
 }

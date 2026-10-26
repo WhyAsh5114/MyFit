@@ -183,15 +183,12 @@
 	"ota.card.autoUpdate": "Auto-update",
 	"ota.card.autoUpdateDescription": "Download updates silently in the background",
 	"account.loggingOut": "Saving changes and logging out…",
-	"account.logoutFailed": "Could not finish logging out",
-	"account.logoutUnsynced": "Your local data is still on this device. Retry to save pending changes, cancel to keep working, or discard unsynced changes and log out. Discarded changes cannot be recovered.",
-	"account.logoutCancel": "Cancel",
-	"account.logoutRetry": "Retry logout",
-	"account.logoutDiscard": "Discard changes and log out",
-	"account.previousDataTitle": "Previous account data is still on this device",
-	"account.previousDataDescription": "Sign in to the previous account to sync its changes, or discard its local data to continue with this account. Discarded changes cannot be recovered.",
-	"account.previousDataKeep": "Keep data and return to sign-in",
-	"account.previousDataDiscard": "Discard local data and continue",
-	"account.changedInAnotherTab": "Local account data changed in another tab. Reload to continue.",
-	"account.reload": "Reload"
+	"account.logoutFailed": "Couldn't log out",
+	"account.logoutUnsynced": "Try again to save your latest changes before you leave. Logging out without saving will lose those changes.",
+	"account.logoutCancel": "Cancel logout",
+	"account.logoutRetry": "Try again",
+	"account.logoutDiscard": "Log out anyway",
+	"account.changedInAnotherTab": "You logged out in another tab. Reload to continue.",
+	"account.reload": "Reload",
+	"account.reloadTitle": "Reload MyFit"
 }

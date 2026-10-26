@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { Dialog } from 'bits-ui';
+	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 	import { signOutAndRefreshSession } from '$lib/features/logout';
 	import { authClient } from '$lib/clients/auth-client';
 	import {
@@ -22,16 +22,17 @@
 	let { children }: { children: Snippet } = $props();
 	const session = authClient.useSession();
 	const sessionOwner = $derived($session.data?.user.id);
+	let recovering = $state(false);
 	const canShowContent = $derived(
 		!$session.isPending &&
 			!accountSession.signingOut &&
+			!recovering &&
 			accountSession.ready &&
 			(!sessionOwner || sessionOwner === accountSession.ownerId) &&
 			(accountSession.ownerId !== null || isUnprotectedRoute(page.url.pathname))
 	);
 	let error = $state<string | null>(null);
-	let conflict = $state(false);
-	let conflictBusy = $state(false);
+	let recoveryFailed = $state(false);
 	let accountChanged = $state(false);
 	let transition = Promise.resolve();
 
@@ -41,14 +42,13 @@
 			$session.isPending ||
 			accountSession.signingOut ||
 			accountChanged ||
-			untrack(() => conflictBusy)
+			untrack(() => recovering)
 		)
 			return;
 		const sessionData = untrack(() => $session.data);
 		let cancelled = false;
 		accountSession.ready = false;
 		error = null;
-		conflict = false;
 
 		// Serialize switches so an older database open cannot overtake a newer session.
 		transition = transition
@@ -67,10 +67,13 @@
 				accountSession.ownerId = accounts.ownerId;
 				accountSession.ready = true;
 			})
-			.catch((cause) => {
-				if (!cancelled) {
-					conflict = cause instanceof LocalAccountConflict;
-					error = cause instanceof Error ? cause.message : 'Failed to open local account';
+			.catch(async (cause) => {
+				if (cancelled) return;
+				console.error('Could not prepare local account', cause);
+				if (cause instanceof LocalAccountConflict) {
+					await returnToSignIn();
+				} else {
+					error = m['account.logoutFailed']();
 				}
 			});
 
@@ -93,27 +96,21 @@
 		}
 	}
 
-	/** Keeps the previous data for reauthentication, or deletes it before admitting the new user. */
-	async function resolveConflict(discard: boolean) {
-		if (conflictBusy) return;
-		conflictBusy = true;
+	/** Returns an unexpected session to sign-in without deleting the previous user's edits. */
+	async function returnToSignIn() {
+		recovering = true;
+		recoveryFailed = false;
 		try {
-			if (discard) {
-				await getAccountDatabase().clear();
-				window.location.reload();
-			} else {
-				await signOutAndRefreshSession(authClient);
-				window.location.assign(resolve('/login'));
-			}
+			await signOutAndRefreshSession(authClient);
+			window.location.assign(resolve('/login'));
 		} catch (cause) {
-			error = cause instanceof Error ? cause.message : 'Could not change accounts';
-		} finally {
-			conflictBusy = false;
+			console.error('Could not return to sign-in', cause);
+			recoveryFailed = true;
 		}
 	}
 
 	onMount(() => {
-		/** Hides stale views immediately when another tab logs out or selects another account. */
+		/** Hides stale views immediately when another tab logs out or signs in. */
 		async function onAccountChange(event: StorageEvent) {
 			if (event.key !== OWNER_STORAGE_KEY && event.key !== null) return;
 			accountChanged = true;
@@ -130,66 +127,49 @@
 </script>
 
 {#if accountChanged}
-	<section class="mx-auto flex max-w-md flex-col gap-4 p-6">
-		<p role="alert">{m['account.changedInAnotherTab']()}</p>
-		<Button onclick={() => window.location.reload()}>{m['account.reload']()}</Button>
-	</section>
+	<ResponsiveDialog
+		open={true}
+		title={m['account.reloadTitle']()}
+		description={m['account.changedInAnotherTab']()}
+		dismissible={false}
+	>
+		<div class="flex justify-end">
+			<Button onclick={() => window.location.reload()}>{m['account.reload']()}</Button>
+		</div>
+	</ResponsiveDialog>
 {:else if accountSession.signingOut}
 	{#if accountSession.logoutError}
-		<Dialog.Root
+		<ResponsiveDialog
 			open={true}
-			onOpenChange={(open) => {
-				if (!open) cancelLogout();
-			}}
+			title={m['account.logoutFailed']()}
+			description={m['account.logoutUnsynced']()}
+			closeLabel={m['account.logoutCancel']()}
+			busy={accountSession.logoutBusy}
+			onclose={cancelLogout}
 		>
-			<Dialog.Portal>
-				<Dialog.Overlay class="fixed inset-0 z-50 bg-black/50" />
-				<Dialog.Content
-					class="fixed top-1/2 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-lg border bg-background p-6 shadow-lg"
+			<div class="flex justify-between gap-2">
+				<Button
+					disabled={accountSession.logoutBusy}
+					class="h-auto min-h-9 min-w-0 whitespace-normal"
+					variant="destructive"
+					onclick={() => retryLogout(true)}>{m['account.logoutDiscard']()}</Button
 				>
-					<Dialog.Title class="text-lg font-semibold">{m['account.logoutFailed']()}</Dialog.Title>
-					<Dialog.Description>{m['account.logoutUnsynced']()}</Dialog.Description>
-					<p role="alert" class="text-sm text-muted-foreground">{accountSession.logoutError}</p>
-					<div class="flex flex-wrap gap-2">
-						<Button variant="outline" onclick={cancelLogout}>{m['account.logoutCancel']()}</Button>
-						<Button onclick={() => retryLogout()}>{m['account.logoutRetry']()}</Button>
-						<Button variant="destructive" onclick={() => retryLogout(true)}
-							>{m['account.logoutDiscard']()}</Button
-						>
-					</div>
-				</Dialog.Content>
-			</Dialog.Portal>
-		</Dialog.Root>
+				<Button
+					disabled={accountSession.logoutBusy}
+					class="h-auto min-h-9 min-w-0 whitespace-normal"
+					variant="outline"
+					onclick={() => retryLogout()}>{m['account.logoutRetry']()}</Button
+				>
+			</div>
+		</ResponsiveDialog>
 	{:else}
 		<p role="status" class="p-6">{m['account.loggingOut']()}</p>
 	{/if}
-{:else if conflict}
-	<Dialog.Root open={true}>
-		<Dialog.Portal>
-			<Dialog.Overlay class="fixed inset-0 z-50 bg-black/50" />
-			<Dialog.Content
-				escapeKeydownBehavior="ignore"
-				interactOutsideBehavior="ignore"
-				class="fixed top-1/2 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-lg border bg-background p-6 shadow-lg"
-				aria-busy={conflictBusy}
-			>
-				<Dialog.Title class="text-lg font-semibold">{m['account.previousDataTitle']()}</Dialog.Title
-				>
-				<Dialog.Description>{m['account.previousDataDescription']()}</Dialog.Description>
-				<p role="alert" class="text-sm text-muted-foreground">{error}</p>
-				<div class="flex flex-wrap gap-2">
-					<Button disabled={conflictBusy} variant="outline" onclick={() => resolveConflict(false)}
-						>{m['account.previousDataKeep']()}</Button
-					>
-					<Button
-						disabled={conflictBusy}
-						variant="destructive"
-						onclick={() => resolveConflict(true)}>{m['account.previousDataDiscard']()}</Button
-					>
-				</div>
-			</Dialog.Content>
-		</Dialog.Portal>
-	</Dialog.Root>
+{:else if recoveryFailed}
+	<div class="flex flex-col gap-4 p-6">
+		<p role="alert">{m['account.logoutFailed']()}</p>
+		<Button variant="outline" onclick={returnToSignIn}>{m['account.logoutRetry']()}</Button>
+	</div>
 {:else if error}
 	<p role="alert" class="p-4">{error}</p>
 {:else if canShowContent}

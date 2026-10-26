@@ -11,6 +11,16 @@ export async function signOutAndRefreshSession(
 	// Sign-out only schedules a refetch; its cached session can otherwise recreate the account.
 	const session = auth.useSession();
 	await session.get().refetch({ query: { disableCookieCache: true } });
+	// A sign-out notification can start a newer refetch and supersede the one we awaited.
+	const settled = Promise.withResolvers<void>();
+	const unsubscribe = session.subscribe((current) => {
+		if (!current.isPending && !current.isRefetching) settled.resolve();
+	});
+	try {
+		await settled.promise;
+	} finally {
+		unsubscribe();
+	}
 	const current = session.get();
 	if (current.error) throw new Error(current.error.message ?? 'Could not confirm sign-out');
 	if (current.data) throw new Error('The session is still active. Please retry logging out.');

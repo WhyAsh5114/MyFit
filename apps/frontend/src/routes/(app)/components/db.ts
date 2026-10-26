@@ -20,7 +20,6 @@ export async function logout(discard = false) {
 	if (accountSession.logoutBusy) return false;
 	accountSession.signingOut = true;
 	accountSession.logoutBusy = true;
-	accountSession.logoutError = null;
 	accountSession.ready = false;
 	try {
 		await syncWorkerState.stop();
@@ -33,9 +32,11 @@ export async function logout(discard = false) {
 		accountSession.ownerId = null;
 		queryClient.clear();
 		await goto(resolve('/login'));
+		accountSession.logoutError = null;
 		accountSession.signingOut = false;
 		return true;
 	} catch (error) {
+		console.error('Could not log out', error);
 		accountSession.logoutError = error instanceof Error ? error.message : 'Could not sign out.';
 		return false;
 	} finally {
