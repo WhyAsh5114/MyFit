@@ -1,0 +1,80 @@
+[
+  {
+    "id": "index.NutritionData.nutrition_data_search_popular_ac7e03d8",
+    "label": "Create index \"nutrition_data_search_popular_ac7e03d8\" on \"NutritionData\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "nutrition_data_search_popular_ac7e03d8",
+        "table": "NutritionData"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"nutrition_data_search_popular_ac7e03d8\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"nutrition_data_search_popular_ac7e03d8\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"nutrition_data_search_popular_ac7e03d8\"",
+        "sql": "CREATE INDEX \"nutrition_data_search_popular_ac7e03d8\" ON \"public\".\"NutritionData\" USING \"gin\" ((setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"productName\", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"brands\", ''))), 'B'))) WHERE (\"uniqueScans\" >= 10)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"nutrition_data_search_popular_ac7e03d8\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"nutrition_data_search_popular_ac7e03d8\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.NutritionData.nutrition_data_search_seen_a424f517",
+    "label": "Create index \"nutrition_data_search_seen_a424f517\" on \"NutritionData\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "nutrition_data_search_seen_a424f517",
+        "table": "NutritionData"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"nutrition_data_search_seen_a424f517\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"nutrition_data_search_seen_a424f517\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"nutrition_data_search_seen_a424f517\"",
+        "sql": "CREATE INDEX \"nutrition_data_search_seen_a424f517\" ON \"public\".\"NutritionData\" USING \"gin\" ((setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"productName\", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"brands\", ''))), 'B'))) WHERE (\"uniqueScans\" >= 1)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"nutrition_data_search_seen_a424f517\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"nutrition_data_search_seen_a424f517\""
+        ]
+      }
+    ]
+  }
+]

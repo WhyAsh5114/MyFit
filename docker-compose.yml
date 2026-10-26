@@ -11,6 +11,19 @@ services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
+    # Sized for the 8 GB, 2 vCPU host (t4g.large) that also runs the other services. The food
+    # table and its indexes are about 1.6 GB and should stay in memory: Postgres's default
+    # 128 MB of shared buffers pushes broad searches onto the disk.
+    command:
+      - postgres
+      - -c
+      - shared_buffers=2GB
+      - -c
+      - effective_cache_size=5GB
+      - -c
+      - work_mem=32MB
+    # Docker's default 64 MB /dev/shm is too small for parallel queries.
+    shm_size: 512mb
     environment:
       POSTGRES_DB: myfit
       POSTGRES_USER: myfit
@@ -61,6 +74,15 @@ services:
       - "traefik.http.routers.myfit-api.entrypoints=websecure"
       - "traefik.http.routers.myfit-api.tls.certresolver=letsencrypt"
       - "traefik.http.services.myfit-api.loadbalancer.server.port=3000"
+      # Food search is the expensive endpoint and is public, so it gets its own router, with a
+      # per-client rate limit that does not apply to sync and auth. The longer rule wins.
+      - "traefik.http.routers.myfit-search.rule=Host(`${API_DOMAIN}`) && PathPrefix(`/api/nutrition-data`)"
+      - "traefik.http.routers.myfit-search.entrypoints=websecure"
+      - "traefik.http.routers.myfit-search.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.myfit-search.service=myfit-api"
+      - "traefik.http.routers.myfit-search.middlewares=myfit-search-ratelimit"
+      - "traefik.http.middlewares.myfit-search-ratelimit.ratelimit.average=10"
+      - "traefik.http.middlewares.myfit-search-ratelimit.ratelimit.burst=30"
 
   frontend:
     build:

@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-	StorageHashBase<'629292428441ee1057e4b6a6806b7e244d6a24514218d74d22927aabe29e9b0c'>;
+	StorageHashBase<'2cb77723bb8e71b0bf16d95d5ee3f308989253d3c3c363638268a883a653a3c6'>;
 export type ExecutionHash =
 	ExecutionHashBase<'9b0ec966f1397f6b3ef25f4a1a23de2c45c37bc7cc8df5fc4c96d8354ad09503'>;
 export type ProfileHash =
@@ -2732,6 +2732,22 @@ type ContractBase = Omit<
 									readonly name: 'nutrition_data_search_aa01b8a8';
 									readonly prefix: 'nutrition_data_search';
 									readonly expression: "(setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"productName\", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"brands\", ''))), 'B'))";
+									readonly unique: false;
+									readonly type: 'gin';
+								},
+								{
+									readonly name: 'nutrition_data_search_popular_ac7e03d8';
+									readonly prefix: 'nutrition_data_search_popular';
+									readonly expression: "(setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"productName\", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"brands\", ''))), 'B'))";
+									readonly where: '"uniqueScans" >= 10';
+									readonly unique: false;
+									readonly type: 'gin';
+								},
+								{
+									readonly name: 'nutrition_data_search_seen_a424f517';
+									readonly prefix: 'nutrition_data_search_seen';
+									readonly expression: "(setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"productName\", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce(\"brands\", ''))), 'B'))";
+									readonly where: '"uniqueScans" >= 1';
 									readonly unique: false;
 									readonly type: 'gin';
 								}

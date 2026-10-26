@@ -323,6 +323,10 @@ model RecipeIngredient {
 // browser asks the API (`/api/nutrition-data`) instead. The weighted full-text index
 // weights productName strongest and brands next. The API uses the matching
 // accent-folded document in its raw search query through the Postgres ORM.
+// The two partial copies of that index serve the search's popularity tiers (at least 10
+// scans, then at least 1): they are small enough that a broad word does not touch the
+// large full index. Their `where` thresholds must match the literals in
+// apps/api/src/features/nutrition-data/search-foods.ts, or the planner cannot use them.
 model NutritionData {
   id                       String @id
   code                     String @unique
@@ -370,6 +374,8 @@ model NutritionData {
   caffeineMg_100g          Float?
 
   @@index(expression: sql`(setweight(to_tsvector('english', public.immutable_unaccent(coalesce("productName", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce("brands", ''))), 'B'))`, type: "gin", name: "nutrition_data_search")
+  @@index(expression: sql`(setweight(to_tsvector('english', public.immutable_unaccent(coalesce("productName", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce("brands", ''))), 'B'))`, where: sql`"uniqueScans" >= 10`, type: "gin", name: "nutrition_data_search_popular")
+  @@index(expression: sql`(setweight(to_tsvector('english', public.immutable_unaccent(coalesce("productName", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce("brands", ''))), 'B'))`, where: sql`"uniqueScans" >= 1`, type: "gin", name: "nutrition_data_search_seen")
   @@index(expression: sql`public.immutable_unaccent("productName") gin_trgm_ops`, type: "gin", name: "nutrition_data_product_name_trgm")
   @@index(expression: sql`public.immutable_unaccent(brands) gin_trgm_ops`, type: "gin", name: "nutrition_data_brands_trgm")
   @@idb.exclude
