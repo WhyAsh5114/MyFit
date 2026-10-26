@@ -5,30 +5,30 @@
 MyFit is a **local-first, mobile-first fitness SPA** built with SvelteKit + Capacitor.
 
 - **No SSR.** Root layout sets `prerender = true`; `(app)` group sets `ssr = false`. All data fetching is client-side.
-- **Local-first data.** All user data (food entries, metrics, targets, preferences) is stored in IndexedDB via `PrismaIDBClient` — a Prisma-compatible client auto-generated from the schema. Writes go to IDB first; an outbox pattern queues changes for background sync to the remote PostgreSQL database.
+- **Local-first data.** All user data (food entries, metrics, targets, preferences) is stored in IndexedDB through the Prisma IDB client (`@prisma-idb/client-idb`), typed by the shared schema in `packages/shared`. Writes go to IDB first; the sync extension records each `orm.*` write in an outbox, and the sync worker pushes it to the remote PostgreSQL database in the background.
 - **Remote data is read-only from the client.** Nutrition food data is fetched from the Hono API via `apiClient` and cached in TanStack Query — it is never written locally.
 - **Two clients, two purposes:**
-  - `getClient()` → `PrismaIDBClient` (IndexedDB) — all user data reads/writes
+  - `getDb()` (`$lib/clients/idb-client`) → `DbClient` (IndexedDB) — all user data reads/writes through `const { orm } = await getDb()`
   - `apiClient` → Hono RPC client — nutrition data search/lookup only
 
 ---
 
 ## Tech Stack
 
-| Concern | Library |
-|---|---|
-| Framework | SvelteKit 2, Svelte 5 (runes) |
-| Styling | Tailwind CSS v4 |
-| Components | shadcn-svelte (via bits-ui) |
-| Charts | layerchart |
-| Server state | TanStack Svelte Query v6 |
-| Forms | sveltekit-superforms + zod v4 |
-| Local DB | PrismaIDBClient (IndexedDB) |
-| Remote API | Hono RPC (`hc<AppType>`) |
-| Auth | better-auth (email OTP + anonymous) |
-| i18n | Paraglide JS (compile-time) |
-| Mobile | Capacitor 8 (iOS + Android) |
-| Date math | `@internationalized/date` |
+| Concern      | Library                                                    |
+| ------------ | ---------------------------------------------------------- |
+| Framework    | SvelteKit 2, Svelte 5 (runes)                              |
+| Styling      | Tailwind CSS v4                                            |
+| Components   | shadcn-svelte (via bits-ui)                                |
+| Charts       | layerchart                                                 |
+| Server state | TanStack Svelte Query v6                                   |
+| Forms        | sveltekit-superforms + zod v4                              |
+| Local DB     | Prisma IDB client (IndexedDB, schema in `packages/shared`) |
+| Remote API   | Hono RPC (`hc<AppType>`)                                   |
+| Auth         | better-auth (email OTP + anonymous)                        |
+| i18n         | Paraglide JS (compile-time)                                |
+| Mobile       | Capacitor 8 (iOS + Android)                                |
+| Date math    | `@internationalized/date`                                  |
 
 ---
 
@@ -84,12 +84,12 @@ Only add mappers when the DB shape and form shape genuinely differ. Do not creat
 
 ### Hooks
 
-| Type | Pattern | Example |
-|---|---|---|
-| Query | `use{Resource}` | `useCurrentUser()` |
+| Type              | Pattern                     | Example                         |
+| ----------------- | --------------------------- | ------------------------------- |
+| Query             | `use{Resource}`             | `useCurrentUser()`              |
 | Query by selector | `use{Resource}By{Selector}` | `useFoodEntriesByDate(getArgs)` |
-| Mutation | `use{Verb}{Resource}` | `useCreateFoodEntry()` |
-| Upsert mutation | `useSave{Resource}` | `useSaveActivityPreferences()` |
+| Mutation          | `use{Verb}{Resource}`       | `useCreateFoodEntry()`          |
+| Upsert mutation   | `useSave{Resource}`         | `useSaveActivityPreferences()`  |
 
 No `Get` prefix, no `Query`/`Mutation` suffix on hook names.
 
@@ -110,10 +110,10 @@ const createFoodEntryMutation = useCreateFoodEntryMutation();
 
 ```ts
 export const foodEntryKeys = {
-  all: ['foodEntry'] as const,
-  list: (userId: string) => [...foodEntryKeys.all, userId] as const,
-  byDate: (userId: string, date: string) => [...foodEntryKeys.list(userId), 'date', date] as const,
-  byId: (userId: string, id: string) => [...foodEntryKeys.list(userId), 'id', id] as const,
+	all: ['foodEntry'] as const,
+	list: (userId: string) => [...foodEntryKeys.all, userId] as const,
+	byDate: (userId: string, date: string) => [...foodEntryKeys.list(userId), 'date', date] as const,
+	byId: (userId: string, id: string) => [...foodEntryKeys.list(userId), 'id', id] as const
 };
 ```
 
@@ -129,17 +129,17 @@ export const foodEntryKeys = {
 
 ```ts
 // Reactive getter function pattern — required for Svelte 5 reactivity
-export const useFoodEntriesByDate = (
-  getArgs: () => { userId: string; date: CalendarDate }
-) =>
-  createQuery(() => {
-    const { userId, date } = getArgs();
-    return {
-      queryKey: foodEntryKeys.byDate(userId, date.toString()),
-      queryFn: async () => { /* ... */ },
-      enabled: !!userId && !!date,
-    };
-  });
+export const useFoodEntriesByDate = (getArgs: () => { userId: string; date: CalendarDate }) =>
+	createQuery(() => {
+		const { userId, date } = getArgs();
+		return {
+			queryKey: foodEntryKeys.byDate(userId, date.toString()),
+			queryFn: async () => {
+				/* ... */
+			},
+			enabled: !!userId && !!date
+		};
+	});
 ```
 
 - Always accept args via a getter function, not raw values. This is what makes queries reactive.
@@ -152,21 +152,22 @@ export const useFoodEntriesByDate = (
 
 ```ts
 export const useCreateFoodEntry = () =>
-  createMutation(() => ({
-    mutationFn: async ({ data, userId }: { data: FoodEntryFormSchema; userId: string }) => {
-      const foodEntry = foodEntryFormSchemaToFoodEntry(data, userId);
-      return await getClient().foodEntry.create({ data: foodEntry });
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: foodEntryKeys.byDate(data.userId, data.eatenAt.toISOString().split('T')[0]),
-      });
-    },
-    onError: (error) => {
-      toast.error(m['unknownErrorOccurred']());
-      console.error('Failed to create food entry:', error);
-    },
-  }));
+	createMutation(() => ({
+		mutationFn: async ({ data, userId }: { data: FoodEntryFormSchema; userId: string }) => {
+			const foodEntry = foodEntryFormSchemaToFoodEntry(data, userId);
+			const { orm } = await getDb();
+			return await orm.foodEntry.create(foodEntry);
+		},
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({
+				queryKey: foodEntryKeys.byDate(data.userId, data.eatenAt.toISOString().split('T')[0])
+			});
+		},
+		onError: (error) => {
+			toast.error(m['unknownErrorOccurred']());
+			console.error('Failed to create food entry:', error);
+		}
+	}));
 ```
 
 - `onSuccess` invalidates by the tightest applicable key scope (prefer `byDate`/`byId` over `list`/`all`).
@@ -268,7 +269,7 @@ import * as Form from '$lib/components/ui/form/index.js';
 
 ```svelte
 <script lang="ts">
-  import { m } from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 </script>
 
 <!-- ✅ All user-visible strings go through Paraglide -->
@@ -288,7 +289,7 @@ toast.error(m['unknownErrorOccurred']());
 
 ## Capacitor
 
-- IDB client (`getClient()`) is **browser-only**. The root `+layout.ts` calls `initializeClient()` on first load. Never call `getClient()` in SSR context or before the root layout has resolved.
+- The IDB client (`getDb()`) is **browser-only**. The root `+layout.ts` awaits `getDb()` on first load, which runs the IndexedDB migrations. Never call `getDb()` in SSR context.
 - Capacitor plugins are initialized at layout level (`+layout.svelte`). Don't re-initialize plugins in child routes.
 - Use `Capacitor.getPlatform()` to gate platform-specific code (`'android'`, `'ios'`, `'web'`).
 - `viewport-fit=cover` is set in `app.html` for safe-area insets — don't override it.
@@ -321,7 +322,7 @@ domain/
 2. `(app)/+layout.ts` disables SSR/prerender for all authenticated routes.
 3. `<SessionCacher>` in `(app)/+layout.svelte` runs on every navigation and syncs the better-auth session with the local IDB user record.
 4. The `user` feature (`useCurrentUser`) reads the local IDB record — not the auth session directly.
-5. `resetDatabaseState()` in `db.ts` clears IDB + localStorage on logout.
+5. `resetDatabaseState()` in `(app)/components/db.ts` stops the sync worker, wipes IDB and clears the pull cursor on logout.
 
 ---
 
@@ -330,8 +331,8 @@ domain/
 1. Create `src/lib/features/{domain}/{resource}/keys.ts` with a hierarchical key factory.
 2. Add `queries/` and `mutations/` sub-folders. Name files after the operation (`get.ts`, `get-by-date.ts`, `create.ts`, `update.ts`).
 3. If the DB shape ≠ form shape, add `model/mapper.ts`. If the schema is complex, add `model/schema.ts`.
-4. Define the Prisma model in `apps/api/prisma/schema/` and run `pnpm generate` from `apps/api/`.
-5. For user-scoped IDB models: ensure the `rootModel = "User"` cascade in the `prismaIDB` generator handles your model (check `exclude` list).
+4. Define the model in `packages/shared/src/schema.prisma`, then run `pnpm --filter @myfit/shared schema:sync <migration-name>` (see the root README).
+5. For user-scoped models: sync uses `rootModel: 'User'` (`packages/shared/src/server.ts`), so give the model a relation path to `User`. Mark server-only models with `@@idb.exclude`.
 6. Use `useCurrentUser()` in route components to get the `userId` — never hardcode or pass it via props through multiple layers.
 
 ---
@@ -341,7 +342,7 @@ domain/
 ```ts
 // ❌ Query inside queryFn
 queryFn: async () => {
-  try { return await getClient().foodEntry.findMany(...) }
+  try { return await (await getDb()).orm.foodEntry.where({ userId }).all() }
   catch (e) { toast.error('...'); throw e; }  // ← don't catch; let TanStack handle it
 }
 
