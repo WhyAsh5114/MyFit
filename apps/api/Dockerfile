@@ -24,14 +24,6 @@ RUN pnpm install --frozen-lockfile --filter @myfit/api...
 COPY apps/api ./apps/api
 COPY packages/shared ./packages/shared
 
-# Regenerate Prisma client for the container platform
-# (typed SQL files stay from VCS — prisma generate without --sql doesn't emit them)
-WORKDIR /build/apps/api
-RUN rm -rf ./generated/prisma && \
-    DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder \
-    pnpm exec prisma generate
-COPY apps/api/generated/prisma/sql ./generated/prisma/sql
-
 # ============================================================================
 # STAGE 2: Runtime
 # ============================================================================
