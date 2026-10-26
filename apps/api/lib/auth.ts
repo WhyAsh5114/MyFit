@@ -1,14 +1,13 @@
 import { betterAuth } from 'better-auth';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { prisma } from './prisma.js';
+import { pool } from './pool.js';
 import { anonymous, emailOTP } from 'better-auth/plugins';
 import { sendOTPEmail } from '../src/mailer.js';
 import { env } from './env.js';
 
 export const auth = betterAuth({
-	database: prismaAdapter(prisma, {
-		provider: 'postgresql'
-	}),
+	// better-auth's tables (user/session/account/verification) are defined in
+	// packages/shared/src/schema.prisma with the exact names and columns it expects.
+	database: pool,
 	trustedOrigins: env.TRUSTED_ORIGINS,
 	plugins: [
 		anonymous(),

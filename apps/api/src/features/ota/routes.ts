@@ -192,10 +192,8 @@ const otaRoutes = new Hono()
 			return c.json({ error: `Upload exceeds ${MAX_UPLOAD_BYTES / 1024 / 1024} MB limit` }, 413);
 		}
 
-		let body: FormData;
-		try {
-			body = await c.req.raw.formData();
-		} catch {
+		const body = await c.req.raw.formData().catch(() => null);
+		if (!body) {
 			return c.json({ error: 'Expected multipart/form-data' }, 400);
 		}
 

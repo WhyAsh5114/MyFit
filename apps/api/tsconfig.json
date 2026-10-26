@@ -3,7 +3,9 @@
 		"target": "ESNext",
 		"module": "ESNext",
 		"lib": ["ESNext"],
+		"types": ["bun"],
 		"moduleResolution": "bundler",
+		"rewriteRelativeImportExtensions": true,
 		"strict": true,
 		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
@@ -14,6 +16,6 @@
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true
 	},
-	"include": ["src/**/*", "prisma.config.ts"],
-	"exclude": ["node_modules", "dist", "generated/prisma-idb"]
+	"include": ["src/**/*", "lib/**/*", "prisma/seed/**/*.ts", "tests/**/*"],
+	"exclude": ["node_modules", "dist"]
 }
