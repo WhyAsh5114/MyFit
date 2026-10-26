@@ -82,11 +82,11 @@ class SyncWorkerState {
 
 	/** Flushes pending edits using the same account-bound transport as background sync. */
 	async flushForLogout(db: DbClient): Promise<void> {
-		await flushLogoutChanges(this.createWorker(db));
+		await flushLogoutChanges(this.createWorker(db, true));
 	}
 
 	/** Creates a worker that pushes and pulls through the API and syncs again when the browser comes back online. */
-	private createWorker(db: DbClient): SyncWorker {
+	private createWorker(db: DbClient, retryImmediately = false): SyncWorker {
 		return db.createSyncWorker({
 			...createSyncFetchHandlers({
 				pushUrl: `${PUBLIC_API_URL}/api/sync/push`,
@@ -95,6 +95,8 @@ class SyncWorkerState {
 				headers: { 'X-Sync-Owner': getAccountDatabase().ownerId! }
 			}),
 			batchSize: 50,
+			// An explicit logout retry should attempt queued edits even during background backoff.
+			...(retryImmediately ? { backoffBaseMs: 0 } : {}),
 			intervalMs: 10000,
 			syncOnReconnect: true
 		});

@@ -187,5 +187,11 @@
 	"account.logoutUnsynced": "Your local data is still on this device. Retry to save pending changes, cancel to keep working, or discard unsynced changes and log out. Discarded changes cannot be recovered.",
 	"account.logoutCancel": "Cancel",
 	"account.logoutRetry": "Retry logout",
-	"account.logoutDiscard": "Discard changes and log out"
+	"account.logoutDiscard": "Discard changes and log out",
+	"account.previousDataTitle": "Previous account data is still on this device",
+	"account.previousDataDescription": "Sign in to the previous account to sync its changes, or discard its local data to continue with this account. Discarded changes cannot be recovered.",
+	"account.previousDataKeep": "Keep data and return to sign-in",
+	"account.previousDataDiscard": "Discard local data and continue",
+	"account.changedInAnotherTab": "Local account data changed in another tab. Reload to continue.",
+	"account.reload": "Reload"
 }

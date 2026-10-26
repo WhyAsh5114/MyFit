@@ -80,5 +80,11 @@
 	"account.logoutUnsynced": "Tus datos locales siguen en este dispositivo. Reintenta para guardar los cambios pendientes, cancela para seguir trabajando o descarta los cambios sin sincronizar y cierra sesión. Los cambios descartados no se pueden recuperar.",
 	"account.logoutCancel": "Cancelar",
 	"account.logoutRetry": "Reintentar cierre de sesión",
-	"account.logoutDiscard": "Descartar cambios y cerrar sesión"
+	"account.logoutDiscard": "Descartar cambios y cerrar sesión",
+	"account.previousDataTitle": "Los datos de la cuenta anterior siguen en este dispositivo",
+	"account.previousDataDescription": "Inicia sesión en la cuenta anterior para sincronizar sus cambios o descarta sus datos locales para continuar con esta cuenta. Los cambios descartados no se pueden recuperar.",
+	"account.previousDataKeep": "Conservar datos y volver al inicio de sesión",
+	"account.previousDataDiscard": "Descartar datos locales y continuar",
+	"account.changedInAnotherTab": "Los datos locales de la cuenta cambiaron en otra pestaña. Recarga para continuar.",
+	"account.reload": "Recargar"
 }

@@ -5,7 +5,12 @@ import { createManagedAutoSyncIdbClient } from '@prisma-idb/sync-extension-idb/c
 import { idbSyncExtension } from '@prisma-idb/sync-extension-idb/control';
 import { contractSpace, type Contract } from '@myfit/schema/client';
 import { createAuthClient } from 'better-auth/svelte';
-import { AccountDatabase, OWNER_STORAGE_KEY, type DbClient } from './idb-client.ts';
+import {
+	AccountDatabase,
+	LocalAccountConflict,
+	OWNER_STORAGE_KEY,
+	type DbClient
+} from './idb-client.ts';
 import { flushLogoutChanges, logoutAccount, signOutAndRefreshSession } from '../features/logout.ts';
 
 /** Supplies persistent storage shared by simulated tabs without requiring a browser. */
@@ -113,9 +118,9 @@ test('logout clears the auth session before the session boundary can reactivate 
 		await accounts.activate(session.get().data?.user.id);
 		assert.equal(accounts.ownerId, null);
 		assert.equal(storage.getItem(OWNER_STORAGE_KEY), '');
-		assert.equal(
-			(await indexedDB.databases()).some(({ name }) => name?.startsWith('myfit:account:')),
-			false
+		assert.deepEqual(
+			(await indexedDB.databases()).map(({ name }) => name),
+			[]
 		);
 	} finally {
 		await accounts.close();
@@ -170,9 +175,9 @@ test('logout saves pending edits before signing out, then deletes account storag
 				assert.equal((await db.orm.meal.all())[0]?.name, 'Offline meal');
 			}
 		});
-		assert.equal(
-			(await indexedDB.databases()).some(({ name }) => name?.startsWith('myfit:account:')),
-			false
+		assert.deepEqual(
+			(await indexedDB.databases()).map(({ name }) => name),
+			[]
 		);
 		await assert.rejects(accounts.get(), /No active local account/);
 		const reloaded = new AccountDatabase(storage);
@@ -273,16 +278,16 @@ test('explicit discard deletes unsynced edits; failed sign-out still preserves t
 		assert.equal(await db.outbox.pendingCount(), 1);
 		assert.equal((await db.orm.meal.all())[0]?.name, 'Offline meal');
 		await logoutAccount(accounts, { ...options, signOut: async () => {} });
-		assert.equal(
-			(await indexedDB.databases()).some(({ name }) => name?.startsWith('myfit:account:')),
-			false
+		assert.deepEqual(
+			(await indexedDB.databases()).map(({ name }) => name),
+			[]
 		);
 	} finally {
 		await accounts.close();
 	}
 });
 
-test('expired legacy account stays offline-capable and never shares rows or queued writes with a new login', async () => {
+test('session expiry retains edits in the sole database and a new account must wait for deletion', async () => {
 	const legacy = createManagedAutoSyncIdbClient<Contract>({
 		contractSpace,
 		dbName: 'myfit',
@@ -296,17 +301,21 @@ test('expired legacy account stays offline-capable and never shares rows or queu
 		await legacy.close();
 	}
 
-	const accounts = new AccountDatabase(createStorage());
+	const storage = createStorage();
+	const accounts = new AccountDatabase(storage);
 	try {
 		const offline = (await accounts.activate())!;
 		assert.equal(accounts.ownerId, 'user-a');
 		assert.equal(await offline.outbox.pendingCount(), 1);
-		const next = (await accounts.activate('user-b'))!;
-		assert.deepEqual(await next.orm.user.all(), []);
-		assert.deepEqual(await next.orm.meal.all(), []);
-		assert.equal(await next.outbox.pendingCount(), 0);
-		await cacheUser(next, 'user-b');
+		await assert.rejects(accounts.activate('user-b'), LocalAccountConflict);
+		assert.equal(storage.getItem(OWNER_STORAGE_KEY), 'user-a');
+		assert.deepEqual(
+			(await indexedDB.databases()).map(({ name }) => name),
+			['myfit']
+		);
+		await assert.rejects(accounts.get(), /No active local account/);
 
+		// Keeping data lets the original user reauthenticate with all pending edits intact.
 		const original = (await accounts.activate('user-a'))!;
 		assert.deepEqual(
 			(await original.orm.user.all()).map((user) => user.id),
@@ -314,12 +323,20 @@ test('expired legacy account stays offline-capable and never shares rows or queu
 		);
 		assert.equal((await original.orm.meal.all())[0]?.name, 'Offline meal');
 		assert.equal(await original.outbox.pendingCount(), 1);
-		await logoutAccount(accounts, { discard: true, sync: syncChanges, signOut: async () => {} });
-		assert.equal(
-			(await indexedDB.databases()).some(({ name }) => name === 'myfit'),
-			false
+
+		// An explicit discard deletes the same database before the other user can populate it.
+		await accounts.clear();
+		assert.deepEqual(await indexedDB.databases(), []);
+		const next = (await accounts.activate('user-b'))!;
+		assert.deepEqual(await next.orm.user.all(), []);
+		assert.deepEqual(await next.orm.meal.all(), []);
+		assert.equal(await next.outbox.pendingCount(), 0);
+		await cacheUser(next, 'user-b');
+		assert.deepEqual(
+			(await indexedDB.databases()).map(({ name }) => name),
+			['myfit']
 		);
-		assert.equal(await accounts.activate(), null);
+		await assert.rejects(accounts.activate('user-a'), LocalAccountConflict);
 	} finally {
 		await accounts.close();
 	}
@@ -336,7 +353,7 @@ test('refuses to assign an already mixed legacy database and keeps its data inta
 		await cacheUser(db, 'user-a');
 		await cacheUser(db, 'user-b');
 		const accounts = new AccountDatabase(createStorage());
-		await assert.rejects(accounts.activate('user-b'), /multiple accounts/);
+		await assert.rejects(accounts.activate('user-b'), LocalAccountConflict);
 		assert.deepEqual(
 			(await db.orm.user.all()).map((user) => user.id),
 			['user-a', 'user-b']
