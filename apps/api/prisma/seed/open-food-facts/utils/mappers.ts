@@ -4,16 +4,16 @@
  */
 
 import type { ProcessedNutritionData, RawNutritionData } from './types.js';
-import { calculateUnsaturatedFat } from './unit-conversion.js';
+import { calculateUnsaturatedFat } from './unit-conversion.ts';
 
 /**
  * Map raw CSV field names to processed field names and values
  * Only processes 100g data, all values are direct numeric extracts (no unit conversion)
  */
 export function mapRawToProcessed(raw: RawNutritionData): ProcessedNutritionData {
-	// Helper to safely parse numeric values
+	/** Keep zero values and reject missing, negative or non-finite nutrients. */
 	const parseValue = (val: string | number | undefined): number | null => {
-		if (!val || val === '') return null;
+		if (val === undefined || val === '') return null;
 		const numVal = typeof val === 'string' ? parseFloat(val) : val;
 		return isFinite(numVal) && numVal >= 0 ? numVal : null;
 	};
@@ -83,8 +83,10 @@ export function mapRawToProcessed(raw: RawNutritionData): ProcessedNutritionData
  */
 export function toTsvRow(data: ProcessedNutritionData): string {
 	const escapeText = (v: string | null): string => {
-		if (!v) return '\\N';
-		return v
+		// Postgres text cannot store NUL bytes (error 22021); some OFF rows contain them
+		const cleaned = v?.replace(/\0/g, '');
+		if (!cleaned) return '\\N';
+		return cleaned
 			.replace(/\\/g, '\\\\')
 			.replace(/\n/g, '\\n')
 			.replace(/\r/g, '\\r')
