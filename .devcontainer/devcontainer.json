@@ -8,7 +8,7 @@
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [5432],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pnpm install && pnpm exec tsx scripts/populate-env.ts && pnpm exec prisma migrate deploy",
+	"postCreateCommand": "pnpm install && pnpm exec tsx scripts/populate-env.ts && pnpm --filter @myfit/shared db:migrate",
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
