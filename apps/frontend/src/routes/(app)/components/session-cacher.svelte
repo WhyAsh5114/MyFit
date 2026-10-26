@@ -150,13 +150,13 @@
 			<div class="flex justify-between gap-2">
 				<Button
 					disabled={accountSession.logoutBusy}
-					class="h-auto min-h-9 min-w-0 whitespace-normal"
+					class="h-auto min-h-9 min-w-0 shrink whitespace-normal"
 					variant="destructive"
 					onclick={() => retryLogout(true)}>{m['account.logoutDiscard']()}</Button
 				>
 				<Button
 					disabled={accountSession.logoutBusy}
-					class="h-auto min-h-9 min-w-0 whitespace-normal"
+					class="h-auto min-h-9 min-w-0 shrink whitespace-normal"
 					variant="outline"
 					onclick={() => retryLogout()}>{m['account.logoutRetry']()}</Button
 				>
