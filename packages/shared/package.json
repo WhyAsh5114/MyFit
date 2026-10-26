@@ -1,5 +1,6 @@
 {
 	"name": "@myfit/shared",
+	"private": true,
 	"type": "module",
 	"exports": {
 		".": {
@@ -9,7 +10,53 @@
 		"./nutrition": {
 			"types": "./src/nutrition/index.ts",
 			"default": "./src/nutrition/index.ts"
+		},
+		"./constants": {
+			"types": "./src/constants.ts",
+			"default": "./src/constants.ts"
+		},
+		"./client": {
+			"types": "./src/client.ts",
+			"default": "./src/client.ts"
+		},
+		"./server": {
+			"types": "./src/server.ts",
+			"default": "./src/server.ts"
 		}
+	},
+	"scripts": {
+		"schema:sync": "node scripts/schema-sync.mjs",
+		"contract:emit": "prisma-idb contract emit --config prisma.config.ts",
+		"contract:emit:postgres": "prisma-idb contract emit --config prisma.config.postgres.ts",
+		"migration:plan": "prisma-idb migration plan",
+		"migration:preflight": "prisma-idb migration preflight",
+		"migration:postgres:plan": "prisma migration plan --config prisma.config.postgres.ts",
+		"migration:postgres:new": "prisma migration new --config prisma.config.postgres.ts",
+		"migration:postgres:status": "prisma migration status --config prisma.config.postgres.ts",
+		"db:migrate": "prisma db migrate --config prisma.config.postgres.ts",
+		"check": "tsc --noEmit",
+		"lint": "prettier --check . && eslint ."
+	},
+	"dependencies": {
+		"@prisma-idb/client-idb": "^0.16.0",
+		"@prisma-idb/sync-extension-idb": "^0.12.0",
+		"@prisma-idb/sync-server": "^0.9.0",
+		"@prisma-idb/sync-server-sql": "^0.9.0",
+		"@prisma/cli-engine": "0.7.0",
+		"@prisma/orm-framework": "8.0.0-rc.18",
+		"@prisma/orm-postgres": "8.0.0-rc.18",
+		"@prisma/orm-toolchain": "8.0.0-rc.18",
+		"dotenv": "^17.4.2",
+		"prisma": "8.0.0-rc.23"
+	},
+	"devDependencies": {
+		"@prisma-idb/adapter-idb": "^0.16.0",
+		"@prisma-idb/driver-idb": "^0.16.0",
+		"@prisma-idb/family-idb": "^0.16.0",
+		"@prisma-idb/target-idb": "^0.16.0",
+		"@types/node": "^25.9.2",
+		"typescript": "^6.0.3",
+		"zod": "^4.6.7"
 	},
 	"peerDependencies": {
 		"zod": "^4.0.0"

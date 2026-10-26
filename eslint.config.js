@@ -27,6 +27,11 @@ export default defineConfig(
 		basePath: 'apps/api',
 		ignores: [...includeIgnoreFile(apiGitignorePath).ignores]
 	},
+	{
+		// Emitted by `prisma contract emit` and the migration planner
+		basePath: 'packages/shared',
+		ignores: ['migrations/**', 'migrations-postgres/**', 'src/generated/**']
+	},
 	js.configs.recommended,
 	...ts.configs.recommended,
 	...svelte.configs.recommended,
