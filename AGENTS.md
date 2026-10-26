@@ -1,4 +1,4 @@
-# MyFit — Copilot Instructions
+# MyFit — Agent Instructions
 
 ## Architecture
 
