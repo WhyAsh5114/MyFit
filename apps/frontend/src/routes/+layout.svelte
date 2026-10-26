@@ -9,10 +9,20 @@
 	import { App } from '@capacitor/app';
 	import { queryClient } from '$lib/clients/query-client';
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
+	import ResponsiveDialog from '$lib/components/responsive-dialog.svelte';
+	import StateBackdrop from '$lib/components/state-backdrop.svelte';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import { initOta } from '$lib/services/ota';
+	import { accountSession, claimTab } from '$lib/features/account-session.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	let { children } = $props();
+
+	// Claimed here rather than in the app layout so the login page cannot change the shared
+	// session under the tab that owns the local database.
+	$effect(() => {
+		claimTab();
+	});
 
 	$effect(() => {
 		if (Capacitor.getPlatform() !== 'android') return;
@@ -39,7 +49,16 @@
 
 <QueryClientProvider client={queryClient}>
 	<SvelteQueryDevtools buttonPosition="top-right" />
-	{@render children()}
+	{#if accountSession.tab === 'blocked'}
+		<StateBackdrop scene="forest" />
+		<ResponsiveDialog
+			title={m['account.openElsewhereTitle']()}
+			description={m['account.openElsewhere']()}
+			dismissible={false}
+		/>
+	{:else}
+		{@render children()}
+	{/if}
 </QueryClientProvider>
 
 <div style="display:none">

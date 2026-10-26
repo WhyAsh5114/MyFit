@@ -17,11 +17,15 @@
 	import * as m from '$lib/paraglide/messages';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
+	import ResponsiveDialog from '$lib/components/responsive-dialog.svelte';
+	import { getDb, resetDb } from '$lib/clients/idb-client';
 	import posthog from 'posthog-js';
 
 	let email = $state('');
 	let otp = $state('');
 	let otpMailSent = $state(false);
+	// The account whose unsynced data this device holds, while a different email waits for approval.
+	let otherAccountEmail = $state<string | null>(null);
 
 	const authData = authClient.useSession();
 
@@ -34,6 +38,39 @@
 			goto(callbackUrl);
 		}
 	});
+
+	/** Asks first when this email would replace another account's unsynced data on this device. */
+	async function submitEmail(event: SubmitEvent) {
+		event.preventDefault();
+		try {
+			const db = await getDb();
+			const local = await db.orm.user.first();
+			if (
+				local &&
+				local.email.toLowerCase() !== email.trim().toLowerCase() &&
+				(await db.outbox.hasPending())
+			) {
+				otherAccountEmail = local.email;
+				return;
+			}
+		} catch (cause) {
+			console.error('Could not check the local account', cause);
+		}
+		sendOTPMutation.mutate(email);
+	}
+
+	/** Deletes the local account the user agreed to give up, so signing in as the new one finds nothing to ask about. */
+	async function discardLocalAccount() {
+		otherAccountEmail = null;
+		try {
+			await resetDb();
+		} catch (cause) {
+			toast.error(m['unknownErrorOccurred']());
+			console.error('Could not discard the local account', cause);
+			return;
+		}
+		sendOTPMutation.mutate(email);
+	}
 
 	const sendOTPMutation = createMutation(() => ({
 		mutationKey: ['send-otp'],
@@ -85,7 +122,7 @@
 </script>
 
 {#if !otpMailSent}
-	<form class="flex flex-col" onsubmit={() => sendOTPMutation.mutate(email)}>
+	<form class="flex flex-col" onsubmit={submitEmail}>
 		<FieldGroup>
 			<div class="flex flex-col items-center gap-1 text-center">
 				<h1 class="text-2xl font-bold">{m['login.otpTitle']()}</h1>
@@ -183,4 +220,19 @@
 			</FieldDescription>
 		</FieldGroup>
 	</form>
+{/if}
+
+{#if otherAccountEmail}
+	<ResponsiveDialog
+		title={m['account.otherAccountTitle']()}
+		description={m['account.otherAccountDescription']({ email: otherAccountEmail })}
+		closeLabel={m['account.otherAccountCancel']()}
+		onclose={() => (otherAccountEmail = null)}
+	>
+		{#snippet footer()}
+			<Button variant="destructive" onclick={discardLocalAccount}>
+				{m['account.otherAccountDiscard']()}
+			</Button>
+		{/snippet}
+	</ResponsiveDialog>
 {/if}

@@ -289,7 +289,7 @@ toast.error(m['unknownErrorOccurred']());
 
 ## Capacitor
 
-- The IDB client (`getDb()`) is **browser-only**. The root `+layout.ts` awaits `getDb()` on first load, which runs the IndexedDB migrations. Never call `getDb()` in SSR context.
+- The IDB client (`getDb()`) is **browser-only** and opens lazily: the first call runs the IndexedDB migrations and every later call shares the same client, so await it inside each query and mutation. Never call it during SSR or prerender.
 - Capacitor plugins are initialized at layout level (`+layout.svelte`). Don't re-initialize plugins in child routes.
 - Use `Capacitor.getPlatform()` to gate platform-specific code (`'android'`, `'ios'`, `'web'`).
 - `viewport-fit=cover` is set in `app.html` for safe-area insets — don't override it.
@@ -320,9 +320,10 @@ domain/
 
 1. `+layout.svelte` (root) wraps the tree in `<QueryClientProvider>`.
 2. `(app)/+layout.ts` disables SSR/prerender for all authenticated routes.
-3. `<SessionCacher>` in `(app)/+layout.svelte` runs on every navigation and syncs the better-auth session with the local IDB user record.
-4. The `user` feature (`useCurrentUser`) reads the local IDB record — not the auth session directly.
-5. `resetDatabaseState()` in `(app)/components/db.ts` stops the sync worker, wipes IDB and clears the pull cursor on logout.
+3. The root layout claims the single-tab lock (`claimTab` in `$lib/features/account-session.svelte.ts`); other tabs show a notice and reload when the active tab closes.
+4. `<SessionCacher>` in `(app)/+layout.svelte` keeps one local account: it checks the local database against the better-auth session, asks before replacing another account's unsynced data, and starts the sync worker for a signed-in account. An expired session keeps the stored account working offline.
+5. The `user` feature (`useCurrentUser`) reads the local IDB record — not the auth session directly.
+6. `logout()` in `$lib/features/logout.ts` saves queued edits, signs out, then deletes the local database. If a step fails it keeps the account and offers retry, cancel or discard.
 
 ---
 
