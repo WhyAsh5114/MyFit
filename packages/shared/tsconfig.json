@@ -1,12 +1,14 @@
 {
 	"compilerOptions": {
-		"target": "ESNext",
+		"target": "ES2022",
 		"module": "ESNext",
-		"lib": ["ESNext"],
 		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
 		"strict": true,
-		"verbatimModuleSyntax": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"noEmit": true,
+		"esModuleInterop": true,
+		"types": ["node"]
 	},
-	"include": ["src/**/*"]
+	"include": ["src", "prisma.config.ts", "prisma.config.postgres.ts"]
 }

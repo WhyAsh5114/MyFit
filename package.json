@@ -2,6 +2,9 @@
 	"private": true,
 	"name": "@myfit/monorepo",
 	"type": "module",
+	"engines": {
+		"node": ">=24"
+	},
 	"packageManager": "pnpm@11.5.2+sha512.71c631e382066efc25625d5cf029075de07b61b37f6e27350fbd84b1bda5864c8c1967adc280776b45c30a715c0359a3be08fef42d5bb09e2b99029979692916",
 	"scripts": {
 		"dev": "turbo run dev",
@@ -9,9 +12,12 @@
 		"lint": "turbo run lint",
 		"format": "turbo run format",
 		"check": "turbo run check",
+		"test": "turbo run test",
+		"changeset": "changeset",
 		"prepare": "husky"
 	},
 	"devDependencies": {
+		"@changesets/cli": "^3.0.3",
 		"@eslint/compat": "^2.1.0",
 		"@eslint/js": "^10.0.1",
 		"eslint": "^10.4.1",
