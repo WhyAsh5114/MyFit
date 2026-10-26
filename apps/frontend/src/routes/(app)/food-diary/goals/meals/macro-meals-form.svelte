@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Meal } from '@myfit/api/prisma/client';
+	import type { Row } from '@myfit/shared/client';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button';
 	import { DragDropProvider, DragOverlay } from '@dnd-kit/svelte';
@@ -14,7 +14,7 @@
 	import MealItem from './meal-item.svelte';
 
 	type Props = {
-		initialData: Meal[];
+		initialData: Row<'Meal'>[];
 		onSubmit: (data: MealsFormSchema) => Promise<unknown>;
 		submit: Snippet<[{ form: SuperForm<MealsFormSchema> }]>;
 	};

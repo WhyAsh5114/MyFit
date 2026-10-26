@@ -1,5 +1,6 @@
 import { AmphoraIcon, BeefIcon, FlameIcon, WheatIcon } from '@lucide/svelte';
-import type { FoodEntry, NutritionData } from '@myfit/api/prisma/client';
+import type { Row } from '@myfit/shared/client';
+import type { NutritionData } from '@myfit/shared/nutrition';
 import {
 	OPTIONAL_NUTRIENT_FIELDS,
 	REQUIRED_NUTRIENT_FIELDS,
@@ -18,14 +19,14 @@ export const REQUIRED_NUTRIENTS = REQUIRED_NUTRIENT_FIELDS.map((n) => ({
 	...n,
 	icon: REQUIRED_ICONS[n.key]
 })) satisfies Array<{
-	key: keyof NutritionData & keyof FoodEntry;
+	key: keyof NutritionData & keyof Row<'FoodEntry'>;
 	label: string;
 	unit: string;
 	icon: unknown;
 }>;
 
 export const OPTIONAL_NUTRIENTS = OPTIONAL_NUTRIENT_FIELDS satisfies ReadonlyArray<{
-	key: keyof NutritionData & keyof FoodEntry;
+	key: keyof NutritionData & keyof Row<'FoodEntry'>;
 	label: string;
 	unit: string;
 }>;

@@ -1,5 +1,5 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { macroMetricsKeys } from '../keys';
 import { getLocalTimeZone, type CalendarDate } from '@internationalized/date';
 
@@ -16,10 +16,12 @@ export const useMacroMetricsByDate = (
 		return {
 			queryKey: macroMetricsKeys.byDate(userId, date.toString()),
 			queryFn: async () => {
-				return await getClient().macroMetrics.findFirst({
-					where: { userId, effectiveFrom: { lt: dayEnd } },
-					orderBy: { effectiveFrom: 'desc' }
-				});
+				const { orm } = await getDb();
+				return await orm.macroMetrics
+					.where({ userId })
+					.where((row) => row.effectiveFrom.lt(dayEnd))
+					.orderBy({ effectiveFrom: 'desc' })
+					.first();
 			},
 			enabled: !!userId && !!date
 		};

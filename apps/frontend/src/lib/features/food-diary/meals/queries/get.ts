@@ -1,5 +1,5 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { mealKeys } from '../keys';
 
 export const useMeals = (getUserId: () => string) =>
@@ -8,10 +8,8 @@ export const useMeals = (getUserId: () => string) =>
 		return {
 			queryKey: mealKeys.byUser(userId),
 			queryFn: async () => {
-				return await getClient().meal.findMany({
-					where: { userId, active: true },
-					orderBy: { sortOrder: 'asc' }
-				});
+				const { orm } = await getDb();
+				return await orm.meal.where({ userId, active: true }).orderBy({ sortOrder: 'asc' }).all();
 			},
 			enabled: !!userId
 		};

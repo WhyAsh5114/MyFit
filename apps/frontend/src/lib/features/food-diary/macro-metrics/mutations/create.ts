@@ -1,16 +1,16 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
-import type { Prisma } from '@myfit/api/prisma/client';
+import type { NewRow } from '@myfit/shared/client';
 import { macroMetricsKeys } from '../keys';
 
 export const useCreateMacroMetrics = () =>
 	createMutation(() => ({
-		mutationFn: async (data: Prisma.MacroMetricsUncheckedCreateInput) => {
-			const client = getClient();
-			return await client.macroMetrics.create({ data });
+		mutationFn: async (data: NewRow<'MacroMetrics'>) => {
+			const { orm } = await getDb();
+			return await orm.macroMetrics.create(data);
 		},
 
 		onSuccess: (data) => {

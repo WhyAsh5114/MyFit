@@ -1,25 +1,34 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
+import { getDb } from '$lib/clients/idb-client';
 import { toast } from 'svelte-sonner';
 import { m } from '$lib/paraglide/messages';
 import { queryClient } from '$lib/clients/query-client';
 import { foodEntryKeys } from '../keys';
 
+/** Identifies a food entry within its owner's diary. */
 type MutationProps = {
 	userId: string;
 	id: string;
 };
 
+/** Deletes an owned entry and invalidates its diary day after the tracked write commits. */
 export const useDeleteFoodEntry = () =>
 	createMutation(() => ({
+		// Resolves to nothing when another write removed the entry since the diary was loaded.
 		mutationFn: async ({ userId, id }: MutationProps) => {
-			const client = getClient();
-			return await client.foodEntry.delete({ where: { id, userId } });
+			const db = await getDb();
+			const [entry] = await db.orm.foodEntry.where({ id, userId }).deleteAll();
+			return entry;
 		},
 
-		onSuccess: (data) => {
+		onSuccess: (entry, { userId }) => {
+			if (!entry) {
+				queryClient.invalidateQueries({ queryKey: foodEntryKeys.byUser(userId) });
+				toast.error(m['foodDiary.foodEntryNotFound']());
+				return;
+			}
 			queryClient.invalidateQueries({
-				queryKey: foodEntryKeys.byDate(data.userId, data.eatenAt.toISOString().split('T')[0])
+				queryKey: foodEntryKeys.byDate(entry.userId, entry.eatenAt.toISOString().split('T')[0])
 			});
 		},
 

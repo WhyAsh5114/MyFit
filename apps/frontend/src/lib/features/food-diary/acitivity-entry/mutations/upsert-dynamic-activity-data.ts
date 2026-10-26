@@ -1,6 +1,6 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getClient } from '$lib/clients/idb-client';
-import type { Prisma } from '@myfit/api/prisma/client';
+import { getDb } from '$lib/clients/idb-client';
+import type { NewRow } from '@myfit/shared/client';
 import { activityEntryKeys } from '../keys';
 import { queryClient } from '$lib/clients/query-client';
 import { toast } from 'svelte-sonner';
@@ -8,11 +8,13 @@ import { m } from '$lib/paraglide/messages';
 
 export const useUpsertDynamicActivityData = () =>
 	createMutation(() => ({
-		mutationFn: async (data: Prisma.ActivityEntryUncheckedCreateInput) => {
-			return await getClient().activityEntry.upsert({
-				where: { id: data.id },
+		mutationFn: async ({ id, ...data }: NewRow<'ActivityEntry'> & { id?: string }) => {
+			const { orm } = await getDb();
+			const entryId = id ?? crypto.randomUUID();
+			return await orm.activityEntry.upsert({
+				where: { id: entryId },
 				update: data,
-				create: data
+				create: { ...data, id: entryId }
 			});
 		},
 
