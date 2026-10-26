@@ -1,0 +1,97 @@
+[
+	{
+		"id": "data.deduplicate_nutrition_codes",
+		"label": "Remove duplicate nutrition codes before adding uniqueness",
+		"operationClass": "destructive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "table",
+				"name": "NutritionData"
+			}
+		},
+		"precheck": [],
+		"execute": [
+			{
+				"description": "Keep the most-scanned existing row for each code",
+				"sql": "DELETE FROM public.\"NutritionData\" WHERE id IN (\n            SELECT id FROM (\n              SELECT id, row_number() OVER (\n                PARTITION BY code ORDER BY \"uniqueScans\" DESC, completeness DESC, id\n              ) AS position\n              FROM public.\"NutritionData\"\n            ) ranked WHERE position > 1\n          )"
+			}
+		],
+		"postcheck": [
+			{
+				"description": "Verify that every nutrition code is unique",
+				"sql": "SELECT NOT EXISTS (SELECT 1 FROM public.\"NutritionData\" GROUP BY code HAVING count(*) > 1) AS result"
+			}
+		]
+	},
+	{
+		"id": "dropIndex.NutritionData.NutritionData_code_idx_8e43b86b",
+		"label": "Drop index \"NutritionData_code_idx_8e43b86b\"",
+		"operationClass": "widening",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "index",
+				"name": "NutritionData_code_idx_8e43b86b",
+				"table": "NutritionData"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure index \"NutritionData_code_idx_8e43b86b\" exists",
+				"sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+				"params": ["\"public\".\"NutritionData_code_idx_8e43b86b\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "drop index \"NutritionData_code_idx_8e43b86b\"",
+				"sql": "DROP INDEX \"public\".\"NutritionData_code_idx_8e43b86b\"",
+				"params": []
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify index \"NutritionData_code_idx_8e43b86b\" does not exist",
+				"sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+				"params": ["\"public\".\"NutritionData_code_idx_8e43b86b\""]
+			}
+		]
+	},
+	{
+		"id": "unique.NutritionData.NutritionData_code_key",
+		"label": "Add unique constraint on \"NutritionData\" (code)",
+		"operationClass": "additive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "unique",
+				"name": "NutritionData_code_key",
+				"table": "NutritionData"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure constraint \"NutritionData_code_key\" does not exist",
+				"sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+				"params": ["NutritionData_code_key", "public", "\"public\".\"NutritionData\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "add unique constraint \"NutritionData_code_key\"",
+				"sql": "ALTER TABLE \"public\".\"NutritionData\" ADD CONSTRAINT \"NutritionData_code_key\" UNIQUE (\"code\")"
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify constraint \"NutritionData_code_key\" exists",
+				"sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+				"params": ["NutritionData_code_key", "public", "\"public\".\"NutritionData\""]
+			}
+		]
+	}
+]
