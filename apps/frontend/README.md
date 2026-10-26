@@ -13,11 +13,7 @@ App runs on `http://localhost:5173`.
 
 ## Environment Setup
 
-Create a `.env` file:
-
-```
-PUBLIC_API_URL=http://localhost:3000
-```
+Copy `.env.example` to `.env`. SvelteKit reads the `PUBLIC_*` variables at build time, so `pnpm check` and `pnpm build` need them.
 
 ## Development
 

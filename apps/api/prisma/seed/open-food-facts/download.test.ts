@@ -3,8 +3,8 @@ import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { test } from 'node:test';
 import { gzipSync } from 'node:zlib';
+import { test } from 'vitest';
 import { prepareDownload } from './utils/download.ts';
 
 test('cache replacement requires a complete gzip and leaves the previous file on failure', async () => {

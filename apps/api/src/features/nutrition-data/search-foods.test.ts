@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { after, before, test } from 'node:test';
+import { afterAll, beforeAll, test } from 'vitest';
 import { searchFoods } from './search-foods.ts';
 import { createSearchFixture } from './search-foods.fixture.ts';
 import { nutritionSearchQuery } from './search-query.ts';
@@ -35,7 +35,7 @@ const foods = [
 let fixture: Awaited<ReturnType<typeof createSearchFixture>>;
 let db: Awaited<ReturnType<typeof createSearchFixture>>['db'];
 
-before(async () => {
+beforeAll(async () => {
 	fixture = await createSearchFixture();
 	db = fixture.db;
 	for (const [id, name, brands, scans] of foods) {
@@ -47,7 +47,7 @@ before(async () => {
 	}
 });
 
-after(async () => {
+afterAll(async () => {
 	await fixture?.close();
 });
 

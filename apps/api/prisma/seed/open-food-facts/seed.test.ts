@@ -4,20 +4,19 @@ import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import { gzipSync } from 'node:zlib';
 import { Client } from 'pg';
+import { test } from 'vitest';
 import {
 	CREATE_STAGING_TABLE_SQL,
 	INSERT_INTO_NUTRITION_DATA_SQL
 } from './utils/staging-schema.ts';
 
 const execute = promisify(execFile);
-const databaseUrl = process.env.NUTRITION_SEED_TEST_DATABASE_URL;
-if (!databaseUrl)
-	throw new Error('Set NUTRITION_SEED_TEST_DATABASE_URL to a migrated test Postgres database.');
+const databaseUrl = process.env.TEST_DATABASE_URL;
+if (!databaseUrl) throw new Error('Set TEST_DATABASE_URL to a migrated test Postgres database.');
 
 /** Build a small OFF export, exercising the production mapper, filter and COPY stream. */
 function fixture(rows: string[]): Buffer {

@@ -1,19 +1,35 @@
-# Test nutrition search
+# Run the API tests
 
 Use Node 24 or later and a fresh development PostgreSQL database. Apply the Postgres baseline first to install `pg_trgm`, `unaccent`, and `public.immutable_unaccent(text)`. The migration role must be able to install extensions; the test role must be able to create schemas.
 
-From the repository root, set `NUTRITION_SEARCH_TEST_DATABASE_URL` to the database URL, then execute:
+From the repository root, set `TEST_DATABASE_URL` to the database URL, then execute:
 
 ```sh
-DATABASE_URL="$NUTRITION_SEARCH_TEST_DATABASE_URL" pnpm --filter @myfit/schema db:migrate
-pnpm --filter @myfit/api test:nutrition-search
+DATABASE_URL="$TEST_DATABASE_URL" pnpm --filter @myfit/schema db:migrate
+pnpm --filter @myfit/api test
 ```
+
+The API workflow runs the same two commands against a PostgreSQL 16 service container. The suites share one database, so Vitest runs them one after the other.
+
+## Nutrition search
 
 The tests create a uniquely named schema with a small synthetic food fixture. They query it through the same Postgres runtime and search function as the API. Cleanup drops that schema. The test table shadows any application `NutritionData` table. It has no trigram or full-text indexes; these tests verify search behavior, not index use. Verify index use separately with `EXPLAIN (ANALYZE, BUFFERS)` against the migrated application table.
 
 The fixture covers the labelled search intents: common foods, final-word prefixes, typos, transpositions, reordered words, brands, French names, accent-insensitive name and brand matching with both spellings present, and short input. Popular ingredient-based products serve as ranking distractors. The remaining assertions check input normalization, search operators, and pagination across the candidate modes. A larger fixture checks the popularity pool and the terminal page for exact, corrected, and fuzzy queries.
 
-`test:nutrition-search` is a manual integration check. It is not wired into CI.
+## Sync write policy
+
+`src/features/sync/user-write-policy.test.ts` pushes User updates through the real sync handler and contracts. An in-memory stand-in replaces the database, so this suite needs no PostgreSQL. It verifies that identity fields, account creation, and account deletion are rejected with HTTP 403, that profile and preference updates apply, and that a forbidden event rejects the whole batch.
+
+## Nutrition seeding
+
+`prisma/seed/open-food-facts/seed.test.ts` creates an isolated schema and copies the migrated food table definition. It invokes the real importer with tiny cached exports. It verifies duplicate selection, repeated imports, stable IDs, refreshed nutrient values, zero-energy foods, invalid macros, rollback after a COPY failure, row limits, and skipping an already populated database during deployment. A staging test verifies that rows with null quality metrics are skipped before duplicate selection, while zero values remain valid. Cleanup removes the schema and fixture files. The test never downloads the public export or changes application food rows.
+
+`download.test.ts` in the same directory uses a local HTTP server and needs no database. It verifies cache reuse, redirect handling, replacement after corruption, and preservation of the old cache after HTTP errors or truncated gzip responses.
+
+## Sync smoke test
+
+`src/features/sync/routes.test.ts` pushes a meal through the real `/api/sync` routes and pulls it back. It also checks that a client with a stale storage hash gets HTTP 409. The test replaces the sign-in check with a fixed test user, because sign-in is not under test. It creates that user in the migrated `public` schema and deletes it, and its rows, afterwards.
 
 ## Benchmark broad searches
 
