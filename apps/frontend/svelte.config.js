@@ -4,7 +4,9 @@ import adapter from '@sveltejs/adapter-static';
 const config = {
 	kit: {
 		adapter: adapter({ fallback: 'index.html' }),
-		paths: { relative: false }
+		paths: { relative: false },
+		// Registered by hooks.client.ts, which skips dev and the native apps.
+		serviceWorker: { register: false }
 	}
 };
 

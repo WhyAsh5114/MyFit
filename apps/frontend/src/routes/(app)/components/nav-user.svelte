@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { authClient } from '$lib/clients/auth-client';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -11,10 +10,8 @@
 	import BadgeCheckIcon from '@lucide/svelte/icons/badge-check';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
-	import { resetDatabaseState } from './db';
-	import { getClient } from '$lib/clients/idb-client';
+	import { logout } from '$lib/features/logout';
 	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
-	import posthog from 'posthog-js';
 
 	const sidebar = useSidebar();
 	let authData = useCurrentUser();
@@ -29,13 +26,6 @@
 		const names = name.split(' ');
 		const initials = names.map((n) => n[0]).join('');
 		return initials.toUpperCase();
-	}
-
-	async function logout() {
-		posthog.capture('user_logged_out');
-		posthog.reset();
-		await resetDatabaseState(getClient());
-		await authClient.signOut();
 	}
 </script>
 
@@ -98,7 +88,7 @@
 							</a>
 						{/snippet}
 					</DropdownMenu.Item>
-					<DropdownMenu.Item onclick={logout}>
+					<DropdownMenu.Item onclick={() => logout()}>
 						<LogOutIcon />
 						{m['account.logout']()}
 					</DropdownMenu.Item>

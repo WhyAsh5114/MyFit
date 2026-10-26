@@ -1,61 +1,36 @@
 import { goto } from '$app/navigation';
-import type { PrismaIDBClient } from '@myfit/api/prisma-idb/client';
+import type { DbClient } from '$lib/clients/idb-client';
 import type { Session, User } from 'better-auth';
 import { toast } from 'svelte-sonner';
 
+/** The authenticated identity cached for local and offline use. */
 type AuthSessionData = {
 	user: User;
 	session: Session;
 };
 
-export async function getCachedUserOnClient(
-	client: PrismaIDBClient,
-	sessionData: AuthSessionData | null
-) {
-	const existingUser = sessionData?.user?.id
-		? await client.user.findUnique({ where: { id: sessionData.user.id } })
-		: null;
-
-	return { existingUser };
-}
-
-export async function getOfflineUser(client: PrismaIDBClient) {
-	const offlineUser = await client.user.findFirst();
-	return offlineUser;
-}
-
-export async function resetDatabaseState(client: PrismaIDBClient) {
-	localStorage.removeItem('lastSyncedAt');
-	await client.resetDatabase();
-}
-
-export async function redirectToLogin(client: PrismaIDBClient, url: URL) {
-	await resetDatabaseState(client);
+/** Sends users without a session or offline account to login without deleting any data. */
+export async function redirectToLogin(url: URL) {
 	const redirect = `${url.pathname}${url.search}${url.hash}`;
-
 	// eslint-disable-next-line svelte/no-navigation-without-resolve
-	goto(`/login?redirect=${encodeURIComponent(redirect)}`);
+	await goto(`/login?redirect=${encodeURIComponent(redirect)}`);
 	return toast.info('Please login to continue');
 }
 
-const DEFAULT_MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
-
-export async function createUserForCurrentSession(
-	client: PrismaIDBClient,
-	sessionData: AuthSessionData
-) {
-	if (sessionData?.user) {
-		await client.user.create({ data: sessionData.user }, { addToOutbox: false });
-
-		// Seed default meals for brand new users (existing users have a name set)
-		if (sessionData.user.name.trim() === '') {
-			await Promise.all(
-				DEFAULT_MEALS.map((name, index) =>
-					client.meal.create({
-						data: { name, sortOrder: index, userId: sessionData.user.id }
-					})
-				)
-			);
-		}
-	}
+/** Stores the signed-in user locally without queuing it for sync. */
+export async function createUserForCurrentSession(db: DbClient, sessionData: AuthSessionData) {
+	// The server already owns this row, so it must not be pushed back through the outbox.
+	const { id, name, email, emailVerified, image, createdAt, updatedAt } = sessionData.user;
+	await db.withoutTracking((orm) =>
+		orm.user.create({
+			id,
+			name,
+			email,
+			emailVerified,
+			image: image ?? null,
+			createdAt,
+			updatedAt,
+			isAnonymous: null
+		})
+	);
 }
