@@ -13,11 +13,7 @@ App runs on `http://localhost:5173`.
 
 ## Environment Setup
 
-Create a `.env` file:
-
-```
-PUBLIC_API_URL=http://localhost:3000
-```
+Copy `.env.example` to `.env`. SvelteKit reads the `PUBLIC_*` variables at build time, so `pnpm check` and `pnpm build` need them.
 
 ## Development
 
@@ -96,12 +92,13 @@ pnpm exec cap open android
 
 ## Database
 
-Uses Prisma-IDB (offline-first browser database) exported from the API package:
+Uses Prisma-IDB (offline-first browser database). The schema and generated contract live in `packages/shared`; `getDb()` in `src/lib/clients/idb-client.ts` migrates IndexedDB on first use and returns a sync-tracked client:
 
 ```typescript
-import { PrismaIDBClient } from '@myfit/api/prisma-idb/client';
+import { getDb } from '$lib/clients/idb-client';
 
-const users = await PrismaIDBClient.user.findMany();
+const { orm } = await getDb();
+const meals = await orm.meal.where({ userId }).all();
 ```
 
 ## Internationalization
@@ -114,11 +111,28 @@ import * as m from '$lib/paraglide/messages';
 const greeting = m.hello();
 ```
 
+## Testing
+
+`pnpm test` runs the unit tests with Vitest (`tests/lib`).
+
+`pnpm test:e2e` runs the Playwright specs in `tests/e2e` against the built app, a real API and Postgres. It covers sign-in, logout, the single-tab lock, session expiry and switching accounts. Start Postgres and apply the migrations first:
+
+```bash
+docker run -d -p 5432:5432 -e POSTGRES_USER=myfit -e POSTGRES_PASSWORD=password -e POSTGRES_DB=myfit postgres:16-alpine
+DATABASE_URL=postgresql://myfit:password@localhost:5432/myfit pnpm --filter @myfit/shared db:migrate
+pnpm exec playwright install chromium
+pnpm test:e2e
+```
+
+Set `TEST_DATABASE_URL` to use another database. Playwright starts a mail stub, the API (needs `bun`) and the production build itself. The stub stands in for Resend, so tests read sign-in codes without sending email.
+
 ## Scripts
 
 - `pnpm dev` - Development server
 - `pnpm build` - Build for production
 - `pnpm preview` - Preview production build
 - `pnpm check` - Type-check
+- `pnpm test` - Unit tests
+- `pnpm test:e2e` - End-to-end tests
 - `pnpm lint` - Lint and format check
 - `pnpm format` - Auto-format code
