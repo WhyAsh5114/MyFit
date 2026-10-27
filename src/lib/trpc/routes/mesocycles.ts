@@ -6,16 +6,26 @@ import {
 	ExerciseSplitSchema,
 	MesocycleCyclicSetChangeCreateWithoutMesocycleInputSchema,
 	MesocycleExerciseSplitDayCreateWithoutMesocycleInputSchema,
-	MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInputSchema,
-	MesocycleUncheckedCreateWithoutUserInputSchema,
-	MesocycleUpdateInputSchema
+	MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInputSchema
 } from '$lib/zodSchemas';
 import { Prisma } from '@prisma/client';
 import { createId } from '@paralleldrive/cuid2';
 import { TRPCError } from '@trpc/server';
 
+// Scalar-only on purpose: never accept generated Prisma create/update input schemas from clients, since they
+// expose relation fields (e.g. `user.connect`) that allow nested writes to rows the caller doesn't own.
+const zodMesocycleScalars = {
+	name: z.string(),
+	RIRProgression: z.array(z.number().int()),
+	startDate: z.coerce.date().nullable().optional(),
+	endDate: z.coerce.date().nullable().optional(),
+	startOverloadPercentage: z.number(),
+	lastSetToFailure: z.boolean(),
+	forceRIRMatching: z.boolean()
+};
+
 const zodMesocycleCreateInput = z.strictObject({
-	mesocycle: MesocycleUncheckedCreateWithoutUserInputSchema,
+	mesocycle: z.strictObject({ ...zodMesocycleScalars, exerciseSplitId: z.string().nullable().optional() }),
 	mesocycleCyclicSetChanges: z.array(MesocycleCyclicSetChangeCreateWithoutMesocycleInputSchema),
 	mesocycleExerciseTemplates: z.array(
 		z.array(MesocycleExerciseTemplateCreateWithoutMesocycleExerciseSplitDayInputSchema)
@@ -27,7 +37,7 @@ const zodMesocycleCreateInput = z.strictObject({
 });
 
 const zodMesocycleEditInput = z.strictObject({
-	mesocycle: MesocycleUpdateInputSchema,
+	mesocycle: z.strictObject(zodMesocycleScalars),
 	mesocycleCyclicSetChanges: z.array(MesocycleCyclicSetChangeCreateWithoutMesocycleInputSchema)
 });
 
@@ -89,6 +99,14 @@ export const mesocycles = t.router({
 		}),
 
 	create: t.procedure.input(zodMesocycleCreateInput).mutation(async ({ input, ctx }) => {
+		if (input.mesocycle.exerciseSplitId) {
+			const ownedSplit = await prisma.exerciseSplit.findFirst({
+				where: { id: input.mesocycle.exerciseSplitId, userId: ctx.userId },
+				select: { id: true }
+			});
+			if (!ownedSplit) throw new TRPCError({ code: 'NOT_FOUND', message: 'Exercise split not found' });
+		}
+
 		const mesocycle: Prisma.MesocycleUncheckedCreateInput = {
 			id: createId(),
 			userId: ctx.userId,
