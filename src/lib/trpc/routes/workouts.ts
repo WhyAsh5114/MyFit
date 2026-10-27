@@ -645,7 +645,7 @@ export const workouts = t.router({
 			};
 
 			const workoutOfMesocycle = await prisma.workoutOfMesocycle.findFirst({
-				where: { workoutId: input.id }
+				where: { workoutId: input.id, workout: { userId: ctx.userId } }
 			});
 
 			const workoutExercises: Prisma.WorkoutExerciseUncheckedCreateInput[] = input.data.workoutExercises.map((ex) => ({
@@ -677,7 +677,7 @@ export const workouts = t.router({
 				);
 
 			const transactionQueries = [
-				prisma.workout.delete({ where: { id: input.id } }),
+				prisma.workout.delete({ where: { id: input.id, userId: ctx.userId } }),
 				prisma.workout.create({ data: workout }),
 				prisma.workoutExercise.createMany({ data: workoutExercises }),
 				prisma.workoutExerciseSet.createMany({ data: workoutExercisesSets }),
