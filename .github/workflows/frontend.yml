@@ -82,7 +82,8 @@ jobs:
 
   e2e:
     name: End-to-end
-    runs-on: ubuntu-latest
+    # Pinned: Playwright 1.60 cannot install Chromium on Ubuntu 26.04, which `ubuntu-latest` now is.
+    runs-on: ubuntu-24.04
     env:
       TEST_DATABASE_URL: postgresql://myfit:password@localhost:5432/myfit
       PUBLIC_POSTHOG_KEY: e2e
