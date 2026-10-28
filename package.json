@@ -13,11 +13,9 @@
 		"format": "turbo run format",
 		"check": "turbo run check",
 		"test": "turbo run test",
-		"changeset": "changeset",
 		"prepare": "husky"
 	},
 	"devDependencies": {
-		"@changesets/cli": "^3.0.3",
 		"@eslint/compat": "^2.1.0",
 		"@eslint/js": "^10.0.1",
 		"eslint": "^10.4.1",
