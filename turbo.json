@@ -3,7 +3,7 @@
 	"ui": "tui",
 	"tasks": {
 		"build": {
-			"dependsOn": ["generate", "^build"],
+			"dependsOn": ["^build"],
 			"outputs": [".svelte-kit/**", "build/**", "dist/**"],
 			"env": [
 				"DATABASE_URL",
@@ -12,11 +12,6 @@
 				"RESEND_API_KEY",
 				"TRUSTED_ORIGINS"
 			]
-		},
-		"generate": {
-			"dependsOn": ["^generate"],
-			"outputs": ["generated/**"],
-			"env": ["DATABASE_URL"]
 		},
 		"check": {
 			"dependsOn": ["^check"]
