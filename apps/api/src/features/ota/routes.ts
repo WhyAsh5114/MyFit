@@ -1,11 +1,23 @@
 import { Hono } from 'hono';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
-import { createHash } from 'node:crypto';
+import { createMiddleware } from 'hono/factory';
+import { mkdir, stat } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
+import { Readable } from 'node:stream';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { join } from 'node:path';
 import { zValidator } from '@hono/zod-validator';
 import z from 'zod';
 import { env } from '../../../lib/env.js';
+import {
+	CHANNEL_PATTERN,
+	findBundle,
+	latestInChannel,
+	readManifest,
+	writeFileAtomic,
+	writeManifest,
+	type BundleEntry
+} from './manifest.js';
+import { readZipEntryNames } from './zip.js';
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -13,53 +25,35 @@ import { env } from '../../../lib/env.js';
 
 const OTA_BUNDLES_DIR = env.OTA_BUNDLES_DIR;
 const OTA_UPLOAD_KEY = env.OTA_UPLOAD_KEY;
-const MANIFEST_FILE = join(OTA_BUNDLES_DIR, 'manifest.json');
 const MAX_UPLOAD_BYTES = 50 * 1024 * 1024; // 50 MB
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-interface BundleEntry {
-	version: string;
-	filename: string;
-	checksum: string;
-	createdAt: string;
-}
-
-interface Manifest {
-	bundles: Record<string, BundleEntry>;
-	latest: string | null;
-}
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-async function ensureDataDir(): Promise<void> {
-	if (!existsSync(OTA_BUNDLES_DIR)) {
-		await mkdir(OTA_BUNDLES_DIR, { recursive: true });
-	}
-}
-
-async function readManifest(): Promise<Manifest> {
-	await ensureDataDir();
-	try {
-		const raw = await readFile(MANIFEST_FILE, 'utf-8');
-		return JSON.parse(raw) as Manifest;
-	} catch {
-		return { bundles: {}, latest: null };
-	}
-}
-
-async function writeManifest(manifest: Manifest): Promise<void> {
-	await ensureDataDir();
-	await writeFile(MANIFEST_FILE, JSON.stringify(manifest, null, 2), 'utf-8');
-}
-
 function computeSha256(buffer: Buffer): string {
 	return createHash('sha256').update(buffer).digest('hex');
 }
+
+/** Compares secrets in constant time. Hashing first gives both sides the same length. */
+function secretsMatch(provided: string, expected: string): boolean {
+	const digest = (value: string) => createHash('sha256').update(value).digest();
+	return timingSafeEqual(digest(provided), digest(expected));
+}
+
+/** Rejects requests that lack the publisher key. Guards routes that change what clients receive. */
+const requirePublisherKey = createMiddleware(async (c, next) => {
+	if (!OTA_UPLOAD_KEY) {
+		return c.json({ error: 'OTA uploads not configured on this server' }, 501);
+	}
+
+	const authHeader = c.req.header('Authorization') ?? '';
+	if (!secretsMatch(authHeader, `Bearer ${OTA_UPLOAD_KEY}`)) {
+		return c.json({ error: 'Unauthorized' }, 401);
+	}
+
+	await next();
+});
 
 function firstHeaderValue(value: string | undefined): string | undefined {
 	return value?.split(',')[0]?.trim() || undefined;
@@ -79,21 +73,112 @@ function getPublicOrigin(requestUrl: string, header: (name: string) => string | 
 }
 
 // ---------------------------------------------------------------------------
-// Upload lock — prevents concurrent writes from racing on the manifest file.
+// Manifest lock — prevents concurrent writes from racing on the manifest file.
 // Single-process Bun is sufficient; for horizontal scaling, switch to a DB or
 // distributed lock.
 // ---------------------------------------------------------------------------
 
-let pendingUpload: Promise<void> = Promise.resolve();
+let pendingManifestWrite: Promise<void> = Promise.resolve();
 
-async function acquireUploadLock(): Promise<() => void> {
-	const prev = pendingUpload;
+/**
+ * Waits for earlier manifest writers, then returns the function that releases the lock.
+ * The caller must call it in a `finally` block, or every later upload hangs.
+ */
+async function acquireManifestLock(): Promise<() => void> {
+	const prev = pendingManifestWrite;
 	let release: () => void;
-	pendingUpload = new Promise<void>((resolve) => {
+	pendingManifestWrite = new Promise<void>((resolve) => {
 		release = resolve;
 	});
 	await prev;
 	return release!;
+}
+
+// ---------------------------------------------------------------------------
+// Upload
+// ---------------------------------------------------------------------------
+
+/** The parsed multipart body of an upload request. */
+type UploadForm = Awaited<ReturnType<Request['formData']>>;
+
+/** A bundle that passed validation and is ready to be stored. */
+interface ValidBundleUpload {
+	buffer: Buffer;
+	version: string;
+	channel: string;
+}
+
+/** Why an upload was refused, with the HTTP status to answer with. */
+interface UploadRejection {
+	status: 400 | 413;
+	error: string;
+}
+
+/** Type guard that tells a refused upload from an accepted one. */
+function isRejection(result: ValidBundleUpload | UploadRejection): result is UploadRejection {
+	return 'error' in result;
+}
+
+/** Validates the multipart form of an upload: the file, its zip structure and the optional fields. */
+async function validateUploadForm(body: UploadForm): Promise<ValidBundleUpload | UploadRejection> {
+	const file = body.get('file');
+	if (!file || !(file instanceof File)) {
+		return { status: 400, error: 'Missing "file" field in form data' };
+	}
+
+	if (file.size > MAX_UPLOAD_BYTES) {
+		return { status: 413, error: `Upload exceeds ${MAX_UPLOAD_BYTES / 1024 / 1024} MB limit` };
+	}
+
+	const channel = body.get('channel');
+	if (typeof channel !== 'string' || !CHANNEL_PATTERN.test(channel)) {
+		return {
+			status: 400,
+			error: '"channel" must be lowercase letters, digits and hyphens, such as cap8'
+		};
+	}
+
+	const buffer = Buffer.from(await file.arrayBuffer());
+	if (!readZipEntryNames(buffer)?.includes('index.html')) {
+		return { status: 400, error: 'Bundle must be a zip file with index.html at its root' };
+	}
+
+	// An empty field counts as absent: a blank version would publish a bundle with no name.
+	const requestedVersion = (body.get('version') as string | null) || generateVersion();
+	const version = requestedVersion.replace(/[^a-zA-Z0-9._-]/g, '_');
+	// Assigning `bundles['__proto__']` would set the object's prototype instead of adding a bundle.
+	if (version === '__proto__') return { status: 400, error: `Version "${version}" is reserved` };
+	return { buffer, version, channel };
+}
+
+/**
+ * Stores a validated bundle, which becomes its channel's latest, under the manifest lock.
+ * Returns `null` when the version was already uploaded: versions are immutable.
+ */
+async function publishBundle(upload: ValidBundleUpload): Promise<BundleEntry | null> {
+	const { buffer, version, channel } = upload;
+
+	const release = await acquireManifestLock();
+	try {
+		const manifest = await readManifest(OTA_BUNDLES_DIR);
+		if (findBundle(manifest, version)) return null;
+
+		await mkdir(OTA_BUNDLES_DIR, { recursive: true });
+		await writeFileAtomic(join(OTA_BUNDLES_DIR, `${version}.zip`), buffer);
+
+		const entry: BundleEntry = {
+			version,
+			filename: `${version}.zip`,
+			checksum: computeSha256(buffer),
+			createdAt: new Date().toISOString(),
+			channel
+		};
+		manifest.bundles[version] = entry;
+		await writeManifest(OTA_BUNDLES_DIR, manifest);
+		return entry;
+	} finally {
+		release();
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -104,24 +189,25 @@ const otaRoutes = new Hono()
 	/**
 	 * GET /api/ota/latest
 	 *
-	 * Returns the latest bundle metadata. The client compares its version
+	 * Returns the newest bundle in the client's channel. The client compares its version
 	 * with `version` via equality — works across any versioning scheme.
+	 * The channel names the native core the client's current bundle was built for, so a client
+	 * only ever hears about bundles its native app can run.
 	 */
 	.get(
 		'/latest',
 		zValidator(
 			'query',
 			z.object({
+				channel: z.string().regex(CHANNEL_PATTERN),
 				platform: z.enum(['ios', 'android', 'web']).optional(),
 				currentVersion: z.string().optional()
 			})
 		),
 		async (c) => {
-			const manifest = await readManifest();
+			const manifest = await readManifest(OTA_BUNDLES_DIR);
 
-			if (!manifest.latest) return c.json({ upToDate: true }, 200);
-
-			const latestEntry = manifest.bundles[manifest.latest];
+			const latestEntry = latestInChannel(manifest, c.req.valid('query').channel);
 			if (!latestEntry) return c.json({ upToDate: true }, 200);
 
 			const origin = getPublicOrigin(c.req.url, (name) => c.req.header(name));
@@ -142,24 +228,25 @@ const otaRoutes = new Hono()
 	/**
 	 * GET /api/ota/download/:version
 	 *
-	 * Serves a zip bundle. Bundles are immutable — cached forever.
+	 * Streams a zip bundle. Bundles are immutable — cached forever.
 	 */
 	.get('/download/:version', async (c) => {
-		const manifest = await readManifest();
-		const entry = manifest.bundles[c.req.param('version')];
+		const manifest = await readManifest(OTA_BUNDLES_DIR);
+		const entry = findBundle(manifest, c.req.param('version'));
 
 		if (!entry) return c.json({ error: 'Bundle not found' }, 404);
 
 		const filePath = join(OTA_BUNDLES_DIR, entry.filename);
 
 		try {
-			const file = await readFile(filePath);
-			return new Response(file, {
+			const { size } = await stat(filePath);
+			const stream = Readable.toWeb(createReadStream(filePath)) as ReadableStream;
+			return new Response(stream, {
 				status: 200,
 				headers: {
 					'Content-Type': 'application/zip',
 					'Content-Disposition': `attachment; filename="${entry.filename}"`,
-					'Content-Length': file.length.toString(),
+					'Content-Length': size.toString(),
 					'Cache-Control': 'public, max-age=31536000, immutable',
 					'X-Checksum-Sha256': entry.checksum
 				}
@@ -173,19 +260,11 @@ const otaRoutes = new Hono()
 	 *
 	 * Upload a new bundle. Protected by OTA_UPLOAD_KEY.
 	 * Accepts multipart/form-data with:
-	 *   - file: the zip bundle (required, max 50 MB)
+	 *   - file: the zip bundle (required, max 50 MB, must contain a root index.html)
+	 *   - channel: the native compatibility line the bundle was built for, such as cap8 (required)
 	 *   - version: custom version string (optional, auto-generated if omitted)
 	 */
-	.post('/upload', async (c) => {
-		if (!OTA_UPLOAD_KEY) {
-			return c.json({ error: 'OTA uploads not configured on this server' }, 501);
-		}
-
-		const authHeader = c.req.header('Authorization');
-		if (!authHeader || authHeader !== `Bearer ${OTA_UPLOAD_KEY}`) {
-			return c.json({ error: 'Unauthorized' }, 401);
-		}
-
+	.post('/upload', requirePublisherKey, async (c) => {
 		// Size guard before reading the body
 		const contentLength = parseInt(c.req.header('Content-Length') ?? '0', 10);
 		if (contentLength > MAX_UPLOAD_BYTES) {
@@ -197,50 +276,24 @@ const otaRoutes = new Hono()
 			return c.json({ error: 'Expected multipart/form-data' }, 400);
 		}
 
-		const file = body.get('file');
-		if (!file || !(file instanceof File)) {
-			return c.json({ error: 'Missing "file" field in form data' }, 400);
+		const upload = await validateUploadForm(body);
+		if (isRejection(upload)) {
+			return c.json({ error: upload.error }, upload.status);
 		}
 
-		if (file.size > MAX_UPLOAD_BYTES) {
-			return c.json({ error: `Upload exceeds ${MAX_UPLOAD_BYTES / 1024 / 1024} MB limit` }, 413);
-		}
-
-		const buffer = Buffer.from(await file.arrayBuffer());
-		const checksum = computeSha256(buffer);
-
-		let version = (body.get('version') as string | null) ?? generateVersion();
-		version = version.replace(/[^a-zA-Z0-9._-]/g, '_');
-
-		// Serialise manifest writes to prevent concurrent uploads from racing
-		const release = await acquireUploadLock();
+		let entry: BundleEntry | null;
 		try {
-			const manifest = await readManifest();
-
-			if (manifest.bundles[version]) {
-				return c.json({ error: `Version "${version}" already exists` }, 409);
-			}
-
-			await ensureDataDir();
-			await writeFile(join(OTA_BUNDLES_DIR, `${version}.zip`), buffer);
-
-			manifest.bundles[version] = {
-				version,
-				filename: `${version}.zip`,
-				checksum,
-				createdAt: new Date().toISOString()
-			};
-			manifest.latest = version;
-			await writeManifest(manifest);
+			entry = await publishBundle(upload);
 		} catch (error) {
 			console.error('OTA: Failed to store uploaded bundle:', error);
 			return c.json({ error: 'Failed to store OTA bundle' }, 500);
-		} finally {
-			release();
+		}
+		if (!entry) {
+			return c.json({ error: `Version "${upload.version}" already exists` }, 409);
 		}
 
-		console.log(`OTA: Uploaded bundle version="${version}" checksum="${checksum}"`);
-		return c.json({ ok: true, version, checksum }, 201);
+		console.log(`OTA: Uploaded bundle version="${entry.version}" checksum="${entry.checksum}"`);
+		return c.json({ ok: true, version: entry.version, checksum: entry.checksum }, 201);
 	});
 
 /**

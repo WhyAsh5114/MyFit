@@ -14,6 +14,7 @@
 		"test": "vitest run",
 		"test:e2e": "playwright test",
 		"format": "prettier --write .",
+		"ota:channel": "node --input-type=module -e \"import { otaChannel } from './scripts/ota-channel.js'; console.log(otaChannel())\"",
 		"ota:upload": "bash scripts/ota-upload.sh"
 	},
 	"devDependencies": {

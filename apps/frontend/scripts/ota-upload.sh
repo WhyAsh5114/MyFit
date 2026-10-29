@@ -2,8 +2,8 @@
 # ---------------------------------------------------------------------------
 # OTA Bundle Upload Script
 #
-# Zips the production build, computes a SHA-256 checksum, and uploads it
-# to the MyFit API's OTA endpoint.
+# Zips the production build and uploads it to the MyFit API's OTA endpoint, in the channel
+# for the Capacitor core the build used (`pnpm ota:channel`). Set OTA_CHANNEL to override.
 #
 # Prerequisites:
 #   1. Run `pnpm build` first to produce the `build/` directory
@@ -11,7 +11,6 @@
 #
 # Usage:
 #   OTA_API_URL=https://api.myfit.fit OTA_UPLOAD_KEY=secret pnpm ota:upload
-#   OTA_API_URL=http://localhost:3000 OTA_UPLOAD_KEY=dev-key pnpm ota:upload
 # ---------------------------------------------------------------------------
 set -euo pipefail
 
@@ -38,16 +37,19 @@ zip -r "$ZIP_FILE" . -x '.DS_Store' > /dev/null
 cd "$PROJECT_DIR"
 
 ZIP_SIZE=$(du -h "$ZIP_FILE" | cut -f1)
-CHECKSUM=$(shasum -a 256 "$ZIP_FILE" | awk '{print $1}')
-echo "  Bundle: $ZIP_SIZE  SHA-256: $CHECKSUM"
+echo "  Bundle: $ZIP_SIZE"
 
 # --- Upload -----------------------------------------------------------------
 echo "→ Uploading to $OTA_API_URL/api/ota/upload ..."
+
+CHANNEL="${OTA_CHANNEL:-$(cd "$PROJECT_DIR" && pnpm --silent run ota:channel)}"
+echo "  Channel: $CHANNEL"
 
 HTTP_CODE=$(curl -s -o /dev/stderr -w "%{http_code}" \
   -X POST \
   -H "Authorization: Bearer ${OTA_UPLOAD_KEY}" \
   -F "file=@${ZIP_FILE}" \
+  -F "channel=${CHANNEL}" \
   "${OTA_API_URL}/api/ota/upload")
 
 # Clean up

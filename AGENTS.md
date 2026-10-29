@@ -295,6 +295,32 @@ toast.error(m['unknownErrorOccurred']());
 - `viewport-fit=cover` is set in `app.html` for safe-area insets — don't override it.
 - The static adapter outputs to `build/` which Capacitor's `webDir` points at.
 
+### Native is an enhancement
+
+The app must work as a plain web app. Native features (Health, back button, and so on) only add to it, so code that uses a plugin must cope with the plugin or a newer method being absent, because a new web bundle can run inside an older binary.
+
+- Check the plugin, not just the platform: `Capacitor.getPlatform() !== 'web'` says the app is native, not that this binary contains the plugin. Use `Capacitor.isPluginAvailable('<Plugin>')` before using one, and `try/catch` calls to methods a newer plugin version might add.
+- A feature whose plugin is missing hides itself or does nothing. Do not gate bundles by native version to avoid this.
+
+### Updates and version drift
+
+Three things can be out of step with each other: the web app, the installed native binary, and the server. Each has its own mechanism.
+
+| Surface         | How it updates                                    | Notes                                                                                                                                                                                                                                                       |
+| --------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web             | Service worker (`src/service-worker.ts`, Serwist) | Takes over on deploy (`skipWaiting`, `clientsClaim`), checks hourly and on tab focus, and shows a "reload" toast. Registered in `hooks.client.ts` through `lib/features/service-worker.ts`. Web only: WKWebView does not run it for the app's local origin. |
+| iOS and Android | Store release, or OTA for web-only changes        | Store releases are only for native changes (plugins, native config, Capacitor upgrades). Everything else ships as an OTA bundle.                                                                                                                            |
+
+**OTA channels.** A bundle ships its own Capacitor JS, which must match the native bridge in the installed app. Bundles are therefore published to a channel named for the Capacitor core major (`cap8`), computed in `apps/frontend/scripts/ota-channel.js` and embedded at build time as `__OTA_CHANNEL__`. The app asks `GET /api/ota/latest?channel=…` and the API serves each channel only its newest upload. Upgrading Capacitor starts a new channel by itself. For another change that old apps cannot run, change `otaChannel()` to return a new name such as `cap8-2`. There is no native version comparison and no `minNativeVersion`. `pnpm ota:channel` prints the current channel, and CI and `scripts/ota-upload.sh` send it on upload.
+
+**No OTA rollback endpoint.** To withdraw a bad release, rebuild the last good commit and upload it as a new version in the same channel. Capgo still rolls back by itself when a bundle never calls `notifyAppReady`, which the app does only after it has read the local database. A rollback does not undo local IndexedDB migrations a newer bundle already ran, so do not rely on one across a schema change.
+
+**Sync contract.** The sync worker sends a hash of the client contract (`storageHash`) with every push and pull, and the server accepts exactly one. A mismatch returns 409: the worker stops, keeps the outbox and cursor, and emits `contractmismatch`. Treat any client-visible schema change as a breaking change for older clients, even an additive one.
+
+- Web recovers when the new service worker takes over and the user reloads. Native recovers when the next OTA bundle applies, or when the store update lands for a native-incompatible change.
+- Server-only changes (indexes, `@@idb.exclude` models) should not alter the contract hash.
+- The server cannot serve two contracts at once, so a client-visible schema change always leaves a window in which clients on the other contract cannot sync (their edits stay queued). Keep it short: batch such changes, publish the new client (OTA, or the store when it needs a new binary) and deploy the matching server change right after.
+
 ---
 
 ## Domain Logic
