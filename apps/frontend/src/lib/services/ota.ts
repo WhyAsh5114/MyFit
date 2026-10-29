@@ -59,12 +59,18 @@ function showDownloadPrompt(data: BundlePayload, onDownload: () => Promise<void>
 // Public API
 // ---------------------------------------------------------------------------
 
+/**
+ * Tells Capgo the running bundle works, but only once it has loaded local data.
+ * If the load fails, Capgo never hears back within its timeout and rolls the bundle back.
+ */
 async function notifyAppReady(): Promise<void> {
 	if (Capacitor.getPlatform() === 'web') return;
 	try {
+		const { orm } = await getDb();
+		await orm.user.first();
 		await CapacitorUpdater.notifyAppReady();
 	} catch (error) {
-		console.error('OTA: Failed to notify app ready:', error);
+		console.error('OTA: Bundle did not become ready:', error);
 	}
 }
 
@@ -80,7 +86,8 @@ export async function checkForUpdates(): Promise<void> {
 		const res = await apiClient.api.ota.latest.$get({
 			query: {
 				platform: Capacitor.getPlatform() as 'ios' | 'android' | 'web',
-				currentVersion: current.bundle.version
+				currentVersion: current.bundle.version,
+				channel: __OTA_CHANNEL__
 			}
 		});
 

@@ -33,6 +33,11 @@ function optionalUrlOrigin(key: string): string | undefined {
 	}
 }
 
+/** Required URL — normalizes to an origin and fails fast if missing or invalid. */
+function requiredUrlOrigin(key: string): string {
+	return optionalUrlOrigin(key) ?? required(key);
+}
+
 /** Required JSON-encoded value. Fails fast on missing or invalid JSON. */
 function requiredJson<T>(key: string): T {
 	const raw = required(key);
@@ -46,6 +51,8 @@ function requiredJson<T>(key: string): T {
 // ---------------------------------------------------------------------------
 // Exports
 // ---------------------------------------------------------------------------
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 export const env = {
 	// --- Required (app won't start without these) ---
@@ -67,7 +74,10 @@ export const env = {
 	OPENAI_MODEL_ID: process.env.OPENAI_MODEL_ID,
 
 	// --- OTA (upload endpoint returns 501 without OTA_UPLOAD_KEY) ---
+	// Production must pin the public origin: download URLs are otherwise built from request headers.
 	OTA_BUNDLES_DIR: optional('OTA_BUNDLES_DIR', 'data/ota-bundles'),
 	OTA_UPLOAD_KEY: process.env.OTA_UPLOAD_KEY,
-	PUBLIC_API_URL: optionalUrlOrigin('PUBLIC_API_URL')
+	PUBLIC_API_URL: isProduction
+		? requiredUrlOrigin('PUBLIC_API_URL')
+		: optionalUrlOrigin('PUBLIC_API_URL')
 } as const;

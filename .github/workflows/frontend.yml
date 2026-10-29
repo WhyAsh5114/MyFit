@@ -26,6 +26,10 @@ jobs:
   ci:
     name: Lint / Check / Test / Build
     runs-on: ubuntu-latest
+    outputs:
+      # The OTA channel of this build: the bundle is published where only apps built for the
+      # same Capacitor core look for updates.
+      ota-channel: ${{ steps.channel.outputs.value }}
     env:
       PUBLIC_API_URL: http://localhost:3000
       PUBLIC_POSTHOG_KEY: test_key
@@ -72,6 +76,10 @@ jobs:
           PUBLIC_API_URL: ${{ secrets.OTA_API_URL }}
           PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
           PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
+
+      - name: Resolve OTA channel
+        id: channel
+        run: echo "value=$(pnpm --silent --filter @myfit/frontend run ota:channel)" >> "$GITHUB_OUTPUT"
 
       - name: Upload build artifact
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/v4-turborepo'
@@ -165,6 +173,7 @@ jobs:
             -X POST \
             -H "Authorization: Bearer ${OTA_UPLOAD_KEY}" \
             -F "file=@ota-bundle.zip" \
+            -F "channel=${OTA_CHANNEL}" \
             "${OTA_API_URL}/api/ota/upload")
           if [ "$HTTP_CODE" -ne 201 ]; then
             echo "OTA upload failed with HTTP $HTTP_CODE"
@@ -174,3 +183,4 @@ jobs:
         env:
           OTA_API_URL: ${{ secrets.OTA_API_URL }}
           OTA_UPLOAD_KEY: ${{ secrets.OTA_UPLOAD_KEY }}
+          OTA_CHANNEL: ${{ needs.ci.outputs.ota-channel }}
