@@ -73,7 +73,7 @@
 			xDomain={[0, 100]}
 			padding={0}
 			axis="y"
-			tooltip={false}
+			tooltipContext={false}
 			series={[
 				{
 					key: 'consumed',

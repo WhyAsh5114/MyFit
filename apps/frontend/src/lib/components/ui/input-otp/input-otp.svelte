@@ -14,8 +14,10 @@
 	bind:ref
 	bind:value
 	data-slot="input-otp"
+	spellcheck={false}
 	class={cn(
-		'flex items-center gap-2 has-disabled:opacity-50 [&_input]:disabled:cursor-not-allowed',
+		'cn-input-otp flex items-center has-disabled:opacity-50',
+		'disabled:cursor-not-allowed',
 		className
 	)}
 	{...restProps}
