@@ -32,7 +32,7 @@
 			<div class="flex items-center justify-between">
 				<div class="flex flex-col gap-0.5">
 					<span class="text-sm font-medium">{m['ota.card.currentVersion']()}</span>
-					<span class="text-muted-foreground font-mono text-xs">
+					<span class="font-mono text-xs text-muted-foreground">
 						{bundle.data?.version ?? '…'}
 					</span>
 				</div>
@@ -48,7 +48,7 @@
 			<div class="flex items-center justify-between">
 				<div class="flex flex-col gap-0.5">
 					<span class="text-sm font-medium">{m['ota.card.autoUpdate']()}</span>
-					<span class="text-muted-foreground text-xs">{m['ota.card.autoUpdateDescription']()}</span>
+					<span class="text-xs text-muted-foreground">{m['ota.card.autoUpdateDescription']()}</span>
 				</div>
 				<Switch.Root
 					checked={user.data?.autoUpdate ?? true}

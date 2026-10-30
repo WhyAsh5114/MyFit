@@ -16,19 +16,19 @@
 		"prepare": "husky"
 	},
 	"devDependencies": {
-		"@eslint/compat": "^2.1.0",
+		"@eslint/compat": "^2.1.1",
 		"@eslint/js": "^10.0.1",
-		"eslint": "^10.4.1",
+		"eslint": "^10.13.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.23.1",
-		"globals": "^17.6.0",
+		"globals": "^17.13.0",
 		"husky": "^9.1.7",
-		"lint-staged": "^17.0.7",
-		"prettier": "^3.8.3",
-		"prettier-plugin-svelte": "^4.1.0",
-		"prettier-plugin-tailwindcss": "^0.8.0",
-		"turbo": "^2.9.16",
-		"typescript-eslint": "^8.60.1"
+		"lint-staged": "^17.6.0",
+		"prettier": "^3.9.10",
+		"prettier-plugin-svelte": "^4.1.1",
+		"prettier-plugin-tailwindcss": "^0.8.1",
+		"turbo": "^2.11.10",
+		"typescript-eslint": "^8.72.1"
 	},
 	"lint-staged": {
 		"*.{ts,js,svelte}": [

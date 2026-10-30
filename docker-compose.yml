@@ -1,7 +1,7 @@
 services:
   ota-volume-init:
     image: busybox:1.37
-    restart: "no"
+    restart: 'no'
     command: sh -c "mkdir -p /data/ota-bundles && chown -R 1001:1001 /data/ota-bundles"
     volumes:
       - ota_bundles:/data/ota-bundles
@@ -33,7 +33,7 @@ services:
     networks:
       - internal
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U myfit -d myfit"]
+      test: ['CMD-SHELL', 'pg_isready -U myfit -d myfit']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -69,20 +69,20 @@ services:
       - internal
       - dokploy-network
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.myfit-api.rule=Host(`${API_DOMAIN}`)"
-      - "traefik.http.routers.myfit-api.entrypoints=websecure"
-      - "traefik.http.routers.myfit-api.tls.certresolver=letsencrypt"
-      - "traefik.http.services.myfit-api.loadbalancer.server.port=3000"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.myfit-api.rule=Host(`${API_DOMAIN}`)'
+      - 'traefik.http.routers.myfit-api.entrypoints=websecure'
+      - 'traefik.http.routers.myfit-api.tls.certresolver=letsencrypt'
+      - 'traefik.http.services.myfit-api.loadbalancer.server.port=3000'
       # Food search is the expensive endpoint and is public, so it gets its own router, with a
       # per-client rate limit that does not apply to sync and auth. The longer rule wins.
-      - "traefik.http.routers.myfit-search.rule=Host(`${API_DOMAIN}`) && PathPrefix(`/api/nutrition-data`)"
-      - "traefik.http.routers.myfit-search.entrypoints=websecure"
-      - "traefik.http.routers.myfit-search.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.myfit-search.service=myfit-api"
-      - "traefik.http.routers.myfit-search.middlewares=myfit-search-ratelimit"
-      - "traefik.http.middlewares.myfit-search-ratelimit.ratelimit.average=10"
-      - "traefik.http.middlewares.myfit-search-ratelimit.ratelimit.burst=30"
+      - 'traefik.http.routers.myfit-search.rule=Host(`${API_DOMAIN}`) && PathPrefix(`/api/nutrition-data`)'
+      - 'traefik.http.routers.myfit-search.entrypoints=websecure'
+      - 'traefik.http.routers.myfit-search.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.myfit-search.service=myfit-api'
+      - 'traefik.http.routers.myfit-search.middlewares=myfit-search-ratelimit'
+      - 'traefik.http.middlewares.myfit-search-ratelimit.ratelimit.average=10'
+      - 'traefik.http.middlewares.myfit-search-ratelimit.ratelimit.burst=30'
 
   frontend:
     build:
@@ -97,11 +97,11 @@ services:
     networks:
       - dokploy-network
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.myfit-frontend.rule=Host(`${FRONTEND_DOMAIN}`)"
-      - "traefik.http.routers.myfit-frontend.entrypoints=websecure"
-      - "traefik.http.routers.myfit-frontend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.myfit-frontend.loadbalancer.server.port=80"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.myfit-frontend.rule=Host(`${FRONTEND_DOMAIN}`)'
+      - 'traefik.http.routers.myfit-frontend.entrypoints=websecure'
+      - 'traefik.http.routers.myfit-frontend.tls.certresolver=letsencrypt'
+      - 'traefik.http.services.myfit-frontend.loadbalancer.server.port=80'
 
 volumes:
   postgres_data:
