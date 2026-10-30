@@ -1,5 +1,5 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { getDb } from '$lib/clients/idb-client';
+import { getDb } from '#lib/clients/idb-client.js';
 import { userKeys } from '../keys';
 
 /** Reads only the user bound to the active account database. */

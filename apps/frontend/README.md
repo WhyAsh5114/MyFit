@@ -107,7 +107,7 @@ xcodebuild archive -project ios/App/App.xcodeproj -scheme App $(node scripts/nat
 Uses Prisma-IDB (offline-first browser database). The schema and generated contract live in `packages/shared`; `getDb()` in `src/lib/clients/idb-client.ts` migrates IndexedDB on first use and returns a sync-tracked client:
 
 ```typescript
-import { getDb } from '$lib/clients/idb-client';
+import { getDb } from '#lib/clients/idb-client.js';
 
 const { orm } = await getDb();
 const meals = await orm.meal.where({ userId }).all();
@@ -118,7 +118,7 @@ const meals = await orm.meal.where({ userId }).all();
 Translations are in `messages/en.json`. The app uses Paraglide for i18n:
 
 ```typescript
-import * as m from '$lib/paraglide/messages';
+import * as m from '#lib/paraglide/messages.js';
 
 const greeting = m.hello();
 ```

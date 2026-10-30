@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import { m } from '$lib/paraglide/messages';
+	import * as Avatar from '#lib/components/ui/avatar/index.js';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
+	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
+	import { useSidebar } from '#lib/components/ui/sidebar/index.js';
+	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
+	import { m } from '#lib/paraglide/messages.js';
 	import { LogInIcon } from '@lucide/svelte';
 	import BadgeCheckIcon from '@lucide/svelte/icons/badge-check';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
-	import { logout } from '$lib/features/logout';
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
+	import { logout } from '#lib/features/logout.js';
+	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
 
 	const sidebar = useSidebar();
 	let authData = useCurrentUser();

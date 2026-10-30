@@ -1,7 +1,7 @@
 <script lang="ts">
-	import CustomScrollArea from '$lib/components/custom-scroll-area.svelte';
-	import { Separator } from '$lib/components/ui/separator';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import CustomScrollArea from '#lib/components/custom-scroll-area.svelte';
+	import { Separator } from '#lib/components/ui/separator/index.js';
+	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import AppSidebar from './components/app-sidebar.svelte';
 	import LinkBreadcrumbs from './components/link-breadcrumbs.svelte';
 	import SessionCacher from './components/session-cacher.svelte';

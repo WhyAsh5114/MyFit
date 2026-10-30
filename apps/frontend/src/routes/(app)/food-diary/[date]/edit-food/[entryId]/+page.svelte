@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import * as Empty from '$lib/components/ui/empty/index.js';
+	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
+	import * as Empty from '#lib/components/ui/empty/index.js';
 	import {
 		PlusCircleIcon,
 		ScanBarcodeIcon,
@@ -10,20 +10,20 @@
 		SquarePenIcon,
 		TrashIcon
 	} from '@lucide/svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
+	import Button from '#lib/components/ui/button/button.svelte';
+	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
 	import { resolve } from '$app/paths';
-	import { m } from '$lib/paraglide/messages';
-	import { useFoodEntryById } from '$lib/features/food-diary/food-entry/queries/get-by-id';
-	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
-	import { useUpdateFoodEntry } from '$lib/features/food-diary/food-entry/mutations/update';
+	import { m } from '#lib/paraglide/messages.js';
+	import { useFoodEntryById } from '#lib/features/food-diary/food-entry/queries/get-by-id.js';
+	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
+	import { useUpdateFoodEntry } from '#lib/features/food-diary/food-entry/mutations/update.js';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
-	import { foodEntryToFoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/mapper';
-	import { useDeleteFoodEntry } from '$lib/features/food-diary/food-entry/mutations/delete';
-	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
+	import { foodEntryToFoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/mapper.js';
+	import { useDeleteFoodEntry } from '#lib/features/food-diary/food-entry/mutations/delete.js';
+	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
 	import posthog from 'posthog-js';
 
 	const currentUser = useCurrentUser();

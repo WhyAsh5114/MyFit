@@ -1,9 +1,9 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getDb } from '$lib/clients/idb-client';
-import { m } from '$lib/paraglide/messages';
+import { getDb } from '#lib/clients/idb-client.js';
+import { m } from '#lib/paraglide/messages.js';
 import { toast } from 'svelte-sonner';
-import { queryClient } from '$lib/clients/query-client';
-import { userKeys } from '$lib/features/user/keys';
+import { queryClient } from '#lib/clients/query-client.js';
+import { userKeys } from '#lib/features/user/keys.js';
 
 /** Updates the OTA preference and refreshes the matching account queries. */
 export const useUpdateAutoUpdate = () =>

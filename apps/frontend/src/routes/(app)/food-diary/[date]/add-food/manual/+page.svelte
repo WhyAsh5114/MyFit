@@ -1,19 +1,19 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { Button } from '$lib/components/ui/button';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { Spinner } from '$lib/components/ui/spinner';
-	import { useCreateFoodEntry } from '$lib/features/food-diary/food-entry/mutations/create';
-	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
-	import { m } from '$lib/paraglide/messages';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
+	import { Spinner } from '#lib/components/ui/spinner/index.js';
+	import { useCreateFoodEntry } from '#lib/features/food-diary/food-entry/mutations/create.js';
+	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
+	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { CircleCheckBigIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import posthog from 'posthog-js';
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
+	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
 
 	const currentUser = useCurrentUser();
 	const meals = useMeals(() => currentUser.data?.id ?? '');

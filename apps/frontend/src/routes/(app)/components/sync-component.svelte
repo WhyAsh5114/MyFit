@@ -8,16 +8,16 @@
 		ClockIcon,
 		RefreshCcwIcon
 	} from '@lucide/svelte';
-	import * as Popover from '$lib/components/ui/popover/index.js';
-	import Badge from '$lib/components/ui/badge/badge.svelte';
-	import { Separator } from '$lib/components/ui/separator/index.js';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import { syncWorkerState } from '$lib/features/sync-worker.svelte';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import { m } from '$lib/paraglide/messages';
-	import { getDb, type DbClient } from '$lib/clients/idb-client';
+	import * as Popover from '#lib/components/ui/popover/index.js';
+	import Badge from '#lib/components/ui/badge/badge.svelte';
+	import { Separator } from '#lib/components/ui/separator/index.js';
+	import Button from '#lib/components/ui/button/button.svelte';
+	import { syncWorkerState } from '#lib/features/sync-worker.svelte.js';
+	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
+	import { m } from '#lib/paraglide/messages.js';
+	import { getDb, type DbClient } from '#lib/clients/idb-client.js';
 	import { page } from '$app/state';
-	import { authClient } from '$lib/clients/auth-client';
+	import { authClient } from '#lib/clients/auth-client.js';
 	import { onMount } from 'svelte';
 	import { online } from 'svelte/reactivity/window';
 	import { redirectToLogin } from './db';

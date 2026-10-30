@@ -1,6 +1,6 @@
 import type { Row } from '@myfit/shared/client';
 import { describe, expect, it } from 'vitest';
-import { calculateDailyNutritionStats } from '$lib/domain/nutrition/stats';
+import { calculateDailyNutritionStats } from '#lib/domain/nutrition/stats.js';
 
 const metrics = {
 	bodyweight: 80,

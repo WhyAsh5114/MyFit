@@ -1,16 +1,16 @@
 <script lang="ts">
-	import * as Empty from '$lib/components/ui/empty/index.js';
-	import * as Item from '$lib/components/ui/item/index.js';
-	import { useSearchNutritionData } from '$lib/features/food-diary/nutrition-data/queries/search';
+	import * as Empty from '#lib/components/ui/empty/index.js';
+	import * as Item from '#lib/components/ui/item/index.js';
+	import { useSearchNutritionData } from '#lib/features/food-diary/nutrition-data/queries/search.js';
 	import { InfiniteLoader, LoaderState } from 'svelte-infinite';
 	import { CloudOffIcon, PlusIcon, SearchIcon } from '@lucide/svelte';
-	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import ScrollArea from '#lib/components/ui/scroll-area/scroll-area.svelte';
+	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
+	import Button from '#lib/components/ui/button/button.svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { online } from 'svelte/reactivity/window';
-	import { m } from '$lib/paraglide/messages';
+	import { m } from '#lib/paraglide/messages.js';
 	import type { SvelteURLSearchParams } from 'svelte/reactivity';
 	import type { Component } from 'svelte';
 

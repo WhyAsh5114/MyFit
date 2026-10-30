@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Item from '$lib/components/ui/item';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import { useCreateFoodEntry } from '$lib/features/food-diary/food-entry/mutations/create';
-	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
+	import Button from '#lib/components/ui/button/button.svelte';
+	import * as Item from '#lib/components/ui/item/index.js';
+	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
+	import { useCreateFoodEntry } from '#lib/features/food-diary/food-entry/mutations/create.js';
+	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
+	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
 	import type { MyUIMessage } from '@myfit/api';
 	import { chat } from '../chat.svelte';
 	import MacrosPieChart from '../../../food-diary/[date]/components/add-edit-entries/macros-pie-chart.svelte';

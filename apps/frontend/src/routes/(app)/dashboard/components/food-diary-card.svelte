@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { m } from '$lib/paraglide/messages';
+	import Button from '#lib/components/ui/button/button.svelte';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { AppleIcon } from '@lucide/svelte';
 </script>
 

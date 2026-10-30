@@ -1,7 +1,7 @@
 <script>
 	import { resolve } from '$app/paths';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import * as m from '$lib/paraglide/messages';
+	import Button from '#lib/components/ui/button/button.svelte';
+	import * as m from '#lib/paraglide/messages.js';
 	import { BicepsFlexedIcon } from '@lucide/svelte';
 </script>
 

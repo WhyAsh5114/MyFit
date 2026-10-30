@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { SuperForm } from 'sveltekit-superforms';
-	import type { MealsFormSchema } from '$lib/features/food-diary/meals/schema';
-	import * as Form from '$lib/components/ui/form/index.js';
+	import type { MealsFormSchema } from '#lib/features/food-diary/meals/schema.js';
+	import * as Form from '#lib/components/ui/form/index.js';
 	import { createSortable } from '@dnd-kit/svelte/sortable';
-	import { cn } from '$lib/utils';
+	import { cn } from '#lib/utils.js';
 	import MealItem from './meal-item.svelte';
 
 	type Props = {

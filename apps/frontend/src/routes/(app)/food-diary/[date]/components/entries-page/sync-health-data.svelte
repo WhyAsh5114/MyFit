@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
 	import { CalendarDate, getLocalTimeZone } from '@internationalized/date';
-	import { useActivityEntriesByDate } from '$lib/features/food-diary/acitivity-entry/queries/get-by-date';
-	import { useActivityPreferencesByDate } from '$lib/features/food-diary/activity-preferences/queries/get-by-date';
-	import { useMacroMetricsByDate } from '$lib/features/food-diary/macro-metrics/queries/get-by-date';
-	import { useGetDaySteps } from '$lib/features/capacitor-health/queries/get-day-steps';
-	import { calculateActivityCalories } from '$lib/domain/nutrition/activity-calories';
-	import { useUpsertDynamicActivityData } from '$lib/features/food-diary/acitivity-entry/mutations/upsert-dynamic-activity-data';
+	import { useActivityEntriesByDate } from '#lib/features/food-diary/acitivity-entry/queries/get-by-date.js';
+	import { useActivityPreferencesByDate } from '#lib/features/food-diary/activity-preferences/queries/get-by-date.js';
+	import { useMacroMetricsByDate } from '#lib/features/food-diary/macro-metrics/queries/get-by-date.js';
+	import { useGetDaySteps } from '#lib/features/capacitor-health/queries/get-day-steps.js';
+	import { calculateActivityCalories } from '#lib/domain/nutrition/activity-calories.js';
+	import { useUpsertDynamicActivityData } from '#lib/features/food-diary/acitivity-entry/mutations/upsert-dynamic-activity-data.js';
 
 	type Props = {
 		selectedDay: CalendarDate;

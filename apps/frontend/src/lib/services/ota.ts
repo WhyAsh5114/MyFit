@@ -1,9 +1,9 @@
 import { Capacitor } from '@capacitor/core';
 import { CapacitorUpdater, type BundleInfo } from '@capgo/capacitor-updater';
-import { apiClient } from '$lib/clients/api-client';
-import { getDb } from '$lib/clients/idb-client';
+import { apiClient } from '#lib/clients/api-client.js';
+import { getDb } from '#lib/clients/idb-client.js';
 import { toast } from 'svelte-sonner';
-import { m } from '$lib/paraglide/messages';
+import { m } from '#lib/paraglide/messages.js';
 
 /**
  * Self-hosted OTA: checks our API for new bundles and downloads them.

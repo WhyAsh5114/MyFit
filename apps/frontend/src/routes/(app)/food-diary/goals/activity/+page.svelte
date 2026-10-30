@@ -1,22 +1,22 @@
 <script lang="ts">
-	import Badge from '$lib/components/ui/badge/badge.svelte';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { Label } from '$lib/components/ui/label';
-	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
-	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import { cn } from '$lib/utils';
+	import Badge from '#lib/components/ui/badge/badge.svelte';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import * as RadioGroup from '#lib/components/ui/radio-group/index.js';
+	import * as InputGroup from '#lib/components/ui/input-group/index.js';
+	import { cn } from '#lib/utils.js';
 	import type { Row } from '@myfit/shared/client';
-	import { enums } from '$lib/clients/idb-client';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import { enums } from '#lib/clients/idb-client.js';
+	import Button from '#lib/components/ui/button/button.svelte';
 	import { SaveIcon } from '@lucide/svelte';
 	import DynamicActivity from './dynamic-activity.svelte';
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
+	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { useActivityPreferences } from '$lib/features/food-diary/activity-preferences/queries/get';
-	import { useSaveActivityPreferences } from '$lib/features/food-diary/activity-preferences/mutations/save';
+	import { useActivityPreferences } from '#lib/features/food-diary/activity-preferences/queries/get.js';
+	import { useSaveActivityPreferences } from '#lib/features/food-diary/activity-preferences/mutations/save.js';
 
 	type ActivityAdjustmentType = Row<'ActivityPreferences'>['adjustmentType'];
 

@@ -1,18 +1,18 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	import Label from '$lib/components/ui/label/label.svelte';
+	import Button from '#lib/components/ui/button/button.svelte';
+	import Label from '#lib/components/ui/label/label.svelte';
 	import { ChevronDownIcon, CirclePlusIcon, ScanBarcodeIcon, SearchIcon } from '@lucide/svelte';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import { Debounced } from 'runed';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { m } from '$lib/paraglide/messages';
+	import { m } from '#lib/paraglide/messages.js';
 	import FoodInfinite from './food-infinite.svelte';
 	import { goto } from '$app/navigation';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
-	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
-	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
+	import * as InputGroup from '#lib/components/ui/input-group/index.js';
+	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
+	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
 	import posthog from 'posthog-js';
 
 	const currentUser = useCurrentUser();
@@ -20,7 +20,7 @@
 
 	let search = $state(page.url.searchParams.get('search') ?? '');
 	const debounced = new Debounced(() => search, 500);
-	const params = new SvelteURLSearchParams(page.url.searchParams);
+	const params = new SvelteURLSearchParams(page.url.search);
 
 	let searchParamMeal = $derived.by(() => {
 		const mealId = params.get('meal-id');
@@ -37,8 +37,8 @@
 		}
 
 		goto(resolve(`food-diary/${page.params.date}/add-food?${params.toString()}`), {
-			replaceState: true,
-			keepFocus: true
+			replace: true,
+			reset: false
 		});
 	});
 </script>

@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
+	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
+	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
 	import MacroMealsForm from './macro-meals-form.svelte';
-	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
-	import { useSaveMeals } from '$lib/features/food-diary/meals/mutations/save';
-	import { m } from '$lib/paraglide/messages';
+	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
+	import { useSaveMeals } from '#lib/features/food-diary/meals/mutations/save.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { SaveIcon } from '@lucide/svelte';
-	import type { MealsFormSchema } from '$lib/features/food-diary/meals/schema';
+	import type { MealsFormSchema } from '#lib/features/food-diary/meals/schema.js';
 	import { toast } from 'svelte-sonner';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '#lib/components/ui/button/index.js';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { Spinner } from '$lib/components/ui/spinner';
+	import { Spinner } from '#lib/components/ui/spinner/index.js';
 
 	const currentUser = useCurrentUser();
 	const meals = useMeals(() => currentUser.data?.id ?? '');

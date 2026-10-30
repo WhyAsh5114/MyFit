@@ -1,5 +1,5 @@
 import { createInfiniteQuery } from '@tanstack/svelte-query';
-import { apiClient } from '$lib/clients/api-client';
+import { apiClient } from '#lib/clients/api-client.js';
 import { toast } from 'svelte-sonner';
 import { nutritionDataKeys } from '../keys';
 import { NUTRITION_DATA_SEARCH_PAGINATION_LIMIT } from '@myfit/shared/constants';

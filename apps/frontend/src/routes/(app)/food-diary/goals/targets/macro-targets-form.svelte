@@ -1,21 +1,21 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card/index.js';
-	import * as Form from '$lib/components/ui/form/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
-	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
-	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import { Slider } from '$lib/components/ui/slider/index.js';
-	import Switch from '$lib/components/ui/switch/switch.svelte';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import * as Form from '#lib/components/ui/form/index.js';
+	import * as Select from '#lib/components/ui/select/index.js';
+	import * as ButtonGroup from '#lib/components/ui/button-group/index.js';
+	import * as InputGroup from '#lib/components/ui/input-group/index.js';
+	import { Slider } from '#lib/components/ui/slider/index.js';
+	import Switch from '#lib/components/ui/switch/switch.svelte';
 	import {
 		macroTargetsSchema,
 		type MacroTargetsSchema
-	} from '$lib/features/food-diary/macro-targets/schema';
-	import { pascalToNormal } from '$lib/my-utils';
+	} from '#lib/features/food-diary/macro-targets/schema.js';
+	import { pascalToNormal } from '#lib/my-utils.js';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
 	import { defaults, superForm, type SuperForm } from 'sveltekit-superforms';
-	import { REQUIRED_NUTRIENTS } from '$lib/features/food-diary/_common/nutrients';
-	import { CALORIES_PER_KILOGRAM } from '$lib/domain/nutrition/constants';
-	import { m } from '$lib/paraglide/messages';
+	import { REQUIRED_NUTRIENTS } from '#lib/features/food-diary/_common/nutrients.js';
+	import { CALORIES_PER_KILOGRAM } from '#lib/domain/nutrition/constants.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import type { Snippet } from 'svelte';
 
 	type Props = {

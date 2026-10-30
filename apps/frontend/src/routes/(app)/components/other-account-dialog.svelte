@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import ResponsiveDialog from '$lib/components/responsive-dialog.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { signOutAndRefreshSession } from '$lib/features/logout';
-	import { m } from '$lib/paraglide/messages';
+	import ResponsiveDialog from '#lib/components/responsive-dialog.svelte';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { signOutAndRefreshSession } from '#lib/features/logout.js';
+	import { m } from '#lib/paraglide/messages.js';
 
 	/** `email` owns the unsynced local data that the new login would replace. */
 	let { email, ondiscard }: { email: string; ondiscard: () => void } = $props();

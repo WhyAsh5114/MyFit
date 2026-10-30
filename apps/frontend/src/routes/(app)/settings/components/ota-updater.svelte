@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { Capacitor } from '@capacitor/core';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import * as Switch from '$lib/components/ui/switch/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import { m } from '$lib/paraglide/messages';
-	import { useCurrentBundle } from '$lib/features/ota/queries/get-current-bundle';
-	import { useCheckForUpdates } from '$lib/features/ota/mutations/check-for-updates';
-	import { useUpdateAutoUpdate } from '$lib/features/ota/mutations/update-auto-update';
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import * as Switch from '#lib/components/ui/switch/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { m } from '#lib/paraglide/messages.js';
+	import { useCurrentBundle } from '#lib/features/ota/queries/get-current-bundle.js';
+	import { useCheckForUpdates } from '#lib/features/ota/mutations/check-for-updates.js';
+	import { useUpdateAutoUpdate } from '#lib/features/ota/mutations/update-auto-update.js';
+	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
 
 	const isNative = Capacitor.getPlatform() !== 'web';
 

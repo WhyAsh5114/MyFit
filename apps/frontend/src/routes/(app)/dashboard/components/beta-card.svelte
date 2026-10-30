@@ -1,11 +1,11 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card/index.js';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
+	import Button from '#lib/components/ui/button/button.svelte';
 	import { BugIcon } from '@lucide/svelte';
-	import DiscordIcon from '$lib/icons/discord-icon.svelte';
-	import GithubIcon from '$lib/icons/github-icon.svelte';
-	import { m } from '$lib/paraglide/messages';
+	import DiscordIcon from '#lib/icons/discord-icon.svelte';
+	import GithubIcon from '#lib/icons/github-icon.svelte';
+	import { m } from '#lib/paraglide/messages.js';
 </script>
 
 <Card.Root>

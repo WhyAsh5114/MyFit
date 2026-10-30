@@ -1,9 +1,9 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	import SetupAccountForm from './setup-account-form.svelte';
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { m } from '$lib/paraglide/messages';
+	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
+	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
+	import { m } from '#lib/paraglide/messages.js';
 
 	const currentUser = useCurrentUser();
 </script>

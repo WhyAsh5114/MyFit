@@ -1,8 +1,8 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getDb } from '$lib/clients/idb-client';
+import { getDb } from '#lib/clients/idb-client.js';
 import { toast } from 'svelte-sonner';
-import { m } from '$lib/paraglide/messages';
-import { queryClient } from '$lib/clients/query-client';
+import { m } from '#lib/paraglide/messages.js';
+import { queryClient } from '#lib/clients/query-client.js';
 import type { NewRow } from '@myfit/shared/client';
 import { mealKeys } from '../keys';
 

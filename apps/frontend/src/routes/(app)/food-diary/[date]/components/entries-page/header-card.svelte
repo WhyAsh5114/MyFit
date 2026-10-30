@@ -1,16 +1,16 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import Button from '#lib/components/ui/button/button.svelte';
 	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
-	import { dateFormatter } from '$lib/my-utils';
-	import { useMacroMetricsByDate } from '$lib/features/food-diary/macro-metrics/queries/get-by-date';
-	import { useMacroTargetsByDate } from '$lib/features/food-diary/macro-targets/queries/get-by-date';
+	import { dateFormatter } from '#lib/my-utils.js';
+	import { useMacroMetricsByDate } from '#lib/features/food-diary/macro-metrics/queries/get-by-date.js';
+	import { useMacroTargetsByDate } from '#lib/features/food-diary/macro-targets/queries/get-by-date.js';
 	import type { Row } from '@myfit/shared/client';
 	import StackedCaloriesBar from './stacked-calories-bar.svelte';
-	import { calculateDailyNutritionStats } from '$lib/domain/nutrition/stats';
+	import { calculateDailyNutritionStats } from '#lib/domain/nutrition/stats.js';
 
 	type Props = {
 		foodEntries?: Row<'FoodEntry'>[];

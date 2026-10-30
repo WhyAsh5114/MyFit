@@ -1,10 +1,10 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getDb } from '$lib/clients/idb-client';
+import { getDb } from '#lib/clients/idb-client.js';
 import { toast } from 'svelte-sonner';
-import { m } from '$lib/paraglide/messages';
-import { queryClient } from '$lib/clients/query-client';
-import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
-import { foodEntryFormSchemaToFoodEntry } from '$lib/features/food-diary/food-entry/model/mapper';
+import { m } from '#lib/paraglide/messages.js';
+import { queryClient } from '#lib/clients/query-client.js';
+import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
+import { foodEntryFormSchemaToFoodEntry } from '#lib/features/food-diary/food-entry/model/mapper.js';
 import { foodEntryKeys } from '../keys';
 
 type MutationProps = {

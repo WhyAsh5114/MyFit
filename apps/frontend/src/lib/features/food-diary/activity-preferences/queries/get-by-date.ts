@@ -1,5 +1,5 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { getDb } from '$lib/clients/idb-client';
+import { getDb } from '#lib/clients/idb-client.js';
 import { toast } from 'svelte-sonner';
 import { activityPreferencesKeys } from '../keys';
 import { getLocalTimeZone, type CalendarDate } from '@internationalized/date';

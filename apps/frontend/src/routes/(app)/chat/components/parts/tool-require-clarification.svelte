@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Item from '$lib/components/ui/item';
+	import Button from '#lib/components/ui/button/button.svelte';
+	import * as Item from '#lib/components/ui/item/index.js';
 	import type { MyUIMessage } from '@myfit/api';
 	import { renderMarkdown } from '../render-markdown';
 	import { chat } from '../chat.svelte';

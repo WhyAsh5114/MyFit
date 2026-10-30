@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import * as Item from '$lib/components/ui/item/index.js';
-	import { cn } from '$lib/utils';
+	import * as Item from '#lib/components/ui/item/index.js';
+	import { cn } from '#lib/utils.js';
 	import { FlameIcon, PlusIcon } from '@lucide/svelte';
 	import type { Row } from '@myfit/shared/client';
 

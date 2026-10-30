@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { useFoodEntriesByDate } from '$lib/features/food-diary/food-entry/queries/get-by-date';
+	import { useFoodEntriesByDate } from '#lib/features/food-diary/food-entry/queries/get-by-date.js';
 	import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
 	import HeaderCard from './components/entries-page/header-card.svelte';
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
-	import { useActivityEntriesByDate } from '$lib/features/food-diary/acitivity-entry/queries/get-by-date';
-	import { useMacroMetricsByDate } from '$lib/features/food-diary/macro-metrics/queries/get-by-date';
-	import { useMacroTargetsByDate } from '$lib/features/food-diary/macro-targets/queries/get-by-date';
+	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
+	import { useActivityEntriesByDate } from '#lib/features/food-diary/acitivity-entry/queries/get-by-date.js';
+	import { useMacroMetricsByDate } from '#lib/features/food-diary/macro-metrics/queries/get-by-date.js';
+	import { useMacroTargetsByDate } from '#lib/features/food-diary/macro-targets/queries/get-by-date.js';
 	import FoodEntries from './components/entries-page/food-entries.svelte';
-	import { ScrollArea } from '$lib/components/ui/scroll-area';
+	import { ScrollArea } from '#lib/components/ui/scroll-area/index.js';
 	import ActivityEntries from './components/entries-page/activity-entries.svelte';
 	import SyncHealthData from './components/entries-page/sync-health-data.svelte';
-	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
+	import Button from '#lib/components/ui/button/button.svelte';
 	import { BotMessageSquareIcon } from '@lucide/svelte';
 
 	const timezone = getLocalTimeZone();

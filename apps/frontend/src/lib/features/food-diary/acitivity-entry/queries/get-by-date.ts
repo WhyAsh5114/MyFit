@@ -1,6 +1,6 @@
 import { createQuery } from '@tanstack/svelte-query';
 import { activityEntryKeys } from '../keys';
-import { getDb } from '$lib/clients/idb-client';
+import { getDb } from '#lib/clients/idb-client.js';
 import { and } from '@prisma-idb/client-idb/orm';
 import { getLocalTimeZone, type CalendarDate } from '@internationalized/date';
 

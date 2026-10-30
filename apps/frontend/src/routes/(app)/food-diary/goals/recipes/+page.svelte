@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
-	import * as Empty from '$lib/components/ui/empty/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import * as Empty from '#lib/components/ui/empty/index.js';
 	import { CirclePlusIcon, SaladIcon, SearchIcon } from '@lucide/svelte';
-	import * as InputGroup from '$lib/components/ui/input-group/index.js';
+	import * as InputGroup from '#lib/components/ui/input-group/index.js';
 	import { resolve } from '$app/paths';
 </script>
 

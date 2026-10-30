@@ -1,8 +1,8 @@
 <script lang="ts">
-	import * as Select from '$lib/components/ui/select/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Select from '#lib/components/ui/select/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	import { setMode, userPrefersMode } from 'mode-watcher';
-	import { m } from '$lib/paraglide/messages';
+	import { m } from '#lib/paraglide/messages.js';
 
 	let modeLabel = $derived(
 		{

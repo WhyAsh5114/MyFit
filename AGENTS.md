@@ -8,7 +8,7 @@ MyFit is a **local-first, mobile-first fitness SPA** built with SvelteKit + Capa
 - **Local-first data.** All user data (food entries, metrics, targets, preferences) is stored in IndexedDB through the Prisma IDB client (`@prisma-idb/client-idb`), typed by the shared schema in `packages/shared`. Writes go to IDB first; the sync extension records each `orm.*` write in an outbox, and the sync worker pushes it to the remote PostgreSQL database in the background.
 - **Remote data is read-only from the client.** Nutrition food data is fetched from the Hono API via `apiClient` and cached in TanStack Query — it is never written locally.
 - **Two clients, two purposes:**
-  - `getDb()` (`$lib/clients/idb-client`) → `DbClient` (IndexedDB) — all user data reads/writes through `const { orm } = await getDb()`
+  - `getDb()` (`#lib/clients/idb-client`) → `DbClient` (IndexedDB) — all user data reads/writes through `const { orm } = await getDb()`
   - `apiClient` → Hono RPC client — nutrition data search/lookup only
 
 ---
@@ -17,7 +17,7 @@ MyFit is a **local-first, mobile-first fitness SPA** built with SvelteKit + Capa
 
 | Concern      | Library                                                    |
 | ------------ | ---------------------------------------------------------- |
-| Framework    | SvelteKit 2, Svelte 5 (runes)                              |
+| Framework    | SvelteKit 3, Svelte 5 (runes)                              |
 | Styling      | Tailwind CSS v4                                            |
 | Components   | shadcn-svelte (via bits-ui)                                |
 | Charts       | layerchart                                                 |
@@ -246,8 +246,8 @@ $effect(() => { computedValue = someData.value * 2; });
 
 ```svelte
 <!-- ✅ Namespace imports -->
-import * as Card from '$lib/components/ui/card/index.js';
-import * as Form from '$lib/components/ui/form/index.js';
+import * as Card from '#lib/components/ui/card/index.js';
+import * as Form from '#lib/components/ui/form/index.js';
 
 <!-- ✅ Loading state in button -->
 <Button disabled={mutation.isPending}>
@@ -258,8 +258,8 @@ import * as Form from '$lib/components/ui/form/index.js';
 <div class={cn('base-class', { 'conditional-class': condition })}>
 ```
 
-- Always import from `$lib/components/ui/` — not directly from `bits-ui`.
-- Use `cn()` from `$lib/utils` for all conditional class logic.
+- Always import from `#lib/components/ui/` — not directly from `bits-ui`.
+- Use `cn()` from `#lib/utils` for all conditional class logic.
 - Use `<Spinner />` for in-button loading states; use `<Skeleton />` for full-section loading states.
 - Use `<Empty.Root>` + `<Empty.Header>` + `<Empty.Content>` for empty states.
 
@@ -269,7 +269,7 @@ import * as Form from '$lib/components/ui/form/index.js';
 
 ```svelte
 <script lang="ts">
-	import { m } from '$lib/paraglide/messages';
+	import { m } from '#lib/paraglide/messages';
 </script>
 
 <!-- ✅ All user-visible strings go through Paraglide -->
@@ -307,10 +307,10 @@ The app must work as a plain web app. Native features (Health, back button, and 
 
 Three things can be out of step with each other: the web app, the installed native binary, and the server. Each has its own mechanism.
 
-| Surface         | How it updates                                    | Notes                                                                                                                                                                                                                                                       |
-| --------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Web             | Service worker (`src/service-worker.ts`, Serwist) | Takes over on deploy (`skipWaiting`, `clientsClaim`), checks hourly and on tab focus, and shows a "reload" toast. Registered in `hooks.client.ts` through `lib/features/service-worker.ts`. Web only: WKWebView does not run it for the app's local origin. |
-| iOS and Android | Store release, or OTA for web-only changes        | Store releases are only for native changes (plugins, native config, Capacitor upgrades). Everything else ships as an OTA bundle.                                                                                                                            |
+| Surface         | How it updates                                          | Notes                                                                                                                                                                                                                                                       |
+| --------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web             | Service worker (`src/service-worker/index.ts`, Serwist) | Takes over on deploy (`skipWaiting`, `clientsClaim`), checks hourly and on tab focus, and shows a "reload" toast. Registered in `hooks.client.ts` through `lib/features/service-worker.ts`. Web only: WKWebView does not run it for the app's local origin. |
+| iOS and Android | Store release, or OTA for web-only changes              | Store releases are only for native changes (plugins, native config, Capacitor upgrades). Everything else ships as an OTA bundle.                                                                                                                            |
 
 **OTA channels.** A bundle ships its own Capacitor JS, which must match the native bridge in the installed app. Bundles are therefore published to a channel named for the Capacitor core major (`cap8`), computed in `apps/frontend/scripts/ota-channel.js` and embedded at build time as `__OTA_CHANNEL__`. The app asks `GET /api/ota/latest?channel=…` and the API serves each channel only its newest upload. Upgrading Capacitor starts a new channel by itself. For another change that old apps cannot run, change `otaChannel()` to return a new name such as `cap8-2`. There is no native version comparison and no `minNativeVersion`. `pnpm ota:channel` prints the current channel, and CI and `scripts/ota-upload.sh` send it on upload.
 
@@ -337,7 +337,7 @@ domain/
     constants.ts       # CALORIES_PER_KILOGRAM = 7700
 ```
 
-- Domain functions are **pure** — no imports from `$lib/clients/`, `$lib/features/`, or SvelteKit.
+- Domain functions are **pure** — no imports from `#lib/clients/`, `#lib/features/`, or SvelteKit.
 - Accept typed plain objects, return plain values.
 - When computing consumed calories from `FoodEntry`, always scale by quantity: `entry.energyKcal_100g * (entry.quantityG / 100)`.
 
@@ -347,10 +347,10 @@ domain/
 
 1. `+layout.svelte` (root) wraps the tree in `<QueryClientProvider>`.
 2. `(app)/+layout.ts` disables SSR/prerender for all authenticated routes.
-3. The root layout claims the single-tab lock (`claimTab` in `$lib/features/account-session.svelte.ts`); other tabs show a notice and reload when the active tab closes.
+3. The root layout claims the single-tab lock (`claimTab` in `#lib/features/account-session.svelte.ts`); other tabs show a notice and reload when the active tab closes.
 4. `<SessionCacher>` in `(app)/+layout.svelte` keeps one local account: it checks the local database against the better-auth session, asks before replacing another account's unsynced data, and starts the sync worker for a signed-in account. An expired session keeps the stored account working offline.
 5. The `user` feature (`useCurrentUser`) reads the local IDB record — not the auth session directly.
-6. `logout()` in `$lib/features/logout.ts` saves queued edits, signs out, then deletes the local database. If a step fails it keeps the account and offers retry, cancel or discard.
+6. `logout()` in `#lib/features/logout.ts` saves queued edits, signs out, then deletes the local database. If a step fails it keeps the account and offers retry, cancel or discard.
 
 ---
 

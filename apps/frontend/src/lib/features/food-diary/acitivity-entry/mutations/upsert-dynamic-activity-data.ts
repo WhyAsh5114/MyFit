@@ -1,11 +1,11 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { getDb } from '$lib/clients/idb-client';
+import { getDb } from '#lib/clients/idb-client.js';
 import type { CalendarDate } from '@internationalized/date';
 import type { NewRow } from '@myfit/shared/client';
 import { activityEntryKeys } from '../keys';
-import { queryClient } from '$lib/clients/query-client';
+import { queryClient } from '#lib/clients/query-client.js';
 import { toast } from 'svelte-sonner';
-import { m } from '$lib/paraglide/messages';
+import { m } from '#lib/paraglide/messages.js';
 
 export const useUpsertDynamicActivityData = () =>
 	createMutation(() => ({

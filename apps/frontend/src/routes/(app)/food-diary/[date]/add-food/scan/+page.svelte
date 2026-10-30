@@ -1,21 +1,21 @@
 <script lang="ts">
 	import { BarqodeStream, type DetectedBarcode } from 'barqode';
 	import { toast } from 'svelte-sonner';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
-	import * as Empty from '$lib/components/ui/empty/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import * as Select from '#lib/components/ui/select/index.js';
+	import * as Empty from '#lib/components/ui/empty/index.js';
 	import { SearchIcon, ZapIcon, ZapOffIcon } from '@lucide/svelte';
-	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { m } from '$lib/paraglide/messages';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import * as InputGroup from '#lib/components/ui/input-group/index.js';
+	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
+	import { m } from '#lib/paraglide/messages.js';
+	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { pickBestCamera } from './utils';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import Button from '#lib/components/ui/button/button.svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { useNutritionDataByCode } from '$lib/features/food-diary/nutrition-data/queries/get-by-code';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import { useNutritionDataByCode } from '#lib/features/food-diary/nutrition-data/queries/get-by-code.js';
+	import Separator from '#lib/components/ui/separator/separator.svelte';
 	import posthog from 'posthog-js';
 
 	let constraintOptions: { label: string; constraints: MediaTrackConstraints }[] = $state([]);

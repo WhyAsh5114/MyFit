@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { round } from '$lib/my-utils';
+	import { round } from '#lib/my-utils.js';
 	import { PlusIcon } from '@lucide/svelte';
 	import type { FoodEntryWithMeal, Row } from '@myfit/shared/client';
-	import * as Item from '$lib/components/ui/item/index.js';
+	import * as Item from '#lib/components/ui/item/index.js';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { cn } from '$lib/utils';
+	import { cn } from '#lib/utils.js';
 
 	let { foodEntries, meals = [] }: { foodEntries?: FoodEntryWithMeal[]; meals?: Row<'Meal'>[] } =
 		$props();

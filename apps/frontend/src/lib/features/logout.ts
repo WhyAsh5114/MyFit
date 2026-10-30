@@ -1,10 +1,10 @@
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
-import { authClient } from '$lib/clients/auth-client';
-import { getDb, resetDb } from '$lib/clients/idb-client';
-import { queryClient } from '$lib/clients/query-client';
-import { accountSession } from '$lib/features/account-session.svelte';
-import { syncWorkerState } from '$lib/features/sync-worker.svelte';
+import { authClient } from '#lib/clients/auth-client.js';
+import { getDb, resetDb } from '#lib/clients/idb-client.js';
+import { queryClient } from '#lib/clients/query-client.js';
+import { accountSession } from '#lib/features/account-session.svelte.js';
+import { syncWorkerState } from '#lib/features/sync-worker.svelte.js';
 import posthog from 'posthog-js';
 
 /** Confirms the session store has observed sign-out, so it cannot recreate the account being deleted. */

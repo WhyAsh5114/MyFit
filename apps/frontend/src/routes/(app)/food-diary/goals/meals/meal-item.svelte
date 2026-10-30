@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { Attachment } from 'svelte/attachments';
 	import type { HTMLInputAttributes } from 'svelte/elements';
-	import * as Item from '$lib/components/ui/item/index.js';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
+	import * as Item from '#lib/components/ui/item/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
 	import { GripVerticalIcon, TrashIcon } from '@lucide/svelte';
-	import { m } from '$lib/paraglide/messages';
-	import { cn } from '$lib/utils';
+	import { m } from '#lib/paraglide/messages.js';
+	import { cn } from '#lib/utils.js';
 
 	type Props = {
 		name: string;
