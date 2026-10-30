@@ -12,9 +12,10 @@ const absolute = (path: string) => `${BASE}${path}`;
 const SHELL = absolute('index.html');
 
 /** Hashed build files never change under the same name, so they need no revision. */
-const hashed = immutable.map(
-	({ path }): PrecacheEntry => ({ url: absolute(path), revision: null })
-);
+const hashed = immutable.map(({ path }): PrecacheEntry => ({
+	url: absolute(path),
+	revision: null
+}));
 
 /** The app shell, prerendered pages and static files such as fonts change per deploy. */
 const unhashed = [

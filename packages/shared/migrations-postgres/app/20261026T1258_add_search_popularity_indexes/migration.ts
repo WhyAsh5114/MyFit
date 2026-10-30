@@ -6,27 +6,27 @@ import startContract from '../../snapshots/629292428441ee1057e4b6a6806b7e244d6a2
 import { Migration, MigrationCLI, sql } from '@prisma/orm-postgres/migration';
 
 export default class M extends Migration<Start, End> {
-  override readonly startContractJson = startContract;
-  override readonly endContractJson = endContract;
+	override readonly startContractJson = startContract;
+	override readonly endContractJson = endContract;
 
-  override get operations() {
-    return [
-      this.createIndex({
-        schema: 'public',
-        table: 'NutritionData',
-        index: 'nutrition_data_search_popular_ac7e03d8',
-        expression: sql`(setweight(to_tsvector('english', public.immutable_unaccent(coalesce("productName", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce("brands", ''))), 'B'))`,
-        extras: { type: 'gin', where: sql`"uniqueScans" >= 10` },
-      }),
-      this.createIndex({
-        schema: 'public',
-        table: 'NutritionData',
-        index: 'nutrition_data_search_seen_a424f517',
-        expression: sql`(setweight(to_tsvector('english', public.immutable_unaccent(coalesce("productName", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce("brands", ''))), 'B'))`,
-        extras: { type: 'gin', where: sql`"uniqueScans" >= 1` },
-      }),
-    ];
-  }
+	override get operations() {
+		return [
+			this.createIndex({
+				schema: 'public',
+				table: 'NutritionData',
+				index: 'nutrition_data_search_popular_ac7e03d8',
+				expression: sql`(setweight(to_tsvector('english', public.immutable_unaccent(coalesce("productName", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce("brands", ''))), 'B'))`,
+				extras: { type: 'gin', where: sql`"uniqueScans" >= 10` }
+			}),
+			this.createIndex({
+				schema: 'public',
+				table: 'NutritionData',
+				index: 'nutrition_data_search_seen_a424f517',
+				expression: sql`(setweight(to_tsvector('english', public.immutable_unaccent(coalesce("productName", ''))), 'A') || setweight(to_tsvector('english', public.immutable_unaccent(coalesce("brands", ''))), 'B'))`,
+				extras: { type: 'gin', where: sql`"uniqueScans" >= 1` }
+			})
+		];
+	}
 }
 
 MigrationCLI.run(import.meta.url, M);
