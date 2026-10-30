@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { useNutritionDataById } from '$lib/features/food-diary/nutrition-data/queries/get-by-id';
-	import * as Empty from '$lib/components/ui/empty/index.js';
+	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
+	import { useNutritionDataById } from '#lib/features/food-diary/nutrition-data/queries/get-by-id.js';
+	import * as Empty from '#lib/components/ui/empty/index.js';
 	import {
 		CircleCheckBigIcon,
 		PlusCircleIcon,
@@ -10,18 +10,18 @@
 		SearchIcon,
 		SearchXIcon
 	} from '@lucide/svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import Button from '#lib/components/ui/button/button.svelte';
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
+	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
 	import { resolve } from '$app/paths';
-	import { m } from '$lib/paraglide/messages';
+	import { m } from '#lib/paraglide/messages.js';
 	import { toast } from 'svelte-sonner';
-	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
-	import { useCreateFoodEntry } from '$lib/features/food-diary/food-entry/mutations/create';
+	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
+	import { useCreateFoodEntry } from '#lib/features/food-diary/food-entry/mutations/create.js';
 	import { goto } from '$app/navigation';
-	import { Spinner } from '$lib/components/ui/spinner';
-	import { nutritionDataToFoodEntryFormData } from '$lib/features/food-diary/nutrition-data/model/mapper';
-	import { useMeals } from '$lib/features/food-diary/meals/queries/get';
+	import { Spinner } from '#lib/components/ui/spinner/index.js';
+	import { nutritionDataToFoodEntryFormData } from '#lib/features/food-diary/nutrition-data/model/mapper.js';
+	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
 	import posthog from 'posthog-js';
 
 	const currentUser = useCurrentUser();

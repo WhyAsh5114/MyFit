@@ -1,4 +1,4 @@
-import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
+import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
 import type { NewRow } from '@myfit/shared/client';
 
 export function foodEntryFormSchemaToFoodEntry(

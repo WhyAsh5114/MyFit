@@ -1,18 +1,18 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card/index.js';
-	import * as Form from '$lib/components/ui/form/index.js';
-	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import * as InputGroup from '$lib/components/ui/input-group/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import * as Form from '#lib/components/ui/form/index.js';
+	import * as RadioGroup from '#lib/components/ui/radio-group/index.js';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
+	import * as InputGroup from '#lib/components/ui/input-group/index.js';
 	import { defaults, superForm, type SuperForm } from 'sveltekit-superforms';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
 	import {
 		macroTrackingMetricsSchema,
 		type MacroTrackingMetricsSchema
-	} from '$lib/features/food-diary/macro-metrics/schema';
+	} from '#lib/features/food-diary/macro-metrics/schema.js';
 	import { ChevronDownIcon } from '@lucide/svelte';
-	import { m } from '$lib/paraglide/messages';
-	import { calculateBMR } from '$lib/domain/nutrition/bmr';
+	import { m } from '#lib/paraglide/messages.js';
+	import { calculateBMR } from '#lib/domain/nutrition/bmr.js';
 	import type { Snippet } from 'svelte';
 
 	type Props = {

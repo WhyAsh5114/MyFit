@@ -1,15 +1,15 @@
 <script lang="ts">
 	import MacroMetricsForm from './macro-metrics-form.svelte';
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-	import { useMacroMetrics } from '$lib/features/food-diary/macro-metrics/queries/get';
-	import { Spinner } from '$lib/components/ui/spinner';
-	import { useCreateMacroMetrics } from '$lib/features/food-diary/macro-metrics/mutations/create';
-	import { m } from '$lib/paraglide/messages';
+	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
+	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
+	import { useMacroMetrics } from '#lib/features/food-diary/macro-metrics/queries/get.js';
+	import { Spinner } from '#lib/components/ui/spinner/index.js';
+	import { useCreateMacroMetrics } from '#lib/features/food-diary/macro-metrics/mutations/create.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { SaveIcon } from '@lucide/svelte';
-	import type { MacroTrackingMetricsSchema } from '$lib/features/food-diary/macro-metrics/schema';
+	import type { MacroTrackingMetricsSchema } from '#lib/features/food-diary/macro-metrics/schema.js';
 	import { toast } from 'svelte-sonner';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '#lib/components/ui/button/index.js';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 

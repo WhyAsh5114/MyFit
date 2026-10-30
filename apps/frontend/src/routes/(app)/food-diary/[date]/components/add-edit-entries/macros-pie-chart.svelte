@@ -1,6 +1,6 @@
 <script lang="ts">
-	import * as Chart from '$lib/components/ui/chart/index.js';
-	import { cn } from '$lib/utils';
+	import * as Chart from '#lib/components/ui/chart/index.js';
+	import { cn } from '#lib/utils.js';
 	import { PieChart, Text } from 'layerchart';
 	import { hasCalculationErrors } from './common';
 

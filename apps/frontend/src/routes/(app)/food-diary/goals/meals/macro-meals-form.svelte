@@ -1,15 +1,15 @@
 <script lang="ts">
 	import type { Row } from '@myfit/shared/client';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { Button } from '$lib/components/ui/button';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
 	import { DragDropProvider, DragOverlay } from '@dnd-kit/svelte';
 	import { move } from '@dnd-kit/helpers';
 	import { PlusIcon } from '@lucide/svelte';
-	import { mealsFormSchema, type MealsFormSchema } from '$lib/features/food-diary/meals/schema';
+	import { mealsFormSchema, type MealsFormSchema } from '#lib/features/food-diary/meals/schema.js';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
 	import { defaults, superForm, type SuperForm } from 'sveltekit-superforms';
 	import type { Snippet } from 'svelte';
-	import { m } from '$lib/paraglide/messages';
+	import { m } from '#lib/paraglide/messages.js';
 	import MealSortableItem from './meal-sortable-item.svelte';
 	import MealItem from './meal-item.svelte';
 

@@ -4,21 +4,21 @@
 		Field,
 		FieldLabel,
 		FieldDescription
-	} from '$lib/components/ui/field/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
+	} from '#lib/components/ui/field/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { authClient } from '$lib/clients/auth-client';
+	import { authClient } from '#lib/clients/auth-client.js';
 	import { toast } from 'svelte-sonner';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
+	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
+	import * as InputOTP from '#lib/components/ui/input-otp/index.js';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import * as m from '$lib/paraglide/messages';
+	import * as m from '#lib/paraglide/messages.js';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
-	import ResponsiveDialog from '$lib/components/responsive-dialog.svelte';
-	import { getDb, resetDb } from '$lib/clients/idb-client';
+	import ResponsiveDialog from '#lib/components/responsive-dialog.svelte';
+	import { getDb, resetDb } from '#lib/clients/idb-client.js';
 	import posthog from 'posthog-js';
 
 	let email = $state('');

@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { useCurrentUser } from '$lib/features/user/queries/get-current-user';
-	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
+	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
+	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
 	import MacroTargetsForm from './macro-targets-form.svelte';
-	import { useMacroTargets } from '$lib/features/food-diary/macro-targets/queries/get';
-	import { useCreateMacroTargets } from '$lib/features/food-diary/macro-targets/mutations/create';
-	import { m } from '$lib/paraglide/messages';
+	import { useMacroTargets } from '#lib/features/food-diary/macro-targets/queries/get.js';
+	import { useCreateMacroTargets } from '#lib/features/food-diary/macro-targets/mutations/create.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { SaveIcon } from '@lucide/svelte';
-	import type { MacroTargetsSchema } from '$lib/features/food-diary/macro-targets/schema';
+	import type { MacroTargetsSchema } from '#lib/features/food-diary/macro-targets/schema.js';
 	import { toast } from 'svelte-sonner';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '#lib/components/ui/button/index.js';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { Spinner } from '$lib/components/ui/spinner';
+	import { Spinner } from '#lib/components/ui/spinner/index.js';
 
 	const currentUser = useCurrentUser();
 	const macroTargets = useMacroTargets(() => currentUser.data?.id ?? '');

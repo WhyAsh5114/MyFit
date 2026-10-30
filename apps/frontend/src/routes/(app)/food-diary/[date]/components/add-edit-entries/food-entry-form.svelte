@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	import {
 		ClockIcon,
 		FolderPenIcon,
@@ -7,23 +7,23 @@
 		HexagonIcon,
 		WeightTildeIcon
 	} from '@lucide/svelte';
-	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import * as Form from '$lib/components/ui/form/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
+	import * as InputGroup from '#lib/components/ui/input-group/index.js';
+	import * as Form from '#lib/components/ui/form/index.js';
+	import * as Select from '#lib/components/ui/select/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
 	import { superForm, defaults, dateProxy, type SuperForm } from 'sveltekit-superforms';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
 	import {
 		foodEntryFormSchema,
 		type FoodEntryFormSchema
-	} from '$lib/features/food-diary/food-entry/model/schema';
+	} from '#lib/features/food-diary/food-entry/model/schema.js';
 	import ModifyNutritionalInfoSheet from './modify-nutritional-info-sheet.svelte';
 	import { toast } from 'svelte-sonner';
-	import { m } from '$lib/paraglide/messages';
+	import { m } from '#lib/paraglide/messages.js';
 	import FoodCard from './food-card.svelte';
 	import type { Snippet } from 'svelte';
-	import { round } from '$lib/my-utils';
-	import { cn } from '$lib/utils';
+	import { round } from '#lib/my-utils.js';
+	import { cn } from '#lib/utils.js';
 	import type { Row } from '@myfit/shared/client';
 
 	type Props = {

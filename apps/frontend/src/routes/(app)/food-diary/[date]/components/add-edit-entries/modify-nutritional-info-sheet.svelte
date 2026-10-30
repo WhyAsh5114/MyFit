@@ -1,7 +1,7 @@
 <script lang="ts">
-	import * as Sheet from '$lib/components/ui/sheet/index.js';
-	import { Button } from '$lib/components/ui/button';
-	import * as Form from '$lib/components/ui/form/index.js';
+	import * as Sheet from '#lib/components/ui/sheet/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import * as Form from '#lib/components/ui/form/index.js';
 	import {
 		AlertCircleIcon,
 		CircleCheckIcon,
@@ -9,19 +9,19 @@
 		PencilIcon,
 		XCircleIcon
 	} from '@lucide/svelte';
-	import * as InputGroup from '$lib/components/ui/input-group/index.js';
+	import * as InputGroup from '#lib/components/ui/input-group/index.js';
 	import { type SuperForm } from 'sveltekit-superforms';
-	import { type FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
-	import CustomScrollArea from '$lib/components/custom-scroll-area.svelte';
+	import { type FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
+	import CustomScrollArea from '#lib/components/custom-scroll-area.svelte';
 	import { toast } from 'svelte-sonner';
-	import { cn } from '$lib/utils';
-	import { m } from '$lib/paraglide/messages';
+	import { cn } from '#lib/utils.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import {
 		OPTIONAL_NUTRIENTS,
 		optionalNutrientsFields,
 		REQUIRED_NUTRIENTS,
 		requiredNutrientsFields
-	} from '$lib/features/food-diary/_common/nutrients';
+	} from '#lib/features/food-diary/_common/nutrients.js';
 	import { hasCalculationErrors } from './common';
 
 	let { form }: { form: SuperForm<FoodEntryFormSchema> } = $props();

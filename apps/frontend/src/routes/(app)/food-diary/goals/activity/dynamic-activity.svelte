@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import Button from '#lib/components/ui/button/button.svelte';
+	import Separator from '#lib/components/ui/separator/separator.svelte';
+	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { Health } from '@capgo/capacitor-health';
 	import { CheckIcon, HeartHandshakeIcon } from '@lucide/svelte';
 	import { onMount } from 'svelte';

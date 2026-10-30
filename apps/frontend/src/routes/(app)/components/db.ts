@@ -1,5 +1,5 @@
 import { goto } from '$app/navigation';
-import type { DbClient } from '$lib/clients/idb-client';
+import type { DbClient } from '#lib/clients/idb-client.js';
 import type { Session, User } from 'better-auth';
 import { toast } from 'svelte-sonner';
 
@@ -10,7 +10,7 @@ type AuthSessionData = {
 };
 
 /** Sends users without a session or offline account to login without deleting any data. */
-export async function redirectToLogin(url: URL) {
+export async function redirectToLogin(url: { pathname: string; search: string; hash: string }) {
 	const redirect = `${url.pathname}${url.search}${url.hash}`;
 	// eslint-disable-next-line svelte/no-navigation-without-resolve
 	await goto(`/login?redirect=${encodeURIComponent(redirect)}`);

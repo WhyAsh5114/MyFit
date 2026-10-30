@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
-	import * as Chart from '$lib/components/ui/chart/index.js';
-	import { round } from '$lib/my-utils';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import * as Chart from '#lib/components/ui/chart/index.js';
+	import { round } from '#lib/my-utils.js';
 	import { PencilIcon } from '@lucide/svelte';
 	import { BarChart } from 'layerchart';
 	import { cubicInOut } from 'svelte/easing';

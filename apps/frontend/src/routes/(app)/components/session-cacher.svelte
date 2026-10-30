@@ -1,20 +1,20 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { authClient } from '$lib/clients/auth-client';
-	import { getDb, resetDb } from '$lib/clients/idb-client';
-	import { queryClient } from '$lib/clients/query-client';
-	import { accountSession } from '$lib/features/account-session.svelte';
-	import { syncWorkerState } from '$lib/features/sync-worker.svelte';
+	import { authClient } from '#lib/clients/auth-client.js';
+	import { getDb, resetDb } from '#lib/clients/idb-client.js';
+	import { queryClient } from '#lib/clients/query-client.js';
+	import { accountSession } from '#lib/features/account-session.svelte.js';
+	import { syncWorkerState } from '#lib/features/sync-worker.svelte.js';
 	import { untrack, type Snippet } from 'svelte';
 	import { isUnprotectedRoute } from './constants';
 	import { createUserForCurrentSession, redirectToLogin } from './db';
 	import LogoutFailedDialog from './logout-failed-dialog.svelte';
 	import OtherAccountDialog from './other-account-dialog.svelte';
-	import { m } from '$lib/paraglide/messages';
+	import { m } from '#lib/paraglide/messages.js';
 	import { toast } from 'svelte-sonner';
-	import StateBackdrop from '$lib/components/state-backdrop.svelte';
-	import ResponsiveDialog from '$lib/components/responsive-dialog.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import StateBackdrop from '#lib/components/state-backdrop.svelte';
+	import ResponsiveDialog from '#lib/components/responsive-dialog.svelte';
+	import { Button } from '#lib/components/ui/button/index.js';
 
 	let { children }: { children: Snippet<[string | null]> } = $props();
 	const session = authClient.useSession();

@@ -1,6 +1,6 @@
 {
 	"extends": "$app/tsconfig",
-	"exclude": ["src/lib/components/ui"],
+	"exclude": ["src/lib/components/ui", "src/service-worker"],
 	"compilerOptions": {
 		"rewriteRelativeImportExtensions": true,
 		"sourceMap": true,

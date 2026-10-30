@@ -1,10 +1,10 @@
 import { QueryClient } from '@tanstack/svelte-query';
 import type { PullChange } from '@prisma-idb/sync-extension-idb/client';
 import { describe, expect, it } from 'vitest';
-import { foodEntryKeys } from '$lib/features/food-diary/food-entry/keys';
-import { macroTargetsKeys } from '$lib/features/food-diary/macro-targets/keys';
-import { mealKeys } from '$lib/features/food-diary/meals/keys';
-import { invalidatePulledChanges } from '$lib/features/sync-invalidation';
+import { foodEntryKeys } from '#lib/features/food-diary/food-entry/keys.js';
+import { macroTargetsKeys } from '#lib/features/food-diary/macro-targets/keys.js';
+import { mealKeys } from '#lib/features/food-diary/meals/keys.js';
+import { invalidatePulledChanges } from '#lib/features/sync-invalidation.js';
 
 /** A pulled change to `model`. Only the model matters to the invalidation. */
 const changeTo = (model: string) => ({ model }) as PullChange;

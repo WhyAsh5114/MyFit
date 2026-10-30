@@ -6,7 +6,6 @@ import svelte from 'eslint-plugin-svelte';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import ts from 'typescript-eslint';
-import svelteConfig from './apps/frontend/svelte.config.js';
 
 const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
 const frontendGitignorePath = path.resolve(import.meta.dirname, 'apps/frontend/.gitignore');
@@ -51,8 +50,7 @@ export default defineConfig(
 			parserOptions: {
 				projectService: true,
 				extraFileExtensions: ['.svelte'],
-				parser: ts.parser,
-				svelteConfig
+				parser: ts.parser
 			}
 		}
 	}

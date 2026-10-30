@@ -1,8 +1,8 @@
 <script lang="ts">
-	import * as Select from '$lib/components/ui/select/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { m } from '$lib/paraglide/messages.js';
-	import { getLocale, setLocale, locales } from '$lib/paraglide/runtime.js';
+	import * as Select from '#lib/components/ui/select/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import { m } from '#lib/paraglide/messages.js';
+	import { getLocale, setLocale, locales } from '#lib/paraglide/runtime.js';
 
 	type Locale = (typeof locales)[number];
 

@@ -1,5 +1,5 @@
 import { createMutation } from '@tanstack/svelte-query';
-import { checkForUpdates } from '$lib/services/ota';
+import { checkForUpdates } from '#lib/services/ota.js';
 
 export const useCheckForUpdates = () =>
 	createMutation(() => ({

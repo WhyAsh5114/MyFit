@@ -1,11 +1,11 @@
 <script lang="ts">
-	import * as Empty from '$lib/components/ui/empty/index.js';
-	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
+	import * as Empty from '#lib/components/ui/empty/index.js';
+	import ScrollArea from '#lib/components/ui/scroll-area/scroll-area.svelte';
 	import { BotMessageSquareIcon } from '@lucide/svelte';
-	import * as Item from '$lib/components/ui/item';
+	import * as Item from '#lib/components/ui/item/index.js';
 	import type { MyUIMessage } from '@myfit/api';
 	import { chat } from './chat.svelte';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import FilePart from './parts/file.svelte';
 	import ReasoningPart from './parts/reasoning.svelte';
 	import TextPart from './parts/text.svelte';

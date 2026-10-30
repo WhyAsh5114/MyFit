@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import { Scrollbar } from '$lib/components/ui/scroll-area';
-	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
-	import { shortDateFormatter } from '$lib/my-utils';
+	import * as Breadcrumb from '#lib/components/ui/breadcrumb/index.js';
+	import { Scrollbar } from '#lib/components/ui/scroll-area/index.js';
+	import ScrollArea from '#lib/components/ui/scroll-area/scroll-area.svelte';
+	import { shortDateFormatter } from '#lib/my-utils.js';
 	import { getLocalTimeZone, parseDate } from '@internationalized/date';
 	import { Slash } from '@lucide/svelte';
 	import z from 'zod';

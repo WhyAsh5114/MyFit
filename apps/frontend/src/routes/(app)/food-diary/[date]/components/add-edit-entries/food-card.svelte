@@ -1,7 +1,7 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	import MacrosPieChart from './macros-pie-chart.svelte';
-	import type { FoodEntryFormSchema } from '$lib/features/food-diary/food-entry/model/schema';
+	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
 
 	type Props = {
 		food: Pick<

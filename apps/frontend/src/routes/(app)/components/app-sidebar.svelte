@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
+	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
+	import { useSidebar } from '#lib/components/ui/sidebar/index.js';
 	import type { ComponentProps } from 'svelte';
 	import { isExternalLink, sidebarLinks } from './constants';
-	import favicon from '$lib/assets/favicon.webp';
-	import { m } from '$lib/paraglide/messages';
+	import favicon from '#lib/assets/favicon.webp';
+	import { m } from '#lib/paraglide/messages.js';
 	import NavUser from './nav-user.svelte';
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
@@ -43,7 +43,7 @@
 							<Sidebar.MenuItem>
 								<Sidebar.MenuButton
 									onclick={() => sidebar.setOpenMobile(false)}
-									isActive={page.url.pathname.startsWith(link.url)}
+									isActive={page.url.pathname.startsWith(`/${link.url}`)}
 								>
 									{#snippet child({ props })}
 										{#if isExternalLink(link.url)}

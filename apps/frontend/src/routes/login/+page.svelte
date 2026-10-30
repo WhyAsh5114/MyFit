@@ -1,10 +1,10 @@
 <script lang="ts">
 	import LoginForm from './components/login-form.svelte';
 	import { resolve } from '$app/paths';
-	import favicon from '$lib/assets/favicon.webp';
+	import favicon from '#lib/assets/favicon.webp';
 	// An Unsplash photo (free to use, no attribution needed), bundled so it works offline.
-	import loginFood from '$lib/assets/login-food.webp';
-	import { m } from '$lib/paraglide/messages';
+	import loginFood from '#lib/assets/login-food.webp';
+	import { m } from '#lib/paraglide/messages.js';
 </script>
 
 <div

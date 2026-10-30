@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as Accordion from '$lib/components/ui/accordion/index.js';
+	import * as Accordion from '#lib/components/ui/accordion/index.js';
 	import type { MyUIMessage } from '@myfit/api';
 	import { renderMarkdown } from '../render-markdown';
 

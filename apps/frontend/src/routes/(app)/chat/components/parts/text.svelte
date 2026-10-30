@@ -1,6 +1,6 @@
 <script lang="ts">
-	import * as Item from '$lib/components/ui/item';
-	import { cn } from '$lib/utils';
+	import * as Item from '#lib/components/ui/item/index.js';
+	import { cn } from '#lib/utils.js';
 	import type { MyUIMessage } from '@myfit/api';
 	import { renderMarkdown } from '../render-markdown';
 

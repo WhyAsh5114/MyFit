@@ -1,7 +1,7 @@
 import type { HandleClientError } from '@sveltejs/kit/hooks';
 import { Capacitor } from '@capacitor/core';
 import { dev } from '$app/env';
-import { registerServiceWorker } from '$lib/features/service-worker';
+import { registerServiceWorker } from '#lib/features/service-worker.js';
 import posthog from 'posthog-js';
 import { PUBLIC_POSTHOG_KEY, PUBLIC_POSTHOG_HOST } from '$app/env/public';
 
@@ -19,7 +19,7 @@ export async function init() {
 	}
 }
 
-export const handleError: HandleClientError = async ({ error, status, message }) => {
-	posthog.captureException(error);
-	return { message, status };
+export const handleError: HandleClientError = ({ kind, error }) => {
+	// App and framework errors such as a 404 are expected; only unknown errors are bugs.
+	if (kind === 'unknown') posthog.captureException(error);
 };

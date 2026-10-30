@@ -1,5 +1,5 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { getDb } from '$lib/clients/idb-client';
+import { getDb } from '#lib/clients/idb-client.js';
 import { foodEntryKeys } from '../keys';
 
 export const useFoodEntryById = (getUserIdAndId: () => { userId: string; id: string }) =>

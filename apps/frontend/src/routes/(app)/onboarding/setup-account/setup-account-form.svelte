@@ -1,16 +1,16 @@
 <script lang="ts">
-	import * as Form from '$lib/components/ui/form/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import { useUpdateUserName } from '$lib/features/user/mutations/update-user-name';
+	import * as Form from '#lib/components/ui/form/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
+	import { useUpdateUserName } from '#lib/features/user/mutations/update-user-name.js';
 	import type { User } from 'better-auth';
 	import { defaults, superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { SendIcon } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { m } from '$lib/paraglide/messages';
-	import { setupAccountFormSchema } from '$lib/features/user/setup-account.schema';
+	import { m } from '#lib/paraglide/messages.js';
+	import { setupAccountFormSchema } from '#lib/features/user/setup-account.schema.js';
 	import posthog from 'posthog-js';
 
 	let { data }: { data: User } = $props();

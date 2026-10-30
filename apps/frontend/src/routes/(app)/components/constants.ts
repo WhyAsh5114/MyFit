@@ -1,4 +1,4 @@
-import { m } from '$lib/paraglide/messages';
+import { m } from '#lib/paraglide/messages.js';
 import {
 	BlocksIcon,
 	SettingsIcon,
@@ -9,7 +9,7 @@ import {
 	AppleIcon,
 	BotMessageSquareIcon
 } from '@lucide/svelte';
-import GithubIcon from '$lib/icons/github-icon.svelte';
+import GithubIcon from '#lib/icons/github-icon.svelte';
 
 export const sidebarLinks = [
 	{
@@ -17,27 +17,27 @@ export const sidebarLinks = [
 		items: [
 			{
 				title: m['nav.dashboard'](),
-				url: '/dashboard',
+				url: 'dashboard',
 				icon: BlocksIcon
 			},
 			{
 				title: m['nav.chat'](),
-				url: '/chat',
+				url: 'chat',
 				icon: BotMessageSquareIcon
 			},
 			{
 				title: m['nav.foodDiary'](),
-				url: '/food-diary',
+				url: 'food-diary',
 				icon: AppleIcon
 			},
 			{
 				title: m['nav.settings'](),
-				url: '/settings',
+				url: 'settings',
 				icon: SettingsIcon
 			},
 			{
 				title: m['nav.docs'](),
-				url: '/docs',
+				url: 'docs',
 				icon: BookOpenIcon
 			}
 		]
@@ -47,12 +47,12 @@ export const sidebarLinks = [
 		items: [
 			{
 				title: m['legal.privacyPolicy'](),
-				url: '/privacy-policy',
+				url: 'privacy-policy',
 				icon: LockIcon
 			},
 			{
 				title: m['legal.termsOfService'](),
-				url: '/terms-of-service',
+				url: 'terms-of-service',
 				icon: HeartHandshakeIcon
 			}
 		]

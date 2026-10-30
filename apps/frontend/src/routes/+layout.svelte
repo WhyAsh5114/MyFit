@@ -1,20 +1,20 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { locales, localizeHref } from '$lib/paraglide/runtime';
+	import { locales, localizeHref } from '#lib/paraglide/runtime.js';
 	import './layout.css';
-	import favicon from '$lib/assets/favicon.webp';
+	import favicon from '#lib/assets/favicon.webp';
 	import { mode, ModeWatcher } from 'mode-watcher';
 	import { QueryClientProvider } from '@tanstack/svelte-query';
 	import { Capacitor, SystemBars, SystemBarsStyle } from '@capacitor/core';
 	import { App } from '@capacitor/app';
-	import { queryClient } from '$lib/clients/query-client';
+	import { queryClient } from '#lib/clients/query-client.js';
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
-	import ResponsiveDialog from '$lib/components/responsive-dialog.svelte';
-	import StateBackdrop from '$lib/components/state-backdrop.svelte';
-	import { Toaster } from '$lib/components/ui/sonner/index.js';
-	import { initOta } from '$lib/services/ota';
-	import { accountSession, claimTab } from '$lib/features/account-session.svelte';
-	import { m } from '$lib/paraglide/messages';
+	import ResponsiveDialog from '#lib/components/responsive-dialog.svelte';
+	import StateBackdrop from '#lib/components/state-backdrop.svelte';
+	import { Toaster } from '#lib/components/ui/sonner/index.js';
+	import { initOta } from '#lib/services/ota.js';
+	import { accountSession, claimTab } from '#lib/features/account-session.svelte.js';
+	import { m } from '#lib/paraglide/messages.js';
 
 	let { children } = $props();
 

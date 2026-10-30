@@ -1,5 +1,5 @@
 import { resolve } from '$app/paths';
-import { m } from '$lib/paraglide/messages';
+import { m } from '#lib/paraglide/messages.js';
 import { Serwist } from '@serwist/window';
 import { toast } from 'svelte-sonner';
 
@@ -15,7 +15,7 @@ const UPDATE_CHECK_MS = 60 * 60 * 1000;
  * build instead of interrupting what the user is doing.
  */
 export async function registerServiceWorker() {
-	const serwist = new Serwist(`${resolve('/')}service-worker.js`);
+	const serwist = new Serwist(`${resolve('/')}service-worker.js`, { type: 'module' });
 
 	// The first install also fires "controlling", which is not an update.
 	let hadController = !!navigator.serviceWorker.controller;
