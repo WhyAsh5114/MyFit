@@ -52,7 +52,7 @@
 	});
 </script>
 
-<div class="flex h-24 flex-col gap-4">
+<div class="mb-4 flex h-24 flex-col gap-4">
 	<div class="flex w-full">
 		<Button size="icon-sm" variant="secondary" onclick={() => changeDay(-1)}>
 			<ChevronLeftIcon />

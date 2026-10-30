@@ -4,7 +4,6 @@
 	import { useSearchNutritionData } from '#lib/features/food-diary/nutrition-data/queries/search.js';
 	import { InfiniteLoader, LoaderState } from 'svelte-infinite';
 	import { CloudOffIcon, PlusIcon, SearchIcon } from '@lucide/svelte';
-	import ScrollArea from '#lib/components/ui/scroll-area/scroll-area.svelte';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import Button from '#lib/components/ui/button/button.svelte';
 	import { resolve } from '$app/paths';
@@ -85,7 +84,7 @@
 		showRecipePrompt: true
 	})}
 {:else}
-	<ScrollArea class="h-px grow">
+	<div class="min-h-0 flex-1 overflow-y-auto">
 		<InfiniteLoader {loaderState} triggerLoad={loadMore}>
 			<div class="flex h-full flex-col gap-2">
 				{#each searchNutritionData.data?.pages.flatMap((page) => page) as foodEntry (foodEntry.id)}
@@ -94,7 +93,7 @@
 							`food-diary/${page.params.date}/add-food/${foodEntry.id}?${params.toString()}`
 						)}
 					>
-						<Item.Root class="flex-nowrap bg-card py-2 shadow-sm" variant="outline">
+						<Item.Root class="flex-nowrap bg-card py-2 shadow-sm">
 							<Item.Content class="w-px grow gap-0">
 								<Item.Title class="block! w-full! min-w-0 truncate">
 									{foodEntry.productName}
@@ -138,5 +137,5 @@
 				</div>
 			{/snippet}
 		</InfiniteLoader>
-	</ScrollArea>
+	</div>
 {/if}

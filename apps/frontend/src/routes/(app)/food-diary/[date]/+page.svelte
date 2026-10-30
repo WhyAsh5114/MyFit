@@ -8,7 +8,6 @@
 	import { useMacroMetricsByDate } from '#lib/features/food-diary/macro-metrics/queries/get-by-date.js';
 	import { useMacroTargetsByDate } from '#lib/features/food-diary/macro-targets/queries/get-by-date.js';
 	import FoodEntries from './components/entries-page/food-entries.svelte';
-	import { ScrollArea } from '#lib/components/ui/scroll-area/index.js';
 	import ActivityEntries from './components/entries-page/activity-entries.svelte';
 	import SyncHealthData from './components/entries-page/sync-health-data.svelte';
 	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
@@ -72,13 +71,13 @@
 	{macroTargets}
 />
 
-<div class="relative flex h-px w-full grow">
-	<ScrollArea class="h-full w-full">
+<div class="relative flex min-h-0 w-full flex-1">
+	<div class="size-full overflow-y-auto">
 		<div class="flex h-full flex-col gap-2">
 			<FoodEntries foodEntries={foodEntriesByDate.data} meals={meals.data} />
 			<ActivityEntries activityEntries={activityEntriesByDate.data} />
 		</div>
-	</ScrollArea>
+	</div>
 
 	<Button
 		class="absolute right-2 bottom-2"

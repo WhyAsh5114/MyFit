@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import * as Breadcrumb from '#lib/components/ui/breadcrumb/index.js';
-	import { Scrollbar } from '#lib/components/ui/scroll-area/index.js';
-	import ScrollArea from '#lib/components/ui/scroll-area/scroll-area.svelte';
 	import { shortDateFormatter } from '#lib/my-utils.js';
 	import { getLocalTimeZone, parseDate } from '@internationalized/date';
 	import { Slash } from '@lucide/svelte';
@@ -55,7 +53,7 @@
 	let items = $derived(pathnameToItems(page.url.pathname));
 </script>
 
-<ScrollArea class="w-px grow py-1.5">
+<div class="no-scrollbar min-w-0 flex-1 scroll-fade-x overflow-x-auto py-1.5">
 	<Breadcrumb.Root>
 		<Breadcrumb.List class="flex-nowrap">
 			{#each items as item, idx (item.label)}
@@ -72,5 +70,4 @@
 			{/each}
 		</Breadcrumb.List>
 	</Breadcrumb.Root>
-	<Scrollbar orientation="horizontal" />
-</ScrollArea>
+</div>
