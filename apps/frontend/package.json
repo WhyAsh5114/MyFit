@@ -70,6 +70,7 @@
 		"@internationalized/date": "^3.12.4",
 		"@prisma-idb/client-idb": "^0.16.0",
 		"@prisma-idb/sync-extension-idb": "^0.12.0",
+		"@shadcn-svelte/primitives": "^0.0.1",
 		"@tanstack/svelte-query": "^6.3.6",
 		"ai": "^7.0.156",
 		"barqode": "^0.0.2",

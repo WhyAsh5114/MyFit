@@ -107,3 +107,43 @@ test('the chat route streams a tool call, then continues with the answer', async
 	expect(await second.text()).toContain('Thanks, logging it.');
 	expect(requests[1].messages.map((m) => m.role)).toEqual(['system', 'user', 'assistant', 'tool']);
 });
+
+test('a typed message answers a pending food entry and question instead of leaving them open', async () => {
+	const { chatRoutes } = await import('../../../src/features/chat/routes.ts');
+	const before = requests.length;
+	const res = await chatRoutes.request('/', {
+		method: 'POST',
+		headers: { 'content-type': 'application/json' },
+		body: JSON.stringify({
+			messages: [
+				{ id: 'u1', role: 'user', parts: [{ type: 'text', text: 'I ate a sandwich' }] },
+				{
+					id: 'a1',
+					role: 'assistant',
+					parts: [
+						{
+							type: 'tool-createFoodEntry',
+							toolCallId: 'call_a',
+							state: 'input-available',
+							input: { name: 'Sandwich', quantityG: 200 }
+						},
+						{
+							type: 'tool-requireClarification',
+							toolCallId: 'call_b',
+							state: 'input-available',
+							input: { message: 'Which bread?', choices: ['White', 'Rye'] }
+						}
+					]
+				},
+				{ id: 'u2', role: 'user', parts: [{ type: 'text', text: 'actually it was a salad' }] }
+			]
+		})
+	});
+	expect(res.status).toBe(200);
+	await res.text();
+
+	// Both tool calls reach the provider with a result, so it does not reject the conversation.
+	const sent = requests[before].messages;
+	expect(sent.filter((m) => m.role === 'tool')).toHaveLength(2);
+	expect(sent.at(-1)).toMatchObject({ role: 'user' });
+});

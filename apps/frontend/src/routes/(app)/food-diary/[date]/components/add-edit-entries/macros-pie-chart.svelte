@@ -37,7 +37,6 @@
 				textAnchor="middle"
 				verticalAnchor="end"
 				class="fill-foreground text-lg! font-bold"
-				dy={6}
 			/>
 			<Text
 				value="kcal"
@@ -46,7 +45,7 @@
 				class={cn('fill-muted-foreground! text-muted-foreground', {
 					'fill-warning!': hasCalculationErrors(kcal, carbs, protein, fat)
 				})}
-				dy={20}
+				dy={14}
 			/>
 		{/snippet}
 		{#snippet tooltip()}

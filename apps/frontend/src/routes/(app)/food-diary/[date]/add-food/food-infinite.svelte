@@ -84,7 +84,7 @@
 		showRecipePrompt: true
 	})}
 {:else}
-	<div class="min-h-0 flex-1 overflow-y-auto">
+	<div class="min-h-0 grow basis-0 overflow-y-auto">
 		<InfiniteLoader {loaderState} triggerLoad={loadMore}>
 			<div class="flex h-full flex-col gap-2">
 				{#each searchNutritionData.data?.pages.flatMap((page) => page) as foodEntry (foodEntry.id)}

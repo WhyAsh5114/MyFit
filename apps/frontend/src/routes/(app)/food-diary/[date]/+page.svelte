@@ -71,7 +71,7 @@
 	{macroTargets}
 />
 
-<div class="relative flex min-h-0 w-full flex-1">
+<div class="relative flex min-h-0 w-full grow basis-0">
 	<div class="size-full overflow-y-auto">
 		<div class="flex h-full flex-col gap-2">
 			<FoodEntries foodEntries={foodEntriesByDate.data} meals={meals.data} />

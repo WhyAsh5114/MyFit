@@ -1,43 +1,43 @@
 <script lang="ts">
+	import * as Bubble from '#lib/components/ui/bubble/index.js';
+	import { Badge } from '#lib/components/ui/badge/index.js';
 	import Button from '#lib/components/ui/button/button.svelte';
-	import * as Item from '#lib/components/ui/item/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { useCreateFoodEntry } from '#lib/features/food-diary/food-entry/mutations/create.js';
 	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
 	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
+	import { CheckIcon, XIcon } from '@lucide/svelte';
 	import type { MyUIMessage } from '@myfit/api';
-	import { chat } from '../chat.svelte';
 	import MacrosPieChart from '../../../food-diary/[date]/components/add-edit-entries/macros-pie-chart.svelte';
-	import { CheckIcon } from '@lucide/svelte';
+	import { chat } from '../chat.svelte';
 
 	type CreateFoodEntryPart = Extract<
 		MyUIMessage['parts'][number],
 		{ type: 'tool-createFoodEntry' }
 	>;
-	const { part }: { part: CreateFoodEntryPart } = $props();
+	const { part, active }: { part: CreateFoodEntryPart; active: boolean } = $props();
 
-	const mutation = useCreateFoodEntry();
+	/** Still waiting on a choice, but the user has typed something else instead. */
+	const skipped = $derived(part.state === 'input-available' && !active);
+
+	const createFoodEntry = useCreateFoodEntry();
 	const currentUser = useCurrentUser();
 
-	function calc(per100g: number): string {
-		if (part.input?.quantityG === undefined) return '-';
-		return (Math.round((per100g / 100) * part.input.quantityG * 10) / 10).toString();
-	}
+	/** A nutrient for the whole portion, from its per-100g value. */
+	const portion = (per100g: number | undefined) =>
+		((per100g ?? 0) / 100) * (part.input?.quantityG ?? 0);
+	const grams = (per100g: number | undefined) => `${Math.round(portion(per100g) * 10) / 10}g`;
 
-	function calcNum(per100g: number): number {
-		if (part.input?.quantityG === undefined) return 0;
-		return (per100g / 100) * part.input.quantityG;
-	}
+	const kcal = $derived(portion(part.input?.energyKcal_100g));
+	const protein = $derived(portion(part.input?.proteinsG_100g));
+	const carbs = $derived(portion(part.input?.carbohydratesG_100g));
+	const fat = $derived(portion(part.input?.fatG_100g));
 
-	let kcal = $derived(calcNum(part.input?.energyKcal_100g ?? 0));
-	let protein = $derived(calcNum(part.input?.proteinsG_100g ?? 0));
-	let carbs = $derived(calcNum(part.input?.carbohydratesG_100g ?? 0));
-	let fat = $derived(calcNum(part.input?.fatG_100g ?? 0));
+	async function log() {
+		if (!currentUser.data?.id || !part.input) return;
 
-	async function confirm() {
-		if (!currentUser.data?.id) return;
-
-		const { name, ...rest } = part.input!;
+		const { name, ...rest } = part.input;
 		const data = {
 			...rest,
 			productName: name,
@@ -50,14 +50,14 @@
 		} as FoodEntryFormSchema;
 
 		try {
-			await mutation.mutateAsync({ data, userId: currentUser.data.id });
+			await createFoodEntry.mutateAsync({ data, userId: currentUser.data.id });
 			chat.addToolOutput({
 				tool: 'createFoodEntry',
 				toolCallId: part.toolCallId,
 				output: 'created'
 			});
 		} catch {
-			// toast already shown by mutation onError; keep state at input-available so user can retry
+			// The mutation already showed a toast, and the card stays open so the user can retry.
 		}
 	}
 
@@ -71,62 +71,52 @@
 </script>
 
 {#if part.state === 'input-streaming'}
-	<Item.Root class="mb-2 w-[80%] place-self-start rounded-tl-none bg-card px-3 py-2">
-		<Item.Content>
-			<Spinner />
-		</Item.Content>
-	</Item.Root>
+	<Bubble.Root variant="ghost">
+		<Bubble.Content class="flex items-center gap-2 text-muted-foreground">
+			<Spinner /> Estimating nutrition...
+		</Bubble.Content>
+	</Bubble.Root>
 {:else if part.state === 'input-available' || part.state === 'output-available'}
-	<Item.Root class="mb-2 w-[80%] place-self-start rounded-tl-none bg-card px-3 py-2">
-		<Item.Content class="text-left">
-			<p class="font-medium">{part.input.name}</p>
-			<p class="mb-1 text-xs text-muted-foreground">{part.input.quantityG}g</p>
-			<div class="flex items-center gap-3">
-				<div class="p-2">
-					<MacrosPieChart {kcal} {protein} {carbs} {fat} />
-				</div>
-				<div class="grid grid-cols-2 gap-x-6 gap-y-0.5 text-sm">
-					<span class="text-muted-foreground">Protein</span>
-					<span class="text-right">{calc(part.input.proteinsG_100g)}g</span>
-					<span class="text-muted-foreground">Carbs</span>
-					<span class="text-right">{calc(part.input.carbohydratesG_100g)}g</span>
-					<span class="text-muted-foreground">Fat</span>
-					<span class="text-right">{calc(part.input.fatG_100g)}g</span>
-				</div>
-			</div>
-			<div class="mt-3 grid grid-cols-2 gap-2">
-				<Button
-					size="sm"
-					variant="outline"
-					class="flex-1"
-					disabled={mutation.isPending || part.state === 'output-available'}
-					onclick={cancel}
-				>
+	<Card.Root size="sm" class="w-full max-w-sm shadow-sm">
+		<Card.Header>
+			<Card.Title>{part.input.name}</Card.Title>
+			<Card.Description>{part.input.quantityG}g · {Math.round(kcal)} kcal</Card.Description>
+			{#if part.state === 'output-available' || skipped}
+				<Card.Action>
+					{#if part.state === 'output-available' && part.output === 'created'}
+						<Badge variant="secondary"><CheckIcon /> Logged</Badge>
+					{:else if skipped}
+						<Badge variant="outline"><XIcon /> Skipped</Badge>
+					{:else}
+						<Badge variant="outline"><XIcon /> Cancelled</Badge>
+					{/if}
+				</Card.Action>
+			{/if}
+		</Card.Header>
+		<Card.Content class="flex items-center gap-4">
+			<MacrosPieChart {kcal} {protein} {carbs} {fat} />
+			<dl class="grid flex-1 grid-cols-[auto_1fr] gap-x-6 gap-y-0.5 text-sm">
+				<dt class="text-muted-foreground">Protein</dt>
+				<dd class="text-right">{grams(part.input.proteinsG_100g)}</dd>
+				<dt class="text-muted-foreground">Carbs</dt>
+				<dd class="text-right">{grams(part.input.carbohydratesG_100g)}</dd>
+				<dt class="text-muted-foreground">Fat</dt>
+				<dd class="text-right">{grams(part.input.fatG_100g)}</dd>
+			</dl>
+		</Card.Content>
+		{#if part.state === 'input-available' && !skipped}
+			<Card.Footer class="grid grid-cols-2 gap-2">
+				<Button variant="outline" disabled={createFoodEntry.isPending} onclick={cancel}>
 					Cancel
 				</Button>
-				<Button
-					size="sm"
-					class="flex-1"
-					disabled={mutation.isPending || part.state === 'output-available'}
-					onclick={confirm}
-				>
-					{#if mutation.isPending}
-						<Spinner />
-					{:else if part.state === 'output-available' && part.output === 'created'}
-						Logged <CheckIcon />
-					{:else}
-						Log
-					{/if}
+				<Button disabled={createFoodEntry.isPending} onclick={log}>
+					{#if createFoodEntry.isPending}<Spinner />{:else}Log{/if}
 				</Button>
-			</div>
-		</Item.Content>
-	</Item.Root>
+			</Card.Footer>
+		{/if}
+	</Card.Root>
 {:else if part.state === 'output-error'}
-	<Item.Root
-		class="mb-2 w-fit max-w-[80%] place-self-start rounded-tl-none bg-destructive/10 px-3 py-2"
-	>
-		<Item.Content>
-			<p class="text-sm text-destructive">Failed to create food entry.</p>
-		</Item.Content>
-	</Item.Root>
+	<Bubble.Root variant="destructive">
+		<Bubble.Content>Failed to create the food entry.</Bubble.Content>
+	</Bubble.Root>
 {/if}

@@ -56,11 +56,13 @@ test('the chat shows a streamed question and sends the chosen answer back', asyn
 
 	await signUp(page);
 	await page.goto('/chat');
-	await page.getByPlaceholder('Ask, Search or Chat...').fill('I ate a sandwich');
+	await page.getByPlaceholder('Tell me what you ate...').fill('I ate a sandwich');
 	await page.getByRole('button', { name: 'Send' }).click();
 
 	await expect(page.getByText('Which size?')).toBeVisible();
-	await page.getByRole('button', { name: 'Large' }).click();
+	await page.getByRole('radio', { name: 'Large' }).click();
+	// Picking a choice only selects it; Send answers.
+	await page.locator('form').getByRole('button', { name: 'Send' }).click();
 
 	await expect(page.getByText('Logged a large sandwich.')).toBeVisible();
 	expect(bodies).toHaveLength(2);

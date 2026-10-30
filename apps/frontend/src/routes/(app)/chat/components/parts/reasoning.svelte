@@ -1,28 +1,44 @@
 <script lang="ts">
-	import * as Accordion from '#lib/components/ui/accordion/index.js';
+	import * as Collapsible from '#lib/components/ui/collapsible/index.js';
+	import { ChevronDownIcon } from '@lucide/svelte';
 	import type { MyUIMessage } from '@myfit/api';
-	import { renderMarkdown } from '../render-markdown';
+	import { untrack } from 'svelte';
+	import Markdown from '../markdown.svelte';
 
 	type ReasoningPart = Extract<MyUIMessage['parts'][number], { type: 'reasoning' }>;
 	const { part }: { part: ReasoningPart } = $props();
+
+	const streaming = $derived(part.state === 'streaming');
+
+	// Always starts folded, so thinking never pushes the reply around. The seconds are only
+	// known for thinking this tab watched, so reasoning that arrives finished has no duration.
+	const wasStreaming = untrack(() => part.state === 'streaming');
+	const startedAt = wasStreaming ? Date.now() : null;
+	let open = $state(false);
+	let seconds = $state<number | null>(null);
+
+	$effect(() => {
+		if (streaming || startedAt === null || seconds !== null) return;
+		seconds = Math.max(1, Math.round((Date.now() - startedAt) / 1000));
+	});
 </script>
 
-<Accordion.Root type="single" class="mb-2 max-w-[80%] rounded-md rounded-tl-none border px-2">
-	<Accordion.Item value="item-1">
-		<Accordion.Trigger class="py-1 font-normal text-muted-foreground">
-			{#if part.state === 'streaming'}
-				<p class="animate-pulse">Thinking...</p>
-			{:else if part.state === 'done'}
-				Thought process
-			{/if}
-		</Accordion.Trigger>
-		<Accordion.Content>
-			{#await renderMarkdown(part.text) then text}
-				<article class="prose prose-sm max-w-none dark:prose-invert">
-					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					{@html text}
-				</article>
-			{/await}
-		</Accordion.Content>
-	</Accordion.Item>
-</Accordion.Root>
+<Collapsible.Root bind:open class="w-full">
+	<Collapsible.Trigger
+		class="group flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+	>
+		{#if streaming}
+			<span class="animate-pulse">Thinking...</span>
+		{:else if seconds !== null}
+			Thought for {seconds}s
+		{:else}
+			Thought process
+		{/if}
+		<ChevronDownIcon class="size-4 transition-transform group-data-[state=open]:rotate-180" />
+	</Collapsible.Trigger>
+	<Collapsible.Content>
+		<div class="mt-2 ml-1 border-l pl-4">
+			<Markdown text={part.text} muted />
+		</div>
+	</Collapsible.Content>
+</Collapsible.Root>

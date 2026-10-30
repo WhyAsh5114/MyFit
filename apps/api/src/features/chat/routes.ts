@@ -21,7 +21,10 @@ const chatRoutes = new Hono()
 
 		const result = streamText({
 			model,
-			messages: await convertToModelMessages(resolveMessages(messages)),
+			// A tool call cut off while streaming has no input to answer, so it is dropped.
+			messages: await convertToModelMessages(resolveMessages(messages), {
+				ignoreIncompleteToolCalls: true
+			}),
 			instructions: systemPrompt,
 			tools
 		});
