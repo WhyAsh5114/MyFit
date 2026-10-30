@@ -8,31 +8,15 @@ overrides:
   '@types/node': ^25.3.0
   tar: '>=7.5.21'
   minimatch: '>=10.2.5'
-  '@xmldom/xmldom': '>=0.9.12'
   '@hono/node-server': '>=2.0.10'
-  cookie: '>=1.1.1'
-  kysely: 0.28.17
-  arktype: 2.2.8
-  '@ai-sdk/provider-utils@4': ^4.0.33
-  '@vitest/mocker@5': ^5.0.3
-  brace-expansion@5: ^5.0.12
   deepmerge-ts@7: ^8.0.0
-  devalue@5: ^5.9.3
-  dompurify@3: ^3.4.17
   esbuild@0.27: ^0.28.1
-  fflate@0.4: ^0.4.9
-  handlebars@4: ^4.7.10
   hono@4: ^4.13.13
-  joi@17: ^17.13.8
   lodash@4: ^4.17.24
   mysql2@3: ^3.23.1
-  nanoid@3: ^3.3.18
-  postcss@8: ^8.5.23
   postcss-selector-parser@6: ^7.1.6
   postcss-selector-parser@7: ^7.1.6
   sharp@0.32: ^0.35.5
-  source-map-js@1: ^1.2.2
-  ts-deepmerge@7: ^8.0.0
   uuid@7: ^11.1.1
   valibot@1: ^1.4.2
 
@@ -514,7 +498,7 @@ packages:
       '@opentelemetry/api': ^1.9.0
       better-call: 1.4.4
       jose: ^6.1.0
-      kysely: 0.28.17
+      kysely: ^0.28.5 || ^0.29.0
       nanostores: ^1.0.1
     peerDependenciesMeta:
       '@opentelemetry/api':
@@ -535,7 +519,7 @@ packages:
     peerDependencies:
       '@better-auth/core': ^1.7.14
       '@better-auth/utils': ^0.4.2 || ^0.5.0
-      kysely: 0.28.17
+      kysely: ^0.28.17 || ^0.29.0
     peerDependenciesMeta:
       kysely:
         optional: true
@@ -5086,7 +5070,7 @@ packages:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
     engines: {node: '>= 10'}
     peerDependencies:
-      postcss: ^8.5.23
+      postcss: '>=8.0.9'
       ts-node: '>=9.0.0'
     peerDependenciesMeta:
       postcss:
@@ -5098,13 +5082,13 @@ packages:
     resolution: {integrity: sha512-1WzZxRLaAFwEh6Do+zyGpjWV3nGJNxxhuh7Ubu/q1ICImMgZJnLwhoaEpRbG4pJppp2Y1ncL9ffA2f+LhrefQg==}
     engines: {node: '>=18.0'}
     peerDependencies:
-      postcss: ^8.5.23
+      postcss: ^8.4.31
 
   postcss-scss@4.0.9:
     resolution: {integrity: sha512-AjKOeiwAitL/MXxQW2DliT28EKukvvbEWx3LBmJIRN8KfBGZbRTxNYW0kSqi1COiTZ57nZ9NW06S6ux//N1c9A==}
     engines: {node: '>=12.0'}
     peerDependencies:
-      postcss: ^8.5.23
+      postcss: ^8.4.29
 
   postcss-selector-parser@7.1.7:
     resolution: {integrity: sha512-wWBro/7hJ40ye6TPiXkUQoXKCw23xSsjriUvqd7Uls9Sso3oLiON1flc18cCdnjgCRXw4fBVqUJJeOdDTh3P3g==}
