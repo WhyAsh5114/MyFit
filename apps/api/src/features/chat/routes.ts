@@ -1,5 +1,10 @@
 import { Hono } from 'hono';
-import { streamText, convertToModelMessages } from 'ai';
+import {
+	streamText,
+	convertToModelMessages,
+	toUIMessageStream,
+	createUIMessageStreamResponse
+} from 'ai';
 import { model } from './provider';
 import { tools } from './tools';
 import { systemPrompt } from './system-prompt';
@@ -17,11 +22,13 @@ const chatRoutes = new Hono()
 		const result = streamText({
 			model,
 			messages: await convertToModelMessages(resolveMessages(messages)),
-			system: systemPrompt,
+			instructions: systemPrompt,
 			tools
 		});
 
-		return result.toUIMessageStreamResponse();
+		return createUIMessageStreamResponse({
+			stream: toUIMessageStream({ stream: result.stream, tools })
+		});
 	});
 
 export { chatRoutes };
