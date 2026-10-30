@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { cn, type WithElementRef } from '#lib/utils.js';
-	import type { HTMLAttributes } from 'svelte/elements';
 	import ChartStyle from './chart-style.svelte';
 	import { setChartContext, type ChartConfig } from './chart-utils.js';
+	import type { HTMLAttributes } from 'svelte/elements';
 
 	const uid = $props.id();
 
@@ -17,8 +17,7 @@
 		config: ChartConfig;
 	} = $props();
 
-	// svelte-ignore state_referenced_locally
-	const chartId = `chart-${id || uid.replace(/:/g, '')}`;
+	const chartId = $derived(`chart-${id || uid.replace(/:/g, '')}`);
 
 	setChartContext({
 		get config() {

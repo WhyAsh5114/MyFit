@@ -95,7 +95,7 @@
 				{#if paused}
 					<CloudOffIcon class="size-5" strokeWidth={1.5} />
 				{:else if syncStatus === undefined}
-					<Spinner class="size-5" strokeWidth={1.5} />
+					<Spinner class="size-5 stroke-[1.5]" />
 				{:else if syncStatus === 'idle' || syncStatus === 'pulling'}
 					<CloudCheckIcon class="size-5" strokeWidth={1.5} />
 				{:else if syncStatus === 'pushing'}
