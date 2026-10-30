@@ -6,6 +6,8 @@
 	"unknownErrorOccurred": "An unknown error occurred",
 	"app.name": "MyFit",
 	"app.iconAlt": "MyFit logo",
+	"app.updateReady": "A new version of MyFit is ready.",
+	"app.reload": "Reload",
 	"home.openApp": "Open app",
 	"nav.dashboard": "Dashboard",
 	"nav.foodDiary": "Food diary",
@@ -203,6 +205,5 @@
 	"account.reload": "Reload",
 	"sync.pausedSignedOut": "Changes are saved on this device. Log in to sync them.",
 	"sync.pausedOffline": "Changes are saved on this device. They'll sync when you're back online.",
-	"account.loggingOutHint": "Keep this tab open until it finishes.",
 	"account.loggingOutSaving": "Syncing your changes"
 }

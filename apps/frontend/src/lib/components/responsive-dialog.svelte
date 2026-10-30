@@ -14,7 +14,8 @@
 		footer
 	}: {
 		title: string;
-		description: string;
+		/** Plain text, or a snippet when the description needs markup such as a shimmer. */
+		description: string | Snippet;
 		/** Whether Escape, an outside click, a swipe or the close button may close it. */
 		dismissible?: boolean;
 		closeLabel?: string;
@@ -35,12 +36,20 @@
 	}
 </script>
 
+{#snippet text()}
+	{#if typeof description === 'string'}
+		{description}
+	{:else}
+		{@render description()}
+	{/if}
+{/snippet}
+
 {#if isDesktop.current}
 	<Dialog.Root bind:open={() => open, changeOpen}>
 		<Dialog.Content showCloseButton={dismissible} {closeLabel}>
 			<Dialog.Header>
 				<Dialog.Title>{title}</Dialog.Title>
-				<Dialog.Description>{description}</Dialog.Description>
+				<Dialog.Description>{@render text()}</Dialog.Description>
 			</Dialog.Header>
 			{@render children?.()}
 			{#if footer}
@@ -53,7 +62,7 @@
 		<Drawer.Content>
 			<Drawer.Header class="text-start">
 				<Drawer.Title>{title}</Drawer.Title>
-				<Drawer.Description>{description}</Drawer.Description>
+				<Drawer.Description>{@render text()}</Drawer.Description>
 			</Drawer.Header>
 			{#if children}
 				<div class="px-4">{@render children()}</div>

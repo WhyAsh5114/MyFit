@@ -6,6 +6,8 @@
 	"app.name": "MyFit",
 	"foodDiary.foodEntryNotFound": "Esta entrada de comida ya no existe.",
 	"app.iconAlt": "Logo de MyFit",
+	"app.updateReady": "Hay una nueva versión de MyFit.",
+	"app.reload": "Recargar",
 	"home.openApp": "Abrir aplicación",
 	"nav.dashboard": "Panel de control",
 	"nav.chat": "Chat",
@@ -96,6 +98,5 @@
 	"account.reload": "Recargar",
 	"sync.pausedSignedOut": "Los cambios se guardan en este dispositivo. Inicia sesión para sincronizarlos.",
 	"sync.pausedOffline": "Los cambios se guardan en este dispositivo. Se sincronizarán cuando vuelvas a tener conexión.",
-	"account.loggingOutHint": "Mantén esta pestaña abierta hasta que termine.",
 	"account.loggingOutSaving": "Sincronizando tus cambios"
 }

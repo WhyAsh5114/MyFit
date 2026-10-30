@@ -14,8 +14,6 @@
 	import { toast } from 'svelte-sonner';
 	import StateBackdrop from '$lib/components/state-backdrop.svelte';
 	import ResponsiveDialog from '$lib/components/responsive-dialog.svelte';
-	import * as Item from '$lib/components/ui/item/index.js';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { Button } from '$lib/components/ui/button';
 
 	let { children }: { children: Snippet<[string | null]> } = $props();
@@ -150,17 +148,10 @@
 
 {#if accountSession.logout === 'busy'}
 	<StateBackdrop scene="sunset" />
-	<ResponsiveDialog
-		title={m['account.loggingOut']()}
-		description={m['account.loggingOutHint']()}
-		dismissible={false}
-	>
-		<Item.Root variant="muted" role="status">
-			<Item.Media><Spinner /></Item.Media>
-			<Item.Content>
-				<Item.Title>{m['account.loggingOutSaving']()}</Item.Title>
-			</Item.Content>
-		</Item.Root>
+	<ResponsiveDialog title={m['account.loggingOut']()} dismissible={false}>
+		{#snippet description()}
+			<span class="shimmer" role="status">{m['account.loggingOutSaving']()}</span>
+		{/snippet}
 	</ResponsiveDialog>
 {:else if accountSession.logout === 'failed'}
 	<StateBackdrop scene="gym" />
