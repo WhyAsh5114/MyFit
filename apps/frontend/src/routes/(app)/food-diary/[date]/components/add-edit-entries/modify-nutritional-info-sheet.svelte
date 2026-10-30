@@ -12,7 +12,6 @@
 	import * as InputGroup from '#lib/components/ui/input-group/index.js';
 	import { type SuperForm } from 'sveltekit-superforms';
 	import { type FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
-	import CustomScrollArea from '#lib/components/custom-scroll-area.svelte';
 	import { toast } from 'svelte-sonner';
 	import { cn } from '#lib/utils.js';
 	import { m } from '#lib/paraglide/messages.js';
@@ -68,7 +67,7 @@
 			</Button>
 		{/snippet}
 	</Sheet.Trigger>
-	<Sheet.Content class="w-5/6">
+	<Sheet.Content class="data-[side=right]:w-5/6 data-[side=right]:sm:max-w-lg">
 		<Sheet.Header>
 			<Sheet.Title>{m['foodDiary.nutritionEditTitle']()}</Sheet.Title>
 			<Sheet.Description>
@@ -79,7 +78,7 @@
 				{m['foodDiary.nutritionAllValuesPerHundred']()}
 			</div>
 		</Sheet.Header>
-		<span class="ml-4 font-semibold">{m['foodDiary.nutritionRequiredFields']()}</span>
+		<span class="mb-2 ml-4 font-semibold">{m['foodDiary.nutritionRequiredFields']()}</span>
 		<div class="grid grid-cols-2 gap-2 px-4">
 			{#each REQUIRED_NUTRIENTS as nutrient (nutrient.key)}
 				<Form.Field {form} name={nutrient.key}>
@@ -103,8 +102,8 @@
 				</Form.Field>
 			{/each}
 		</div>
-		<span class="ml-4 font-semibold">{m['foodDiary.nutritionOptionalFields']()}</span>
-		<CustomScrollArea class="h-px grow px-4" viewportClass="scroll-shadow">
+		<span class="my-2 ml-4 font-semibold">{m['foodDiary.nutritionOptionalFields']()}</span>
+		<div class="mb-2 no-scrollbar min-h-0 flex-1 scroll-fade-y overflow-y-auto px-4">
 			<div class="grid grid-cols-2 gap-2">
 				<Form.Field {form} name="servingSize">
 					<Form.Control>
@@ -155,7 +154,7 @@
 					</Form.Field>
 				{/each}
 			</div>
-		</CustomScrollArea>
+		</div>
 		{#if hasFieldErrors}
 			<Button class="mx-4 mb-4" type="button" variant="destructive" onclick={showErrorsToast}>
 				{m['foodDiary.nutritionFormErrors']()}
