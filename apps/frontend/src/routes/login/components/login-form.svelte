@@ -45,6 +45,7 @@
 		try {
 			const db = await getDb();
 			const local = await db.orm.user.first();
+
 			if (
 				local &&
 				local.email.toLowerCase() !== email.trim().toLowerCase() &&
@@ -104,7 +105,7 @@
 
 			if (data.user.name.trim() === '') {
 				toast.success(m['login.registerSuccess']());
-				goto(resolve('/onboarding/setup-account'));
+				goto(resolve('onboarding/setup-account'));
 				return data;
 			}
 
@@ -209,14 +210,9 @@
 
 				<br />
 				{m['login.otpChangePrompt']()}
-				<Button
-					variant="link"
-					size="sm"
-					class="p-0 underline"
-					onclick={() => (otpMailSent = false)}
+				<Button variant="link" size="sm" class="p-0 underline" onclick={() => (otpMailSent = false)}
+					>{m['login.otpChangeButton']()}</Button
 				>
-					{m['login.otpChangeButton']()}
-				</Button>
 			</FieldDescription>
 		</FieldGroup>
 	</form>

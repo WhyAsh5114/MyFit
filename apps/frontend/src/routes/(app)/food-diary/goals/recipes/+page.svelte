@@ -13,7 +13,7 @@
 			<SearchIcon />
 		</InputGroup.Addon>
 	</InputGroup.Root>
-	<Button href={resolve('/food-diary/goals/recipes/new')}>Create <CirclePlusIcon /></Button>
+	<Button href={resolve('food-diary/goals/recipes/new')}>Create <CirclePlusIcon /></Button>
 </div>
 
 <Empty.Root>

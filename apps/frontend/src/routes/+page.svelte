@@ -8,7 +8,7 @@
 <div
 	class="flex h-screen w-screen items-center justify-center pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
 >
-	<Button aria-label={m['home.openApp']()} class="size-36" href={resolve('/dashboard')}>
-		<BicepsFlexedIcon class="size-24" strokeWidth={1.25} />
-	</Button>
+	<Button aria-label={m['home.openApp']()} class="size-36" href={resolve('dashboard')}
+		><BicepsFlexedIcon class="size-24" strokeWidth={1.25} /></Button
+	>
 </div>

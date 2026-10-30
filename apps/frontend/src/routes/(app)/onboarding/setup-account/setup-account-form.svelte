@@ -30,7 +30,7 @@
 			});
 			posthog.capture('onboarding_completed');
 			posthog.identify(data.id, { name: form.data.name });
-			await goto(resolve('/dashboard'));
+			await goto(resolve('dashboard'));
 		}
 	});
 

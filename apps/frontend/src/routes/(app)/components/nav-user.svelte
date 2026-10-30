@@ -44,10 +44,7 @@
 		{:else if !user}
 			<Sidebar.MenuButton variant="outline" size="lg" aria-label={m['account.login']()}>
 				{#snippet child({ props })}
-					<a href={resolve('/login')} {...props}>
-						<LogInIcon />
-						{m['account.login']()}
-					</a>
+					<a href={resolve('login')} {...props}><LogInIcon />{m['account.login']()}</a>
 				{/snippet}
 			</Sidebar.MenuButton>
 		{:else}
@@ -82,10 +79,7 @@
 				>
 					<DropdownMenu.Item>
 						{#snippet child({ props })}
-							<a href={resolve('/account')} {...props}>
-								<BadgeCheckIcon />
-								{m['account.title']()}
-							</a>
+							<a href={resolve('account')} {...props}><BadgeCheckIcon />{m['account.title']()}</a>
 						{/snippet}
 					</DropdownMenu.Item>
 					<DropdownMenu.Item onclick={() => logout()}>

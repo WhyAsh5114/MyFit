@@ -4,6 +4,6 @@
 	import { today, getLocalTimeZone } from '@internationalized/date';
 
 	$effect(() => {
-		goto(resolve(`/food-diary/${today(getLocalTimeZone()).toString()}`));
+		goto(resolve(`food-diary/${today(getLocalTimeZone()).toString()}`));
 	});
 </script>

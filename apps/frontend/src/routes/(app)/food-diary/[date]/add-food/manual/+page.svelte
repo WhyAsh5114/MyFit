@@ -34,7 +34,7 @@
 			quantity_g: data.quantityG
 		});
 		toast.success(m['foodDiary.foodEntryCreated']());
-		await goto(resolve(`/food-diary/${page.params.date}`));
+		await goto(resolve(`food-diary/${page.params.date}`));
 	}
 </script>
 

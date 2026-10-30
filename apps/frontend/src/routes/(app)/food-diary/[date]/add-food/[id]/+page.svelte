@@ -45,7 +45,7 @@
 			quantity_g: data.quantityG
 		});
 		toast.success(m['foodDiary.foodEntryCreated']());
-		await goto(resolve(`/food-diary/${page.params.date}`));
+		await goto(resolve(`food-diary/${page.params.date}`));
 	}
 </script>
 
@@ -64,18 +64,15 @@
 			</Empty.Description>
 		</Empty.Header>
 		<Empty.Content class="grid gap-2">
-			<Button href={resolve(`/food-diary/${page.params.date}/add-food/scan`)}>
-				<ScanBarcodeIcon />
-				{m['foodDiary.scanBarcode']()}
-			</Button>
-			<Button variant="secondary" href={resolve(`/food-diary/${page.params.date}/add-food`)}>
-				<SearchIcon />
-				{m['foodDiary.searchForFoods']()}
-			</Button>
-			<Button variant="outline">
-				<PlusCircleIcon />
-				{m['foodDiary.addManually']()}
-			</Button>
+			<Button href={resolve(`food-diary/${page.params.date}/add-food/scan`)}
+				><ScanBarcodeIcon />{m['foodDiary.scanBarcode']()}</Button
+			>
+
+			<Button variant="secondary" href={resolve(`food-diary/${page.params.date}/add-food`)}
+				><SearchIcon />{m['foodDiary.searchForFoods']()}</Button
+			>
+
+			<Button variant="outline"><PlusCircleIcon />{m['foodDiary.addManually']()}</Button>
 		</Empty.Content>
 	</Empty.Root>
 {:else}

@@ -91,7 +91,7 @@
 			// Defaulting to first item in case multiple items are returned for the same code, which can happen with some APIs
 			// Most of the time, barcodes will be unique. In the future, can add a dialog to let users choose if multiple items are returned.
 			const nutritionData = nutritionDataByCode.data[0];
-			goto(resolve(`/food-diary/${page.params.date}/add-food/${nutritionData.id}`));
+			goto(resolve(`food-diary/${page.params.date}/add-food/${nutritionData.id}`));
 		}
 	});
 </script>
@@ -163,13 +163,13 @@
 			<!-- Corner brackets -->
 			<g stroke="currentColor" stroke-width="2" fill="none" class="text-foreground">
 				<!-- Top-left corner -->
-				<path d="M 20 40 L 20 60 M 20 40 L 45 40" />
+				<path d="M 20 40 L 20 60 M 20 40 L 45 40"></path>
 				<!-- Top-right corner -->
-				<path d="M 180 40 L 180 60 M 180 40 L 155 40" />
+				<path d="M 180 40 L 180 60 M 180 40 L 155 40"></path>
 				<!-- Bottom-left corner -->
-				<path d="M 20 160 L 20 140 M 20 160 L 45 160" />
+				<path d="M 20 160 L 20 140 M 20 160 L 45 160"></path>
 				<!-- Bottom-right corner -->
-				<path d="M 180 160 L 180 140 M 180 160 L 155 160" />
+				<path d="M 180 160 L 180 140 M 180 160 L 155 160"></path>
 			</g>
 
 			<!-- Scanning line -->
@@ -182,7 +182,7 @@
 				stroke-width="2"
 				class="scan-line text-primary"
 				opacity="0.6"
-			/>
+			></line>
 		</svg>
 	</div>
 {/if}

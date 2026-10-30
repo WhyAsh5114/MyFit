@@ -1,4 +1,4 @@
-import { PUBLIC_API_URL } from '$env/static/public';
+import { PUBLIC_API_URL } from '$app/env/public';
 import { hc } from 'hono/client';
 import type { AppType } from '@myfit/api';
 

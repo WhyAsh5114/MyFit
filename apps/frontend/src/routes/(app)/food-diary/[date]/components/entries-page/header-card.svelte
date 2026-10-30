@@ -25,7 +25,7 @@
 
 	function changeDay(days: number) {
 		selectedDay = selectedDay.add({ days });
-		goto(resolve(`/food-diary/${selectedDay.toString()}`));
+		goto(resolve(`food-diary/${selectedDay.toString()}`));
 	}
 
 	function getRelativeDayLabel(date: CalendarDate) {
@@ -66,15 +66,13 @@
 		</Button>
 	</div>
 	{#if dailyNutritionStats}
-		<a class="w-full" href={resolve(`/food-diary/goals`)}>
+		<a class="w-full" href={resolve(`food-diary/goals`)}>
 			<StackedCaloriesBar day={selectedDay.toString()} {...dailyNutritionStats} />
 		</a>
 	{:else if !macroTargets.isLoading && !macroMetrics.isLoading}
 		<a
 			class="w-full text-center text-sm text-muted-foreground underline"
-			href={resolve('/food-diary/goals')}
+			href={resolve('food-diary/goals')}>Set calorie goal →</a
 		>
-			Set calorie goal →
-		</a>
 	{/if}
 </div>
