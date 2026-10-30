@@ -18,10 +18,10 @@
 		"ota:upload": "bash scripts/ota-upload.sh"
 	},
 	"devDependencies": {
-		"@capacitor/android": "^8.5.3",
+		"@capacitor/android": "^8.6.0",
 		"@capacitor/assets": "^3.0.5",
-		"@capacitor/cli": "^8.5.3",
-		"@capacitor/ios": "^8.5.3",
+		"@capacitor/cli": "^8.6.0",
+		"@capacitor/ios": "^8.6.0",
 		"@inlang/paraglide-js": "^2.29.3",
 		"@lucide/svelte": "^1.64.0",
 		"@myfit/api": "workspace:*",
@@ -61,9 +61,9 @@
 	"dependencies": {
 		"@ai-sdk/svelte": "^5.0.156",
 		"@capacitor/app": "^8.1.2",
-		"@capacitor/core": "^8.5.3",
-		"@capgo/capacitor-health": "^8.11.12",
-		"@capgo/capacitor-updater": "^8.53.1",
+		"@capacitor/core": "^8.6.0",
+		"@capgo/capacitor-health": "^8.11.13",
+		"@capgo/capacitor-updater": "^8.54.0",
 		"@dnd-kit/helpers": "^0.5.1",
 		"@dnd-kit/svelte": "^0.5.1",
 		"@internationalized/date": "^3.12.4",
