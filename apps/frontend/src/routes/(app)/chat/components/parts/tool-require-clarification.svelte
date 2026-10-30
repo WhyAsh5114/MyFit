@@ -1,44 +1,74 @@
 <script lang="ts">
-	import Button from '#lib/components/ui/button/button.svelte';
-	import * as Item from '#lib/components/ui/item/index.js';
+	import { Badge } from '#lib/components/ui/badge/index.js';
+	import * as Bubble from '#lib/components/ui/bubble/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import * as Questionnaire from '#lib/components/ui/questionnaire/index.js';
+	import { XIcon } from '@lucide/svelte';
 	import type { MyUIMessage } from '@myfit/api';
-	import { renderMarkdown } from '../render-markdown';
 	import { chat } from '../chat.svelte';
 
 	type RequireClarificationPart = Extract<
 		MyUIMessage['parts'][number],
 		{ type: 'tool-requireClarification' }
 	>;
-	const { part }: { part: RequireClarificationPart } = $props();
+	const { part, active }: { part: RequireClarificationPart; active: boolean } = $props();
+
+	const choices = $derived(
+		(part.input?.choices ?? []).filter((choice): choice is string => choice !== undefined)
+	);
+
+	function answer(event: SubmitEvent) {
+		event.preventDefault();
+		const values = new FormData(event.currentTarget as HTMLFormElement)
+			.getAll('answer')
+			.filter((value): value is string => typeof value === 'string' && value.trim() !== '');
+		const output = values.at(-1)?.trim();
+		if (!output) return;
+		chat.addToolOutput({ tool: 'requireClarification', toolCallId: part.toolCallId, output });
+	}
 </script>
 
-{#if part.state !== 'output-error'}
-	<Item.Root class="mb-2 w-fit max-w-[80%] place-self-start rounded-tl-none bg-card px-2 py-1">
-		<Item.Content class="text-left">
-			{#await renderMarkdown(part.input?.message ?? '') then text}
-				<article class="prose prose-sm max-w-none dark:prose-invert">
-					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					{@html text}
-				</article>
-			{/await}
-			<div class="mt-2 flex flex-wrap gap-1">
-				{#each (part.input?.choices ?? []).filter((c): c is string => c !== undefined) as choice (choice)}
-					<Button
-						size="sm"
-						class="h-fit w-full py-1 whitespace-break-spaces"
-						variant={part.output === choice ? 'default' : 'outline'}
-						disabled={part.state !== 'input-available'}
-						onclick={() =>
-							chat.addToolOutput({
-								tool: 'requireClarification',
-								toolCallId: part.toolCallId,
-								output: choice
-							})}
-					>
-						{choice}
-					</Button>
-				{/each}
-			</div>
-		</Item.Content>
-	</Item.Root>
+{#if part.state === 'input-available' && active}
+	<Card.Root size="sm" class="w-full max-w-xs shadow-sm">
+		<Card.Content>
+			<Questionnaire.Root
+				items={[{ name: 'answer', required: true, choices: choices.map((value) => ({ value })) }]}
+				onSubmit={answer}
+				class="gap-2"
+			>
+				<Questionnaire.Item name="answer" required class="gap-2">
+					<Questionnaire.Title class="text-sm">{part.input.message}</Questionnaire.Title>
+					<Questionnaire.Choices class="gap-1.5">
+						{#each choices as choice (choice)}
+							<Questionnaire.Choice value={choice} class="min-h-0 gap-2 px-3 py-1.5 sm:min-h-0">
+								{choice}
+							</Questionnaire.Choice>
+						{/each}
+						<Questionnaire.Input
+							aria-label="Something else"
+							placeholder="Something else..."
+							class="min-h-0 text-sm"
+						/>
+					</Questionnaire.Choices>
+				</Questionnaire.Item>
+				<Questionnaire.Actions>
+					<Questionnaire.Submit size="sm" class="min-h-0">Send</Questionnaire.Submit>
+				</Questionnaire.Actions>
+			</Questionnaire.Root>
+		</Card.Content>
+	</Card.Root>
+{:else if part.state === 'input-available'}
+	<!-- The user typed something else instead, so the question is closed. -->
+	<Bubble.Root variant="ghost">
+		<Bubble.Content>{part.input.message}</Bubble.Content>
+	</Bubble.Root>
+	<Badge variant="outline" class="w-fit"><XIcon /> Skipped</Badge>
+{:else if part.state === 'output-available'}
+	<!-- Answered: the question stays as context and the answer reads as the user's reply. -->
+	<Bubble.Root variant="ghost">
+		<Bubble.Content>{part.input.message}</Bubble.Content>
+	</Bubble.Root>
+	<Bubble.Root align="end">
+		<Bubble.Content>{part.output}</Bubble.Content>
+	</Bubble.Root>
 {/if}
