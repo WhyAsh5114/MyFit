@@ -85,7 +85,7 @@
 		}
 
 		toast.success('Activity calorie preferences saved');
-		await goto(resolve('/food-diary/goals'));
+		await goto(resolve('food-diary/goals'));
 	}
 </script>
 

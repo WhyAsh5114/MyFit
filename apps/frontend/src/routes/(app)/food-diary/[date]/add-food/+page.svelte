@@ -36,7 +36,7 @@
 			posthog.capture('food_searched', { query_length: debounced.current.trim().length });
 		}
 
-		goto(resolve(`/food-diary/${page.params.date}/add-food?${params.toString()}`), {
+		goto(resolve(`food-diary/${page.params.date}/add-food?${params.toString()}`), {
 			replaceState: true,
 			keepFocus: true
 		});
@@ -81,15 +81,13 @@
 	</Label>
 	<Button
 		variant="secondary"
-		href={resolve(`/food-diary/${page.params.date}/add-food/manual?${params.toString()}`)}
+		href={resolve(`food-diary/${page.params.date}/add-food/manual?${params.toString()}`)}
+		><CirclePlusIcon />{m['foodDiary.addManually']()}</Button
 	>
-		<CirclePlusIcon />
-		{m['foodDiary.addManually']()}
-	</Button>
-	<Button href={resolve(`/food-diary/${page.params.date}/add-food/scan?${params.toString()}`)}>
-		{m['foodDiary.scanBarcode']()}
-		<ScanBarcodeIcon />
-	</Button>
+
+	<Button href={resolve(`food-diary/${page.params.date}/add-food/scan?${params.toString()}`)}
+		>{m['foodDiary.scanBarcode']()} <ScanBarcodeIcon /></Button
+	>
 </div>
 
 <FoodInfinite {params} />

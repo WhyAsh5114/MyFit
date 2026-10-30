@@ -21,7 +21,7 @@
 		if (!currentUser.data) return toast.error(m['unknownErrorOccurred']());
 		await saveMeals.mutateAsync({ meals: data.meals, userId: currentUser.data.id });
 		toast.success('Meals saved');
-		await goto(resolve('/food-diary/goals'));
+		await goto(resolve('food-diary/goals'));
 	}
 </script>
 

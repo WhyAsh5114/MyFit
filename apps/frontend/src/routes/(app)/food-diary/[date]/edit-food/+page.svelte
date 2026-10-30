@@ -4,6 +4,6 @@
 	import { page } from '$app/state';
 
 	$effect(() => {
-		goto(resolve(`/food-diary/${page.params.date}`));
+		goto(resolve(`food-diary/${page.params.date}`));
 	});
 </script>

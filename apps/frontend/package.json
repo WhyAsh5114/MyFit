@@ -45,7 +45,7 @@
 		"serwist": "^9.5.13",
 		"shadcn-svelte": "^1.7.1",
 		"svelte": "^5.57.3",
-		"svelte-check": "^4.6.0",
+		"svelte-check": "^4.7.5",
 		"svelte-sonner": "^1.1.1",
 		"sveltekit-superforms": "^2.30.1",
 		"tailwind-merge": "^3.6.0",

@@ -15,7 +15,7 @@
 	import { toast } from 'svelte-sonner';
 	import { chat, resetChat } from './chat.svelte';
 	import type { MyUIMessage } from '@myfit/api';
-	import { dev } from '$app/environment';
+	import { dev } from '$app/env';
 	import posthog from 'posthog-js';
 
 	let input = $state('');
@@ -107,10 +107,8 @@
 		<Button
 			class="absolute top-0 right-0 size-6 rounded-full border p-0.5 shadow"
 			variant="secondary"
-			onclick={() => (selectedImage = null)}
+			onclick={() => (selectedImage = null)}><XIcon class="size-3" /></Button
 		>
-			<XIcon class="size-3" />
-		</Button>
 	</div>
 {/if}
 
@@ -166,15 +164,8 @@
 			</InputGroup.Button>
 		{/if}
 
-		<InputGroup.Button
-			variant="default"
-			size="sm"
-			class="ml-auto"
-			onclick={handleSubmit}
-			{disabled}
+		<InputGroup.Button variant="default" size="sm" class="ml-auto" onclick={handleSubmit} {disabled}
+			>Send <SendIcon /></InputGroup.Button
 		>
-			Send
-			<SendIcon />
-		</InputGroup.Button>
 	</InputGroup.Addon>
 </InputGroup.Root>

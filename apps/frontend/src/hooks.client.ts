@@ -1,9 +1,9 @@
+import type { HandleClientError } from '@sveltejs/kit/hooks';
 import { Capacitor } from '@capacitor/core';
-import { dev } from '$app/environment';
+import { dev } from '$app/env';
 import { registerServiceWorker } from '$lib/features/service-worker';
 import posthog from 'posthog-js';
-import { PUBLIC_POSTHOG_KEY, PUBLIC_POSTHOG_HOST } from '$env/static/public';
-import type { HandleClientError } from '@sveltejs/kit';
+import { PUBLIC_POSTHOG_KEY, PUBLIC_POSTHOG_HOST } from '$app/env/public';
 
 export async function init() {
 	posthog.init(PUBLIC_POSTHOG_KEY, {

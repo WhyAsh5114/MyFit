@@ -24,7 +24,7 @@
 		}
 		await createMacroMetrics.mutateAsync({ ...data, userId: currentUser.data.id });
 		toast.success(m['foodDiary.metrics.saved']());
-		await goto(resolve('/food-diary/goals'));
+		await goto(resolve('food-diary/goals'));
 	}
 </script>
 

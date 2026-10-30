@@ -1,4 +1,4 @@
-import { PUBLIC_API_URL } from '$env/static/public';
+import { PUBLIC_API_URL } from '$app/env/public';
 import type { DbClient } from '$lib/clients/idb-client';
 import { queryClient } from '$lib/clients/query-client';
 import { invalidatePulledChanges } from './sync-invalidation';

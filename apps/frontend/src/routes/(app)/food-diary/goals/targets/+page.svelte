@@ -24,7 +24,7 @@
 		}
 		await createMacroTargets.mutateAsync({ ...data, userId: currentUser.data.id });
 		toast.success('Targets saved');
-		await goto(resolve('/food-diary/goals'));
+		await goto(resolve('food-diary/goals'));
 	}
 </script>
 

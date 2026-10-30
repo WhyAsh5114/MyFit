@@ -18,7 +18,7 @@
 		error = null;
 		try {
 			await signOutAndRefreshSession();
-			await goto(resolve('/login'));
+			await goto(resolve('login'));
 		} catch (cause) {
 			console.error('Could not sign out', cause);
 			error = m['account.otherAccountSignOutFailed']();

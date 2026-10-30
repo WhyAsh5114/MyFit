@@ -49,12 +49,14 @@ export async function logout(discard = false) {
 		}
 		await syncWorkerState.stop();
 		await queryClient.cancelQueries();
+
 		if (!discard && (await db.outbox.hasPending()))
 			throw new Error('Some changes have not synced yet.');
+
 		await signOutAndRefreshSession();
 		await resetDb();
 		queryClient.clear();
-		await goto(resolve('/login'));
+		await goto(resolve('login'));
 		accountSession.logout = 'idle';
 		posthog.capture('user_logged_out');
 		posthog.reset();

@@ -19,7 +19,7 @@
 		})}
 	>
 		{#snippet child({ props })}
-			<a href={resolve(`/food-diary/${page.params.date}/add-activity`)} {...props}>
+			<a href={resolve(`food-diary/${page.params.date}/add-activity`)} {...props}>
 				<Item.Content>
 					<Item.Title class="flex w-full font-semibold">
 						Activity
