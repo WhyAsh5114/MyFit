@@ -46,7 +46,7 @@
 		"@prisma/orm-framework": "8.0.0-rc.18",
 		"@prisma/orm-postgres": "8.0.0-rc.18",
 		"@prisma/orm-toolchain": "8.0.0-rc.18",
-		"dotenv": "^17.4.2",
+		"dotenv": "^18.0.9",
 		"prisma": "8.0.0-rc.23"
 	},
 	"devDependencies": {

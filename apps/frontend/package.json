@@ -39,7 +39,7 @@
 		"@types/node": "^25.9.2",
 		"bits-ui": "^2.18.1",
 		"clsx": "^2.1.1",
-		"dotenv": "^17.4.2",
+		"dotenv": "^18.0.9",
 		"formsnap": "^2.1.0",
 		"layerchart": "2.0.0-next.43",
 		"serwist": "^9.5.13",
@@ -59,7 +59,7 @@
 		"vitest": "^5.0.5"
 	},
 	"dependencies": {
-		"@ai-sdk/svelte": "^4.0.315",
+		"@ai-sdk/svelte": "^5.0.156",
 		"@capacitor/app": "^8.1.2",
 		"@capacitor/core": "^8.5.3",
 		"@capgo/capacitor-health": "^8.11.12",
@@ -70,7 +70,7 @@
 		"@prisma-idb/client-idb": "^0.16.0",
 		"@prisma-idb/sync-extension-idb": "^0.12.0",
 		"@tanstack/svelte-query": "^6.1.34",
-		"ai": "^6.0.197",
+		"ai": "^7.0.156",
 		"barqode": "^0.0.2",
 		"better-auth": "^1.6.33",
 		"browser-image-compression": "^2.0.2",
