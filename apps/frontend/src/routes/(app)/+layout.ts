@@ -9,6 +9,6 @@ export const csr = true;
 export const load: LayoutLoad = async ({ depends }) => {
 	const ownerId = loadOwner(depends);
 	// Nothing to read until the session cacher has opened the account's database.
-	const user = ownerId ? await getLocalUser(depends) : null;
+	const user = ownerId ? await getLocalUser(depends, ownerId) : null;
 	return { ownerId, user };
 };

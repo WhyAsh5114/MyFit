@@ -45,6 +45,44 @@ export default defineConfig(
 		}
 	},
 	{
+		// A load reads local data through a reader, so the keys it registers always match what it read.
+		files: ['apps/frontend/src/routes/**/+layout.ts', 'apps/frontend/src/routes/**/+page.ts'],
+		rules: {
+			'no-restricted-imports': [
+				'error',
+				{
+					patterns: [
+						{
+							regex: '^#lib/clients/idb-client',
+							message:
+								'Read local data through a reader from `queries/`, so the load reruns when it changes.'
+						}
+					]
+				}
+			]
+		}
+	},
+	{
+		// Local readers are made with `defineReader`, which registers what they read. The nutrition
+		// queries are remote and go through TanStack.
+		files: ['apps/frontend/src/lib/features/{food-diary,user}/**/queries/*.ts'],
+		ignores: ['apps/frontend/src/lib/features/food-diary/nutrition-data/**'],
+		rules: {
+			'no-restricted-syntax': [
+				'error',
+				{
+					selector: 'ExportNamedDeclaration > FunctionDeclaration, ExportDefaultDeclaration',
+					message: 'Define a reader with `defineReader`, so it registers the keys it reads.'
+				},
+				{
+					selector:
+						"ExportNamedDeclaration > VariableDeclaration > VariableDeclarator:not([init.callee.name='defineReader'])",
+					message: 'Define a reader with `defineReader`, so it registers the keys it reads.'
+				}
+			]
+		}
+	},
+	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
 		languageOptions: {
 			parserOptions: {

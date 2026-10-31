@@ -22,6 +22,21 @@ export function dependOn(depends: Depends, ...keys: Key[]) {
 }
 
 /**
+ * Defines a reader for a `load`: `keys` names what `read` looks at, and the reader registers
+ * them before it reads, so a `load` can't use one and miss its reruns. Forgetting `keys` is a
+ * type error, and the lint config only allows readers in `queries/` to be made this way.
+ */
+export function defineReader<Args, Data>(reader: {
+	keys: (args: Args) => readonly Key[];
+	read: (args: Args) => Promise<Data>;
+}) {
+	return (depends: Depends, args: Args): Promise<Data> => {
+		dependOn(depends, ...reader.keys(args));
+		return reader.read(args);
+	};
+}
+
+/**
  * Whether a registered dependency lies under one of the prefixes, the way `invalidateQueries`
  * matches by key prefix: `['foodEntry', 'u1']` covers every day of that user and leaves `u12` alone.
  */

@@ -1,10 +1,12 @@
 import { getDb } from '#lib/clients/idb-client.js';
-import { dependOn, type Depends } from '#lib/features/dependencies.js';
+import { defineReader } from '#lib/features/dependencies.js';
 import { userKeys } from '../keys';
 
-/** The user the local database belongs to, or `null` when it holds none. */
-export async function getLocalUser(depends: Depends) {
-	dependOn(depends, userKeys.current());
-	const { orm } = await getDb();
-	return await orm.user.first();
-}
+/** A user's local record, or `null` when the local database doesn't hold it. */
+export const getLocalUser = defineReader({
+	keys: (userId: string) => [userKeys.detail(userId)],
+	read: async (userId) => {
+		const { orm } = await getDb();
+		return await orm.user.where({ id: userId }).first();
+	}
+});

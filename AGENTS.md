@@ -54,9 +54,9 @@ src/lib/features/
         mapper.ts             # DB shape ↔ form shape transforms
         nutrients.ts          # Domain constants, config arrays
       queries/
-        get.ts                # getResource(depends, userId)
-        get-by-date.ts        # getResourceByDate(depends, { userId, date })
-        get-by-id.ts          # getResourceById(depends, { userId, id })
+        get.ts                # getResource = defineReader(...) → (depends, userId)
+        get-by-date.ts        # getResourceByDate → (depends, { userId, date })
+        get-by-id.ts          # getResourceById → (depends, { userId, id })
         search.ts             # useSearchResource(getSearch)  ← remote only, TanStack
       mutations/
         create.ts             # useCreateResource()
@@ -135,15 +135,16 @@ export const foodEntryKeys = {
 Local data is read by the route's `load`, not by hooks in the page. A page then renders whole and has no loading state of its own. SvelteKit keeps the current page until `load` settles, so a day change or a navigation never shows a skeleton.
 
 ```ts
-// features/food-diary/food-entry/queries/get-by-date.ts — a plain reader that registers what it read
-export async function getFoodEntriesByDate(
-	depends: Depends,
-	{ userId, date }: { userId: string; date: CalendarDate }
-) {
-	dependOn(depends, foodEntryKeys.byDate(userId, date.toString()));
-	const { orm } = await getDb();
-	return await orm.foodEntry.where({ userId } /* ... */).all();
-}
+// features/food-diary/food-entry/queries/get-by-date.ts — a reader names the keys it reads
+export const getFoodEntriesByDate = defineReader({
+	keys: ({ userId, date }: { userId: string; date: CalendarDate }) => [
+		foodEntryKeys.byDate(userId, date.toString())
+	],
+	read: async ({ userId, date }) => {
+		const { orm } = await getDb();
+		return await orm.foodEntry.where({ userId } /* ... */).all();
+	}
+});
 
 // routes/(app)/food-diary/[date]/+page.ts
 export const load: PageLoad = async ({ params, depends }) => {
@@ -154,7 +155,7 @@ export const load: PageLoad = async ({ params, depends }) => {
 };
 ```
 
-- Readers take `depends` first and call `dependOn` with the same key factory the mutations use. The key is turned into a `depends` id (`dependencyId` in `#lib/features/dependencies.ts`), and `invalidateKeys(prefix)` reruns every active `load` that registered a key under that prefix, the way `invalidateQueries` matched prefixes. This works for universal loads (`+page.ts`), and the component keeps its state, because the page data updates in place.
+- A reader is made with `defineReader({ keys, read })` and called as `reader(depends, args)`. It registers `keys` before it reads, so a `load` can't use one and miss its reruns, and `keys` is required by its type. ESLint enforces it: a local `queries/*.ts` file can only export `defineReader(...)` calls, and a `+page.ts`/`+layout.ts` can't import the IDB client. Use the key factory the mutations use. A key is turned into a `depends` id (`dependencyId` in `#lib/features/dependencies.ts`), and `invalidateKeys(prefix)` reruns every active `load` that registered a key under that prefix, the way `invalidateQueries` matched prefixes. This works for universal loads (`+page.ts`), and the component keeps its state, because the page data updates in place.
 - A route that reads several resources of one feature gets a feature-level loader (`food-diary/load-day.ts`); `+page.ts` only calls it.
 - `loadOwner(depends)` returns the account the local database belongs to, and reruns the `load` when it changes. It is `undefined` or `null` until the session cacher has settled on an account: return `null` data then, and render it as nothing. The cacher shows the page only after the loads have rerun for the settled account.
 - Load functions return data and never throw for missing rows: a reader returns `null` for one that doesn't exist.
@@ -408,14 +409,14 @@ domain/
 ## Anti-Patterns
 
 ```ts
-// ❌ A reader that forgets to register what it read
-export async function getMeals(depends, userId) {
+// ❌ A reader that doesn't register what it read (lint rejects it)
+export async function getMeals(userId) {
   return (await getDb()).orm.meal.where({ userId }).all()  // ← never reruns after a mutation or sync
 }
-// ✅ dependOn(depends, mealKeys.byUser(userId)) first
+// ✅ defineReader({ keys: (userId) => [mealKeys.byUser(userId)], read: ... })
 
 // ❌ Non-userId-scoped keys for user data
-dependOn(depends, macroMetricsKeys.all)  // ← not scoped to the user; use byUser(userId)
+keys: () => [macroMetricsKeys.all]  // ← not scoped to the user; use byUser(userId)
 
 // ❌ Local data read in a component
 const meals = createQuery(...)  // ← read it in the route's load; it appears whole instead of through a skeleton
