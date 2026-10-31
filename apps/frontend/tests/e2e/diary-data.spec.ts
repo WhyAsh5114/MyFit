@@ -115,3 +115,12 @@ test('cold starts, day changes, deletes and account switches show the right data
 	await expect(page.getByText('Greek yogurt')).toHaveCount(0);
 	expect(errors).toEqual([]);
 });
+
+test('the bare diary and edit routes go straight to the day', async ({ page }) => {
+	await signUp(page);
+	await page.goto('/food-diary');
+	await expect(page).toHaveURL(new RegExp(`/food-diary/${day()}$`));
+	await page.goto(`/food-diary/${day(1)}/edit-food`);
+	await expect(page).toHaveURL(new RegExp(`/food-diary/${day(1)}$`));
+	await expect(page.getByText('Tomorrow', { exact: true })).toBeVisible();
+});
