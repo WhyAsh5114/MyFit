@@ -13,32 +13,31 @@
 	let { data }: PageProps = $props();
 
 	const timezone = getLocalTimeZone();
-	const diary = $derived(data.diary);
-	const selectedDay = $derived(parseSelectedDay(diary.day));
+	const selectedDay = $derived(parseSelectedDay(data.day));
 </script>
 
 <SyncHealthData
 	{selectedDay}
 	userId={data.ownerId}
-	activityEntries={diary.activityEntries}
-	activityPreferences={diary.activityPreferences}
-	macroMetrics={diary.macroMetrics}
+	activityEntries={data.activityEntries}
+	activityPreferences={data.activityPreferences}
+	macroMetrics={data.macroMetrics}
 />
 
 <HeaderCard
-	foodEntries={diary.foodEntries}
-	activityEntries={diary.activityEntries}
+	foodEntries={data.foodEntries}
+	activityEntries={data.activityEntries}
 	{selectedDay}
 	{timezone}
-	macroMetrics={diary.macroMetrics}
-	macroTargets={diary.macroTargets}
+	macroMetrics={data.macroMetrics}
+	macroTargets={data.macroTargets}
 />
 
 <div class="relative flex min-h-0 w-full grow basis-0">
 	<div class="size-full overflow-y-auto">
 		<div class="flex h-full flex-col gap-2">
-			<FoodEntries foodEntries={diary.foodEntries} meals={diary.meals} />
-			<ActivityEntries activityEntries={diary.activityEntries} />
+			<FoodEntries foodEntries={data.foodEntries} meals={data.meals} />
+			<ActivityEntries activityEntries={data.activityEntries} />
 		</div>
 	</div>
 

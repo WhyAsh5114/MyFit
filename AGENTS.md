@@ -149,12 +149,17 @@ export const getFoodEntriesByDate = defineReader({
 // routes/(app)/food-diary/[date]/+page.ts
 export const load: PageLoad = async ({ params, depends, parent }) => {
 	const { ownerId } = await parent(); // a string: the protected layout redirects when there is no account
-	return { diary: await loadDiaryDay(depends, ownerId, parseSelectedDay(params.date)) };
+	const date = parseSelectedDay(params.date);
+	const [meals, foodEntries] = await Promise.all([
+		getMeals(depends, ownerId),
+		getFoodEntriesByDate(depends, { userId: ownerId, date })
+	]);
+	return { day: date.toString(), meals, foodEntries };
 };
 ```
 
 - A reader is made with `defineReader({ keys, read })` and called as `reader(depends, args)`. It registers `keys` before it reads, so a `load` can't use one and miss its reruns, and `keys` is required by its type. ESLint enforces it: a local `queries/*.ts` file can only export `defineReader(...)` calls, and a `+page.ts`/`+layout.ts` can't import the IDB client. Use the key factory the mutations use. A key is turned into a `depends` id (`dependencyId` in `#lib/features/dependencies.ts`), and `invalidateKeys(prefix)` reruns every active `load` that registered a key under that prefix, the way `invalidateQueries` matched prefixes. This works for universal loads (`+page.ts`), and the component keeps its state, because the page data updates in place.
-- A route that reads several resources of one feature gets a feature-level loader (`food-diary/load-day.ts`); `+page.ts` only calls it.
+- A `+page.ts` calls its readers itself, with `Promise.all` when there are several, and returns them under flat keys. There is no feature-level loader function: every route reads the same way.
 - Pages under `(app)/(protected)/` get `ownerId: string` from `await parent()`. The `(app)` layout's `load` waits for an account to be ready (`accountReady`), and the protected layout redirects to the login page when there is none, so a page's data never has a missing-account case. The wait is behind the account dialogs (see Auth & Session Flow): a `load` never waits on something that only renders after it finishes.
 - Load functions return data and never throw for missing rows: a reader returns `null` for one that doesn't exist.
 - A `load` is tracked until it returns, so reading `params` and `url` after an `await` is fine, but not inside a callback that runs later. A `load` that reads `url.search` reruns on every search-param change.
