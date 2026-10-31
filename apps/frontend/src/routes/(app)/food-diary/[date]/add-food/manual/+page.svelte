@@ -10,6 +10,7 @@
 	import { CircleCheckBigIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import posthog from 'posthog-js';
+	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
@@ -24,7 +25,7 @@
 			toast.error(m['unknownErrorOccurred']());
 			return;
 		}
-		await createFoodEntry.mutateAsync({
+		const created = await createFoodEntry.mutateAsync({
 			data,
 			userId: currentUser.data.id
 		});
@@ -33,7 +34,7 @@
 			product_name: data.productName,
 			quantity_g: data.quantityG
 		});
-		toast.success(m['foodDiary.foodEntryCreated']());
+		markRecentChange(created.id);
 		await goto(resolve(`food-diary/${page.params.date}`));
 	}
 </script>

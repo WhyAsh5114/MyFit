@@ -15,7 +15,7 @@
 <div class="flex flex-col rounded-lg border">
 	<Item.Root
 		class={cn('rounded-none rounded-t-lg bg-card py-3', {
-			'rounded-b-lg py-2': activityEntries?.length === 0
+			'rounded-b-lg': activityEntries?.length === 0
 		})}
 	>
 		{#snippet child({ props })}

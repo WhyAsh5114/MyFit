@@ -1,3 +1,4 @@
+import { m } from '#lib/paraglide/messages.js';
 import { goto } from '$app/navigation';
 import type { DbClient } from '#lib/clients/idb-client.js';
 import type { Session, User } from 'better-auth';
@@ -14,7 +15,7 @@ export async function redirectToLogin(url: { pathname: string; search: string; h
 	const redirect = `${url.pathname}${url.search}${url.hash}`;
 	// eslint-disable-next-line svelte/no-navigation-without-resolve
 	await goto(`/login?redirect=${encodeURIComponent(redirect)}`);
-	return toast.info('Please login to continue');
+	return toast.info(m['account.loginToContinue']());
 }
 
 /** Stores the signed-in user locally without queuing it for sync. */

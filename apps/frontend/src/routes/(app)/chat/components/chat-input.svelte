@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '#lib/paraglide/messages.js';
 	import * as Attachment from '#lib/components/ui/attachment/index.js';
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import * as InputGroup from '#lib/components/ui/input-group/index.js';
@@ -53,7 +54,7 @@
 			posthog.capture('chat_image_attached');
 		} catch (error) {
 			image = null;
-			toast.error('Could not attach that image.');
+			toast.error(m['chat.attachFailed']());
 			console.error('Failed to attach image:', error);
 		}
 	}
@@ -121,7 +122,7 @@
 	{/if}
 	<InputGroup.Textarea
 		bind:value={input}
-		placeholder="Tell me what you ate..."
+		placeholder={m['chat.placeholder']()}
 		class="max-h-40"
 		onkeydown={(event) => {
 			if (event.key === 'Enter' && !event.shiftKey) {
@@ -130,7 +131,7 @@
 			}
 		}}
 	/>
-	<InputGroup.Addon align="block-end">
+	<InputGroup.Addon align="block-end" class="gap-3">
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger>
 				{#snippet child({ props })}
@@ -138,7 +139,7 @@
 						variant="outline"
 						class="rounded-full"
 						size="icon-sm"
-						aria-label="Attach an image"
+						aria-label={m['chat.attachImage']()}
 						{...props}
 					>
 						<PlusIcon />
@@ -148,10 +149,12 @@
 			<DropdownMenu.Content align="start">
 				<DropdownMenu.Group>
 					<DropdownMenu.Item onclick={() => cameraInput.click()}>
-						<CameraIcon /> Camera
+						<CameraIcon />
+						{m['chat.camera']()}
 					</DropdownMenu.Item>
 					<DropdownMenu.Item onclick={() => fileInput.click()}>
-						<FileIcon /> File
+						<FileIcon />
+						{m['chat.file']()}
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 			</DropdownMenu.Content>
@@ -160,7 +163,7 @@
 		<InputGroup.Button
 			variant="ghost"
 			size="icon-sm"
-			aria-label="Start a new chat"
+			aria-label={m['chat.newChat']()}
 			disabled={chat.messages.length === 0}
 			onclick={reset}
 		>
@@ -182,7 +185,7 @@
 			<InputGroup.Button
 				class="ml-auto rounded-full"
 				size="icon-sm"
-				aria-label="Stop"
+				aria-label={m['chat.stop']()}
 				onclick={() => chat.stop()}
 			>
 				<SquareIcon />
@@ -191,7 +194,7 @@
 			<InputGroup.Button
 				class="ml-auto rounded-full"
 				size="icon-sm"
-				aria-label="Send"
+				aria-label={m['chat.send']()}
 				disabled={!canSend}
 				onclick={send}
 			>

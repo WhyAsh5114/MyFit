@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '#lib/paraglide/messages.js';
 	import * as Card from '#lib/components/ui/card/index.js';
 	import MacrosPieChart from './macros-pie-chart.svelte';
 	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
@@ -43,11 +44,11 @@
 	</div>
 {/snippet}
 
-<Card.Content class="flex items-center justify-around gap-4">
+<Card.Content class="flex flex-row items-center justify-around gap-4">
 	<MacrosPieChart {carbs} {fat} {protein} kcal={energyKcal} />
 	<div class="grid grow grid-cols-3">
-		{@render macroCell('Carbs', carbs, 'text-chart-carbs', 4)}
-		{@render macroCell('Fat', fat, 'text-chart-fat', 9)}
-		{@render macroCell('Protein', protein, 'text-chart-protein', 4)}
+		{@render macroCell(m['macro.carbs'](), carbs, 'text-chart-carbs', 4)}
+		{@render macroCell(m['macro.fat'](), fat, 'text-chart-fat', 9)}
+		{@render macroCell(m['macro.protein'](), protein, 'text-chart-protein', 4)}
 	</div>
 </Card.Content>

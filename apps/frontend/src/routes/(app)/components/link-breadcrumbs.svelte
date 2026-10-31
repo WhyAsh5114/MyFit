@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '#lib/paraglide/messages.js';
 	import { page } from '$app/state';
 	import * as Breadcrumb from '#lib/components/ui/breadcrumb/index.js';
 	import { shortDateFormatter } from '#lib/my-utils.js';
@@ -34,7 +35,7 @@
 				try {
 					z.uuid().parse(part);
 					return {
-						label: 'Item',
+						label: m['breadcrumb.item'](),
 						href: fullPath
 					};
 				} catch {
@@ -53,7 +54,17 @@
 	let items = $derived(pathnameToItems(page.url.pathname));
 </script>
 
-<div class="no-scrollbar min-w-0 flex-1 scroll-fade-x overflow-x-auto py-1.5">
+<!-- The current page is the last crumb, so keep the end of a long trail in view. -->
+<div
+	class="-ml-2 no-scrollbar min-w-0 flex-1 scroll-fade-x overflow-x-auto py-3 pl-2"
+	{@attach (node) => {
+		void page.url.pathname;
+		const toEnd = () => (node.scrollLeft = node.scrollWidth);
+		toEnd();
+		// The text is wider once the web font has loaded.
+		void document.fonts.ready.then(toEnd);
+	}}
+>
 	<Breadcrumb.Root>
 		<Breadcrumb.List class="flex-nowrap">
 			{#each items as item, idx (item.label)}
@@ -68,6 +79,8 @@
 					</Breadcrumb.Separator>
 				{/if}
 			{/each}
+			<!-- Room after the last crumb, so its tap area clears the sync button. -->
+			<li class="w-3 shrink-0" aria-hidden="true"></li>
 		</Breadcrumb.List>
 	</Breadcrumb.Root>
 </div>

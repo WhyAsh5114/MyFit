@@ -80,7 +80,6 @@
 			if (error) throw error;
 
 			otpMailSent = true;
-			toast.success(m['login.otpSentSuccess']());
 			return email;
 		},
 		onError: (error) => {
@@ -104,12 +103,10 @@
 			});
 
 			if (data.user.name.trim() === '') {
-				toast.success(m['login.registerSuccess']());
 				goto(resolve('onboarding/setup-account'));
 				return data;
 			}
 
-			toast.success(m['login.loginSuccess']());
 			const callbackUrl = page.url.searchParams.get('callbackUrl') || '/dashboard';
 			// eslint-disable-next-line svelte/no-navigation-without-resolve
 			goto(callbackUrl);
@@ -210,9 +207,14 @@
 
 				<br />
 				{m['login.otpChangePrompt']()}
-				<Button variant="link" size="sm" class="p-0 underline" onclick={() => (otpMailSent = false)}
-					>{m['login.otpChangeButton']()}</Button
+				<Button
+					variant="link"
+					size="sm"
+					class="p-0 underline"
+					onclick={() => (otpMailSent = false)}
 				>
+					{m['login.otpChangeButton']()}
+				</Button>
 			</FieldDescription>
 		</FieldGroup>
 	</form>

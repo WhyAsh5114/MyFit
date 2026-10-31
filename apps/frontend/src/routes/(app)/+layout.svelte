@@ -16,10 +16,10 @@
 			<AppSidebar />
 			<div class="mx-auto flex h-dvh w-full max-w-xl flex-col pb-[env(safe-area-inset-bottom)]">
 				<header
-					class="sticky top-0 z-50 flex min-h-12 items-center gap-2 bg-background/80 px-4 pt-[calc(env(safe-area-inset-top)+0.5rem)] pb-2 backdrop-blur-sm"
+					class="sticky top-0 z-50 flex min-h-12 items-center gap-3 bg-background/80 px-4 pt-[calc(env(safe-area-inset-top)+0.5rem)] pb-2 backdrop-blur-sm"
 				>
 					<Sidebar.Trigger />
-					<Separator orientation="vertical" class="mr-2 h-6" />
+					<Separator orientation="vertical" class="mr-2 h-full" />
 					<LinkBreadcrumbs />
 					{#if ownerId}
 						<SyncComponent />

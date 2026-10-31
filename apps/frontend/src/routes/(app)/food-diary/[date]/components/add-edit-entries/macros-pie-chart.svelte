@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '#lib/paraglide/messages.js';
 	import * as Chart from '#lib/components/ui/chart/index.js';
 	import { cn } from '#lib/utils.js';
 	import { PieChart, Text } from 'layerchart';
@@ -15,9 +16,9 @@
 
 	const chartConfig = {
 		macro: { label: 'Macro' },
-		carbs: { label: 'Carbs', color: 'var(--chart-carbs)' },
-		fat: { label: 'Fat', color: 'var(--chart-fat)' },
-		protein: { label: 'Protein', color: 'var(--chart-protein)' }
+		carbs: { label: m['macro.carbs'](), color: 'var(--chart-carbs)' },
+		fat: { label: m['macro.fat'](), color: 'var(--chart-fat)' },
+		protein: { label: m['macro.protein'](), color: 'var(--chart-protein)' }
 	} satisfies Chart.ChartConfig;
 </script>
 

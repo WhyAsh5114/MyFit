@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '#lib/paraglide/messages.js';
 	import * as Collapsible from '#lib/components/ui/collapsible/index.js';
 	import { ChevronDownIcon } from '@lucide/svelte';
 	import type { MyUIMessage } from '@myfit/api';
@@ -25,14 +26,14 @@
 
 <Collapsible.Root bind:open class="w-full">
 	<Collapsible.Trigger
-		class="group flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+		class="group flex min-h-11 items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
 	>
 		{#if streaming}
-			<span class="animate-pulse">Thinking...</span>
+			<span class="animate-pulse">{m['chat.thinking']()}</span>
 		{:else if seconds !== null}
-			Thought for {seconds}s
+			{m['chat.thoughtFor']({ seconds })}
 		{:else}
-			Thought process
+			{m['chat.thoughtProcess']()}
 		{/if}
 		<ChevronDownIcon class="size-4 transition-transform group-data-[state=open]:rotate-180" />
 	</Collapsible.Trigger>

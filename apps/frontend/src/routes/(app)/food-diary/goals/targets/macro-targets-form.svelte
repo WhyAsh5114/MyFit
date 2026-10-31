@@ -28,9 +28,9 @@
 
 	// Map macro target field names to nutrient labels and form field names
 	const macroFields = [
-		{ label: 'Protein', formField: 'proteinG' as const },
-		{ label: 'Carbs', formField: 'carbsG' as const },
-		{ label: 'Fat', formField: 'fatG' as const }
+		{ label: m['macro.protein'](), formField: 'proteinG' as const },
+		{ label: m['macro.carbs'](), formField: 'carbsG' as const },
+		{ label: m['macro.fat'](), formField: 'fatG' as const }
 	];
 
 	// svelte-ignore state_referenced_locally
@@ -63,8 +63,8 @@
 			<Form.Field {form} name="weeklyCaloricChange" class="flex flex-col items-start">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Weight change per week</Form.Label>
-						<div class="bg-outline grid w-full gap-2 rounded-md border p-4">
+						<Form.Label>{m['foodDiary.targets.weightChangePerWeek']()}</Form.Label>
+						<div class="grid w-full gap-2 rounded-lg border bg-secondary/50 p-4">
 							<Slider
 								class="col-span-full"
 								type="single"
@@ -91,7 +91,7 @@
 			<Form.Field {form} name="quantifier">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>Macro targets</Form.Label>
+						<Form.Label>{m['foodDiary.targets.macroTargets']()}</Form.Label>
 						<Select.Root type="single" bind:value={$formData.quantifier} {...props}>
 							<Select.Trigger class="w-full">
 								{pascalToNormal($formData.quantifier)}

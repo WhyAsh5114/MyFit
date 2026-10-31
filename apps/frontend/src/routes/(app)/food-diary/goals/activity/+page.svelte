@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
 	import Badge from '#lib/components/ui/badge/badge.svelte';
 	import * as Card from '#lib/components/ui/card/index.js';
 	import { Label } from '#lib/components/ui/label/index.js';
@@ -12,7 +13,6 @@
 	import DynamicActivity from './dynamic-activity.svelte';
 	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
-	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { useActivityPreferences } from '#lib/features/food-diary/activity-preferences/queries/get.js';
@@ -84,7 +84,7 @@
 			});
 		}
 
-		toast.success('Activity calorie preferences saved');
+		markRecentChange('activity');
 		await goto(resolve('food-diary/goals'));
 	}
 </script>

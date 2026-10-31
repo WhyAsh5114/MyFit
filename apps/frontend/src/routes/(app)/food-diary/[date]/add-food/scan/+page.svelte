@@ -117,15 +117,14 @@
 			{onCameraOn}
 			{torch}
 			constraints={selectedConstraint?.constraints}
-			onError={(err) =>
-				toast.error('An error occurred while scanning', { description: err.message })}
+			onError={(err) => toast.error(m['foodDiary.scanError'](), { description: err.message })}
 			formats={['ean_13', 'ean_8', 'upc_a']}
 		/>
 		<Button
 			class="absolute top-4 right-4 z-10 rounded-full"
 			size="icon-lg"
 			variant="secondary"
-			aria-label="Toggle flashlight"
+			aria-label={m['foodDiary.toggleFlashlight']()}
 			onclick={() => (torch = !torch)}
 			disabled={!torchSupported}
 		>
@@ -182,7 +181,7 @@
 				stroke-width="2"
 				class="scan-line text-primary"
 				opacity="0.6"
-			></line>
+			/>
 		</svg>
 	</div>
 {/if}
@@ -215,7 +214,7 @@
 				</InputGroup.Addon>
 				<InputGroup.Input
 					type="number"
-					placeholder="Enter code manually"
+					placeholder={m['foodDiary.enterCodeManually']()}
 					required
 					bind:value={manualCode}
 					disabled={nutritionDataByCode.isFetching}
@@ -223,8 +222,9 @@
 				<InputGroup.Addon align="inline-end">
 					<InputGroup.Button
 						variant="secondary"
+						size="sm"
 						type="submit"
-						aria-label="Submit manual code"
+						aria-label={m['foodDiary.submitManualCode']()}
 						disabled={nutritionDataByCode.isFetching}
 					>
 						{#if nutritionDataByCode.isFetching}

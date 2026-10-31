@@ -4,7 +4,8 @@
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { DragDropProvider, DragOverlay } from '@dnd-kit/svelte';
 	import { move } from '@dnd-kit/helpers';
-	import { PlusIcon } from '@lucide/svelte';
+	import { PlusIcon, UtensilsIcon } from '@lucide/svelte';
+	import * as Empty from '#lib/components/ui/empty/index.js';
 	import { mealsFormSchema, type MealsFormSchema } from '#lib/features/food-diary/meals/schema.js';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
 	import { defaults, superForm, type SuperForm } from 'sveltekit-superforms';
@@ -73,17 +74,38 @@
 				<Card.Description>{m['foodDiary.mealsDescription']()}</Card.Description>
 			</Card.Header>
 			<Card.Content>
-				<div class="flex flex-col gap-2 rounded-lg border p-2">
-					{#each sortableMeals as meal, index (meal.id)}
-						<MealSortableItem {form} id={meal.id} {index} onDelete={() => deleteMeal(index)} />
-					{/each}
-				</div>
+				{#if sortableMeals.length === 0}
+					<Empty.Root class="border border-dashed">
+						<Empty.Header>
+							<Empty.Media variant="icon">
+								<UtensilsIcon />
+							</Empty.Media>
+							<Empty.Title>{m['foodDiary.noMeals']()}</Empty.Title>
+							<Empty.Description>{m['foodDiary.noMealsDescription']()}</Empty.Description>
+						</Empty.Header>
+						<Empty.Content>
+							<Button type="button" onclick={addMeal}>
+								<PlusIcon />
+								{m['foodDiary.addMeal']()}
+							</Button>
+						</Empty.Content>
+					</Empty.Root>
+				{:else}
+					<div class="flex flex-col gap-2 rounded-lg border p-2">
+						{#each sortableMeals as meal, index (meal.id)}
+							<MealSortableItem {form} id={meal.id} {index} onDelete={() => deleteMeal(index)} />
+						{/each}
+					</div>
+				{/if}
 			</Card.Content>
-			<Card.Footer>
-				<Button type="button" class="w-full" variant="secondary" onclick={addMeal}>
-					Add more <PlusIcon />
-				</Button>
-			</Card.Footer>
+			{#if sortableMeals.length > 0}
+				<Card.Footer>
+					<Button type="button" class="w-full" variant="secondary" onclick={addMeal}>
+						{m['foodDiary.addAnotherMeal']()}
+						<PlusIcon />
+					</Button>
+				</Card.Footer>
+			{/if}
 		</Card.Root>
 
 		<DragOverlay>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
 	import MacroMetricsForm from './macro-metrics-form.svelte';
 	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
 	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
@@ -23,7 +24,7 @@
 			return toast.error(m['unknownErrorOccurred']());
 		}
 		await createMacroMetrics.mutateAsync({ ...data, userId: currentUser.data.id });
-		toast.success(m['foodDiary.metrics.saved']());
+		markRecentChange('metrics');
 		await goto(resolve('food-diary/goals'));
 	}
 </script>

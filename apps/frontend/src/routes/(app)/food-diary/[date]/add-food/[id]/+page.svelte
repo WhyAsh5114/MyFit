@@ -23,6 +23,7 @@
 	import { nutritionDataToFoodEntryFormData } from '#lib/features/food-diary/nutrition-data/model/mapper.js';
 	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
 	import posthog from 'posthog-js';
+	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
 
 	const currentUser = useCurrentUser();
 	const meals = useMeals(() => currentUser.data?.id ?? '');
@@ -35,7 +36,7 @@
 			toast.error(m['unknownErrorOccurred']());
 			return;
 		}
-		await createFoodEntry.mutateAsync({
+		const created = await createFoodEntry.mutateAsync({
 			data,
 			userId: currentUser.data.id
 		});
@@ -44,7 +45,7 @@
 			product_name: data.productName,
 			quantity_g: data.quantityG
 		});
-		toast.success(m['foodDiary.foodEntryCreated']());
+		markRecentChange(created.id);
 		await goto(resolve(`food-diary/${page.params.date}`));
 	}
 </script>
@@ -64,13 +65,13 @@
 			</Empty.Description>
 		</Empty.Header>
 		<Empty.Content class="grid gap-2">
-			<Button href={resolve(`food-diary/${page.params.date}/add-food/scan`)}
-				><ScanBarcodeIcon />{m['foodDiary.scanBarcode']()}</Button
-			>
+			<Button href={resolve(`food-diary/${page.params.date}/add-food/scan`)}>
+				<ScanBarcodeIcon />{m['foodDiary.scanBarcode']()}
+			</Button>
 
-			<Button variant="secondary" href={resolve(`food-diary/${page.params.date}/add-food`)}
-				><SearchIcon />{m['foodDiary.searchForFoods']()}</Button
-			>
+			<Button variant="secondary" href={resolve(`food-diary/${page.params.date}/add-food`)}>
+				<SearchIcon />{m['foodDiary.searchForFoods']()}
+			</Button>
 
 			<Button variant="outline"><PlusCircleIcon />{m['foodDiary.addManually']()}</Button>
 		</Empty.Content>

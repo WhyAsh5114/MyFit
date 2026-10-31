@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
 	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
 	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
 	import MacroMealsForm from './macro-meals-form.svelte';
@@ -20,7 +21,7 @@
 	async function handleSubmit(data: MealsFormSchema) {
 		if (!currentUser.data) return toast.error(m['unknownErrorOccurred']());
 		await saveMeals.mutateAsync({ meals: data.meals, userId: currentUser.data.id });
-		toast.success('Meals saved');
+		markRecentChange('meals');
 		await goto(resolve('food-diary/goals'));
 	}
 </script>

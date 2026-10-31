@@ -8,9 +8,8 @@
 		ClockIcon,
 		RefreshCcwIcon
 	} from '@lucide/svelte';
-	import * as Popover from '#lib/components/ui/popover/index.js';
+	import * as Drawer from '#lib/components/ui/drawer/index.js';
 	import Badge from '#lib/components/ui/badge/badge.svelte';
-	import { Separator } from '#lib/components/ui/separator/index.js';
 	import Button from '#lib/components/ui/button/button.svelte';
 	import { syncWorkerState } from '#lib/features/sync-worker.svelte.js';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
@@ -83,14 +82,15 @@
 	);
 </script>
 
-<Popover.Root>
-	<Popover.Trigger>
+<Drawer.Root>
+	<Drawer.Trigger>
 		{#snippet child({ props })}
 			<Button
 				variant="ghost"
+				size="icon"
 				{...props}
 				aria-label={m['sync.title']()}
-				class="h-3 w-3 p-0 pr-2 text-muted-foreground"
+				class="text-muted-foreground"
 			>
 				{#if paused}
 					<CloudOffIcon class="size-5" strokeWidth={1.5} />
@@ -105,60 +105,64 @@
 				{/if}
 			</Button>
 		{/snippet}
-	</Popover.Trigger>
-	<Popover.Content align="end" class="flex w-56 flex-col gap-2 p-3">
-		<div class="flex items-center justify-between gap-3">
-			<p class="text-sm font-medium">{m['sync.title']()}</p>
-			{#if !paused}
-				<Badge variant={statusVariant}>{statusLabel}</Badge>
-			{/if}
-		</div>
-		<Separator />
-		{#if paused}
-			<div
-				class="flex items-start gap-2 rounded-md bg-amber-500/10 p-2 text-xs text-amber-700 dark:text-amber-400"
-			>
-				<CloudOffIcon class="mt-0.5 size-3.5 shrink-0" />
-				<span
-					>{paused === 'signedOut' ? m['sync.pausedSignedOut']() : m['sync.pausedOffline']()}</span
-				>
+	</Drawer.Trigger>
+	<Drawer.Content>
+		<Drawer.Header class="text-start">
+			<div class="flex items-center justify-between gap-3">
+				<Drawer.Title>{m['sync.title']()}</Drawer.Title>
+				{#if !paused}
+					<Badge variant={statusVariant}>{statusLabel}</Badge>
+				{/if}
 			</div>
-			{#if paused === 'signedOut'}
-				<Button
-					size="sm"
-					class="w-full"
-					variant="secondary"
-					onclick={() => void redirectToLogin(page.url)}
+			<Drawer.Description class="sr-only">{statusLabel}</Drawer.Description>
+		</Drawer.Header>
+		<div class="flex flex-col gap-3 px-4 pb-2">
+			{#if paused}
+				<div class="flex items-start gap-2 rounded-lg bg-muted p-3 text-sm">
+					<CloudOffIcon class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+					<span>
+						{paused === 'signedOut' ? m['sync.pausedSignedOut']() : m['sync.pausedOffline']()}
+					</span>
+				</div>
+				{#if paused === 'signedOut'}
+					<Button variant="secondary" onclick={() => void redirectToLogin(page.url)}>
+						{m['account.logIn']()}
+					</Button>
+				{/if}
+			{/if}
+			{#if !paused || lastSyncTime}
+				<div class="flex items-center gap-2 text-sm text-muted-foreground">
+					<ClockIcon class="size-4 shrink-0" />
+					<span>{m['sync.lastSynced']()}</span>
+					<span class="ml-auto font-medium text-foreground tabular-nums">{lastSyncDisplay}</span>
+				</div>
+			{/if}
+			{#if lastError && !paused}
+				<div
+					class="flex items-start gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive"
 				>
-					{m['account.logIn']()}
+					<AlertCircleIcon class="mt-0.5 size-4 shrink-0" />
+					<span class="break-all">{lastError}</span>
+				</div>
+			{/if}
+			{#if !paused && hasAnyRetryableUnsynced && syncWorkerState.syncWorker && (syncStatus === 'idle' || syncStatus === 'error')}
+				<Button
+					variant="secondary"
+					onclick={() =>
+						// The worker's `error` event already reports the failure to `lastError`.
+						syncWorkerState.syncWorker?.forceSync().catch(() => {})}
+				>
+					{m['sync.syncNow']()}
+					<RefreshCcwIcon />
 				</Button>
 			{/if}
-		{/if}
-		{#if !paused || lastSyncTime}
-			<div class="flex items-center gap-2 text-xs text-muted-foreground">
-				<ClockIcon class="size-3.5 shrink-0" />
-				<span>{m['sync.lastSynced']()}</span>
-				<span class="ml-auto font-medium tabular-nums">{lastSyncDisplay}</span>
-			</div>
-		{/if}
-		{#if lastError && !paused}
-			<div class="flex items-start gap-2 rounded-md bg-destructive/10 p-2 text-xs text-destructive">
-				<AlertCircleIcon class="mt-0.5 size-3.5 shrink-0" />
-				<span class="break-all">{lastError}</span>
-			</div>
-		{/if}
-		{#if !paused && hasAnyRetryableUnsynced && syncWorkerState.syncWorker && (syncStatus === 'idle' || syncStatus === 'error')}
-			<Button
-				size="sm"
-				class="w-full"
-				variant="secondary"
-				onclick={() =>
-					// The worker's `error` event already reports the failure to `lastError`.
-					syncWorkerState.syncWorker?.forceSync().catch(() => {})}
-			>
-				{m['sync.syncNow']()}
-				<RefreshCcwIcon />
-			</Button>
-		{/if}
-	</Popover.Content>
-</Popover.Root>
+		</div>
+		<Drawer.Footer>
+			<Drawer.Close>
+				{#snippet child({ props })}
+					<Button variant="outline" {...props}>{m['common.close']()}</Button>
+				{/snippet}
+			</Drawer.Close>
+		</Drawer.Footer>
+	</Drawer.Content>
+</Drawer.Root>

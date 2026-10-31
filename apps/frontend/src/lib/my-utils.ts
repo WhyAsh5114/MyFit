@@ -48,3 +48,8 @@ export function round(num: number, decimals = 2): number {
 	const factor = Math.pow(10, decimals);
 	return Math.round(num * factor) / factor;
 }
+
+/** Whole numbers with thousands separators; `decimals` caps the fraction digits. */
+export function formatNumber(num: number, decimals = 0): string {
+	return num.toLocaleString('en-US', { maximumFractionDigits: decimals });
+}

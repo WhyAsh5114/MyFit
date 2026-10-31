@@ -9,7 +9,7 @@
 :root {
 	--radius: 0.625rem;
 
-	--background: oklch(1 0 0);
+	--background: oklch(0.99 0.0001 271.152);
 	--foreground: oklch(0.145 0 0);
 	--shadow-color: rgba(0, 0, 0, 0.3);
 
@@ -22,8 +22,8 @@
 	--primary: oklch(0.572 0.144 253.606);
 	--primary-foreground: oklch(0.97 0.014 254.604);
 
-	--secondary: oklch(0.967 0.001 286.375);
-	--secondary-foreground: oklch(0.21 0.006 285.885);
+	--secondary: oklch(0.97 0 0);
+	--secondary-foreground: oklch(0.205 0 0);
 
 	--muted: oklch(0.97 0 0);
 	--muted-foreground: oklch(0.556 0 0);
@@ -36,6 +36,11 @@
 
 	--warning: oklch(67.357% 0.14425 71.906);
 	--warning-foreground: oklch(0.985 0 89.876);
+
+	/* Status. Fills may be bright; text uses the darker `ink` so it keeps 4.5:1 contrast. */
+	--success: oklch(0.62 0.16 152);
+	--success-ink: oklch(0.45 0.12 152);
+	--warning-ink: oklch(0.5 0.12 65);
 
 	--border: oklch(0.922 0 0);
 	--input: oklch(0.922 0 0);
@@ -77,7 +82,7 @@
 	--primary: oklch(0.572 0.144 253.606);
 	--primary-foreground: oklch(0.97 0.014 254.604);
 
-	--secondary: oklch(0.274 0.006 286.033);
+	--secondary: oklch(0.269 0 0);
 	--secondary-foreground: oklch(0.985 0 0);
 
 	--muted: oklch(0.269 0 0);
@@ -91,6 +96,10 @@
 
 	--warning: oklch(62.35% 0.12832 96.393);
 	--warning-foreground: oklch(0.985 0 89.876);
+
+	--success: oklch(0.7 0.16 152);
+	--success-ink: oklch(0.78 0.15 152);
+	--warning-ink: oklch(0.82 0.14 75);
 
 	--border: oklch(1 0 0 / 10%);
 	--input: oklch(1 0 0 / 15%);
@@ -133,6 +142,9 @@
 	--color-destructive: var(--destructive);
 	--color-warning: var(--warning);
 	--color-warning-foreground: var(--warning-foreground);
+	--color-warning-ink: var(--warning-ink);
+	--color-success: var(--success);
+	--color-success-ink: var(--success-ink);
 	--color-border: var(--border);
 	--color-input: var(--input);
 	--color-ring: var(--ring);
@@ -159,6 +171,29 @@
 	--radius-2xl: calc(var(--radius) * 1.8);
 	--radius-3xl: calc(var(--radius) * 2.2);
 	--radius-4xl: calc(var(--radius) * 2.6);
+
+	/* Holds a blue tint, then fades back to the element's own background. There is no end keyframe, so
+	   the fade lands on whatever background the element has (card or row) instead of on transparent. */
+	--animate-highlight: highlight 1s ease-out;
+	@keyframes highlight {
+		0%,
+		20% {
+			background-color: color-mix(in oklab, var(--primary) 18%, var(--card));
+		}
+	}
+}
+
+/* A 44px hit area around a smaller control. Neighbouring hit areas must not overlap. */
+@utility tap {
+	&::after {
+		content: '';
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: max(100%, 44px);
+		height: max(100%, 44px);
+		transform: translate(-50%, -50%);
+	}
 }
 
 @font-face {
@@ -179,4 +214,30 @@
 	html {
 		@apply font-sans;
 	}
+}
+
+/* Spinners and pulses show that work is happening, so they keep moving. */
+@media (prefers-reduced-motion: reduce) {
+	*:not(.animate-spin, .animate-pulse),
+	*:not(.animate-spin, .animate-pulse)::before,
+	*:not(.animate-spin, .animate-pulse)::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* Sonner's action and cancel buttons are small; give them the same 44px hit area as everything else. */
+[data-sonner-toast] [data-button] {
+	position: relative;
+}
+[data-sonner-toast] [data-button]::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: max(100%, 44px);
+	height: max(100%, 44px);
+	transform: translate(-50%, -50%);
 }

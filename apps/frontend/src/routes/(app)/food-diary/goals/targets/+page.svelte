@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
 	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
 	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
 	import MacroTargetsForm from './macro-targets-form.svelte';
@@ -20,10 +21,10 @@
 
 	async function handleSubmit(data: MacroTargetsSchema) {
 		if (!currentUser.data) {
-			return toast.error('Unable to save targets - user not found');
+			return toast.error(m['unknownErrorOccurred']());
 		}
 		await createMacroTargets.mutateAsync({ ...data, userId: currentUser.data.id });
-		toast.success('Targets saved');
+		markRecentChange('targets');
 		await goto(resolve('food-diary/goals'));
 	}
 </script>

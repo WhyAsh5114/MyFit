@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '#lib/paraglide/messages.js';
 	import { Badge } from '#lib/components/ui/badge/index.js';
 	import * as Bubble from '#lib/components/ui/bubble/index.js';
 	import * as Card from '#lib/components/ui/card/index.js';
@@ -40,19 +41,22 @@
 					<Questionnaire.Title class="text-sm">{part.input.message}</Questionnaire.Title>
 					<Questionnaire.Choices class="gap-1.5">
 						{#each choices as choice (choice)}
-							<Questionnaire.Choice value={choice} class="min-h-0 gap-2 px-3 py-1.5 sm:min-h-0">
+							<Questionnaire.Choice
+								value={choice}
+								class="min-h-11 items-center gap-2 px-3 py-1 sm:min-h-11"
+							>
 								{choice}
 							</Questionnaire.Choice>
 						{/each}
 						<Questionnaire.Input
-							aria-label="Something else"
-							placeholder="Something else..."
-							class="min-h-0 text-sm"
+							aria-label={m['chat.somethingElse']()}
+							placeholder={m['chat.somethingElsePlaceholder']()}
+							class="min-h-11 text-sm"
 						/>
 					</Questionnaire.Choices>
 				</Questionnaire.Item>
 				<Questionnaire.Actions>
-					<Questionnaire.Submit size="sm" class="min-h-0">Send</Questionnaire.Submit>
+					<Questionnaire.Submit size="sm" class="min-h-11">{m['chat.send']()}</Questionnaire.Submit>
 				</Questionnaire.Actions>
 			</Questionnaire.Root>
 		</Card.Content>
@@ -62,7 +66,7 @@
 	<Bubble.Root variant="ghost">
 		<Bubble.Content>{part.input.message}</Bubble.Content>
 	</Bubble.Root>
-	<Badge variant="outline" class="w-fit"><XIcon /> Skipped</Badge>
+	<Badge variant="outline" class="w-fit"><XIcon /> {m['chat.skipped']()}</Badge>
 {:else if part.state === 'output-available'}
 	<!-- Answered: the question stays as context and the answer reads as the user's reply. -->
 	<Bubble.Root variant="ghost">

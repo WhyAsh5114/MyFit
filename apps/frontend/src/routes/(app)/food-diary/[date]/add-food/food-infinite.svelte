@@ -132,8 +132,8 @@
 
 			{#snippet error(retry)}
 				<div class="flex flex-col items-center justify-center gap-2 py-4">
-					<p>Error loading foods</p>
-					<Button onclick={retry} variant="outline">Retry</Button>
+					<p>{m['foodDiary.errorLoadingFoods']()}</p>
+					<Button onclick={retry} variant="outline">{m['common.retry']()}</Button>
 				</div>
 			{/snippet}
 		</InfiniteLoader>

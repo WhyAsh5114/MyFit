@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '#lib/paraglide/messages.js';
 	import * as Bubble from '#lib/components/ui/bubble/index.js';
 	import { Badge } from '#lib/components/ui/badge/index.js';
 	import Button from '#lib/components/ui/button/button.svelte';
@@ -9,7 +10,7 @@
 	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
 	import { CheckIcon, XIcon } from '@lucide/svelte';
 	import type { MyUIMessage } from '@myfit/api';
-	import MacrosPieChart from '../../../food-diary/[date]/components/add-edit-entries/macros-pie-chart.svelte';
+	import FoodCard from '../../../food-diary/[date]/components/add-edit-entries/food-card.svelte';
 	import { chat } from '../chat.svelte';
 
 	type CreateFoodEntryPart = Extract<
@@ -23,16 +24,6 @@
 
 	const createFoodEntry = useCreateFoodEntry();
 	const currentUser = useCurrentUser();
-
-	/** A nutrient for the whole portion, from its per-100g value. */
-	const portion = (per100g: number | undefined) =>
-		((per100g ?? 0) / 100) * (part.input?.quantityG ?? 0);
-	const grams = (per100g: number | undefined) => `${Math.round(portion(per100g) * 10) / 10}g`;
-
-	const kcal = $derived(portion(part.input?.energyKcal_100g));
-	const protein = $derived(portion(part.input?.proteinsG_100g));
-	const carbs = $derived(portion(part.input?.carbohydratesG_100g));
-	const fat = $derived(portion(part.input?.fatG_100g));
 
 	async function log() {
 		if (!currentUser.data?.id || !part.input) return;
@@ -73,50 +64,51 @@
 {#if part.state === 'input-streaming'}
 	<Bubble.Root variant="ghost">
 		<Bubble.Content class="flex items-center gap-2 text-muted-foreground">
-			<Spinner /> Estimating nutrition...
+			<Spinner />
+			{m['chat.estimating']()}
 		</Bubble.Content>
 	</Bubble.Root>
 {:else if part.state === 'input-available' || part.state === 'output-available'}
 	<Card.Root size="sm" class="w-full max-w-sm shadow-sm">
 		<Card.Header>
 			<Card.Title>{part.input.name}</Card.Title>
-			<Card.Description>{part.input.quantityG}g · {Math.round(kcal)} kcal</Card.Description>
+			<Card.Description>{part.input.quantityG} g</Card.Description>
 			{#if part.state === 'output-available' || skipped}
 				<Card.Action>
 					{#if part.state === 'output-available' && part.output === 'created'}
-						<Badge variant="secondary"><CheckIcon /> Logged</Badge>
+						<Badge variant="secondary"><CheckIcon /> {m['chat.logged']()}</Badge>
 					{:else if skipped}
-						<Badge variant="outline"><XIcon /> Skipped</Badge>
+						<Badge variant="outline"><XIcon /> {m['chat.skipped']()}</Badge>
 					{:else}
-						<Badge variant="outline"><XIcon /> Cancelled</Badge>
+						<Badge variant="outline"><XIcon /> {m['chat.cancelled']()}</Badge>
 					{/if}
 				</Card.Action>
 			{/if}
 		</Card.Header>
-		<Card.Content class="flex items-center gap-4">
-			<MacrosPieChart {kcal} {protein} {carbs} {fat} />
-			<dl class="grid flex-1 grid-cols-[auto_1fr] gap-x-6 gap-y-0.5 text-sm">
-				<dt class="text-muted-foreground">Protein</dt>
-				<dd class="text-right">{grams(part.input.proteinsG_100g)}</dd>
-				<dt class="text-muted-foreground">Carbs</dt>
-				<dd class="text-right">{grams(part.input.carbohydratesG_100g)}</dd>
-				<dt class="text-muted-foreground">Fat</dt>
-				<dd class="text-right">{grams(part.input.fatG_100g)}</dd>
-			</dl>
-		</Card.Content>
+		<FoodCard
+			food={{
+				productName: part.input.name,
+				brands: null,
+				energyKcal_100g: part.input.energyKcal_100g,
+				carbohydratesG_100g: part.input.carbohydratesG_100g,
+				fatG_100g: part.input.fatG_100g,
+				proteinsG_100g: part.input.proteinsG_100g
+			}}
+			quantityG={part.input.quantityG}
+		/>
 		{#if part.state === 'input-available' && !skipped}
 			<Card.Footer class="grid grid-cols-2 gap-2">
 				<Button variant="outline" disabled={createFoodEntry.isPending} onclick={cancel}>
-					Cancel
+					{m['common.cancel']()}
 				</Button>
 				<Button disabled={createFoodEntry.isPending} onclick={log}>
-					{#if createFoodEntry.isPending}<Spinner />{:else}Log{/if}
+					{#if createFoodEntry.isPending}<Spinner />{:else}{m['common.log']()}{/if}
 				</Button>
 			</Card.Footer>
 		{/if}
 	</Card.Root>
 {:else if part.state === 'output-error'}
 	<Bubble.Root variant="destructive">
-		<Bubble.Content>Failed to create the food entry.</Bubble.Content>
+		<Bubble.Content>{m['chat.createFailed']()}</Bubble.Content>
 	</Bubble.Root>
 {/if}

@@ -127,12 +127,12 @@ A macro bar or letter always keeps its identity color. Status never recolors it;
 
 There are two nutrition statuses and no red:
 
-| Status     | Color           | Icon                | Words                                   |
-| ---------- | --------------- | ------------------- | --------------------------------------- |
-| On target  | success (green) | `✓`                 | On target                               |
-| Off target | warning (amber) | `▲` over, `▼` under | A bit over / Over / A bit under / Under |
+| Status     | Color           | Icon                |
+| ---------- | --------------- | ------------------- |
+| On target  | success (green) | `✓`                 |
+| Off target | warning (amber) | `▲` over, `▼` under |
 
-- Severity is carried by the **word and icon**, not by escalating to red.
+- The icon and color carry the status; the number beside it (`912 kcal over`) carries how far. There is no separate badge, and severity never escalates to red.
 - Text uses the darker **ink** tokens, fills use the brighter tokens. Today's `--warning` as small text on white is roughly 2.5:1, below the 4.5:1 minimum, so add `--success-ink` and `--warning-ink` and use them for text.
 - Starting values, to confirm in implementation: success `oklch(0.62 0.16 152)` fill, `oklch(0.45 0.12 152)` ink; warning ink `oklch(0.5 0.12 65)` light, `oklch(0.82 0.14 75)` dark.
 - Red (`--destructive`) is for errors and destructive actions only.
@@ -249,8 +249,8 @@ Applied on 2026-10-30. What changed, and what is still open.
 - 44px hit areas: the `tap` utility is on every `Button` size, breadcrumb links, select triggers and the chat disclosure. Inputs, input groups, OTP slots, menu rows, toggles and sidebar rows are 44px tall. Switch and radio hit areas are 44px. Empty meal and activity rows are 44px or taller.
 - The sync panel is a bottom drawer with a 44px trigger and a visible Close button. Offline is shown as a neutral note, not an alarm.
 - The drawer content was positioned off screen on mobile (`fixed relative` in `drawer-content.svelte`). Fixed, which also repairs the account dialogs on phones.
-- Status colors: `--success`, `--success-ink` and `--warning-ink` exist. The calorie bar uses ink for text, an arrow when off target, a tick at the goal once passed, and a status chip for finished days. The rules live in `lib/domain/nutrition/status.ts` with tests.
-- Feedback: creating or editing an entry marks it (`recent-change.svelte.ts`) and the diary highlights and scrolls to it; the goals screen shows `Saved` on the card you just changed. Deleting an entry shows an Undo toast that restores it. Success toasts are gone.
+- Status colors: `--success`, `--success-ink` and `--warning-ink` exist. The calorie bar uses ink for text, a check when on target, an arrow when off target, and a tick at the goal once passed. The rules live in `lib/domain/nutrition/status.ts` with tests.
+- Feedback: creating or editing an entry marks it (`recent-change.svelte.ts`) and the diary highlights and scrolls to it; the goals screen highlights the card you just changed the same way. Deleting an entry shows an Undo toast that restores it. Success toasts are gone.
 - Paraglide: toast, chat, scan, search, targets, breadcrumb and macro-name strings. Calorie numbers have thousands separators.
 - Reduced motion is respected globally; spinners keep moving.
 - The goals list no longer nests a button inside a link, and the calorie bar no longer nests a link inside a link.

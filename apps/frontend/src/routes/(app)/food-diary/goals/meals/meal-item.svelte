@@ -29,7 +29,7 @@
 
 <Item.Root class={cn('bg-card p-2', className)}>
 	<Item.Actions>
-		<div {@attach gripAttachment}>
+		<div {@attach gripAttachment} class="tap relative">
 			<Button class="pointer-events-none" size="icon-sm" variant="secondary">
 				<GripVerticalIcon class="size-4" />
 			</Button>

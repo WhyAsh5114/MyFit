@@ -23,8 +23,11 @@
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
 	import { foodEntryToFoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/mapper.js';
 	import { useDeleteFoodEntry } from '#lib/features/food-diary/food-entry/mutations/delete.js';
+	import { useCreateFoodEntry } from '#lib/features/food-diary/food-entry/mutations/create.js';
 	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
 	import posthog from 'posthog-js';
+	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
+	import type { Row } from '@myfit/shared/client';
 
 	const currentUser = useCurrentUser();
 	const meals = useMeals(() => currentUser.data?.id ?? '');
@@ -34,6 +37,7 @@
 	}));
 
 	const deleteFoodEntry = useDeleteFoodEntry();
+	const createFoodEntry = useCreateFoodEntry();
 	const updateFoodEntry = useUpdateFoodEntry();
 
 	async function handleSubmit(data: FoodEntryFormSchema) {
@@ -50,8 +54,19 @@
 			product_name: data.productName,
 			quantity_g: data.quantityG
 		});
-		toast.success(m['foodDiary.foodEntryUpdated']());
+		markRecentChange(page.params.entryId);
 		await goto(resolve(`food-diary/${page.params.date}`));
+	}
+
+	/**
+	 * Puts the entry back and highlights it on the diary the user has returned to. It is stored as a
+	 * new entry, so the old id is left behind.
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- the id is dropped on purpose
+	async function undoDelete({ id, ...entry }: Row<'FoodEntry'>) {
+		const restored = await createFoodEntry.mutateAsync({ data: entry, userId: entry.userId });
+		posthog.capture('food_entry_restored');
+		markRecentChange(restored.id);
 	}
 
 	async function deleteEntry() {
@@ -60,12 +75,17 @@
 			return;
 		}
 
-		await deleteFoodEntry.mutateAsync({
+		const deleted = await deleteFoodEntry.mutateAsync({
 			id: page.params.entryId,
 			userId: currentUser.data.id
 		});
 		posthog.capture('food_entry_deleted');
-		toast.success(m['foodDiary.foodEntryDeleted']());
+		if (deleted) {
+			toast(m['foodDiary.foodEntryDeleted'](), {
+				duration: 6000,
+				action: { label: m['common.undo'](), onClick: () => void undoDelete(deleted) }
+			});
+		}
 		await goto(resolve(`food-diary/${page.params.date}`));
 	}
 </script>
@@ -85,13 +105,13 @@
 			</Empty.Description>
 		</Empty.Header>
 		<Empty.Content class="grid gap-2">
-			<Button href={resolve(`food-diary/${page.params.date}/add-food/scan`)}
-				><ScanBarcodeIcon />{m['foodDiary.scanBarcode']()}</Button
-			>
+			<Button href={resolve(`food-diary/${page.params.date}/add-food/scan`)}>
+				<ScanBarcodeIcon />{m['foodDiary.scanBarcode']()}
+			</Button>
 
-			<Button variant="secondary" href={resolve(`food-diary/${page.params.date}/add-food`)}
-				><SearchIcon />{m['foodDiary.searchForFoods']()}</Button
-			>
+			<Button variant="secondary" href={resolve(`food-diary/${page.params.date}/add-food`)}>
+				<SearchIcon />{m['foodDiary.searchForFoods']()}
+			</Button>
 
 			<Button variant="outline"><PlusCircleIcon />{m['foodDiary.addManually']()}</Button>
 		</Empty.Content>

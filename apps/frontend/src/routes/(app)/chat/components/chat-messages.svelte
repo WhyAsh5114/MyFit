@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '#lib/paraglide/messages.js';
 	import * as Bubble from '#lib/components/ui/bubble/index.js';
 	import Button from '#lib/components/ui/button/button.svelte';
 	import * as Empty from '#lib/components/ui/empty/index.js';
@@ -24,9 +25,9 @@
 							<Empty.Media variant="icon">
 								<BotMessageSquareIcon />
 							</Empty.Media>
-							<Empty.Title>Hey there!</Empty.Title>
+							<Empty.Title>{m['chat.greeting']()}</Empty.Title>
 							<Empty.Description>
-								Tell me what you ate, or send a photo, and I'll log it for you.
+								{m['chat.greetingHint']()}
 							</Empty.Description>
 						</Empty.Header>
 					</Empty.Root>
@@ -35,10 +36,10 @@
 					<Message.Root>
 						<Message.Content>
 							<Bubble.Root variant="destructive">
-								<Bubble.Content>Something went wrong, so I couldn't answer that.</Bubble.Content>
+								<Bubble.Content>{m['chat.error']()}</Bubble.Content>
 							</Bubble.Root>
 							<Button class="w-fit" size="sm" variant="outline" onclick={() => chat.regenerate()}>
-								Try again
+								{m['chat.tryAgain']()}
 							</Button>
 						</Message.Content>
 					</Message.Root>

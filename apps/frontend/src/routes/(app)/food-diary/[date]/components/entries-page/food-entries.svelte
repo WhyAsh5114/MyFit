@@ -6,6 +6,7 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { cn } from '#lib/utils.js';
+	import { recentChange, revealIfRecent } from '#lib/features/recent-change.svelte.js';
 
 	let { foodEntries, meals = [] }: { foodEntries?: FoodEntryWithMeal[]; meals?: Row<'Meal'>[] } =
 		$props();
@@ -63,7 +64,7 @@
 		<div class="flex flex-col rounded-lg border shadow-sm">
 			<Item.Root
 				class={cn('rounded-none rounded-t-lg bg-card py-3', {
-					'rounded-b-lg py-2': group.entries.length === 0
+					'rounded-b-lg': group.entries.length === 0
 				})}
 			>
 				{#snippet child({ props })}
@@ -106,13 +107,15 @@
 					<Item.Root
 						class={cn('rounded-none border-0 border-border py-3', {
 							'rounded-b-lg': index === group.entries.length - 1,
-							'border-b': index < group.entries.length - 1
+							'border-b': index < group.entries.length - 1,
+							'animate-highlight': recentChange.id === foodEntry.id
 						})}
 					>
 						{#snippet child({ props })}
 							<a
 								href={resolve(`food-diary/${page.params.date}/edit-food/${foodEntry.id}`)}
 								{...props}
+								{@attach revealIfRecent(foodEntry.id)}
 							>
 								<Item.Content>
 									<Item.Title class="flex w-full">

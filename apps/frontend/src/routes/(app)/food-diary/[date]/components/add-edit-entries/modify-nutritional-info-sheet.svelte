@@ -78,7 +78,7 @@
 				{m['foodDiary.nutritionAllValuesPerHundred']()}
 			</div>
 		</Sheet.Header>
-		<span class="mb-2 ml-4 font-semibold">{m['foodDiary.nutritionRequiredFields']()}</span>
+		<span class="ml-4 font-semibold">{m['foodDiary.nutritionRequiredFields']()}</span>
 		<div class="grid grid-cols-2 gap-2 px-4">
 			{#each REQUIRED_NUTRIENTS as nutrient (nutrient.key)}
 				<Form.Field {form} name={nutrient.key}>
@@ -102,7 +102,7 @@
 				</Form.Field>
 			{/each}
 		</div>
-		<span class="my-2 ml-4 font-semibold">{m['foodDiary.nutritionOptionalFields']()}</span>
+		<span class="ml-4 font-semibold">{m['foodDiary.nutritionOptionalFields']()}</span>
 		<div class="mb-2 no-scrollbar min-h-0 flex-1 scroll-fade-y overflow-y-auto px-4">
 			<div class="grid grid-cols-2 gap-2">
 				<Form.Field {form} name="servingSize">

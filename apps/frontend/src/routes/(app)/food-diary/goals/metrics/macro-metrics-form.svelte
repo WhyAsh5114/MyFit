@@ -155,9 +155,14 @@
 						{#snippet children({ props })}
 							<Form.Label
 								for="gender-male"
-								class="grid place-items-center rounded-md border-2 border-muted bg-secondary p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary"
+								class="relative flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-md border border-input px-4 py-3 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/10 has-data-[state=checked]:text-primary dark:bg-input/30 dark:has-data-[state=checked]:bg-primary/10"
 							>
-								<RadioGroup.Item value="Male" class="sr-only" aria-label="Male" {...props} />
+								<RadioGroup.Item
+									value="Male"
+									class="absolute inset-0 size-full opacity-0"
+									aria-label="Male"
+									{...props}
+								/>
 								{m['foodDiary.metrics.male']()}
 							</Form.Label>
 						{/snippet}
@@ -166,9 +171,14 @@
 						{#snippet children({ props })}
 							<Form.Label
 								for="gender-female"
-								class="grid place-items-center rounded-md border-2 border-muted bg-secondary p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary"
+								class="relative flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-md border border-input px-4 py-3 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/10 has-data-[state=checked]:text-primary dark:bg-input/30 dark:has-data-[state=checked]:bg-primary/10"
 							>
-								<RadioGroup.Item value="Female" class="sr-only" aria-label="Female" {...props} />
+								<RadioGroup.Item
+									value="Female"
+									class="absolute inset-0 size-full opacity-0"
+									aria-label="Female"
+									{...props}
+								/>
 								{m['foodDiary.metrics.female']()}
 							</Form.Label>
 						{/snippet}
@@ -180,7 +190,7 @@
 
 	<Card.Root>
 		<Card.Header>
-			<Card.Description>Basal Metabolic Rate (BMR)</Card.Description>
+			<Card.Description>{m['foodDiary.metrics.bmr']()}</Card.Description>
 			<Card.Title class="text-2xl">
 				{@const bmr = calculateBMR($formData)}
 				{bmr ? `${bmr.toFixed()} kcal` : 'Fill in metrics to calculate'}
