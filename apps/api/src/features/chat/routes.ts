@@ -17,7 +17,12 @@ const chatRoutes = new Hono()
 	 * Accepts an array of messages and returns a stream of text responses
 	 */
 	.post('/', authMiddleware, async (c) => {
-		const { messages } = await c.req.json();
+		const { messages, today } = await c.req.json();
+		// The app sends the user's local date, because the server's can be a different day.
+		const day =
+			typeof today === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(today)
+				? today
+				: new Date().toISOString().slice(0, 10);
 
 		const result = streamText({
 			model,
@@ -25,7 +30,7 @@ const chatRoutes = new Hono()
 			messages: await convertToModelMessages(resolveMessages(messages), {
 				ignoreIncompleteToolCalls: true
 			}),
-			instructions: systemPrompt,
+			instructions: `${systemPrompt}\n\nThe user's current date is ${day}.`,
 			tools
 		});
 

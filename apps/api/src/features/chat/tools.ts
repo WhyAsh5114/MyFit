@@ -16,6 +16,16 @@ const coercedOptionalNutrientsShape = Object.fromEntries(
 	])
 ) as { [K in OptionalNutrientKey]: z.ZodNullable<z.ZodOptional<z.ZodNumber>> };
 
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use the form YYYY-MM-DD.');
+
+/** Amounts for the quantity eaten, already scaled from the per-100g values. */
+const eatenNutrients = {
+	kcal: z.number(),
+	carbsG: z.number(),
+	fatG: z.number(),
+	proteinG: z.number()
+};
+
 export const tools = {
 	requireClarification: {
 		description: 'Ask the user a clarifying question with multiple choice answers.',
@@ -36,6 +46,32 @@ export const tools = {
 			...coercedOptionalNutrientsShape
 		}),
 		outputSchema: z.string()
+	},
+	readFoodEntries: {
+		description:
+			"Read the user's logged food entries, with the nutrients of each and the totals for each day. The app reads them on the user's device. Use it to answer questions about what they ate, their calories or macros, or how much is left, instead of guessing.",
+		inputSchema: z.object({
+			from: isoDate.describe("First day to read, as the user's local date."),
+			to: isoDate
+				.optional()
+				.describe('Last day to read, inclusive. Defaults to `from`. At most 31 days after it.')
+		}),
+		outputSchema: z.object({
+			days: z.array(
+				z.object({
+					date: isoDate,
+					entries: z.array(
+						z.object({
+							name: z.string(),
+							quantityG: z.number(),
+							meal: z.string().nullable(),
+							...eatenNutrients
+						})
+					),
+					totals: z.object(eatenNutrients)
+				})
+			)
+		})
 	}
 };
 

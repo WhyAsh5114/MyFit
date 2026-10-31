@@ -84,6 +84,26 @@ async function mockChat(page: Page) {
 
 		const last = (request.postDataJSON() as { messages: { role: string }[] }).messages.at(-1)!;
 		const json = JSON.stringify(last);
+		if (/tool-readFoodEntries/.test(json)) {
+			return route.fulfill(
+				turn(
+					...text(
+						'tr',
+						'Today you have had **3 foods**, about **782 kcal**:\n\n- Greek yogurt\n- Rolled oats\n- Grilled chicken sandwich'
+					)
+				)
+			);
+		}
+		if (last.role === 'user' && /What did I eat/.test(json)) {
+			return route.fulfill(
+				turn({
+					type: 'tool-input-available',
+					toolCallId: 'read-1',
+					toolName: 'readFoodEntries',
+					input: { from: new Date().toLocaleDateString('en-CA') }
+				})
+			);
+		}
 		if (/"output":"created"/.test(json)) {
 			return route.fulfill(
 				turn(
@@ -275,6 +295,16 @@ test('capture every screen', async ({ page }, testInfo) => {
 	for (const food of SAMPLE_FOODS) await logFromChat(`I ate ${food.name}`);
 	await go('/chat');
 	await shot('chat-empty', 'Chat', 'Chat, empty', '/chat');
+	await send('What did I eat today?');
+	await page.getByText('Today you have had').waitFor();
+	await page.waitForTimeout(600);
+	await shot(
+		'chat-read',
+		'Chat',
+		'Reading the diary',
+		'The app reads the entries on the device and the reply uses them'
+	);
+	await page.getByRole('button', { name: 'Start a new chat' }).click();
 	await send('Quick question: how much protein per meal?');
 	await page.getByText('Your protein target').waitFor();
 	await page.waitForTimeout(600);

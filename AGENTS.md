@@ -8,6 +8,7 @@ MyFit is a **local-first, mobile-first fitness SPA** built with SvelteKit + Capa
 - **Local-first data.** All user data (food entries, metrics, targets, preferences) is stored in IndexedDB through the Prisma IDB client (`@prisma-idb/client-idb`), typed by the shared schema in `packages/shared`. Writes go to IDB first; the sync extension records each `orm.*` write in an outbox, and the sync worker pushes it to the remote PostgreSQL database in the background.
 - **Remote data is read-only from the client.** Nutrition food data is fetched from the Hono API via `apiClient` and cached in TanStack Query — it is never written locally.
 - **Local data is loaded by routes.** Each page's `load` reads IndexedDB and returns the data, so a page renders whole instead of through skeletons. Mutations and sync pulls rerun the affected `load`s with `invalidateKeys`. TanStack Query is only for remote and device reads; writes go through `useMutation` (`#lib/data/mutation.svelte.ts`).
+- **Chat tools run on the device.** The chat endpoint declares tools without an `execute`, and the app answers them from `onToolCall` (`chat/components/chat.svelte.ts`). `readFoodEntries` reads the local diary there, so the server only sees the result. The app sends the user's local date with each request, because the server's can be another day.
 - **Two clients, two purposes:**
   - `getDb()` (`#lib/clients/idb-client`) → `DbClient` (IndexedDB) — all user data reads/writes through `const { orm } = await getDb()`
   - `apiClient` → Hono RPC client — nutrition data search/lookup only

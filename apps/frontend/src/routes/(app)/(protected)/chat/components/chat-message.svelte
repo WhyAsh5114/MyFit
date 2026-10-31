@@ -5,6 +5,7 @@
 	import ReasoningPart from './parts/reasoning.svelte';
 	import TextPart from './parts/text.svelte';
 	import CreateFoodEntryPart from './parts/tool-create-food-entry.svelte';
+	import ReadFoodEntriesPart from './parts/tool-read-food-entries.svelte';
 	import RequireClarificationPart from './parts/tool-require-clarification.svelte';
 
 	type Part = MyUIMessage['parts'][number];
@@ -28,6 +29,8 @@
 				<RequireClarificationPart part={part as PartOf<'tool-requireClarification'>} {active} />
 			{:else if part.type === 'tool-createFoodEntry'}
 				<CreateFoodEntryPart part={part as PartOf<'tool-createFoodEntry'>} {active} />
+			{:else if part.type === 'tool-readFoodEntries'}
+				<ReadFoodEntriesPart part={part as PartOf<'tool-readFoodEntries'>} />
 			{/if}
 		{/each}
 	</Message.Content>

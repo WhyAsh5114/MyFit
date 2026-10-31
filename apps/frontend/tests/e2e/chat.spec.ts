@@ -71,3 +71,85 @@ test('the chat shows a streamed question and sends the chosen answer back', asyn
 		answered.some((part) => part.type === 'tool-requireClarification' && part.output === 'Large')
 	).toBe(true);
 });
+
+test('the chat reads the diary on the device and answers from it', async ({ page }) => {
+	const today = new Date().toLocaleDateString('en-CA');
+	const yogurt = {
+		name: 'Greek yogurt',
+		quantityG: 150,
+		energyKcal_100g: 65,
+		carbohydratesG_100g: 4,
+		fatG_100g: 0.4,
+		proteinsG_100g: 10
+	};
+	type Body = {
+		today?: string;
+		messages: { role: string; parts: { type: string; output?: unknown }[] }[];
+	};
+	const bodies: Body[] = [];
+
+	await page.route(`${API}/api/chat`, async (route) => {
+		const request = route.request();
+		if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: CORS });
+		const body = request.postDataJSON() as Body;
+		bodies.push(body);
+		const json = JSON.stringify(body.messages.at(-1));
+		const start = [{ type: 'start' }, { type: 'start-step' }];
+		const end = [{ type: 'finish-step' }, { type: 'finish' }];
+		const reply = (text: string) =>
+			route.fulfill(
+				stream(
+					...start,
+					{ type: 'text-start', id: 't' },
+					{ type: 'text-delta', id: 't', delta: text },
+					{ type: 'text-end', id: 't' },
+					...end
+				)
+			);
+		if (json.includes('"output":"created"')) return reply('Logged.');
+		if (json.includes('tool-readFoodEntries')) {
+			return route.fulfill(
+				stream(
+					...start,
+					{ type: 'text-start', id: 't' },
+					{ type: 'text-delta', id: 't', delta: 'You had a Greek yogurt.' },
+					{ type: 'text-end', id: 't' },
+					...end
+				)
+			);
+		}
+		const tool = json.includes('what did I eat')
+			? { toolName: 'readFoodEntries', input: { from: today } }
+			: { toolName: 'createFoodEntry', input: yogurt };
+		return route.fulfill(
+			stream(
+				...start,
+				{ type: 'tool-input-available', toolCallId: `call_${bodies.length}`, ...tool },
+				...end
+			)
+		);
+	});
+
+	await signUp(page);
+	await page.goto('/chat');
+	const message = page.getByPlaceholder('Tell me what you ate...');
+	await message.fill('I ate yogurt');
+	await page.getByRole('button', { name: 'Send' }).click();
+	await page.getByRole('button', { name: 'Log', exact: true }).click();
+	await expect(page.getByText('Logged', { exact: true })).toBeVisible();
+
+	await message.fill('what did I eat today?');
+	await page.getByRole('button', { name: 'Send' }).click();
+	await expect(page.getByText('You had a Greek yogurt.')).toBeVisible();
+	await expect(page.getByText(/Read your diary/)).toBeVisible();
+
+	// The device answered the call, and the server only ever saw the result.
+	const last = bodies.at(-1)!;
+	expect(last.today).toBe(today);
+	const read = last.messages
+		.flatMap((m) => m.parts)
+		.find((part) => part.type === 'tool-readFoodEntries');
+	expect(read?.output).toMatchObject({
+		days: [{ date: today, entries: [{ name: 'Greek yogurt', kcal: 97.5 }], totals: { kcal: 97.5 } }]
+	});
+});
