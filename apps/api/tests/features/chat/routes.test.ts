@@ -64,12 +64,13 @@ afterAll(() => new Promise((resolve) => provider.close(resolve)));
 test('the chat route streams a tool call, then continues with the answer', async () => {
 	const { chatRoutes } = await import('../../../src/features/chat/routes.ts');
 	const { systemPrompt } = await import('../../../src/features/chat/system-prompt.ts');
+	const { tools } = await import('../../../src/features/chat/tools.ts');
 
 	const ask = (messages: unknown[]) =>
 		chatRoutes.request('/', {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify({ messages })
+			body: JSON.stringify({ messages, today: '2026-10-31' })
 		});
 	const user = {
 		id: 'u1',
@@ -84,9 +85,13 @@ test('the chat route streams a tool call, then continues with the answer', async
 	expect(firstStream).toContain('"type":"tool-input-available"');
 	expect(firstStream).toContain('"toolName":"requireClarification"');
 
-	// The system prompt reaches the provider as the first message, and the tools are declared.
-	expect(requests[0].messages[0]).toEqual({ role: 'system', content: systemPrompt });
-	expect(requests[0].tools).toHaveLength(2);
+	// The system prompt, followed by the user's date from the app, reaches the provider as the first
+	// message, and every tool is declared.
+	expect(requests[0].messages[0]).toEqual({
+		role: 'system',
+		content: `${systemPrompt}\n\nThe user's current date is 2026-10-31.`
+	});
+	expect(requests[0].tools).toHaveLength(Object.keys(tools).length);
 
 	// The client sends the answered tool call back, which has to convert to a tool message.
 	const answered = {
