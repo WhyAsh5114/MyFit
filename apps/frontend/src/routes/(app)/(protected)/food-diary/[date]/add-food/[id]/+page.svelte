@@ -67,7 +67,9 @@
 				<SearchIcon />{m['foodDiary.searchForFoods']()}
 			</Button>
 
-			<Button variant="outline"><PlusCircleIcon />{m['foodDiary.addManually']()}</Button>
+			<Button variant="outline" href={resolve(`food-diary/${page.params.date}/add-food/manual`)}>
+				<PlusCircleIcon />{m['foodDiary.addManually']()}
+			</Button>
 		</Empty.Content>
 	</Empty.Root>
 {:else}

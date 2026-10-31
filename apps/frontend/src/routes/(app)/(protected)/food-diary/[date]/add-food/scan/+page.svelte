@@ -33,7 +33,9 @@
 	const nutritionDataByCode = useNutritionDataByCode(() => codeToSearch);
 
 	async function initializeCameraOptions() {
-		await navigator.mediaDevices.getUserMedia({ video: true });
+		// Asking is what unlocks the camera labels. Stop the stream at once, or the camera stays on.
+		const permission = await navigator.mediaDevices.getUserMedia({ video: true });
+		permission.getTracks().forEach((track) => track.stop());
 		const devices = await navigator.mediaDevices.enumerateDevices();
 		const videoDevices = devices.filter(({ kind }) => kind === 'videoinput');
 
