@@ -1,7 +1,7 @@
 import type { HandleClientError } from '@sveltejs/kit/hooks';
 import { Capacitor } from '@capacitor/core';
 import { dev } from '$app/env';
-import { registerServiceWorker } from '#lib/features/service-worker.js';
+import { registerServiceWorker } from '#lib/features/service-worker.svelte.js';
 import posthog from 'posthog-js';
 import { mount } from 'svelte';
 import AccountRoot from '#lib/components/account/account-root.svelte';

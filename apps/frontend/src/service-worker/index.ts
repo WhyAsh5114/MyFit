@@ -29,16 +29,16 @@ const unhashed = [
 // navigation fallback below are answered by the worker.
 const serwist = new Serwist({
 	precacheEntries: [...hashed, ...unhashed],
-	// A new worker takes over as soon as it installs, so a deploy reaches open tabs without
-	// waiting for every tab to close. The client offers a reload when this happens.
-	skipWaiting: true,
+	// A new worker waits after it installs, so a page keeps the build it started with. The client
+	// asks it to take over (the message below) once the user accepts the update.
+	skipWaiting: false,
 	clientsClaim: true
 });
 
 serwist.registerRoute(new NavigationRoute(serwist.createHandlerBoundToUrl(SHELL)));
 serwist.addEventListeners();
 
-// Kept for safety against the worker being replaced mid-install by an older build.
+// The client sends this when the user accepts an update.
 sw.addEventListener('message', (event) => {
 	if (event.data?.type === 'SKIP_WAITING') void sw.skipWaiting();
 });
