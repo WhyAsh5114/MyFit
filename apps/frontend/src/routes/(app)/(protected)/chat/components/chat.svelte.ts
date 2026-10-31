@@ -5,6 +5,7 @@ import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } fro
 import { PUBLIC_API_URL } from '$app/env/public';
 import { page } from '$app/state';
 import type { MyUIMessage } from '@myfit/api';
+import { onAccountChange } from '#lib/services/account/account-session.svelte.js';
 import { readFoodEntries } from './tools/read-food-entries';
 
 export const chat = $state(
@@ -56,3 +57,7 @@ export function resetChat() {
 	}
 	chat.messages = [];
 }
+
+// The conversation holds the diary's content, so another account must not see it. It is a module
+// singleton and the page isn't reloaded on a logout or a switch.
+onAccountChange(resetChat);

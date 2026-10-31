@@ -16,6 +16,20 @@ export const accountSession = $state({
 
 export const accountKeys = { owner: ['account'] as const };
 
+let accountChangeListeners: Array<() => void> = [];
+
+/**
+ * Runs `listener` when the account on screen is replaced by another one, or signed out, so state
+ * kept outside the local database (such as the chat) never shows the previous account's content.
+ * Returns the function that stops listening.
+ */
+export function onAccountChange(listener: () => void) {
+	accountChangeListeners.push(listener);
+	return () => {
+		accountChangeListeners = accountChangeListeners.filter((other) => other !== listener);
+	};
+}
+
 /** Loads waiting for an account, and the account the last load was handed. */
 const waiting: Array<(owner: string | null) => void> = [];
 let handedOwner: string | null | undefined;
@@ -44,7 +58,10 @@ export function publishOwner(owner: string | null | undefined) {
 	const stale = handedOwner !== undefined && handedOwner !== owner;
 	handedOwner = owner;
 	for (const resolve of waiting.splice(0)) resolve(owner);
-	if (stale) void invalidateOwner();
+	if (stale) {
+		accountChangeListeners.forEach((listener) => listener());
+		void invalidateOwner();
+	}
 }
 
 /** Reruns every active `load` that reads the account. */
