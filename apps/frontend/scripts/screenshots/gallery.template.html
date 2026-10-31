@@ -1,0 +1,446 @@
+<title>MyFit Screens</title>
+<meta name="claude:viewport-fit-sides" content="cover" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+	rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+/>
+<style>
+	/* Layout: a sticky filter bar over sections of phone screenshots; click one to enlarge. */
+	:root {
+		--page: oklch(0.965 0 0);
+		--card: oklch(1 0 0);
+		--fg: oklch(0.145 0 0);
+		--muted-fg: oklch(0.49 0 0);
+		--border: oklch(0.9 0 0);
+		--primary: oklch(0.572 0.144 253.606);
+		--primary-fg: oklch(0.97 0.014 254.6);
+		--veil: oklch(0.1 0 0 / 0.82);
+		--font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+	}
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme='light']) {
+			--page: oklch(0.11 0 0);
+			--card: oklch(0.17 0 0);
+			--fg: oklch(0.97 0 0);
+			--muted-fg: oklch(0.72 0 0);
+			--border: oklch(1 0 0 / 14%);
+			color-scheme: dark;
+		}
+	}
+	:root[data-theme='dark'] {
+		--page: oklch(0.11 0 0);
+		--card: oklch(0.17 0 0);
+		--fg: oklch(0.97 0 0);
+		--muted-fg: oklch(0.72 0 0);
+		--border: oklch(1 0 0 / 14%);
+		color-scheme: dark;
+	}
+	* {
+		box-sizing: border-box;
+	}
+	body {
+		background: var(--page);
+		color: var(--fg);
+		font-family: var(--font);
+		font-size: 15px;
+		line-height: 1.5;
+		padding-left: max(16px, env(safe-area-inset-left, 0px));
+		padding-right: max(16px, env(safe-area-inset-right, 0px));
+		padding-block: 28px 64px;
+	}
+	.wrap {
+		max-width: 1180px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 28px;
+	}
+	h1 {
+		font-size: 28px;
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+		font-weight: 600;
+		margin: 0 0 8px;
+		text-wrap: balance;
+	}
+	h2 {
+		font-size: 20px;
+		letter-spacing: -0.01em;
+		font-weight: 600;
+		margin: 0;
+	}
+	p {
+		margin: 0;
+	}
+	.lede {
+		max-width: 66ch;
+		color: var(--muted-fg);
+	}
+	.num {
+		font-variant-numeric: tabular-nums;
+	}
+
+	.bar {
+		position: sticky;
+		top: env(safe-area-inset-top, 0px);
+		z-index: 5;
+		background: color-mix(in oklch, var(--page) 88%, transparent);
+		backdrop-filter: blur(8px);
+		padding: 10px 0;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		border-bottom: 1px solid var(--border);
+	}
+	body::before {
+		content: '';
+		position: fixed;
+		inset: 0 0 auto;
+		height: env(safe-area-inset-top, 0px);
+		z-index: 10;
+		background: var(--page);
+	}
+	.row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		align-items: center;
+	}
+	.row .lab {
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		color: var(--muted-fg);
+		margin-right: 6px;
+		min-width: 52px;
+	}
+	.chip {
+		min-height: 44px;
+		padding: 0 14px;
+		border-radius: 999px;
+		border: 1px solid var(--border);
+		background: var(--card);
+		color: var(--fg);
+		font: 500 14px var(--font);
+		cursor: pointer;
+	}
+	.chip[aria-pressed='true'] {
+		background: var(--primary);
+		border-color: var(--primary);
+		color: var(--primary-fg);
+	}
+	.chip small {
+		opacity: 0.7;
+		margin-left: 4px;
+		font-size: 12px;
+	}
+	.chip:focus-visible,
+	.fig button:focus-visible,
+	.lb button:focus-visible {
+		outline: 3px solid color-mix(in oklch, var(--primary) 50%, transparent);
+		outline-offset: 2px;
+	}
+
+	section {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		scroll-margin-top: 140px;
+	}
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(var(--min, 210px), 1fr));
+		gap: 22px 18px;
+		align-items: start;
+	}
+	body[data-view='both'] .grid {
+		--min: 330px;
+	}
+	.fig {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		min-width: 0;
+	}
+	.fig button.shots {
+		all: unset;
+		cursor: zoom-in;
+		display: flex;
+		gap: 10px;
+	}
+	.fig button.shots img {
+		flex: 1 1 0;
+		min-width: 0;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 390 / 844;
+		border-radius: 18px;
+		border: 1px solid var(--border);
+		box-shadow: 0 6px 20px rgb(0 0 0 / 0.08);
+		background: var(--card);
+		object-fit: cover;
+		display: block;
+	}
+	body[data-view='light'] img.dk,
+	body[data-view='dark'] img.lt {
+		display: none;
+	}
+	.cap b {
+		display: block;
+		font-weight: 600;
+		font-size: 14px;
+	}
+	.cap span {
+		display: block;
+		font-size: 12.5px;
+		color: var(--muted-fg);
+	}
+
+	.lb {
+		position: fixed;
+		inset: 0;
+		z-index: 50;
+		background: var(--veil);
+		display: none;
+		align-items: center;
+		justify-content: center;
+		padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px))
+			max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+	}
+	.lb.open {
+		display: flex;
+	}
+	.lb .stage {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 10px;
+		max-width: 100%;
+		max-height: 100%;
+		min-height: 0;
+	}
+	.lb .imgs {
+		display: flex;
+		gap: 14px;
+		min-height: 0;
+		max-width: 100%;
+	}
+	.lb img {
+		display: block;
+		height: min(78vh, 900px);
+		width: auto;
+		max-width: 100%;
+		border-radius: 22px;
+		background: var(--card);
+	}
+	body[data-view='both'] .lb img {
+		height: min(70vh, 860px);
+		max-width: 48vw;
+		object-fit: contain;
+	}
+	body[data-view='light'] .lb img.dk,
+	body[data-view='dark'] .lb img.lt {
+		display: none;
+	}
+	.lb .meta {
+		color: #fff;
+		text-align: center;
+		max-width: 60ch;
+	}
+	.lb .meta b {
+		font-weight: 600;
+	}
+	.lb .meta span {
+		display: block;
+		font-size: 13px;
+		opacity: 0.75;
+	}
+	.lb .nav {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+	.lb .prev {
+		left: max(8px, env(safe-area-inset-left, 0px));
+	}
+	.lb .next {
+		right: max(8px, env(safe-area-inset-right, 0px));
+	}
+	.lb .close {
+		position: absolute;
+		top: max(8px, env(safe-area-inset-top, 0px));
+		right: max(8px, env(safe-area-inset-right, 0px));
+	}
+	.lb button {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		border: 1px solid oklch(1 0 0 / 0.25);
+		background: oklch(0.2 0 0 / 0.7);
+		color: #fff;
+		font: 600 20px var(--font);
+		cursor: pointer;
+	}
+	.foot {
+		font-size: 12.5px;
+		color: var(--muted-fg);
+		max-width: 80ch;
+	}
+	@media (max-width: 520px) {
+		.grid {
+			--min: 150px;
+			gap: 18px 12px;
+		}
+		body[data-view='both'] .grid {
+			--min: 100%;
+		}
+		.lb .nav {
+			top: auto;
+			bottom: 8px;
+			transform: none;
+		}
+	}
+</style>
+
+<div class="wrap">
+	<header>
+		<h1>MyFit screens</h1>
+		<p class="lede">
+			__COUNT__ screens from the app as it is now, captured in the real build at 390 × 844 with
+			sample data. Nothing is mocked. Tap a screen to enlarge it, then use the arrow keys to move
+			through them.
+		</p>
+	</header>
+
+	<div class="bar">
+		<div class="row">
+			<span class="lab">Theme</span>
+			<div class="row" id="views" role="group" aria-label="Theme"></div>
+		</div>
+		<div class="row">
+			<span class="lab">Area</span>
+			<div class="row" id="groups" role="group" aria-label="Area"></div>
+		</div>
+	</div>
+
+	<main id="main" style="display: flex; flex-direction: column; gap: 36px">__SECTIONS__</main>
+
+	<p class="foot">
+		Captured __DATE__ from a production build against a local API. The name, meals and foods are
+		sample data, and chat replies are scripted. The camera screen shows the test browser's no-camera
+		state. Screens marked "Not built yet" are placeholders in the app.
+	</p>
+</div>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Screen preview">
+	<button class="close" id="lb-close" aria-label="Close">✕</button>
+	<button class="nav prev" id="lb-prev" aria-label="Previous screen">‹</button>
+	<div class="stage">
+		<div class="imgs" id="lb-imgs"></div>
+		<div class="meta" id="lb-meta"></div>
+	</div>
+	<button class="nav next" id="lb-next" aria-label="Next screen">›</button>
+</div>
+
+<script>
+	const GROUPS = __GROUPS__;
+	const state = {
+		view:
+			window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+		group: 'All'
+	};
+	const $ = (s, r = document) => r.querySelector(s);
+	const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+	const figs = $$('.fig');
+
+	function chips(el, items, key, fmt) {
+		el.innerHTML = items
+			.map(
+				(i) =>
+					`<button type="button" class="chip" data-v="${i.id}" aria-pressed="false">${i.label}${i.count != null ? `<small class="num">${i.count}</small>` : ''}</button>`
+			)
+			.join('');
+		el.addEventListener('click', (e) => {
+			const b = e.target.closest('button');
+			if (!b) return;
+			state[key] = b.dataset.v;
+			apply();
+		});
+	}
+	chips(
+		$('#views'),
+		[
+			{ id: 'light', label: 'Light' },
+			{ id: 'dark', label: 'Dark' },
+			{ id: 'both', label: 'Side by side' }
+		],
+		'view'
+	);
+	chips(
+		$('#groups'),
+		[
+			{ id: 'All', label: 'All', count: figs.length },
+			...GROUPS.map((g) => ({ id: g.name, label: g.name, count: g.count }))
+		],
+		'group'
+	);
+
+	function apply() {
+		document.body.dataset.view = state.view;
+		$$('#views .chip').forEach((b) =>
+			b.setAttribute('aria-pressed', String(b.dataset.v === state.view))
+		);
+		$$('#groups .chip').forEach((b) =>
+			b.setAttribute('aria-pressed', String(b.dataset.v === state.group))
+		);
+		$$('section').forEach((s) => {
+			s.hidden = state.group !== 'All' && s.dataset.group !== state.group;
+		});
+	}
+
+	/* lightbox over the screens that are currently visible */
+	let list = [],
+		idx = 0;
+	const lb = $('#lb');
+	function show(i) {
+		idx = (i + list.length) % list.length;
+		const f = list[idx];
+		$('#lb-imgs').replaceChildren(
+			...$$('img', f).map((i) => {
+				const c = i.cloneNode();
+				c.removeAttribute('loading');
+				return c;
+			})
+		);
+		$('#lb-meta').innerHTML =
+			`<b>${f.dataset.title}</b><span>${f.dataset.note}</span><span class="num">${idx + 1} of ${list.length}</span>`;
+	}
+	function open(f) {
+		list = figs.filter((x) => !x.closest('section').hidden);
+		lb.classList.add('open');
+		show(list.indexOf(f));
+		$('#lb-close').focus();
+	}
+	function close() {
+		lb.classList.remove('open');
+	}
+	figs.forEach((f) => {
+		$('button.shots', f).addEventListener('click', () => open(f));
+	});
+	$('#lb-close').onclick = close;
+	$('#lb-prev').onclick = () => show(idx - 1);
+	$('#lb-next').onclick = () => show(idx + 1);
+	lb.addEventListener('click', (e) => {
+		if (e.target === lb) close();
+	});
+	document.addEventListener('keydown', (e) => {
+		if (!lb.classList.contains('open')) return;
+		if (e.key === 'Escape') close();
+		if (e.key === 'ArrowLeft') show(idx - 1);
+		if (e.key === 'ArrowRight') show(idx + 1);
+	});
+	apply();
+</script>

@@ -138,6 +138,20 @@ pnpm test:e2e
 
 Set `TEST_DATABASE_URL` to use another database. Playwright starts a mail stub, the API (needs `bun`) and the production build itself. The stub stands in for Resend, so tests read sign-in codes without sending email.
 
+## Screenshots
+
+`pnpm screenshots` captures every screen of the built app in light and dark at 390 × 844 and builds a gallery, so you can see the effect of a design change on the whole app. It starts its own mail stub, API (ports 3001 and 4010) and fresh production build on port 4273, so it can run beside `pnpm dev`.
+
+Point it at a Postgres server; it creates a disposable database, applies the migrations and seeds a few foods for search. The default is the dev container's server:
+
+```bash
+pnpm screenshots                                  # postgresql://postgres:postgres@localhost:5432/myfit_screenshots
+SCREENSHOT_DATABASE_URL=postgresql://user:pass@host:5432/name pnpm screenshots
+SCREENSHOT_FORMAT=png pnpm screenshots            # lossless images instead of JPEG
+```
+
+Output goes to `screenshots/` (ignored by git): `light/` and `dark/` images, `index.html` to browse them locally, and `gallery.html`, one file with the images embedded. `pnpm screenshots:gallery` rebuilds the gallery without recapturing. Chat replies are scripted and the camera screen shows the headless browser's no-camera state. Add a screen by adding a `shot(...)` call in `tests/screenshots/screens.spec.ts`.
+
 ## Scripts
 
 - `pnpm dev` - Development server
@@ -146,5 +160,6 @@ Set `TEST_DATABASE_URL` to use another database. Playwright starts a mail stub, 
 - `pnpm check` - Type-check
 - `pnpm test` - Unit tests
 - `pnpm test:e2e` - End-to-end tests
+- `pnpm screenshots` - Capture every screen and build a gallery
 - `pnpm lint` - Lint and format check
 - `pnpm format` - Auto-format code

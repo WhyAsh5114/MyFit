@@ -13,6 +13,8 @@
 		"lint": "prettier --check . && eslint .",
 		"test": "vitest run",
 		"test:e2e": "playwright test",
+		"screenshots": "node scripts/screenshots/run.mjs",
+		"screenshots:gallery": "node scripts/screenshots/build-gallery.mjs",
 		"format": "prettier --write .",
 		"ota:channel": "node --input-type=module -e \"import { otaChannel } from './scripts/ota-channel.js'; console.log(otaChannel())\"",
 		"ota:upload": "bash scripts/ota-upload.sh"
