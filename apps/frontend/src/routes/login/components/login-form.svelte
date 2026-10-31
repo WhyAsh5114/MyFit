@@ -21,6 +21,7 @@
 	import { getDb, resetDb } from '#lib/clients/idb-client.js';
 	import posthog from 'posthog-js';
 	import { settleSession } from '#lib/services/account/logout.js';
+	import { localRedirect } from '#lib/services/account/redirect.js';
 
 	let email = $state('');
 	let otp = $state('');
@@ -33,7 +34,7 @@
 	/** Where to go after signing in: the page a visitor was sent away from, or the dashboard. */
 	function afterLogin() {
 		const back = page.url.searchParams.get('redirect') ?? page.url.searchParams.get('callbackUrl');
-		return back?.startsWith('/') && !back.startsWith('//') ? back : '/dashboard';
+		return localRedirect(back, page.url.origin);
 	}
 
 	onMount(() => {
