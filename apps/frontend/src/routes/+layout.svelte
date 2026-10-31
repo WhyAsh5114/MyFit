@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { building } from '$app/env';
 	import { page } from '$app/state';
 	import { locales, localizeHref } from '#lib/paraglide/runtime.js';
 	import './layout.css';
@@ -17,7 +18,11 @@
 	<meta name="description" content="Super comprehensive science-based fitness platform" />
 </svelte:head>
 
-<ModeWatcher />
+<!-- Only the prerendered page needs this: it carries the script that sets the theme before first
+paint. The account root mounts the watcher the running app uses, from `init`. -->
+{#if building}
+	<ModeWatcher />
+{/if}
 
 <QueryClientProvider client={queryClient}>
 	<SvelteQueryDevtools buttonPosition="top-right" />
