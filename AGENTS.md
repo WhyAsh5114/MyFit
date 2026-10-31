@@ -13,6 +13,12 @@ MyFit is a **local-first, mobile-first fitness SPA** built with SvelteKit + Capa
 
 ---
 
+## Design
+
+Read [`DESIGN.md`](DESIGN.md) before building or changing any UI. It sets the priorities, surfaces (page, drawer, dialog), 44px touch targets, color and status rules, feedback, motion and copy voice. This file covers code structure only.
+
+---
+
 ## Tech Stack
 
 | Concern      | Library                                                    |

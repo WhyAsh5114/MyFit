@@ -17,6 +17,6 @@
 	bind:ref
 	data-slot="dropdown-menu-group-heading"
 	data-inset={inset}
-	class={cn('px-3 py-2.5 text-xs text-muted-foreground data-inset:pl-9.5', className)}
+	class={cn('px-2 py-1.5 text-xs font-medium text-muted-foreground data-inset:pl-8', className)}
 	{...restProps}
 />

@@ -14,6 +14,6 @@
 	bind:ref
 	bind:value={value as never}
 	data-slot="accordion"
-	class={cn('flex w-full flex-col overflow-hidden rounded-2xl border', className)}
+	class={cn('flex w-full flex-col', className)}
 	{...restProps}
 />
