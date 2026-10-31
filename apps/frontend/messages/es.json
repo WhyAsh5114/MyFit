@@ -94,6 +94,7 @@
 	"account.loadFailed": "No se pudo abrir tu cuenta",
 	"account.loadFailedHint": "Tus datos están seguros en este dispositivo. Recarga para intentarlo de nuevo.",
 	"account.reload": "Recargar",
+	"errors.pageLoadFailed": "No se pudo abrir esta página",
 	"sync.pausedSignedOut": "Los cambios se guardan en este dispositivo. Inicia sesión para sincronizarlos.",
 	"sync.pausedOffline": "Los cambios se guardan en este dispositivo. Se sincronizarán cuando vuelvas a tener conexión.",
 	"account.loggingOutSaving": "Sincronizando tus cambios",

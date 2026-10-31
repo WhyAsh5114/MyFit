@@ -197,6 +197,7 @@
 	"account.loadFailed": "Couldn't open your account",
 	"account.loadFailedHint": "Your data is safe on this device. Reload to try again.",
 	"account.reload": "Reload",
+	"errors.pageLoadFailed": "Couldn't open this page",
 	"sync.pausedSignedOut": "Changes are saved on this device. Log in to sync them.",
 	"sync.pausedOffline": "Changes are saved on this device. They'll sync when you're back online.",
 	"account.loggingOutSaving": "Syncing your changes",
