@@ -8,13 +8,9 @@ export function foodEntryFormSchemaToFoodEntry(
 	return { ...input, recipeId: null, userId };
 }
 
+/** The form values of a stored entry. It keeps the entry's own `eatenAt`, so an edit never moves it. */
 export function foodEntryToFoodEntryFormSchema(
-	foodEntry: NewRow<'FoodEntry'>,
-	date?: string
+	foodEntry: NewRow<'FoodEntry'>
 ): FoodEntryFormSchema {
-	const eatenAt = date ? new Date(date) : new Date();
-	const now = new Date();
-	eatenAt.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
-
-	return { ...foodEntry, eatenAt };
+	return { ...foodEntry };
 }

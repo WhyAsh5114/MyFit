@@ -1,4 +1,5 @@
 import type { NutritionData } from '@myfit/shared/nutrition';
+import { momentOnDay } from '../../_common/day-bounds';
 import type { FoodEntryFormSchema } from '../../food-entry/model/schema';
 
 export function nutritionDataToFoodEntryFormData(
@@ -6,9 +7,7 @@ export function nutritionDataToFoodEntryFormData(
 	date?: string,
 	mealId?: string | null
 ): FoodEntryFormSchema {
-	const eatenAt = date ? new Date(date) : new Date();
-	const now = new Date();
-	eatenAt.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+	const eatenAt = momentOnDay(date);
 
 	let quantityG = 100;
 	let preferredUnit: 'g' | 'serving' = 'g';

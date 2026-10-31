@@ -107,7 +107,7 @@
 	</Empty.Root>
 {:else}
 	<FoodEntryForm
-		initialData={foodEntryToFoodEntryFormSchema(data.foodEntry, page.params.date)}
+		initialData={foodEntryToFoodEntryFormSchema(data.foodEntry)}
 		allowProductEdit
 		formId="edit-food-entry-form"
 		onSubmit={handleSubmit}
