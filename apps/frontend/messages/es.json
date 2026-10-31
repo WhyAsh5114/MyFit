@@ -166,6 +166,7 @@
 	"foodDiary.metrics.bmr": "Tasa metabólica basal (TMB)",
 	"foodDiary.noMeals": "Aún no hay comidas",
 	"foodDiary.noMealsDescription": "Las comidas agrupan lo que comes según la hora del día, como el desayuno o el almuerzo.",
+	"foodDiary.mealNameDuplicate": "Dos comidas no pueden tener el mismo nombre.",
 	"foodDiary.addMeal": "Añadir una comida",
 	"foodDiary.addAnotherMeal": "Añadir otra comida"
 }

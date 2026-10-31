@@ -268,6 +268,7 @@
 	"foodDiary.metrics.bmr": "Basal Metabolic Rate (BMR)",
 	"foodDiary.noMeals": "No meals yet",
 	"foodDiary.noMealsDescription": "Meals group what you eat by time of day, like breakfast or lunch.",
+	"foodDiary.mealNameDuplicate": "Two meals can't have the same name.",
 	"foodDiary.addMeal": "Add a meal",
 	"foodDiary.addAnotherMeal": "Add another meal"
 }
