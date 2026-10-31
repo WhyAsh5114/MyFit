@@ -20,7 +20,6 @@ export async function loadDiaryDay(depends: Depends, userId: string, date: Calen
 			getMacroTargetsByDate(depends, args)
 		]);
 	return {
-		userId,
 		day: date.toString(),
 		meals,
 		foodEntries,

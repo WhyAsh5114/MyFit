@@ -7,19 +7,17 @@ import { accountSession } from '#lib/features/account-session.svelte.js';
 import { syncWorkerState } from '#lib/features/sync-worker.svelte.js';
 import posthog from 'posthog-js';
 
-/** Confirms the session store has observed sign-out, so it cannot recreate the account being deleted. */
-export async function signOutAndRefreshSession(): Promise<void> {
-	// The result is ignored: a retry after a half-finished logout has no session left to end and
-	// errors, so the session check below is what decides whether the sign-out worked.
-	await authClient.signOut();
-
-	// Sign-out only schedules a refetch; until it lands the store still holds the old session,
-	// which would recreate the account we are about to delete.
+/**
+ * Refetches the session and waits until the store has the result. The store lags behind a sign-in
+ * or sign-out, and the account only becomes ready once it has caught up, so callers that navigate
+ * next wait here first.
+ */
+export async function settleSession() {
 	const session = authClient.useSession();
 	await session.get().refetch();
 
-	// Better Auth's own post-sign-out refetch can cancel the one we awaited, so wait for the
-	// store to go idle rather than trusting that our request was the one that finished.
+	// Better Auth's own post-sign-in or post-sign-out refetch can cancel the one we awaited, so
+	// wait for the store to go idle rather than trusting that our request was the one that finished.
 	const settled = Promise.withResolvers<void>();
 	const unsubscribe = session.subscribe((current) => {
 		if (!current.isPending && !current.isRefetching) settled.resolve();
@@ -29,7 +27,18 @@ export async function signOutAndRefreshSession(): Promise<void> {
 	} finally {
 		unsubscribe();
 	}
-	const current = session.get();
+	return session.get();
+}
+
+/** Confirms the session store has observed sign-out, so it cannot recreate the account being deleted. */
+export async function signOutAndRefreshSession(): Promise<void> {
+	// The result is ignored: a retry after a half-finished logout has no session left to end and
+	// errors, so the session check below is what decides whether the sign-out worked.
+	await authClient.signOut();
+
+	// Sign-out only schedules a refetch; until it lands the store still holds the old session,
+	// which would recreate the account we are about to delete.
+	const current = await settleSession();
 	if (current.error) throw new Error(current.error.message ?? 'Could not confirm sign-out');
 	if (current.data) throw new Error('The session is still active. Please retry logging out.');
 }

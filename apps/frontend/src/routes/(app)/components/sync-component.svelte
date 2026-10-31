@@ -19,7 +19,7 @@
 	import { authClient } from '#lib/clients/auth-client.js';
 	import { onMount } from 'svelte';
 	import { online } from 'svelte/reactivity/window';
-	import { redirectToLogin } from './db';
+	import { redirectToLogin } from '#lib/features/account-db.js';
 	import type { SyncWorkerStatus } from '@prisma-idb/sync-extension-idb/client';
 
 	let hasAnyRetryableUnsynced = $state<boolean>();

@@ -20,6 +20,7 @@
 	import ResponsiveDialog from '#lib/components/responsive-dialog.svelte';
 	import { getDb, resetDb } from '#lib/clients/idb-client.js';
 	import posthog from 'posthog-js';
+	import { settleSession } from '#lib/features/logout.js';
 
 	let email = $state('');
 	let otp = $state('');
@@ -94,8 +95,8 @@
 			const { data, error } = await authClient.signIn.emailOtp({ email, otp });
 			if (error) throw error;
 
-			// Re-fetch session to let state sync
-			await authClient.getSession();
+			// Let the session store catch up, so the pages after the redirect see the new account.
+			await settleSession();
 
 			posthog.identify(data.user.id, { email: data.user.email, name: data.user.name });
 			posthog.capture(data.user.name.trim() === '' ? 'user_signed_up' : 'user_logged_in', {

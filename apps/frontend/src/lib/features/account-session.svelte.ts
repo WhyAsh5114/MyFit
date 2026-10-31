@@ -8,25 +8,47 @@ export const accountSession = $state({
 	tab: 'pending' as TabStatus,
 	logout: 'idle' as 'idle' | 'busy' | 'failed',
 	/**
-	 * The account the local database belongs to: `undefined` while it is being reconciled with the
-	 * session, `null` when there is none. Route loads read it through `loadOwner`.
+	 * The account the app is showing: `undefined` while it isn't ready (the local database is being
+	 * reconciled with the session, or a dialog is waiting for the user), `null` when there is none.
 	 */
 	ownerId: undefined as string | null | undefined
 });
 
 export const accountKeys = { owner: ['account'] as const };
 
+/** Loads waiting for an account, and the account the last load was handed. */
+const waiting: Array<(owner: string | null) => void> = [];
+let handedOwner: string | null | undefined;
+
 /**
- * The account a `load` should read for, or `undefined`/`null` while there is none to read for. It
- * reruns when the session cacher settles on another account, which is how a cold start gets its data.
+ * The account for a `load` to read for. It settles once the account is ready and never while a
+ * dialog is waiting for the user (another account's unsynced data, a failed open, a blocked tab or
+ * a logout), so the navigation just waits behind the dialog. `null` means there is no account.
  */
-export function loadOwner(depends: Depends) {
+export function accountReady(depends: Depends): Promise<string | null> {
 	dependOn(depends, accountKeys.owner);
-	return accountSession.ownerId;
+	if (accountSession.ownerId !== undefined) {
+		handedOwner = accountSession.ownerId;
+		return Promise.resolve(accountSession.ownerId);
+	}
+	return new Promise((resolve) => waiting.push(resolve));
+}
+
+/**
+ * Sets the account the app is showing, `undefined` while it isn't ready. Loads waiting for it
+ * continue, and loads that already ran for another account run again.
+ */
+export function publishOwner(owner: string | null | undefined) {
+	accountSession.ownerId = owner;
+	if (owner === undefined) return;
+	const stale = handedOwner !== undefined && handedOwner !== owner;
+	handedOwner = owner;
+	for (const resolve of waiting.splice(0)) resolve(owner);
+	if (stale) void invalidateOwner();
 }
 
 /** Reruns every active `load` that reads the account. */
-export const invalidateOwner = () => invalidateKeys(accountKeys.owner);
+const invalidateOwner = () => invalidateKeys(accountKeys.owner);
 
 const LOCK_NAME = 'myfit-active-tab';
 let claimed = false;

@@ -147,19 +147,17 @@ export const getFoodEntriesByDate = defineReader({
 });
 
 // routes/(app)/food-diary/[date]/+page.ts
-export const load: PageLoad = async ({ params, depends }) => {
-	const userId = loadOwner(depends);
-	return {
-		diary: userId ? await loadDiaryDay(depends, userId, parseSelectedDay(params.date)) : null
-	};
+export const load: PageLoad = async ({ params, depends, parent }) => {
+	const { ownerId } = await parent(); // a string: the protected layout redirects when there is no account
+	return { diary: await loadDiaryDay(depends, ownerId, parseSelectedDay(params.date)) };
 };
 ```
 
 - A reader is made with `defineReader({ keys, read })` and called as `reader(depends, args)`. It registers `keys` before it reads, so a `load` can't use one and miss its reruns, and `keys` is required by its type. ESLint enforces it: a local `queries/*.ts` file can only export `defineReader(...)` calls, and a `+page.ts`/`+layout.ts` can't import the IDB client. Use the key factory the mutations use. A key is turned into a `depends` id (`dependencyId` in `#lib/features/dependencies.ts`), and `invalidateKeys(prefix)` reruns every active `load` that registered a key under that prefix, the way `invalidateQueries` matched prefixes. This works for universal loads (`+page.ts`), and the component keeps its state, because the page data updates in place.
 - A route that reads several resources of one feature gets a feature-level loader (`food-diary/load-day.ts`); `+page.ts` only calls it.
-- `loadOwner(depends)` returns the account the local database belongs to, and reruns the `load` when it changes. It is `undefined` or `null` until the session cacher has settled on an account: return `null` data then, and render it as nothing. The cacher shows the page only after the loads have rerun for the settled account.
+- Pages under `(app)/(protected)/` get `ownerId: string` from `await parent()`. The `(app)` layout's `load` waits for an account to be ready (`accountReady`), and the protected layout redirects to the login page when there is none, so a page's data never has a missing-account case. The wait is behind the account dialogs (see Auth & Session Flow): a `load` never waits on something that only renders after it finishes.
 - Load functions return data and never throw for missing rows: a reader returns `null` for one that doesn't exist.
-- Read `params` and `url` in the body of `load`: they are only tracked until `load` returns. A `load` that reads `url.search` reruns on every search-param change.
+- A `load` is tracked until it returns, so reading `params` and `url` after an `await` is fine, but not inside a callback that runs later. A `load` that reads `url.search` reruns on every search-param change.
 - Components never copy `data` into `$state`; use `$derived(data.x)`, because `data` updates without a remount. Forms built from `data` keep the values they started with, which is what you want mid-edit.
 - Pages that need the user read `getCurrentUser()` (`user/current-user.svelte.ts`), which reads the `(app)` layout's data.
 - Remote reads are the exception: a `load` that waited on the network would hold the navigation, so they stay in TanStack (below) with a real loading state.
@@ -186,7 +184,7 @@ export const useCreateFoodEntry = () =>
 - `onSuccess` returns `invalidateKeys(...)` so `mutateAsync` resolves once the pages have the new data.
 - Invalidate `byUser` unless a page would flash a stale state: deleting an entry reloads its day (`byDate`), not `byId`, because the edit page would show "not found" while it navigates away. A day key is the local day (`localDay`), never `toISOString()`.
 - `onError` always shows `m['unknownErrorOccurred']()` toast + `console.error` with context.
-- Call `invalidateKeys` only from a mutation's `onSuccess` and from sync (`sync-invalidation.ts`, which maps each pulled model to its key prefixes). The one other caller is the session cacher, which reruns every `load` that reads the account (`invalidateOwner`).
+- Call `invalidateKeys` only from a mutation's `onSuccess` and from sync (`sync-invalidation.ts`, which maps each pulled model to its key prefixes). The one other caller is the account root, which reruns every `load` that read another account (`publishOwner`).
 
 ## TanStack Query Conventions (remote and device reads)
 
@@ -213,7 +211,7 @@ export const useNutritionDataById = (getId: () => string) =>
 - Always accept args via a getter function, not raw values. This is what makes queries reactive.
 - Remote/API queries: set `staleTime: 1000 * 60 * 10`, `refetchOnWindowFocus: false`, `refetchOnReconnect: false`.
 - Never `try/catch` inside `queryFn`. Let errors propagate to TanStack's error state.
-- Never call `queryClient` inside a route/component. The session cacher and logout only cancel and clear it when the account changes.
+- Never call `queryClient` inside a route/component. The account root and logout only cancel and clear it when the account changes.
 
 ---
 
@@ -387,11 +385,12 @@ domain/
 ## Auth & Session Flow
 
 1. `+layout.svelte` (root) wraps the tree in `<QueryClientProvider>`.
-2. `(app)/+layout.ts` disables SSR/prerender for all authenticated routes.
-3. The root layout claims the single-tab lock (`claimTab` in `#lib/features/account-session.svelte.ts`); other tabs show a notice and reload when the active tab closes.
-4. `<SessionCacher>` in `(app)/+layout.svelte` keeps one local account: it checks the local database against the better-auth session, asks before replacing another account's unsynced data, and starts the sync worker for a signed-in account. An expired session keeps the stored account working offline.
-5. `(app)/+layout.ts` loads the local user and the account (`ownerId`) for every page; `getCurrentUser()` reads it. The cacher publishes the settled account in `accountSession.ownerId` and reruns the loads with `invalidateOwner()`. Page loads read it with `loadOwner(depends)`.
-6. `logout()` in `#lib/features/logout.ts` saves queued edits, signs out, then deletes the local database. If a step fails it keeps the account and offers retry, cancel or discard.
+2. `hooks.client.ts` `init` claims the single-tab lock (`claimTab` in `#lib/features/account-session.svelte.ts`) and mounts the account root (`#lib/components/account/account-root.svelte`) on `document.body`, before the first `load`. The root is outside the router's tree on purpose: SvelteKit renders a page only once its `load`s have finished, and those wait for the account, so the dialogs that decide the account (a blocked tab, another account's unsynced data, a failed open, a logout) can't live inside it. It also owns the theme (`ModeWatcher`) and the toasts (`Toaster`).
+3. The account root keeps one local account. It checks the local database against the better-auth session, asks before replacing another account's unsynced data, starts the sync worker for a signed-in account, and publishes the result with `publishOwner`. An expired session keeps the stored account working offline.
+4. `(app)/+layout.ts` waits with `accountReady(depends)`. It settles with the account (a user id, or `null` for none) and never while a dialog is waiting, so a navigation waits behind the dialog. It returns the `ownerId` and the local user (`getCurrentUser()` reads it). When the account changes, `publishOwner` reruns the loads that read the old one.
+5. `(app)/(protected)/+layout.ts` redirects to `/login?redirect=…` when there is no account and returns `ownerId: string`. Only the legal pages live outside the group, in `(app)`.
+6. `(app)/+layout.svelte` renders pages only while `data.ownerId` is the account on screen, so a switch never leaves the other account's data in the DOM.
+7. `logout()` in `#lib/features/logout.ts` saves queued edits, signs out, then deletes the local database. If a step fails it keeps the account and offers retry, cancel or discard. After a sign-in or sign-out, wait for the session store with `settleSession()` before navigating, because the store lags behind and the account is only ready once it has caught up.
 
 ---
 
@@ -402,7 +401,7 @@ domain/
 3. If the DB shape ≠ form shape, add `model/mapper.ts`. If the schema is complex, add `model/schema.ts`.
 4. Define the model in `packages/shared/src/schema.prisma`, then run `pnpm --filter @myfit/shared schema:sync <migration-name>` (see the root README).
 5. For user-scoped models: sync uses `rootModel: 'User'` (`packages/shared/src/server.ts`), so give the model a relation path to `User`. Mark server-only models with `@@idb.exclude`.
-6. Get the `userId` from `loadOwner(depends)` in the route's `load` and return it with the data. Components outside a page's data read `getCurrentUser()` — never hardcode it or pass it through multiple layers.
+6. Put the route under `(app)/(protected)/` and take `ownerId` from `await parent()` in its `load`; a page reads it as `data.ownerId`. Components outside a page's data read `getCurrentUser()` — never hardcode it or pass it through multiple layers.
 
 ---
 
@@ -433,7 +432,6 @@ const useCreateFoodEntryMutation = ... // ← useCreateFoodEntry
 // ❌ Copying load data into state
 let meals = $state(data.meals)  // ← stale after a rerun; use $derived(data.meals)
 
-// ❌ Reading params or url after an await in a load
-const meal = await getMeals(depends, userId);
-const day = params.date;  // ← not tracked; read it before the first await
+// ❌ Reading params or url in a callback that runs after the load returned
+queueMicrotask(() => console.log(params.date))  // ← not tracked
 ```

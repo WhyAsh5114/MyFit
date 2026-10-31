@@ -79,10 +79,11 @@ class SyncWorkerState {
 				if (failed === 0 && !pullBlocked) this.lastSyncTime = new Date();
 				if (stalled) this.lastError = stalled.lastError ?? 'Some changes keep failing to sync.';
 			}),
-			worker.on('pullcompleted', async ({ changes }) => {
+			worker.on('pullcompleted', ({ changes }) => {
 				this.lastSyncTime = new Date();
 				this.lastError = null;
-				await invalidatePulledChanges(changes);
+				// Not awaited: the reload waits on the account, which can be waiting on this worker to stop.
+				void invalidatePulledChanges(changes);
 			})
 		];
 	}

@@ -3,9 +3,18 @@ import { Capacitor } from '@capacitor/core';
 import { dev } from '$app/env';
 import { registerServiceWorker } from '#lib/features/service-worker.js';
 import posthog from 'posthog-js';
+import { mount } from 'svelte';
+import AccountRoot from '#lib/components/account/account-root.svelte';
+import { claimTab } from '#lib/features/account-session.svelte.js';
+import './routes/layout.css';
 import { PUBLIC_POSTHOG_KEY, PUBLIC_POSTHOG_HOST } from '$app/env/public';
 
 export async function init() {
+	// Before the first `load`, which waits for the account. The tab lock and the account's dialogs
+	// can't live in the router's tree, because it renders only once those loads have finished.
+	claimTab();
+	mount(AccountRoot, { target: document.body });
+
 	posthog.init(PUBLIC_POSTHOG_KEY, {
 		api_host: 'https://t.myfit.fit',
 		ui_host: PUBLIC_POSTHOG_HOST,
