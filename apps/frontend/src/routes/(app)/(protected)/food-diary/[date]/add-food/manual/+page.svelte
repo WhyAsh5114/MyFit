@@ -6,7 +6,7 @@
 	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
 	import { CircleCheckBigIcon } from '@lucide/svelte';
 	import posthog from 'posthog-js';
-	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
+	import { markRecentChange } from '#lib/features/food-diary/recent-change.svelte.js';
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';

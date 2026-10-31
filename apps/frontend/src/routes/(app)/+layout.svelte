@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Separator } from '#lib/components/ui/separator/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
-	import { accountSession } from '#lib/features/account-session.svelte.js';
+	import { accountSession } from '#lib/features/account/account-session.svelte.js';
 	import AppSidebar from './components/app-sidebar.svelte';
 	import LinkBreadcrumbs from './components/link-breadcrumbs.svelte';
 	import SyncComponent from './components/sync-component.svelte';

@@ -9,7 +9,7 @@
 	import BadgeCheckIcon from '@lucide/svelte/icons/badge-check';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
-	import { logout } from '#lib/features/logout.js';
+	import { logout } from '#lib/features/account/logout.js';
 	import { getCurrentUser } from '#lib/features/user/current-user.svelte.js';
 
 	const sidebar = useSidebar();

@@ -1,6 +1,6 @@
 import { PUBLIC_API_URL } from '$app/env/public';
 import type { DbClient } from '#lib/clients/idb-client.js';
-import { invalidatePulledChanges } from './sync-invalidation';
+import { invalidatePulledChanges } from '#lib/features/sync/sync-invalidation.js';
 import {
 	createSyncFetchHandlers,
 	type SyncWorker,

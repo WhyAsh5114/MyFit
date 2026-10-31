@@ -1,13 +1,13 @@
 import { refreshAll } from '$app/navigation';
 import type { PullChange } from '@prisma-idb/sync-extension-idb/client';
-import { invalidateKeys } from './dependencies';
-import { userKeys } from './user/keys';
-import { activityEntryKeys } from './food-diary/acitivity-entry/keys';
-import { activityPreferencesKeys } from './food-diary/activity-preferences/keys';
-import { foodEntryKeys } from './food-diary/food-entry/keys';
-import { macroMetricsKeys } from './food-diary/macro-metrics/keys';
-import { macroTargetsKeys } from './food-diary/macro-targets/keys';
-import { mealKeys } from './food-diary/meals/keys';
+import { invalidateKeys } from '#lib/features/data/dependencies.js';
+import { userKeys } from '#lib/features/user/keys.js';
+import { activityEntryKeys } from '#lib/features/food-diary/acitivity-entry/keys.js';
+import { activityPreferencesKeys } from '#lib/features/food-diary/activity-preferences/keys.js';
+import { foodEntryKeys } from '#lib/features/food-diary/food-entry/keys.js';
+import { macroMetricsKeys } from '#lib/features/food-diary/macro-metrics/keys.js';
+import { macroTargetsKeys } from '#lib/features/food-diary/macro-targets/keys.js';
+import { mealKeys } from '#lib/features/food-diary/meals/keys.js';
 
 type Key = readonly string[];
 

@@ -1,5 +1,5 @@
 import { getDb } from '#lib/clients/idb-client.js';
-import { defineReader } from '#lib/features/dependencies.js';
+import { defineReader } from '#lib/features/data/dependencies.js';
 import { userKeys } from '../keys';
 
 /** A user's local record, or `null` when the local database doesn't hold it. */

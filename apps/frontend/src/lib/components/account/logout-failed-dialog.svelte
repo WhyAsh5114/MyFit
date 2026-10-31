@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ResponsiveDialog from '#lib/components/responsive-dialog.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
-	import { cancelLogout, logout } from '#lib/features/logout.js';
+	import { cancelLogout, logout } from '#lib/features/account/logout.js';
 	import { m } from '#lib/paraglide/messages.js';
 </script>
 

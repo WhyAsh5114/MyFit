@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
+	import { markRecentChange } from '#lib/features/food-diary/recent-change.svelte.js';
 	import MacroMealsForm from './macro-meals-form.svelte';
 	import { useSaveMeals } from '#lib/features/food-diary/meals/mutations/save.js';
 	import { m } from '#lib/paraglide/messages.js';

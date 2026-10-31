@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
+	import { markRecentChange } from '#lib/features/food-diary/recent-change.svelte.js';
 	import Badge from '#lib/components/ui/badge/badge.svelte';
 	import * as Card from '#lib/components/ui/card/index.js';
 	import { Label } from '#lib/components/ui/label/index.js';

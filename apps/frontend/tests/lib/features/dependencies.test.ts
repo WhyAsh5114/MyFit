@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { defineReader, dependencyId } from '#lib/features/dependencies.js';
+import { defineReader, dependencyId } from '#lib/features/data/dependencies.js';
 
 describe('defineReader', () => {
 	const keys = (id: string) => [['thing', id] as const, ['thing', id, 'detail'] as const];

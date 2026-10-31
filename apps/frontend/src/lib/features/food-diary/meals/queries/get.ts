@@ -1,5 +1,5 @@
 import { getDb } from '#lib/clients/idb-client.js';
-import { defineReader } from '#lib/features/dependencies.js';
+import { defineReader } from '#lib/features/data/dependencies.js';
 import { mealKeys } from '../keys';
 
 /** A user's active meals, in the order they chose. */

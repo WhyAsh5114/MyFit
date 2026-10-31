@@ -1,11 +1,11 @@
 import type { HandleClientError } from '@sveltejs/kit/hooks';
 import { Capacitor } from '@capacitor/core';
 import { dev } from '$app/env';
-import { registerServiceWorker } from '#lib/features/service-worker.svelte.js';
+import { registerServiceWorker } from '#lib/features/app-update/service-worker.svelte.js';
 import posthog from 'posthog-js';
 import { mount } from 'svelte';
 import AccountRoot from '#lib/components/account/account-root.svelte';
-import { claimTab } from '#lib/features/account-session.svelte.js';
+import { claimTab } from '#lib/features/account/account-session.svelte.js';
 import { startNative } from '#lib/services/native.svelte.js';
 import './routes/layout.css';
 import { PUBLIC_POSTHOG_KEY, PUBLIC_POSTHOG_HOST } from '$app/env/public';

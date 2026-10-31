@@ -11,7 +11,7 @@
 	} from '@lucide/svelte';
 	import { m } from '#lib/paraglide/messages.js';
 	import { cn } from '#lib/utils.js';
-	import { recentChange } from '#lib/features/recent-change.svelte.js';
+	import { recentChange } from '#lib/features/food-diary/recent-change.svelte.js';
 
 	const buttonData = [
 		{

@@ -6,7 +6,7 @@
 		appUpdate,
 		applyAppUpdate,
 		checkForAppUpdate
-	} from '#lib/features/service-worker.svelte.js';
+	} from '#lib/features/app-update/service-worker.svelte.js';
 	import { m } from '#lib/paraglide/messages.js';
 
 	const status = $derived(

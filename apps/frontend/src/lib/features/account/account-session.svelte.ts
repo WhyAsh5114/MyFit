@@ -1,4 +1,4 @@
-import { dependOn, invalidateKeys, type Depends } from './dependencies';
+import { dependOn, invalidateKeys, type Depends } from '#lib/features/data/dependencies.js';
 
 /** Whether this tab owns the app: `pending` until the lock request settles. */
 export type TabStatus = 'pending' | 'active' | 'blocked';
