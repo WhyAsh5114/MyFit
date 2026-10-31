@@ -114,7 +114,10 @@
 					<Badge variant={statusVariant}>{statusLabel}</Badge>
 				{/if}
 			</div>
-			<Drawer.Description class="sr-only">{statusLabel}</Drawer.Description>
+			<!-- While paused there is no status to read out, and "Connecting" would be wrong. -->
+			<Drawer.Description class="sr-only">
+				{paused ? m['sync.title']() : statusLabel}
+			</Drawer.Description>
 		</Drawer.Header>
 		<div class="flex flex-col gap-3 px-4 pb-2">
 			{#if paused}
