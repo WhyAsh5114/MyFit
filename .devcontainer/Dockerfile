@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/devcontainers/javascript-node:3-22-bookworm
 RUN apt-get update && apt-get upgrade -y
 
 # Layer 2: Install pnpm globally
-RUN npm install -g pnpm@10.15.0
+RUN npm install -g pnpm@12.16.1
 
 # Layer 3: Switch to node user (better security practice)
 USER node

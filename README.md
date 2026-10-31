@@ -12,6 +12,7 @@ This is a monorepo managed with [Turborepo](https://turbo.build) and [pnpm](http
 │   ├── api/          # Backend API (Hono + Better Auth + Prisma 8)
 │   └── frontend/     # Web/mobile app (SvelteKit + Capacitor)
 ├── packages/
+│   └── shared/       # Prisma schema, generated contracts and sync server (@myfit/shared)
 └── turbo.json        # Turborepo configuration
 ```
 
@@ -25,7 +26,7 @@ This is a monorepo managed with [Turborepo](https://turbo.build) and [pnpm](http
 ### Prerequisites
 
 - **Node.js** 24+
-- **pnpm** 10+
+- **pnpm** 12+
 - **PostgreSQL** (for development)
 
 ### Installation
