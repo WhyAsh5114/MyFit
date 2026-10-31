@@ -6,7 +6,10 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { cn } from '#lib/utils.js';
-	import { recentChange, revealIfRecent } from '#lib/features/food-diary/recent-change.svelte.js';
+	import {
+		recentChange,
+		revealIfRecent
+	} from '#lib/features/food-diary/_common/recent-change.svelte.js';
 
 	let { foodEntries, meals = [] }: { foodEntries?: FoodEntryWithMeal[]; meals?: Row<'Meal'>[] } =
 		$props();

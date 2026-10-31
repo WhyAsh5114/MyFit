@@ -20,7 +20,7 @@
 	import ResponsiveDialog from '#lib/components/responsive-dialog.svelte';
 	import { getDb, resetDb } from '#lib/clients/idb-client.js';
 	import posthog from 'posthog-js';
-	import { settleSession } from '#lib/features/account/logout.js';
+	import { settleSession } from '#lib/services/account/logout.js';
 
 	let email = $state('');
 	let otp = $state('');

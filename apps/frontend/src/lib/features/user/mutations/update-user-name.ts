@@ -1,8 +1,8 @@
-import { useMutation } from '#lib/features/data/mutation.svelte.js';
+import { useMutation } from '#lib/data/mutation.svelte.js';
 import { getDb } from '#lib/clients/idb-client.js';
 import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
-import { invalidateKeys } from '#lib/features/data/dependencies.js';
+import { invalidateKeys } from '#lib/data/dependencies.js';
 import { userKeys } from '../keys';
 
 /** Updates the profile name and reloads the pages that show it. */

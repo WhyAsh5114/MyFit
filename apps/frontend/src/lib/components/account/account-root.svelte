@@ -3,12 +3,12 @@
 	import { authClient } from '#lib/clients/auth-client.js';
 	import { getDb, resetDb } from '#lib/clients/idb-client.js';
 	import { queryClient } from '#lib/clients/query-client.js';
-	import { accountSession, publishOwner } from '#lib/features/account/account-session.svelte.js';
+	import { accountSession, publishOwner } from '#lib/services/account/account-session.svelte.js';
 	import {
 		createUserForCurrentSession,
 		redirectToLogin
-	} from '#lib/features/account/account-db.js';
-	import { syncWorkerState } from '#lib/features/sync/sync-worker.svelte.js';
+	} from '#lib/services/account/account-db.js';
+	import { syncWorkerState } from '#lib/services/sync/sync-worker.svelte.js';
 	import { untrack } from 'svelte';
 	import { ModeWatcher } from 'mode-watcher';
 	import LogoutFailedDialog from './logout-failed-dialog.svelte';

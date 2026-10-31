@@ -4,7 +4,7 @@ import { getFoodEntriesByDate } from '#lib/features/food-diary/food-entry/querie
 import { getMacroMetricsByDate } from '#lib/features/food-diary/macro-metrics/queries/get-by-date.js';
 import { getMacroTargetsByDate } from '#lib/features/food-diary/macro-targets/queries/get-by-date.js';
 import { getMeals } from '#lib/features/food-diary/meals/queries/get.js';
-import { parseSelectedDay } from '#lib/features/food-diary/selected-day.js';
+import { parseSelectedDay } from '#lib/features/food-diary/_common/selected-day.js';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ params, depends, parent }) => {

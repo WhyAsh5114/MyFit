@@ -3,7 +3,7 @@
 	import { resolve } from '$app/paths';
 	import ResponsiveDialog from '#lib/components/responsive-dialog.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
-	import { signOutAndRefreshSession } from '#lib/features/account/logout.js';
+	import { signOutAndRefreshSession } from '#lib/services/account/logout.js';
 	import { m } from '#lib/paraglide/messages.js';
 
 	/** `email` owns the unsynced local data that the new login would replace. */

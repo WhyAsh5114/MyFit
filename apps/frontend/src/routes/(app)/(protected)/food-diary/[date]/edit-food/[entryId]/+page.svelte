@@ -22,7 +22,7 @@
 	import { useDeleteFoodEntry } from '#lib/features/food-diary/food-entry/mutations/delete.js';
 	import { useCreateFoodEntry } from '#lib/features/food-diary/food-entry/mutations/create.js';
 	import posthog from 'posthog-js';
-	import { markRecentChange } from '#lib/features/food-diary/recent-change.svelte.js';
+	import { markRecentChange } from '#lib/features/food-diary/_common/recent-change.svelte.js';
 	import type { Row } from '@myfit/shared/client';
 	import type { PageProps } from './$types';
 

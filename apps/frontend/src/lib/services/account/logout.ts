@@ -3,8 +3,8 @@ import { resolve } from '$app/paths';
 import { authClient } from '#lib/clients/auth-client.js';
 import { getDb, resetDb } from '#lib/clients/idb-client.js';
 import { queryClient } from '#lib/clients/query-client.js';
-import { accountSession } from '#lib/features/account/account-session.svelte.js';
-import { syncWorkerState } from '#lib/features/sync/sync-worker.svelte.js';
+import { accountSession } from '#lib/services/account/account-session.svelte.js';
+import { syncWorkerState } from '#lib/services/sync/sync-worker.svelte.js';
 import posthog from 'posthog-js';
 
 /**

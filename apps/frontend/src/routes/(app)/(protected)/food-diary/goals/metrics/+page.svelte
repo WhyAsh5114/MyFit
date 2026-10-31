@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { markRecentChange } from '#lib/features/food-diary/recent-change.svelte.js';
+	import { markRecentChange } from '#lib/features/food-diary/_common/recent-change.svelte.js';
 	import MacroMetricsForm from './macro-metrics-form.svelte';
 	import { Spinner } from '#lib/components/ui/spinner/index.js';
 	import { useCreateMacroMetrics } from '#lib/features/food-diary/macro-metrics/mutations/create.js';

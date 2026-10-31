@@ -1,4 +1,4 @@
-import { accountReady } from '#lib/features/account/account-session.svelte.js';
+import { accountReady } from '#lib/services/account/account-session.svelte.js';
 import { getLocalUser } from '#lib/features/user/queries/get.js';
 import type { LayoutLoad } from './$types';
 

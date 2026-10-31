@@ -11,7 +11,7 @@
 	import * as Drawer from '#lib/components/ui/drawer/index.js';
 	import Badge from '#lib/components/ui/badge/badge.svelte';
 	import Button from '#lib/components/ui/button/button.svelte';
-	import { syncWorkerState } from '#lib/features/sync/sync-worker.svelte.js';
+	import { syncWorkerState } from '#lib/services/sync/sync-worker.svelte.js';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getDb, type DbClient } from '#lib/clients/idb-client.js';
@@ -19,7 +19,7 @@
 	import { authClient } from '#lib/clients/auth-client.js';
 	import { onMount } from 'svelte';
 	import { online } from 'svelte/reactivity/window';
-	import { redirectToLogin } from '#lib/features/account/account-db.js';
+	import { redirectToLogin } from '#lib/services/account/account-db.js';
 	import type { SyncWorkerStatus } from '@prisma-idb/sync-extension-idb/client';
 
 	let hasAnyRetryableUnsynced = $state<boolean>();

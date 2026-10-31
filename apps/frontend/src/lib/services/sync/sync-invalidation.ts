@@ -1,6 +1,6 @@
 import { refreshAll } from '$app/navigation';
 import type { PullChange } from '@prisma-idb/sync-extension-idb/client';
-import { invalidateKeys } from '#lib/features/data/dependencies.js';
+import { invalidateKeys } from '#lib/data/dependencies.js';
 import { userKeys } from '#lib/features/user/keys.js';
 import { activityEntryKeys } from '#lib/features/food-diary/acitivity-entry/keys.js';
 import { activityPreferencesKeys } from '#lib/features/food-diary/activity-preferences/keys.js';

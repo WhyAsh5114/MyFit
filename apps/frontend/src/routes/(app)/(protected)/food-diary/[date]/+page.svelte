@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { getLocalTimeZone } from '@internationalized/date';
-	import { parseSelectedDay } from '#lib/features/food-diary/selected-day.js';
+	import { parseSelectedDay } from '#lib/features/food-diary/_common/selected-day.js';
 	import HeaderCard from './components/entries-page/header-card.svelte';
 	import FoodEntries from './components/entries-page/food-entries.svelte';
 	import ActivityEntries from './components/entries-page/activity-entries.svelte';

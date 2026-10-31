@@ -1,6 +1,6 @@
 import type { CalendarDate } from '@internationalized/date';
 import { getDb } from '#lib/clients/idb-client.js';
-import { defineReader } from '#lib/features/data/dependencies.js';
+import { defineReader } from '#lib/data/dependencies.js';
 import { dayBounds } from '../../_common/day-bounds';
 import { macroTargetsKeys } from '../keys';
 

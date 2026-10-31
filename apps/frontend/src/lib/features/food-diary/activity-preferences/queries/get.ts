@@ -1,5 +1,5 @@
 import { getDb } from '#lib/clients/idb-client.js';
-import { defineReader } from '#lib/features/data/dependencies.js';
+import { defineReader } from '#lib/data/dependencies.js';
 import { activityPreferencesKeys } from '../keys';
 
 /** A user's latest activity preferences, or `null` when they have none. */

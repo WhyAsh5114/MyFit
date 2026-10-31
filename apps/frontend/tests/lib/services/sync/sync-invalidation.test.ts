@@ -1,10 +1,10 @@
 import type { PullChange } from '@prisma-idb/sync-extension-idb/client';
 import { describe, expect, it } from 'vitest';
-import { dependencyId, isUnder } from '#lib/features/data/dependencies.js';
+import { dependencyId, isUnder } from '#lib/data/dependencies.js';
 import { foodEntryKeys } from '#lib/features/food-diary/food-entry/keys.js';
 import { macroTargetsKeys } from '#lib/features/food-diary/macro-targets/keys.js';
 import { mealKeys } from '#lib/features/food-diary/meals/keys.js';
-import { keysChangedBy } from '#lib/features/sync/sync-invalidation.js';
+import { keysChangedBy } from '#lib/services/sync/sync-invalidation.js';
 
 /** A pulled change to `model`. Only the model matters to the invalidation. */
 const changeTo = (model: string) => ({ model }) as PullChange;

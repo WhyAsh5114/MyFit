@@ -20,7 +20,7 @@
 	import { Spinner } from '#lib/components/ui/spinner/index.js';
 	import { nutritionDataToFoodEntryFormData } from '#lib/features/food-diary/nutrition-data/model/mapper.js';
 	import posthog from 'posthog-js';
-	import { markRecentChange } from '#lib/features/food-diary/recent-change.svelte.js';
+	import { markRecentChange } from '#lib/features/food-diary/_common/recent-change.svelte.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
