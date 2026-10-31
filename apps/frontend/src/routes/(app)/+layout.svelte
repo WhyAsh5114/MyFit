@@ -7,10 +7,10 @@
 	import SyncComponent from './components/sync-component.svelte';
 
 	// Renamed because the session cacher hands its own `children` snippet to the layout below.
-	let { children: page } = $props();
+	let { children: page, data } = $props();
 </script>
 
-<SessionCacher>
+<SessionCacher loadedOwnerId={data.ownerId}>
 	{#snippet children(ownerId)}
 		<Sidebar.Provider>
 			<AppSidebar />

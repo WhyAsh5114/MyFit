@@ -7,7 +7,7 @@
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { useCreateFoodEntry } from '#lib/features/food-diary/food-entry/mutations/create.js';
 	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
-	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
+	import { getCurrentUser } from '#lib/features/user/current-user.svelte.js';
 	import { CheckIcon, XIcon } from '@lucide/svelte';
 	import type { MyUIMessage } from '@myfit/api';
 	import FoodCard from '../../../food-diary/[date]/components/add-edit-entries/food-card.svelte';
@@ -23,10 +23,10 @@
 	const skipped = $derived(part.state === 'input-available' && !active);
 
 	const createFoodEntry = useCreateFoodEntry();
-	const currentUser = useCurrentUser();
+	const currentUser = $derived(getCurrentUser());
 
 	async function log() {
-		if (!currentUser.data?.id || !part.input) return;
+		if (!currentUser || !part.input) return;
 
 		const { name, ...rest } = part.input;
 		const data = {
@@ -41,7 +41,7 @@
 		} as FoodEntryFormSchema;
 
 		try {
-			await createFoodEntry.mutateAsync({ data, userId: currentUser.data.id });
+			await createFoodEntry.mutateAsync({ data, userId: currentUser.id });
 			chat.addToolOutput({
 				tool: 'createFoodEntry',
 				toolCallId: part.toolCallId,

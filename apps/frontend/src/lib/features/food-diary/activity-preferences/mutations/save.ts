@@ -1,26 +1,22 @@
-import { createMutation } from '@tanstack/svelte-query';
+import { useMutation } from '#lib/features/mutation.svelte.js';
 import { getDb } from '#lib/clients/idb-client.js';
 import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
-import { queryClient } from '#lib/clients/query-client.js';
+import { invalidateKeys } from '#lib/features/dependencies.js';
 import type { NewRow } from '@myfit/shared/client';
 import { activityPreferencesKeys } from '../keys';
 
 export const useSaveActivityPreferences = () =>
-	createMutation(() => ({
+	useMutation({
 		mutationFn: async (data: NewRow<'ActivityPreferences'>) => {
 			const { orm } = await getDb();
 			return await orm.activityPreferences.create(data);
 		},
 
-		onSuccess: (data) => {
-			queryClient.invalidateQueries({
-				queryKey: activityPreferencesKeys.byUser(data.userId)
-			});
-		},
+		onSuccess: (data) => invalidateKeys(activityPreferencesKeys.byUser(data.userId)),
 
 		onError: (error) => {
 			toast.error(m['unknownErrorOccurred']());
 			console.error('Failed to upsert activity preferences:', error);
 		}
-	}));
+	});

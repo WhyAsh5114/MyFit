@@ -1,11 +1,32 @@
+import { dependOn, invalidateKeys, type Depends } from './dependencies';
+
 /** Whether this tab owns the app: `pending` until the lock request settles. */
 export type TabStatus = 'pending' | 'active' | 'blocked';
 
 /** Gates account views while the tab lock and the logout flow settle. */
 export const accountSession = $state({
 	tab: 'pending' as TabStatus,
-	logout: 'idle' as 'idle' | 'busy' | 'failed'
+	logout: 'idle' as 'idle' | 'busy' | 'failed',
+	/**
+	 * The account the local database belongs to: `undefined` while it is being reconciled with the
+	 * session, `null` when there is none. Route loads read it through `loadOwner`.
+	 */
+	ownerId: undefined as string | null | undefined
 });
+
+export const accountKeys = { owner: ['account'] as const };
+
+/**
+ * The account a `load` should read for, or `undefined`/`null` while there is none to read for. It
+ * reruns when the session cacher settles on another account, which is how a cold start gets its data.
+ */
+export function loadOwner(depends: Depends) {
+	dependOn(depends, accountKeys.owner);
+	return accountSession.ownerId;
+}
+
+/** Reruns every active `load` that reads the account. */
+export const invalidateOwner = () => invalidateKeys(accountKeys.owner);
 
 const LOCK_NAME = 'myfit-active-tab';
 let claimed = false;

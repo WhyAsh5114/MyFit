@@ -3,7 +3,7 @@
 	import { authClient } from '#lib/clients/auth-client.js';
 	import { getDb, resetDb } from '#lib/clients/idb-client.js';
 	import { queryClient } from '#lib/clients/query-client.js';
-	import { accountSession } from '#lib/features/account-session.svelte.js';
+	import { accountSession, invalidateOwner } from '#lib/features/account-session.svelte.js';
 	import { syncWorkerState } from '#lib/features/sync-worker.svelte.js';
 	import { untrack, type Snippet } from 'svelte';
 	import { isUnprotectedRoute } from './constants';
@@ -16,19 +16,27 @@
 	import ResponsiveDialog from '#lib/components/responsive-dialog.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
 
-	let { children }: { children: Snippet<[string | null]> } = $props();
+	type Props = {
+		/** The account the layout's `load` last ran for. */
+		loadedOwnerId: string | null | undefined;
+		children: Snippet<[string | null]>;
+	};
+	let { loadedOwnerId, children }: Props = $props();
 	const session = authClient.useSession();
 	const sessionOwner = $derived($session.data?.user.id);
 
 	// The user the app runs as: the signed-in one, or the stored one while offline or expired.
 	// `undefined` until the local database has been checked against the session.
-	let ownerId = $state<string | null>();
+	const ownerId = $derived(accountSession.ownerId);
 
+	// The pages' data was read for `ownerId` once the loads have rerun after it settled, so showing
+	// them any sooner would flash another account's data, or none.
 	const canShowContent = $derived(
 		accountSession.tab === 'active' &&
 			!$session.isPending &&
 			accountSession.logout === 'idle' &&
 			ownerId !== undefined &&
+			loadedOwnerId === ownerId &&
 			(!sessionOwner || sessionOwner === ownerId) &&
 			(ownerId !== null || isUnprotectedRoute(page.url.pathname))
 	);
@@ -59,7 +67,7 @@
 
 		const sessionData = untrack(() => $session.data);
 		let cancelled = false;
-		ownerId = undefined;
+		accountSession.ownerId = undefined;
 		error = null;
 
 		// Serialize switches so an older database open cannot overtake a newer session.
@@ -90,9 +98,11 @@
 				if (sessionData && !user) await createUserForCurrentSession(db, sessionData);
 				if (cancelled) return;
 				// Without a session (offline), the stored user keeps working.
-				ownerId = owner ?? user?.id ?? null;
+				accountSession.ownerId = owner ?? user?.id ?? null;
 				// Only a signed-in account syncs; an expired session keeps editing locally.
 				if (owner) syncWorkerState.start(db);
+				// The pages' loads ran before there was an account to read for, or for another one.
+				void invalidateOwner();
 			})
 			.catch((cause) => {
 				if (cancelled) return;
@@ -139,11 +149,15 @@
 
 	/**
 	 * Stops the sync worker when the component is destroyed, so it never outlives the account it
-	 * serves (it is bound to this database client).
+	 * serves (it is bound to this database client), and forgets the account so loads that run
+	 * before the next cacher settles read nothing.
 	 *
 	 * Has no dependencies, so it runs once on mount; only the cleanup does anything.
 	 */
-	$effect(() => () => void syncWorkerState.stop());
+	$effect(() => () => {
+		accountSession.ownerId = undefined;
+		void syncWorkerState.stop();
+	});
 </script>
 
 {#if accountSession.logout === 'busy'}

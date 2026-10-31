@@ -4,19 +4,16 @@
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '#lib/components/ui/sidebar/index.js';
-	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { m } from '#lib/paraglide/messages.js';
 	import { LogInIcon } from '@lucide/svelte';
 	import BadgeCheckIcon from '@lucide/svelte/icons/badge-check';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 	import { logout } from '#lib/features/logout.js';
-	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
+	import { getCurrentUser } from '#lib/features/user/current-user.svelte.js';
 
 	const sidebar = useSidebar();
-	let authData = useCurrentUser();
-
-	let user = $derived(authData.data);
+	let user = $derived(getCurrentUser());
 
 	function getInitials(name: string, email: string) {
 		if (name.length === 0) {
@@ -31,17 +28,7 @@
 
 <Sidebar.Menu>
 	<Sidebar.MenuItem>
-		{#if authData.isPending}
-			<Sidebar.MenuButton
-				size="lg"
-				variant="outline"
-				aria-disabled="true"
-				class="justify-center"
-				aria-label={m['account.loading']()}
-			>
-				<Spinner />
-			</Sidebar.MenuButton>
-		{:else if !user}
+		{#if !user}
 			<Sidebar.MenuButton variant="outline" size="lg" aria-label={m['account.login']()}>
 				{#snippet child({ props })}
 					<a href={resolve('login')} {...props}><LogInIcon />{m['account.login']()}</a>

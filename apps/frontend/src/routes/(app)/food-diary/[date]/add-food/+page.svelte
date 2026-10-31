@@ -11,12 +11,10 @@
 	import { goto } from '$app/navigation';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import * as InputGroup from '#lib/components/ui/input-group/index.js';
-	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
-	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
 	import posthog from 'posthog-js';
+	import type { PageProps } from './$types';
 
-	const currentUser = useCurrentUser();
-	const meals = useMeals(() => currentUser.data?.id ?? '');
+	let { data }: PageProps = $props();
 
 	let search = $state(page.url.searchParams.get('search') ?? '');
 	const debounced = new Debounced(() => search, 500);
@@ -25,7 +23,7 @@
 	let searchParamMeal = $derived.by(() => {
 		const mealId = params.get('meal-id');
 		if (!mealId) return null;
-		return meals.data?.find((meal) => meal.id === mealId) ?? null;
+		return data.meals?.find((meal) => meal.id === mealId) ?? null;
 	});
 
 	$effect(() => {
@@ -66,7 +64,7 @@
 						{/snippet}
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content align="end">
-						{#each meals.data ?? [] as meal (meal.id)}
+						{#each data.meals ?? [] as meal (meal.id)}
 							<DropdownMenu.Item onclick={() => params.set('meal-id', meal.id)}>
 								{meal.name}
 							</DropdownMenu.Item>

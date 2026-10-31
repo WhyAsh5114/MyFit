@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
 	import * as Empty from '#lib/components/ui/empty/index.js';
 	import {
 		PlusCircleIcon,
@@ -11,10 +10,8 @@
 		TrashIcon
 	} from '@lucide/svelte';
 	import Button from '#lib/components/ui/button/button.svelte';
-	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
-	import { useFoodEntryById } from '#lib/features/food-diary/food-entry/queries/get-by-id.js';
 	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
 	import { useUpdateFoodEntry } from '#lib/features/food-diary/food-entry/mutations/update.js';
 	import { toast } from 'svelte-sonner';
@@ -24,35 +21,30 @@
 	import { foodEntryToFoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/mapper.js';
 	import { useDeleteFoodEntry } from '#lib/features/food-diary/food-entry/mutations/delete.js';
 	import { useCreateFoodEntry } from '#lib/features/food-diary/food-entry/mutations/create.js';
-	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
 	import posthog from 'posthog-js';
 	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
 	import type { Row } from '@myfit/shared/client';
+	import type { PageProps } from './$types';
 
-	const currentUser = useCurrentUser();
-	const meals = useMeals(() => currentUser.data?.id ?? '');
-	const foodEntryById = useFoodEntryById(() => ({
-		userId: currentUser.data?.id ?? '',
-		id: page.params.entryId ?? ''
-	}));
+	let { data }: PageProps = $props();
 
 	const deleteFoodEntry = useDeleteFoodEntry();
 	const createFoodEntry = useCreateFoodEntry();
 	const updateFoodEntry = useUpdateFoodEntry();
 
-	async function handleSubmit(data: FoodEntryFormSchema) {
-		if (!page.params.entryId || !currentUser.data) {
+	async function handleSubmit(form: FoodEntryFormSchema) {
+		if (!page.params.entryId || !data.edit) {
 			toast.error(m['unknownErrorOccurred']());
 			return;
 		}
 		await updateFoodEntry.mutateAsync({
-			data,
+			data: form,
 			id: page.params.entryId,
-			userId: currentUser.data.id
+			userId: data.edit.userId
 		});
 		posthog.capture('food_entry_updated', {
-			product_name: data.productName,
-			quantity_g: data.quantityG
+			product_name: form.productName,
+			quantity_g: form.quantityG
 		});
 		markRecentChange(page.params.entryId);
 		await goto(resolve(`food-diary/${page.params.date}`));
@@ -70,14 +62,14 @@
 	}
 
 	async function deleteEntry() {
-		if (!page.params.entryId || !currentUser.data) {
+		if (!page.params.entryId || !data.edit) {
 			toast.error(m['unknownErrorOccurred']());
 			return;
 		}
 
 		const deleted = await deleteFoodEntry.mutateAsync({
 			id: page.params.entryId,
-			userId: currentUser.data.id
+			userId: data.edit.userId
 		});
 		posthog.capture('food_entry_deleted');
 		if (deleted) {
@@ -90,10 +82,7 @@
 	}
 </script>
 
-{#if foodEntryById.data === undefined || meals.data === undefined || !currentUser.data}
-	<Skeleton class="h-134 w-full" />
-	<Skeleton class="mt-auto h-9 w-full" />
-{:else if foodEntryById.data === null}
+{#if data.edit?.foodEntry === null}
 	<Empty.Root>
 		<Empty.Header>
 			<Empty.Media variant="icon">
@@ -116,13 +105,13 @@
 			<Button variant="outline"><PlusCircleIcon />{m['foodDiary.addManually']()}</Button>
 		</Empty.Content>
 	</Empty.Root>
-{:else}
+{:else if data.edit}
 	<FoodEntryForm
-		initialData={foodEntryToFoodEntryFormSchema(foodEntryById.data, page.params.date)}
+		initialData={foodEntryToFoodEntryFormSchema(data.edit.foodEntry, page.params.date)}
 		allowProductEdit
 		formId="edit-food-entry-form"
 		onSubmit={handleSubmit}
-		meals={meals.data}
+		meals={data.edit.meals}
 	>
 		{#snippet submit()}
 			<div class="mt-auto grid grid-cols-2 gap-2">

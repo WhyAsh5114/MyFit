@@ -11,12 +11,13 @@
 	import Button from '#lib/components/ui/button/button.svelte';
 	import { SaveIcon } from '@lucide/svelte';
 	import DynamicActivity from './dynamic-activity.svelte';
-	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { useActivityPreferences } from '#lib/features/food-diary/activity-preferences/queries/get.js';
 	import { useSaveActivityPreferences } from '#lib/features/food-diary/activity-preferences/mutations/save.js';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
 
 	type ActivityAdjustmentType = Row<'ActivityPreferences'>['adjustmentType'];
 
@@ -37,15 +38,13 @@
 		{ description: string; badge?: { text: string; variant: 'outline' | 'default' } }
 	>;
 
-	const currentUser = useCurrentUser();
-	const activityPreferences = useActivityPreferences(() => currentUser.data?.id ?? '');
 	const saveActivityPreferences = useSaveActivityPreferences();
 
 	let selectedOption = $derived<ActivityAdjustmentType>(
-		activityPreferences.data?.adjustmentType ?? 'Manual'
+		data.activity?.preferences?.adjustmentType ?? 'Manual'
 	);
 	let staticCalories = $derived<number | undefined>(
-		activityPreferences.data?.staticCalories ?? undefined
+		data.activity?.preferences?.staticCalories ?? undefined
 	);
 
 	let dynamicDataStatus = $state<'unavailable' | 'granted' | 'denied'>();
@@ -62,25 +61,26 @@
 
 	/** Persists the selected activity adjustment and returns to the goals page. */
 	async function saveSettings() {
-		if (!currentUser.data) return;
+		if (!data.activity) return;
+		const { userId } = data.activity;
 
 		if (selectedOption === 'Manual') {
 			await saveActivityPreferences.mutateAsync({
 				adjustmentType: 'Manual',
 				staticCalories: null,
-				userId: currentUser.data.id
+				userId
 			});
 		} else if (selectedOption === 'Static') {
 			await saveActivityPreferences.mutateAsync({
 				adjustmentType: 'Static',
 				staticCalories: staticCalories ?? null,
-				userId: currentUser.data.id
+				userId
 			});
 		} else if (selectedOption === 'Dynamic') {
 			await saveActivityPreferences.mutateAsync({
 				adjustmentType: 'Dynamic',
 				staticCalories: null,
-				userId: currentUser.data.id
+				userId
 			});
 		}
 

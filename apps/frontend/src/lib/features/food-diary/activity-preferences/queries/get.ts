@@ -1,26 +1,10 @@
-import { createQuery } from '@tanstack/svelte-query';
 import { getDb } from '#lib/clients/idb-client.js';
-import { toast } from 'svelte-sonner';
+import { dependOn, type Depends } from '#lib/features/dependencies.js';
 import { activityPreferencesKeys } from '../keys';
 
-export const useActivityPreferences = (getUserId: () => string) =>
-	createQuery(() => {
-		const userId = getUserId();
-		return {
-			queryKey: activityPreferencesKeys.byUser(userId),
-			queryFn: async () => {
-				try {
-					const { orm } = await getDb();
-					return await orm.activityPreferences
-						.where({ userId })
-						.orderBy({ effectiveFrom: 'desc' })
-						.first();
-				} catch (error) {
-					toast.error('Failed to fetch activity preferences');
-					console.error('Error fetching activity preferences:', error);
-					throw error;
-				}
-			},
-			enabled: !!userId
-		};
-	});
+/** A user's latest activity preferences, or `null` when they have none. */
+export async function getActivityPreferences(depends: Depends, userId: string) {
+	dependOn(depends, activityPreferencesKeys.byUser(userId));
+	const { orm } = await getDb();
+	return await orm.activityPreferences.where({ userId }).orderBy({ effectiveFrom: 'desc' }).first();
+}

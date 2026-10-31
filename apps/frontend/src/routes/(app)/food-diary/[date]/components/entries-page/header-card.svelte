@@ -6,21 +6,18 @@
 	import Button from '#lib/components/ui/button/button.svelte';
 	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
 	import { dateFormatter } from '#lib/my-utils.js';
-	import { useMacroMetricsByDate } from '#lib/features/food-diary/macro-metrics/queries/get-by-date.js';
-	import { useMacroTargetsByDate } from '#lib/features/food-diary/macro-targets/queries/get-by-date.js';
 	import type { Row } from '@myfit/shared/client';
 	import StackedCaloriesBar from './stacked-calories-bar.svelte';
 	import { calculateDailyNutritionStats } from '#lib/domain/nutrition/stats.js';
 	import { m } from '#lib/paraglide/messages.js';
-	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
 
 	type Props = {
 		foodEntries?: Row<'FoodEntry'>[];
 		activityEntries?: Row<'ActivityEntry'>[];
 		selectedDay: CalendarDate;
 		timezone: string;
-		macroMetrics: ReturnType<typeof useMacroMetricsByDate>;
-		macroTargets: ReturnType<typeof useMacroTargetsByDate>;
+		macroMetrics: Row<'MacroMetrics'> | null;
+		macroTargets: Row<'MacroTargets'> | null;
 	};
 	let { foodEntries, activityEntries, selectedDay, timezone, macroMetrics, macroTargets }: Props =
 		$props();
@@ -41,16 +38,16 @@
 		if (daysDiff > 1) return m['foodDiary.inDays']({ count: daysDiff });
 	}
 
-	let weeklyCaloricChange = $derived(macroTargets.data?.weeklyCaloricChange ?? 0);
+	let weeklyCaloricChange = $derived(macroTargets?.weeklyCaloricChange ?? 0);
 
 	// A day is finished once it is in the past; today is still in progress.
 	let finished = $derived(selectedDay.compare(today(getLocalTimeZone())) < 0);
 
 	let dailyNutritionStats = $derived.by(() => {
-		if (!macroMetrics.data || macroTargets.data === undefined) return undefined;
+		if (!macroMetrics) return undefined;
 
 		return calculateDailyNutritionStats({
-			metrics: macroMetrics.data,
+			metrics: macroMetrics,
 			weeklyCaloricChange,
 			foodEntries,
 			activityEntries
@@ -71,7 +68,7 @@
 			<ChevronRightIcon />
 		</Button>
 	</div>
-	<!-- Reserves the bar's height so nothing shifts as data loads. -->
+	<!-- Keeps the card's height whether it shows the bar or the prompt to set a goal. -->
 	<div class="flex min-h-14.5 w-full flex-col">
 		{#if dailyNutritionStats}
 			<StackedCaloriesBar
@@ -80,8 +77,6 @@
 				{weeklyCaloricChange}
 				{finished}
 			/>
-		{:else if macroTargets.isLoading || macroMetrics.isLoading}
-			<Skeleton class="grow" />
 		{:else}
 			<a
 				class="my-auto w-full py-3 text-center text-sm text-muted-foreground underline"

@@ -1,16 +1,13 @@
-import { createQuery } from '@tanstack/svelte-query';
 import { getDb } from '#lib/clients/idb-client.js';
+import { dependOn, type Depends } from '#lib/features/dependencies.js';
 import { foodEntryKeys } from '../keys';
 
-export const useFoodEntryById = (getUserIdAndId: () => { userId: string; id: string }) =>
-	createQuery(() => {
-		const { userId, id } = getUserIdAndId();
-		return {
-			queryKey: foodEntryKeys.byId(userId, id),
-			queryFn: async () => {
-				const { orm } = await getDb();
-				return await orm.foodEntry.where({ id, userId }).first();
-			},
-			enabled: !!id && !!userId
-		};
-	});
+/** One of a user's food entries, or `null` when it no longer exists. */
+export async function getFoodEntryById(
+	depends: Depends,
+	{ userId, id }: { userId: string; id: string }
+) {
+	dependOn(depends, foodEntryKeys.byId(userId, id));
+	const { orm } = await getDb();
+	return await orm.foodEntry.where({ id, userId }).first();
+}

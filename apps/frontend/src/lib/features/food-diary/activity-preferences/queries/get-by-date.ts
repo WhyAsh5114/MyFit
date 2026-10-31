@@ -1,35 +1,20 @@
-import { createQuery } from '@tanstack/svelte-query';
+import type { CalendarDate } from '@internationalized/date';
 import { getDb } from '#lib/clients/idb-client.js';
-import { toast } from 'svelte-sonner';
+import { dependOn, type Depends } from '#lib/features/dependencies.js';
+import { dayBounds } from '../../_common/day-bounds';
 import { activityPreferencesKeys } from '../keys';
-import { getLocalTimeZone, type CalendarDate } from '@internationalized/date';
 
-export const useActivityPreferencesByDate = (
-	getUserIdAndDate: () => { userId: string; date: CalendarDate }
-) =>
-	createQuery(() => {
-		const { userId, date } = getUserIdAndDate();
-		const timezone = getLocalTimeZone();
-
-		const dayEnd = date.add({ days: 1 }).toDate(timezone);
-		dayEnd.setHours(0, 0, 0, 0);
-
-		return {
-			queryKey: activityPreferencesKeys.byDate(userId, date.toString()),
-			queryFn: async () => {
-				try {
-					const { orm } = await getDb();
-					return await orm.activityPreferences
-						.where({ userId })
-						.where((row) => row.effectiveFrom.lt(dayEnd))
-						.orderBy({ effectiveFrom: 'desc' })
-						.first();
-				} catch (error) {
-					toast.error('Failed to fetch activity preferences');
-					console.error('Error fetching activity preferences:', error);
-					throw error;
-				}
-			},
-			enabled: !!userId && !!date
-		};
-	});
+/** The activity preferences in effect on one diary day, or `null` when none had started yet. */
+export async function getActivityPreferencesByDate(
+	depends: Depends,
+	{ userId, date }: { userId: string; date: CalendarDate }
+) {
+	dependOn(depends, activityPreferencesKeys.byDate(userId, date.toString()));
+	const { end } = dayBounds(date);
+	const { orm } = await getDb();
+	return await orm.activityPreferences
+		.where({ userId })
+		.where((row) => row.effectiveFrom.lt(end))
+		.orderBy({ effectiveFrom: 'desc' })
+		.first();
+}

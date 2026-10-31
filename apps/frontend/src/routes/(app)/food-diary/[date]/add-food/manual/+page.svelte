@@ -1,54 +1,43 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { Button } from '#lib/components/ui/button/index.js';
-	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
 	import { Spinner } from '#lib/components/ui/spinner/index.js';
 	import { useCreateFoodEntry } from '#lib/features/food-diary/food-entry/mutations/create.js';
 	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
-	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
-	import { m } from '#lib/paraglide/messages.js';
 	import { CircleCheckBigIcon } from '@lucide/svelte';
-	import { toast } from 'svelte-sonner';
 	import posthog from 'posthog-js';
 	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
+	import type { PageProps } from './$types';
 
-	const currentUser = useCurrentUser();
-	const meals = useMeals(() => currentUser.data?.id ?? '');
+	let { data }: PageProps = $props();
+
 	const createFoodEntry = useCreateFoodEntry();
 
-	async function handleSubmit(data: FoodEntryFormSchema) {
-		if (!currentUser.data) {
-			toast.error(m['unknownErrorOccurred']());
-			return;
-		}
+	async function handleSubmit(form: FoodEntryFormSchema) {
+		if (!data.manual) return;
 		const created = await createFoodEntry.mutateAsync({
-			data,
-			userId: currentUser.data.id
+			data: form,
+			userId: data.manual.userId
 		});
 		posthog.capture('food_entry_created', {
 			source: 'manual',
-			product_name: data.productName,
-			quantity_g: data.quantityG
+			product_name: form.productName,
+			quantity_g: form.quantityG
 		});
 		markRecentChange(created.id);
 		await goto(resolve(`food-diary/${page.params.date}`));
 	}
 </script>
 
-{#if !currentUser.data || !meals.data}
-	<Skeleton class="h-70 w-full" />
-	<Skeleton class="h-65 w-full" />
-	<Skeleton class="mt-auto h-9 w-full" />
-{:else}
+{#if data.manual}
 	<FoodEntryForm
 		allowProductEdit
 		formId="create-food-entry-form"
 		onSubmit={handleSubmit}
-		meals={meals.data}
+		meals={data.manual.meals}
 	>
 		{#snippet submit()}
 			<Button

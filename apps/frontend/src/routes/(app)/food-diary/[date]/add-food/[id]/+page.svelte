@@ -12,45 +12,40 @@
 	} from '@lucide/svelte';
 	import Button from '#lib/components/ui/button/button.svelte';
 	import FoodEntryForm from '../../components/add-edit-entries/food-entry-form.svelte';
-	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
-	import { toast } from 'svelte-sonner';
 	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
 	import { useCreateFoodEntry } from '#lib/features/food-diary/food-entry/mutations/create.js';
 	import { goto } from '$app/navigation';
 	import { Spinner } from '#lib/components/ui/spinner/index.js';
 	import { nutritionDataToFoodEntryFormData } from '#lib/features/food-diary/nutrition-data/model/mapper.js';
-	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
 	import posthog from 'posthog-js';
 	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
+	import type { PageProps } from './$types';
 
-	const currentUser = useCurrentUser();
-	const meals = useMeals(() => currentUser.data?.id ?? '');
+	let { data }: PageProps = $props();
+
 	const nutritionDataById = useNutritionDataById(() => page.params.id ?? '');
 
 	const createFoodEntry = useCreateFoodEntry();
 
-	async function handleSubmit(data: FoodEntryFormSchema) {
-		if (!currentUser.data) {
-			toast.error(m['unknownErrorOccurred']());
-			return;
-		}
+	async function handleSubmit(form: FoodEntryFormSchema) {
+		if (!data.log) return;
 		const created = await createFoodEntry.mutateAsync({
-			data,
-			userId: currentUser.data.id
+			data: form,
+			userId: data.log.userId
 		});
 		posthog.capture('food_entry_created', {
 			source: 'search',
-			product_name: data.productName,
-			quantity_g: data.quantityG
+			product_name: form.productName,
+			quantity_g: form.quantityG
 		});
 		markRecentChange(created.id);
 		await goto(resolve(`food-diary/${page.params.date}`));
 	}
 </script>
 
-{#if nutritionDataById.data === undefined || meals.data === undefined || !currentUser.data}
+{#if nutritionDataById.data === undefined || !data.log}
 	<Skeleton class="h-115 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
 {:else if nutritionDataById.data === null}
@@ -86,7 +81,7 @@
 		allowProductEdit={false}
 		formId="create-food-entry-form"
 		onSubmit={handleSubmit}
-		meals={meals.data}
+		meals={data.log.meals}
 	>
 		{#snippet submit()}
 			<Button

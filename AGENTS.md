@@ -7,6 +7,7 @@ MyFit is a **local-first, mobile-first fitness SPA** built with SvelteKit + Capa
 - **No SSR.** Root layout sets `prerender = true`; `(app)` group sets `ssr = false`. All data fetching is client-side.
 - **Local-first data.** All user data (food entries, metrics, targets, preferences) is stored in IndexedDB through the Prisma IDB client (`@prisma-idb/client-idb`), typed by the shared schema in `packages/shared`. Writes go to IDB first; the sync extension records each `orm.*` write in an outbox, and the sync worker pushes it to the remote PostgreSQL database in the background.
 - **Remote data is read-only from the client.** Nutrition food data is fetched from the Hono API via `apiClient` and cached in TanStack Query — it is never written locally.
+- **Local data is loaded by routes.** Each page's `load` reads IndexedDB and returns the data, so a page renders whole instead of through skeletons. Mutations and sync pulls rerun the affected `load`s with `invalidateKeys`. TanStack Query is only for remote and device reads; writes go through `useMutation` (`#lib/features/mutation.svelte.ts`).
 - **Two clients, two purposes:**
   - `getDb()` (`#lib/clients/idb-client`) → `DbClient` (IndexedDB) — all user data reads/writes through `const { orm } = await getDb()`
   - `apiClient` → Hono RPC client — nutrition data search/lookup only
@@ -21,20 +22,20 @@ Read [`DESIGN.md`](DESIGN.md) before building or changing any UI. It sets the pr
 
 ## Tech Stack
 
-| Concern      | Library                                                    |
-| ------------ | ---------------------------------------------------------- |
-| Framework    | SvelteKit 3, Svelte 5 (runes)                              |
-| Styling      | Tailwind CSS v4                                            |
-| Components   | shadcn-svelte (via bits-ui)                                |
-| Charts       | layerchart                                                 |
-| Server state | TanStack Svelte Query v6                                   |
-| Forms        | sveltekit-superforms + zod v4                              |
-| Local DB     | Prisma IDB client (IndexedDB, schema in `packages/shared`) |
-| Remote API   | Hono RPC (`hc<AppType>`)                                   |
-| Auth         | better-auth (email OTP + anonymous)                        |
-| i18n         | Paraglide JS (compile-time)                                |
-| Mobile       | Capacitor 8 (iOS + Android)                                |
-| Date math    | `@internationalized/date`                                  |
+| Concern      | Library                                                          |
+| ------------ | ---------------------------------------------------------------- |
+| Framework    | SvelteKit 3, Svelte 5 (runes)                                    |
+| Styling      | Tailwind CSS v4                                                  |
+| Components   | shadcn-svelte (via bits-ui)                                      |
+| Charts       | layerchart                                                       |
+| Server state | SvelteKit `load` (local data), TanStack Svelte Query v6 (remote) |
+| Forms        | sveltekit-superforms + zod v4                                    |
+| Local DB     | Prisma IDB client (IndexedDB, schema in `packages/shared`)       |
+| Remote API   | Hono RPC (`hc<AppType>`)                                         |
+| Auth         | better-auth (email OTP + anonymous)                              |
+| i18n         | Paraglide JS (compile-time)                                      |
+| Mobile       | Capacitor 8 (iOS + Android)                                      |
+| Date math    | `@internationalized/date`                                        |
 
 ---
 
@@ -53,10 +54,10 @@ src/lib/features/
         mapper.ts             # DB shape ↔ form shape transforms
         nutrients.ts          # Domain constants, config arrays
       queries/
-        get.ts                # useResource(getUserId)
-        get-by-date.ts        # useResourceByDate(getArgs)
-        get-by-id.ts          # useResourceById(getArgs)
-        search.ts             # useSearchResource(getSearch)
+        get.ts                # getResource(depends, userId)
+        get-by-date.ts        # getResourceByDate(depends, { userId, date })
+        get-by-id.ts          # getResourceById(depends, { userId, id })
+        search.ts             # useSearchResource(getSearch)  ← remote only, TanStack
       mutations/
         create.ts             # useCreateResource()
         update.ts             # useUpdateResource()
@@ -76,7 +77,7 @@ The explicit contract for every feature:
 Query → [Mapper] → Form Schema → [Mapper] → Mutation → IDB
 ```
 
-1. **Query** fetches the current value from IDB (or API for remote data)
+1. **Query** reads the current value from IDB in a route `load` (or from the API through TanStack for remote data)
 2. **Mapper** (optional) converts the raw DB/API shape into the form's initial values
 3. **Form** validates with the Zod schema via superforms; user edits data
 4. **Mapper** (optional) converts validated form data back to the DB input shape
@@ -90,21 +91,21 @@ Only add mappers when the DB shape and form shape genuinely differ. Do not creat
 
 ### Hooks
 
-| Type              | Pattern                     | Example                         |
-| ----------------- | --------------------------- | ------------------------------- |
-| Query             | `use{Resource}`             | `useCurrentUser()`              |
-| Query by selector | `use{Resource}By{Selector}` | `useFoodEntriesByDate(getArgs)` |
-| Mutation          | `use{Verb}{Resource}`       | `useCreateFoodEntry()`          |
-| Upsert mutation   | `useSave{Resource}`         | `useSaveActivityPreferences()`  |
+| Type            | Pattern                       | Example                               |
+| --------------- | ----------------------------- | ------------------------------------- |
+| Local reader    | `get{Resource}[By{Selector}]` | `getFoodEntriesByDate(depends, args)` |
+| Remote query    | `use{Resource}[By{Selector}]` | `useNutritionDataById(getId)`         |
+| Mutation        | `use{Verb}{Resource}`         | `useCreateFoodEntry()`                |
+| Upsert mutation | `useSave{Resource}`           | `useSaveActivityPreferences()`        |
 
-No `Get` prefix, no `Query`/`Mutation` suffix on hook names.
+No `Query`/`Mutation` suffix on hook names.
 
 ### Local variables (in components/routes)
 
 ```ts
 // ✅ Concise and readable
-const currentUser = useCurrentUser();
-const foodEntries = useFoodEntriesByDate(() => ({ userId, date }));
+const currentUser = $derived(getCurrentUser());
+const nutritionData = useNutritionDataById(() => id);
 const createFoodEntry = useCreateFoodEntry();
 
 // ❌ Verbose, legacy-style
@@ -129,57 +130,89 @@ export const foodEntryKeys = {
 
 ---
 
-## TanStack Query Conventions
+## Loading Local Data
 
-### Queries
+Local data is read by the route's `load`, not by hooks in the page. A page then renders whole and has no loading state of its own. SvelteKit keeps the current page until `load` settles, so a day change or a navigation never shows a skeleton.
+
+```ts
+// features/food-diary/food-entry/queries/get-by-date.ts — a plain reader that registers what it read
+export async function getFoodEntriesByDate(
+	depends: Depends,
+	{ userId, date }: { userId: string; date: CalendarDate }
+) {
+	dependOn(depends, foodEntryKeys.byDate(userId, date.toString()));
+	const { orm } = await getDb();
+	return await orm.foodEntry.where({ userId } /* ... */).all();
+}
+
+// routes/(app)/food-diary/[date]/+page.ts
+export const load: PageLoad = async ({ params, depends }) => {
+	const userId = loadOwner(depends);
+	return {
+		diary: userId ? await loadDiaryDay(depends, userId, parseSelectedDay(params.date)) : null
+	};
+};
+```
+
+- Readers take `depends` first and call `dependOn` with the same key factory the mutations use. The key is turned into a `depends` id (`dependencyId` in `#lib/features/dependencies.ts`), and `invalidateKeys(prefix)` reruns every active `load` that registered a key under that prefix, the way `invalidateQueries` matched prefixes. This works for universal loads (`+page.ts`), and the component keeps its state, because the page data updates in place.
+- A route that reads several resources of one feature gets a feature-level loader (`food-diary/load-day.ts`); `+page.ts` only calls it.
+- `loadOwner(depends)` returns the account the local database belongs to, and reruns the `load` when it changes. It is `undefined` or `null` until the session cacher has settled on an account: return `null` data then, and render it as nothing. The cacher shows the page only after the loads have rerun for the settled account.
+- Load functions return data and never throw for missing rows: a reader returns `null` for one that doesn't exist.
+- Read `params` and `url` in the body of `load`: they are only tracked until `load` returns. A `load` that reads `url.search` reruns on every search-param change.
+- Components never copy `data` into `$state`; use `$derived(data.x)`, because `data` updates without a remount. Forms built from `data` keep the values they started with, which is what you want mid-edit.
+- Pages that need the user read `getCurrentUser()` (`user/current-user.svelte.ts`), which reads the `(app)` layout's data.
+- Remote reads are the exception: a `load` that waited on the network would hold the navigation, so they stay in TanStack (below) with a real loading state.
+
+## Mutations
+
+```ts
+export const useCreateFoodEntry = () =>
+	useMutation({
+		mutationFn: async ({ data, userId }: { data: FoodEntryFormSchema; userId: string }) => {
+			const { orm } = await getDb();
+			return await orm.foodEntry.create(foodEntryFormSchemaToFoodEntry(data, userId));
+		},
+		// Waits for the pages to reload, so the caller returns to a diary that already has the entry.
+		onSuccess: (data) => invalidateKeys(foodEntryKeys.byUser(data.userId)),
+		onError: (error) => {
+			toast.error(m['unknownErrorOccurred']());
+			console.error('Failed to create food entry:', error);
+		}
+	});
+```
+
+- `useMutation` gives `isPending`, `mutate` and `mutateAsync`. `mutateAsync` rejects after `onError` has run; `mutate` doesn't.
+- `onSuccess` returns `invalidateKeys(...)` so `mutateAsync` resolves once the pages have the new data.
+- Invalidate `byUser` unless a page would flash a stale state: deleting an entry reloads its day (`byDate`), not `byId`, because the edit page would show "not found" while it navigates away. A day key is the local day (`localDay`), never `toISOString()`.
+- `onError` always shows `m['unknownErrorOccurred']()` toast + `console.error` with context.
+- Call `invalidateKeys` only from a mutation's `onSuccess` and from sync (`sync-invalidation.ts`, which maps each pulled model to its key prefixes). The one other caller is the session cacher, which reruns every `load` that reads the account (`invalidateOwner`).
+
+## TanStack Query Conventions (remote and device reads)
+
+Used for the nutrition API, the Health plugin and OTA, which a `load` shouldn't wait on.
 
 ```ts
 // Reactive getter function pattern — required for Svelte 5 reactivity
-export const useFoodEntriesByDate = (getArgs: () => { userId: string; date: CalendarDate }) =>
+export const useNutritionDataById = (getId: () => string) =>
 	createQuery(() => {
-		const { userId, date } = getArgs();
+		const id = getId();
 		return {
-			queryKey: foodEntryKeys.byDate(userId, date.toString()),
+			queryKey: nutritionDataKeys.byId(id),
 			queryFn: async () => {
 				/* ... */
 			},
-			enabled: !!userId && !!date
+			staleTime: 1000 * 60 * 10,
+			refetchOnWindowFocus: false,
+			refetchOnReconnect: false,
+			enabled: !!id
 		};
 	});
 ```
 
 - Always accept args via a getter function, not raw values. This is what makes queries reactive.
-- `enabled: !!userId` guards against running before auth is ready.
-- **IDB queries:** no `staleTime` needed — local data is always current.
-- **Remote/API queries:** set `staleTime: 1000 * 60 * 10`, `refetchOnWindowFocus: false`, `refetchOnReconnect: false`.
+- Remote/API queries: set `staleTime: 1000 * 60 * 10`, `refetchOnWindowFocus: false`, `refetchOnReconnect: false`.
 - Never `try/catch` inside `queryFn`. Let errors propagate to TanStack's error state.
-
-### Mutations
-
-```ts
-export const useCreateFoodEntry = () =>
-	createMutation(() => ({
-		mutationFn: async ({ data, userId }: { data: FoodEntryFormSchema; userId: string }) => {
-			const foodEntry = foodEntryFormSchemaToFoodEntry(data, userId);
-			const { orm } = await getDb();
-			return await orm.foodEntry.create(foodEntry);
-		},
-		onSuccess: (data) => {
-			queryClient.invalidateQueries({
-				queryKey: foodEntryKeys.byDate(data.userId, data.eatenAt.toISOString().split('T')[0])
-			});
-		},
-		onError: (error) => {
-			toast.error(m['unknownErrorOccurred']());
-			console.error('Failed to create food entry:', error);
-		}
-	}));
-```
-
-- `onSuccess` invalidates by the tightest applicable key scope (prefer `byDate`/`byId` over `list`/`all`).
-- `setQueryData` for optimistic-style updates on `update` mutations when you already have the full updated object.
-- `onError` always shows `m['unknownErrorOccurred']()` toast + `console.error` with context.
-- Never call `queryClient` inside a route/component — only inside mutation `onSuccess`/`onError`.
+- Never call `queryClient` inside a route/component. The session cacher and logout only cancel and clear it when the account changes.
 
 ---
 
@@ -220,15 +253,16 @@ const form = superForm(
 // ✅ Derived state
 let caloriesRemaining = $derived(targetCalories - caloriesConsumed);
 let stats = $derived.by(() => {
-  if (!metrics.data) return null;
-  return calculateDailyNutritionStats({ metrics: metrics.data, ... });
+  if (!macroMetrics) return null;
+  return calculateDailyNutritionStats({ metrics: macroMetrics, ... });
 });
 
-// ✅ Reactive query args
-const foodEntries = useFoodEntriesByDate(() => ({
-  userId: currentUser.data?.id ?? '',
-  date: selectedDay,
-}));
+// ✅ Page data from the route's load
+let { data }: PageProps = $props();
+const diary = $derived(data.diary);
+
+// ✅ Reactive query args (remote reads)
+const nutritionData = useNutritionDataById(() => page.params.id ?? '');
 
 // ✅ Props
 let { initialData, onSubmit, meals }: Props = $props();
@@ -355,7 +389,7 @@ domain/
 2. `(app)/+layout.ts` disables SSR/prerender for all authenticated routes.
 3. The root layout claims the single-tab lock (`claimTab` in `#lib/features/account-session.svelte.ts`); other tabs show a notice and reload when the active tab closes.
 4. `<SessionCacher>` in `(app)/+layout.svelte` keeps one local account: it checks the local database against the better-auth session, asks before replacing another account's unsynced data, and starts the sync worker for a signed-in account. An expired session keeps the stored account working offline.
-5. The `user` feature (`useCurrentUser`) reads the local IDB record — not the auth session directly.
+5. `(app)/+layout.ts` loads the local user and the account (`ownerId`) for every page; `getCurrentUser()` reads it. The cacher publishes the settled account in `accountSession.ownerId` and reruns the loads with `invalidateOwner()`. Page loads read it with `loadOwner(depends)`.
 6. `logout()` in `#lib/features/logout.ts` saves queued edits, signs out, then deletes the local database. If a step fails it keeps the account and offers retry, cancel or discard.
 
 ---
@@ -363,38 +397,42 @@ domain/
 ## Adding a New Feature
 
 1. Create `src/lib/features/{domain}/{resource}/keys.ts` with a hierarchical key factory.
-2. Add `queries/` and `mutations/` sub-folders. Name files after the operation (`get.ts`, `get-by-date.ts`, `create.ts`, `update.ts`).
+2. Add `queries/` and `mutations/` sub-folders. Name files after the operation (`get.ts`, `get-by-date.ts`, `create.ts`, `update.ts`). A query is a reader that takes `depends`; the route's `+page.ts` calls it.
 3. If the DB shape ≠ form shape, add `model/mapper.ts`. If the schema is complex, add `model/schema.ts`.
 4. Define the model in `packages/shared/src/schema.prisma`, then run `pnpm --filter @myfit/shared schema:sync <migration-name>` (see the root README).
 5. For user-scoped models: sync uses `rootModel: 'User'` (`packages/shared/src/server.ts`), so give the model a relation path to `User`. Mark server-only models with `@@idb.exclude`.
-6. Use `useCurrentUser()` in route components to get the `userId` — never hardcode or pass it via props through multiple layers.
+6. Get the `userId` from `loadOwner(depends)` in the route's `load` and return it with the data. Components outside a page's data read `getCurrentUser()` — never hardcode it or pass it through multiple layers.
 
 ---
 
 ## Anti-Patterns
 
 ```ts
-// ❌ Query inside queryFn
-queryFn: async () => {
-  try { return await (await getDb()).orm.foodEntry.where({ userId }).all() }
-  catch (e) { toast.error('...'); throw e; }  // ← don't catch; let TanStack handle it
+// ❌ A reader that forgets to register what it read
+export async function getMeals(depends, userId) {
+  return (await getDb()).orm.meal.where({ userId }).all()  // ← never reruns after a mutation or sync
 }
+// ✅ dependOn(depends, mealKeys.byUser(userId)) first
 
 // ❌ Non-userId-scoped keys for user data
-queryKey: macroMetricsKeys.all  // ← stale data persists across user switches
+dependOn(depends, macroMetricsKeys.all)  // ← not scoped to the user; use byUser(userId)
 
-// ❌ Raw createMutation/createQuery in route files
+// ❌ Local data read in a component
+const meals = createQuery(...)  // ← read it in the route's load; it appears whole instead of through a skeleton
+
+// ❌ Raw useMutation/createQuery in route files
 // Use the feature hook instead
 
 // ❌ Hardcoded strings
 toast.error('Failed to save');  // ← use m['unknownErrorOccurred']()
 
 // ❌ Verbose hook names
-const useGetFoodEntriesQuery = ...   // ← useFoodEntries
 const useCreateFoodEntryMutation = ... // ← useCreateFoodEntry
 
-// ❌ Flat query args (not reactive)
-export const useFoodEntries = (userId: string) => createQuery(...)
-// ✅ Use getter functions
-export const useFoodEntries = (getUserId: () => string) => createQuery(() => ...)
+// ❌ Copying load data into state
+let meals = $state(data.meals)  // ← stale after a rerun; use $derived(data.meals)
+
+// ❌ Reading params or url after an await in a load
+const meal = await getMeals(depends, userId);
+const day = params.date;  // ← not tracked; read it before the first await
 ```

@@ -1,6 +1,5 @@
 import { PUBLIC_API_URL } from '$app/env/public';
 import type { DbClient } from '#lib/clients/idb-client.js';
-import { queryClient } from '#lib/clients/query-client.js';
 import { invalidatePulledChanges } from './sync-invalidation';
 import {
 	createSyncFetchHandlers,
@@ -83,7 +82,7 @@ class SyncWorkerState {
 			worker.on('pullcompleted', async ({ changes }) => {
 				this.lastSyncTime = new Date();
 				this.lastError = null;
-				await invalidatePulledChanges(queryClient, changes);
+				await invalidatePulledChanges(changes);
 			})
 		];
 	}

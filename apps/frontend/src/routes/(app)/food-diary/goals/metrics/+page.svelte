@@ -1,41 +1,31 @@
 <script lang="ts">
 	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
 	import MacroMetricsForm from './macro-metrics-form.svelte';
-	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
-	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
-	import { useMacroMetrics } from '#lib/features/food-diary/macro-metrics/queries/get.js';
 	import { Spinner } from '#lib/components/ui/spinner/index.js';
 	import { useCreateMacroMetrics } from '#lib/features/food-diary/macro-metrics/mutations/create.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { SaveIcon } from '@lucide/svelte';
 	import type { MacroTrackingMetricsSchema } from '#lib/features/food-diary/macro-metrics/schema.js';
-	import { toast } from 'svelte-sonner';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import type { PageProps } from './$types';
 
-	const currentUser = useCurrentUser();
-	const macroMetrics = useMacroMetrics(() => currentUser.data?.id ?? '');
+	let { data }: PageProps = $props();
 
 	const createMacroMetrics = useCreateMacroMetrics();
 
-	async function handleSubmit(data: MacroTrackingMetricsSchema) {
-		if (!currentUser.data) {
-			return toast.error(m['unknownErrorOccurred']());
-		}
-		await createMacroMetrics.mutateAsync({ ...data, userId: currentUser.data.id });
+	async function handleSubmit(form: MacroTrackingMetricsSchema) {
+		if (!data.metrics) return;
+		await createMacroMetrics.mutateAsync({ ...form, userId: data.metrics.userId });
 		markRecentChange('metrics');
 		await goto(resolve('food-diary/goals'));
 	}
 </script>
 
-{#if !currentUser.data || macroMetrics.data === undefined}
-	<Skeleton class="h-67.5 w-full" />
-	<Skeleton class="h-27 w-full" />
-	<Skeleton class="mt-auto h-9 w-full" />
-{:else}
+{#if data.metrics}
 	<MacroMetricsForm
-		initialData={macroMetrics.data}
+		initialData={data.metrics.macroMetrics}
 		formId="macro-tracking-metrics-form"
 		onSubmit={handleSubmit}
 	>

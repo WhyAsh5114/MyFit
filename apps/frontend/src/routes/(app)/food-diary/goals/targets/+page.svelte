@@ -1,41 +1,31 @@
 <script lang="ts">
 	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
-	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
-	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
 	import MacroTargetsForm from './macro-targets-form.svelte';
-	import { useMacroTargets } from '#lib/features/food-diary/macro-targets/queries/get.js';
 	import { useCreateMacroTargets } from '#lib/features/food-diary/macro-targets/mutations/create.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { SaveIcon } from '@lucide/svelte';
 	import type { MacroTargetsSchema } from '#lib/features/food-diary/macro-targets/schema.js';
-	import { toast } from 'svelte-sonner';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { Spinner } from '#lib/components/ui/spinner/index.js';
+	import type { PageProps } from './$types';
 
-	const currentUser = useCurrentUser();
-	const macroTargets = useMacroTargets(() => currentUser.data?.id ?? '');
+	let { data }: PageProps = $props();
 
 	const createMacroTargets = useCreateMacroTargets();
 
-	async function handleSubmit(data: MacroTargetsSchema) {
-		if (!currentUser.data) {
-			return toast.error(m['unknownErrorOccurred']());
-		}
-		await createMacroTargets.mutateAsync({ ...data, userId: currentUser.data.id });
+	async function handleSubmit(form: MacroTargetsSchema) {
+		if (!data.targets) return;
+		await createMacroTargets.mutateAsync({ ...form, userId: data.targets.userId });
 		markRecentChange('targets');
 		await goto(resolve('food-diary/goals'));
 	}
 </script>
 
-{#if !currentUser.data || macroTargets.data === undefined}
-	<Skeleton class="h-67.5 w-full" />
-	<Skeleton class="h-27 w-full" />
-	<Skeleton class="mt-auto h-9 w-full" />
-{:else}
+{#if data.targets}
 	<MacroTargetsForm
-		initialData={macroTargets.data}
+		initialData={data.targets.macroTargets}
 		formId="macro-targets-form"
 		onSubmit={handleSubmit}
 	>

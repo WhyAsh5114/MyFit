@@ -7,18 +7,18 @@
 	import { useCurrentBundle } from '#lib/features/ota/queries/get-current-bundle.js';
 	import { useCheckForUpdates } from '#lib/features/ota/mutations/check-for-updates.js';
 	import { useUpdateAutoUpdate } from '#lib/features/ota/mutations/update-auto-update.js';
-	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
+	import { getCurrentUser } from '#lib/features/user/current-user.svelte.js';
 
 	const isNative = Capacitor.getPlatform() !== 'web';
 
-	const user = useCurrentUser();
+	const user = $derived(getCurrentUser());
 	const bundle = useCurrentBundle();
 	const checkForUpdates = useCheckForUpdates();
 	const updateAutoUpdate = useUpdateAutoUpdate();
 
 	function handleAutoUpdateToggle(value: boolean) {
-		if (!user.data) return;
-		updateAutoUpdate.mutate({ userId: user.data.id, autoUpdate: value });
+		if (!user) return;
+		updateAutoUpdate.mutate({ userId: user.id, autoUpdate: value });
 	}
 </script>
 
@@ -51,7 +51,7 @@
 					<span class="text-xs text-muted-foreground">{m['ota.card.autoUpdateDescription']()}</span>
 				</div>
 				<Switch.Root
-					checked={user.data?.autoUpdate ?? true}
+					checked={user?.autoUpdate ?? true}
 					disabled={updateAutoUpdate.isPending}
 					onCheckedChange={handleAutoUpdateToggle}
 				/>

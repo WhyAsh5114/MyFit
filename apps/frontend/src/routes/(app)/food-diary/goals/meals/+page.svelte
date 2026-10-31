@@ -1,36 +1,30 @@
 <script lang="ts">
 	import { markRecentChange } from '#lib/features/recent-change.svelte.js';
-	import { useCurrentUser } from '#lib/features/user/queries/get-current-user.js';
-	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
 	import MacroMealsForm from './macro-meals-form.svelte';
-	import { useMeals } from '#lib/features/food-diary/meals/queries/get.js';
 	import { useSaveMeals } from '#lib/features/food-diary/meals/mutations/save.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { SaveIcon } from '@lucide/svelte';
 	import type { MealsFormSchema } from '#lib/features/food-diary/meals/schema.js';
-	import { toast } from 'svelte-sonner';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { Spinner } from '#lib/components/ui/spinner/index.js';
+	import type { PageProps } from './$types';
 
-	const currentUser = useCurrentUser();
-	const meals = useMeals(() => currentUser.data?.id ?? '');
+	let { data }: PageProps = $props();
+
 	const saveMeals = useSaveMeals();
 
-	async function handleSubmit(data: MealsFormSchema) {
-		if (!currentUser.data) return toast.error(m['unknownErrorOccurred']());
-		await saveMeals.mutateAsync({ meals: data.meals, userId: currentUser.data.id });
+	async function handleSubmit(form: MealsFormSchema) {
+		if (!data.goals) return;
+		await saveMeals.mutateAsync({ meals: form.meals, userId: data.goals.userId });
 		markRecentChange('meals');
 		await goto(resolve('food-diary/goals'));
 	}
 </script>
 
-{#if !currentUser.data || meals.data === undefined}
-	<Skeleton class="h-67.5 w-full" />
-	<Skeleton class="mt-auto h-9 w-full" />
-{:else}
-	<MacroMealsForm initialData={meals.data} onSubmit={handleSubmit}>
+{#if data.goals}
+	<MacroMealsForm initialData={data.goals.meals} onSubmit={handleSubmit}>
 		{#snippet submit()}
 			<Button class="mt-auto w-full" type="submit" disabled={saveMeals.isPending}>
 				{#if saveMeals.isPending}

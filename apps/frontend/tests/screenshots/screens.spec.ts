@@ -354,7 +354,7 @@ test('capture every screen', async ({ page }, testInfo) => {
 		'diary-finished',
 		'Food diary',
 		'A finished day',
-		'Past days get a status chip judged against the goal'
+		'Past days are judged against the goal; the arrow and amber say how it went'
 	);
 
 	// ---- settings and info pages
