@@ -30,13 +30,22 @@
 
 	const authData = authClient.useSession();
 
+	/** Where to go after signing in: the page a visitor was sent away from, or the dashboard. */
+	function afterLogin() {
+		const back = page.url.searchParams.get('redirect') ?? page.url.searchParams.get('callbackUrl');
+		return back?.startsWith('/') && !back.startsWith('//') ? back : '/dashboard';
+	}
+
 	onMount(() => {
+		// A protected page sent the visitor here without saying so.
+		if (page.url.searchParams.has('redirect') && !$authData.data?.user) {
+			toast.info(m['account.loginToContinue']());
+		}
 		if ($authData.isPending) return;
 		if ($authData.data?.user) {
 			toast.warning(m['login.alreadyLoggedIn']());
-			const callbackUrl = page.url.searchParams.get('callbackUrl') || '/dashboard';
 			// eslint-disable-next-line svelte/no-navigation-without-resolve
-			goto(callbackUrl);
+			goto(afterLogin());
 		}
 	});
 
@@ -108,9 +117,8 @@
 				return data;
 			}
 
-			const callbackUrl = page.url.searchParams.get('callbackUrl') || '/dashboard';
 			// eslint-disable-next-line svelte/no-navigation-without-resolve
-			goto(callbackUrl);
+			goto(afterLogin());
 			return data;
 		},
 		onError: (error) => {
@@ -152,7 +160,14 @@
 		</FieldGroup>
 	</form>
 {:else}
-	<form class="flex flex-col" onsubmit={() => verifyOTPMutation.mutate(otp)}>
+	<form
+		class="flex flex-col"
+		onsubmit={(event) => {
+			// Without this the browser submits the form as a navigation, which drops the page the visitor asked for.
+			event.preventDefault();
+			verifyOTPMutation.mutate(otp);
+		}}
+	>
 		<FieldGroup>
 			<div class="flex flex-col items-center gap-1 text-center">
 				<h1 class="text-2xl font-bold">{m['login.otpVerifyTitle']()}</h1>

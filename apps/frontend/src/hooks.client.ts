@@ -6,6 +6,7 @@ import posthog from 'posthog-js';
 import { mount } from 'svelte';
 import AccountRoot from '#lib/components/account/account-root.svelte';
 import { claimTab } from '#lib/features/account-session.svelte.js';
+import { startNative } from '#lib/services/native.svelte.js';
 import './routes/layout.css';
 import { PUBLIC_POSTHOG_KEY, PUBLIC_POSTHOG_HOST } from '$app/env/public';
 
@@ -14,6 +15,7 @@ export async function init() {
 	// can't live in the router's tree, because it renders only once those loads have finished.
 	claimTab();
 	mount(AccountRoot, { target: document.body });
+	startNative();
 
 	posthog.init(PUBLIC_POSTHOG_KEY, {
 		api_host: 'https://t.myfit.fit',

@@ -3,36 +3,12 @@
 	import { locales, localizeHref } from '#lib/paraglide/runtime.js';
 	import './layout.css';
 	import favicon from '#lib/assets/favicon.webp';
-	import { mode, ModeWatcher } from 'mode-watcher';
+	import { ModeWatcher } from 'mode-watcher';
 	import { QueryClientProvider } from '@tanstack/svelte-query';
-	import { Capacitor, SystemBars, SystemBarsStyle } from '@capacitor/core';
-	import { App } from '@capacitor/app';
 	import { queryClient } from '#lib/clients/query-client.js';
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
-	import { initOta } from '#lib/services/ota.js';
 
 	let { children } = $props();
-
-	$effect(() => {
-		if (Capacitor.getPlatform() !== 'android') return;
-		App.addListener('backButton', ({ canGoBack }) => {
-			if (canGoBack) window.history.back();
-			else App.exitApp();
-		});
-	});
-
-	// The in-app theme can differ from the device's, so set the system bar icons to match it.
-	$effect(() => {
-		if (!Capacitor.isNativePlatform() || !mode.current) return;
-		SystemBars.setStyle({
-			style: mode.current === 'dark' ? SystemBarsStyle.Dark : SystemBarsStyle.Light
-		});
-	});
-
-	// Initialize OTA updates on mount (native only — no-op on web)
-	$effect(() => {
-		initOta();
-	});
 </script>
 
 <svelte:head>

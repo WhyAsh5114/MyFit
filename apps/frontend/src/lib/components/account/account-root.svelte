@@ -18,18 +18,20 @@
 	import { Toaster } from '#lib/components/ui/sonner/index.js';
 
 	const session = authClient.useSession();
+	// Derived so an effect that reads them reruns only when they change. Reading `$session` itself
+	// reruns it on every emission, and the store emits for each background refetch.
 	const sessionOwner = $derived($session.data?.user.id);
+	const sessionPending = $derived($session.isPending);
 
 	// The user the app runs as: the signed-in one, or the stored one while offline or expired.
 	// `undefined` until the local database has been checked against the session.
 	let ownerId = $state<string | null>();
 
-	// The session store lags behind a login or logout, so the account is only ready once the store
-	// has caught up with the database it was checked against.
+	// Ready once the database was checked against the session, and the store still agrees with it.
+	// A background refetch (on focus, or coming back online) doesn't count: the page stays up.
 	const ready = $derived(
 		accountSession.tab === 'active' &&
-			!$session.isPending &&
-			!$session.isRefetching &&
+			!sessionPending &&
 			accountSession.logout === 'idle' &&
 			ownerId !== undefined &&
 			(!sessionOwner || sessionOwner === ownerId)
@@ -62,7 +64,7 @@
 	$effect(() => {
 		const owner = sessionOwner;
 		const discardApproved = owner !== undefined && approvedDiscardFor === owner;
-		if (accountSession.tab !== 'active' || $session.isPending || accountSession.logout !== 'idle')
+		if (accountSession.tab !== 'active' || sessionPending || accountSession.logout !== 'idle')
 			return;
 
 		const sessionData = untrack(() => $session.data);

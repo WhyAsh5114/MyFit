@@ -83,7 +83,9 @@ class SyncWorkerState {
 				this.lastSyncTime = new Date();
 				this.lastError = null;
 				// Not awaited: the reload waits on the account, which can be waiting on this worker to stop.
-				void invalidatePulledChanges(changes);
+				invalidatePulledChanges(changes).catch((error) =>
+					console.error('Could not reload after a sync', error)
+				);
 			})
 		];
 	}
