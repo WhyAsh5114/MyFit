@@ -28,18 +28,21 @@
 
 	type Props = {
 		initialData?: FoodEntryFormSchema;
+		/** When `initialData` is absent: the time a new entry starts at. */
+		defaultEatenAt?: Date;
 		formId: string;
 		onSubmit: (data: FoodEntryFormSchema) => Promise<void>;
 		submit: Snippet<[{ form: SuperForm<FoodEntryFormSchema> }]>;
 		allowProductEdit: boolean;
 		meals: Row<'Meal'>[];
 	};
-	let { initialData, onSubmit, submit, allowProductEdit, formId, meals }: Props = $props();
+	let { initialData, defaultEatenAt, onSubmit, submit, allowProductEdit, formId, meals }: Props =
+		$props();
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(
 		defaults(
-			initialData ? foodEntryFormSchema.parse(initialData) : undefined,
+			initialData ? foodEntryFormSchema.parse(initialData) : { eatenAt: defaultEatenAt },
 			zod4(foodEntryFormSchema)
 		),
 		{

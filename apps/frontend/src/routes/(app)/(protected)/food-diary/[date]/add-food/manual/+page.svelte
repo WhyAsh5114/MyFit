@@ -33,6 +33,7 @@
 
 <FoodEntryForm
 	allowProductEdit
+	defaultEatenAt={data.eatenAt}
 	formId="create-food-entry-form"
 	onSubmit={handleSubmit}
 	meals={data.meals}
