@@ -238,7 +238,6 @@
 	"foodDiary.mealNameDuplicate": "दो भोजन का नाम एक जैसा नहीं हो सकता।",
 	"foodDiary.addMeal": "भोजन जोड़ें",
 	"foodDiary.addAnotherMeal": "एक और भोजन जोड़ें",
-	"foodDiary.searchFailed": "खाद्य पदार्थ नहीं खोजे जा सके",
 	"foodDiary.foodFetchFailed": "वह खाना लोड नहीं हो सका",
 	"foodDiary.logFood": "खाना लॉग करें",
 	"foodDiary.deleteEntry": "एंट्री हटाएँ",
@@ -281,5 +280,6 @@
 	"foodDiary.recipes.searchPlaceholder": "पेस्टो रैप",
 	"foodDiary.recipes.create": "बनाएँ",
 	"foodDiary.recipes.emptyTitle": "कोई रेसिपी नहीं",
-	"foodDiary.recipes.emptyDescription": "रेसिपी से आप कई खाद्य पदार्थों को एक साथ जोड़कर एक ही एंट्री के रूप में लॉग कर सकते हैं।"
+	"foodDiary.recipes.emptyDescription": "रेसिपी से आप कई खाद्य पदार्थों को एक साथ जोड़कर एक ही एंट्री के रूप में लॉग कर सकते हैं।",
+	"foodDiary.fetchFailedDescription": "अपना कनेक्शन जाँचें और फिर कोशिश करें।"
 }

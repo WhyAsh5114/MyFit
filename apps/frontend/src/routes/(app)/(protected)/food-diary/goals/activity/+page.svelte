@@ -14,7 +14,7 @@
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { useSaveActivityPreferences } from '#lib/features/food-diary/activity-preferences/mutations/save.js';
+	import { useCreateActivityPreferences } from '#lib/features/food-diary/activity-preferences/mutations/create.js';
 	import type { PageProps } from './$types';
 	import { m } from '#lib/paraglide/messages.js';
 
@@ -47,7 +47,7 @@
 		})
 	};
 
-	const saveActivityPreferences = useSaveActivityPreferences();
+	const createActivityPreferences = useCreateActivityPreferences();
 
 	let selectedOption = $derived<ActivityAdjustmentType>(
 		data.preferences?.adjustmentType ?? 'Manual'
@@ -63,7 +63,7 @@
 		if (selectedOption === 'Dynamic') {
 			return dynamicDataStatus !== 'granted';
 		}
-		return saveActivityPreferences.isPending;
+		return createActivityPreferences.isPending;
 	});
 
 	/** Persists the selected activity adjustment and returns to the goals page. */
@@ -71,19 +71,19 @@
 		const userId = data.ownerId;
 
 		if (selectedOption === 'Manual') {
-			await saveActivityPreferences.mutateAsync({
+			await createActivityPreferences.mutateAsync({
 				adjustmentType: 'Manual',
 				staticCalories: null,
 				userId
 			});
 		} else if (selectedOption === 'Static') {
-			await saveActivityPreferences.mutateAsync({
+			await createActivityPreferences.mutateAsync({
 				adjustmentType: 'Static',
 				staticCalories: staticCalories ?? null,
 				userId
 			});
 		} else if (selectedOption === 'Dynamic') {
-			await saveActivityPreferences.mutateAsync({
+			await createActivityPreferences.mutateAsync({
 				adjustmentType: 'Dynamic',
 				staticCalories: null,
 				userId
@@ -156,7 +156,7 @@
 </Card.Root>
 
 <Button class="mt-auto" disabled={isSaveButtonDisabled} onclick={saveSettings}>
-	{#if saveActivityPreferences.isPending}
+	{#if createActivityPreferences.isPending}
 		<Spinner />
 	{:else}
 		{m['foodDiary.metrics.save']()} <SaveIcon />

@@ -110,7 +110,7 @@ Only add mappers when the DB shape and form shape genuinely differ. Do not creat
 | Local reader    | `get{Resource}[By{Selector}]` | `getFoodEntriesByDate(depends, args)` |
 | Remote query    | `use{Resource}[By{Selector}]` | `useNutritionDataById(getId)`         |
 | Mutation        | `use{Verb}{Resource}`         | `useCreateFoodEntry()`                |
-| Upsert mutation | `useSave{Resource}`           | `useSaveActivityPreferences()`        |
+| Upsert mutation | `useSave{Resource}`           | `useSaveMeals()`                      |
 
 No `Query`/`Mutation` suffix on hook names.
 
@@ -230,6 +230,9 @@ export const useNutritionDataById = (getId: () => string) =>
 - Always accept args via a getter function, not raw values. This is what makes queries reactive.
 - Remote/API queries: set `staleTime: 1000 * 60 * 10`, `refetchOnWindowFocus: false`, `refetchOnReconnect: false`.
 - Never `try/catch` inside `queryFn`. Let errors propagate to TanStack's error state.
+- Never toast or log inside `queryFn`: TanStack retries a failed query, so a toast there repeats. Throw instead, and let the component read `isError` (an empty state with a retry, or one toast in an `$effect`). A response that is an answer, like a 404 for a missing food, is returned as `null`, not thrown.
+- Login (`routes/login/components/login-form.svelte`) uses TanStack's `createMutation` on purpose: it is a network request, so it keeps TanStack's retry behavior. Local-first writes use `useMutation`.
+- Name a mutation for what it does: `useCreate…` for an insert (a versioned row such as activity preferences is a create, and earlier rows stay as history), `useSave…` only for an upsert.
 - Never call `queryClient` inside a route/component. The account root and logout only cancel and clear it when the account changes.
 
 ---

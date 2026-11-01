@@ -238,7 +238,6 @@
 	"foodDiary.mealNameDuplicate": "Two meals can't have the same name.",
 	"foodDiary.addMeal": "Add a meal",
 	"foodDiary.addAnotherMeal": "Add another meal",
-	"foodDiary.searchFailed": "Couldn't search foods",
 	"foodDiary.foodFetchFailed": "Couldn't load that food",
 	"foodDiary.logFood": "Log food",
 	"foodDiary.deleteEntry": "Delete entry",
@@ -281,5 +280,6 @@
 	"foodDiary.recipes.searchPlaceholder": "pesto wrap",
 	"foodDiary.recipes.create": "Create",
 	"foodDiary.recipes.emptyTitle": "No recipes",
-	"foodDiary.recipes.emptyDescription": "Recipes allow you to group multiple food items together and log them as a single entry."
+	"foodDiary.recipes.emptyDescription": "Recipes allow you to group multiple food items together and log them as a single entry.",
+	"foodDiary.fetchFailedDescription": "Check your connection and try again."
 }

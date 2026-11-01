@@ -1,4 +1,4 @@
-import { getActivityEntriesByDate } from '#lib/features/food-diary/acitivity-entry/queries/get-by-date.js';
+import { getActivityEntriesByDate } from '#lib/features/food-diary/activity-entry/queries/get-by-date.js';
 import { getActivityPreferencesByDate } from '#lib/features/food-diary/activity-preferences/queries/get-by-date.js';
 import { getFoodEntriesByDate } from '#lib/features/food-diary/food-entry/queries/get-by-date.js';
 import { getMacroMetricsByDate } from '#lib/features/food-diary/macro-metrics/queries/get-by-date.js';

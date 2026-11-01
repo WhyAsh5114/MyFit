@@ -26,13 +26,25 @@
 		return data.meals.find((meal) => meal.id === mealId) ?? null;
 	});
 
+	// The search the page opened with isn't a new search, so it isn't tracked.
+	let trackedQuery = page.url.searchParams.get('search')?.trim() ?? '';
+	$effect(() => {
+		const query = debounced.current.trim();
+		if (query === trackedQuery) return;
+		trackedQuery = query;
+		if (query.length > 0) posthog.capture('food_searched', { query_length: query.length });
+	});
+
+	// Keeps the URL in step with the search text and the meal filter, which the child pages read.
 	$effect(() => {
 		if (debounced.current.trim().length === 0) {
 			params.delete('search');
 		} else {
 			params.set('search', debounced.current);
-			posthog.capture('food_searched', { query_length: debounced.current.trim().length });
 		}
+
+		// Already there on first render, and after the navigation below lands.
+		if (params.toString() === new URLSearchParams(page.url.search).toString()) return;
 
 		goto(resolve(`food-diary/${page.params.date}/add-food?${params.toString()}`), {
 			replace: true,

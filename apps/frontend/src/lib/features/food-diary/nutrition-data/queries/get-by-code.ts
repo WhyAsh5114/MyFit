@@ -1,7 +1,5 @@
 import { createQuery } from '@tanstack/svelte-query';
 import { apiClient } from '#lib/clients/api-client.js';
-import { toast } from 'svelte-sonner';
-import { m } from '#lib/paraglide/messages.js';
 import { nutritionDataKeys } from '../keys';
 
 export const useNutritionDataByCode = (getCode: () => string) =>
@@ -13,14 +11,9 @@ export const useNutritionDataByCode = (getCode: () => string) =>
 				const res = await apiClient.api['nutrition-data']['code'][':code'].$get({
 					param: { code }
 				});
-				if (!res.ok) {
-					toast.error(m['foodDiary.foodFetchFailed']());
-					console.error('Failed to fetch nutrition data', res);
-					return null;
-				}
-
-				const data = await res.json();
-				return data;
+				// Throwing lets TanStack retry, and the page shows the error once the retries run out.
+				if (!res.ok) throw new Error(`Failed to fetch nutrition data (${res.status})`);
+				return await res.json();
 			},
 			staleTime: 1000 * 60 * 10,
 			refetchOnWindowFocus: false,

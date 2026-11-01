@@ -83,6 +83,11 @@
 		codeToSearch = manualCode.toString();
 	}
 
+	// Retries have run out by the time `isError` is set, so this toasts once per failed code.
+	$effect(() => {
+		if (nutritionDataByCode.isError) toast.error(m['foodDiary.foodFetchFailed']());
+	});
+
 	$effect(() => {
 		if (nutritionDataByCode.isSuccess && nutritionDataByCode.data) {
 			if (nutritionDataByCode.data.length === 0) {

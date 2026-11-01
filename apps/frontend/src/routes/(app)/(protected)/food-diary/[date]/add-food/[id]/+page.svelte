@@ -44,7 +44,20 @@
 	}
 </script>
 
-{#if nutritionDataById.data === undefined}
+{#if nutritionDataById.isError}
+	<Empty.Root>
+		<Empty.Header>
+			<Empty.Media variant="icon">
+				<SearchXIcon />
+			</Empty.Media>
+			<Empty.Title>{m['foodDiary.foodFetchFailed']()}</Empty.Title>
+			<Empty.Description>{m['foodDiary.fetchFailedDescription']()}</Empty.Description>
+		</Empty.Header>
+		<Empty.Content>
+			<Button onclick={() => nutritionDataById.refetch()}>{m['common.retry']()}</Button>
+		</Empty.Content>
+	</Empty.Root>
+{:else if nutritionDataById.data === undefined}
 	<Skeleton class="h-115 w-full" />
 	<Skeleton class="mt-auto h-9 w-full" />
 {:else if nutritionDataById.data === null}

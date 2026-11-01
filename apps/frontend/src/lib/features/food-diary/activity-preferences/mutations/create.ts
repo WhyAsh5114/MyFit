@@ -6,7 +6,8 @@ import { invalidateKeys } from '#lib/data/dependencies.js';
 import type { NewRow } from '@myfit/shared/client';
 import { activityPreferencesKeys } from '../keys';
 
-export const useSaveActivityPreferences = () =>
+// Each save adds a row effective from now, so earlier preferences stay as history.
+export const useCreateActivityPreferences = () =>
 	useMutation({
 		mutationFn: async (data: NewRow<'ActivityPreferences'>) => {
 			const { orm } = await getDb();
@@ -17,6 +18,6 @@ export const useSaveActivityPreferences = () =>
 
 		onError: (error) => {
 			toast.error(m['unknownErrorOccurred']());
-			console.error('Failed to upsert activity preferences:', error);
+			console.error('Failed to create activity preferences:', error);
 		}
 	});

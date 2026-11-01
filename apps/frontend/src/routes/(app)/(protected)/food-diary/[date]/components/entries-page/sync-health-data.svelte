@@ -4,7 +4,7 @@
 	import type { Row } from '@myfit/shared/client';
 	import { useGetDaySteps } from '#lib/features/capacitor-health/queries/get-day-steps.js';
 	import { calculateActivityCalories } from '#lib/domain/nutrition/activity-calories.js';
-	import { useUpsertDynamicActivityData } from '#lib/features/food-diary/acitivity-entry/mutations/upsert-dynamic-activity-data.js';
+	import { useUpsertDynamicActivityData } from '#lib/features/food-diary/activity-entry/mutations/upsert-dynamic-activity-data.js';
 
 	type Props = {
 		selectedDay: CalendarDate;
