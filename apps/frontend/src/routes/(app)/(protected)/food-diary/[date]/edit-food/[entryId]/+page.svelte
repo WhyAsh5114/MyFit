@@ -125,14 +125,14 @@
 						<Spinner />
 					{:else}
 						<TrashIcon />
-						Delete entry
+						{m['foodDiary.deleteEntry']()}
 					{/if}
 				</Button>
 				<Button type="submit" form="edit-food-entry-form" disabled={updateFoodEntry.isPending}>
 					{#if updateFoodEntry.isPending}
 						<Spinner />
 					{:else}
-						Update entry
+						{m['foodDiary.updateEntry']()}
 						<SquarePenIcon />
 					{/if}
 				</Button>

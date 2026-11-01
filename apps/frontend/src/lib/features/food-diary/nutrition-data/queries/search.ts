@@ -1,6 +1,7 @@
 import { createInfiniteQuery } from '@tanstack/svelte-query';
 import { apiClient } from '#lib/clients/api-client.js';
 import { toast } from 'svelte-sonner';
+import { m } from '#lib/paraglide/messages.js';
 import { nutritionDataKeys } from '../keys';
 import { NUTRITION_DATA_SEARCH_PAGINATION_LIMIT } from '@myfit/shared/constants';
 
@@ -14,7 +15,7 @@ export const useSearchNutritionData = (getSearch: () => string) =>
 					query: { search, offset: pageParam.toString() }
 				});
 				if (!res.ok) {
-					toast.error('Failed to search nutrition data');
+					toast.error(m['foodDiary.searchFailed']());
 					console.error('Failed to search nutrition data', res);
 					throw new Error('Failed to search nutrition data');
 				}

@@ -1,6 +1,7 @@
 import { PUBLIC_API_URL } from '$app/env/public';
 import type { DbClient } from '#lib/clients/idb-client.js';
 import { invalidatePulledChanges } from '#lib/services/sync/sync-invalidation.js';
+import { m } from '#lib/paraglide/messages.js';
 import {
 	createSyncFetchHandlers,
 	type SyncWorker,
@@ -69,7 +70,7 @@ class SyncWorkerState {
 				this.lastError = error.message;
 			}),
 			worker.on('contractmismatch', () => {
-				this.lastError = 'This version of the app is out of date. Reload to keep syncing.';
+				this.lastError = m['sync.contractMismatch']();
 			}),
 			// The worker also emits this after a rejected push, so only a push that left
 			// nothing waiting counts as a sync. It never clears `lastError`: a pull does, once
@@ -77,7 +78,7 @@ class SyncWorkerState {
 			// every later pull, so surface it instead of retrying silently.
 			worker.on('pushcompleted', ({ failed, pullBlocked, stalled }) => {
 				if (failed === 0 && !pullBlocked) this.lastSyncTime = new Date();
-				if (stalled) this.lastError = stalled.lastError ?? 'Some changes keep failing to sync.';
+				if (stalled) this.lastError = stalled.lastError ?? m['sync.stalled']();
 			}),
 			worker.on('pullcompleted', ({ changes }) => {
 				this.lastSyncTime = new Date();

@@ -5,6 +5,7 @@
 	import { Health } from '@capgo/capacitor-health';
 	import { CheckIcon, HeartHandshakeIcon } from '@lucide/svelte';
 	import { onMount } from 'svelte';
+	import { m } from '#lib/paraglide/messages.js';
 
 	let { data = $bindable() }: { data?: 'unavailable' | 'granted' | 'denied' } = $props();
 
@@ -92,9 +93,9 @@
 
 <div class="text-xs text-muted-foreground">
 	{#if data === 'unavailable'}
-		<p>Health data is not available on this device.</p>
+		<p>{m['foodDiary.activityGoal.healthUnavailable']()}</p>
 	{:else if data === 'denied'}
-		<p>You have not granted permission to access health data.</p>
+		<p>{m['foodDiary.activityGoal.healthDenied']()}</p>
 		<Button
 			class="mt-2 w-full"
 			size="sm"
@@ -102,10 +103,10 @@
 			disabled={requestingPermissions}
 		>
 			{#if requestingPermissions}
-				Requesting permissions
+				{m['foodDiary.activityGoal.healthRequesting']()}
 				<Spinner />
 			{:else}
-				Grant permissions
+				{m['foodDiary.activityGoal.healthGrant']()}
 				<HeartHandshakeIcon />
 			{/if}
 		</Button>
@@ -113,34 +114,34 @@
 		<div class="w-full">
 			<span class="flex items-center gap-2 text-sm font-medium text-primary">
 				<CheckIcon class="size-4" />
-				Health data access granted!
+				{m['foodDiary.activityGoal.healthGranted']()}
 			</span>
 			<Separator class="my-2 bg-secondary" />
 			<div class="grid grid-cols-2 gap-1">
-				<p class="text-foreground">Today's steps</p>
+				<p class="text-foreground">{m['foodDiary.activityGoal.todaysSteps']()}</p>
 				<p class="ml-auto font-semibold">
 					{#if todaysSteps === null}
-						No data for today
+						{m['foodDiary.activityGoal.noDataToday']()}
 					{:else if todaysSteps === undefined}
 						<Spinner />
 					{:else}
 						{todaysSteps}
 					{/if}
 				</p>
-				<p class="text-foreground">Today's weight</p>
+				<p class="text-foreground">{m['foodDiary.activityGoal.todaysWeight']()}</p>
 				<p class="ml-auto font-semibold">
 					{#if todaysWeight === null}
-						No data for today
+						{m['foodDiary.activityGoal.noDataToday']()}
 					{:else if todaysWeight === undefined}
 						<Spinner />
 					{:else}
 						{todaysWeight} kg
 					{/if}
 				</p>
-				<p class="text-foreground">Today's calories burned</p>
+				<p class="text-foreground">{m['foodDiary.activityGoal.todaysCalories']()}</p>
 				<p class="ml-auto font-semibold">
 					{#if todaysCalories === null}
-						No data for today
+						{m['foodDiary.activityGoal.noDataToday']()}
 					{:else if todaysCalories === undefined}
 						<Spinner />
 					{:else}
@@ -151,7 +152,7 @@
 		</div>
 	{:else if data === undefined}
 		<p class="flex items-center gap-2">
-			Checking health data permissions
+			{m['foodDiary.activityGoal.healthChecking']()}
 			<Spinner />
 		</p>
 	{/if}

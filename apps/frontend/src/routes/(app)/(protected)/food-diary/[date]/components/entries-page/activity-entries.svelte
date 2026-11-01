@@ -3,6 +3,7 @@
 	import { page } from '$app/state';
 	import * as Item from '#lib/components/ui/item/index.js';
 	import { cn } from '#lib/utils.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { FlameIcon, PlusIcon } from '@lucide/svelte';
 	import type { Row } from '@myfit/shared/client';
 
@@ -22,7 +23,7 @@
 			<a href={resolve(`food-diary/${page.params.date}/add-activity`)} {...props}>
 				<Item.Content>
 					<Item.Title class="flex w-full font-semibold">
-						Activity
+						{m['foodDiary.activityTitle']()}
 						<FlameIcon class="size-4" />
 						<PlusIcon class="ml-auto size-4" strokeWidth={2.5} />
 					</Item.Title>

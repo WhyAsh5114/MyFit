@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '#lib/paraglide/messages.js';
 	import { page } from '$app/state';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { Spinner } from '#lib/components/ui/spinner/index.js';
@@ -48,7 +49,7 @@
 			{#if createFoodEntry.isPending}
 				<Spinner />
 			{:else}
-				Log food
+				{m['foodDiary.logFood']()}
 				<CircleCheckBigIcon />
 			{/if}
 		</Button>

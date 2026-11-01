@@ -127,7 +127,7 @@
 						<InputGroup.Root>
 							<InputGroup.Input {...props} bind:value={$formData.age} type="number" />
 							<InputGroup.Addon align="inline-end">
-								<InputGroup.Text>years</InputGroup.Text>
+								<InputGroup.Text>{m['foodDiary.metrics.yearsUnit']()}</InputGroup.Text>
 							</InputGroup.Addon>
 						</InputGroup.Root>
 					{/snippet}
@@ -160,7 +160,7 @@
 								<RadioGroup.Item
 									value="Male"
 									class="absolute inset-0 size-full opacity-0"
-									aria-label="Male"
+									aria-label={m['foodDiary.metrics.male']()}
 									{...props}
 								/>
 								{m['foodDiary.metrics.male']()}
@@ -176,7 +176,7 @@
 								<RadioGroup.Item
 									value="Female"
 									class="absolute inset-0 size-full opacity-0"
-									aria-label="Female"
+									aria-label={m['foodDiary.metrics.female']()}
 									{...props}
 								/>
 								{m['foodDiary.metrics.female']()}

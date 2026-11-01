@@ -69,9 +69,12 @@
 
 	// Amber only when the day is actually off target, not for every bit of overage.
 	let chartConfig = $derived({
-		consumed: { label: 'Consumed', color: 'var(--chart-consumed)' },
-		remaining: { label: 'Remaining', color: 'var(--chart-remaining)' },
-		excess: { label: 'Excess', color: flagged ? 'var(--warning)' : 'var(--chart-consumed)' }
+		consumed: { label: m['foodDiary.consumed'](), color: 'var(--chart-consumed)' },
+		remaining: { label: m['foodDiary.remaining'](), color: 'var(--chart-remaining)' },
+		excess: {
+			label: m['foodDiary.excess'](),
+			color: flagged ? 'var(--warning)' : 'var(--chart-consumed)'
+		}
 	} satisfies Chart.ChartConfig);
 </script>
 
@@ -127,19 +130,19 @@
 				series={[
 					{
 						key: 'consumed',
-						label: 'Consumed',
+						label: m['foodDiary.consumed'](),
 						color: chartConfig.consumed.color,
 						props: { rounded: 'none' }
 					},
 					{
 						key: 'remaining',
-						label: 'Remaining',
+						label: m['foodDiary.remaining'](),
 						color: chartConfig.remaining.color,
 						props: { rounded: 'none' }
 					},
 					{
 						key: 'excess',
-						label: 'Excess',
+						label: m['foodDiary.excess'](),
 						color: chartConfig.excess.color,
 						props: { rounded: 'none' }
 					}

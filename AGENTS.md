@@ -339,7 +339,7 @@ toast.error(m['unknownErrorOccurred']());
 <p>No food found</p>
 ```
 
-- Every user-visible string must have a key in `messages/en.json` and `messages/es.json`.
+- Every user-visible string must have a key in `messages/en.json` and `messages/hi.json`.
 - Message keys use `feature.camelCase` namespacing (e.g., `foodDiary.addManually`).
 - Only exception: in-progress/beta-only UI can use hardcoded strings temporarily.
 

@@ -16,27 +16,36 @@
 	import { resolve } from '$app/paths';
 	import { useSaveActivityPreferences } from '#lib/features/food-diary/activity-preferences/mutations/save.js';
 	import type { PageProps } from './$types';
+	import { m } from '#lib/paraglide/messages.js';
 
 	let { data }: PageProps = $props();
 
 	type ActivityAdjustmentType = Row<'ActivityPreferences'>['adjustmentType'];
 
-	const activityAdjustmentMetadata = {
-		Static: {
-			description: 'Add a fixed amount every day',
-			badge: { text: 'flat', variant: 'outline' }
-		},
-		Dynamic: {
-			description: 'Sync activity data from your device',
-			badge: { text: 'automatic', variant: 'default' }
-		},
-		Manual: {
-			description: 'No activity calories added automatically'
-		}
-	} as Record<
+	/** Labels are read inside a function so they follow the current locale. */
+	const activityAdjustmentMetadata: Record<
 		ActivityAdjustmentType,
-		{ description: string; badge?: { text: string; variant: 'outline' | 'default' } }
-	>;
+		() => {
+			label: string;
+			description: string;
+			badge?: { text: string; variant: 'outline' | 'default' };
+		}
+	> = {
+		Static: () => ({
+			label: m['foodDiary.activityGoal.static'](),
+			description: m['foodDiary.activityGoal.staticDescription'](),
+			badge: { text: m['foodDiary.activityGoal.staticBadge'](), variant: 'outline' }
+		}),
+		Dynamic: () => ({
+			label: m['foodDiary.activityGoal.dynamic'](),
+			description: m['foodDiary.activityGoal.dynamicDescription'](),
+			badge: { text: m['foodDiary.activityGoal.dynamicBadge'](), variant: 'default' }
+		}),
+		Manual: () => ({
+			label: m['foodDiary.activityGoal.manual'](),
+			description: m['foodDiary.activityGoal.manualDescription']()
+		})
+	};
 
 	const saveActivityPreferences = useSaveActivityPreferences();
 
@@ -88,12 +97,13 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title>Activity calories</Card.Title>
-		<Card.Description>How should activity be added to your daily calorie budget?</Card.Description>
+		<Card.Title>{m['foodDiary.activityGoal.title']()}</Card.Title>
+		<Card.Description>{m['foodDiary.activityGoal.description']()}</Card.Description>
 	</Card.Header>
 	<Card.Content>
 		<RadioGroup.Root bind:value={selectedOption} class="gap-2">
 			{#each enums.__unbound__.ActivityAdjustmentType.values as option (option)}
+				{@const meta = activityAdjustmentMetadata[option]()}
 				<Label
 					for={option}
 					class="flex items-start rounded-lg border bg-secondary/50 p-3 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/10"
@@ -101,20 +111,18 @@
 					<RadioGroup.Item value={option} id={option} class="mt-0.5 bg-card!" />
 					<div class="flex flex-col items-start gap-1">
 						<p>
-							{option}
-							{#if activityAdjustmentMetadata[option].badge}
+							{meta.label}
+							{#if meta.badge}
 								<Badge
-									variant={activityAdjustmentMetadata[option].badge.variant}
-									class={cn('ml-2 h-5', {
-										'bg-card': activityAdjustmentMetadata[option].badge.variant === 'outline'
-									})}
+									variant={meta.badge.variant}
+									class={cn('ml-2 h-5', { 'bg-card': meta.badge.variant === 'outline' })}
 								>
-									{activityAdjustmentMetadata[option].badge.text}
+									{meta.badge.text}
 								</Badge>
 							{/if}
 						</p>
 						<p class="text-xs font-normal text-muted-foreground">
-							{activityAdjustmentMetadata[option].description}
+							{meta.description}
 						</p>
 					</div>
 				</Label>
@@ -123,23 +131,22 @@
 		<div class="mt-4 flex flex-col gap-2 rounded-lg border bg-secondary/50 p-3">
 			{#if selectedOption === 'Manual'}
 				<p class="text-xs text-muted-foreground">
-					Your calorie budget stays fixed each day. You can log individual exercises on the diary
-					page if you want to account for them.
+					{m['foodDiary.activityGoal.manualNote']()}
 				</p>
 			{:else if selectedOption === 'Static'}
 				<InputGroup.Root>
 					<InputGroup.Input
-						placeholder="daily cals"
+						placeholder={m['foodDiary.activityGoal.staticPlaceholder']()}
 						type="number"
 						bind:value={staticCalories}
 						min={0}
 					/>
 					<InputGroup.Addon align="inline-end">
-						<InputGroup.Button>kcal / day</InputGroup.Button>
+						<InputGroup.Button>{m['foodDiary.activityGoal.staticUnit']()}</InputGroup.Button>
 					</InputGroup.Addon>
 				</InputGroup.Root>
 				<p class="text-xs text-muted-foreground">
-					Added to your budget every day regardless of actual activity.
+					{m['foodDiary.activityGoal.staticNote']()}
 				</p>
 			{:else if selectedOption === 'Dynamic'}
 				<DynamicActivity bind:data={dynamicDataStatus} />
@@ -152,6 +159,6 @@
 	{#if saveActivityPreferences.isPending}
 		<Spinner />
 	{:else}
-		Save <SaveIcon />
+		{m['foodDiary.metrics.save']()} <SaveIcon />
 	{/if}
 </Button>

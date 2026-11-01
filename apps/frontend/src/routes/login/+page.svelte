@@ -13,7 +13,7 @@
 	<div class="relative hidden bg-muted lg:block">
 		<img
 			src={loginFood}
-			alt="Healthy food and nutrition"
+			alt={m['login.imageAlt']()}
 			class="absolute inset-0 h-full w-full object-cover brightness-50"
 		/>
 	</div>

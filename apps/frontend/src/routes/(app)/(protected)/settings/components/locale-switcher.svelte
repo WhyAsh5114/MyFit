@@ -27,7 +27,7 @@
 				</Select.Trigger>
 				<Select.Content align="end">
 					<Select.Item value="en">{m['language.en']()}</Select.Item>
-					<Select.Item value="es">{m['language.es']()}</Select.Item>
+					<Select.Item value="hi">{m['language.hi']()}</Select.Item>
 				</Select.Content>
 			</Select.Root>
 		</Card.Action>

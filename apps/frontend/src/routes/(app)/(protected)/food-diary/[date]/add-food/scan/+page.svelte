@@ -232,7 +232,7 @@
 						{#if nutritionDataByCode.isFetching}
 							<Spinner />
 						{:else}
-							Search
+							{m['foodDiary.search']()}
 						{/if}
 					</InputGroup.Button>
 				</InputGroup.Addon>

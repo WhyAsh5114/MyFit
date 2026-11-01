@@ -97,8 +97,8 @@
 								{pascalToNormal($formData.quantifier)}
 							</Select.Trigger>
 							<Select.Content>
-								<Select.Item value="Percentage">Percentage (%)</Select.Item>
-								<Select.Item value="Absolute">Absolute (gm)</Select.Item>
+								<Select.Item value="Percentage">{m['foodDiary.targets.percentage']()}</Select.Item>
+								<Select.Item value="Absolute">{m['foodDiary.targets.absolute']()}</Select.Item>
 							</Select.Content>
 						</Select.Root>
 					{/snippet}

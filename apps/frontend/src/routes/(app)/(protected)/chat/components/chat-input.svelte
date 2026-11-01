@@ -66,7 +66,7 @@
 
 	function copyChat() {
 		navigator.clipboard.writeText(JSON.stringify(chat.messages, null, 2));
-		toast.success('Chat copied to clipboard');
+		toast.success(m['chat.copied']());
 	}
 
 	function send() {
@@ -173,7 +173,7 @@
 			<InputGroup.Button
 				variant="ghost"
 				size="icon-sm"
-				aria-label="Copy chat"
+				aria-label={m['chat.copy']()}
 				disabled={chat.messages.length === 0}
 				onclick={copyChat}
 			>

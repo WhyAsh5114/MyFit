@@ -94,7 +94,7 @@
 				{#if createFoodEntry.isPending}
 					<Spinner />
 				{:else}
-					Log food
+					{m['foodDiary.logFood']()}
 					<CircleCheckBigIcon />
 				{/if}
 			</Button>

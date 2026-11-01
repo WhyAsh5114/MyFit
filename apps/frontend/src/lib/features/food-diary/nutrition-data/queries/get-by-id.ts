@@ -1,6 +1,7 @@
 import { createQuery } from '@tanstack/svelte-query';
 import { apiClient } from '#lib/clients/api-client.js';
 import { toast } from 'svelte-sonner';
+import { m } from '#lib/paraglide/messages.js';
 import { nutritionDataKeys } from '../keys';
 
 export const useNutritionDataById = (getId: () => string) =>
@@ -11,7 +12,7 @@ export const useNutritionDataById = (getId: () => string) =>
 			queryFn: async () => {
 				const res = await apiClient.api['nutrition-data'][':id'].$get({ param: { id } });
 				if (!res.ok) {
-					toast.error('Failed to fetch nutrition data');
+					toast.error(m['foodDiary.foodFetchFailed']());
 					console.error('Failed to fetch nutrition data', res);
 					return null;
 				}

@@ -59,7 +59,7 @@ These are rejected in review.
 - Name things the way the user would: "calorie goal", not "macro target record".
 - Errors say what happened and what to do next. No apology, no blame.
 - Buttons say exactly what they do: `Log`, `Save`, `Cancel`, never `OK`.
-- Every string goes through Paraglide with keys in `messages/en.json` and `messages/es.json`.
+- Every string goes through Paraglide with keys in `messages/en.json` and `messages/hi.json`.
 - Format: `kcal` and `g` after a space, thousands separators, `tabular-nums` wherever digits line up. kcal and gram values in lists are whole numbers; editors may show one decimal.
 - Macro order and letters are **C F P** (carbs, fat, protein) in summaries, with the identity colors below.
 

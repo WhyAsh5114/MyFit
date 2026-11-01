@@ -51,7 +51,7 @@
 		{#if updateUserName.isPending}
 			<Spinner />
 		{:else}
-			Submit <SendIcon />
+			{m['onboarding.nameSubmit']()} <SendIcon />
 		{/if}
 	</Form.Button>
 </form>
