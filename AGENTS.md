@@ -23,7 +23,8 @@ for one. See the [root README](README.md) and each app's README for setup.
   prisma-idb; that dependency's contribution and release rules do not apply here.
 - Native releases use `apps/frontend/package.json`'s `version`, bumped by hand in
   the release commit. Web-only changes need no version bump. Android reads the
-  version directly; iOS archive arguments come from `scripts/native-version.js`.
+  version directly; iOS archive arguments come from
+  `apps/frontend/scripts/native-version.js`.
   Follow [Frontend releases](apps/frontend/README.md#releases).
 - `.github/workflows/frontend.yml` builds and tests relevant pushes. On `main`
   and `v4-turborepo`, it uploads the built web bundle to the API after unit and
@@ -57,7 +58,8 @@ run the affected tests, typecheck and lint for code changes. Each package's
 - API integration tests need PostgreSQL 16. Set `TEST_DATABASE_URL`, then run
   `DATABASE_URL="$TEST_DATABASE_URL" pnpm --filter @myfit/shared db:migrate` before
   testing. Some API suites need no database; see [API testing](apps/api/docs/testing.md).
-- For frontend end-to-end tests, migrate the test database, install Chromium
+- Frontend end-to-end tests also need PostgreSQL 16 and `TEST_DATABASE_URL`.
+  Migrate the test database as above, install Chromium
   with `pnpm --filter @myfit/frontend exec playwright install chromium`, then run
   `pnpm --filter @myfit/frontend test:e2e` (optionally followed by a spec path).
   Playwright starts the mail stub, Bun API and built app. See
