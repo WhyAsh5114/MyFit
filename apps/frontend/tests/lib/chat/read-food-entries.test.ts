@@ -44,6 +44,28 @@ describe('readFoodEntries', () => {
 		expect(days[0].totals.kcal).toBe(97.5 + 39);
 	});
 
+	it('leaves the other nutrients out unless the full detail is asked for', async () => {
+		entries.rows = [entry(30, { ironMg_100g: 2 })];
+
+		const { days } = await readFoodEntries('u1', { from: '2026-10-30' });
+
+		expect(days[0].entries[0]).not.toHaveProperty('nutrients');
+		expect(days[0].totals).not.toHaveProperty('nutrients');
+	});
+
+	it('adds the recorded nutrients, scaled and totalled, for the full detail', async () => {
+		entries.rows = [
+			entry(30, { ironMg_100g: 2, vitaminCMg_100g: null, fiberG_100g: 0 }),
+			entry(30, { quantityG: 50, ironMg_100g: 4 })
+		];
+
+		const { days } = await readFoodEntries('u1', { from: '2026-10-30', detail: 'full' });
+
+		expect(days[0].entries[0].nutrients).toEqual({ ironMg: 3, fiberG: 0 });
+		expect(days[0].entries[1].nutrients).toEqual({ ironMg: 2 });
+		expect(days[0].totals.nutrients).toEqual({ ironMg: 5, fiberG: 0 });
+	});
+
 	it('lists every day in the range, and a day with nothing logged is empty', async () => {
 		entries.rows = [entry(29), entry(31)];
 

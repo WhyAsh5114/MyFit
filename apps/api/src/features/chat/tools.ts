@@ -26,6 +26,12 @@ const eatenNutrients = {
 	proteinG: z.number()
 };
 
+/**
+ * The optional nutrients (fats, sugars, fiber, salt, vitamins, minerals, caffeine) for the quantity
+ * eaten, keyed like `vitaminCMg` or `ironMg`. Only nutrients with a known value are present.
+ */
+const extraNutrients = z.record(z.string(), z.number());
+
 export const tools = {
 	requireClarification: {
 		description: 'Ask the user a clarifying question with multiple choice answers.',
@@ -49,12 +55,18 @@ export const tools = {
 	},
 	readFoodEntries: {
 		description:
-			"Read the user's logged food entries, with the nutrients of each and the totals for each day. The app reads them on the user's device. Use it to answer questions about what they ate, their calories or macros, or how much is left, instead of guessing.",
+			'Read the user\'s logged food entries, with the nutrients of each and the totals for each day. The app reads them on the user\'s device. Use it to answer questions about what they ate, their calories or macros, or how much is left, instead of guessing. By default it gives calories and macros only; set `detail` to "full" when the question is about micronutrients or other nutrients (vitamins, minerals, fiber, sugar, sodium, cholesterol, fat types, caffeine).',
 		inputSchema: z.object({
 			from: isoDate.describe("First day to read, as the user's local date."),
 			to: isoDate
 				.optional()
-				.describe('Last day to read, inclusive. Defaults to `from`. At most 31 days after it.')
+				.describe('Last day to read, inclusive. Defaults to `from`. At most 31 days after it.'),
+			detail: z
+				.enum(['macros', 'full'])
+				.optional()
+				.describe(
+					'"macros" (default) gives calories, carbs, fat and protein. "full" also gives every other nutrient the entries have, per entry and per day.'
+				)
 		}),
 		outputSchema: z.object({
 			days: z.array(
@@ -65,10 +77,11 @@ export const tools = {
 							name: z.string(),
 							quantityG: z.number(),
 							meal: z.string().nullable(),
-							...eatenNutrients
+							...eatenNutrients,
+							nutrients: extraNutrients.optional()
 						})
 					),
-					totals: z.object(eatenNutrients)
+					totals: z.object({ ...eatenNutrients, nutrients: extraNutrients.optional() })
 				})
 			)
 		})
