@@ -20,7 +20,8 @@ COPY apps/api/package.json ./apps/api/
 COPY packages/shared/package.json ./packages/shared/
 
 # Install frontend and its workspace deps (api is a devDep for the typed RPC client)
-RUN pnpm install --frozen-lockfile --filter @myfit/frontend...
+RUN --mount=type=cache,id=myfit-pnpm-store,target=/pnpm/store \
+    pnpm install --frozen-lockfile --store-dir /pnpm/store --filter @myfit/frontend...
 
 # Copy sources
 COPY apps/frontend ./apps/frontend

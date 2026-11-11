@@ -27,3 +27,6 @@
 README.md
 LICENSE
 todo.md
+
+# Local seed data dumps (gitignored; never needed in the image)
+**/prisma/seed/**/data
