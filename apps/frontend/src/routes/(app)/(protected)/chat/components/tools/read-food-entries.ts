@@ -3,6 +3,7 @@ import type { MyUITools } from '@myfit/api';
 import { OPTIONAL_NUTRIENT_FIELDS } from '@myfit/shared/nutrition';
 import { getFoodEntriesByRange } from '#lib/features/food-diary/food-entry/queries/get-by-range.js';
 import { localDay } from '#lib/features/food-diary/_common/day-bounds.js';
+import { localTime } from './local-time';
 
 type Input = MyUITools['readFoodEntries']['input'];
 type Output = MyUITools['readFoodEntries']['output'];
@@ -63,6 +64,8 @@ export async function readFoodEntries(
 	for (const entry of entries) {
 		const scale = entry.quantityG / 100;
 		byDay.get(localDay(entry.eatenAt))?.push({
+			id: entry.id,
+			time: localTime(entry.eatenAt),
 			name: entry.productName,
 			quantityG: round(entry.quantityG),
 			meal: entry.meal?.name ?? null,

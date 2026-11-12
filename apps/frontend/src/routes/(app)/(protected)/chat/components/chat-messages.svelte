@@ -7,8 +7,11 @@
 	import * as MessageScroller from '#lib/components/ui/message-scroller/index.js';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { BotMessageSquareIcon } from '@lucide/svelte';
-	import { chat } from './chat.svelte';
+	import { getChatPageContext } from './chat.svelte';
 	import ChatMessage from './chat-message.svelte';
+
+	const context = getChatPageContext();
+	const chat = $derived(context.session.chat);
 </script>
 
 <MessageScroller.Provider autoScroll>
@@ -16,7 +19,9 @@
 		<MessageScroller.Viewport class="h-auto min-h-0 grow basis-0">
 			<MessageScroller.Content class="gap-4 pb-2">
 				{#each chat.messages as message, index (message.id)}
-					<MessageScroller.Item messageId={message.id}>
+					<!-- Each item clips what it paints (content-visibility), so it keeps room for the cards'
+						outer ring and shadow. -->
+					<MessageScroller.Item messageId={message.id} class="px-1 py-0.5">
 						<ChatMessage {message} active={index === chat.messages.length - 1} />
 					</MessageScroller.Item>
 				{:else}

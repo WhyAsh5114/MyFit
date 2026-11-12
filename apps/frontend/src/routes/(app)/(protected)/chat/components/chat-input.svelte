@@ -10,7 +10,6 @@
 		ClipboardCopyIcon,
 		FileIcon,
 		PlusIcon,
-		RotateCcwIcon,
 		SendIcon,
 		SquareIcon,
 		XIcon
@@ -19,9 +18,16 @@
 	import imageCompression from 'browser-image-compression';
 	import posthog from 'posthog-js';
 	import { toast } from 'svelte-sonner';
-	import { chat, resetChat } from './chat.svelte';
+	import { CHAT_IMAGE_URL_PREFIX } from '@myfit/shared/constants';
+	import { useUploadChatImage } from '#lib/features/chat/chat-image/mutations/upload.js';
+	import { getChatPageContext } from './chat.svelte';
 
-	type Image = { name: string; mediaType: string; dataUrl?: string };
+	/** A photo being attached. `id` is set once object storage has it; the message refers to it by id. */
+	type Image = { name: string; mediaType: string; previewUrl?: string; id?: string };
+
+	const context = getChatPageContext();
+	const chat = $derived(context.session.chat);
+	const uploadImage = useUploadChatImage();
 
 	let input = $state('');
 	let image = $state<Image | null>(null);
@@ -29,7 +35,10 @@
 	let cameraInput: HTMLInputElement;
 
 	const busy = $derived(chat.status === 'submitted' || chat.status === 'streaming');
-	const canSend = $derived(!busy && (input.trim() !== '' || !!image?.dataUrl));
+	const canSend = $derived(!busy && !(image && !image.id) && (input.trim() !== '' || !!image?.id));
+
+	/** Counts attaches, so a slow one that was replaced or removed doesn't overwrite the newer one. */
+	let attachCount = 0;
 
 	async function attach(event: Event) {
 		const target = event.target as HTMLInputElement;
@@ -37,31 +46,32 @@
 		target.value = '';
 		if (!file) return;
 
+		const attempt = ++attachCount;
+		const current = () => attempt === attachCount && image !== null;
 		image = { name: file.name, mediaType: file.type };
 		try {
 			const compressed = await imageCompression(file, {
 				maxSizeMB: 1,
 				maxWidthOrHeight: 1024,
-				useWebWorker: true
+				useWebWorker: true,
+				fileType: 'image/jpeg'
 			});
-			const dataUrl = await new Promise<string>((resolve, reject) => {
-				const reader = new FileReader();
-				reader.onload = () => resolve(reader.result as string);
-				reader.onerror = () => reject(reader.error);
-				reader.readAsDataURL(compressed);
-			});
-			image = { name: file.name, mediaType: compressed.type || 'image/jpeg', dataUrl };
+			if (!current()) return;
+			image = {
+				name: file.name,
+				mediaType: 'image/jpeg',
+				previewUrl: URL.createObjectURL(compressed)
+			};
+			const { id } = await uploadImage.mutateAsync(compressed);
+			if (!current()) return;
+			image = { ...image!, id };
 			posthog.capture('chat_image_attached');
 		} catch (error) {
+			if (!current()) return;
 			image = null;
 			toast.error(m['chat.attachFailed']());
 			console.error('Failed to attach image:', error);
 		}
-	}
-
-	function reset() {
-		posthog.capture('chat_reset');
-		resetChat();
 	}
 
 	function copyChat() {
@@ -73,8 +83,12 @@
 		if (!canSend) return;
 
 		const parts: MyUIMessage['parts'] = [];
-		if (image?.dataUrl) {
-			parts.push({ type: 'file', mediaType: image.mediaType, url: image.dataUrl });
+		if (image?.id) {
+			parts.push({
+				type: 'file',
+				mediaType: image.mediaType,
+				url: `${CHAT_IMAGE_URL_PREFIX}${image.id}`
+			});
 		}
 		if (input.trim()) parts.push({ type: 'text', text: input.trim() });
 
@@ -82,7 +96,7 @@
 			has_image: !!image,
 			message_length: input.trim().length
 		});
-		chat.sendMessage({ role: 'user', parts });
+		void context.session.send({ role: 'user', parts });
 		input = '';
 		image = null;
 	}
@@ -101,10 +115,10 @@
 <InputGroup.Root>
 	{#if image}
 		<InputGroup.Addon align="block-start">
-			<Attachment.Root size="sm" state={image.dataUrl ? 'done' : 'processing'}>
+			<Attachment.Root size="sm" state={image.id ? 'done' : 'processing'}>
 				<Attachment.Media variant="image">
-					{#if image.dataUrl}
-						<img src={image.dataUrl} alt="" class="size-full object-cover" />
+					{#if image.previewUrl}
+						<img src={image.previewUrl} alt="" class="size-full object-cover" />
 					{:else}
 						<Spinner />
 					{/if}
@@ -113,7 +127,13 @@
 					<Attachment.Title class="max-w-40 truncate">{image.name}</Attachment.Title>
 				</Attachment.Content>
 				<Attachment.Actions>
-					<Attachment.Action aria-label="Remove {image.name}" onclick={() => (image = null)}>
+					<Attachment.Action
+						aria-label="Remove {image.name}"
+						onclick={() => {
+							image = null;
+							attachCount++;
+						}}
+					>
 						<XIcon />
 					</Attachment.Action>
 				</Attachment.Actions>
@@ -160,15 +180,6 @@
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 
-		<InputGroup.Button
-			variant="ghost"
-			size="icon-sm"
-			aria-label={m['chat.newChat']()}
-			disabled={chat.messages.length === 0}
-			onclick={reset}
-		>
-			<RotateCcwIcon />
-		</InputGroup.Button>
 		{#if dev}
 			<InputGroup.Button
 				variant="ghost"

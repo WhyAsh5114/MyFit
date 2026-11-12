@@ -8,6 +8,7 @@ import { foodEntryKeys } from '#lib/features/food-diary/food-entry/keys.js';
 import { macroMetricsKeys } from '#lib/features/food-diary/macro-metrics/keys.js';
 import { macroTargetsKeys } from '#lib/features/food-diary/macro-targets/keys.js';
 import { mealKeys } from '#lib/features/food-diary/meals/keys.js';
+import { chatKeys } from '#lib/features/chat/chat/keys.js';
 
 type Key = readonly string[];
 
@@ -25,7 +26,9 @@ const KEYS_BY_MODEL: Record<string, Key[]> = {
 	ActivityEntry: [activityEntryKeys.all],
 	ActivityPreferences: [activityPreferencesKeys.all],
 	MacroMetrics: [macroMetricsKeys.all],
-	MacroTargets: [macroTargetsKeys.all]
+	MacroTargets: [macroTargetsKeys.all],
+	Chat: [chatKeys.all],
+	ChatMessage: [chatKeys.all]
 };
 
 /** The key prefixes a pull changed, or `null` when a changed model has no mapping. */

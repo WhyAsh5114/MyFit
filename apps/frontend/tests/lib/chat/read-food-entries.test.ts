@@ -9,6 +9,7 @@ import { readFoodEntries } from '../../../src/routes/(app)/(protected)/chat/comp
 
 /** An entry eaten at noon, local time, on day `day` of October 2026. */
 const entry = (day: number, overrides: object = {}) => ({
+	id: `entry-${day}`,
 	productName: 'Greek yogurt',
 	quantityG: 150,
 	eatenAt: new Date(2026, 9, day, 12),
@@ -32,6 +33,9 @@ describe('readFoodEntries', () => {
 
 		expect(days).toHaveLength(1);
 		expect(days[0].entries[0]).toEqual({
+			// The id lets the model delete it; the time is local, like the day.
+			id: 'entry-30',
+			time: '12:00',
 			name: 'Greek yogurt',
 			quantityG: 150,
 			meal: 'Breakfast',

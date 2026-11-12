@@ -6,13 +6,14 @@
 	import * as Questionnaire from '#lib/components/ui/questionnaire/index.js';
 	import { XIcon } from '@lucide/svelte';
 	import type { MyUIMessage } from '@myfit/api';
-	import { chat } from '../chat.svelte';
+	import { getChatPageContext } from '../chat.svelte';
 
 	type RequireClarificationPart = Extract<
 		MyUIMessage['parts'][number],
 		{ type: 'tool-requireClarification' }
 	>;
 	const { part, active }: { part: RequireClarificationPart; active: boolean } = $props();
+	const context = getChatPageContext();
 
 	const choices = $derived(
 		(part.input?.choices ?? []).filter((choice): choice is string => choice !== undefined)
@@ -25,7 +26,11 @@
 			.filter((value): value is string => typeof value === 'string' && value.trim() !== '');
 		const output = values.at(-1)?.trim();
 		if (!output) return;
-		chat.addToolOutput({ tool: 'requireClarification', toolCallId: part.toolCallId, output });
+		void context.session.answer({
+			tool: 'requireClarification',
+			toolCallId: part.toolCallId,
+			output
+		});
 	}
 </script>
 

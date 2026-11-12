@@ -65,8 +65,11 @@ export default defineConfig(
 	{
 		// Local readers are made with `defineReader`, which registers what they read. The nutrition
 		// queries are remote and go through TanStack.
-		files: ['apps/frontend/src/lib/features/{food-diary,user}/**/queries/*.ts'],
-		ignores: ['apps/frontend/src/lib/features/food-diary/nutrition-data/**'],
+		files: ['apps/frontend/src/lib/features/{food-diary,user,chat}/**/queries/*.ts'],
+		ignores: [
+			'apps/frontend/src/lib/features/food-diary/nutrition-data/**',
+			'apps/frontend/src/lib/features/chat/chat-image/**'
+		],
 		rules: {
 			'no-restricted-syntax': [
 				'error',
