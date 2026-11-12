@@ -27,6 +27,8 @@
 	},
 	// Environment variables
 	"containerEnv": {
-		"DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/myfit_v4_dev"
+		"DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/myfit_v4_dev",
+		// The API's .env points at localhost for a host run; inside the container SeaweedFS is a service.
+		"S3_ENDPOINT": "http://seaweedfs:8333"
 	}
 }

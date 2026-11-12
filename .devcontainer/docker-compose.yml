@@ -29,5 +29,21 @@ services:
     # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
+  # Object storage for chat photos. Independent of `db`, so it can run on its own for an API on
+  # the host:  docker compose -f .devcontainer/docker-compose.yml up -d seaweedfs
+  # The host reaches it at http://localhost:8333, the devcontainer at http://seaweedfs:8333.
+  # It takes the key pair (S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY) from apps/api/.env.
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.53
+    restart: unless-stopped
+    entrypoint: ['/bin/sh', '/start.sh']
+    env_file: ../apps/api/.env
+    volumes:
+      - ../infra/seaweedfs/start.sh:/start.sh:ro
+      - seaweedfs-data:/data
+    ports:
+      - '127.0.0.1:8333:8333'
+
 volumes:
   postgres-data:
+  seaweedfs-data:

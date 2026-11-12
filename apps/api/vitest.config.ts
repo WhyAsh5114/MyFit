@@ -12,7 +12,10 @@ export default defineConfig({
 			DATABASE_URL: process.env.TEST_DATABASE_URL ?? '',
 			TRUSTED_ORIGINS: '[]',
 			BETTER_AUTH_SECRET: 'test-secret',
-			BETTER_AUTH_URL: 'http://localhost:3000'
+			BETTER_AUTH_URL: 'http://localhost:3000',
+			// External services stay off, whatever a developer's `.env` has: dotenv doesn't override these.
+			EXA_API_KEY: '',
+			S3_ENDPOINT: ''
 		}
 	}
 });

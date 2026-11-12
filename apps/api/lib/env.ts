@@ -72,6 +72,16 @@ export const env = {
 	OPENAI_API_KEY: process.env.OPENAI_API_KEY,
 	OPENAI_BASE_URL: process.env.OPENAI_BASE_URL,
 	OPENAI_MODEL_ID: process.env.OPENAI_MODEL_ID,
+	// Web search for the chat (https://exa.ai). The chat has no `webSearch` tool without it.
+	EXA_API_KEY: process.env.EXA_API_KEY,
+
+	// --- Object storage for chat photos: any S3-compatible store (SeaweedFS in docker-compose) ---
+	// Photo upload answers 501 without these.
+	S3_ENDPOINT: process.env.S3_ENDPOINT,
+	S3_REGION: optional('S3_REGION', 'us-east-1'),
+	S3_BUCKET: optional('S3_BUCKET', 'myfit-chat-images'),
+	S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID,
+	S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
 
 	// --- OTA (upload endpoint returns 501 without OTA_UPLOAD_KEY) ---
 	// Production must pin the public origin: download URLs are otherwise built from request headers.
