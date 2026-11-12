@@ -9,10 +9,16 @@ import { apiClient } from '#lib/clients/api-client.js';
 import { useSaveChat } from '#lib/features/chat/chat/mutations/save.js';
 import { storedParts } from '#lib/features/chat/chat/model.js';
 import { onAccountChange } from '#lib/services/account/account-session.svelte.js';
+import { findEntriesToDelete } from './tools/delete-food-entries';
 import { readFoodEntries } from './tools/read-food-entries';
 
 /** The tools the app answers; the server answers the rest. */
-type AppTool = 'requireClarification' | 'createFoodEntry' | 'readFoodEntries';
+type AppTool =
+	| 'requireClarification'
+	| 'createFoodEntry'
+	| 'readFoodEntries'
+	| 'deleteFoodEntries'
+	| 'updateFoodEntries';
 
 type ToolOutput = {
 	[K in AppTool]: { tool: K; toolCallId: string; output: MyUITools[K]['output'] };
@@ -73,6 +79,18 @@ export class ChatSession {
 			onToolCall: ({ toolCall }) => {
 				if (toolCall.dynamic) return;
 				if (toolCall.toolName === 'readFoodEntries') void this.#answerReadFoodEntries(toolCall);
+				if (toolCall.toolName === 'deleteFoodEntries')
+					void this.#answerMissingEntries(
+						'deleteFoodEntries',
+						toolCall.toolCallId,
+						toolCall.input.ids
+					);
+				if (toolCall.toolName === 'updateFoodEntries')
+					void this.#answerMissingEntries(
+						'updateFoodEntries',
+						toolCall.toolCallId,
+						toolCall.input.edits.map((edit) => edit.id)
+					);
 			},
 			onFinish: () => this.persist()
 		});
@@ -145,6 +163,29 @@ export class ChatSession {
 			if (title) this.persist(title);
 		} catch (error) {
 			console.warn('Could not name the chat', error);
+		}
+	}
+
+	/**
+	 * A delete or edit whose ids match none of the user's entries has nothing to confirm, so the model hears
+	 * it at once instead of the user seeing an empty card. Otherwise the card asks the user.
+	 */
+	async #answerMissingEntries(
+		tool: 'deleteFoodEntries' | 'updateFoodEntries',
+		toolCallId: string,
+		ids: string[]
+	) {
+		try {
+			const { entries, notFound } = await findEntriesToDelete(this.userId, ids);
+			if (entries.length > 0) return;
+			await this.answer(
+				tool === 'deleteFoodEntries'
+					? { tool, toolCallId, output: { deleted: [], cancelled: false, notFound } }
+					: { tool, toolCallId, output: { updated: [], cancelled: false, notFound } }
+			);
+		} catch (error) {
+			// The card reads the entries again and reports its own failure.
+			console.error('Could not look up food entries to delete', error);
 		}
 	}
 
