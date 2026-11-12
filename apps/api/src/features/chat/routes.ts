@@ -3,13 +3,21 @@ import {
 	streamText,
 	convertToModelMessages,
 	toUIMessageStream,
-	createUIMessageStreamResponse
+	createUIMessageStreamResponse,
+	isStepCount
 } from 'ai';
+import { env } from '../../../lib/env.js';
 import { model } from './provider';
 import { tools } from './tools';
 import { systemPrompt } from './system-prompt';
 import { resolveMessages } from './helpers';
 import { authMiddleware } from '../../shared/middleware/auth.js';
+
+/**
+ * The server answers searchFoods and webSearch itself, so one request can take a few steps. A
+ * call to a tool the app answers ends the request, and the app sends the next one.
+ */
+const MAX_STEPS = 6;
 
 const chatRoutes = new Hono()
 	/**
@@ -31,7 +39,11 @@ const chatRoutes = new Hono()
 				ignoreIncompleteToolCalls: true
 			}),
 			instructions: `${systemPrompt}\n\nThe user's current date is ${day}.`,
-			tools
+			tools,
+			activeTools: env.EXA_API_KEY
+				? undefined
+				: (Object.keys(tools).filter((name) => name !== 'webSearch') as (keyof typeof tools)[]),
+			stopWhen: isStepCount(MAX_STEPS)
 		});
 
 		return createUIMessageStreamResponse({

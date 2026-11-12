@@ -86,12 +86,12 @@ test('the chat route streams a tool call, then continues with the answer', async
 	expect(firstStream).toContain('"toolName":"requireClarification"');
 
 	// The system prompt, followed by the user's date from the app, reaches the provider as the first
-	// message, and every tool is declared.
+	// message, and every tool is declared except web search, which needs an Exa key.
 	expect(requests[0].messages[0]).toEqual({
 		role: 'system',
 		content: `${systemPrompt}\n\nThe user's current date is 2026-10-31.`
 	});
-	expect(requests[0].tools).toHaveLength(Object.keys(tools).length);
+	expect(requests[0].tools).toHaveLength(Object.keys(tools).length - 1);
 
 	// The client sends the answered tool call back, which has to convert to a tool message.
 	const answered = {
