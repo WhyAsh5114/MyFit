@@ -13,6 +13,8 @@ export default defineConfig({
 			TRUSTED_ORIGINS: '[]',
 			BETTER_AUTH_SECRET: 'test-secret',
 			BETTER_AUTH_URL: 'http://localhost:3000',
+			// The mailer builds its client on import, and CI has no `.env`.
+			RESEND_API_KEY: 're_test',
 			// External services stay off, whatever a developer's `.env` has: dotenv doesn't override these.
 			EXA_API_KEY: '',
 			S3_ENDPOINT: ''

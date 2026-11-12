@@ -240,7 +240,7 @@ const otaRoutes = new Hono()
 
 		try {
 			const { size } = await stat(filePath);
-			const stream = Readable.toWeb(createReadStream(filePath)) as ReadableStream;
+			const stream = Readable.toWeb(createReadStream(filePath)) as unknown as ReadableStream;
 			return new Response(stream, {
 				status: 200,
 				headers: {
