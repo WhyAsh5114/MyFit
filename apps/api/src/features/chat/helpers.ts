@@ -4,10 +4,10 @@ import type { MyUITools } from './tools';
 export type MyUIMessage = UIMessage<unknown, UIDataTypes, MyUITools>;
 
 /** What the model is told when the user moved on without answering a tool call it made. */
-const UNANSWERED: Record<string, string> = {
+const UNANSWERED: Record<string, unknown> = {
 	'tool-requireClarification': 'No answer provided, continue without this information.',
-	'tool-createFoodEntry':
-		'Not logged: the user did not confirm it and sent another message instead.'
+	// Not confirmed: the user sent another message instead.
+	'tool-createFoodEntry': { logged: false, meal: null }
 };
 
 /** Tools the app answers by itself. A call still open was cut short, so it is closed as an error. */

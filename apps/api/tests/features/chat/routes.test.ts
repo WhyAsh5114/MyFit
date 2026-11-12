@@ -10,6 +10,7 @@ vi.mock('../../../src/shared/middleware/auth.js', () => ({
 type ChatRequest = { messages: { role: string; content: unknown }[]; tools?: unknown[] };
 
 const requests: ChatRequest[] = [];
+const titleRequests: ChatRequest[] = [];
 let provider: Server;
 
 /** One streamed chat completion, in the OpenAI wire format the provider package reads. */
@@ -28,9 +29,30 @@ beforeAll(async () => {
 		let body = '';
 		req.on('data', (part) => (body += part));
 		req.on('end', () => {
-			requests.push(JSON.parse(body));
-			const toolResultSent = requests.at(-1)!.messages.some((m) => m.role === 'tool');
+			const request = JSON.parse(body) as ChatRequest;
+			// A title request is the only one made without tools, and it doesn't stream.
+			if (!request.tools) {
+				titleRequests.push(request);
+				res.writeHead(200, { 'content-type': 'application/json' });
+				return res.end(
+					JSON.stringify({
+						id: 'c2',
+						object: 'chat.completion',
+						created: 1,
+						model: 'm',
+						choices: [
+							{
+								index: 0,
+								message: { role: 'assistant', content: '"Sandwich lunch."' },
+								finish_reason: 'stop'
+							}
+						]
+					})
+				);
+			}
 			res.writeHead(200, { 'content-type': 'text/event-stream' });
+			requests.push(request);
+			const toolResultSent = request.messages.some((m) => m.role === 'tool');
 			res.end(
 				toolResultSent
 					? completion({ content: 'Thanks, logging it.' }, 'stop')
@@ -151,4 +173,66 @@ test('a typed message answers a pending food entry and question instead of leavi
 	const sent = requests[before].messages;
 	expect(sent.filter((m) => m.role === 'tool')).toHaveLength(2);
 	expect(sent.at(-1)).toMatchObject({ role: 'user' });
+});
+
+test("the user's local time and meals reach the model, and a bad value is ignored", async () => {
+	const { chatRoutes } = await import('../../../src/features/chat/routes.ts');
+	const { systemPrompt } = await import('../../../src/features/chat/system-prompt.ts');
+	const before = requests.length;
+	const res = await chatRoutes.request('/', {
+		method: 'POST',
+		headers: { 'content-type': 'application/json' },
+		body: JSON.stringify({
+			messages: [{ id: 'u1', role: 'user', parts: [{ type: 'text', text: 'I had poha' }] }],
+			today: '2026-10-31',
+			time: '08:15',
+			meals: ['Breakfast', 'Lunch', 'Dinner'],
+			unexpected: 'ignored'
+		})
+	});
+	expect(res.status).toBe(200);
+	await res.text();
+	expect(requests[before].messages[0]).toEqual({
+		role: 'system',
+		content: [
+			systemPrompt,
+			'',
+			"The user's current date is 2026-10-31.",
+			"The user's local time is 08:15.",
+			"The user's meals, in order: Breakfast, Lunch, Dinner."
+		].join('\n')
+	});
+
+	const bad = await chatRoutes.request('/', {
+		method: 'POST',
+		headers: { 'content-type': 'application/json' },
+		body: JSON.stringify({
+			messages: [{ id: 'u1', role: 'user', parts: [{ type: 'text', text: 'hi' }] }],
+			time: 'noon'
+		})
+	});
+	expect(bad.status).toBe(200);
+	await bad.text();
+});
+
+test('the title route names a chat from its first message, cleaned of quotes and a full stop', async () => {
+	const { chatTitleRoutes } = await import('../../../src/features/chat/title.ts');
+	const ask = (body: unknown) =>
+		chatTitleRoutes.request('/', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify(body)
+		});
+
+	const res = await ask({ text: 'I ate a sandwich' });
+	expect(res.status).toBe(200);
+	expect(await res.json()).toEqual({ title: 'Sandwich lunch' });
+	expect(titleRequests.at(-1)!.messages.at(-1)).toMatchObject({
+		role: 'user',
+		content: 'I ate a sandwich'
+	});
+
+	const before = titleRequests.length;
+	expect((await ask({ text: '   ' })).status).toBe(400);
+	expect(titleRequests).toHaveLength(before);
 });

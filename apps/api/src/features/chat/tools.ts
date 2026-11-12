@@ -34,6 +34,11 @@ const eatenNutrients = {
  */
 const extraNutrients = z.record(z.string(), z.number());
 
+/** A wall-clock time in the user's own time zone, without an offset. */
+const localDateTime = z
+	.string()
+	.regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, 'Use the form YYYY-MM-DDTHH:mm, in local time.');
+
 export const tools = {
 	requireClarification: {
 		description: 'Ask the user a clarifying question with multiple choice answers.',
@@ -47,7 +52,7 @@ export const tools = {
 	},
 	createFoodEntry: {
 		description:
-			'Create a food entry for the user. Nutrient values are per 100 g, and quantityG is the amount eaten.',
+			'Propose a food entry. The user sees a card with the values and the meal, can change the meal, and confirms it. Nutrient values are per 100 g.',
 		inputSchema: z.object({
 			name: z.string().describe('The name of the food.'),
 			brands: z
@@ -55,11 +60,28 @@ export const tools = {
 				.optional()
 				.nullable()
 				.describe('The brand, when the food is a branded product (for example from searchFoods).'),
+			meal: z
+				.string()
+				.optional()
+				.nullable()
+				.describe(
+					"One of the user's meal names, exactly as listed. Use the meal the user named, otherwise the one that fits their local time. Leave it out when they have no meals."
+				),
 			quantityG: z.coerce.number().positive().describe('Amount eaten in grams.'),
+			eatenAt: localDateTime
+				.optional()
+				.nullable()
+				.describe(
+					'When it was eaten, as the user\'s local date and time (YYYY-MM-DDTHH:mm). Leave it out for "now"; set it only when the user says when ("yesterday", "at 8 am", "last night").'
+				),
 			...coercedRequiredNutrientsShape,
 			...coercedOptionalNutrientsShape
 		}),
-		outputSchema: z.string()
+		outputSchema: z.object({
+			logged: z.boolean(),
+			/** The meal the user logged it under, which can differ from the proposed one. */
+			meal: z.string().nullable()
+		})
 	},
 	searchFoods: {
 		description:
