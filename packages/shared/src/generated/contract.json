@@ -12,6 +12,14 @@
 			"model": "ActivityPreferences",
 			"namespace": "__unbound__"
 		},
+		"chat": {
+			"model": "Chat",
+			"namespace": "__unbound__"
+		},
+		"chatMessage": {
+			"model": "ChatMessage",
+			"namespace": "__unbound__"
+		},
 		"foodEntry": {
 			"model": "FoodEntry",
 			"namespace": "__unbound__"
@@ -269,6 +277,136 @@
 						"storage": {
 							"keyPath": "id",
 							"storeName": "activityPreferences"
+						}
+					},
+					"Chat": {
+						"fields": {
+							"createdAt": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/date@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"title": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"updatedAt": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/date@1",
+									"kind": "scalar"
+								}
+							},
+							"userId": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"messages": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["chatId"]
+								},
+								"to": {
+									"model": "ChatMessage",
+									"namespace": "__unbound__"
+								}
+							},
+							"user": {
+								"cardinality": "N:1",
+								"nullable": false,
+								"on": {
+									"localFields": ["userId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "User",
+									"namespace": "__unbound__"
+								}
+							}
+						},
+						"storage": {
+							"keyPath": "id",
+							"storeName": "chat"
+						}
+					},
+					"ChatMessage": {
+						"fields": {
+							"chatId": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							},
+							"parts": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/json@1",
+									"kind": "scalar"
+								}
+							},
+							"position": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/int32@1",
+									"kind": "scalar"
+								}
+							},
+							"role": {
+								"nullable": false,
+								"type": {
+									"codecId": "idb/string@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"chat": {
+								"cardinality": "N:1",
+								"nullable": false,
+								"on": {
+									"localFields": ["chatId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "Chat",
+									"namespace": "__unbound__"
+								}
+							}
+						},
+						"storage": {
+							"keyPath": "id",
+							"relations": {
+								"chat": {
+									"onDelete": "cascade"
+								}
+							},
+							"storeName": "chatMessage"
 						}
 					},
 					"FoodEntry": {
@@ -1419,6 +1557,17 @@
 									"namespace": "__unbound__"
 								}
 							},
+							"chats": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["userId"]
+								},
+								"to": {
+									"model": "Chat",
+									"namespace": "__unbound__"
+								}
+							},
 							"foodEntries": {
 								"cardinality": "1:N",
 								"on": {
@@ -1494,7 +1643,7 @@
 				"id": "__unbound__"
 			}
 		},
-		"storageHash": "329bd9102170df5a3a05c5e27e6b5a45a1ea2b27f5828426f2c890c38fc8c0b5",
+		"storageHash": "5989cbf9fdeafef36e5cb62d7edb69eaf08cf8924db9991ad93bad2242ff7263",
 		"stores": {
 			"activityEntry": {
 				"indexes": {
@@ -1633,6 +1782,106 @@
 						}
 					},
 					"model": "ActivityPreferences"
+				}
+			},
+			"chat": {
+				"indexes": {
+					"userId": {
+						"keyPath": "userId"
+					}
+				},
+				"keyPath": "id",
+				"record": {
+					"fields": {
+						"createdAt": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/date@1",
+								"kind": "scalar"
+							}
+						},
+						"id": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"title": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"updatedAt": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/date@1",
+								"kind": "scalar"
+							}
+						},
+						"userId": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						}
+					},
+					"model": "Chat"
+				}
+			},
+			"chatMessage": {
+				"indexes": {
+					"chatId": {
+						"keyPath": "chatId"
+					},
+					"chatId_position_unique": {
+						"keyPath": ["chatId", "position"],
+						"unique": true
+					}
+				},
+				"keyPath": "id",
+				"record": {
+					"fields": {
+						"chatId": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"id": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						},
+						"parts": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/json@1",
+								"kind": "scalar"
+							}
+						},
+						"position": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/int32@1",
+								"kind": "scalar"
+							}
+						},
+						"role": {
+							"nullable": false,
+							"type": {
+								"codecId": "idb/string@1",
+								"kind": "scalar"
+							}
+						}
+					},
+					"model": "ChatMessage"
 				}
 			},
 			"foodEntry": {
@@ -2725,7 +2974,7 @@
 		}
 	},
 	"execution": {
-		"executionHash": "f707a208dc86266e1e0a02c7ff79cad6fd8940dbd6d0a7d3b85bb36d68990dd6",
+		"executionHash": "a78dbf318e2b17d15ecf497e8ff3418ada272134e169ebe71ebaa4c5295b8ba2",
 		"mutations": {
 			"defaults": [
 				{
@@ -2913,6 +3162,28 @@
 					"ref": {
 						"entry": "recipeIngredient",
 						"field": "id",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "uuidv4",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "chat",
+						"field": "id",
+						"namespace": "__unbound__"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "timestampNow",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "chat",
+						"field": "createdAt",
 						"namespace": "__unbound__"
 					}
 				}

@@ -16,6 +16,14 @@
 			"model": "Changelog",
 			"namespace": "public"
 		},
+		"Chat": {
+			"model": "Chat",
+			"namespace": "public"
+		},
+		"ChatMessage": {
+			"model": "ChatMessage",
+			"namespace": "public"
+		},
 		"FoodEntry": {
 			"model": "FoodEntry",
 			"namespace": "public"
@@ -589,6 +597,165 @@
 							},
 							"namespaceId": "public",
 							"table": "Changelog"
+						}
+					},
+					"Chat": {
+						"fields": {
+							"createdAt": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/timestamptz-date@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							},
+							"title": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							},
+							"updatedAt": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/timestamptz-date@1",
+									"kind": "scalar"
+								}
+							},
+							"userId": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"messages": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["chatId"]
+								},
+								"to": {
+									"model": "ChatMessage",
+									"namespace": "public"
+								}
+							},
+							"user": {
+								"cardinality": "N:1",
+								"nullable": false,
+								"on": {
+									"localFields": ["userId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "User",
+									"namespace": "public"
+								}
+							}
+						},
+						"storage": {
+							"fields": {
+								"createdAt": {
+									"column": "createdAt"
+								},
+								"id": {
+									"column": "id"
+								},
+								"title": {
+									"column": "title"
+								},
+								"updatedAt": {
+									"column": "updatedAt"
+								},
+								"userId": {
+									"column": "userId"
+								}
+							},
+							"namespaceId": "public",
+							"table": "Chat"
+						}
+					},
+					"ChatMessage": {
+						"fields": {
+							"chatId": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							},
+							"parts": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/json@1",
+									"kind": "scalar"
+								}
+							},
+							"position": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/int4@1",
+									"kind": "scalar"
+								}
+							},
+							"role": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"chat": {
+								"cardinality": "N:1",
+								"nullable": false,
+								"on": {
+									"localFields": ["chatId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "Chat",
+									"namespace": "public"
+								}
+							}
+						},
+						"storage": {
+							"fields": {
+								"chatId": {
+									"column": "chatId"
+								},
+								"id": {
+									"column": "id"
+								},
+								"parts": {
+									"column": "parts"
+								},
+								"position": {
+									"column": "position"
+								},
+								"role": {
+									"column": "role"
+								}
+							},
+							"namespaceId": "public",
+							"table": "ChatMessage"
 						}
 					},
 					"FoodEntry": {
@@ -2663,6 +2830,17 @@
 									"namespace": "public"
 								}
 							},
+							"chats": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["userId"]
+								},
+								"to": {
+									"model": "Chat",
+									"namespace": "public"
+								}
+							},
 							"foodEntries": {
 								"cardinality": "1:N",
 								"on": {
@@ -3070,6 +3248,131 @@
 							"uniques": [
 								{
 									"columns": ["outboxEventId"]
+								}
+							]
+						},
+						"Chat": {
+							"columns": {
+								"createdAt": {
+									"codecId": "pg/timestamptz-date@1",
+									"dataType": "pg/timestamptz",
+									"default": {
+										"expression": "now()",
+										"kind": "function"
+									},
+									"nullable": false
+								},
+								"id": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
+								},
+								"title": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
+								},
+								"updatedAt": {
+									"codecId": "pg/timestamptz-date@1",
+									"dataType": "pg/timestamptz",
+									"nullable": false
+								},
+								"userId": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
+								}
+							},
+							"foreignKeys": [
+								{
+									"index": {
+										"name": "Chat_userId_idx_a489d58a"
+									},
+									"source": {
+										"columns": ["userId"],
+										"namespaceId": "public",
+										"tableName": "Chat"
+									},
+									"target": {
+										"columns": ["id"],
+										"namespaceId": "public",
+										"tableName": "user"
+									}
+								}
+							],
+							"indexes": [
+								{
+									"columns": ["userId"],
+									"name": "Chat_userId_idx_a489d58a",
+									"prefix": "Chat_userId_idx",
+									"unique": false
+								}
+							],
+							"primaryKey": {
+								"columns": ["id"]
+							},
+							"uniques": []
+						},
+						"ChatMessage": {
+							"columns": {
+								"chatId": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
+								},
+								"id": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
+								},
+								"parts": {
+									"codecId": "pg/json@1",
+									"dataType": "pg/json",
+									"nullable": false
+								},
+								"position": {
+									"codecId": "pg/int4@1",
+									"dataType": "pg/int4",
+									"nullable": false
+								},
+								"role": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
+								}
+							},
+							"foreignKeys": [
+								{
+									"index": {
+										"name": "ChatMessage_chatId_idx_53965835"
+									},
+									"onDelete": "cascade",
+									"source": {
+										"columns": ["chatId"],
+										"namespaceId": "public",
+										"tableName": "ChatMessage"
+									},
+									"target": {
+										"columns": ["id"],
+										"namespaceId": "public",
+										"tableName": "Chat"
+									}
+								}
+							],
+							"indexes": [
+								{
+									"columns": ["chatId"],
+									"name": "ChatMessage_chatId_idx_53965835",
+									"prefix": "ChatMessage_chatId_idx",
+									"unique": false
+								}
+							],
+							"primaryKey": {
+								"columns": ["id"]
+							},
+							"uniques": [
+								{
+									"columns": ["chatId", "position"]
 								}
 							]
 						},
@@ -4621,10 +4924,10 @@
 				"kind": "postgres-schema"
 			}
 		},
-		"storageHash": "2cb77723bb8e71b0bf16d95d5ee3f308989253d3c3c363638268a883a653a3c6"
+		"storageHash": "4d7f38ec72f894e2aab2b36df9fb958e5ea3f3c97eadbd2e047cfe38d2d9ffc0"
 	},
 	"execution": {
-		"executionHash": "9b0ec966f1397f6b3ef25f4a1a23de2c45c37bc7cc8df5fc4c96d8354ad09503",
+		"executionHash": "c9fb90183ece9e7ea953d974041915d68e4cf5bbc98b22d8571a04999d82014d",
 		"mutations": {
 			"defaults": [
 				{
@@ -4656,6 +4959,17 @@
 					},
 					"ref": {
 						"entry": "Changelog",
+						"field": "id",
+						"namespace": "public"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "uuidv4",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "Chat",
 						"field": "id",
 						"namespace": "public"
 					}

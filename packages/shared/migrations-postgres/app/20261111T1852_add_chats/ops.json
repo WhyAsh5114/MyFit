@@ -1,0 +1,244 @@
+[
+	{
+		"id": "table.Chat",
+		"label": "Create table \"Chat\"",
+		"summary": "Creates table \"Chat\"",
+		"operationClass": "additive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "table",
+				"name": "Chat"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure table \"Chat\" does not exist",
+				"sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+				"params": ["\"public\".\"Chat\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "create table \"Chat\"",
+				"sql": "CREATE TABLE \"public\".\"Chat\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+				"params": []
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify table \"Chat\" exists",
+				"sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+				"params": ["\"public\".\"Chat\""]
+			}
+		]
+	},
+	{
+		"id": "table.ChatMessage",
+		"label": "Create table \"ChatMessage\"",
+		"summary": "Creates table \"ChatMessage\"",
+		"operationClass": "additive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "table",
+				"name": "ChatMessage"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure table \"ChatMessage\" does not exist",
+				"sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+				"params": ["\"public\".\"ChatMessage\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "create table \"ChatMessage\"",
+				"sql": "CREATE TABLE \"public\".\"ChatMessage\" (\n  \"chatId\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"parts\" json NOT NULL,\n  \"position\" int4 NOT NULL,\n  \"role\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+				"params": []
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify table \"ChatMessage\" exists",
+				"sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+				"params": ["\"public\".\"ChatMessage\""]
+			}
+		]
+	},
+	{
+		"id": "unique.ChatMessage.ChatMessage_chatId_position_key",
+		"label": "Add unique constraint on \"ChatMessage\" (chatId, position)",
+		"operationClass": "additive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "unique",
+				"name": "ChatMessage_chatId_position_key",
+				"table": "ChatMessage"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure constraint \"ChatMessage_chatId_position_key\" does not exist",
+				"sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+				"params": ["ChatMessage_chatId_position_key", "public", "\"public\".\"ChatMessage\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "add unique constraint \"ChatMessage_chatId_position_key\"",
+				"sql": "ALTER TABLE \"public\".\"ChatMessage\" ADD CONSTRAINT \"ChatMessage_chatId_position_key\" UNIQUE (\"chatId\", \"position\")"
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify constraint \"ChatMessage_chatId_position_key\" exists",
+				"sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+				"params": ["ChatMessage_chatId_position_key", "public", "\"public\".\"ChatMessage\""]
+			}
+		]
+	},
+	{
+		"id": "index.Chat.Chat_userId_idx_a489d58a",
+		"label": "Create index \"Chat_userId_idx_a489d58a\" on \"Chat\"",
+		"operationClass": "additive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "index",
+				"name": "Chat_userId_idx_a489d58a",
+				"table": "Chat"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure index \"Chat_userId_idx_a489d58a\" does not exist",
+				"sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+				"params": ["\"public\".\"Chat_userId_idx_a489d58a\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "create index \"Chat_userId_idx_a489d58a\"",
+				"sql": "CREATE INDEX \"Chat_userId_idx_a489d58a\" ON \"public\".\"Chat\" (\"userId\")",
+				"params": []
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify index \"Chat_userId_idx_a489d58a\" exists",
+				"sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+				"params": ["\"public\".\"Chat_userId_idx_a489d58a\""]
+			}
+		]
+	},
+	{
+		"id": "index.ChatMessage.ChatMessage_chatId_idx_53965835",
+		"label": "Create index \"ChatMessage_chatId_idx_53965835\" on \"ChatMessage\"",
+		"operationClass": "additive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "index",
+				"name": "ChatMessage_chatId_idx_53965835",
+				"table": "ChatMessage"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure index \"ChatMessage_chatId_idx_53965835\" does not exist",
+				"sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+				"params": ["\"public\".\"ChatMessage_chatId_idx_53965835\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "create index \"ChatMessage_chatId_idx_53965835\"",
+				"sql": "CREATE INDEX \"ChatMessage_chatId_idx_53965835\" ON \"public\".\"ChatMessage\" (\"chatId\")",
+				"params": []
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify index \"ChatMessage_chatId_idx_53965835\" exists",
+				"sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+				"params": ["\"public\".\"ChatMessage_chatId_idx_53965835\""]
+			}
+		]
+	},
+	{
+		"id": "foreignKey.Chat.Chat_userId_fkey",
+		"label": "Add foreign key \"Chat_userId_fkey\" on \"Chat\"",
+		"operationClass": "additive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "foreignKey",
+				"name": "Chat_userId_fkey",
+				"table": "Chat"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure FK \"Chat_userId_fkey\" does not exist",
+				"sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+				"params": ["Chat_userId_fkey", "public", "\"public\".\"Chat\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "add FK \"Chat_userId_fkey\"",
+				"sql": "ALTER TABLE \"public\".\"Chat\"\nADD CONSTRAINT \"Chat_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")"
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify FK \"Chat_userId_fkey\" exists",
+				"sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+				"params": ["Chat_userId_fkey", "public", "\"public\".\"Chat\""]
+			}
+		]
+	},
+	{
+		"id": "foreignKey.ChatMessage.ChatMessage_chatId_fkey",
+		"label": "Add foreign key \"ChatMessage_chatId_fkey\" on \"ChatMessage\"",
+		"operationClass": "additive",
+		"target": {
+			"id": "postgres",
+			"details": {
+				"schema": "public",
+				"objectType": "foreignKey",
+				"name": "ChatMessage_chatId_fkey",
+				"table": "ChatMessage"
+			}
+		},
+		"precheck": [
+			{
+				"description": "ensure FK \"ChatMessage_chatId_fkey\" does not exist",
+				"sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+				"params": ["ChatMessage_chatId_fkey", "public", "\"public\".\"ChatMessage\""]
+			}
+		],
+		"execute": [
+			{
+				"description": "add FK \"ChatMessage_chatId_fkey\"",
+				"sql": "ALTER TABLE \"public\".\"ChatMessage\"\nADD CONSTRAINT \"ChatMessage_chatId_fkey\"\nFOREIGN KEY (\"chatId\")\nREFERENCES \"public\".\"Chat\" (\"id\")\nON DELETE CASCADE"
+			}
+		],
+		"postcheck": [
+			{
+				"description": "verify FK \"ChatMessage_chatId_fkey\" exists",
+				"sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+				"params": ["ChatMessage_chatId_fkey", "public", "\"public\".\"ChatMessage\""]
+			}
+		]
+	}
+]

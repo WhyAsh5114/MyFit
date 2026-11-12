@@ -18,9 +18,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-	StorageHashBase<'2cb77723bb8e71b0bf16d95d5ee3f308989253d3c3c363638268a883a653a3c6'>;
+	StorageHashBase<'4d7f38ec72f894e2aab2b36df9fb958e5ea3f3c97eadbd2e047cfe38d2d9ffc0'>;
 export type ExecutionHash =
-	ExecutionHashBase<'9b0ec966f1397f6b3ef25f4a1a23de2c45c37bc7cc8df5fc4c96d8354ad09503'>;
+	ExecutionHashBase<'c9fb90183ece9e7ea953d974041915d68e4cf5bbc98b22d8571a04999d82014d'>;
 export type ProfileHash =
 	ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -275,6 +275,20 @@ export type FieldOutputTypes = {
 			readonly outboxEventId: CodecTypes['pg/text@1']['output'];
 			readonly scopeKey: CodecTypes['pg/text@1']['output'];
 		};
+		readonly Chat: {
+			readonly createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
+			readonly id: CodecTypes['pg/text@1']['output'];
+			readonly title: CodecTypes['pg/text@1']['output'];
+			readonly updatedAt: CodecTypes['pg/timestamptz-date@1']['output'];
+			readonly userId: CodecTypes['pg/text@1']['output'];
+		};
+		readonly ChatMessage: {
+			readonly chatId: CodecTypes['pg/text@1']['output'];
+			readonly id: CodecTypes['pg/text@1']['output'];
+			readonly parts: CodecTypes['pg/json@1']['output'];
+			readonly position: CodecTypes['pg/int4@1']['output'];
+			readonly role: CodecTypes['pg/text@1']['output'];
+		};
 		readonly FoodEntry: {
 			readonly alcoholG_100g: CodecTypes['pg/float8@1']['output'] | null;
 			readonly brands: CodecTypes['pg/text@1']['output'] | null;
@@ -524,6 +538,20 @@ export type FieldInputTypes = {
 			readonly operation: 'create' | 'update' | 'delete';
 			readonly outboxEventId: CodecTypes['pg/text@1']['input'];
 			readonly scopeKey: CodecTypes['pg/text@1']['input'];
+		};
+		readonly Chat: {
+			readonly createdAt: CodecTypes['pg/timestamptz-date@1']['input'];
+			readonly id: CodecTypes['pg/text@1']['input'];
+			readonly title: CodecTypes['pg/text@1']['input'];
+			readonly updatedAt: CodecTypes['pg/timestamptz-date@1']['input'];
+			readonly userId: CodecTypes['pg/text@1']['input'];
+		};
+		readonly ChatMessage: {
+			readonly chatId: CodecTypes['pg/text@1']['input'];
+			readonly id: CodecTypes['pg/text@1']['input'];
+			readonly parts: CodecTypes['pg/json@1']['input'];
+			readonly position: CodecTypes['pg/int4@1']['input'];
+			readonly role: CodecTypes['pg/text@1']['input'];
 		};
 		readonly FoodEntry: {
 			readonly alcoholG_100g: CodecTypes['pg/float8@1']['input'] | null;
@@ -775,6 +803,20 @@ export type StorageColumnTypes = {
 			readonly outboxEventId: CodecTypes['pg/text@1']['output'];
 			readonly scopeKey: CodecTypes['pg/text@1']['output'];
 		};
+		readonly Chat: {
+			readonly createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
+			readonly id: CodecTypes['pg/text@1']['output'];
+			readonly title: CodecTypes['pg/text@1']['output'];
+			readonly updatedAt: CodecTypes['pg/timestamptz-date@1']['output'];
+			readonly userId: CodecTypes['pg/text@1']['output'];
+		};
+		readonly ChatMessage: {
+			readonly chatId: CodecTypes['pg/text@1']['output'];
+			readonly id: CodecTypes['pg/text@1']['output'];
+			readonly parts: CodecTypes['pg/json@1']['output'];
+			readonly position: CodecTypes['pg/int4@1']['output'];
+			readonly role: CodecTypes['pg/text@1']['output'];
+		};
 		readonly FoodEntry: {
 			readonly alcoholG_100g: CodecTypes['pg/float8@1']['output'] | null;
 			readonly brands: CodecTypes['pg/text@1']['output'] | null;
@@ -1024,6 +1066,20 @@ export type StorageColumnInputTypes = {
 			readonly operation: 'create' | 'update' | 'delete';
 			readonly outboxEventId: CodecTypes['pg/text@1']['input'];
 			readonly scopeKey: CodecTypes['pg/text@1']['input'];
+		};
+		readonly Chat: {
+			readonly createdAt: CodecTypes['pg/timestamptz-date@1']['input'];
+			readonly id: CodecTypes['pg/text@1']['input'];
+			readonly title: CodecTypes['pg/text@1']['input'];
+			readonly updatedAt: CodecTypes['pg/timestamptz-date@1']['input'];
+			readonly userId: CodecTypes['pg/text@1']['input'];
+		};
+		readonly ChatMessage: {
+			readonly chatId: CodecTypes['pg/text@1']['input'];
+			readonly id: CodecTypes['pg/text@1']['input'];
+			readonly parts: CodecTypes['pg/json@1']['input'];
+			readonly position: CodecTypes['pg/int4@1']['input'];
+			readonly role: CodecTypes['pg/text@1']['input'];
 		};
 		readonly FoodEntry: {
 			readonly alcoholG_100g: CodecTypes['pg/float8@1']['input'] | null;
@@ -1282,6 +1338,25 @@ export namespace Models {
 		scopeKey: CodecTypes['pg/text@1']['output'];
 		readonly [RelationKeys]?: never;
 	};
+	export type public_Chat = {
+		createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
+		id: CodecTypes['pg/text@1']['output'];
+		title: CodecTypes['pg/text@1']['output'];
+		updatedAt: CodecTypes['pg/timestamptz-date@1']['output'];
+		userId: CodecTypes['pg/text@1']['output'];
+		messages: public_ChatMessage[];
+		user: public_User;
+		readonly [RelationKeys]?: 'messages' | 'user';
+	};
+	export type public_ChatMessage = {
+		chatId: CodecTypes['pg/text@1']['output'];
+		id: CodecTypes['pg/text@1']['output'];
+		parts: CodecTypes['pg/json@1']['output'];
+		position: CodecTypes['pg/int4@1']['output'];
+		role: CodecTypes['pg/text@1']['output'];
+		chat: public_Chat;
+		readonly [RelationKeys]?: 'chat';
+	};
 	export type public_FoodEntry = {
 		alcoholG_100g: CodecTypes['pg/float8@1']['output'] | null;
 		brands: CodecTypes['pg/text@1']['output'] | null;
@@ -1501,6 +1576,7 @@ export namespace Models {
 		accounts: public_Account[];
 		activityEntries: public_ActivityEntry[];
 		activityPreferences: public_ActivityPreferences[];
+		chats: public_Chat[];
 		foodEntries: public_FoodEntry[];
 		macroMetrics: public_MacroMetrics[];
 		macroTargets: public_MacroTargets[];
@@ -1511,6 +1587,7 @@ export namespace Models {
 			| 'accounts'
 			| 'activityEntries'
 			| 'activityPreferences'
+			| 'chats'
 			| 'foodEntries'
 			| 'macroMetrics'
 			| 'macroTargets'
@@ -1535,6 +1612,8 @@ export declare const models: {
 		ActivityEntry: Models.public_ActivityEntry;
 		ActivityPreferences: Models.public_ActivityPreferences;
 		Changelog: Models.public_Changelog;
+		Chat: Models.public_Chat;
+		ChatMessage: Models.public_ChatMessage;
 		FoodEntry: Models.public_FoodEntry;
 		MacroMetrics: Models.public_MacroMetrics;
 		MacroTargets: Models.public_MacroTargets;
@@ -1869,6 +1948,123 @@ type ContractBase = Omit<
 								}
 							];
 							foreignKeys: readonly [];
+						};
+						readonly Chat: {
+							columns: {
+								readonly createdAt: {
+									readonly dataType: 'pg/timestamptz';
+									readonly codecId: 'pg/timestamptz-date@1';
+									readonly nullable: false;
+									readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+									readonly many: false;
+								};
+								readonly id: {
+									readonly dataType: 'pg/text';
+									readonly codecId: 'pg/text@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly title: {
+									readonly dataType: 'pg/text';
+									readonly codecId: 'pg/text@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly updatedAt: {
+									readonly dataType: 'pg/timestamptz';
+									readonly codecId: 'pg/timestamptz-date@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly userId: {
+									readonly dataType: 'pg/text';
+									readonly codecId: 'pg/text@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+							};
+							primaryKey: { readonly columns: readonly ['id'] };
+							uniques: readonly [];
+							indexes: readonly [
+								{
+									readonly name: 'Chat_userId_idx_a489d58a';
+									readonly prefix: 'Chat_userId_idx';
+									readonly columns: readonly ['userId'];
+									readonly unique: false;
+								}
+							];
+							foreignKeys: readonly [
+								{
+									readonly source: {
+										readonly namespaceId: 'public' & NamespaceId;
+										readonly tableName: 'Chat';
+										readonly columns: readonly ['userId'];
+									};
+									readonly target: {
+										readonly namespaceId: 'public' & NamespaceId;
+										readonly tableName: 'user';
+										readonly columns: readonly ['id'];
+									};
+								}
+							];
+						};
+						readonly ChatMessage: {
+							columns: {
+								readonly chatId: {
+									readonly dataType: 'pg/text';
+									readonly codecId: 'pg/text@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly id: {
+									readonly dataType: 'pg/text';
+									readonly codecId: 'pg/text@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly parts: {
+									readonly dataType: 'pg/json';
+									readonly codecId: 'pg/json@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly position: {
+									readonly dataType: 'pg/int4';
+									readonly codecId: 'pg/int4@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly role: {
+									readonly dataType: 'pg/text';
+									readonly codecId: 'pg/text@1';
+									readonly nullable: false;
+									readonly many: false;
+								};
+							};
+							primaryKey: { readonly columns: readonly ['id'] };
+							uniques: readonly [{ readonly columns: readonly ['chatId', 'position'] }];
+							indexes: readonly [
+								{
+									readonly name: 'ChatMessage_chatId_idx_53965835';
+									readonly prefix: 'ChatMessage_chatId_idx';
+									readonly columns: readonly ['chatId'];
+									readonly unique: false;
+								}
+							];
+							foreignKeys: readonly [
+								{
+									readonly source: {
+										readonly namespaceId: 'public' & NamespaceId;
+										readonly tableName: 'ChatMessage';
+										readonly columns: readonly ['chatId'];
+									};
+									readonly target: {
+										readonly namespaceId: 'public' & NamespaceId;
+										readonly tableName: 'Chat';
+										readonly columns: readonly ['id'];
+									};
+								}
+							];
 						};
 						readonly FoodEntry: {
 							columns: {
@@ -3348,6 +3544,11 @@ type ContractBase = Omit<
 			readonly model: 'ActivityPreferences';
 		};
 		readonly Changelog: { readonly namespace: 'public' & NamespaceId; readonly model: 'Changelog' };
+		readonly Chat: { readonly namespace: 'public' & NamespaceId; readonly model: 'Chat' };
+		readonly ChatMessage: {
+			readonly namespace: 'public' & NamespaceId;
+			readonly model: 'ChatMessage';
+		};
 		readonly FoodEntry: { readonly namespace: 'public' & NamespaceId; readonly model: 'FoodEntry' };
 		readonly MacroMetrics: {
 			readonly namespace: 'public' & NamespaceId;
@@ -3636,6 +3837,115 @@ type ContractBase = Omit<
 								readonly operation: { readonly column: 'operation' };
 								readonly outboxEventId: { readonly column: 'outboxEventId' };
 								readonly scopeKey: { readonly column: 'scopeKey' };
+							};
+						};
+					};
+					readonly Chat: {
+						readonly fields: {
+							readonly createdAt: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: 'scalar';
+									readonly codecId: 'pg/timestamptz-date@1';
+								};
+							};
+							readonly id: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+							};
+							readonly title: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+							};
+							readonly updatedAt: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: 'scalar';
+									readonly codecId: 'pg/timestamptz-date@1';
+								};
+							};
+							readonly userId: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+							};
+						};
+						readonly relations: {
+							readonly messages: {
+								readonly to: {
+									readonly namespace: 'public' & NamespaceId;
+									readonly model: 'ChatMessage';
+								};
+								readonly cardinality: '1:N';
+								readonly on: {
+									readonly localFields: readonly ['id'];
+									readonly targetFields: readonly ['chatId'];
+								};
+							};
+							readonly user: {
+								readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+								readonly cardinality: 'N:1';
+								readonly nullable: false;
+								readonly on: {
+									readonly localFields: readonly ['userId'];
+									readonly targetFields: readonly ['id'];
+								};
+							};
+						};
+						readonly storage: {
+							readonly table: 'Chat';
+							readonly namespaceId: 'public';
+							readonly fields: {
+								readonly createdAt: { readonly column: 'createdAt' };
+								readonly id: { readonly column: 'id' };
+								readonly title: { readonly column: 'title' };
+								readonly updatedAt: { readonly column: 'updatedAt' };
+								readonly userId: { readonly column: 'userId' };
+							};
+						};
+					};
+					readonly ChatMessage: {
+						readonly fields: {
+							readonly chatId: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+							};
+							readonly id: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+							};
+							readonly parts: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+							};
+							readonly position: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+							};
+							readonly role: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+							};
+						};
+						readonly relations: {
+							readonly chat: {
+								readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Chat' };
+								readonly cardinality: 'N:1';
+								readonly nullable: false;
+								readonly on: {
+									readonly localFields: readonly ['chatId'];
+									readonly targetFields: readonly ['id'];
+								};
+							};
+						};
+						readonly storage: {
+							readonly table: 'ChatMessage';
+							readonly namespaceId: 'public';
+							readonly fields: {
+								readonly chatId: { readonly column: 'chatId' };
+								readonly id: { readonly column: 'id' };
+								readonly parts: { readonly column: 'parts' };
+								readonly position: { readonly column: 'position' };
+								readonly role: { readonly column: 'role' };
 							};
 						};
 					};
@@ -4801,6 +5111,14 @@ type ContractBase = Omit<
 									readonly targetFields: readonly ['userId'];
 								};
 							};
+							readonly chats: {
+								readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Chat' };
+								readonly cardinality: '1:N';
+								readonly on: {
+									readonly localFields: readonly ['id'];
+									readonly targetFields: readonly ['userId'];
+								};
+							};
 							readonly foodEntries: {
 								readonly to: {
 									readonly namespace: 'public' & NamespaceId;
@@ -5072,6 +5390,14 @@ type ContractBase = Omit<
 					readonly onCreate: { readonly id: 'uuidv7'; readonly kind: 'generator' };
 					readonly ref: {
 						readonly entry: 'Changelog';
+						readonly field: 'id';
+						readonly namespace: 'public';
+					};
+				},
+				{
+					readonly onCreate: { readonly id: 'uuidv4'; readonly kind: 'generator' };
+					readonly ref: {
+						readonly entry: 'Chat';
 						readonly field: 'id';
 						readonly namespace: 'public';
 					};

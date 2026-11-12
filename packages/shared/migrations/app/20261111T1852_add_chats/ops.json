@@ -1,0 +1,70 @@
+[
+	{
+		"kind": "createObjectStore",
+		"id": "object-store.chat.create",
+		"label": "Create object store \"chat\"",
+		"operationClass": "additive",
+		"storeName": "chat",
+		"def": {
+			"keyPath": "id",
+			"indexes": {
+				"userId": {
+					"keyPath": "userId"
+				}
+			}
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.chat.userId.create",
+		"label": "Create index \"userId\" on \"chat\"",
+		"operationClass": "additive",
+		"storeName": "chat",
+		"indexName": "userId",
+		"def": {
+			"keyPath": "userId"
+		}
+	},
+	{
+		"kind": "createObjectStore",
+		"id": "object-store.chatMessage.create",
+		"label": "Create object store \"chatMessage\"",
+		"operationClass": "additive",
+		"storeName": "chatMessage",
+		"def": {
+			"keyPath": "id",
+			"indexes": {
+				"chatId": {
+					"keyPath": "chatId"
+				},
+				"chatId_position_unique": {
+					"keyPath": ["chatId", "position"],
+					"unique": true
+				}
+			}
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.chatMessage.chatId.create",
+		"label": "Create index \"chatId\" on \"chatMessage\"",
+		"operationClass": "additive",
+		"storeName": "chatMessage",
+		"indexName": "chatId",
+		"def": {
+			"keyPath": "chatId"
+		}
+	},
+	{
+		"kind": "createIndex",
+		"id": "index.chatMessage.chatId_position_unique.create",
+		"label": "Create index \"chatId_position_unique\" on \"chatMessage\"",
+		"operationClass": "additive",
+		"storeName": "chatMessage",
+		"indexName": "chatId_position_unique",
+		"def": {
+			"keyPath": ["chatId", "position"],
+			"unique": true
+		}
+	}
+]

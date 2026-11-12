@@ -31,6 +31,7 @@ model User {
   activityEntries     ActivityEntry[]
   meals               Meal[]
   recipes             Recipe[]
+  chats               Chat[]
 
   @@map("user")
 }
@@ -317,6 +318,35 @@ model RecipeIngredient {
   copperMg_100g            Float?
   manganeseMg_100g         Float?
   caffeineMg_100g          Float?
+}
+
+// A saved conversation with the chat assistant. `updatedAt` is set by the app on every save,
+// so the history lists the latest conversation first.
+model Chat {
+  id        String   @id @default(uuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  messages ChatMessage[]
+}
+
+// One message of a chat, as the AI SDK's UI message. `id` is the SDK's message id. `parts` holds
+// the message parts as JSON; a photo is stored in object storage and its part keeps only the
+// image id, so a message stays small enough to sync.
+model ChatMessage {
+  id       String @id
+  position Int
+  role     String
+  parts    Json
+
+  chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chatId String
+
+  @@unique([chatId, position])
 }
 
 // The Open Food Facts search table. Server only: it is far too large to sync, so the

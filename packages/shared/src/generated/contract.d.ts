@@ -13,9 +13,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-	StorageHashBase<'329bd9102170df5a3a05c5e27e6b5a45a1ea2b27f5828426f2c890c38fc8c0b5'>;
+	StorageHashBase<'5989cbf9fdeafef36e5cb62d7edb69eaf08cf8924db9991ad93bad2242ff7263'>;
 export type ExecutionHash =
-	ExecutionHashBase<'f707a208dc86266e1e0a02c7ff79cad6fd8940dbd6d0a7d3b85bb36d68990dd6'>;
+	ExecutionHashBase<'a78dbf318e2b17d15ecf497e8ff3418ada272134e169ebe71ebaa4c5295b8ba2'>;
 export type ProfileHash =
 	ProfileHashBase<'40329830af4e39e0774683fbebcdc24dcf983a5da02c5fe6079a2a57579f861c'>;
 
@@ -40,6 +40,20 @@ export type FieldOutputTypes = {
 			readonly id: CodecTypes['idb/string@1']['output'];
 			readonly staticCalories: CodecTypes['idb/int32@1']['output'] | null;
 			readonly userId: CodecTypes['idb/string@1']['output'];
+		};
+		readonly Chat: {
+			readonly createdAt: CodecTypes['idb/date@1']['output'];
+			readonly id: CodecTypes['idb/string@1']['output'];
+			readonly title: CodecTypes['idb/string@1']['output'];
+			readonly updatedAt: CodecTypes['idb/date@1']['output'];
+			readonly userId: CodecTypes['idb/string@1']['output'];
+		};
+		readonly ChatMessage: {
+			readonly chatId: CodecTypes['idb/string@1']['output'];
+			readonly id: CodecTypes['idb/string@1']['output'];
+			readonly parts: CodecTypes['idb/json@1']['output'];
+			readonly position: CodecTypes['idb/int32@1']['output'];
+			readonly role: CodecTypes['idb/string@1']['output'];
 		};
 		readonly FoodEntry: {
 			readonly alcoholG_100g: CodecTypes['idb/double@1']['output'] | null;
@@ -202,6 +216,20 @@ export type FieldInputTypes = {
 			readonly id: CodecTypes['idb/string@1']['input'];
 			readonly staticCalories: CodecTypes['idb/int32@1']['input'] | null;
 			readonly userId: CodecTypes['idb/string@1']['input'];
+		};
+		readonly Chat: {
+			readonly createdAt: CodecTypes['idb/date@1']['input'];
+			readonly id: CodecTypes['idb/string@1']['input'];
+			readonly title: CodecTypes['idb/string@1']['input'];
+			readonly updatedAt: CodecTypes['idb/date@1']['input'];
+			readonly userId: CodecTypes['idb/string@1']['input'];
+		};
+		readonly ChatMessage: {
+			readonly chatId: CodecTypes['idb/string@1']['input'];
+			readonly id: CodecTypes['idb/string@1']['input'];
+			readonly parts: CodecTypes['idb/json@1']['input'];
+			readonly position: CodecTypes['idb/int32@1']['input'];
+			readonly role: CodecTypes['idb/string@1']['input'];
 		};
 		readonly FoodEntry: {
 			readonly alcoholG_100g: CodecTypes['idb/double@1']['input'] | null;
@@ -369,6 +397,25 @@ export namespace Models {
 		user: unbound_User;
 		readonly [RelationKeys]?: 'user';
 	};
+	export type unbound_Chat = {
+		createdAt: CodecTypes['idb/date@1']['output'];
+		id: CodecTypes['idb/string@1']['output'];
+		title: CodecTypes['idb/string@1']['output'];
+		updatedAt: CodecTypes['idb/date@1']['output'];
+		userId: CodecTypes['idb/string@1']['output'];
+		messages: unbound_ChatMessage[];
+		user: unbound_User;
+		readonly [RelationKeys]?: 'messages' | 'user';
+	};
+	export type unbound_ChatMessage = {
+		chatId: CodecTypes['idb/string@1']['output'];
+		id: CodecTypes['idb/string@1']['output'];
+		parts: CodecTypes['idb/json@1']['output'];
+		position: CodecTypes['idb/int32@1']['output'];
+		role: CodecTypes['idb/string@1']['output'];
+		chat: unbound_Chat;
+		readonly [RelationKeys]?: 'chat';
+	};
 	export type unbound_FoodEntry = {
 		alcoholG_100g: CodecTypes['idb/double@1']['output'] | null;
 		brands: CodecTypes['idb/string@1']['output'] | null;
@@ -528,6 +575,7 @@ export namespace Models {
 		updatedAt: CodecTypes['idb/date@1']['output'];
 		activityEntries: unbound_ActivityEntry[];
 		activityPreferences: unbound_ActivityPreferences[];
+		chats: unbound_Chat[];
 		foodEntries: unbound_FoodEntry[];
 		macroMetrics: unbound_MacroMetrics[];
 		macroTargets: unbound_MacroTargets[];
@@ -536,6 +584,7 @@ export namespace Models {
 		readonly [RelationKeys]?:
 			| 'activityEntries'
 			| 'activityPreferences'
+			| 'chats'
 			| 'foodEntries'
 			| 'macroMetrics'
 			| 'macroTargets'
@@ -548,6 +597,8 @@ export declare const models: {
 	__unbound__: {
 		ActivityEntry: Models.unbound_ActivityEntry;
 		ActivityPreferences: Models.unbound_ActivityPreferences;
+		Chat: Models.unbound_Chat;
+		ChatMessage: Models.unbound_ChatMessage;
 		FoodEntry: Models.unbound_FoodEntry;
 		MacroMetrics: Models.unbound_MacroMetrics;
 		MacroTargets: Models.unbound_MacroTargets;
@@ -646,6 +697,72 @@ type ContractBase = Omit<
 					readonly userId: { readonly keyPath: 'userId'; readonly unique: false };
 					readonly userId_effectiveFrom_unique: {
 						readonly keyPath: readonly ['userId', 'effectiveFrom'];
+						readonly unique: true;
+					};
+				};
+			};
+			readonly chat: {
+				readonly keyPath: 'id';
+				readonly record: {
+					readonly fields: {
+						readonly createdAt: {
+							readonly nullable: false;
+							readonly type: { readonly codecId: 'idb/date@1'; readonly kind: 'scalar' };
+						};
+						readonly id: {
+							readonly nullable: false;
+							readonly type: { readonly codecId: 'idb/string@1'; readonly kind: 'scalar' };
+						};
+						readonly title: {
+							readonly nullable: false;
+							readonly type: { readonly codecId: 'idb/string@1'; readonly kind: 'scalar' };
+						};
+						readonly updatedAt: {
+							readonly nullable: false;
+							readonly type: { readonly codecId: 'idb/date@1'; readonly kind: 'scalar' };
+						};
+						readonly userId: {
+							readonly nullable: false;
+							readonly type: { readonly codecId: 'idb/string@1'; readonly kind: 'scalar' };
+						};
+					};
+					readonly model: 'Chat';
+				};
+				readonly indexes: {
+					readonly userId: { readonly keyPath: 'userId'; readonly unique: false };
+				};
+			};
+			readonly chatMessage: {
+				readonly keyPath: 'id';
+				readonly record: {
+					readonly fields: {
+						readonly chatId: {
+							readonly nullable: false;
+							readonly type: { readonly codecId: 'idb/string@1'; readonly kind: 'scalar' };
+						};
+						readonly id: {
+							readonly nullable: false;
+							readonly type: { readonly codecId: 'idb/string@1'; readonly kind: 'scalar' };
+						};
+						readonly parts: {
+							readonly nullable: false;
+							readonly type: { readonly codecId: 'idb/json@1'; readonly kind: 'scalar' };
+						};
+						readonly position: {
+							readonly nullable: false;
+							readonly type: { readonly codecId: 'idb/int32@1'; readonly kind: 'scalar' };
+						};
+						readonly role: {
+							readonly nullable: false;
+							readonly type: { readonly codecId: 'idb/string@1'; readonly kind: 'scalar' };
+						};
+					};
+					readonly model: 'ChatMessage';
+				};
+				readonly indexes: {
+					readonly chatId: { readonly keyPath: 'chatId'; readonly unique: false };
+					readonly chatId_position_unique: {
+						readonly keyPath: readonly ['chatId', 'position'];
 						readonly unique: true;
 					};
 				};
@@ -1320,6 +1437,11 @@ type ContractBase = Omit<
 			readonly namespace: '__unbound__' & NamespaceId;
 			readonly model: 'ActivityPreferences';
 		};
+		readonly chat: { readonly namespace: '__unbound__' & NamespaceId; readonly model: 'Chat' };
+		readonly chatMessage: {
+			readonly namespace: '__unbound__' & NamespaceId;
+			readonly model: 'ChatMessage';
+		};
 		readonly foodEntry: {
 			readonly namespace: '__unbound__' & NamespaceId;
 			readonly model: 'FoodEntry';
@@ -1433,6 +1555,95 @@ type ContractBase = Omit<
 							};
 						};
 						readonly storage: { readonly storeName: 'activityPreferences'; readonly keyPath: 'id' };
+					};
+					readonly Chat: {
+						readonly fields: {
+							readonly createdAt: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'idb/date@1' };
+							};
+							readonly id: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'idb/string@1' };
+							};
+							readonly title: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'idb/string@1' };
+							};
+							readonly updatedAt: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'idb/date@1' };
+							};
+							readonly userId: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'idb/string@1' };
+							};
+						};
+						readonly relations: {
+							readonly messages: {
+								readonly to: {
+									readonly namespace: '__unbound__' & NamespaceId;
+									readonly model: 'ChatMessage';
+								};
+								readonly cardinality: '1:N';
+								readonly on: {
+									readonly localFields: readonly ['id'];
+									readonly targetFields: readonly ['chatId'];
+								};
+							};
+							readonly user: {
+								readonly to: {
+									readonly namespace: '__unbound__' & NamespaceId;
+									readonly model: 'User';
+								};
+								readonly cardinality: 'N:1';
+								readonly nullable: false;
+								readonly on: {
+									readonly localFields: readonly ['userId'];
+									readonly targetFields: readonly ['id'];
+								};
+							};
+						};
+						readonly storage: { readonly storeName: 'chat'; readonly keyPath: 'id' };
+					};
+					readonly ChatMessage: {
+						readonly fields: {
+							readonly chatId: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'idb/string@1' };
+							};
+							readonly id: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'idb/string@1' };
+							};
+							readonly parts: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'idb/json@1' };
+							};
+							readonly position: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'idb/int32@1' };
+							};
+							readonly role: {
+								readonly nullable: false;
+								readonly type: { readonly kind: 'scalar'; readonly codecId: 'idb/string@1' };
+							};
+						};
+						readonly relations: {
+							readonly chat: {
+								readonly to: {
+									readonly namespace: '__unbound__' & NamespaceId;
+									readonly model: 'Chat';
+								};
+								readonly cardinality: 'N:1';
+								readonly nullable: false;
+								readonly on: {
+									readonly localFields: readonly ['chatId'];
+									readonly targetFields: readonly ['id'];
+								};
+							};
+						};
+						readonly storage: { readonly storeName: 'chatMessage'; readonly keyPath: 'id' };
 					};
 					readonly FoodEntry: {
 						readonly fields: {
@@ -2139,6 +2350,17 @@ type ContractBase = Omit<
 									readonly targetFields: readonly ['userId'];
 								};
 							};
+							readonly chats: {
+								readonly to: {
+									readonly namespace: '__unbound__' & NamespaceId;
+									readonly model: 'Chat';
+								};
+								readonly cardinality: '1:N';
+								readonly on: {
+									readonly localFields: readonly ['id'];
+									readonly targetFields: readonly ['userId'];
+								};
+							};
 							readonly foodEntries: {
 								readonly to: {
 									readonly namespace: '__unbound__' & NamespaceId;
@@ -2426,6 +2648,22 @@ type ContractBase = Omit<
 					readonly ref: {
 						readonly entry: 'recipeIngredient';
 						readonly field: 'id';
+						readonly namespace: '__unbound__';
+					};
+				},
+				{
+					readonly onCreate: { readonly id: 'uuidv4'; readonly kind: 'generator' };
+					readonly ref: {
+						readonly entry: 'chat';
+						readonly field: 'id';
+						readonly namespace: '__unbound__';
+					};
+				},
+				{
+					readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+					readonly ref: {
+						readonly entry: 'chat';
+						readonly field: 'createdAt';
 						readonly namespace: '__unbound__';
 					};
 				}
