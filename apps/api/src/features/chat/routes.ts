@@ -12,8 +12,9 @@ import { model } from './provider';
 import { tools } from './tools';
 import { systemPrompt } from './system-prompt';
 import { resolveMessages, type MyUIMessage } from './helpers';
+import { chatImageRoutes, resolveChatImages } from './images';
 import { chatTitleRoutes } from './title';
-import { authMiddleware } from '../../shared/middleware/auth.js';
+import { authMiddleware, getUserId } from '../../shared/middleware/auth.js';
 
 /**
  * The server answers searchFoods and webSearch itself, so one request can take a few steps. A
@@ -44,6 +45,7 @@ function instructions({ today, time, meals }: z.infer<typeof context>) {
 }
 
 const chatRoutes = new Hono()
+	.route('/images', chatImageRoutes)
 	.route('/title', chatTitleRoutes)
 	/**
 	 * Chat endpoint with Vercel AI SDK
@@ -54,7 +56,7 @@ const chatRoutes = new Hono()
 		const messages = body.messages as MyUIMessage[];
 		const extra = context.parse(body);
 
-		const resolved = resolveMessages(messages);
+		const resolved = await resolveChatImages(resolveMessages(messages), getUserId(c));
 		const result = streamText({
 			model,
 			// A tool call cut off while streaming has no input to answer, so it is dropped.

@@ -4,7 +4,8 @@ import { afterAll, beforeAll, expect, test, vi } from 'vitest';
 
 // Sign-in is not under test.
 vi.mock('../../../src/shared/middleware/auth.js', () => ({
-	authMiddleware: (_c: unknown, next: () => Promise<void>) => next()
+	authMiddleware: (_c: unknown, next: () => Promise<void>) => next(),
+	getUserId: () => 'user-1'
 }));
 
 type ChatRequest = { messages: { role: string; content: unknown }[]; tools?: unknown[] };
@@ -235,4 +236,26 @@ test('the title route names a chat from its first message, cleaned of quotes and
 	const before = titleRequests.length;
 	expect((await ask({ text: '   ' })).status).toBe(400);
 	expect(titleRequests).toHaveLength(before);
+});
+
+test('a pending delete the user moved on from reaches the model as cancelled', async () => {
+	const { resolveMessages } = await import('../../../src/features/chat/helpers.ts');
+	const [message] = resolveMessages([
+		{
+			id: 'a1',
+			role: 'assistant',
+			parts: [
+				{
+					type: 'tool-deleteFoodEntries',
+					toolCallId: 'call_d',
+					state: 'input-available',
+					input: { ids: ['e1'] }
+				}
+			]
+		}
+	] as never);
+	expect(message.parts[0]).toMatchObject({
+		state: 'output-available',
+		output: { deleted: [], cancelled: true, notFound: [] }
+	});
 });

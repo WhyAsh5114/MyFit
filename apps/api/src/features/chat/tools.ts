@@ -20,6 +20,19 @@ const coercedOptionalNutrientsShape = Object.fromEntries(
 
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use the form YYYY-MM-DD.');
 
+/** A wall-clock time in the user's own time zone, without an offset. */
+const localDateTime = z
+	.string()
+	.regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, 'Use the form YYYY-MM-DDTHH:mm, in local time.');
+
+/** An entry as the user recognizes it, for the model's answer after a delete. */
+const entrySummary = z.object({
+	name: z.string(),
+	quantityG: z.number(),
+	date: isoDate,
+	time: z.string()
+});
+
 /** Amounts for the quantity eaten, already scaled from the per-100g values. */
 const eatenNutrients = {
 	kcal: z.number(),
@@ -33,11 +46,6 @@ const eatenNutrients = {
  * eaten, keyed like `vitaminCMg` or `ironMg`. Only nutrients with a known value are present.
  */
 const extraNutrients = z.record(z.string(), z.number());
-
-/** A wall-clock time in the user's own time zone, without an offset. */
-const localDateTime = z
-	.string()
-	.regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, 'Use the form YYYY-MM-DDTHH:mm, in local time.');
 
 export const tools = {
 	requireClarification: {
@@ -81,6 +89,55 @@ export const tools = {
 			logged: z.boolean(),
 			/** The meal the user logged it under, which can differ from the proposed one. */
 			meal: z.string().nullable()
+		})
+	},
+	deleteFoodEntries: {
+		description:
+			'Propose deleting logged food entries, by the ids readFoodEntries gives. The user sees every entry on one card and confirms them all with one tap, or cancels. Put every entry to delete in one call. Never delete without reading the entries first, and never guess an id.',
+		inputSchema: z.object({
+			ids: z.array(z.string()).min(1).max(50).describe('The ids of the entries to delete.')
+		}),
+		outputSchema: z.object({
+			/** What was deleted; empty when the user cancelled or none of the ids exist. */
+			deleted: z.array(entrySummary),
+			cancelled: z.boolean(),
+			/** Ids that match no entry of the user's. */
+			notFound: z.array(z.string())
+		})
+	},
+	updateFoodEntries: {
+		description:
+			'Propose changes to logged food entries, by the ids readFoodEntries gives. The user sees each entry with its old and new values on one card and confirms them all with one tap, or cancels. Put every change in one call. Set only the fields that change. Never edit without reading the entries first, and never guess an id.',
+		inputSchema: z.object({
+			edits: z
+				.array(
+					z.object({
+						id: z.string().describe('The id of the entry to change.'),
+						name: z.string().min(1).optional().describe('A new name.'),
+						quantityG: z.coerce.number().positive().optional().describe('A new amount in grams.'),
+						meal: z
+							.string()
+							.nullable()
+							.optional()
+							.describe(
+								"One of the user's meal names, exactly as listed, or null to take it out of its meal."
+							),
+						eatenAt: localDateTime.optional().describe('A new time it was eaten, in local time.'),
+						energyKcal_100g: z.coerce.number().nonnegative().optional(),
+						carbohydratesG_100g: z.coerce.number().nonnegative().optional(),
+						fatG_100g: z.coerce.number().nonnegative().optional(),
+						proteinsG_100g: z.coerce.number().nonnegative().optional()
+					})
+				)
+				.min(1)
+				.max(50)
+		}),
+		outputSchema: z.object({
+			/** The entries as they are now; empty when the user cancelled or none of the ids exist. */
+			updated: z.array(entrySummary.extend({ meal: z.string().nullable() })),
+			cancelled: z.boolean(),
+			/** Ids that match no entry of the user's. */
+			notFound: z.array(z.string())
 		})
 	},
 	searchFoods: {
@@ -138,6 +195,9 @@ export const tools = {
 					date: isoDate,
 					entries: z.array(
 						z.object({
+							id: z.string(),
+							/** The local time it was eaten, HH:mm. */
+							time: z.string(),
 							name: z.string(),
 							quantityG: z.number(),
 							meal: z.string().nullable(),

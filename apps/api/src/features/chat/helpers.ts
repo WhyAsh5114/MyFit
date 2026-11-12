@@ -7,7 +7,9 @@ export type MyUIMessage = UIMessage<unknown, UIDataTypes, MyUITools>;
 const UNANSWERED: Record<string, unknown> = {
 	'tool-requireClarification': 'No answer provided, continue without this information.',
 	// Not confirmed: the user sent another message instead.
-	'tool-createFoodEntry': { logged: false, meal: null }
+	'tool-createFoodEntry': { logged: false, meal: null },
+	'tool-deleteFoodEntries': { deleted: [], cancelled: true, notFound: [] },
+	'tool-updateFoodEntries': { updated: [], cancelled: true, notFound: [] }
 };
 
 /** Tools the app answers by itself. A call still open was cut short, so it is closed as an error. */
