@@ -17,11 +17,12 @@
 <MessageScroller.Provider autoScroll>
 	<MessageScroller.Root class="h-auto grow basis-0">
 		<MessageScroller.Viewport class="h-auto min-h-0 grow basis-0">
-			<MessageScroller.Content class="gap-4 pb-2">
+			<MessageScroller.Content class="gap-0 pb-2">
 				{#each chat.messages as message, index (message.id)}
 					<!-- Each item clips what it paints (content-visibility), so it keeps room for the cards'
-						outer ring and shadow. -->
-					<MessageScroller.Item messageId={message.id} class="px-1 py-0.5">
+						outer ring and shadow, and for the toggles' 44px hit areas, which reach 10px past their
+						text. Its padding is also the space between messages. -->
+					<MessageScroller.Item messageId={message.id} class="px-1 py-2.5">
 						<ChatMessage {message} active={index === chat.messages.length - 1} />
 					</MessageScroller.Item>
 				{:else}

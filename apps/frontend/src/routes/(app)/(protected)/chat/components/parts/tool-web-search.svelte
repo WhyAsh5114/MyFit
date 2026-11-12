@@ -24,7 +24,7 @@
 	<!-- The sources stay one tap away, so the user can check where a number came from. -->
 	<Collapsible.Root class="max-w-full min-w-0">
 		<Collapsible.Trigger
-			class="flex min-h-11 w-full min-w-0 items-center gap-2 text-start text-sm text-muted-foreground"
+			class="-my-2.5 flex min-h-11 w-full min-w-0 items-center gap-2 text-start text-sm text-muted-foreground"
 		>
 			<GlobeIcon class="size-4 shrink-0" />
 			<span class="min-w-0 truncate">

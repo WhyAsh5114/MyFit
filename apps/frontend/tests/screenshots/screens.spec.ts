@@ -41,6 +41,13 @@ const turn = (...chunks: object[]) =>
 		{ type: 'finish' }
 	);
 
+/** A tool the server answers itself: its call and result arrive in one step of the stream. */
+const serverTool = (toolCallId: string, toolName: string, input: object, output: object) => [
+	{ type: 'tool-input-available', toolCallId, toolName, input },
+	{ type: 'tool-output-available', toolCallId, output }
+];
+const step = (...chunks: object[]) => [{ type: 'start-step' }, ...chunks, { type: 'finish-step' }];
+
 const SAMPLE_FOODS = [
 	{
 		name: 'Greek yogurt',
@@ -78,12 +85,114 @@ const PIZZA = {
 
 /** Answers `/api/chat` by looking at the last message, so a conversation plays out like a real one. */
 async function mockChat(page: Page) {
+	// Naming a new chat is its own call: the title is the start of the first message.
+	await page.route(`${API}/api/chat/title`, async (route: Route) => {
+		const request = route.request();
+		if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: CORS });
+		const { text } = request.postDataJSON() as { text: string };
+		return route.fulfill({
+			status: 200,
+			headers: { ...CORS, 'content-type': 'application/json' },
+			body: JSON.stringify({ title: text.slice(0, 40) })
+		});
+	});
 	await page.route(`${API}/api/chat`, async (route: Route) => {
 		const request = route.request();
 		if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: CORS });
 
-		const last = (request.postDataJSON() as { messages: { role: string }[] }).messages.at(-1)!;
+		type Part = { type: string; text?: string; output?: unknown };
+		const { messages } = request.postDataJSON() as {
+			messages: { role: string; parts: Part[] }[];
+		};
+		const last = messages.at(-1)!;
 		const json = JSON.stringify(last);
+		const userText = messages
+			.filter((message) => message.role === 'user')
+			.at(-1)!
+			.parts.map((part) => part.text ?? '')
+			.join(' ');
+		// The entry a name picks out of what the app read from the device, so the card names real ids.
+		const read = last.parts.find((part) => part.type === 'tool-readFoodEntries')?.output as
+			{ days: { entries: { id: string; name: string }[] }[] } | undefined;
+		const idOf = (name: RegExp) =>
+			read?.days.flatMap((day) => day.entries).find((entry) => name.test(entry.name))?.id;
+		const readCall = (id: string) =>
+			turn({
+				type: 'tool-input-available',
+				toolCallId: id,
+				toolName: 'readFoodEntries',
+				input: { from: new Date().toLocaleDateString('en-CA') }
+			});
+
+		if (/Big Mac/.test(userText) && last.role === 'user') {
+			return route.fulfill(
+				reply(
+					{ type: 'start' },
+					...step(...serverTool('s1', 'searchFoods', { query: 'big mac' }, { foods: [] })),
+					...step(
+						...serverTool(
+							's2',
+							'webSearch',
+							{ query: 'McDonald’s Big Mac nutrition facts' },
+							{
+								results: [
+									{
+										title: 'Big Mac nutrition',
+										url: 'https://www.mcdonalds.com/big-mac',
+										text: ''
+									},
+									{
+										title: 'Big Mac calories and macros',
+										url: 'https://www.nutritionix.com/big-mac',
+										text: ''
+									},
+									{
+										title: 'McDonald’s menu nutrition guide',
+										url: 'https://www.fatsecret.com/mcd',
+										text: ''
+									}
+								]
+							}
+						)
+					),
+					...step(
+						...text(
+							'tb',
+							'A Big Mac is about **590 kcal** (46 g carbs, 34 g fat, 25 g protein), per the maker’s own page.'
+						)
+					),
+					{ type: 'finish' }
+				)
+			);
+		}
+		if (/yogurt to/.test(userText)) {
+			if (/"output":\{"updated"/.test(json))
+				return route.fulfill(turn(...text('tu', 'Done, I changed your yogurt to **200 g**.')));
+			const id = idOf(/yogurt/i);
+			if (!id) return route.fulfill(readCall('read-u'));
+			return route.fulfill(
+				turn(...text('tu0', 'I found it. Here is the change:'), {
+					type: 'tool-input-available',
+					toolCallId: 'upd-1',
+					toolName: 'updateFoodEntries',
+					input: { edits: [{ id, name: 'Greek yogurt, plain', quantityG: 200 }] }
+				})
+			);
+		}
+		if (/Delete my oats/.test(userText)) {
+			if (/"output":\{"deleted"/.test(json))
+				return route.fulfill(turn(...text('td', 'Done, I removed the oats from your diary.')));
+			const id = idOf(/oats/i);
+			if (!id) return route.fulfill(readCall('read-d'));
+			return route.fulfill(
+				turn(...text('td0', 'These entries match:'), {
+					type: 'tool-input-available',
+					toolCallId: 'del-1',
+					toolName: 'deleteFoodEntries',
+					input: { ids: [id] }
+				})
+			);
+		}
 		if (/tool-readFoodEntries/.test(json)) {
 			return route.fulfill(
 				turn(
@@ -104,7 +213,7 @@ async function mockChat(page: Page) {
 				})
 			);
 		}
-		if (/"output":"created"/.test(json)) {
+		if (/"output":\{"logged"/.test(json)) {
 			return route.fulfill(
 				turn(
 					...text(
@@ -200,6 +309,14 @@ test('capture every screen', async ({ page }, testInfo) => {
 	const send = async (message: string) => {
 		await page.getByPlaceholder('Tell me what you ate...').fill(message);
 		await page.getByRole('button', { name: 'Send' }).click();
+	};
+	/** Taps "Start a new chat" and waits for the empty chat, as the page keeps the old one until then. */
+	const newChat = async () => {
+		await page.getByRole('link', { name: 'Start a new chat' }).click();
+		await page
+			.getByRole('button', { name: 'Chat history' })
+			.filter({ hasText: 'New chat' })
+			.waitFor();
 	};
 	const logFromChat = async (message: string) => {
 		await go('/chat', 600);
@@ -304,7 +421,7 @@ test('capture every screen', async ({ page }, testInfo) => {
 		'Reading the diary',
 		'The app reads the entries on the device and the reply uses them'
 	);
-	await page.getByRole('button', { name: 'Start a new chat' }).click();
+	await newChat();
 	await send('Quick question: how much protein per meal?');
 	await page.getByText('Your protein target').waitFor();
 	await page.waitForTimeout(600);
@@ -312,7 +429,7 @@ test('capture every screen', async ({ page }, testInfo) => {
 	await page.getByRole('button', { name: /Thought/ }).click();
 	await page.waitForTimeout(500);
 	await shot('chat-reasoning-open', 'Chat', 'Reasoning expanded');
-	await page.getByRole('button', { name: 'Start a new chat' }).click();
+	await newChat();
 	await send('I had a chicken sandwich');
 	await page.getByText('How was the chicken cooked?').waitFor();
 	await page.waitForTimeout(500);
@@ -332,12 +449,55 @@ test('capture every screen', async ({ page }, testInfo) => {
 			? route.fulfill({ status: 204, headers: CORS })
 			: route.fulfill({ status: 500, headers: CORS, body: 'nope' })
 	);
-	await page.getByRole('button', { name: 'Start a new chat' }).click();
+	await page.unroute(`${API}/api/chat`);
+	await mockChat(page);
+	await newChat();
+	await send('How many calories are in a Big Mac?');
+	await page.getByText('A Big Mac is about').waitFor();
+	await page.waitForTimeout(600);
+	await shot(
+		'chat-search',
+		'Chat',
+		'Food and web search',
+		'Searched the food database, then the web'
+	);
+	await page.getByRole('button', { name: /Searched the web/ }).click();
+	await page.waitForTimeout(500);
+	await shot('chat-web-sources', 'Chat', 'Web sources', 'Each source is one tap away');
+	await newChat();
+	await send('Change my yogurt to 200 g');
+	await page.getByRole('button', { name: /^Update 1/ }).waitFor();
+	await page.waitForTimeout(600);
+	await shot('chat-update', 'Chat', 'Confirm an edit', 'Old and new values, one confirm');
+	await page.getByRole('button', { name: /^Update 1/ }).click();
+	await page.getByText('Done, I changed').waitFor();
+	await page.waitForTimeout(600);
+	await shot('chat-update-done', 'Chat', 'Edit applied', 'The card lists what changed');
+	await newChat();
+	await send('Delete my oats entry');
+	await page.getByRole('button', { name: /^Delete 1/ }).waitFor();
+	await page.waitForTimeout(600);
+	await shot('chat-delete', 'Chat', 'Confirm a delete', 'The entries to remove, one confirm');
+	await page.getByRole('button', { name: /^Delete 1/ }).click();
+	await page.getByText('Done, I removed').waitFor();
+	await page.waitForTimeout(600);
+	await shot('chat-delete-done', 'Chat', 'Entries deleted', 'The card lists what was removed');
+	await page.unroute(`${API}/api/chat`);
+	await page.route(`${API}/api/chat`, (route) =>
+		route.request().method() === 'OPTIONS'
+			? route.fulfill({ status: 204, headers: CORS })
+			: route.fulfill({ status: 500, headers: CORS, body: 'nope' })
+	);
+	await newChat();
 	await send('Hello');
 	await page.getByText("couldn't answer").waitFor();
 	await page.waitForTimeout(500);
 	await shot('chat-error', 'Chat', 'When the reply fails', 'Try again re-sends');
 	await page.unroute(`${API}/api/chat`);
+	await page.getByRole('button', { name: 'Chat history' }).click();
+	await page.waitForTimeout(600);
+	await shot('chat-history', 'Chat', 'Chat history', 'Search and switch chats from the title');
+	await page.keyboard.press('Escape');
 
 	// ---- diary with entries
 	await go(diary);
@@ -350,7 +510,7 @@ test('capture every screen', async ({ page }, testInfo) => {
 	await page.getByRole('button', { name: 'Data sync' }).click();
 	await page.waitForTimeout(1300);
 	await shot('sync-drawer', 'Food diary', 'Sync drawer', 'Tap the cloud in the header');
-	await page.getByRole('button', { name: 'Close' }).click();
+	await page.keyboard.press('Escape');
 	await page.waitForTimeout(700);
 	await page.getByText('Greek yogurt').click();
 	await page.waitForTimeout(1300);

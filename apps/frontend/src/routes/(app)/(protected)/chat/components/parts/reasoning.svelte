@@ -26,7 +26,7 @@
 
 <Collapsible.Root bind:open class="w-full">
 	<Collapsible.Trigger
-		class="group flex min-h-11 items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+		class="group -my-2.5 flex min-h-11 items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
 	>
 		{#if streaming}
 			<span class="animate-pulse">{m['chat.thinking']()}</span>

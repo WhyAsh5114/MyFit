@@ -50,6 +50,12 @@
 	const chatHref = (id: string) => resolve('/(app)/(protected)/chat/[id]', { id });
 	/** A new conversation gets its id now and is saved with its first message. */
 	const newChatHref = () => chatHref(crypto.randomUUID());
+	// The header stays mounted from chat to chat, so the link gets a new id whenever the open chat
+	// changes. Otherwise it would keep pointing at the chat just opened, and tapping it would do nothing.
+	const newHref = $derived.by(() => {
+		void currentId;
+		return newChatHref();
+	});
 
 	async function remove(id: string) {
 		const wasOpen = id === currentId;
@@ -155,7 +161,7 @@
 		size="icon"
 		aria-label={m['chat.newChat']()}
 		disabled={title === null}
-		href={newChatHref()}
+		href={newHref}
 		onclick={() => posthog.capture('chat_reset')}
 	>
 		<SquarePenIcon />
