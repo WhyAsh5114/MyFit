@@ -22,6 +22,9 @@
 				entries: []
 			}));
 
+		// An account without meals still needs somewhere to add food from.
+		if (groups.length === 0) groups.push({ meal: null, mealLabel: 'No meal', entries: [] });
+
 		for (const entry of foodEntries ?? []) {
 			const mealLabel = entry.meal?.name ?? 'No meal';
 			const existingGroup = groups.find((g) => g.mealLabel === mealLabel);

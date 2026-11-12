@@ -2,6 +2,7 @@
 	import * as Form from '#lib/components/ui/form/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
+	import { useCreateDefaultMeals } from '#lib/features/food-diary/meals/mutations/create-defaults.js';
 	import { useUpdateUserName } from '#lib/features/user/mutations/update-user-name.js';
 	import type { User } from 'better-auth';
 	import { defaults, superForm } from 'sveltekit-superforms';
@@ -16,6 +17,7 @@
 	let { data }: { data: User } = $props();
 
 	const updateUserName = useUpdateUserName();
+	const createDefaultMeals = useCreateDefaultMeals();
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(defaults({ name: data.name }, zod4Client(setupAccountFormSchema)), {
@@ -28,6 +30,7 @@
 				userId: data.id,
 				name: form.data.name
 			});
+			await createDefaultMeals.mutateAsync({ userId: data.id });
 			posthog.capture('onboarding_completed');
 			posthog.identify(data.id, { name: form.data.name });
 			await goto(resolve('dashboard'));

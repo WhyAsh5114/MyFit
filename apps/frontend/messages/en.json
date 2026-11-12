@@ -320,5 +320,9 @@
 	"foodDiary.recipes.create": "Create",
 	"foodDiary.recipes.emptyTitle": "No recipes",
 	"foodDiary.recipes.emptyDescription": "Recipes allow you to group multiple food items together and log them as a single entry.",
-	"foodDiary.fetchFailedDescription": "Check your connection and try again."
+	"foodDiary.fetchFailedDescription": "Check your connection and try again.",
+	"foodDiary.defaultMealBreakfast": "Breakfast",
+	"foodDiary.defaultMealLunch": "Lunch",
+	"foodDiary.defaultMealDinner": "Dinner",
+	"foodDiary.defaultMealSnacks": "Snacks"
 }

@@ -14,7 +14,7 @@
 			<SearchIcon />
 		</InputGroup.Addon>
 	</InputGroup.Root>
-	<Button href={resolve('food-diary/goals/recipes/new')}
+	<Button href={resolve('food-diary/goals/recipes/new')} class="h-11 border-primary"
 		>{m['foodDiary.recipes.create']()} <CirclePlusIcon /></Button
 	>
 </div>

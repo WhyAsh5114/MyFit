@@ -320,5 +320,9 @@
 	"foodDiary.recipes.create": "बनाएँ",
 	"foodDiary.recipes.emptyTitle": "कोई रेसिपी नहीं",
 	"foodDiary.recipes.emptyDescription": "रेसिपी से आप कई खाद्य पदार्थों को एक साथ जोड़कर एक ही एंट्री के रूप में लॉग कर सकते हैं।",
-	"foodDiary.fetchFailedDescription": "अपना कनेक्शन जाँचें और फिर कोशिश करें।"
+	"foodDiary.fetchFailedDescription": "अपना कनेक्शन जाँचें और फिर कोशिश करें।",
+	"foodDiary.defaultMealBreakfast": "नाश्ता",
+	"foodDiary.defaultMealLunch": "दोपहर का खाना",
+	"foodDiary.defaultMealDinner": "रात का खाना",
+	"foodDiary.defaultMealSnacks": "स्नैक्स"
 }
