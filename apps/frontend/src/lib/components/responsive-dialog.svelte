@@ -67,9 +67,8 @@
 			{#if children}
 				<div class="px-4">{@render children()}</div>
 			{/if}
-			{#if footer}
-				<Drawer.Footer>{@render footer()}</Drawer.Footer>
-			{/if}
+			<!-- Kept without actions too: its padding is the space below the content. -->
+			<Drawer.Footer>{@render footer?.()}</Drawer.Footer>
 		</Drawer.Content>
 	</Drawer.Root>
 {/if}

@@ -8,7 +8,7 @@
 		ClockIcon,
 		RefreshCcwIcon
 	} from '@lucide/svelte';
-	import * as Drawer from '#lib/components/ui/drawer/index.js';
+	import ResponsiveDialog from '#lib/components/responsive-dialog.svelte';
 	import Badge from '#lib/components/ui/badge/badge.svelte';
 	import Button from '#lib/components/ui/button/button.svelte';
 	import { syncWorkerState } from '#lib/services/sync/sync-worker.svelte.js';
@@ -22,6 +22,7 @@
 	import { redirectToLogin } from '#lib/services/account/account-db.js';
 	import type { SyncWorkerStatus } from '@prisma-idb/sync-extension-idb/client';
 
+	let open = $state(false);
 	let hasAnyRetryableUnsynced = $state<boolean>();
 
 	/** Refreshes the indicator whenever the outbox gains, loses or fails an event. */
@@ -82,44 +83,37 @@
 	);
 </script>
 
-<Drawer.Root>
-	<Drawer.Trigger>
-		{#snippet child({ props })}
-			<Button
-				variant="ghost"
-				size="icon"
-				{...props}
-				aria-label={m['sync.title']()}
-				class="text-muted-foreground"
-			>
-				{#if paused}
-					<CloudOffIcon class="size-5" strokeWidth={1.5} />
-				{:else if syncStatus === undefined}
-					<Spinner class="size-5 stroke-[1.5]" />
-				{:else if syncStatus === 'idle' || syncStatus === 'pulling'}
-					<CloudCheckIcon class="size-5" strokeWidth={1.5} />
-				{:else if syncStatus === 'pushing'}
-					<CloudSyncIcon class="size-5 animate-pulse" strokeWidth={1.5} />
-				{:else if syncStatus === 'stopped' || syncStatus === 'error'}
-					<CloudAlertIcon class="size-5" strokeWidth={1.5} />
-				{/if}
-			</Button>
-		{/snippet}
-	</Drawer.Trigger>
-	<Drawer.Content>
-		<Drawer.Header class="text-start">
-			<div class="flex items-center justify-between gap-3">
-				<Drawer.Title>{m['sync.title']()}</Drawer.Title>
-				{#if !paused}
-					<Badge variant={statusVariant}>{statusLabel}</Badge>
-				{/if}
-			</div>
+<Button
+	variant="ghost"
+	size="icon"
+	onclick={() => (open = true)}
+	aria-label={m['sync.title']()}
+	class="text-muted-foreground"
+>
+	{#if paused}
+		<CloudOffIcon class="size-5" strokeWidth={1.5} />
+	{:else if syncStatus === undefined}
+		<Spinner class="size-5 stroke-[1.5]" />
+	{:else if syncStatus === 'idle' || syncStatus === 'pulling'}
+		<CloudCheckIcon class="size-5" strokeWidth={1.5} />
+	{:else if syncStatus === 'pushing'}
+		<CloudSyncIcon class="size-5 animate-pulse" strokeWidth={1.5} />
+	{:else if syncStatus === 'stopped' || syncStatus === 'error'}
+		<CloudAlertIcon class="size-5" strokeWidth={1.5} />
+	{/if}
+</Button>
+
+{#if open}
+	<ResponsiveDialog title={m['sync.title']()} onclose={() => (open = false)}>
+		{#snippet description()}
 			<!-- While paused there is no status to read out, and "Connecting" would be wrong. -->
-			<Drawer.Description class="sr-only">
-				{paused ? m['sync.title']() : statusLabel}
-			</Drawer.Description>
-		</Drawer.Header>
-		<div class="flex flex-col gap-3 px-4 pb-2">
+			{#if paused}
+				<span class="sr-only">{m['sync.title']()}</span>
+			{:else}
+				<Badge variant={statusVariant}>{statusLabel}</Badge>
+			{/if}
+		{/snippet}
+		<div class="flex flex-col gap-3">
 			{#if paused}
 				<div class="flex items-start gap-2 rounded-lg bg-muted p-3 text-sm">
 					<CloudOffIcon class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
@@ -160,12 +154,5 @@
 				</Button>
 			{/if}
 		</div>
-		<Drawer.Footer>
-			<Drawer.Close>
-				{#snippet child({ props })}
-					<Button variant="outline" {...props}>{m['common.close']()}</Button>
-				{/snippet}
-			</Drawer.Close>
-		</Drawer.Footer>
-	</Drawer.Content>
-</Drawer.Root>
+	</ResponsiveDialog>
+{/if}

@@ -15,40 +15,42 @@
 	function pathnameToItems(pathname: string): Item[] {
 		const parts = pathname.split('/').filter((part) => part !== '');
 
-		return pathname
-			.split('/')
-			.filter((part) => part !== '')
-			.map((part, index) => {
-				const fullPath = `/${parts.slice(0, index + 1).join('/')}`;
-				let label;
+		return (
+			parts
+				// A chat is named by its picker below the header, not by its id.
+				.filter((part, index) => !(parts[0] === 'chat' && index > 0))
+				.map((part, index) => {
+					const fullPath = `/${parts.slice(0, index + 1).join('/')}`;
+					let label;
 
-				try {
-					const date = parseDate(part);
-					return {
-						label: shortDateFormatter.format(date.toDate(getLocalTimeZone())),
-						href: fullPath
-					};
-				} catch {
-					// Not a date, continue processing
-				}
+					try {
+						const date = parseDate(part);
+						return {
+							label: shortDateFormatter.format(date.toDate(getLocalTimeZone())),
+							href: fullPath
+						};
+					} catch {
+						// Not a date, continue processing
+					}
 
-				try {
-					z.uuid().parse(part);
-					return {
-						label: m['breadcrumb.item'](),
-						href: fullPath
-					};
-				} catch {
-					// Not a UUID, continue processing
-				}
+					try {
+						z.uuid().parse(part);
+						return {
+							label: m['breadcrumb.item'](),
+							href: fullPath
+						};
+					} catch {
+						// Not a UUID, continue processing
+					}
 
-				label = part
-					.split('-')
-					.map((word, idx) => (idx === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word))
-					.join(' ');
+					label = part
+						.split('-')
+						.map((word, idx) => (idx === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word))
+						.join(' ');
 
-				return { label, href: fullPath };
-			});
+					return { label, href: fullPath };
+				})
+		);
 	}
 
 	let items = $derived(pathnameToItems(page.url.pathname));

@@ -247,6 +247,8 @@
 	"chat.history": "Chat history",
 	"chat.historyDescription": "Your saved chats, latest first.",
 	"chat.noHistory": "No saved chats yet",
+	"chat.searchHistory": "Search chats",
+	"chat.noMatches": "No chats match",
 	"chat.delete": "Delete chat “{title}”",
 	"chat.deleted": "Chat deleted",
 	"chat.untitled": "Photo",

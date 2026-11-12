@@ -67,17 +67,19 @@ These are rejected in review.
 
 Pick the surface by the job, not by what is easiest to build.
 
-| Job                                             | Surface                            |
-| ----------------------------------------------- | ---------------------------------- |
-| A task with inputs or several steps             | **Page** (a route; back works)     |
-| Quick secondary content or actions, status      | **Bottom drawer**                  |
-| Confirming a destructive or irreversible action | **Dialog**                         |
-| A short list of actions, or a hint              | **Dropdown menu / tooltip**        |
-| Results of a user action that can fail          | Inline message, then toast if gone |
+| Job                                             | Surface                                                                    |
+| ----------------------------------------------- | -------------------------------------------------------------------------- |
+| A task with inputs or several steps             | **Page** (a route; back works)                                             |
+| Quick secondary content or actions, status      | **Responsive dialog** (bottom drawer on phones, centred dialog from 768px) |
+| Picking one item from a long list               | **Searchable picker** (popover with a search field)                        |
+| Confirming a destructive or irreversible action | **Dialog**                                                                 |
+| A short list of actions, or a hint              | **Dropdown menu / tooltip**                                                |
+| Results of a user action that can fail          | Inline message, then toast if gone                                         |
 
 Rules:
 
-- **Popovers are not a surface for content.** Anything with more than a line or two of text, or any action, is a drawer.
+- **Popovers are not a surface for content.** Anything with more than a line or two of text, or any action, is a responsive dialog. The one exception is a picker: a trigger that shows the current choice and opens a search field over a list (chat history).
+- A bottom drawer alone looks wrong on desktop, so secondary panels use `ResponsiveDialog` (`lib/components/responsive-dialog.svelte`), never a bare `Drawer`.
 - Don't stack overlays. A drawer never opens a dialog over itself except to confirm a destructive action.
 - Drawers have a visible close control and respond to the system back gesture.
 - Sheets for editing use a page when the form is more than a few fields.
@@ -207,7 +209,7 @@ How it is built: the mutation's `onSuccess` records the changed id in one small 
 ## System state
 
 - A **persistent quiet indicator** in the header shows sync state (cloud icon). It never uses banners or toasts for routine states.
-- Tapping it opens a **drawer** with status, last sync time, any error and the one action available.
+- Tapping it opens a **responsive dialog** with status, last sync time, any error and the one action available.
 - Surface only what is actionable: signed out, repeated sync failures, a conflict. Offline and syncing are neutral.
 - Edits keep saving locally in every state; say so when sync is paused.
 
@@ -222,6 +224,7 @@ How it is built: the mutation's `onSuccess` records the changed id in one small 
 ## Chat
 
 - The chat is the same product, not a skin. It follows every rule above except voice (warmer).
+- The chat has one row under the app header: a picker showing the open chat's title (search and switch chats there) beside the new chat button. The breadcrumb stops at `Chat`.
 - A tool action needing a decision (confirm a food entry, answer a clarification) is a card inside the conversation, not a modal.
 - A stale pending card becomes `Skipped` when the user moves on.
 - While a card streams in, show a spinner and a short label, not a skeleton.
@@ -247,7 +250,7 @@ Applied on 2026-10-30. What changed, and what is still open.
 **Done**
 
 - 44px hit areas: the `tap` utility is on every `Button` size, breadcrumb links, select triggers and the chat disclosure. Inputs, input groups, OTP slots, menu rows, toggles and sidebar rows are 44px tall. Switch and radio hit areas are 44px. Empty meal and activity rows are 44px or taller.
-- The sync panel is a bottom drawer with a 44px trigger and a visible Close button. Offline is shown as a neutral note, not an alarm.
+- The sync panel is a responsive dialog (drawer on phones) with a 44px trigger and a visible Close button. Offline is shown as a neutral note, not an alarm.
 - The drawer content was positioned off screen on mobile (`fixed relative` in `drawer-content.svelte`). Fixed, which also repairs the account dialogs on phones.
 - Status colors: `--success`, `--success-ink` and `--warning-ink` exist. The calorie bar uses ink for text, a check when on target, an arrow when off target, and a tick at the goal once passed. The rules live in `lib/domain/nutrition/status.ts` with tests.
 - Feedback: creating or editing an entry marks it (`recent-change.svelte.ts`) and the diary highlights and scrolls to it; the goals screen highlights the card you just changed the same way. Deleting an entry shows an Undo toast that restores it. Success toasts are gone.

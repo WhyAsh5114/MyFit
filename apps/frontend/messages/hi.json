@@ -247,6 +247,8 @@
 	"chat.history": "चैट इतिहास",
 	"chat.historyDescription": "आपकी सेव की गई चैट, सबसे नई पहले।",
 	"chat.noHistory": "अभी कोई सेव की गई चैट नहीं",
+	"chat.searchHistory": "चैट खोजें",
+	"chat.noMatches": "कोई चैट मेल नहीं खाती",
 	"chat.delete": "चैट “{title}” हटाएँ",
 	"chat.deleted": "चैट हटाई गई",
 	"chat.untitled": "फ़ोटो",
