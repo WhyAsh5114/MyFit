@@ -1,5 +1,5 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { Capacitor } from '@capacitor/core';
+import { hasUpdater } from '#lib/features/ota/has-updater.js';
 import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import { otaKeys } from '../keys';
 
@@ -10,5 +10,5 @@ export const useCurrentBundle = () =>
 			const current = await CapacitorUpdater.current();
 			return current.bundle;
 		},
-		enabled: Capacitor.getPlatform() !== 'web'
+		enabled: hasUpdater()
 	}));

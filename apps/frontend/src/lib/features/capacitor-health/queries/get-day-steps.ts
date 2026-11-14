@@ -1,6 +1,7 @@
 import { createQuery } from '@tanstack/svelte-query';
 import { capacitorHealthKeys } from '../keys';
 import type { CalendarDate } from '@internationalized/date';
+import { Capacitor } from '@capacitor/core';
 import { Health } from '@capgo/capacitor-health';
 
 export const useGetDaySteps = (getDate: () => CalendarDate) =>
@@ -17,6 +18,7 @@ export const useGetDaySteps = (getDate: () => CalendarDate) =>
 				});
 			},
 			staleTime: 1000 * 60 * 5,
-			enabled: !!date
+			// An older app binary may not have the plugin.
+			enabled: !!date && Capacitor.isPluginAvailable('Health')
 		};
 	});

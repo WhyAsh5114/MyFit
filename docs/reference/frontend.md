@@ -104,7 +104,7 @@ const form = superForm(
 
 The app must work as a plain web app. Native features (Health, the back button and so on) only add to it. A new web bundle can run inside an older binary, so code that uses a plugin must cope with the plugin, or a newer method, being absent.
 
-- **Check the plugin, not just the platform.** `Capacitor.getPlatform() !== 'web'` says the app is native, not that this binary has the plugin. Call `Capacitor.isPluginAvailable('<Plugin>')` before using one, and `try/catch` methods a newer plugin version might add.
+- **Check the platform and the plugin.** `Capacitor.isNativePlatform()` says the app is native, not that this binary has the plugin; `Capacitor.isPluginAvailable('<Plugin>')` is also true on the web for a plugin with a web stub (the updater, App, Health). Check both before using a native-only plugin, as `features/ota/has-updater.ts` does, and `try/catch` methods a newer plugin version might add.
 - **A feature whose plugin is missing hides itself or does nothing.** Don't gate bundles by native version.
 - **Gate platform-specific code with `Capacitor.getPlatform()`** (`'android'`, `'ios'`, `'web'`).
 - **Initialize plugins in the root `+layout.svelte`**, once. Child routes don't re-initialize them.

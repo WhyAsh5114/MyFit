@@ -10,7 +10,7 @@ import { initOta } from './ota.js';
  * `notifyAppReady` in time is rolled back.
  */
 export function startNative() {
-	if (Capacitor.getPlatform() === 'android') {
+	if (Capacitor.getPlatform() === 'android' && Capacitor.isPluginAvailable('App')) {
 		App.addListener('backButton', ({ canGoBack }) => {
 			if (canGoBack) window.history.back();
 			else App.exitApp();

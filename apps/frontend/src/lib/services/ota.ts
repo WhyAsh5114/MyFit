@@ -1,5 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 import { CapacitorUpdater, type BundleInfo } from '@capgo/capacitor-updater';
+import { hasUpdater } from '#lib/features/ota/has-updater.js';
 import { apiClient } from '#lib/clients/api-client.js';
 import { getDb } from '#lib/clients/idb-client.js';
 import { toast } from 'svelte-sonner';
@@ -64,7 +65,7 @@ function showDownloadPrompt(data: BundlePayload, onDownload: () => Promise<void>
  * If the load fails, Capgo never hears back within its timeout and rolls the bundle back.
  */
 async function notifyAppReady(): Promise<void> {
-	if (Capacitor.getPlatform() === 'web') return;
+	if (!hasUpdater()) return;
 	try {
 		const { orm } = await getDb();
 		await orm.user.first();
@@ -75,7 +76,7 @@ async function notifyAppReady(): Promise<void> {
 }
 
 export async function checkForUpdates(): Promise<void> {
-	if (Capacitor.getPlatform() === 'web') return;
+	if (!hasUpdater()) return;
 	if (updateCheckInProgress) return;
 
 	updateCheckInProgress = true;
@@ -126,7 +127,7 @@ async function readAutoUpdatePreference(): Promise<boolean> {
 }
 
 export async function initOta(): Promise<void> {
-	if (Capacitor.getPlatform() === 'web') return;
+	if (!hasUpdater()) return;
 	await notifyAppReady();
 	await checkForUpdates();
 }

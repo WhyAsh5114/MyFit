@@ -2,6 +2,7 @@
 	import Button from '#lib/components/ui/button/button.svelte';
 	import Separator from '#lib/components/ui/separator/separator.svelte';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
+	import { Capacitor } from '@capacitor/core';
 	import { Health } from '@capgo/capacitor-health';
 	import { CheckIcon, HeartHandshakeIcon } from '@lucide/svelte';
 	import { onMount } from 'svelte';
@@ -15,6 +16,11 @@
 	let todaysCalories = $state<number | null>();
 
 	onMount(async () => {
+		// An older app binary may not have the plugin.
+		if (!Capacitor.isPluginAvailable('Health')) {
+			data = 'unavailable';
+			return;
+		}
 		const availability = await Health.isAvailable();
 		if (!availability.available) {
 			data = 'unavailable';
@@ -34,17 +40,20 @@
 	});
 
 	async function requestPermissions() {
+		requestingPermissions = true;
 		try {
-			requestingPermissions = true;
 			const response = await Health.requestAuthorization({
 				read: ['steps', 'weight', 'calories']
 			});
-			requestingPermissions = false;
-			if (response.readAuthorized.length === 3) data = 'granted';
-			else data = 'denied';
+			if (response.readAuthorized.length === 3) {
+				data = 'granted';
+				await loadTodaysData();
+			} else data = 'denied';
 		} catch (error) {
 			console.error('Permission request failed:', error);
 			data = 'denied';
+		} finally {
+			requestingPermissions = false;
 		}
 	}
 

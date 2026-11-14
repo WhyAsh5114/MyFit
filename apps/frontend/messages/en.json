@@ -317,7 +317,7 @@
 	"foodDiary.activityGoal.healthDenied": "You have not granted permission to access health data.",
 	"foodDiary.activityGoal.healthRequesting": "Requesting permissions",
 	"foodDiary.activityGoal.healthGrant": "Grant permissions",
-	"foodDiary.activityGoal.healthGranted": "Health data access granted!",
+	"foodDiary.activityGoal.healthGranted": "Health access granted",
 	"foodDiary.activityGoal.healthChecking": "Checking health data permissions",
 	"foodDiary.activityGoal.todaysSteps": "Today's steps",
 	"foodDiary.activityGoal.todaysWeight": "Today's weight",

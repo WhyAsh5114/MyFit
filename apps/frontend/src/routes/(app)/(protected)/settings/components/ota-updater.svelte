@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Capacitor } from '@capacitor/core';
+	import { hasUpdater } from '#lib/features/ota/has-updater.js';
 	import * as Card from '#lib/components/ui/card/index.js';
 	import * as Switch from '#lib/components/ui/switch/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
@@ -9,7 +9,7 @@
 	import { useUpdateAutoUpdate } from '#lib/features/ota/mutations/update-auto-update.js';
 	import { getCurrentUser } from '#lib/features/user/current-user.svelte.js';
 
-	const isNative = Capacitor.getPlatform() !== 'web';
+	const isNative = hasUpdater();
 
 	const user = $derived(getCurrentUser());
 	const bundle = useCurrentBundle();
