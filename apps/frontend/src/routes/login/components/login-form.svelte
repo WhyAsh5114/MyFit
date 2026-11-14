@@ -18,10 +18,13 @@
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import ResponsiveDialog from '#lib/components/responsive-dialog.svelte';
-	import { getDb, resetDb } from '#lib/clients/idb-client.js';
 	import posthog from 'posthog-js';
 	import { settleSession } from '#lib/services/account/logout.js';
 	import { localRedirect } from '#lib/services/account/redirect.js';
+	import {
+		discardLocalAccount,
+		otherAccountWithUnsyncedData
+	} from '#lib/services/account/account-db.js';
 
 	let email = $state('');
 	let otp = $state('');
@@ -54,17 +57,8 @@
 	async function submitEmail(event: SubmitEvent) {
 		event.preventDefault();
 		try {
-			const db = await getDb();
-			const local = await db.orm.user.first();
-
-			if (
-				local &&
-				local.email.toLowerCase() !== email.trim().toLowerCase() &&
-				(await db.outbox.hasPending())
-			) {
-				otherAccountEmail = local.email;
-				return;
-			}
+			otherAccountEmail = await otherAccountWithUnsyncedData(email);
+			if (otherAccountEmail) return;
 		} catch (cause) {
 			console.error('Could not check the local account', cause);
 		}
@@ -72,10 +66,10 @@
 	}
 
 	/** Deletes the local account the user agreed to give up, so signing in as the new one finds nothing to ask about. */
-	async function discardLocalAccount() {
+	async function discardAndSendCode() {
 		otherAccountEmail = null;
 		try {
-			await resetDb();
+			await discardLocalAccount();
 		} catch (cause) {
 			toast.error(m['unknownErrorOccurred']());
 			console.error('Could not discard the local account', cause);
@@ -245,7 +239,7 @@
 		onclose={() => (otherAccountEmail = null)}
 	>
 		{#snippet footer()}
-			<Button variant="destructive" onclick={discardLocalAccount}>
+			<Button variant="destructive" onclick={discardAndSendCode}>
 				{m['account.otherAccountDiscard']()}
 			</Button>
 		{/snippet}

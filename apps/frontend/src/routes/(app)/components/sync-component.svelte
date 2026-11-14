@@ -9,12 +9,12 @@
 		RefreshCcwIcon
 	} from '@lucide/svelte';
 	import ResponsiveDialog from '#lib/components/responsive-dialog.svelte';
+	import { formatDate } from '#lib/format.js';
 	import Badge from '#lib/components/ui/badge/badge.svelte';
 	import Button from '#lib/components/ui/button/button.svelte';
-	import { syncWorkerState } from '#lib/services/sync/sync-worker.svelte.js';
+	import { syncWorkerState, watchUnsyncedChanges } from '#lib/services/sync/sync-worker.svelte.js';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { m } from '#lib/paraglide/messages.js';
-	import { getDb, type DbClient } from '#lib/clients/idb-client.js';
 	import { page } from '$app/state';
 	import { authClient } from '#lib/clients/auth-client.js';
 	import { onMount } from 'svelte';
@@ -25,18 +25,7 @@
 	let open = $state(false);
 	let hasAnyRetryableUnsynced = $state<boolean>();
 
-	/** Refreshes the indicator whenever the outbox gains, loses or fails an event. */
-	async function updateOutboxStats(db: DbClient) {
-		hasAnyRetryableUnsynced = await db.outbox.hasPending();
-	}
-
-	onMount(() => {
-		const unsubscribe = getDb().then((db) => {
-			void updateOutboxStats(db);
-			return db.on('outboxchange', () => updateOutboxStats(db));
-		});
-		return () => void unsubscribe.then((off) => off());
-	});
+	onMount(() => watchUnsyncedChanges((pending) => (hasAnyRetryableUnsynced = pending)));
 
 	const STATUS_LABELS: Record<SyncWorkerStatus, () => string> = {
 		idle: m['sync.statusIdle'],
@@ -77,9 +66,7 @@
 	});
 
 	let lastSyncDisplay = $derived(
-		lastSyncTime
-			? lastSyncTime.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
-			: m['sync.neverSynced']()
+		lastSyncTime ? formatDate(lastSyncTime, 'time') : m['sync.neverSynced']()
 	);
 </script>
 

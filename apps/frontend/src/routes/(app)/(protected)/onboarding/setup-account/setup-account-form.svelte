@@ -11,7 +11,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
-	import { setupAccountFormSchema } from '#lib/features/user/setup-account.schema.js';
+	import { setupAccountFormSchema } from '#lib/features/user/schema.js';
 	import posthog from 'posthog-js';
 
 	let { data }: { data: User } = $props();

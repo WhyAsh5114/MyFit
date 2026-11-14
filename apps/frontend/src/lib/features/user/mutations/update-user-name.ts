@@ -13,7 +13,7 @@ export const useUpdateUserName = () =>
 			await orm.user.where({ id: userId }).update({ name: name.trim() });
 		},
 
-		onSuccess: () => invalidateKeys(userKeys.all),
+		onSuccess: (_data, { userId }) => invalidateKeys(userKeys.byUser(userId)),
 
 		onError: (error) => {
 			toast.error(m['unknownErrorOccurred']());

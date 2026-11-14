@@ -7,7 +7,7 @@ import { invalidateKeys } from '#lib/data/dependencies.js';
 import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
 
-export const useUpsertDynamicActivityData = () =>
+export const useSaveDynamicActivityData = () =>
 	useMutation({
 		mutationFn: async ({
 			date,

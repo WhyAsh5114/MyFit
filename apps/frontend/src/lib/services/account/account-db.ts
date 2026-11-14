@@ -1,6 +1,6 @@
 import { m } from '#lib/paraglide/messages.js';
 import { goto } from '$app/navigation';
-import type { DbClient } from '#lib/clients/idb-client.js';
+import { getDb, resetDb, type DbClient } from '#lib/clients/idb-client.js';
 import type { Session, User } from 'better-auth';
 import { toast } from 'svelte-sonner';
 
@@ -35,3 +35,17 @@ export async function createUserForCurrentSession(db: DbClient, sessionData: Aut
 		})
 	);
 }
+
+/**
+ * The email of the account whose unsynced data this device holds, when signing in as `email` would
+ * replace it. `null` when the device is empty, holds the same account, or has nothing left to sync.
+ */
+export async function otherAccountWithUnsyncedData(email: string): Promise<string | null> {
+	const db = await getDb();
+	const local = await db.orm.user.first();
+	if (!local || local.email.toLowerCase() === email.trim().toLowerCase()) return null;
+	return (await db.outbox.hasPending()) ? local.email : null;
+}
+
+/** Deletes the local account and its data, once the user has agreed to give it up. */
+export const discardLocalAccount = (): Promise<void> => resetDb();

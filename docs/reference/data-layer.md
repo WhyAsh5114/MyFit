@@ -57,6 +57,7 @@ export const load: PageLoad = async ({ params, depends, parent }) => {
 - **Return `null` for a missing row.** A `load` never throws for missing data.
 - **Read `params` and `url` before the `load` returns.** Reading them after an `await` is fine; reading them in a callback that runs later is not tracked. A `load` that reads `url.search` reruns on every search-param change.
 - **Read page data with `$derived(data.x)`.** Never copy `data` into `$state`: `data` updates without a remount, and the copy goes stale. For a local value you can change that still follows `data`, reassign a `let` derived (see [Frontend → Svelte 5](frontend.md#svelte-5)). A form built from `data` keeps the values it started with, which is what you want mid-edit.
+- **Outside a `load`, pass `noDepends`** (`#lib/data/dependencies.ts`), as the chat tools do: `getFoodEntriesByIds(noDepends, { userId, ids })`. Nothing reruns that read, so use it only for a one-off read whose result isn't shown as page data.
 - **Components outside a page's data read the user with `getCurrentUser()`** (`user/current-user.svelte.ts`), which reads the `(app)` layout's data.
 
 ESLint enforces two of these: a local `queries/*.ts` file may only export `defineReader(...)` calls, and a `+page.ts` or `+layout.ts` may not import the IDB client.
@@ -111,8 +112,8 @@ export const useNutritionDataById = (getId: () => string) =>
 - **Take args through a getter function**, not raw values.
 - **Remote queries set** `staleTime: 1000 * 60 * 10`, `refetchOnWindowFocus: false` and `refetchOnReconnect: false`.
 - **Let `queryFn` throw.** No `try/catch`, toast or log inside it: TanStack retries a failed query, so a toast there repeats. The component reads `isError` and shows an empty state with a retry, or one toast in an `$effect`. A response that is an answer, like a 404 for a missing food, returns `null`.
-- **Login uses TanStack's `createMutation` on purpose** (`routes/login/components/login-form.svelte`): it is a network request and keeps TanStack's retry. Local writes use `useMutation`.
-- **Leave `queryClient` to the account root and logout**, which cancel and clear it when the account changes. Routes and components never call it.
+- **A write that goes only to the network uses TanStack's `createMutation`**, which keeps its retry: login (`routes/login/components/login-form.svelte`), the chat photo upload (`chat-image/mutations/upload.ts`) and the OTA check (`ota/mutations/check-for-updates.ts`). Local writes use `useMutation`.
+- **Leave `queryClient` to the account root and logout**, which cancel and clear it when the account changes. Routes and components never call it. A feature hook may seed its own query's cache: the photo upload puts the local image under `chatImageKeys.byId(id)`, so the message shows it without downloading it again.
 
 ## Naming
 
@@ -141,3 +142,9 @@ export const foodEntryKeys = {
 
 - **Every user-scoped key has `userId` at the second level.** A key without it keeps one user's data after another signs in.
 - Segment names are `byUser`, `byDate`, `byId` and `search`, with no `Query` or `get` suffix.
+- **The segment label goes before its value**: `[...byUser(userId), 'date', date]`, not `[..., date]` or `[..., 'byDate', date]`.
+- Device data, such as Health (`capacitorHealthKeys`), has no `userId` level: it belongs to the device, not the account.
+
+## Known deviations
+
+None known. Add one here when code is left breaking a rule above, with where it is.

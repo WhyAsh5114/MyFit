@@ -1,5 +1,5 @@
 import { PUBLIC_API_URL } from '$app/env/public';
-import type { DbClient } from '#lib/clients/idb-client.js';
+import { getDb, type DbClient } from '#lib/clients/idb-client.js';
 import { invalidatePulledChanges } from '#lib/services/sync/sync-invalidation.js';
 import { m } from '#lib/paraglide/messages.js';
 import {
@@ -97,3 +97,16 @@ if (!g[SYNC_WORKER_STATE_KEY]) {
 	g[SYNC_WORKER_STATE_KEY] = new SyncWorkerState();
 }
 export const syncWorkerState = g[SYNC_WORKER_STATE_KEY] as SyncWorkerState;
+
+/**
+ * Calls `onChange` with whether any change still waits to sync, now and whenever the outbox gains,
+ * loses or fails an event. Returns the function that stops watching.
+ */
+export function watchUnsyncedChanges(onChange: (pending: boolean) => void): () => void {
+	const off = getDb().then((db) => {
+		const update = async () => onChange(await db.outbox.hasPending());
+		void update();
+		return db.on('outboxchange', () => void update());
+	});
+	return () => void off.then((stop) => stop());
+}

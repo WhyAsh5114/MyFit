@@ -4,7 +4,7 @@ import { userKeys } from '../keys';
 
 /** A user's local record, or `null` when the local database doesn't hold it. */
 export const getLocalUser = defineReader({
-	keys: (userId: string) => [userKeys.detail(userId)],
+	keys: (userId: string) => [userKeys.byUser(userId)],
 	read: async (userId) => {
 		const { orm } = await getDb();
 		return await orm.user.where({ id: userId }).first();

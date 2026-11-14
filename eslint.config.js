@@ -72,12 +72,6 @@ const importRules = [
 		// Routes and their components read local data through a `load` and write through a
 		// mutation hook, so every read reruns after a write or a sync.
 		files: [`${FRONTEND}/routes/**/*.{svelte,svelte.ts}`],
-		ignores: [
-			// Known exceptions: they manage the database itself (login resets it, the sync panel
-			// reads the outbox). Move that work into a service when you next change them.
-			`${FRONTEND}/routes/login/components/login-form.svelte`,
-			`${FRONTEND}/routes/(app)/components/sync-component.svelte`
-		],
 		rules: restrict(
 			[
 				bitsUi,
