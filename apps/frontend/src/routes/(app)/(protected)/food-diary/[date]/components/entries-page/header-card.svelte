@@ -57,14 +57,24 @@
 
 <div class="mb-2 flex flex-col gap-4">
 	<div class="flex w-full">
-		<Button size="icon-sm" variant="secondary" onclick={() => changeDay(-1)}>
+		<Button
+			size="icon-sm"
+			variant="secondary"
+			onclick={() => changeDay(-1)}
+			aria-label={m['foodDiary.previousDay']()}
+		>
 			<ChevronLeftIcon />
 		</Button>
 		<div class="grid grow place-items-center">
 			<Card.Title>{formatDate(selectedDay.toDate(timezone), 'long')}</Card.Title>
 			<Card.Description class="text-xs">{getRelativeDayLabel(selectedDay)}</Card.Description>
 		</div>
-		<Button size="icon-sm" variant="secondary" onclick={() => changeDay(1)}>
+		<Button
+			size="icon-sm"
+			variant="secondary"
+			onclick={() => changeDay(1)}
+			aria-label={m['foodDiary.nextDay']()}
+		>
 			<ChevronRightIcon />
 		</Button>
 	</div>

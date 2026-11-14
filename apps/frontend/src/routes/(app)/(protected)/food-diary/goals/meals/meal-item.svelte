@@ -30,7 +30,12 @@
 <Item.Root class={cn('bg-card p-2', className)}>
 	<Item.Actions>
 		<div {@attach gripAttachment} class="tap relative">
-			<Button class="pointer-events-none" size="icon-sm" variant="secondary">
+			<Button
+				class="pointer-events-none"
+				size="icon-sm"
+				variant="secondary"
+				aria-label={m['foodDiary.reorderMeal']()}
+			>
 				<GripVerticalIcon class="size-4" />
 			</Button>
 		</div>
@@ -52,6 +57,7 @@
 			variant="destructive"
 			class={cn({ 'pointer-events-none': !onDelete })}
 			onclick={onDelete}
+			aria-label={m['foodDiary.deleteMeal']()}
 		>
 			<TrashIcon />
 		</Button>

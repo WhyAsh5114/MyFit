@@ -70,9 +70,6 @@
 	function onDetect(detectedCodes: DetectedBarcode[]) {
 		const detectedCode = detectedCodes[0].rawValue;
 		posthog.capture('barcode_scanned', { method: 'camera' });
-		toast.success(m['foodDiary.barcodeDetected'](), {
-			description: m['foodDiary.barcodeDetectedValue']({ value: detectedCode })
-		});
 		codeToSearch = detectedCode;
 	}
 

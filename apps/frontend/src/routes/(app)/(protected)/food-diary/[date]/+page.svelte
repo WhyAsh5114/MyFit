@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
+	import { m } from '#lib/paraglide/messages.js';
 	import { getLocalTimeZone } from '@internationalized/date';
 	import { parseSelectedDay } from '#lib/features/food-diary/_common/selected-day.js';
 	import HeaderCard from './components/entries-page/header-card.svelte';
@@ -44,7 +45,8 @@
 	<Button
 		class="absolute right-2 bottom-2"
 		size="icon-lg"
-		href="/chat?screen=food-diary&date={page.params.date}"
+		href={resolve('chat')}
+		aria-label={m['foodDiary.logWithChat']()}
 	>
 		<BotMessageSquareIcon class="size-6" />
 	</Button>
