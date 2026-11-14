@@ -1,3 +1,4 @@
+/** Whether a food's kcal is far from what its macros add up to (4/4/9 kcal per gram), beyond rounding. */
 export function hasCalculationErrors(
 	energyKcal: number,
 	carbsG: number,

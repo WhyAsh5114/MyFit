@@ -1,10 +1,11 @@
 import type { Row } from '@myfit/shared/client';
 import { calculateBMR } from './bmr';
+import { forQuantity } from './portion';
 
 type CalculateDailyNutritionStatsArgs = {
 	metrics: Row<'MacroMetrics'>;
 	weeklyCaloricChange: number;
-	foodEntries?: { energyKcal_100g: number; quantityG: number }[];
+	foodEntries?: Pick<Row<'FoodEntry'>, 'energyKcal_100g' | 'quantityG'>[];
 	activityEntries?: { calories: number }[];
 };
 
@@ -15,7 +16,7 @@ export function calculateDailyNutritionStats(data: CalculateDailyNutritionStatsA
 	if (bmr === null) return null;
 
 	const caloriesConsumed = foodEntries.reduce(
-		(sum, entry) => sum + entry.energyKcal_100g * (entry.quantityG / 100),
+		(sum, entry) => sum + forQuantity(entry.energyKcal_100g, entry.quantityG),
 		0
 	);
 	const caloriesBurned = activityEntries.reduce((sum, entry) => sum + entry.calories, 0);

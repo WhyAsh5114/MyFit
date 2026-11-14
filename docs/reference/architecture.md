@@ -50,7 +50,7 @@ Name files after the operation. One exported reader or hook per file.
 
 `lib/domain/` holds pure functions: typed plain objects in, plain values out. They import nothing from `#lib/clients`, `#lib/features`, `#lib/services`, `svelte` or SvelteKit (ESLint enforces this), so they are easy to test exhaustively.
 
-When computing consumed calories from a `FoodEntry`, scale by quantity: `entry.energyKcal_100g * (entry.quantityG / 100)`.
+Foods and food entries store nutrients per 100 g. Scale them with `lib/domain/nutrition/portion.ts` (`forQuantity`, `macrosFor`, `totalMacros`) rather than writing the arithmetic again.
 
 ### API (`apps/api/src`)
 
@@ -93,6 +93,9 @@ type SyncState =
 
 let state = $state<SyncState>({ kind: 'idle' });
 ```
+
+- **Reuse before you write.** Look for an existing type, helper or function before adding one. Build a type from the data model, for example `Pick<Row<'FoodEntry'>, 'energyKcal_100g' | 'quantityG'>`, instead of retyping its fields, so a schema change reaches every user of it.
+- **Let TypeScript infer.** Leave out a return type or annotation the compiler already knows, and avoid casts (`as`, `!`). A cast hides a type that doesn't fit; fix the type, narrow the value, or add a type guard.
 
 - Change it in one place, through named transitions (`start()`, `fail(error)`), not by assigning fields from many handlers.
 - Render with `{#if state.kind === …}` so every state has a visible branch.

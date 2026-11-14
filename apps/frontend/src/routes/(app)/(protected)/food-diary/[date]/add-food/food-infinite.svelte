@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { forQuantity } from '#lib/domain/nutrition/portion.js';
 	import * as Empty from '#lib/components/ui/empty/index.js';
 	import { useSearchNutritionData } from '#lib/features/food-diary/nutrition-data/queries/search.js';
 	import { InfiniteLoader, LoaderState } from 'svelte-infinite';
@@ -90,7 +91,7 @@
 				<FoodRow
 					name={food.productName}
 					detail={food.servingSize && food.servingQuantity
-						? `${brand}${Math.round(food.energyKcal_100g * (food.servingQuantity / 100))} kcal · ${food.servingSize}`
+						? `${brand}${Math.round(forQuantity(food.energyKcal_100g, food.servingQuantity))} kcal · ${food.servingSize}`
 						: `${brand}${Math.round(food.energyKcal_100g)} kcal · 100 g`}
 					href={foodHref(food.id)}
 					action={{ label: m['foodDiary.addFood'](), href: foodHref(food.id) }}

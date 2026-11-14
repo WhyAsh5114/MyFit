@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
 	import * as Card from '#lib/components/ui/card/index.js';
+	import { macrosFor } from '#lib/domain/nutrition/portion.js';
 	import MacrosPieChart from './macros-pie-chart.svelte';
 	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
 
@@ -18,10 +19,11 @@
 	};
 	let { food, quantityG }: Props = $props();
 
-	let energyKcal = $derived(food.energyKcal_100g * (quantityG / 100));
-	let carbs = $derived(food.carbohydratesG_100g * (quantityG / 100));
-	let fat = $derived(food.fatG_100g * (quantityG / 100));
-	let protein = $derived(food.proteinsG_100g * (quantityG / 100));
+	let macros = $derived(macrosFor(food, quantityG));
+	let energyKcal = $derived(macros.kcal);
+	let carbs = $derived(macros.carbsG);
+	let fat = $derived(macros.fatG);
+	let protein = $derived(macros.proteinG);
 
 	function calculateMacroPercentage(macroGrams: number, kcalPerGram: number) {
 		const macroKcal = macroGrams * kcalPerGram;

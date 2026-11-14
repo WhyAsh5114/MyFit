@@ -11,7 +11,7 @@
 	import { resolve } from '$app/paths';
 	import { CheckIcon, GroupIcon, XIcon } from '@lucide/svelte';
 	import type { MyUIMessage } from '@myfit/api';
-	import FoodCard from '../../../food-diary/[date]/components/add-edit-entries/food-card.svelte';
+	import FoodCard from '#lib/components/food/food-card.svelte';
 	import { getChatPageContext } from '../chat.svelte';
 	import { parseLocalDateTime, whenLabel } from '../tools/local-time';
 

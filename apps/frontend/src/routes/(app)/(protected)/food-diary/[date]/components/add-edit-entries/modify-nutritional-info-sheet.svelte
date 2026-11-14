@@ -21,7 +21,7 @@
 		REQUIRED_NUTRIENTS,
 		requiredNutrientsFields
 	} from '#lib/features/food-diary/_common/nutrients.js';
-	import { hasCalculationErrors } from './common';
+	import { hasCalculationErrors } from '#lib/domain/nutrition/energy-check.js';
 
 	let { form }: { form: SuperForm<FoodEntryFormSchema> } = $props();
 	let formData = $derived(form.form);

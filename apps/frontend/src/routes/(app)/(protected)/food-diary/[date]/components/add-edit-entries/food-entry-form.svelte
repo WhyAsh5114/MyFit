@@ -20,7 +20,7 @@
 	import ModifyNutritionalInfoSheet from './modify-nutritional-info-sheet.svelte';
 	import { toast } from 'svelte-sonner';
 	import { m } from '#lib/paraglide/messages.js';
-	import FoodCard from './food-card.svelte';
+	import FoodCard from '#lib/components/food/food-card.svelte';
 	import type { Snippet } from 'svelte';
 	import { round } from '#lib/my-utils.js';
 	import { cn } from '#lib/utils.js';

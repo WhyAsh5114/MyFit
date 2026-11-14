@@ -3,7 +3,7 @@
 	import * as Chart from '#lib/components/ui/chart/index.js';
 	import { cn } from '#lib/utils.js';
 	import { PieChart, Text } from 'layerchart';
-	import { hasCalculationErrors } from './common';
+	import { hasCalculationErrors } from '#lib/domain/nutrition/energy-check.js';
 
 	let { carbs, fat, protein, kcal }: { carbs: number; fat: number; protein: number; kcal: number } =
 		$props();
