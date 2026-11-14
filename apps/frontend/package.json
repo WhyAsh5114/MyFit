@@ -91,7 +91,8 @@
 		"zod": "^4.6.7"
 	},
 	"imports": {
-		"#lib": "./src/lib/index.js",
-		"#lib/*": "./src/lib/*"
+		"#lib/*": "./src/lib/*",
+		"#routes/*": "./src/routes/*",
+		"#tests/*": "./tests/*"
 	}
 }

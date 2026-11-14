@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 vi.mock('$app/navigation', () => ({ invalidate: vi.fn(async () => {}) }));
 
 const { accountReady, onAccountChange, publishOwner } =
-	await import('../../../../src/lib/services/account/account-session.svelte');
+	await import('#lib/services/account/account-session.svelte.js');
 
 describe('onAccountChange', () => {
 	beforeEach(() => publishOwner(undefined));

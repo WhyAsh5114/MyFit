@@ -22,7 +22,8 @@
 		"./server": {
 			"types": "./src/server.ts",
 			"default": "./src/server.ts"
-		}
+		},
+		"./generated/*": "./src/generated/*"
 	},
 	"scripts": {
 		"schema:sync": "node scripts/schema-sync.mjs",

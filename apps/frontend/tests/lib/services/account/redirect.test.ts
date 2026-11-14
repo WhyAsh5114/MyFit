@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { localRedirect } from '../../../../src/lib/services/account/redirect';
+import { localRedirect } from '#lib/services/account/redirect.js';
 
 const origin = 'https://myfit.fit';
 
