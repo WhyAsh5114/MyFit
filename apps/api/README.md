@@ -32,7 +32,7 @@ pnpm start    # Run production build
 
 ## Key Features
 
-- 🔐 **Authentication** - Google & GitHub OAuth via Better Auth
+- 🔐 **Authentication** - email one-time codes via Better Auth
 - 🗄️ **Database** - PostgreSQL + Prisma 8
 - ⚡ **Fast** - Built on Hono's minimal footprint
 - 📝 **Type-safe** - Full TypeScript support

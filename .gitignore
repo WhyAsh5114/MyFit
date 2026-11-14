@@ -10,3 +10,8 @@ todo.md
 playwright-report
 test-results
 .vercel
+
+# Personal Claude Code settings and notes
+.claude/settings.local.json
+CLAUDE.local.md
+.claude/instructions.log

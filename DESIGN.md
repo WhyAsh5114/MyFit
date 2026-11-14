@@ -2,7 +2,7 @@
 
 Status: v0.1, decided 2026-10-30. Decisions came from a Q&A with the owner, backed by mocks of the real screens. Open questions are at the end.
 
-This file answers "how should this look and behave?". `AGENTS.md` answers "how is the code structured?". When they seem to disagree, ask; don't guess.
+This file answers "how should this look and behave?". [`docs/`](docs/README.md) answers "how is the code structured?"; the code rules for UI are in [`docs/reference/frontend.md`](docs/reference/frontend.md). When they seem to disagree, ask; don't guess.
 
 ## How to use this file
 
@@ -202,7 +202,7 @@ Expressive, but purposeful. Motion explains cause and effect, rewards completion
 - **Toasts are for what can't be shown in place:** errors, undo after a destructive action, and system events (update ready, session expired).
 - **Delete shows an Undo toast.** Deleting is quiet but reversible.
 - Optimistic by default: writes are local and instant, so never show a spinner for them.
-- Haptics are an enhancement where the plugin exists (see Capacitor in `AGENTS.md`); never the only signal.
+- Haptics are an enhancement where the plugin exists (see Capacitor in `docs/reference/frontend.md`); never the only signal.
 
 How it is built: the mutation's `onSuccess` records the changed id in one small shared store; the list reads it, scrolls to the row and plays a CSS highlight. Save buttons read the mutation's `isSuccess` and reset on a timer. Toasts remain only for the cases above.
 
@@ -231,7 +231,7 @@ How it is built: the mutation's `onSuccess` records the changed id in one small 
 
 ## Reviewing a screen
 
-Run `pnpm --filter @myfit/frontend screenshots` to see every screen in light and dark after a change (see the frontend README). Before merging UI, check:
+Run `pnpm --filter @myfit/frontend screenshots` to see every screen in light and dark after a change (see [`docs/how-to/run-tests.md`](docs/how-to/run-tests.md)). Before merging UI, check:
 
 - [ ] Every tappable thing has a 44px hit area; nothing overlaps.
 - [ ] Surface matches the job (page, drawer, dialog, menu).
@@ -262,13 +262,14 @@ Applied on 2026-10-30. What changed, and what is still open.
 **Still open**
 
 1. The nutrition editor (`modify-nutritional-info-sheet.svelte`) is a sheet with many fields. The rule says a page. Moving it means lifting the parent form's state, so it is left for now.
-2. Strings are still hardcoded in the recipes stub, the activity preferences screen and the health-data panel. They are unfinished screens, which `AGENTS.md` allows, but they should be converted when finished.
+2. Hardcoded text in markup is now an ESLint error (`eslint.config.js`, `copyRules`). Strings built in scripts, such as toast text and label arrays, are not checked; convert them as screens ship.
 3. The Week and Nutrients views from the status section do not exist yet.
 4. A "daily goal met" reward moment is allowed by the motion rules but not built.
 5. Touch targets were measured in a mobile-width browser. Check on a real device, especially the header.
 
 ## Open questions
 
+- **Visual identity:** the app still looks like a stock shadcn app. A separate design session will set type, color, shape and one or two signature details, and may reopen the Typography rule (Inter only, no display faces) and the Layout rule (no new radii or shadows). Until then, those rules stand.
 - **Haptics:** which actions get one (log, delete, goal met)? Not decided.
 - **Red for far-off finished days:** the mocks used red for "far off" and this file removes it, since you rejected red for going over. If protein far below the floor should read stronger than amber, say so; the default is amber with a stronger word.
 - **Defining "finished":** this file says past days. If a "close the day" action is wanted, it changes that rule.

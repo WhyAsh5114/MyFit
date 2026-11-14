@@ -26,20 +26,9 @@ pnpm lint          # ESLint + Prettier check
 pnpm format        # Format code
 ```
 
-## Project Structure
+## Project structure
 
-```
-src/
-├── routes/        # SvelteKit pages and API routes
-├── lib/
-│   ├── components/    # Reusable Svelte components
-│   ├── hooks/         # Svelte hooks
-│   ├── auth-client.ts # Auth utilities
-│   ├── idb-client.ts  # IndexedDB utilities
-│   └── utils.ts       # Helper functions
-├── app.html       # HTML entry point
-└── app.d.ts       # Global types
-```
+Where code goes is in [Architecture](../../docs/reference/architecture.md), and how data is read and written in [Data layer](../../docs/reference/data-layer.md).
 
 ## Features
 
@@ -50,107 +39,13 @@ src/
 - ♿ **Accessible** - Semantic HTML and ARIA
 - 🎭 **Themes** - Dark/light
 
-# Build web assets
+## Mobile
 
-```bash
-pnpm build
-```
+Building for iOS and Android, running on a device and releasing are in [Release the app](../../docs/how-to/release.md).
 
-# Sync to Xcode
+## Testing and screenshots
 
-```bash
-pnpm exec cap sync ios
-pnpm exec cap open ios
-```
-
-# In Xcode
-
-Select target device and press Run
-
-### Android
-
-```bash
-# Install Android SDK via Android Studio first
-
-# Sync to Android Studio
-pnpm exec cap sync android
-pnpm exec cap open android
-
-# In Android Studio: Select emulator/device and click Run
-```
-
-### Workflow
-
-1. Make changes in `src/`
-2. `pnpm dev` to see changes in browser
-3. When ready to test on device:
-   ```bash
-   pnpm build
-   pnpm exec cap sync
-   ```
-4. Open in Xcode/Android Studio and run
-
-To load the Vite dev server in the native app instead of the bundled build, set `CAPACITOR_DEV_SERVER_URL` before `cap sync`. Use `http://localhost:5173` for both. On the Android emulator, first run `adb reverse tcp:5173 tcp:5173` (and `tcp:3000` for a local API); `http://10.0.2.2` is not a secure context, so the app fails without `crypto.randomUUID`. Leave it unset for release builds.
-
-### Releases
-
-The `version` in `package.json` is the app version for both platforms. It is bumped by hand in the release commit. Web-only changes ship over the air and don't need a new version.
-
-Android's `versionName` and `versionCode` are read from it by `android/app/build.gradle`. An Xcode project can't read it, so `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in the project (`1.0` and `1`) are placeholders. Pass the real values when archiving:
-
-```bash
-xcodebuild archive -project ios/App/App.xcodeproj -scheme App $(node scripts/native-version.js)
-```
-
-## Database
-
-Uses Prisma-IDB (offline-first browser database). The schema and generated contract live in `packages/shared`; `getDb()` in `src/lib/clients/idb-client.ts` migrates IndexedDB on first use and returns a sync-tracked client:
-
-```typescript
-import { getDb } from '#lib/clients/idb-client.js';
-
-const { orm } = await getDb();
-const meals = await orm.meal.where({ userId }).all();
-```
-
-## Internationalization
-
-Translations are in `messages/en.json`. The app uses Paraglide for i18n:
-
-```typescript
-import * as m from '#lib/paraglide/messages.js';
-
-const greeting = m.hello();
-```
-
-## Testing
-
-`pnpm test` runs the unit tests with Vitest (`tests/lib`).
-
-`pnpm test:e2e` runs the Playwright specs in `tests/e2e` against the built app, a real API and Postgres. It covers sign-in, logout, the single-tab lock, session expiry and switching accounts. Start Postgres and apply the migrations first:
-
-```bash
-docker run -d -p 5432:5432 -e POSTGRES_USER=myfit -e POSTGRES_PASSWORD=password -e POSTGRES_DB=myfit postgres:16-alpine
-DATABASE_URL=postgresql://myfit:password@localhost:5432/myfit pnpm --filter @myfit/shared db:migrate
-pnpm exec playwright install chromium
-pnpm test:e2e
-```
-
-Set `TEST_DATABASE_URL` to use another database. Playwright starts a mail stub, the API (needs `bun`) and the production build itself. The stub stands in for Resend, so tests read sign-in codes without sending email.
-
-## Screenshots
-
-`pnpm screenshots` captures every screen of the built app in light and dark at 390 × 844 and builds a gallery, so you can see the effect of a design change on the whole app. It starts its own mail stub, API (ports 3001 and 4010) and fresh production build on port 4273, so it can run beside `pnpm dev`.
-
-Point it at a Postgres server; it creates a disposable database, applies the migrations and seeds a few foods for search. The default is the dev container's server:
-
-```bash
-pnpm screenshots                                  # postgresql://postgres:postgres@localhost:5432/myfit_screenshots
-SCREENSHOT_DATABASE_URL=postgresql://user:pass@host:5432/name pnpm screenshots
-SCREENSHOT_FORMAT=png pnpm screenshots            # lossless images instead of JPEG
-```
-
-Output goes to `screenshots/` (ignored by git): `light/` and `dark/` images, `index.html` to browse them locally, and `gallery.html`, one file with the images embedded. `pnpm screenshots:gallery` rebuilds the gallery without recapturing. Chat replies are scripted and the camera screen shows the headless browser's no-camera state. Add a screen by adding a `shot(...)` call in `tests/screenshots/screens.spec.ts`.
+See [Run the tests and screenshots](../../docs/how-to/run-tests.md), and [Testing](../../docs/reference/testing.md) for which test to write.
 
 ## Scripts
 

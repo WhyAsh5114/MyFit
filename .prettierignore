@@ -4,3 +4,7 @@ pnpm-lock.yaml
 yarn.lock
 bun.lock
 bun.lockb
+
+# Vendored from mattpocock/skills; kept byte-identical so updates diff cleanly.
+.claude/skills/*/
+.claude/skills/LICENSE-mattpocock-skills

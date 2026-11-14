@@ -109,37 +109,13 @@ pnpm exec cap open ios    # Open Xcode
 pnpm exec cap open android # Open Android Studio
 ```
 
-See [Frontend README](./apps/frontend/README.md) for detailed mobile setup.
+See [Release the app](docs/how-to/release.md) for running on a device and releasing.
 
 ## 🗄️ Database
 
 MyFit uses [Prisma 8](https://www.prisma.io) with a PostgreSQL database on the server and [Prisma IDB](https://github.com/prisma-idb/prisma-idb) (IndexedDB) in the browser for offline-first use. Both read one schema: `packages/shared/src/schema.prisma`.
 
-### Change the schema
-
-After you edit `schema.prisma`, run one command from the repository root. Pick a short name for the migration:
-
-```bash
-pnpm --filter @myfit/shared schema:sync add-meal-notes
-```
-
-`schema:sync` runs these steps in order, then formats the generated files:
-
-1. `contract:emit` writes the browser contract.
-2. `migration:plan` plans the IndexedDB migration and bundles the migration chain for the browser. If the bundle is stale, the browser sends the old chain and every sync request fails with a contract mismatch.
-3. `migration:preflight` applies the chain to a fake IndexedDB and checks it matches the new contract.
-4. `contract:emit:postgres` writes the server contract.
-5. `migration:postgres:plan` plans the Postgres migration.
-
-Commit everything the command changes. When the schema did not change, the command changes nothing.
-
-If a change drops or renames data, the planners refuse and list the questions. Run the steps individually and pass the `--rename` or `--delete` flags the planner prints. To write a Postgres data migration by hand, scaffold it from the latest migration's target hash. That hash is the `storageHash` in `packages/shared/src/generated/postgres-contract.json`. A bare `migration:postgres:new` fails on an unchanged schema, because it needs a starting hash.
-
-```bash
-pnpm --filter @myfit/shared migration:postgres:new --from <hash> --name <name>
-```
-
-Apply the Postgres migrations with `pnpm --filter @myfit/shared db:migrate`. This also creates the `NutritionData` food search table.
+To change the schema, follow [Change the database schema](docs/how-to/change-the-schema.md).
 
 See the [API README](./apps/api/README.md) for the server side.
 
@@ -159,10 +135,12 @@ pnpm build
 
 ## 🤝 Contributing
 
-1. Create a feature branch from `main`
-2. Make your changes
-3. Run `pnpm lint` and `pnpm format`
-4. Push and create a PR
+Start with [`docs/`](docs/README.md): how the app is built, where code goes, and how to test it. `v4-turborepo` is the working branch.
+
+1. Branch from `v4-turborepo`.
+2. Make your change, with its tests and docs.
+3. Run `pnpm lint`, `pnpm check` and `pnpm --filter @myfit/frontend test`.
+4. Push and open a PR.
 
 ## 📚 Tech Stack
 

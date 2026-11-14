@@ -33,7 +33,9 @@
 								{...props}
 							>
 								<DiscordIcon />
+								<!-- eslint-disable no-restricted-syntax -- brand name -->
 								Discord
+								<!-- eslint-enable no-restricted-syntax -->
 							</a>
 						{/snippet}
 					</DropdownMenu.Item>
@@ -46,7 +48,9 @@
 								{...props}
 							>
 								<GithubIcon />
+								<!-- eslint-disable no-restricted-syntax -- brand name -->
 								GitHub
+								<!-- eslint-enable no-restricted-syntax -->
 							</a>
 						{/snippet}
 					</DropdownMenu.Item>
