@@ -26,9 +26,31 @@
 	const sessionOwner = $derived($session.data?.user.id);
 	const sessionPending = $derived($session.isPending);
 
-	// The user the app runs as: the signed-in one, or the stored one while offline or expired.
+	/**
+	 * Where reconciling the local database with the session stands. Each state carries only what is
+	 * valid in it, and the transitions below are the only writes.
+	 */
+	type AccountState =
+		/** The database is being checked against the session. */
+		| { kind: 'preparing' }
+		/** The app runs as `ownerId`: the signed-in user, or the stored one while offline or expired. */
+		| { kind: 'ready'; ownerId: string | null }
+		/** Another account's unsynced data is in the database; the login waits for the user's decision. */
+		| { kind: 'otherAccount'; email: string }
+		| { kind: 'failed'; error: string };
+
+	let account = $state<AccountState>({ kind: 'preparing' });
+
+	/** A new run starts. A pending other-account question stays up until the run answers it. */
+	const startPreparing = () => {
+		if (account.kind !== 'otherAccount') account = { kind: 'preparing' };
+	};
+	const becomeReady = (ownerId: string | null) => (account = { kind: 'ready', ownerId });
+	const askAboutOtherAccount = (email: string) => (account = { kind: 'otherAccount', email });
+	const fail = (error: string) => (account = { kind: 'failed', error });
+
 	// `undefined` until the local database has been checked against the session.
-	let ownerId = $state<string | null>();
+	const ownerId = $derived(account.kind === 'ready' ? account.ownerId : undefined);
 
 	// Ready once the database was checked against the session, and the store still agrees with it.
 	// A background refetch (on focus, or coming back online) doesn't count: the page stays up.
@@ -45,11 +67,8 @@
 		publishOwner(ready ? ownerId : undefined);
 	});
 
-	let error = $state<string | null>(null);
-
-	// The account that owns the unsynced local data, while a different login waits for a decision.
-	let otherAccountEmail = $state<string | null>(null);
-
+	// The login the user agreed may discard another account's unsynced data. An input to the run,
+	// not part of `account`: it must outlive the run it starts.
 	let approvedDiscardFor = $state<string>();
 	let transition = Promise.resolve();
 
@@ -72,8 +91,8 @@
 
 		const sessionData = untrack(() => $session.data);
 		let cancelled = false;
-		ownerId = undefined;
-		error = null;
+		// Untracked: the run sets `account`, which must not rerun it.
+		untrack(startPreparing);
 
 		// Serialize switches so an older database open cannot overtake a newer session.
 		transition = transition
@@ -89,7 +108,7 @@
 				// once the user agrees, unless nothing is waiting to sync.
 				if (owner && user && user.id !== owner) {
 					if (!discardApproved && (await db.outbox.hasPending())) {
-						if (!cancelled) otherAccountEmail = user.email;
+						if (!cancelled) askAboutOtherAccount(user.email);
 						return;
 					}
 					await resetDb();
@@ -98,19 +117,17 @@
 				}
 
 				if (cancelled) return;
-				otherAccountEmail = null;
-
 				if (sessionData && !user) await createUserForCurrentSession(db, sessionData);
 				if (cancelled) return;
 				// Without a session (offline), the stored user keeps working.
-				ownerId = owner ?? user?.id ?? null;
+				becomeReady(owner ?? user?.id ?? null);
 				// Only a signed-in account syncs; an expired session keeps editing locally.
 				if (owner) syncWorkerState.start(db);
 			})
 			.catch((cause) => {
 				if (cancelled) return;
 				console.error('Could not prepare local account', cause);
-				error = m['account.loadFailed']();
+				fail(m['account.loadFailed']());
 			});
 
 		return () => {
@@ -162,15 +179,16 @@ account, and a dialog can't live in a tree that doesn't render until they finish
 {:else if accountSession.logout === 'failed'}
 	<StateBackdrop scene="gym" />
 	<LogoutFailedDialog />
-{:else if otherAccountEmail}
+{:else if account.kind === 'otherAccount'}
 	<StateBackdrop scene="meal" />
-	<OtherAccountDialog
-		email={otherAccountEmail}
-		ondiscard={() => (approvedDiscardFor = sessionOwner)}
-	/>
-{:else if error}
+	<OtherAccountDialog email={account.email} ondiscard={() => (approvedDiscardFor = sessionOwner)} />
+{:else if account.kind === 'failed'}
 	<StateBackdrop scene="salad" />
-	<ResponsiveDialog title={error} description={m['account.loadFailedHint']()} dismissible={false}>
+	<ResponsiveDialog
+		title={account.error}
+		description={m['account.loadFailedHint']()}
+		dismissible={false}
+	>
 		{#snippet footer()}
 			<Button onclick={() => location.reload()}>{m['account.reload']()}</Button>
 		{/snippet}

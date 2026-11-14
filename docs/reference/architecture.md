@@ -121,7 +121,8 @@ let state = $state<SyncState>({ kind: 'idle' });
 
 - Change it in one place, through named transitions (`start()`, `fail(error)`), not by assigning fields from many handlers.
 - Render with `{#if state.kind === …}` so every state has a visible branch.
-- `lib/services/service-worker.svelte.ts` (`appUpdate.status`) follows this pattern. The account root (`account-root.svelte`: `ownerId`, `error`, `otherAccountEmail`, `approvedDiscardFor`) is the main place that doesn't yet; convert it when you next change it.
+- `lib/services/service-worker.svelte.ts` (`appUpdate.status`) and the account root (`lib/components/account/account-root.svelte`, `account`) follow this pattern.
+- An input to the machine, such as a choice the user made that must outlive one run, stays a separate value; the account root's `approvedDiscardFor` is one.
 
 ## Consistency
 
