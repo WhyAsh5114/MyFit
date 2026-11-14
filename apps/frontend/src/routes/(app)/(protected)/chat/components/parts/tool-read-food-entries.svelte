@@ -3,7 +3,7 @@
 	import { BookOpenIcon, TriangleAlertIcon } from '@lucide/svelte';
 	import type { MyUIMessage } from '@myfit/api';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
-	import { shortDateFormatter } from '#lib/my-utils.js';
+	import { formatDate } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 
 	type ReadFoodEntriesPart = Extract<
@@ -18,9 +18,9 @@
 		if (!from) return '';
 		try {
 			const timezone = getLocalTimeZone();
-			const start = shortDateFormatter.format(parseDate(from).toDate(timezone));
+			const start = formatDate(parseDate(from).toDate(timezone), 'short');
 			if (!to || to === from) return start;
-			return `${start} – ${shortDateFormatter.format(parseDate(to).toDate(timezone))}`;
+			return `${start} – ${formatDate(parseDate(to).toDate(timezone), 'short')}`;
 		} catch {
 			return '';
 		}

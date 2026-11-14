@@ -8,7 +8,7 @@
 	import { Input } from '#lib/components/ui/input/index.js';
 	import * as Empty from '#lib/components/ui/empty/index.js';
 	import * as Item from '#lib/components/ui/item/index.js';
-	import { shortDateFormatter } from '#lib/my-utils.js';
+	import { formatDate } from '#lib/format.js';
 	import { cn } from '#lib/utils.js';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { useCreateChat } from '#lib/features/chat/chat/mutations/create.js';
@@ -35,10 +35,6 @@
 	const shown = $derived(
 		chats.filter((chat) => chat.title.toLowerCase().includes(query.trim().toLowerCase()))
 	);
-	// A fresh search each time it opens.
-	$effect(() => {
-		if (!open) query = '';
-	});
 	const currentId = $derived(page.params.id);
 
 	const context = getChatPageContext();
@@ -90,7 +86,8 @@
 
 <!-- One row: the open chat's title picks another chat, beside the new chat button. -->
 <div class="flex items-center gap-2">
-	<Popover.Root bind:open>
+	<!-- A fresh search each time it opens. -->
+	<Popover.Root bind:open onOpenChange={(isOpen) => isOpen && (query = '')}>
 		<Popover.Trigger class="min-w-0 flex-1 justify-between font-medium">
 			{#snippet child({ props })}
 				<Button variant="outline" aria-label={m['chat.history']()} {...props}>
@@ -126,7 +123,7 @@
 								{chat.title}
 							</a>
 							<Item.Description class="text-xs tabular-nums">
-								{shortDateFormatter.format(chat.updatedAt)}
+								{formatDate(chat.updatedAt, 'short')}
 							</Item.Description>
 						</Item.Content>
 						<Item.Actions>

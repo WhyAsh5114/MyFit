@@ -5,7 +5,7 @@ import {
 	toCalendarDate,
 	today
 } from '@internationalized/date';
-import { shortDateFormatter, timeFormatter } from '#lib/my-utils.js';
+import { formatDate } from '#lib/format.js';
 
 const pad = (value: number) => String(value).padStart(2, '0');
 
@@ -27,8 +27,8 @@ export function parseLocalDateTime(value: string | null | undefined): Date | nul
 
 /** When an entry was eaten, as the card shows it: the time alone for today, else the day too. */
 export function whenLabel(date: Date): string {
-	const time = timeFormatter.format(date);
+	const time = formatDate(date, 'time');
 	const day = toCalendarDate(fromDate(date, getLocalTimeZone()));
 	if (day.compare(today(getLocalTimeZone())) === 0) return time;
-	return `${shortDateFormatter.format(date)}, ${time}`;
+	return `${formatDate(date, 'short')}, ${time}`;
 }

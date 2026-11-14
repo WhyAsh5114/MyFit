@@ -1,7 +1,9 @@
 import type { MyUITools } from '@myfit/api';
+import { noDepends } from '#lib/data/dependencies.js';
+import { forQuantity } from '#lib/domain/nutrition/portion.js';
 import { getFoodEntriesByIds } from '#lib/features/food-diary/food-entry/queries/get-by-ids.js';
 import { localDay } from '#lib/features/food-diary/_common/day-bounds.js';
-import { localTime } from './local-time';
+import { localTime } from './local-time.js';
 
 type Output = MyUITools['deleteFoodEntries']['output'];
 
@@ -20,8 +22,7 @@ export type EntryToDelete = {
  * model, so the card shows what will really be deleted. Ids with no entry are listed apart.
  */
 export async function findEntriesToDelete(userId: string, ids: string[]) {
-	// A chat isn't a page's load, so nothing reruns this read.
-	const entries = await getFoodEntriesByIds(() => {}, { userId, ids });
+	const entries = await getFoodEntriesByIds(noDepends, { userId, ids });
 	const found = new Set(entries.map((entry) => entry.id));
 	return {
 		entries: entries
@@ -30,7 +31,7 @@ export async function findEntriesToDelete(userId: string, ids: string[]) {
 				id: entry.id,
 				name: entry.productName,
 				quantityG: entry.quantityG,
-				kcal: Math.round((entry.energyKcal_100g * entry.quantityG) / 100),
+				kcal: Math.round(forQuantity(entry.energyKcal_100g, entry.quantityG)),
 				eatenAt: entry.eatenAt,
 				meal: entry.meal?.name ?? null
 			})),

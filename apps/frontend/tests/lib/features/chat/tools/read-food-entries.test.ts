@@ -1,40 +1,57 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
+import type { DbClient } from '#lib/clients/idb-client.js';
+import { readFoodEntries } from '#lib/features/chat/tools/read-food-entries.js';
+import { foodEntry, freshDb } from '#tests/lib/support/local-db.js';
 
-const entries = vi.hoisted(() => ({ rows: [] as unknown[] }));
-vi.mock('#lib/features/food-diary/food-entry/queries/get-by-range.js', () => ({
-	getFoodEntriesByRange: async () => entries.rows
-}));
+const userId = 'u1';
+let db: DbClient;
+let n = 0;
 
-import { readFoodEntries } from '../../../src/routes/(app)/(protected)/chat/components/tools/read-food-entries';
-
-/** An entry eaten at noon, local time, on day `day` of October 2026. */
-const entry = (day: number, overrides: object = {}) => ({
-	id: `entry-${day}`,
-	productName: 'Greek yogurt',
-	quantityG: 150,
-	eatenAt: new Date(2026, 9, day, 12),
-	energyKcal_100g: 65,
-	carbohydratesG_100g: 4,
-	fatG_100g: 0.4,
-	proteinsG_100g: 10,
-	meal: { name: 'Breakfast' },
-	...overrides
-});
+/** Logs an entry eaten at noon, local time, on day `day` of October 2026, in Breakfast. */
+const log = (day: number, overrides: object = {}) =>
+	db.orm.foodEntry.create(
+		foodEntry(userId, {
+			id: `entry-${n++}`,
+			productName: 'Greek yogurt',
+			quantityG: 150,
+			eatenAt: new Date(2026, 9, day, 12),
+			energyKcal_100g: 65,
+			carbohydratesG_100g: 4,
+			fatG_100g: 0.4,
+			proteinsG_100g: 10,
+			mealId: 'breakfast',
+			...overrides
+		})
+	);
 
 describe('readFoodEntries', () => {
-	beforeEach(() => {
-		entries.rows = [];
+	beforeEach(async () => {
+		n = 0;
+		db = await freshDb(userId);
+		await db.orm.meal.create({
+			id: 'breakfast',
+			name: 'Breakfast',
+			userId,
+			sortOrder: 0,
+			active: true
+		});
 	});
 
 	it('scales the nutrients to the amount eaten and totals each day', async () => {
-		entries.rows = [entry(30), entry(30, { productName: 'Oats', quantityG: 60, meal: null })];
+		await log(30);
+		await log(30, {
+			productName: 'Oats',
+			quantityG: 60,
+			mealId: null,
+			eatenAt: new Date(2026, 9, 30, 13)
+		});
 
 		const { days } = await readFoodEntries('u1', { from: '2026-10-30' });
 
 		expect(days).toHaveLength(1);
 		expect(days[0].entries[0]).toEqual({
 			// The id lets the model delete it; the time is local, like the day.
-			id: 'entry-30',
+			id: 'entry-0',
 			time: '12:00',
 			name: 'Greek yogurt',
 			quantityG: 150,
@@ -49,7 +66,7 @@ describe('readFoodEntries', () => {
 	});
 
 	it('leaves the other nutrients out unless the full detail is asked for', async () => {
-		entries.rows = [entry(30, { ironMg_100g: 2 })];
+		await log(30, { ironMg_100g: 2 });
 
 		const { days } = await readFoodEntries('u1', { from: '2026-10-30' });
 
@@ -58,10 +75,8 @@ describe('readFoodEntries', () => {
 	});
 
 	it('adds the recorded nutrients, scaled and totalled, for the full detail', async () => {
-		entries.rows = [
-			entry(30, { ironMg_100g: 2, vitaminCMg_100g: null, fiberG_100g: 0 }),
-			entry(30, { quantityG: 50, ironMg_100g: 4 })
-		];
+		await log(30, { ironMg_100g: 2, vitaminCMg_100g: null, fiberG_100g: 0 });
+		await log(30, { quantityG: 50, ironMg_100g: 4, eatenAt: new Date(2026, 9, 30, 13) });
 
 		const { days } = await readFoodEntries('u1', { from: '2026-10-30', detail: 'full' });
 
@@ -71,7 +86,8 @@ describe('readFoodEntries', () => {
 	});
 
 	it('lists every day in the range, and a day with nothing logged is empty', async () => {
-		entries.rows = [entry(29), entry(31)];
+		await log(29);
+		await log(31);
 
 		const { days } = await readFoodEntries('u1', { from: '2026-10-29', to: '2026-10-31' });
 

@@ -1,31 +1,40 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
+import type { DbClient } from '#lib/clients/idb-client.js';
+import { findEntriesToDelete, summarize } from '#lib/features/chat/tools/delete-food-entries.js';
+import { parseLocalDateTime } from '#lib/features/chat/tools/local-time.js';
+import { foodEntry, freshDb } from '#tests/lib/support/local-db.js';
 
-const store = vi.hoisted(() => ({ rows: [] as unknown[], asked: [] as string[][] }));
-vi.mock('#lib/features/food-diary/food-entry/queries/get-by-ids.js', () => ({
-	getFoodEntriesByIds: async (_depends: unknown, { ids }: { ids: string[] }) => {
-		store.asked.push(ids);
-		return (store.rows as { id: string }[]).filter((row) => ids.includes(row.id));
-	}
-}));
+const userId = 'u1';
+let db: DbClient;
 
-import {
-	findEntriesToDelete,
-	summarize
-} from '../../../src/routes/(app)/(protected)/chat/components/tools/delete-food-entries';
-import { parseLocalDateTime } from '../../../src/routes/(app)/(protected)/chat/components/tools/local-time';
+/** Logs an entry at `hour`:30 on 11 November 2026; morning entries are in Breakfast. */
+const log = (id: string, hour: number) =>
+	db.orm.foodEntry.create(
+		foodEntry(userId, {
+			id,
+			productName: `Food ${id}`,
+			quantityG: 150,
+			energyKcal_100g: 200,
+			eatenAt: new Date(2026, 10, 11, hour, 30),
+			mealId: hour < 12 ? 'breakfast' : null
+		})
+	);
 
-const row = (id: string, hour: number) => ({
-	id,
-	productName: `Food ${id}`,
-	quantityG: 150,
-	energyKcal_100g: 200,
-	eatenAt: new Date(2026, 10, 11, hour, 30),
-	meal: hour < 12 ? { name: 'Breakfast' } : null
+beforeEach(async () => {
+	db = await freshDb(userId);
+	await db.orm.meal.create({
+		id: 'breakfast',
+		name: 'Breakfast',
+		userId,
+		sortOrder: 0,
+		active: true
+	});
 });
 
 describe('findEntriesToDelete', () => {
 	it('reads the entries from the device, oldest first, and lists ids that match nothing', async () => {
-		store.rows = [row('b', 20), row('a', 8)];
+		await log('b', 20);
+		await log('a', 8);
 		const { entries, notFound } = await findEntriesToDelete('u1', ['b', 'a', 'gone']);
 		expect(entries.map((e) => e.id)).toEqual(['a', 'b']);
 		expect(entries[0]).toMatchObject({ name: 'Food a', kcal: 300, meal: 'Breakfast' });
@@ -34,7 +43,7 @@ describe('findEntriesToDelete', () => {
 	});
 
 	it('summarizes a deleted entry by its local day and time', async () => {
-		store.rows = [row('a', 8)];
+		await log('a', 8);
 		const { entries } = await findEntriesToDelete('u1', ['a']);
 		expect(summarize(entries[0])).toEqual({
 			name: 'Food a',

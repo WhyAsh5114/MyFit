@@ -1,9 +1,11 @@
 import { parseDate } from '@internationalized/date';
 import type { MyUITools } from '@myfit/api';
+import { noDepends } from '#lib/data/dependencies.js';
 import { OPTIONAL_NUTRIENT_FIELDS } from '@myfit/shared/nutrition';
+import { forQuantity, macrosFor } from '#lib/domain/nutrition/portion.js';
 import { getFoodEntriesByRange } from '#lib/features/food-diary/food-entry/queries/get-by-range.js';
 import { localDay } from '#lib/features/food-diary/_common/day-bounds.js';
-import { localTime } from './local-time';
+import { localTime } from './local-time.js';
 
 type Input = MyUITools['readFoodEntries']['input'];
 type Output = MyUITools['readFoodEntries']['output'];
@@ -18,11 +20,12 @@ const roundFine = (value: number) => Math.round(value * 1000) / 1000;
 type Nutrients = Record<string, number>;
 
 /** The optional nutrients an entry has a value for, scaled to what was eaten and keyed without `_100g`. */
-function extraNutrients(entry: Record<string, unknown>, scale: number): Nutrients {
+function extraNutrients(entry: Record<string, unknown>, quantityG: number): Nutrients {
 	const result: Nutrients = {};
 	for (const { key } of OPTIONAL_NUTRIENT_FIELDS) {
 		const value = entry[key];
-		if (typeof value === 'number') result[key.replace(/_100g$/, '')] = roundFine(value * scale);
+		if (typeof value === 'number')
+			result[key.replace(/_100g$/, '')] = roundFine(forQuantity(value, quantityG));
 	}
 	return result;
 }
@@ -54,26 +57,25 @@ export async function readFoodEntries(
 	if (days < 1) throw new Error('The last day is before the first.');
 	if (days > MAX_DAYS) throw new Error(`Ask for at most ${MAX_DAYS} days at a time.`);
 
-	// A chat isn't a page's load, so nothing reruns this read.
-	const entries = await getFoodEntriesByRange(() => {}, { userId, from, to });
+	const entries = await getFoodEntriesByRange(noDepends, { userId, from, to });
 
 	const byDay = new Map<string, Output['days'][number]['entries']>();
 	for (let offset = 0; offset < days; offset++)
 		byDay.set(from.add({ days: offset }).toString(), []);
 
 	for (const entry of entries) {
-		const scale = entry.quantityG / 100;
+		const macros = macrosFor(entry, entry.quantityG);
 		byDay.get(localDay(entry.eatenAt))?.push({
 			id: entry.id,
 			time: localTime(entry.eatenAt),
 			name: entry.productName,
 			quantityG: round(entry.quantityG),
 			meal: entry.meal?.name ?? null,
-			kcal: round(entry.energyKcal_100g * scale),
-			carbsG: round(entry.carbohydratesG_100g * scale),
-			fatG: round(entry.fatG_100g * scale),
-			proteinG: round(entry.proteinsG_100g * scale),
-			...(detail === 'full' && { nutrients: extraNutrients(entry, scale) })
+			kcal: round(macros.kcal),
+			carbsG: round(macros.carbsG),
+			fatG: round(macros.fatG),
+			proteinG: round(macros.proteinG),
+			...(detail === 'full' && { nutrients: extraNutrients(entry, entry.quantityG) })
 		});
 	}
 

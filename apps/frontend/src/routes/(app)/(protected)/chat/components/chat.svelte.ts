@@ -5,12 +5,12 @@ import { createContext } from 'svelte';
 
 import { PUBLIC_API_URL } from '$app/env/public';
 import type { MyUIMessage, MyUITools } from '@myfit/api';
-import { apiClient } from '#lib/clients/api-client.js';
 import { useSaveChat } from '#lib/features/chat/chat/mutations/save.js';
 import { storedParts } from '#lib/features/chat/chat/model.js';
+import { requestChatTitle } from '#lib/features/chat/chat/request-title.js';
 import { onAccountChange } from '#lib/services/account/account-session.svelte.js';
-import { findEntriesToDelete } from './tools/delete-food-entries';
-import { readFoodEntries } from './tools/read-food-entries';
+import { findEntriesToDelete } from '#lib/features/chat/tools/delete-food-entries.js';
+import { readFoodEntries } from '#lib/features/chat/tools/read-food-entries.js';
 
 /** The tools the app answers; the server answers the rest. */
 type AppTool =
@@ -157,9 +157,7 @@ export class ChatSession {
 			.trim();
 		if (!text) return;
 		try {
-			const response = await apiClient.api.chat.title.$post({ json: { text } });
-			if (!response.ok) return;
-			const { title } = await response.json();
+			const title = await requestChatTitle(text);
 			if (title) this.persist(title);
 		} catch (error) {
 			console.warn('Could not name the chat', error);

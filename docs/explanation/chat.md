@@ -4,7 +4,7 @@ The chat logs and edits food in conversation. It follows one rule: **a tool runs
 
 ## Tools over user data run in the app
 
-The user's diary lives on the device (see [Local-first data](local-first.md)), so the server declares these tools without an `execute`, and the app answers them in `chat/components/chat.svelte.ts`:
+The user's diary lives on the device (see [Local-first data](local-first.md)), so the server declares these tools without an `execute`, and the app answers them: `chat/components/chat.svelte.ts` routes each call, and the handlers that read the diary are in `lib/features/chat/tools/`:
 
 - `readFoodEntries` reads the local diary from `onToolCall`. The server sees only the result.
 - `createFoodEntry` waits for the user to confirm its card and pick the meal. The entry is logged at `eatenAt` (the model's local time) or now.

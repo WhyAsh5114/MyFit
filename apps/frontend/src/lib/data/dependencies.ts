@@ -16,6 +16,12 @@ const SCHEME = 'app:';
 export const dependencyId = (key: Key) =>
 	`${SCHEME}${key.map((s) => encodeURIComponent(s)).join('/')}` as const;
 
+/**
+ * The `depends` for a reader called outside a `load`, such as by a chat tool. Nothing reruns that
+ * read when its data changes, so use it only for a one-off read.
+ */
+export const noDepends: Depends = () => {};
+
 /** Registers the keys a `load` read, so invalidating any of their prefixes reruns it. */
 export function dependOn(depends: Depends, ...keys: Key[]) {
 	depends(...keys.map(dependencyId));

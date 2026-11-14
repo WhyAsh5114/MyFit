@@ -10,8 +10,8 @@
 	import { CheckIcon, SearchXIcon, Trash2Icon, XIcon } from '@lucide/svelte';
 	import type { MyUIMessage } from '@myfit/api';
 	import { getChatPageContext } from '../chat.svelte';
-	import { findEntriesToDelete, summarize } from '../tools/delete-food-entries';
-	import { parseLocalDateTime, whenLabel } from '../tools/local-time';
+	import { findEntriesToDelete, summarize } from '#lib/features/chat/tools/delete-food-entries.js';
+	import { parseLocalDateTime, whenLabel } from '#lib/features/chat/tools/local-time.js';
 
 	type DeleteFoodEntriesPart = Extract<
 		MyUIMessage['parts'][number],

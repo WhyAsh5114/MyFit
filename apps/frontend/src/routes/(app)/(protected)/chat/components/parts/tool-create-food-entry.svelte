@@ -13,7 +13,7 @@
 	import type { MyUIMessage } from '@myfit/api';
 	import FoodCard from '#lib/components/food/food-card.svelte';
 	import { getChatPageContext } from '../chat.svelte';
-	import { parseLocalDateTime, whenLabel } from '../tools/local-time';
+	import { parseLocalDateTime, whenLabel } from '#lib/features/chat/tools/local-time.js';
 
 	type CreateFoodEntryPart = Extract<
 		MyUIMessage['parts'][number],

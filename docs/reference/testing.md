@@ -12,14 +12,14 @@ A test exists to catch a behavior change someone would care about, and to keep p
 
 Pick the smallest layer that can see the behavior. Most of the suite is the first three rows.
 
-| Code                                                                         | Test                                                                     | Tool                            | Example                                              |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------- | ---------------------------------------------------- |
-| Pure logic in `lib/domain/`, key factories, parsers                          | Unit, exhaustive: every branch and boundary                              | Vitest                          | `tests/lib/domain/nutrition/status.test.ts`          |
-| Readers, mutations, transactions, chat tool handlers                         | Against a real IDB client on `fake-indexeddb`, a fresh database per test | Vitest + `fake-indexeddb/auto`  | `tests/lib/features/food-diary/save-meals.test.ts`   |
-| Services with timing or ordering (tab lock, sync invalidation, dependencies) | Through their public functions, with real collaborators                  | Vitest                          | `tests/lib/services/account/account-session.test.ts` |
-| API routes and server logic                                                  | Through the Hono app against a migrated Postgres test database           | Vitest + `TEST_DATABASE_URL`    | `apps/api/tests/features/sync/routes.test.ts`        |
-| A user flow across pages, the account, sync or offline                       | End to end against the built app, the real API and Postgres              | Playwright                      | `tests/e2e/diary-data.spec.ts`                       |
-| How a screen looks, and 44px tap targets                                     | Screenshot gallery, reviewed by a person; tap targets are asserted       | Playwright (`pnpm screenshots`) | `tests/screenshots/screens.spec.ts`                  |
+| Code                                                                         | Test                                                                     | Tool                            | Example                                                   |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------- | --------------------------------------------------------- |
+| Pure logic in `lib/domain/`, key factories, parsers                          | Unit, exhaustive: every branch and boundary                              | Vitest                          | `tests/lib/domain/nutrition/status.test.ts`               |
+| Readers, mutations, transactions, chat tool handlers                         | Against a real IDB client on `fake-indexeddb`, a fresh database per test | Vitest + `fake-indexeddb/auto`  | `tests/lib/features/chat/tools/read-food-entries.test.ts` |
+| Services with timing or ordering (tab lock, sync invalidation, dependencies) | Through their public functions, with real collaborators                  | Vitest                          | `tests/lib/services/account/account-session.test.ts`      |
+| API routes and server logic                                                  | Through the Hono app against a migrated Postgres test database           | Vitest + `TEST_DATABASE_URL`    | `apps/api/tests/features/sync/routes.test.ts`             |
+| A user flow across pages, the account, sync or offline                       | End to end against the built app, the real API and Postgres              | Playwright                      | `tests/e2e/diary-data.spec.ts`                            |
+| How a screen looks, and 44px tap targets                                     | Screenshot gallery, reviewed by a person; tap targets are asserted       | Playwright (`pnpm screenshots`) | `tests/screenshots/screens.spec.ts`                       |
 
 Svelte components have no unit tests. If a component holds logic worth testing, move that logic into `lib/domain/` or the feature and test it there; the component is covered by e2e and screenshots.
 
@@ -45,7 +45,7 @@ Name the test after the behavior and its condition: `it('keeps the entry on its 
 Check the resulting data or output, not that a function was called with certain arguments. Interaction checks break when the implementation changes and pass when the result is wrong.
 
 **Prefer real implementations, then fakes, then mocks.**
-Use the real code where it is fast and deterministic. Use a fake where it isn't: `fake-indexeddb` for IndexedDB, the in-memory sync database stand-in, the mail stub. Mock only what you don't own and can't fake: the LLM (canned stream through `page.route`), Exa, the sign-in check when sign-in isn't under test. Never mock the module under test or our own data layer.
+Use the real code where it is fast and deterministic. Use a fake where it isn't: `fake-indexeddb` for IndexedDB, the in-memory sync database stand-in, the mail stub. Mock only what you don't own and can't fake: the LLM (canned stream through `page.route`), Exa, the sign-in check when sign-in isn't under test, and SvelteKit's runtime modules (`$app/navigation`, `$app/state`), which need a running app (`account-session.test.ts` mocks `invalidate`). Never mock the module under test or our own data layer: for code that calls `getDb()`, start each test with `freshDb(userId)` from `tests/lib/support/local-db.ts`, which gives the real client an empty fake-indexeddb database.
 
 **Make expected values independent.**
 Write the expected value as a literal from a worked example, the spec or `DESIGN.md`. An expectation computed the way the code computes it passes by construction.

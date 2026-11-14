@@ -1,9 +1,11 @@
 import type { MyUITools } from '@myfit/api';
+import { noDepends } from '#lib/data/dependencies.js';
+import { forQuantity } from '#lib/domain/nutrition/portion.js';
 import { OPTIONAL_NUTRIENT_FIELDS } from '@myfit/shared/nutrition';
 import type { FoodEntryChanges } from '#lib/features/food-diary/food-entry/mutations/update-many.js';
 import { getFoodEntriesByIds } from '#lib/features/food-diary/food-entry/queries/get-by-ids.js';
 import { localDay } from '#lib/features/food-diary/_common/day-bounds.js';
-import { localTime, parseLocalDateTime } from './local-time';
+import { localTime, parseLocalDateTime } from './local-time.js';
 
 type Edit = MyUITools['updateFoodEntries']['input']['edits'][number];
 type Output = MyUITools['updateFoodEntries']['output'];
@@ -31,7 +33,7 @@ export type PlannedUpdate = {
 	changes: FoodEntryChanges;
 };
 
-const kcal = (per100g: number, quantityG: number) => Math.round((per100g * quantityG) / 100);
+const kcal = (per100g: number, quantityG: number) => Math.round(forQuantity(per100g, quantityG));
 
 /**
  * The edits a `updateFoodEntries` call asks for, read against the entries on this device rather
@@ -43,8 +45,7 @@ export async function planUpdates(
 	edits: Edit[],
 	meals: { id: string; name: string }[]
 ) {
-	// A chat isn't a page's load, so nothing reruns this read.
-	const entries = await getFoodEntriesByIds(() => {}, { userId, ids: edits.map((e) => e.id) });
+	const entries = await getFoodEntriesByIds(noDepends, { userId, ids: edits.map((e) => e.id) });
 	const byId = new Map(entries.map((entry) => [entry.id, entry]));
 
 	const updates: PlannedUpdate[] = [];

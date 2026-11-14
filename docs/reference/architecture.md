@@ -52,6 +52,8 @@ Name files after the operation. One exported reader or hook per file.
 
 Foods and food entries store nutrients per 100 g. Scale them with `lib/domain/nutrition/portion.ts` (`forQuantity`, `macrosFor`, `totalMacros`) rather than writing the arithmetic again.
 
+A helper that belongs to one resource but isn't a reader or a mutation sits in the resource folder, named for what it does: `meals/save-meals.ts` (the upsert the mutation and account setup share), `chat/model.ts` (titles and stored parts), `chat/request-title.ts` (a network call). Code for a domain that isn't one resource gets its own folder beside the resources, like `chat/tools/` (the handlers for the chat's in-app tools).
+
 ### API (`apps/api/src`)
 
 | You are writing…                    | Put it in                                                                   |
