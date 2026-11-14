@@ -6,6 +6,12 @@ const MAIL = 'http://localhost:4010';
 const DATABASE_URL =
 	process.env.TEST_DATABASE_URL ?? 'postgresql://myfit:password@localhost:5432/myfit';
 
+// The diary day is the device's local day, so the suite runs away from UTC, where a day-boundary bug
+// would hide. The test runner and the servers share the zone, so a spec's `new Date()` agrees with
+// the browser's.
+const TIMEZONE = 'America/New_York';
+process.env.TZ = TIMEZONE;
+
 /**
  * Runs the built app against a real API and Postgres. The API's mail provider points at a stub
  * that records sign-in codes, so tests log in without sending email or changing production code.
@@ -18,7 +24,7 @@ export default defineConfig({
 	expect: { timeout: 15_000 },
 	retries: process.env.CI ? 1 : 0,
 	reporter: process.env.CI ? 'list' : 'html',
-	use: { baseURL: WEB, locale: 'en-US', trace: 'retain-on-failure' },
+	use: { baseURL: WEB, locale: 'en-US', timezoneId: TIMEZONE, trace: 'retain-on-failure' },
 	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 	webServer: [
 		{

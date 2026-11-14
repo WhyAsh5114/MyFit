@@ -57,7 +57,7 @@ No loops, conditions or string building in a test body. Repeat a little setup if
 A fresh database per test (unique `dbName`, or a unique Postgres schema or user that cleanup removes). Tests never depend on order or on each other.
 
 **Deterministic and fast.**
-No `sleep`. In Playwright, wait with web-first assertions (`await expect(locator).toBeVisible()`). Fix the clock or the date when the behavior depends on it, and use dates in the local day, not UTC (`toLocaleDateString('en-CA')`). Time-sensitive diary behavior should also be checked with a non-UTC `timezoneId`.
+No `sleep` (`waitForTimeout`). In Playwright, wait with web-first assertions (`await expect(locator).toBeVisible()`), or `expect.poll` for something the page doesn't show. Before a screenshot, call `settle(page)` from `tests/e2e/support/settle.ts`, which waits for fonts and animations to finish. To check that something did _not_ happen, first wait for whatever would cause it (a response, a navigation), then assert it's absent; when nothing observable marks the cause, a short bounded wait with a comment is the one allowed exception (the preload check in `account-flow.spec.ts`). Fix the clock or the date when the behavior depends on it, and use dates in the local day, not UTC (`toLocaleDateString('en-CA')`). The e2e suite runs in `America/New_York`, and the test runner shares that zone (`playwright.config.ts`), so a spec's `new Date()` gives the browser's day.
 
 **A failure explains itself.**
 The test name plus the assertion message should tell a reader what broke without opening the code.

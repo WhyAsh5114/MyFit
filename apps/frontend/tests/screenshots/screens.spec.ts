@@ -3,6 +3,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { API, EXT, FORMAT, MAIL, OUT_DIR, WEB } from './support/env';
 import { findSmallTargets } from './support/tap-targets';
+import { settle } from '../e2e/support/settle';
 
 /** One captured screen. The gallery groups by `group` and lists `note` under the title. */
 type Screen = { id: string; group: string; title: string; note: string };
@@ -300,11 +301,11 @@ test('capture every screen', async ({ page }, testInfo) => {
 		});
 		screens.push({ id, group, title, note });
 	};
-	const go = async (path: string, settle = 1300) => {
+	const go = async (path: string) => {
 		await page.goto(path);
-		await page.waitForTimeout(settle);
+		await settle(page);
 	};
-	const today = new Date().toISOString().slice(0, 10);
+	const today = new Date().toLocaleDateString('en-CA');
 	const diary = `/food-diary/${today}`;
 	const send = async (message: string) => {
 		await page.getByPlaceholder('Tell me what you ate...').fill(message);
@@ -319,29 +320,31 @@ test('capture every screen', async ({ page }, testInfo) => {
 			.waitFor();
 	};
 	const logFromChat = async (message: string) => {
-		await go('/chat', 600);
+		await go('/chat');
 		await send(message);
 		await page.getByRole('button', { name: 'Log', exact: true }).click();
-		await page.waitForTimeout(700);
+		// The card drops its buttons once the entry is saved and answered. Log alone turns into a
+		// spinner while saving, so wait on Cancel, which stays until then.
+		await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toHaveCount(0);
 	};
 
 	// ---- signed out
-	await go('/', 1500);
+	await go('/');
 	await shot('landing', 'Account', 'Landing page', '/');
 	await go('/login');
 	await shot('login', 'Account', 'Log in', '/login');
 	const email = `shots-${crypto.randomUUID()}@example.test`;
 	await requestCode(page, email);
-	await page.waitForTimeout(500);
+	await settle(page);
 	await shot('login-otp', 'Account', 'Verification code', 'After entering an email');
 	await enterCode(page, email);
 	await page.getByLabel('Name').waitFor();
-	await page.waitForTimeout(500);
+	await settle(page);
 	await shot('onboarding', 'Account', 'Set up your account', '/onboarding/setup-account');
 	await page.getByLabel('Name').fill('Alex Morgan');
 	await page.getByRole('button', { name: 'Submit' }).click();
 	await page.waitForURL(/dashboard/);
-	await page.waitForTimeout(1200);
+	await settle(page);
 	await shot('dashboard', 'Home', 'Dashboard', '/dashboard');
 
 	// ---- diary and goals, before and after setup
@@ -361,11 +364,11 @@ test('capture every screen', async ({ page }, testInfo) => {
 	await page.getByLabel('Age').fill('30');
 	await page.getByLabel('Body fat').fill('18');
 	await page.getByText('Male', { exact: true }).click();
-	await page.waitForTimeout(400);
+	await settle(page);
 	await shot('metrics-filled', 'Goals', 'Metrics, filled', 'BMR is calculated as you type');
 	await page.getByRole('button', { name: 'Save' }).click();
 	await page.waitForURL(/goals$/);
-	await page.waitForTimeout(250);
+	await settle(page);
 	await shot(
 		'goals-saved',
 		'Goals',
@@ -391,18 +394,20 @@ test('capture every screen', async ({ page }, testInfo) => {
 	await go(`${diary}/add-food`);
 	await shot('add-food', 'Add food', 'Add food', '/food-diary/:date/add-food');
 	await page.getByPlaceholder('apple pie').fill('yogurt');
-	await page.waitForTimeout(2200);
+	await page.getByText('Greek Yogurt, Plain').first().waitFor();
+	await settle(page);
 	await shot('add-food-results', 'Add food', 'Search results', 'Typing "yogurt"');
 	await page.getByText('Greek Yogurt, Plain').first().click();
-	await page.waitForTimeout(1500);
+	await page.getByRole('button', { name: 'Edit nutrition' }).first().waitFor();
+	await settle(page);
 	await shot('add-food-detail', 'Add food', 'Food detail', 'Before logging');
 	await page.getByRole('button', { name: 'Edit nutrition' }).first().click();
-	await page.waitForTimeout(900);
+	await settle(page);
 	await shot('nutrition-editor', 'Add food', 'Edit nutrition', 'A sheet over the food detail');
 	await page.keyboard.press('Escape');
 	await go(`${diary}/add-food/manual`);
 	await shot('add-manual', 'Add food', 'Add manually', '/food-diary/:date/add-food/manual');
-	await go(`${diary}/add-food/scan`, 1800);
+	await go(`${diary}/add-food/scan`);
 	await shot('add-scan', 'Add food', 'Scan a barcode', 'The test browser has no camera');
 	await go(`${diary}/add-activity`);
 	await shot('add-activity', 'Add food', 'Add activity', 'Not built yet');
@@ -414,7 +419,8 @@ test('capture every screen', async ({ page }, testInfo) => {
 	await go(`${diary}/add-food`);
 	await shot('add-food-history', 'Add food', 'Your foods', 'Ranked by how often and how recently');
 	await page.getByPlaceholder('apple pie').fill('yogurt');
-	await page.waitForTimeout(2200);
+	await page.getByText('Greek Yogurt, Plain').first().waitFor();
+	await settle(page);
 	await shot(
 		'add-food-history-search',
 		'Add food',
@@ -422,13 +428,14 @@ test('capture every screen', async ({ page }, testInfo) => {
 		'Typing "yogurt"'
 	);
 	await page.getByRole('link', { name: /^Greek yogurt/ }).click();
-	await page.waitForTimeout(1300);
+	await page.waitForURL(/add-food\/history\//);
+	await settle(page);
 	await shot('add-food-history-detail', 'Add food', 'A food from your history', 'Its last amount');
 	await go('/chat');
 	await shot('chat-empty', 'Chat', 'Chat, empty', '/chat');
 	await send('What did I eat today?');
 	await page.getByText('Today you have had').waitFor();
-	await page.waitForTimeout(600);
+	await settle(page);
 	await shot(
 		'chat-read',
 		'Chat',
@@ -438,24 +445,24 @@ test('capture every screen', async ({ page }, testInfo) => {
 	await newChat();
 	await send('Quick question: how much protein per meal?');
 	await page.getByText('Your protein target').waitFor();
-	await page.waitForTimeout(600);
+	await settle(page);
 	await shot('chat-reasoning', 'Chat', 'Reply with reasoning', 'Reasoning stays folded');
 	await page.getByRole('button', { name: /Thought/ }).click();
-	await page.waitForTimeout(500);
+	await settle(page);
 	await shot('chat-reasoning-open', 'Chat', 'Reasoning expanded');
 	await newChat();
 	await send('I had a chicken sandwich');
 	await page.getByText('How was the chicken cooked?').waitFor();
-	await page.waitForTimeout(500);
+	await settle(page);
 	await shot('chat-question', 'Chat', 'A clarifying question', 'Tapping a choice does not send it');
 	await page.getByRole('radio', { name: 'Grilled' }).click();
 	await page.getByRole('button', { name: 'Send' }).first().click();
 	await page.getByRole('button', { name: 'Log', exact: true }).waitFor();
-	await page.waitForTimeout(700);
+	await settle(page);
 	await shot('chat-card', 'Chat', 'Confirm a food entry', 'Log or cancel');
 	await page.getByRole('button', { name: 'Log', exact: true }).click();
 	await page.getByText('Anything else?').waitFor();
-	await page.waitForTimeout(600);
+	await settle(page);
 	await shot('chat-done', 'Chat', 'Entry logged', 'The card shows Logged');
 	await page.unroute(`${API}/api/chat`);
 	await page.route(`${API}/api/chat`, (route) =>
@@ -468,7 +475,7 @@ test('capture every screen', async ({ page }, testInfo) => {
 	await newChat();
 	await send('How many calories are in a Big Mac?');
 	await page.getByText('A Big Mac is about').waitFor();
-	await page.waitForTimeout(600);
+	await settle(page);
 	await shot(
 		'chat-search',
 		'Chat',
@@ -476,25 +483,25 @@ test('capture every screen', async ({ page }, testInfo) => {
 		'Searched the food database, then the web'
 	);
 	await page.getByRole('button', { name: /Searched the web/ }).click();
-	await page.waitForTimeout(500);
+	await settle(page);
 	await shot('chat-web-sources', 'Chat', 'Web sources', 'Each source is one tap away');
 	await newChat();
 	await send('Change my yogurt to 200 g');
 	await page.getByRole('button', { name: /^Update 1/ }).waitFor();
-	await page.waitForTimeout(600);
+	await settle(page);
 	await shot('chat-update', 'Chat', 'Confirm an edit', 'Old and new values, one confirm');
 	await page.getByRole('button', { name: /^Update 1/ }).click();
 	await page.getByText('Done, I changed').waitFor();
-	await page.waitForTimeout(600);
+	await settle(page);
 	await shot('chat-update-done', 'Chat', 'Edit applied', 'The card lists what changed');
 	await newChat();
 	await send('Delete my oats entry');
 	await page.getByRole('button', { name: /^Delete 1/ }).waitFor();
-	await page.waitForTimeout(600);
+	await settle(page);
 	await shot('chat-delete', 'Chat', 'Confirm a delete', 'The entries to remove, one confirm');
 	await page.getByRole('button', { name: /^Delete 1/ }).click();
 	await page.getByText('Done, I removed').waitFor();
-	await page.waitForTimeout(600);
+	await settle(page);
 	await shot('chat-delete-done', 'Chat', 'Entries deleted', 'The card lists what was removed');
 	await page.unroute(`${API}/api/chat`);
 	await page.route(`${API}/api/chat`, (route) =>
@@ -505,11 +512,11 @@ test('capture every screen', async ({ page }, testInfo) => {
 	await newChat();
 	await send('Hello');
 	await page.getByText("couldn't answer").waitFor();
-	await page.waitForTimeout(500);
+	await settle(page);
 	await shot('chat-error', 'Chat', 'When the reply fails', 'Try again re-sends');
 	await page.unroute(`${API}/api/chat`);
 	await page.getByRole('button', { name: 'Chat history' }).click();
-	await page.waitForTimeout(600);
+	await settle(page);
 	await shot('chat-history', 'Chat', 'Chat history', 'Search and switch chats from the title');
 	await page.keyboard.press('Escape');
 
@@ -522,25 +529,26 @@ test('capture every screen', async ({ page }, testInfo) => {
 		'Today is in progress, so under target stays neutral'
 	);
 	await page.getByRole('button', { name: 'Data sync' }).click();
-	await page.waitForTimeout(1300);
+	await settle(page);
 	await shot('sync-drawer', 'Food diary', 'Sync drawer', 'Tap the cloud in the header');
 	await page.keyboard.press('Escape');
-	await page.waitForTimeout(700);
+	await settle(page);
 	await page.getByText('Greek yogurt').click();
-	await page.waitForTimeout(1300);
+	await page.waitForURL(/edit-food\//);
+	await settle(page);
 	await shot('edit-food', 'Food diary', 'Edit entry', '/food-diary/:date/edit-food/:id');
 	await page.getByRole('button', { name: 'Delete entry' }).click();
 	await page.waitForURL(new RegExp(`${today}$`));
-	await page.waitForTimeout(500);
+	await settle(page);
 	await shot('delete-undo', 'Food diary', 'After deleting an entry', 'Undo restores it');
 	await page.getByRole('button', { name: 'Undo' }).click();
-	await page.waitForTimeout(700);
+	await settle(page);
 	await shot('undo-highlight', 'Food diary', 'After Undo', 'The restored entry highlights briefly');
 	await page.getByRole('button', { name: 'Toggle Sidebar' }).click();
-	await page.waitForTimeout(900);
+	await settle(page);
 	await shot('sidebar', 'Home', 'Navigation menu', 'Opened from the header');
 	await page.keyboard.press('Escape');
-	await page.waitForTimeout(500);
+	await settle(page);
 
 	// ---- over the goal, then a finished day
 	await mockChat(page);

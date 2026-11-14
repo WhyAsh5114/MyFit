@@ -8,7 +8,7 @@ test('every signed-in page opens without an error', async ({ page }) => {
 	page.on('pageerror', (error) => errors.push(error.message));
 
 	await signUp(page);
-	const date = new Date().toISOString().slice(0, 10);
+	const date = new Date().toLocaleDateString('en-CA');
 	const routes = [
 		'/dashboard',
 		'/chat',

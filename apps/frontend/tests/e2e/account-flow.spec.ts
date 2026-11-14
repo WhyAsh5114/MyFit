@@ -9,6 +9,7 @@ import {
 	unblockApi,
 	waitForNameSynced
 } from './support/auth';
+import { settle } from './support/settle';
 
 test('a background session refetch keeps the page and what was typed on it', async ({ page }) => {
 	let sessionRequests = 0;
@@ -20,12 +21,21 @@ test('a background session refetch keeps the page and what was typed on it', asy
 		() => ((window as unknown as { main: unknown }).main = document.querySelector('main'))
 	);
 
-	// The session store refetches when the tab becomes visible again, at most every five seconds.
-	await page.waitForTimeout(6000);
+	// The session store refetches when the tab becomes visible again, at most every five seconds,
+	// so keep showing the tab until it does.
 	const before = sessionRequests;
-	await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
-	await expect.poll(() => sessionRequests).toBeGreaterThan(before);
-	await page.waitForTimeout(1500);
+	const refetched = page.waitForResponse((response) => response.url().includes('/get-session'));
+	await expect
+		.poll(
+			async () => {
+				await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+				return sessionRequests;
+			},
+			{ timeout: 15_000, intervals: [500] }
+		)
+		.toBeGreaterThan(before);
+	await refetched;
+	await settle(page);
 
 	const sameMain = await page.evaluate(
 		() => (window as unknown as { main: unknown }).main === document.querySelector('main')
@@ -61,11 +71,17 @@ test('another account signing in while the app is open asks first and hides the 
 	expect(await post('/email-otp/send-verification-otp', { email, type: 'sign-in' })).toBe(true);
 	expect(await post('/sign-in/email-otp', { email, otp: await readCode(email) })).toBe(true);
 
-	await page.waitForTimeout(6000);
-	await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
-	await expect(
-		page.getByRole('dialog', { name: "This isn't the account on this device" })
-	).toBeVisible({ timeout: 20_000 });
+	// The session store refetches at most every five seconds, so keep showing the tab until it does.
+	const otherAccount = page.getByRole('dialog', { name: "This isn't the account on this device" });
+	await expect
+		.poll(
+			async () => {
+				await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+				return otherAccount.isVisible();
+			},
+			{ timeout: 20_000, intervals: [1000] }
+		)
+		.toBe(true);
 	await expect(page.locator('main')).toHaveCount(0);
 });
 
@@ -83,6 +99,7 @@ test('a signed-out visit to a protected page comes back to it after login', asyn
 	// Hovering a link preloads its page, which must not announce a redirect that never happens.
 	await page.goto('/privacy-policy');
 	await page.getByRole('link', { name: 'Food diary' }).first().hover();
+	// Nothing on the page shows that the preload finished, so this absence check keeps a bounded wait.
 	await page.waitForTimeout(800);
 	await expect(page.getByText('Log in to continue')).toHaveCount(0);
 
