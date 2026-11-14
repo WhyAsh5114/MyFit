@@ -12,7 +12,7 @@ import { test } from 'vitest';
 import {
 	CREATE_STAGING_TABLE_SQL,
 	INSERT_INTO_NUTRITION_DATA_SQL
-} from '../../../../prisma/seed/open-food-facts/utils/staging-schema.ts';
+} from '#prisma/seed/open-food-facts/utils/staging-schema.js';
 
 const execute = promisify(execFile);
 const databaseUrl = process.env.TEST_DATABASE_URL;

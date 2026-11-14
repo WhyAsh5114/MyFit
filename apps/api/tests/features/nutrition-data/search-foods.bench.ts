@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { performance } from 'node:perf_hooks';
 import { createSearchFixture } from './search-foods.fixture.ts';
-import { searchFoods } from '../../../src/features/nutrition-data/search-foods.ts';
+import { searchFoods } from '#src/features/nutrition-data/search-foods.js';
 
 const fixture = await createSearchFixture();
 try {

@@ -13,7 +13,7 @@ vi.mock('../../../lib/storage.js', () => ({
 	})
 }));
 
-const { resolveChatImages } = await import('../../../src/features/chat/images.ts');
+const { resolveChatImages } = await import('#src/features/chat/images.js');
 
 const ids = Array.from({ length: 6 }, (_, i) => `00000000-0000-4000-8000-00000000000${i}`);
 const photo = (id: string) => ({ type: 'file', mediaType: 'image/jpeg', url: `chat-image:${id}` });

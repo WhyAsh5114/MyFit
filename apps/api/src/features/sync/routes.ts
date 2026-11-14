@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { createSqlSync } from '@prisma-idb/sync-server-sql';
 import { clientContract, serverContract } from '@myfit/shared/server';
-import { authMiddleware, requireSessionUserId } from '../../shared/middleware/auth.js';
-import { getDb } from '../../../lib/db.js';
+import { authMiddleware, requireSessionUserId } from '#src/shared/middleware/auth.js';
+import { getDb } from '#lib/db.js';
 import { writePolicies } from './write-policies.ts';
 
 // Generous headroom over the client's push batch size (50); just a bound so a

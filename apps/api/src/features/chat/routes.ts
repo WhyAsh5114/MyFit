@@ -7,14 +7,14 @@ import {
 	isStepCount
 } from 'ai';
 import z from 'zod';
-import { env } from '../../../lib/env.js';
+import { env } from '#lib/env.js';
 import { model } from './provider';
 import { tools } from './tools';
 import { systemPrompt } from './system-prompt';
 import { resolveMessages, type MyUIMessage } from './helpers';
 import { chatImageRoutes, resolveChatImages } from './images';
 import { chatTitleRoutes } from './title';
-import { authMiddleware, getUserId } from '../../shared/middleware/auth.js';
+import { authMiddleware, getUserId } from '#src/shared/middleware/auth.js';
 
 /**
  * The server answers searchFoods and webSearch itself, so one request can take a few steps. A

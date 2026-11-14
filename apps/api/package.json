@@ -41,5 +41,10 @@
 		"pg-copy-streams": "^7.0.0",
 		"typescript": "^6.0.3",
 		"vitest": "^5.0.5"
+	},
+	"imports": {
+		"#lib/*.js": "./lib/*.ts",
+		"#src/*.js": "./src/*.ts",
+		"#prisma/*.js": "./prisma/*.ts"
 	}
 }

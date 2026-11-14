@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { test } from 'vitest';
-import { prepareDownload } from '../../../../prisma/seed/open-food-facts/utils/download.ts';
+import { prepareDownload } from '#prisma/seed/open-food-facts/utils/download.js';
 
 test('cache replacement requires a complete gzip and leaves the previous file on failure', async () => {
 	const directory = await mkdtemp(path.join(tmpdir(), 'nutrition-download-'));

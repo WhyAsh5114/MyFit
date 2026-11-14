@@ -9,7 +9,7 @@ import {
 	writeFileAtomic,
 	writeManifest,
 	type Manifest
-} from '../../../src/features/ota/manifest.js';
+} from '#src/features/ota/manifest.js';
 
 let dir: string;
 

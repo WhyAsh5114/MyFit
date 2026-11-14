@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { afterAll, beforeAll, test } from 'vitest';
-import { searchFoods } from '../../../src/features/nutrition-data/search-foods.ts';
+import { searchFoods } from '#src/features/nutrition-data/search-foods.js';
 import { createSearchFixture } from './search-foods.fixture.ts';
-import { nutritionSearchQuery } from '../../../src/features/nutrition-data/search-query.ts';
+import { nutritionSearchQuery } from '#src/features/nutrition-data/search-query.js';
 
 // Small synthetic counterparts to the labelled food-search intents and distractors.
 // Keep popular ingredient-based products: they exposed the original ranking failures.

@@ -1,4 +1,4 @@
-import { env } from '../../../lib/env.js';
+import { env } from '#lib/env.js';
 
 const EXA_SEARCH_URL = 'https://api.exa.ai/search';
 const MAX_RESULTS = 5;

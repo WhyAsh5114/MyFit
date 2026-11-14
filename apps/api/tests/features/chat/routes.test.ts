@@ -85,9 +85,9 @@ beforeAll(async () => {
 afterAll(() => new Promise((resolve) => provider.close(resolve)));
 
 test('the chat route streams a tool call, then continues with the answer', async () => {
-	const { chatRoutes } = await import('../../../src/features/chat/routes.ts');
-	const { systemPrompt } = await import('../../../src/features/chat/system-prompt.ts');
-	const { tools } = await import('../../../src/features/chat/tools.ts');
+	const { chatRoutes } = await import('#src/features/chat/routes.js');
+	const { systemPrompt } = await import('#src/features/chat/system-prompt.js');
+	const { tools } = await import('#src/features/chat/tools.js');
 
 	const ask = (messages: unknown[]) =>
 		chatRoutes.request('/', {
@@ -137,7 +137,7 @@ test('the chat route streams a tool call, then continues with the answer', async
 });
 
 test('a typed message answers a pending food entry and question instead of leaving them open', async () => {
-	const { chatRoutes } = await import('../../../src/features/chat/routes.ts');
+	const { chatRoutes } = await import('#src/features/chat/routes.js');
 	const before = requests.length;
 	const res = await chatRoutes.request('/', {
 		method: 'POST',
@@ -177,8 +177,8 @@ test('a typed message answers a pending food entry and question instead of leavi
 });
 
 test("the user's local time and meals reach the model, and a bad value is ignored", async () => {
-	const { chatRoutes } = await import('../../../src/features/chat/routes.ts');
-	const { systemPrompt } = await import('../../../src/features/chat/system-prompt.ts');
+	const { chatRoutes } = await import('#src/features/chat/routes.js');
+	const { systemPrompt } = await import('#src/features/chat/system-prompt.js');
 	const before = requests.length;
 	const res = await chatRoutes.request('/', {
 		method: 'POST',
@@ -217,7 +217,7 @@ test("the user's local time and meals reach the model, and a bad value is ignore
 });
 
 test('the title route names a chat from its first message, cleaned of quotes and a full stop', async () => {
-	const { chatTitleRoutes } = await import('../../../src/features/chat/title.ts');
+	const { chatTitleRoutes } = await import('#src/features/chat/title.js');
 	const ask = (body: unknown) =>
 		chatTitleRoutes.request('/', {
 			method: 'POST',
@@ -239,7 +239,7 @@ test('the title route names a chat from its first message, cleaned of quotes and
 });
 
 test('a pending delete the user moved on from reaches the model as cancelled', async () => {
-	const { resolveMessages } = await import('../../../src/features/chat/helpers.ts');
+	const { resolveMessages } = await import('#src/features/chat/helpers.js');
 	const [message] = resolveMessages([
 		{
 			id: 'a1',

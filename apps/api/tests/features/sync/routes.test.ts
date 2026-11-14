@@ -14,7 +14,7 @@ vi.mock('../../../src/shared/middleware/auth.js', () => ({
 	requireSessionUserId: async () => userId
 }));
 
-const { syncRoutes } = await import('../../../src/features/sync/routes.ts');
+const { syncRoutes } = await import('#src/features/sync/routes.js');
 const storageHash = clientContract.storage.storageHash;
 const admin = new Client({ connectionString: databaseUrl });
 

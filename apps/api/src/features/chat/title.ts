@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { generateText } from 'ai';
 import z from 'zod';
-import { authMiddleware } from '../../shared/middleware/auth.js';
+import { authMiddleware } from '#src/shared/middleware/auth.js';
 import { model } from './provider';
 
 const TITLE_LENGTH = 60;

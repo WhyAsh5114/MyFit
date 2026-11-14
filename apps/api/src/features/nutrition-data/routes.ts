@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import z from 'zod';
 import { NUTRITION_DATA_SEARCH_PAGINATION_LIMIT } from '@myfit/shared/constants';
-import { getDb, getSearchDb } from '../../../lib/db.js';
+import { getDb, getSearchDb } from '#lib/db.js';
 import { searchFoods } from './search-foods.js';
 import { nutritionSearchQuery } from './search-query.js';
 

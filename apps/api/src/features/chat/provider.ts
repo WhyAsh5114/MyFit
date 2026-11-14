@@ -1,5 +1,5 @@
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
-import { env } from '../../../lib/env.js';
+import { env } from '#lib/env.js';
 
 const provider = createOpenAICompatible({
 	name: 'digitalocean',

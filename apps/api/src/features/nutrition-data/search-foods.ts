@@ -1,4 +1,4 @@
-import type { getDb } from '../../../lib/db.js';
+import type { getDb } from '#lib/db.js';
 import { NUTRITION_DATA_SEARCH_MAX_OFFSET } from '@myfit/shared/constants';
 
 /** Connected database client used by the search query. */

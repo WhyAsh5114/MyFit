@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { readZipEntryNames } from '../../../src/features/ota/zip.js';
+import { readZipEntryNames } from '#src/features/ota/zip.js';
 import { buildZip } from './zip-fixture.js';
 
 test('lists entry names, including when the archive has a trailing comment', () => {

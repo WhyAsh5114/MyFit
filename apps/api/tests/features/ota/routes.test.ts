@@ -7,7 +7,7 @@ import { buildZip } from './zip-fixture.js';
 const UPLOAD_KEY = 'test-publisher-key';
 
 let dir: string;
-let otaRoutes: (typeof import('../../../src/features/ota/routes.js'))['otaRoutes'];
+let otaRoutes: (typeof import('#src/features/ota/routes.js'))['otaRoutes'];
 
 beforeAll(async () => {
 	dir = await mkdtemp(join(tmpdir(), 'ota-routes-'));
@@ -20,7 +20,7 @@ beforeAll(async () => {
 		OTA_BUNDLES_DIR: dir,
 		OTA_UPLOAD_KEY: UPLOAD_KEY
 	});
-	({ otaRoutes } = await import('../../../src/features/ota/routes.js'));
+	({ otaRoutes } = await import('#src/features/ota/routes.js'));
 });
 
 // Every case starts from an empty bundle store, so cases do not depend on each other's uploads.

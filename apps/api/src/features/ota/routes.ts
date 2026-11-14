@@ -7,7 +7,7 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { join } from 'node:path';
 import { zValidator } from '@hono/zod-validator';
 import z from 'zod';
-import { env } from '../../../lib/env.js';
+import { env } from '#lib/env.js';
 import {
 	CHANNEL_PATTERN,
 	findBundle,

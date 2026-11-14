@@ -6,9 +6,9 @@ import postgres from '@prisma/orm-postgres/runtime';
 import { createSqlSync } from '@prisma-idb/sync-server-sql';
 import type { ServerContract } from '@myfit/shared/server';
 import type { Contract as ClientContract } from '@myfit/shared/client';
-import serverJson from '../../../../../packages/shared/src/generated/postgres-contract.json' with { type: 'json' };
-import clientJson from '../../../../../packages/shared/src/generated/contract.json' with { type: 'json' };
-import { writePolicies } from '../../../src/features/sync/write-policies.ts';
+import serverJson from '@myfit/shared/generated/postgres-contract.json' with { type: 'json' };
+import clientJson from '@myfit/shared/generated/contract.json' with { type: 'json' };
+import { writePolicies } from '#src/features/sync/write-policies.js';
 
 const serverContract = serverJson as unknown as ServerContract;
 const clientContract = clientJson as unknown as ClientContract;
