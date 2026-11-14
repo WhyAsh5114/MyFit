@@ -172,7 +172,7 @@
 							<br />
 						{/if}
 						<p class={cn({ 'text-xs': $formData.preferredUnit === 'g' })}>
-							1 serving = {$formData.servingSize}
+							{m['foodDiary.oneServing']({ size: $formData.servingSize ?? '' })}
 						</p>
 					</Form.Description>
 				{/if}

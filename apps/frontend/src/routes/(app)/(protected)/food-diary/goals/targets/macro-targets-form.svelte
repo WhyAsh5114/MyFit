@@ -80,7 +80,7 @@
 								{$formData.weeklyCaloricChange / CALORIES_PER_KILOGRAM} kg
 								<br />
 								<span class="text-sm">
-									{$formData.weeklyCaloricChange} kcal (weekly balance)
+									{m['foodDiary.targets.weeklyBalance']({ kcal: $formData.weeklyCaloricChange })}
 								</span>
 							</p>
 						</div>

@@ -128,7 +128,7 @@
 				</Attachment.Content>
 				<Attachment.Actions>
 					<Attachment.Action
-						aria-label="Remove {image.name}"
+						aria-label={m['chat.removeImage']({ name: image.name })}
 						onclick={() => {
 							image = null;
 							attachCount++;
