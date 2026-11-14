@@ -3,7 +3,7 @@
 	import * as Chart from '#lib/components/ui/chart/index.js';
 	import { calorieStatus, goalDirection } from '#lib/domain/nutrition/status.js';
 	import { m } from '#lib/paraglide/messages.js';
-	import { formatNumber } from '#lib/my-utils.js';
+	import { formatNumber } from '#lib/format.js';
 	import { cn } from '#lib/utils.js';
 	import { ArrowDownIcon, ArrowUpIcon, CheckIcon, PencilIcon } from '@lucide/svelte';
 	import { BarChart } from 'layerchart';

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { round } from '#lib/my-utils.js';
+	import { round } from '#lib/format.js';
+	import { forQuantity, totalMacros } from '#lib/domain/nutrition/portion.js';
 	import { PlusIcon } from '@lucide/svelte';
 	import type { FoodEntryWithMeal, Row } from '@myfit/shared/client';
 	import * as Item from '#lib/components/ui/item/index.js';
@@ -42,31 +43,11 @@
 
 		return groups;
 	}
-
-	function getGroupSummary(group: { entries: FoodEntryWithMeal[] }) {
-		const calories = group.entries.reduce(
-			(sum, entry) => sum + entry.energyKcal_100g * (entry.quantityG / 100),
-			0
-		);
-		const protein = group.entries.reduce(
-			(sum, entry) => sum + entry.proteinsG_100g * (entry.quantityG / 100),
-			0
-		);
-		const carbs = group.entries.reduce(
-			(sum, entry) => sum + entry.carbohydratesG_100g * (entry.quantityG / 100),
-			0
-		);
-		const fat = group.entries.reduce(
-			(sum, entry) => sum + entry.fatG_100g * (entry.quantityG / 100),
-			0
-		);
-		return { calories, protein, carbs, fat };
-	}
 </script>
 
 <div class="flex flex-col gap-2">
 	{#each groupedFoodEntriesByMeal(foodEntries) as group (group.mealLabel)}
-		{@const groupSummary = getGroupSummary(group)}
+		{@const groupSummary = totalMacros(group.entries)}
 		<div class="flex flex-col rounded-lg border shadow-sm">
 			<Item.Root
 				class={cn('rounded-none rounded-t-lg bg-card py-3', {
@@ -89,18 +70,18 @@
 								<Item.Description class="flex w-full gap-1 text-xs text-muted-foreground">
 									<p>
 										<span class="text-chart-carbs">C</span>
-										{groupSummary.carbs.toFixed()}g
+										{groupSummary.carbsG.toFixed()}g
 									</p>
 									<p>
 										<span class="text-chart-fat">F</span>
-										{groupSummary.fat.toFixed()}g
+										{groupSummary.fatG.toFixed()}g
 									</p>
 									<p>
 										<span class="text-chart-protein">P</span>
-										{groupSummary.protein.toFixed()}g
+										{groupSummary.proteinG.toFixed()}g
 									</p>
 									<p class="ml-auto">
-										{round(groupSummary.calories, 0)} kcal
+										{round(groupSummary.kcal, 0)} kcal
 									</p>
 								</Item.Description>
 							{/if}
@@ -127,7 +108,7 @@
 									<Item.Title class="flex w-full">
 										{foodEntry.productName}
 										<p class="ml-auto font-normal whitespace-nowrap text-muted-foreground">
-											{round(foodEntry.energyKcal_100g * (foodEntry.quantityG / 100), 0)} kcal
+											{round(forQuantity(foodEntry.energyKcal_100g, foodEntry.quantityG), 0)} kcal
 										</p>
 									</Item.Title>
 									<Item.Description class="flex w-full text-xs">

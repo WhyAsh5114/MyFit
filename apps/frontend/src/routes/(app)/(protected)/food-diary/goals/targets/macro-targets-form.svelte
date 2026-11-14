@@ -10,7 +10,6 @@
 		macroTargetsSchema,
 		type MacroTargetsSchema
 	} from '#lib/features/food-diary/macro-targets/schema.js';
-	import { pascalToNormal } from '#lib/my-utils.js';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
 	import { defaults, superForm, type SuperForm } from 'sveltekit-superforms';
 	import { REQUIRED_NUTRIENTS } from '#lib/features/food-diary/_common/nutrients.js';
@@ -94,7 +93,9 @@
 						<Form.Label>{m['foodDiary.targets.macroTargets']()}</Form.Label>
 						<Select.Root type="single" bind:value={$formData.quantifier} {...props}>
 							<Select.Trigger class="w-full">
-								{pascalToNormal($formData.quantifier)}
+								{$formData.quantifier === 'Absolute'
+									? m['foodDiary.targets.absolute']()
+									: m['foodDiary.targets.percentage']()}
 							</Select.Trigger>
 							<Select.Content>
 								<Select.Item value="Percentage">{m['foodDiary.targets.percentage']()}</Select.Item>

@@ -96,6 +96,8 @@ const form = superForm(
 
 - **Every user-visible string has a key in `messages/en.json` and `messages/hi.json`.** That includes `aria-label`, `placeholder`, `alt` and toast text.
 - Keys are namespaced `feature.camelCase`, such as `foodDiary.addManually`.
+- **Format dates and numbers with `#lib/format.ts`** (`formatDate(date, 'long' | 'short' | 'time')`, `formatNumber`), which use the app's language. Never pass `'en-US'` or call `toLocaleString()` without a locale.
+- **Show an enum value through a message**, not by reformatting its name: `Absolute` is `m['foodDiary.targets.absolute']()`.
 - An unfinished screen may hardcode strings for now. Convert them when the screen ships.
 
 ## Capacitor and native

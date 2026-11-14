@@ -22,7 +22,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import FoodCard from '#lib/components/food/food-card.svelte';
 	import type { Snippet } from 'svelte';
-	import { round } from '#lib/my-utils.js';
+	import { round } from '#lib/format.js';
 	import { cn } from '#lib/utils.js';
 	import type { Row } from '@myfit/shared/client';
 

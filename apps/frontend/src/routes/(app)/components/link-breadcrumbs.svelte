@@ -2,7 +2,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { page } from '$app/state';
 	import * as Breadcrumb from '#lib/components/ui/breadcrumb/index.js';
-	import { shortDateFormatter } from '#lib/my-utils.js';
+	import { formatDate } from '#lib/format.js';
 	import { getLocalTimeZone, parseDate } from '@internationalized/date';
 	import { Slash } from '@lucide/svelte';
 	import z from 'zod';
@@ -26,7 +26,7 @@
 					try {
 						const date = parseDate(part);
 						return {
-							label: shortDateFormatter.format(date.toDate(getLocalTimeZone())),
+							label: formatDate(date.toDate(getLocalTimeZone()), 'short'),
 							href: fullPath
 						};
 					} catch {

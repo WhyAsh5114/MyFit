@@ -5,7 +5,7 @@
 	import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 	import Button from '#lib/components/ui/button/button.svelte';
 	import { ChevronLeftIcon, ChevronRightIcon } from '@lucide/svelte';
-	import { dateFormatter } from '#lib/my-utils.js';
+	import { formatDate } from '#lib/format.js';
 	import type { Row } from '@myfit/shared/client';
 	import StackedCaloriesBar from './stacked-calories-bar.svelte';
 	import { calculateDailyNutritionStats } from '#lib/domain/nutrition/stats.js';
@@ -61,7 +61,7 @@
 			<ChevronLeftIcon />
 		</Button>
 		<div class="grid grow place-items-center">
-			<Card.Title>{dateFormatter.format(selectedDay.toDate(timezone))}</Card.Title>
+			<Card.Title>{formatDate(selectedDay.toDate(timezone), 'long')}</Card.Title>
 			<Card.Description class="text-xs">{getRelativeDayLabel(selectedDay)}</Card.Description>
 		</div>
 		<Button size="icon-sm" variant="secondary" onclick={() => changeDay(1)}>
