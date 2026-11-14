@@ -1,8 +1,8 @@
 import { redirect } from '@sveltejs/kit';
 import { resolve } from '$app/paths';
 import z from 'zod';
-import { getChats } from '#lib/features/chat/chat/queries/get.js';
-import { getChatById } from '#lib/features/chat/chat/queries/get-by-id.js';
+import { getChats } from '#lib/features/assistant/chat/queries/get.js';
+import { getChatById } from '#lib/features/assistant/chat/queries/get-by-id.js';
 import { getMeals } from '#lib/features/food-diary/meals/queries/get.js';
 import type { PageLoad } from './$types';
 

@@ -154,7 +154,7 @@ export default defineConfig(
 		files: ['apps/frontend/src/lib/features/{food-diary,user,chat}/**/queries/*.ts'],
 		ignores: [
 			'apps/frontend/src/lib/features/food-diary/nutrition-data/**',
-			'apps/frontend/src/lib/features/chat/chat-image/**'
+			'apps/frontend/src/lib/features/assistant/chat-image/**'
 		],
 		rules: {
 			'no-restricted-syntax': [

@@ -19,7 +19,7 @@
 	import posthog from 'posthog-js';
 	import { toast } from 'svelte-sonner';
 	import { CHAT_IMAGE_URL_PREFIX } from '@myfit/shared/constants';
-	import { useUploadChatImage } from '#lib/features/chat/chat-image/mutations/upload.js';
+	import { useUploadChatImage } from '#lib/features/assistant/chat-image/mutations/upload.js';
 	import { getChatPageContext } from './chat.svelte';
 
 	/** A photo being attached. `id` is set once object storage has it; the message refers to it by id. */

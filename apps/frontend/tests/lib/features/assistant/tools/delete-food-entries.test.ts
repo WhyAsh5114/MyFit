@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { DbClient } from '#lib/clients/idb-client.js';
-import { findEntriesToDelete, summarize } from '#lib/features/chat/tools/delete-food-entries.js';
-import { parseLocalDateTime } from '#lib/features/chat/tools/local-time.js';
+import {
+	findEntriesToDelete,
+	summarize
+} from '#lib/features/assistant/tools/delete-food-entries.js';
+import { parseLocalDateTime } from '#lib/features/assistant/tools/local-time.js';
 import { foodEntry, freshDb } from '#tests/lib/support/local-db.js';
 
 const userId = 'u1';

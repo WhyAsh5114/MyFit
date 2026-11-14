@@ -11,8 +11,8 @@
 	import { formatDate } from '#lib/format.js';
 	import { cn } from '#lib/utils.js';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
-	import { useCreateChat } from '#lib/features/chat/chat/mutations/create.js';
-	import { useDeleteChat } from '#lib/features/chat/chat/mutations/delete.js';
+	import { useCreateChat } from '#lib/features/assistant/chat/mutations/create.js';
+	import { useDeleteChat } from '#lib/features/assistant/chat/mutations/delete.js';
 	import {
 		ChevronsUpDownIcon,
 		MessagesSquareIcon,

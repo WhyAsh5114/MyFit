@@ -5,7 +5,7 @@
 	import type { MyUIMessage } from '@myfit/api';
 	import { CHAT_IMAGE_URL_PREFIX } from '@myfit/shared/constants';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
-	import { useChatImageById } from '#lib/features/chat/chat-image/queries/get-by-id.js';
+	import { useChatImageById } from '#lib/features/assistant/chat-image/queries/get-by-id.js';
 
 	type FilePart = Extract<MyUIMessage['parts'][number], { type: 'file' }>;
 	const { part }: { part: FilePart } = $props();

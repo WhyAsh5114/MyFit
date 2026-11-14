@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { DbClient } from '#lib/clients/idb-client.js';
-import { readFoodEntries } from '#lib/features/chat/tools/read-food-entries.js';
+import { readFoodEntries } from '#lib/features/assistant/tools/read-food-entries.js';
 import { foodEntry, freshDb } from '#tests/lib/support/local-db.js';
 
 const userId = 'u1';

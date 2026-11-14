@@ -11,12 +11,12 @@
 	import { CheckIcon, PencilIcon, SearchXIcon, XIcon } from '@lucide/svelte';
 	import type { MyUIMessage } from '@myfit/api';
 	import { getChatPageContext } from '../chat.svelte';
-	import { parseLocalDateTime, whenLabel } from '#lib/features/chat/tools/local-time.js';
+	import { parseLocalDateTime, whenLabel } from '#lib/features/assistant/tools/local-time.js';
 	import {
 		planUpdates,
 		summarizeUpdate,
 		type PlannedUpdate
-	} from '#lib/features/chat/tools/update-food-entries.js';
+	} from '#lib/features/assistant/tools/update-food-entries.js';
 
 	type UpdateFoodEntriesPart = Extract<
 		MyUIMessage['parts'][number],

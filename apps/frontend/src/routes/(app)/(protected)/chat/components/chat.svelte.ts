@@ -5,12 +5,12 @@ import { createContext } from 'svelte';
 
 import { PUBLIC_API_URL } from '$app/env/public';
 import type { MyUIMessage, MyUITools } from '@myfit/api';
-import { useSaveChat } from '#lib/features/chat/chat/mutations/save.js';
-import { storedParts } from '#lib/features/chat/chat/model.js';
-import { requestChatTitle } from '#lib/features/chat/chat/request-title.js';
+import { useSaveChat } from '#lib/features/assistant/chat/mutations/save.js';
+import { storedParts } from '#lib/features/assistant/chat/model.js';
+import { requestChatTitle } from '#lib/features/assistant/chat/request-title.js';
 import { onAccountChange } from '#lib/services/account/account-session.svelte.js';
-import { findEntriesToDelete } from '#lib/features/chat/tools/delete-food-entries.js';
-import { readFoodEntries } from '#lib/features/chat/tools/read-food-entries.js';
+import { findEntriesToDelete } from '#lib/features/assistant/tools/delete-food-entries.js';
+import { readFoodEntries } from '#lib/features/assistant/tools/read-food-entries.js';
 
 /** The tools the app answers; the server answers the rest. */
 type AppTool =

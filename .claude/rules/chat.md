@@ -1,6 +1,6 @@
 ---
 paths:
-  - 'apps/frontend/src/lib/features/chat/**'
+  - 'apps/frontend/src/lib/features/assistant/**'
   - 'apps/frontend/src/routes/**/chat/**'
   - 'apps/api/src/features/chat/**'
 ---

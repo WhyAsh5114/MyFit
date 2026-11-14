@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chatTitle } from '#lib/features/chat/chat/model.js';
+import { chatTitle } from '#lib/features/assistant/chat/model.js';
 
 const user = (...parts: object[]) => ({ id: 'u', role: 'user', parts }) as never;
 
