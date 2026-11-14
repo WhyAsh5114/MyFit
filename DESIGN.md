@@ -199,7 +199,7 @@ Expressive, but purposeful. Motion explains cause and effect, rewards completion
 ## Feedback
 
 - **Inline confirmation by default.** After a create or edit, land on the result and highlight the changed row briefly, scrolled into view. When the user stays on the page (a goals form), the save button changes to `Saved ✓` for about two seconds.
-- **Toasts are for what can't be shown in place:** errors, undo after a destructive action, and system events (update ready, session expired).
+- **Toasts are for what can't be shown in place:** errors, undo after a destructive action, and system events (update ready, session expired). Copying text is one more: nothing on screen changes, so "Copied" is a short toast.
 - **Delete shows an Undo toast.** Deleting is quiet but reversible.
 - Optimistic by default: writes are local and instant, so never show a spinner for them.
 - Haptics are an enhancement where the plugin exists (see Capacitor in `docs/reference/frontend.md`); never the only signal.
@@ -266,6 +266,8 @@ Applied on 2026-10-30. What changed, and what is still open.
 3. The Week and Nutrients views from the status section do not exist yet.
 4. A "daily goal met" reward moment is allowed by the motion rules but not built.
 5. Touch targets were measured in a mobile-width browser. Check on a real device, especially the header.
+6. Meals can only be reordered by dragging the handle (`goals/meals/meal-item.svelte`), which breaks the rule that a gesture is never the only way. It needs a visible control, such as Move up and Move down in a row menu.
+7. Cards, food rows, the diary list and the meal drag ghost use `shadow-sm` and `shadow-lg`. Left for the visual identity decision (Open questions).
 
 ## Open questions
 

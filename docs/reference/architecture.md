@@ -52,26 +52,25 @@ lib/features/{domain}/{resource}/
 
 Name files after the operation. One exported reader or hook per file.
 
+A helper that belongs to one resource but isn't a reader or a mutation sits in the resource folder, named for what it does: `meals/save-meals.ts` (the upsert the mutation and account setup share), `assistant/chat/model.ts` (titles and stored parts), `assistant/chat/request-title.ts` (a network call). Code for a domain that isn't one resource gets its own folder beside the resources, like `assistant/tools/` (the handlers for the assistant's in-app tools).
+
 ### Domain logic
 
 `lib/domain/` holds pure functions: typed plain objects in, plain values out. They import nothing from `#lib/clients`, `#lib/features`, `#lib/services`, `svelte` or SvelteKit (ESLint enforces this), so they are easy to test exhaustively.
 
 Foods and food entries store nutrients per 100 g. Scale them with `lib/domain/nutrition/portion.ts` (`forQuantity`, `macrosFor`, `totalMacros`) rather than writing the arithmetic again.
 
-A helper that belongs to one resource but isn't a reader or a mutation sits in the resource folder, named for what it does: `meals/save-meals.ts` (the upsert the mutation and account setup share), `assistant/chat/model.ts` (titles and stored parts), `assistant/chat/request-title.ts` (a network call). Code for a domain that isn't one resource gets its own folder beside the resources, like `assistant/tools/` (the handlers for the assistant's in-app tools).
-
-A helper that belongs to one resource but isn't a reader or a mutation sits in the resource folder, named for what it does: `meals/save-meals.ts` (the upsert the mutation and account setup share), `chat/model.ts` (titles and stored parts), `chat/request-title.ts` (a network call). Code for a domain that isn't one resource gets its own folder beside the resources, like `chat/tools/` (the handlers for the chat's in-app tools).
-
 ### API (`apps/api/src`)
 
 | You are writing…                    | Put it in                                                                   |
 | ----------------------------------- | --------------------------------------------------------------------------- |
-| Routes for one area                 | `features/{area}/routes.ts`                                                 |
-| Logic those routes call             | `features/{area}/{concern}.ts` beside them                                  |
-| Middleware used by several features | `shared/middleware/`                                                        |
+| Routes for one area                 | `src/features/{area}/routes.ts`                                             |
+| Logic those routes call             | `src/features/{area}/{concern}.ts` beside them                              |
+| Middleware used by several features | `src/shared/middleware/`                                                    |
+| Sending email                       | `src/mailer.ts`                                                             |
+| Setup shared by the app and scripts | `lib/` (`env`, `db`, `pool`, `auth`, `storage`), outside `src/`             |
+| Seed scripts                        | `prisma/seed/`                                                              |
 | The schema, contracts, sync server  | `packages/shared` (see [Change the schema](../how-to/change-the-schema.md)) |
-
-## Splitting code
 
 ### Imports
 
@@ -85,6 +84,8 @@ Import what belongs to the same feature, resource or route relatively, even a fe
 
 Write the `.js` extension. In the API the alias maps `*.js` to `*.ts`, which Bun, tsc and Vitest all resolve.
 
+## Splitting code
+
 The vocabulary is from the `codebase-design` skill: a **module** has an **interface** (everything a caller must know) and an implementation; a **seam** is where the interface lives.
 
 - **Prefer deep modules.** A module should hide more than it exposes. A wrapper whose interface is as large as its body is a pass-through; inline it. Test: if you deleted the module, would its complexity reappear in every caller? If not, it isn't earning its keep.
@@ -92,6 +93,8 @@ The vocabulary is from the `codebase-design` skill: a **module** has an **interf
 - **Keep a concept's code together.** Schema, mapper and keys for a resource live in its folder, not in global `schemas/` or `types/` folders.
 - **Depend inward.** Routes depend on features; features depend on `data`, `clients` and `domain`; `domain` depends on nothing. Never import a route from `lib/`.
 - **Pass dependencies in where a test needs to swap them.** `saveMeals(tx, userId, meals)` takes the transaction, so a test can hand it a fake-indexeddb database. Add a seam only when there are two real uses (production and test count); one adapter is just indirection.
+- **Reuse before you write.** Look for an existing type, helper or function before adding one. Build a type from the data model, for example `Pick<Row<'FoodEntry'>, 'energyKcal_100g' | 'quantityG'>`, instead of retyping its fields, so a schema change reaches every user of it.
+- **Let TypeScript infer.** Leave out a return type or annotation the compiler already knows, and avoid casts (`as`, `!`). A cast hides a type that doesn't fit; fix the type, narrow the value, or add a type guard.
 - **Return values instead of mutating arguments.** Side effects sit at the edges: mutations, `$effect`s, services.
 
 SOLID, applied here:
@@ -116,9 +119,6 @@ type SyncState =
 let state = $state<SyncState>({ kind: 'idle' });
 ```
 
-- **Reuse before you write.** Look for an existing type, helper or function before adding one. Build a type from the data model, for example `Pick<Row<'FoodEntry'>, 'energyKcal_100g' | 'quantityG'>`, instead of retyping its fields, so a schema change reaches every user of it.
-- **Let TypeScript infer.** Leave out a return type or annotation the compiler already knows, and avoid casts (`as`, `!`). A cast hides a type that doesn't fit; fix the type, narrow the value, or add a type guard.
-
 - Change it in one place, through named transitions (`start()`, `fail(error)`), not by assigning fields from many handlers.
 - Render with `{#if state.kind === …}` so every state has a visible branch.
 - `lib/services/service-worker.svelte.ts` (`appUpdate.status`) follows this pattern. The account root (`account-root.svelte`: `ownerId`, `error`, `otherAccountEmail`, `approvedDiscardFor`) is the main place that doesn't yet; convert it when you next change it.
@@ -128,3 +128,7 @@ let state = $state<SyncState>({ kind: 'idle' });
 - **Same job, same pattern.** A new reader looks like the existing readers; a new mutation like the existing mutations. A one-off pattern needs a reason in a comment.
 - **Names follow [Data layer → Naming](data-layer.md#naming)** and the terms in [`GLOSSARY.md`](../../GLOSSARY.md).
 - **No dead code or speculative options.** Build what the current task needs; delete what nothing uses.
+
+## Known deviations
+
+None known. Add one here when code is left breaking a rule above, with where it is.

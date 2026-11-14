@@ -25,13 +25,13 @@ This file is a map. The rules live in `docs/` (index: [`docs/README.md`](docs/RE
 
 ## Rules for every task
 
-- **Follow the existing pattern.** Find the nearest example of what you are adding (a reader, a mutation, a route, a test) and match it. When a task seems to need a new pattern, say so and ask before inventing one.
+- **Follow the existing pattern.** Find the nearest example of what you are adding (a reader, a mutation, a route, a test) and match it, as long as it follows the docs. When a task seems to need a new pattern, say so and ask before inventing one.
 - **Local data flows one way.** A route's `load` reads IndexedDB through a `defineReader` reader; a component writes through a `use…` mutation hook from `lib/features`. TanStack Query is only for remote and device reads.
 - **Every user-visible string goes through Paraglide**, in `messages/en.json` and `messages/hi.json`.
 - **UI comes from `#lib/components/ui/`** and follows `DESIGN.md`. Look at the screens you changed with `pnpm --filter @myfit/frontend screenshots`.
 - **Test at the layer `docs/reference/testing.md` names**, through the public interface. A bug fix starts with a failing test.
 - **Update the doc in the same change as the code.** If you made a decision the docs don't cover, add it to the one doc where it belongs.
-- **When this file, `DESIGN.md` and the code disagree, ask.** Don't pick one silently.
+- **When the docs and the code disagree, new code follows the docs.** Leave the surrounding code as it is unless the task covers it, and name the deviation in your summary. Each reference doc lists its known deviations at the end, and `DESIGN.md` under "Still open". When two docs disagree, ask.
 - **Commit only when the user asks.**
 
 ESLint enforces the mechanical rules (readers, IDB access from routes, `bits-ui` imports, pure `lib/domain`, `../../../../` imports, hardcoded text in markup; strings built in scripts and toasts are still on you). A lint error's message says what to do instead; fix the code rather than disabling the rule.

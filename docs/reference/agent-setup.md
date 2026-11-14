@@ -48,3 +48,7 @@ Personal permissions go in `.claude/settings.local.json` (ignored by git).
 - Keep `CLAUDE.md` a map of about 120 lines at most. Rules for one area go in `.claude/rules/`; the content goes in `docs/`.
 - Run `/doctor prompt-audit` in Claude Code now and then. It reports stale or conflicting instructions across these files.
 - After moving a doc, update the rules that name it: `grep -rn "docs/" .claude/rules`.
+
+## Known deviations
+
+None known. Add one here when something is left breaking a rule above, with where it is.

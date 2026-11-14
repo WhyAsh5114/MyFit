@@ -40,3 +40,7 @@ An ADR follows `.claude/skills/domain-modeling/ADR-FORMAT.md`: a few sentences o
 - Update the doc in the same change as the code it describes. A stale doc is worse than none.
 - Delete what no longer applies. Don't leave history in a reference page; that goes in git or an ADR.
 - Code comments say why, not what. Write them as full sentences.
+
+## Known deviations
+
+None known. Add one here when something is left breaking a rule above, with where it is.
