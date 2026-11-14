@@ -4,6 +4,7 @@ import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
 import { invalidateKeys } from '#lib/data/dependencies.js';
 import { foodEntryKeys } from '../keys';
+import type { OPTIONAL_NUTRIENT_FIELDS } from '@myfit/shared/nutrition';
 
 export type FoodEntryChanges = {
 	productName?: string;
@@ -14,6 +15,9 @@ export type FoodEntryChanges = {
 	carbohydratesG_100g?: number;
 	fatG_100g?: number;
 	proteinsG_100g?: number;
+} & {
+	// Micronutrients and the other optional values, per 100 g; null clears one.
+	[K in (typeof OPTIONAL_NUTRIENT_FIELDS)[number]['key']]?: number | null;
 };
 
 /**

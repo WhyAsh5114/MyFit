@@ -11,6 +11,8 @@ const MIN_SEARCH_TOKEN_LENGTH = 2;
 const MIN_FUZZY_TOKEN_LENGTH = 3;
 const MIN_TRANSPOSITION_LENGTH = 3;
 const MAX_TRANSPOSITION_LENGTH = 24;
+/** Each word of a partial match reads at most this many foods, so eight words stay bounded. */
+const MAX_PARTIAL_CANDIDATES_PER_WORD = 200;
 
 /** One ranked search hit: the columns the food list shows. */
 export type FoodSearchHit = {
@@ -64,13 +66,23 @@ function prepareSearch(search: string) {
 	const operators = /"|(?:^|\s)-[\p{L}\p{N}]|(?:^|\s)OR(?:\s|$)/iu.test(raw);
 	const spellings = operators ? [tokens.join(' ')] : spellingCandidates(tokens);
 	const fuzzy = !operators && tokens.every((token) => [...token].length >= MIN_FUZZY_TOKEN_LENGTH);
-	return { raw, tokens, operators, spellings, fuzzy };
+	// Words that can carry a partial match on their own; the typed last word stays a prefix.
+	const partialTerms = operators
+		? []
+		: tokens
+				.map((value, i) => ({ value, prefix: i === tokens.length - 1 }))
+				.filter(({ value }) => [...value].length >= MIN_FUZZY_TOKEN_LENGTH);
+	const partial = tokens.length > 1 && partialTerms.length > 0;
+	return { raw, tokens, operators, spellings, fuzzy, partialTerms, partial };
 }
 
 /**
  * Search names and brands with final-word typeahead, then bounded typo recovery.
  * Quotes, OR and exclusions retain web-search semantics and disable recovery.
  * Recovery runs only when the preceding candidate set is empty, across all pages.
+ * The last recovery is a partial match: when no mode finds every word, foods matching any word
+ * (of three letters or more) are ranked by how many words they match. Each word reads its own
+ * popularity tiers, so a common word cannot crowd a rare one out of the pool.
  * Each mode selects a stable popularity pool before scoring or fuzzy word checks.
  * Broad queries trade recall for bounded ranking work; refine input for rarer foods.
  * The exact-match pool is the top candidates by scan count, read in tiers (at least 10
@@ -96,7 +108,7 @@ export async function searchFoods(
 		return [];
 	const query = prepareSearch(search);
 	if (!query) return [];
-	const { raw, tokens, operators, spellings, fuzzy } = query;
+	const { raw, tokens, operators, spellings, fuzzy, partialTerms, partial } = query;
 	const plan = db.raw.sql`
 WITH lexemes AS (
   -- Fold before quoting: unaccent can turn punctuation into tsquery syntax.
@@ -112,8 +124,18 @@ spellings AS (
       ' & ' ORDER BY position) AS prefix
   FROM lexemes GROUP BY spelling
 ),
+partial_terms AS (
+  -- Fold before quoting, as above.
+  SELECT quote_literal(public.immutable_unaccent(t.value)) || CASE WHEN t.prefix THEN ':*' ELSE '' END AS term
+  FROM jsonb_to_recordset(${JSON.stringify(partialTerms)}::jsonb) AS t(value text, prefix boolean)
+),
+token_queries AS MATERIALIZED (
+  SELECT tsq FROM (SELECT to_tsquery('english', term) AS tsq FROM partial_terms) t
+  WHERE numnode(tsq) > 0 AND querytree(tsq) <> 'T'
+),
 query AS (
   SELECT
+    (SELECT to_tsquery('english', string_agg(term, ' | ')) FROM partial_terms) AS partial,
     CASE WHEN ${operators}::boolean THEN websearch_to_tsquery('english', public.immutable_unaccent(${raw}::text))
       ELSE to_tsquery('english', (SELECT prefix FROM spellings WHERE spelling = 1)) END AS tsq,
     to_tsquery('english', (SELECT string_agg('(' || exact || ')', ' | ') FROM spellings)) AS corrections,
@@ -172,16 +194,41 @@ fuzzy_pool AS MATERIALIZED (
   ORDER BY n."uniqueScans" DESC, n.id ASC
   LIMIT ${MAX_SEARCH_CANDIDATES}
 ),
-candidates AS MATERIALIZED (
-  SELECT id, 0 AS mode FROM matched
-  UNION ALL SELECT id, 1 AS mode FROM corrected
-  UNION ALL
-  SELECT n.id, 2 AS mode FROM fuzzy_pool f JOIN "NutritionData" n ON n.id = f.id CROSS JOIN query q
+fuzzy_matched AS MATERIALIZED (
+  SELECT n.id FROM fuzzy_pool f JOIN "NutritionData" n ON n.id = f.id CROSS JOIN query q
     -- Require every word so unrelated popular products cannot fill missing intent.
   WHERE NOT EXISTS (
       SELECT 1 FROM jsonb_array_elements_text(q.tokens) AS token(value)
       WHERE strict_word_similarity(public.immutable_unaccent(token.value), public.immutable_unaccent(n."productName" || ' ' || coalesce(n.brands, ''))) < 0.35
     )
+),
+partial_pool AS MATERIALIZED (
+  -- Per word, the busiest tier first; a LIMIT over UNION ALL stops before the quieter tiers
+  -- once a busier one fills it, so a broad word never touches the large full-text index.
+  SELECT DISTINCT p.id FROM token_queries t CROSS JOIN LATERAL (
+    SELECT id FROM (
+      (SELECT n.id FROM doc n WHERE n."uniqueScans" >= 10 AND n.document @@ t.tsq
+        ORDER BY n."uniqueScans" DESC, n.id ASC LIMIT ${MAX_PARTIAL_CANDIDATES_PER_WORD})
+      UNION ALL
+      (SELECT n.id FROM doc n WHERE n."uniqueScans" >= 1 AND n."uniqueScans" < 10 AND n.document @@ t.tsq
+        ORDER BY n."uniqueScans" DESC, n.id ASC LIMIT ${MAX_PARTIAL_CANDIDATES_PER_WORD})
+      UNION ALL
+      (SELECT n.id FROM doc n WHERE n."uniqueScans" = 0 AND n.document @@ t.tsq
+        ORDER BY n.id ASC LIMIT ${MAX_PARTIAL_CANDIDATES_PER_WORD})
+    ) tiers LIMIT ${MAX_PARTIAL_CANDIDATES_PER_WORD}
+  ) p
+  WHERE ${partial}::boolean
+    AND NOT EXISTS (SELECT 1 FROM matched)
+    AND NOT EXISTS (SELECT 1 FROM corrected)
+    AND NOT EXISTS (SELECT 1 FROM fuzzy_matched)
+),
+candidates AS MATERIALIZED (
+  SELECT id, 0 AS mode, 0 AS hits FROM matched
+  UNION ALL SELECT id, 1 AS mode, 0 AS hits FROM corrected
+  UNION ALL SELECT id, 2 AS mode, 0 AS hits FROM fuzzy_matched
+  UNION ALL
+  SELECT n.id, 3 AS mode, (SELECT count(*) FROM token_queries t WHERE n.document @@ t.tsq)::int AS hits
+  FROM partial_pool p JOIN doc n ON n.id = p.id
 )
 SELECT n.id, n.code, n."productName", n.brands, n."energyKcal_100g",
   n."servingSize", n."servingQuantity"
@@ -189,11 +236,13 @@ FROM candidates c JOIN doc n ON n.id = c.id CROSS JOIN query q
 ORDER BY
   CASE WHEN ${tokens.length === 1 && [...tokens[0]].length === MIN_SEARCH_TOKEN_LENGTH}::boolean
     THEN similarity(q.raw, public.immutable_unaccent(n."productName")) ELSE 0 END DESC,
+  -- A partial match ranks first by how many of the words it has.
+  c.hits DESC,
   CASE WHEN c.mode = 2 THEN strict_word_similarity(q.raw, public.immutable_unaccent(n."productName"))
     ELSE ts_rank_cd('{0.1, 0.2, 0.4, 1.0}', n.document,
-      CASE WHEN c.mode = 0 THEN q.tsq ELSE q.corrections END,
+      CASE WHEN c.mode = 0 THEN q.tsq WHEN c.mode = 3 THEN q.partial ELSE q.corrections END,
       2) * 0.4 -- Divide cover-density rank by document length.
-      + 0.6 * CASE WHEN c.mode = 0 THEN similarity(q.raw, public.immutable_unaccent(n."productName")) ELSE (
+      + 0.6 * CASE WHEN c.mode IN (0, 3) THEN similarity(q.raw, public.immutable_unaccent(n."productName")) ELSE (
         SELECT max(similarity(public.immutable_unaccent(spelling.value), public.immutable_unaccent(n."productName")))
         FROM jsonb_array_elements_text(q.spellings) AS spelling(value)
       ) END

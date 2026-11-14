@@ -205,6 +205,42 @@ test('reads popularity tiers in order, only reaching a quieter tier when the bus
 	}
 });
 
+test('falls back to foods matching some of the words, most words first', async () => {
+	await fixture.admin
+		.query(`INSERT INTO ${fixture.table} (id, code, "productName", brands, "uniqueScans")
+		VALUES ('oatmeal', 'oatmeal', 'Oatmeal', NULL, 2),
+			('oatmeal-apple', 'oatmeal-apple', 'Apple oatmeal sachets', 'Oatmeal', 1),
+			('rolled-oats', 'rolled-oats', 'Rolled oats', 'Quaker', 5)`);
+	await fixture.admin
+		.query(`INSERT INTO ${fixture.table} (id, code, "productName", brands, "uniqueScans")
+		SELECT 'sachet-' || i, 'sachet-' || i, 'Sugar sachet ' || i, 'Sweet', 1000
+		FROM generate_series(1, 300) i`);
+	try {
+		// No food has every word: the ones with the most words lead, and a rare word
+		// still reaches the results past 300 popular foods sharing another word.
+		const hits = (await searchFoods(db, 'oatmeal rolled oats sachet', 0, 50)).map((h) => h.id);
+		assert.deepEqual(hits.slice(0, 2).sort(), ['oatmeal-apple', 'rolled-oats']);
+		assert.ok(hits.includes('oatmeal'));
+		assert.equal((await searchFoods(db, 'oatmeal sachet', 0, 5))[0]?.id, 'oatmeal-apple');
+		// A full match still wins outright: the partial mode never mixes in.
+		assert.deepEqual(
+			(await searchFoods(db, 'oatmeal apple', 0, 10)).map((h) => h.id),
+			['oatmeal-apple']
+		);
+		// Pages of a partial match are stable.
+		assert.deepEqual(
+			await searchFoods(db, 'oatmeal rolled oats sachet', 2, 3),
+			(await searchFoods(db, 'oatmeal rolled oats sachet', 0, 5)).slice(2, 5)
+		);
+		// Operators keep their strict meaning.
+		assert.deepEqual(await searchFoods(db, '"oatmeal rolled"', 0, 5), []);
+	} finally {
+		await fixture.admin.query(
+			`DELETE FROM ${fixture.table} WHERE id LIKE 'sachet-%' OR id IN ('oatmeal', 'oatmeal-apple', 'rolled-oats')`
+		);
+	}
+});
+
 test('validates the pagination ceiling and defaults at the API boundary', () => {
 	assert.equal(nutritionSearchQuery.parse({ search: 'milk' }).offset, 0);
 	assert.equal(nutritionSearchQuery.parse({ search: 'milk', offset: '500' }).offset, 500);

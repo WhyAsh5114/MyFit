@@ -1,9 +1,8 @@
 <script lang="ts">
 	import * as Empty from '#lib/components/ui/empty/index.js';
-	import * as Item from '#lib/components/ui/item/index.js';
 	import { useSearchNutritionData } from '#lib/features/food-diary/nutrition-data/queries/search.js';
 	import { InfiniteLoader, LoaderState } from 'svelte-infinite';
-	import { CloudOffIcon, PlusIcon, SearchIcon } from '@lucide/svelte';
+	import { CloudOffIcon, SearchIcon } from '@lucide/svelte';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import Button from '#lib/components/ui/button/button.svelte';
 	import { resolve } from '$app/paths';
@@ -12,8 +11,14 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import type { SvelteURLSearchParams } from 'svelte/reactivity';
 	import type { Component } from 'svelte';
+	import FoodRow from './food-row.svelte';
 
-	let { params }: { params: SvelteURLSearchParams } = $props();
+	type Props = {
+		params: SvelteURLSearchParams;
+		/** Your foods matched above, so the database states stay small instead of filling the page. */
+		compact: boolean;
+	};
+	let { params, compact }: Props = $props();
 	let search = $derived(page.url.searchParams.get('search') ?? '');
 
 	const searchNutritionData = useSearchNutritionData(() => search);
@@ -33,28 +38,28 @@
 			loaderState.loaded();
 		}
 	});
+
+	const foodHref = (id: string) =>
+		resolve(`food-diary/${page.params.date}/add-food/${id}?${params.toString()}`);
 </script>
 
-{#snippet empty(data: {
-	title: string;
-	description: string;
-	icon: Component;
-	showRecipePrompt?: boolean;
-})}
-	<Empty.Root class="h-full">
-		<Empty.Header>
-			<Empty.Media variant="icon">
-				<data.icon />
-			</Empty.Media>
-			<Empty.Title>{data.title}</Empty.Title>
-			<Empty.Description>{data.description}</Empty.Description>
-			{#if data.showRecipePrompt}
-				<Button variant="outline" size="sm" href={resolve('food-diary/goals/recipes')} class="mt-1">
-					🥣 Create a custom recipe
-				</Button>
-			{/if}
-		</Empty.Header>
-	</Empty.Root>
+{#snippet empty(data: { title: string; description: string; icon: Component })}
+	{#if compact}
+		<p class="flex min-h-11 items-center gap-2 text-sm text-muted-foreground">
+			<data.icon class="size-4 shrink-0" />
+			{data.description}
+		</p>
+	{:else}
+		<Empty.Root class="h-full">
+			<Empty.Header>
+				<Empty.Media variant="icon">
+					<data.icon />
+				</Empty.Media>
+				<Empty.Title>{data.title}</Empty.Title>
+				<Empty.Description>{data.description}</Empty.Description>
+			</Empty.Header>
+		</Empty.Root>
+	{/if}
 {/snippet}
 
 {#if !online.current}
@@ -62,13 +67,6 @@
 		title: m['foodDiary.searchFoodsOffline'](),
 		description: m['foodDiary.searchFoodsOfflineDescription'](),
 		icon: CloudOffIcon
-	})}
-{:else if search.trim().length === 0}
-	{@render empty({
-		title: m['foodDiary.searchFoodsEmpty'](),
-		description: m['foodDiary.searchFoodsEmptyDescription'](),
-		icon: SearchIcon,
-		showRecipePrompt: true
 	})}
 {:else if searchNutritionData.isLoading}
 	{@render empty({
@@ -79,63 +77,42 @@
 {:else if searchNutritionData.data?.pages[0]?.length === 0}
 	{@render empty({
 		title: m['foodDiary.noFoodsFound'](),
-		description: m['foodDiary.noFoodsFoundDescription'](),
-		icon: SearchIcon,
-		showRecipePrompt: true
+		description: compact
+			? m['foodDiary.noDatabaseMatches']()
+			: m['foodDiary.noFoodsFoundDescription'](),
+		icon: SearchIcon
 	})}
 {:else}
-	<div class="min-h-0 grow basis-0 overflow-y-auto">
-		<InfiniteLoader {loaderState} triggerLoad={loadMore}>
-			<div class="flex h-full flex-col gap-2">
-				{#each searchNutritionData.data?.pages.flatMap((page) => page) as foodEntry (foodEntry.id)}
-					<a
-						href={resolve(
-							`food-diary/${page.params.date}/add-food/${foodEntry.id}?${params.toString()}`
-						)}
-					>
-						<Item.Root class="flex-nowrap bg-card py-2 shadow-sm">
-							<Item.Content class="w-px grow gap-0">
-								<Item.Title class="block! w-full! min-w-0 truncate">
-									{foodEntry.productName}
-								</Item.Title>
-								<Item.Description>
-									{#if foodEntry.servingSize && foodEntry.servingQuantity}
-										{foodEntry.brands ? `${foodEntry.brands} ·` : ''}
-										{Math.round(foodEntry.energyKcal_100g * (foodEntry.servingQuantity / 100))} kcal ·
-										{foodEntry.servingSize}
-									{:else}
-										{foodEntry.brands ? `${foodEntry.brands} ·` : ''}
-										{Math.round(foodEntry.energyKcal_100g)} kcal · 100g
-									{/if}
-								</Item.Description>
-							</Item.Content>
-							<Item.Actions class="shrink-0">
-								<Button
-									size="icon"
-									aria-label={m['foodDiary.addFood']()}
-									class="ml-2 rounded-full"
-									variant="outline"
-								>
-									<PlusIcon />
-								</Button>
-							</Item.Actions>
-						</Item.Root>
-					</a>
-				{/each}
+	<InfiniteLoader {loaderState} triggerLoad={loadMore}>
+		<div class="flex flex-col gap-2">
+			{#each searchNutritionData.data?.pages.flatMap((page) => page) as food (food.id)}
+				{@const brand = food.brands ? `${food.brands} · ` : ''}
+				<FoodRow
+					name={food.productName}
+					detail={food.servingSize && food.servingQuantity
+						? `${brand}${Math.round(food.energyKcal_100g * (food.servingQuantity / 100))} kcal · ${food.servingSize}`
+						: `${brand}${Math.round(food.energyKcal_100g)} kcal · 100 g`}
+					href={foodHref(food.id)}
+					action={{ label: m['foodDiary.addFood'](), href: foodHref(food.id) }}
+				/>
+			{/each}
+		</div>
+
+		{#snippet loading()}
+			<div class="flex items-center justify-center py-4">
+				<Spinner />
 			</div>
+		{/snippet}
 
-			{#snippet loading()}
-				<div class="flex items-center justify-center py-4">
-					<Spinner />
-				</div>
-			{/snippet}
+		<!-- The list itself shows the end; the loader's default texts are English-only. -->
+		{#snippet noResults()}{/snippet}
+		{#snippet noData()}{/snippet}
 
-			{#snippet error(retry)}
-				<div class="flex flex-col items-center justify-center gap-2 py-4">
-					<p>{m['foodDiary.errorLoadingFoods']()}</p>
-					<Button onclick={retry} variant="outline">{m['common.retry']()}</Button>
-				</div>
-			{/snippet}
-		</InfiniteLoader>
-	</div>
+		{#snippet error(retry)}
+			<div class="flex flex-col items-center justify-center gap-2 py-4">
+				<p>{m['foodDiary.errorLoadingFoods']()}</p>
+				<Button onclick={retry} variant="outline">{m['common.retry']()}</Button>
+			</div>
+		{/snippet}
+	</InfiniteLoader>
 {/if}

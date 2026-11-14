@@ -257,6 +257,7 @@ Applied on 2026-10-30. What changed, and what is still open.
 - Paraglide: toast, chat, scan, search, targets, breadcrumb and macro-name strings. Calorie numbers have thousands separators.
 - Reduced motion is respected globally; spinners keep moving.
 - The goals list no longer nests a button inside a link, and the calorie bar no longer nests a link inside a link.
+- Add food leads with **Your foods** (decided 2026-11-13): foods from the diary, one list ranked by frequency and recency together (each entry counts 1, halving every 14 days). While typing, up to 3 matches sit above the food database, and they work offline. A row's + logs the food again at its last amount, in the meal filter's meal or the meal usually logged at this time of day, and lands on the diary with the entry highlighted; tapping the row opens it to change the amount first.
 
 **Still open**
 

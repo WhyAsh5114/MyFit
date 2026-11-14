@@ -124,3 +124,21 @@ test('the bare diary and edit routes go straight to the day', async ({ page }) =
 	await expect(page).toHaveURL(new RegExp(`/food-diary/${day(1)}$`));
 	await expect(page.getByText('Tomorrow', { exact: true })).toBeVisible();
 });
+
+test('a food from your history logs again in one tap, and opens with its last amount', async ({
+	page
+}) => {
+	await signUp(page, newEmail());
+	await logYogurt(page);
+
+	await page.goto(`/food-diary/${day()}/add-food`);
+	await expect(page.getByText('Your foods')).toBeVisible();
+	await page.getByRole('link', { name: /Greek yogurt/ }).click();
+	await expect(page).toHaveURL(/add-food\/history\//);
+	await expect(page.getByText('Greek yogurt')).toBeVisible();
+	await page.goBack();
+
+	await page.getByRole('button', { name: 'Log Greek yogurt again' }).click();
+	await expect(page).toHaveURL(new RegExp(`/food-diary/${day()}$`));
+	await expect(page.getByText('Greek yogurt')).toHaveCount(2);
+});

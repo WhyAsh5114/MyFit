@@ -107,7 +107,7 @@ export const tools = {
 	},
 	updateFoodEntries: {
 		description:
-			'Propose changes to logged food entries, by the ids readFoodEntries gives. The user sees each entry with its old and new values on one card and confirms them all with one tap, or cancels. Put every change in one call. Set only the fields that change. Never edit without reading the entries first, and never guess an id.',
+			'Propose changes to logged food entries, by the ids readFoodEntries gives. The user sees each entry with its old and new values on one card and confirms them all with one tap, or cancels. Put every change in one call. Set only the fields that change. Nutrient values (including micronutrients like vitaminCMg_100g or ironMg_100g) are per 100 g, not for the amount eaten: readFoodEntries gives amounts for the quantity eaten, so divide by quantityG and multiply by 100. Never edit without reading the entries first, and never guess an id.',
 		inputSchema: z.object({
 			edits: z
 				.array(
@@ -126,7 +126,9 @@ export const tools = {
 						energyKcal_100g: z.coerce.number().nonnegative().optional(),
 						carbohydratesG_100g: z.coerce.number().nonnegative().optional(),
 						fatG_100g: z.coerce.number().nonnegative().optional(),
-						proteinsG_100g: z.coerce.number().nonnegative().optional()
+						proteinsG_100g: z.coerce.number().nonnegative().optional(),
+						// Per 100 g, like the four above; null clears a value. Fats, sugars, fiber, vitamins, minerals.
+						...coercedOptionalNutrientsShape
 					})
 				)
 				.min(1)
@@ -142,13 +144,13 @@ export const tools = {
 	},
 	searchFoods: {
 		description:
-			"Search the Open Food Facts database of packaged and common foods by name and brand. Returns up to 5 matches with nutrients per 100 g and the serving size. Use it before estimating, and log a match's values when it is the food the user means.",
+			'Search the Open Food Facts database of packaged foods by name and brand. Returns up to 5 matches with nutrients per 100 g and the serving size. Search with one to three words, the brand and product name as printed on the pack ("monster", "amul gold milk"), never descriptions, synonyms or pack sizes. When no food has every word, the results match only some of them, so check each name and log a match\'s values only when it is the food the user means. Home-cooked dishes are rarely in it.',
 		inputSchema: z.object({
 			query: z
 				.string()
 				.min(2)
 				.max(120)
-				.describe('Product name and brand words, for example "nescafe iced latte".')
+				.describe('One to three words: brand and product name, for example "nescafe iced latte".')
 		}),
 		outputSchema: z.object({
 			foods: z.array(

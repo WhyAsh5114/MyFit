@@ -410,6 +410,20 @@ test('capture every screen', async ({ page }, testInfo) => {
 	// ---- chat
 	await mockChat(page);
 	for (const food of SAMPLE_FOODS) await logFromChat(`I ate ${food.name}`);
+	// The foods just logged are now the user's history.
+	await go(`${diary}/add-food`);
+	await shot('add-food-history', 'Add food', 'Your foods', 'Ranked by how often and how recently');
+	await page.getByPlaceholder('apple pie').fill('yogurt');
+	await page.waitForTimeout(2200);
+	await shot(
+		'add-food-history-search',
+		'Add food',
+		'Your foods, then the database',
+		'Typing "yogurt"'
+	);
+	await page.getByRole('link', { name: /^Greek yogurt/ }).click();
+	await page.waitForTimeout(1300);
+	await shot('add-food-history-detail', 'Add food', 'A food from your history', 'Its last amount');
 	await go('/chat');
 	await shot('chat-empty', 'Chat', 'Chat, empty', '/chat');
 	await send('What did I eat today?');

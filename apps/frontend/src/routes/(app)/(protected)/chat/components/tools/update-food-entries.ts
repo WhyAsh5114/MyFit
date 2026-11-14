@@ -1,4 +1,5 @@
 import type { MyUITools } from '@myfit/api';
+import { OPTIONAL_NUTRIENT_FIELDS } from '@myfit/shared/nutrition';
 import type { FoodEntryChanges } from '#lib/features/food-diary/food-entry/mutations/update-many.js';
 import { getFoodEntriesByIds } from '#lib/features/food-diary/food-entry/queries/get-by-ids.js';
 import { localDay } from '#lib/features/food-diary/_common/day-bounds.js';
@@ -18,6 +19,8 @@ export type EntryState = {
 	carbsG: number;
 	fatG: number;
 	proteinG: number;
+	/** The optional nutrients per 100 g, by field key. */
+	extras: Record<string, number | null>;
 };
 
 export type PlannedUpdate = {
@@ -61,6 +64,24 @@ export async function planUpdates(
 		set('carbohydratesG_100g', edit.carbohydratesG_100g);
 		set('fatG_100g', edit.fatG_100g);
 		set('proteinsG_100g', edit.proteinsG_100g);
+		const extras = (key: string, source: Record<string, unknown>) => {
+			const value = source[key];
+			return typeof value === 'number' ? value : null;
+		};
+		for (const { key } of OPTIONAL_NUTRIENT_FIELDS) {
+			const value = (edit as Record<string, unknown>)[key];
+			if (value === undefined) continue;
+			if (value !== extras(key, entry)) (changes as Record<string, unknown>)[key] = value;
+		}
+		const extrasAfter = (source: Record<string, unknown>) =>
+			Object.fromEntries(
+				OPTIONAL_NUTRIENT_FIELDS.map(({ key }) => [
+					key,
+					key in changes
+						? ((changes as Record<string, number | null>)[key] ?? null)
+						: extras(key, source)
+				])
+			);
 
 		const eatenAt = parseLocalDateTime(edit.eatenAt);
 		if (eatenAt && eatenAt.getTime() !== entry.eatenAt.getTime()) changes.eatenAt = eatenAt;
@@ -88,7 +109,10 @@ export async function planUpdates(
 				meal: entry.meal?.name ?? null,
 				carbsG: entry.carbohydratesG_100g,
 				fatG: entry.fatG_100g,
-				proteinG: entry.proteinsG_100g
+				proteinG: entry.proteinsG_100g,
+				extras: Object.fromEntries(
+					OPTIONAL_NUTRIENT_FIELDS.map(({ key }) => [key, extras(key, entry)])
+				)
 			},
 			after: {
 				name: changes.productName ?? entry.productName,
@@ -98,7 +122,8 @@ export async function planUpdates(
 				meal: mealName,
 				carbsG: changes.carbohydratesG_100g ?? entry.carbohydratesG_100g,
 				fatG: changes.fatG_100g ?? entry.fatG_100g,
-				proteinG: changes.proteinsG_100g ?? entry.proteinsG_100g
+				proteinG: changes.proteinsG_100g ?? entry.proteinsG_100g,
+				extras: extrasAfter(entry)
 			},
 			changes
 		});

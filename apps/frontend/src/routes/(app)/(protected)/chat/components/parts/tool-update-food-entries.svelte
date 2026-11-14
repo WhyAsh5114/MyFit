@@ -7,6 +7,7 @@
 	import * as Table from '#lib/components/ui/table/index.js';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { useUpdateFoodEntries } from '#lib/features/food-diary/food-entry/mutations/update-many.js';
+	import { OPTIONAL_NUTRIENT_FIELDS } from '@myfit/shared/nutrition';
 	import { CheckIcon, PencilIcon, SearchXIcon, XIcon } from '@lucide/svelte';
 	import type { MyUIMessage } from '@myfit/api';
 	import { getChatPageContext } from '../chat.svelte';
@@ -106,6 +107,12 @@
 						after: `${after[field]} g`
 					}
 			),
+			...OPTIONAL_NUTRIENT_FIELDS.map(({ key, label, unit }) => {
+				const [was, now] = [before.extras[key], after.extras[key]];
+				const show = (value: number | null) =>
+					value === null ? '—' : `${Math.round(value * 1000) / 1000} ${unit}`;
+				return was !== now && { label, before: show(was), after: show(now) };
+			}),
 			'mealId' in changes && {
 				label: m['foodDiary.entryMeal'](),
 				before: before.meal ?? m['chat.noMeal'](),
