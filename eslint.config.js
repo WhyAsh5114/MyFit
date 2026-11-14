@@ -19,11 +19,21 @@ const bitsUi = {
 	message:
 		'Import the component from `#lib/components/ui/`, which carries our styling and hit areas.'
 };
+// Applies everywhere: a path that climbs four folders breaks when either file moves.
+const deepRelative = {
+	regex: '^(\\.\\./){4,}',
+	message:
+		'Use an alias instead of climbing four or more folders (relative is for files of the same feature, resource or route): `#lib/*`, `#routes/*` or `#tests/*` in the frontend, `#lib/*`, `#src/*` or `#prisma/*` in the API.'
+};
 const restrict = (paths, patterns = []) => ({
-	'no-restricted-imports': ['error', { paths, patterns }]
+	'no-restricted-imports': ['error', { paths, patterns: [deepRelative, ...patterns] }]
 });
 
 const importRules = [
+	{
+		files: ['apps/{frontend,api}/**/*.{ts,svelte}'],
+		rules: restrict([])
+	},
 	{
 		// shadcn-svelte wraps bits-ui with our tokens, 44px hit areas and translated labels.
 		files: [`${FRONTEND}/**/*.{ts,svelte}`],

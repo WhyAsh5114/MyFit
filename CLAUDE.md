@@ -34,7 +34,7 @@ This file is a map. The rules live in `docs/` (index: [`docs/README.md`](docs/RE
 - **When this file, `DESIGN.md` and the code disagree, ask.** Don't pick one silently.
 - **Commit only when the user asks.**
 
-ESLint enforces the mechanical rules (readers, IDB access from routes, `bits-ui` imports, pure `lib/domain`, hardcoded text in markup; strings built in scripts and toasts are still on you). A lint error's message says what to do instead; fix the code rather than disabling the rule.
+ESLint enforces the mechanical rules (readers, IDB access from routes, `bits-ui` imports, pure `lib/domain`, `../../../../` imports, hardcoded text in markup; strings built in scripts and toasts are still on you). A lint error's message says what to do instead; fix the code rather than disabling the rule.
 
 ## Before you finish
 

@@ -73,6 +73,18 @@ A helper that belongs to one resource but isn't a reader or a mutation sits in t
 
 ## Splitting code
 
+### Imports
+
+Import what belongs to the same feature, resource or route relatively, even a few folders up (`../../components/food-entry-form.svelte`): the files move together, so the path stays right. Import everything else through an alias, such as another feature, `lib/`, or a route's code from a test. ESLint only stops the extreme case, a path that climbs four or more folders (`../../../../`); the rest is your judgment.
+
+| App      | Alias                                                    | Example                                          |
+| -------- | -------------------------------------------------------- | ------------------------------------------------ |
+| Frontend | `#lib/*`, `#routes/*`, `#tests/*` (`package.json`)       | `#lib/features/food-diary/_common/day-bounds.js` |
+| API      | `#lib/*`, `#src/*`, `#prisma/*` (`package.json`)         | `#src/shared/middleware/auth.js`                 |
+| Both     | `@myfit/shared/*`, including `@myfit/shared/generated/*` | `@myfit/shared/generated/contract.json`          |
+
+Write the `.js` extension. In the API the alias maps `*.js` to `*.ts`, which Bun, tsc and Vitest all resolve.
+
 The vocabulary is from the `codebase-design` skill: a **module** has an **interface** (everything a caller must know) and an implementation; a **seam** is where the interface lives.
 
 - **Prefer deep modules.** A module should hide more than it exposes. A wrapper whose interface is as large as its body is a pass-through; inline it. Test: if you deleted the module, would its complexity reappear in every caller? If not, it isn't earning its keep.

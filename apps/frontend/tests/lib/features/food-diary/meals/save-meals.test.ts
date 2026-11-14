@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { createManagedAutoSyncIdbClient } from '@prisma-idb/sync-extension-idb/client';
 import { idbSyncExtension } from '@prisma-idb/sync-extension-idb/control';
 import { contractSpace, type Contract } from '@myfit/shared/client';
-import { saveMeals } from '../../../../src/lib/features/food-diary/meals/save-meals';
+import { saveMeals } from '#lib/features/food-diary/meals/save-meals.js';
 
 const userId = 'u1';
 let n = 0;

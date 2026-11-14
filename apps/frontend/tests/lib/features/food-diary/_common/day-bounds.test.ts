@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { momentOnDay } from '../../../../src/lib/features/food-diary/_common/day-bounds';
+import { momentOnDay } from '#lib/features/food-diary/_common/day-bounds.js';
 
 const original = process.env.TZ;
 afterEach(() => {
