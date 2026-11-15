@@ -60,7 +60,7 @@ export const load: PageLoad = async ({ params, depends, parent }) => {
 - **Outside a `load`, pass `noDepends`** (`#lib/data/dependencies.ts`), as the chat tools do: `getFoodEntriesByIds(noDepends, { userId, ids })`. Nothing reruns that read, so use it only for a one-off read whose result isn't shown as page data.
 - **Components outside a page's data read the user with `getCurrentUser()`** (`user/current-user.svelte.ts`), which reads the `(app)` layout's data.
 
-ESLint enforces two of these: a local `queries/*.ts` file may only export `defineReader(...)` calls, and a `+page.ts` or `+layout.ts` may not import the IDB client.
+ESLint enforces two of these: a `queries/*.ts` file exports only `get…` readers made with `defineReader(...)` or `use…` TanStack hooks, and a `+page.ts` or `+layout.ts` may not import the IDB client.
 
 ## Mutations
 

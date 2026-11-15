@@ -84,7 +84,7 @@ Import what belongs to the same feature, resource or route relatively, even a fe
 | API      | `#lib/*`, `#src/*`, `#prisma/*` (`package.json`)         | `#src/shared/middleware/auth.js`                 |
 | Both     | `@myfit/shared/*`, including `@myfit/shared/generated/*` | `@myfit/shared/generated/contract.json`          |
 
-Write the `.js` extension. In the API the alias maps `*.js` to `*.ts`, which Bun, tsc and Vitest all resolve.
+Write the extension: `.js` for a TypeScript module (`../keys.js`, `./index.js` for a folder), `.svelte` for a component. ESLint enforces this. In the API the aliases map only `*.js` to `*.ts`. A script that plain Node runs, such as the nutrition search benchmark, imports `.ts` instead, because Node doesn't rewrite `.js`.
 
 ## Splitting code
 

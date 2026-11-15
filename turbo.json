@@ -1,6 +1,7 @@
 {
 	"$schema": "https://turborepo.dev/schema.json",
 	"ui": "tui",
+	"globalDependencies": ["eslint.config.js", ".prettierrc", ".prettierignore"],
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],

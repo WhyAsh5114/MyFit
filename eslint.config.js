@@ -25,8 +25,19 @@ const deepRelative = {
 	message:
 		'Use an alias instead of climbing four or more folders (relative is for files of the same feature, resource or route): `#lib/*`, `#routes/*` or `#tests/*` in the frontend, `#lib/*`, `#src/*` or `#prisma/*` in the API.'
 };
+// Bun, Vite, tsc and Vitest all resolve `x.js` to `x.ts`, and the API's aliases only match `*.js`.
+// `$types` is SvelteKit's generated route types, which has no file to name.
+const missingExtension = {
+	regex:
+		'^(?!(\\.{1,2}/)+\\$types$)(\\.{1,2}/|#)(?!.*\\.(js|ts|svelte|json|css|webp|png|jpe?g|svg)(\\?.*)?$)',
+	message:
+		'Write the extension: `.js` for a TypeScript module (`../keys.js`, `./index.js` for a folder), `.svelte` for a component.'
+};
 const restrict = (paths, patterns = []) => ({
-	'no-restricted-imports': ['error', { paths, patterns: [deepRelative, ...patterns] }]
+	'no-restricted-imports': [
+		'error',
+		{ paths, patterns: [deepRelative, missingExtension, ...patterns] }
+	]
 });
 
 const importRules = [
@@ -153,24 +164,34 @@ export default defineConfig(
 		}
 	},
 	{
-		// Local readers are made with `defineReader`, which registers what they read. The nutrition
-		// queries are remote and go through TanStack.
-		files: ['apps/frontend/src/lib/features/{food-diary,user,chat}/**/queries/*.ts'],
-		ignores: [
-			'apps/frontend/src/lib/features/food-diary/nutrition-data/**',
-			'apps/frontend/src/lib/features/assistant/chat-image/**'
-		],
+		// A `!` hides a value that can be missing; narrow it with a check instead. Tests may use one
+		// right after asserting the value is there.
+		files: ['apps/*/src/**/*.{ts,svelte}', 'apps/api/lib/**/*.ts', 'packages/*/src/**/*.ts'],
+		rules: { '@typescript-eslint/no-non-null-assertion': 'error' }
+	},
+	{
+		// A query file exports a local reader (`get…`, made with `defineReader`, which registers the
+		// keys it reads) or a remote/device TanStack hook (`use…`). Covers every feature, so a new
+		// domain is checked without editing this list.
+		files: ['apps/frontend/src/lib/features/**/queries/*.ts'],
 		rules: {
 			'no-restricted-syntax': [
 				'error',
 				{
 					selector: 'ExportNamedDeclaration > FunctionDeclaration, ExportDefaultDeclaration',
-					message: 'Define a reader with `defineReader`, so it registers the keys it reads.'
+					message:
+						'Export `const getX = defineReader(...)` for local data, or `const useX = () => createQuery(...)` for remote or device data.'
 				},
 				{
 					selector:
-						"ExportNamedDeclaration > VariableDeclaration > VariableDeclarator:not([init.callee.name='defineReader'])",
-					message: 'Define a reader with `defineReader`, so it registers the keys it reads.'
+						"ExportNamedDeclaration > VariableDeclaration > VariableDeclarator[id.name=/^get[A-Z]/]:not([init.callee.name='defineReader'])",
+					message: 'Define a local reader with `defineReader`, so it registers the keys it reads.'
+				},
+				{
+					selector:
+						'ExportNamedDeclaration > VariableDeclaration > VariableDeclarator:not([id.name=/^(get|use)[A-Z]/])',
+					message:
+						'Name a local reader `get{Resource}…` and a remote or device query `use{Resource}…` (docs/reference/data-layer.md → Naming).'
 				}
 			]
 		}
