@@ -1,6 +1,6 @@
 import { getDb } from '#lib/clients/idb-client.js';
 import { defineReader } from '#lib/data/dependencies.js';
-import { chatKeys } from '../keys';
+import { chatKeys } from '../keys.js';
 
 /** A user's saved chats, the most recently active first. */
 export const getChats = defineReader({

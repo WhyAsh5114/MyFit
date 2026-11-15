@@ -3,7 +3,7 @@ import { getDb } from '#lib/clients/idb-client.js';
 import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
 import { invalidateKeys } from '#lib/data/dependencies.js';
-import { foodEntryKeys } from '../keys';
+import { foodEntryKeys } from '../keys.js';
 
 /**
  * Deletes several of a user's entries in one write, all or none, and resolves to the ones it

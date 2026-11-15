@@ -3,7 +3,7 @@ import { getDb } from '#lib/clients/idb-client.js';
 import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
 import { invalidateKeys } from '#lib/data/dependencies.js';
-import { foodEntryKeys } from '../keys';
+import { foodEntryKeys } from '../keys.js';
 import type { OPTIONAL_NUTRIENT_FIELDS } from '@myfit/shared/nutrition';
 
 export type FoodEntryChanges = {

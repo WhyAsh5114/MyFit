@@ -3,8 +3,8 @@ import { getDb } from '#lib/clients/idb-client.js';
 import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
 import { invalidateKeys } from '#lib/data/dependencies.js';
-import { localDay } from '../../_common/day-bounds';
-import { foodEntryKeys } from '../keys';
+import { localDay } from '../../_common/day-bounds.js';
+import { foodEntryKeys } from '../keys.js';
 
 /** Identifies a food entry within its owner's diary. */
 type MutationProps = {

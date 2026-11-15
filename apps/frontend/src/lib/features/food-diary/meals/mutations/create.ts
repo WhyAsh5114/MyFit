@@ -4,7 +4,7 @@ import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
 import { invalidateKeys } from '#lib/data/dependencies.js';
 import type { NewRow } from '@myfit/shared/client';
-import { mealKeys } from '../keys';
+import { mealKeys } from '../keys.js';
 
 export const useCreateMeal = () =>
 	useMutation({

@@ -1,4 +1,4 @@
-import { CALORIES_PER_KILOGRAM } from './constants';
+import { CALORIES_PER_KILOGRAM } from './constants.js';
 
 export type GoalDirection = 'cut' | 'maintain' | 'bulk';
 

@@ -3,7 +3,7 @@ import { getDb } from '#lib/clients/idb-client.js';
 import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
 import { invalidateKeys } from '#lib/data/dependencies.js';
-import { userKeys } from '../keys';
+import { userKeys } from '../keys.js';
 
 /** Updates the profile name and reloads the pages that show it. */
 export const useUpdateUserName = () =>

@@ -1,8 +1,8 @@
 import type { CalendarDate } from '@internationalized/date';
 import { getDb } from '#lib/clients/idb-client.js';
 import { defineReader } from '#lib/data/dependencies.js';
-import { dayBounds } from '../../_common/day-bounds';
-import { macroTargetsKeys } from '../keys';
+import { dayBounds } from '../../_common/day-bounds.js';
+import { macroTargetsKeys } from '../keys.js';
 
 type Args = { userId: string; date: CalendarDate };
 

@@ -1,6 +1,6 @@
 import { createInfiniteQuery } from '@tanstack/svelte-query';
 import { apiClient } from '#lib/clients/api-client.js';
-import { nutritionDataKeys } from '../keys';
+import { nutritionDataKeys } from '../keys.js';
 import { NUTRITION_DATA_SEARCH_PAGINATION_LIMIT } from '@myfit/shared/constants';
 
 export const useSearchNutritionData = (getSearch: () => string) =>

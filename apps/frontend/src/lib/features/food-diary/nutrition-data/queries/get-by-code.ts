@@ -1,6 +1,6 @@
 import { createQuery } from '@tanstack/svelte-query';
 import { apiClient } from '#lib/clients/api-client.js';
-import { nutritionDataKeys } from '../keys';
+import { nutritionDataKeys } from '../keys.js';
 
 export const useNutritionDataByCode = (getCode: () => string) =>
 	createQuery(() => {

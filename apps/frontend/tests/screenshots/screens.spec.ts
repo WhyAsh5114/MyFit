@@ -1,9 +1,9 @@
 import { expect, test, type Page, type Route } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { API, EXT, FORMAT, MAIL, OUT_DIR, WEB } from './support/env';
-import { findSmallTargets } from './support/tap-targets';
-import { settle } from '../e2e/support/settle';
+import { API, EXT, FORMAT, MAIL, OUT_DIR, WEB } from './support/env.js';
+import { findSmallTargets } from './support/tap-targets.js';
+import { settle } from '../e2e/support/settle.js';
 
 /** One captured screen. The gallery groups by `group` and lists `note` under the title. */
 type Screen = { id: string; group: string; title: string; note: string };

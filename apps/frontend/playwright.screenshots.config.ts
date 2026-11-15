@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { API, MAIL, WEB } from './tests/screenshots/support/env';
+import { API, MAIL, WEB } from './tests/screenshots/support/env.js';
 
 const DATABASE_URL = process.env.SCREENSHOT_DATABASE_URL;
 if (!DATABASE_URL) {

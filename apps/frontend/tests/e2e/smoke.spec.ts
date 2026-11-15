@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { signUp } from './support/auth';
+import { signUp } from './support/auth.js';
 
 test('a new account signs up, lands on the dashboard and stays signed in after a reload', async ({
 	page

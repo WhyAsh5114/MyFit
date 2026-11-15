@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { API, clickLogout, newEmail, setUpName, signIn, signUp } from './support/auth';
+import { API, clickLogout, newEmail, setUpName, signIn, signUp } from './support/auth.js';
 
 const WEB = 'http://localhost:4173';
 const CORS = {

@@ -4,7 +4,7 @@ import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
 import { invalidateKeys } from '#lib/data/dependencies.js';
 import type { NewRow } from '@myfit/shared/client';
-import { macroTargetsKeys } from '../keys';
+import { macroTargetsKeys } from '../keys.js';
 
 export const useCreateMacroTargets = () =>
 	useMutation({

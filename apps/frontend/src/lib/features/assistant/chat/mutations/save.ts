@@ -4,8 +4,8 @@ import { invalidateKeys } from '#lib/data/dependencies.js';
 import { useMutation } from '#lib/data/mutation.svelte.js';
 import { m } from '#lib/paraglide/messages.js';
 import { toast } from 'svelte-sonner';
-import { chatKeys } from '../keys';
-import { chatTitle, storedParts } from '../model';
+import { chatKeys } from '../keys.js';
+import { chatTitle, storedParts } from '../model.js';
 
 type Variables = {
 	userId: string;

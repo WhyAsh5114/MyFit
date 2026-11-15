@@ -1,6 +1,6 @@
 import type { NutritionData } from '@myfit/shared/nutrition';
-import { momentOnDay } from '../../_common/day-bounds';
-import type { FoodEntryFormSchema } from '../../food-entry/model/schema';
+import { momentOnDay } from '../../_common/day-bounds.js';
+import type { FoodEntryFormSchema } from '../../food-entry/model/schema.js';
 
 export function nutritionDataToFoodEntryFormData(
 	nutritionData: NutritionData,

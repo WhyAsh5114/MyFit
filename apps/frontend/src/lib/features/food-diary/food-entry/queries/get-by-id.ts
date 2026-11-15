@@ -1,6 +1,6 @@
 import { getDb } from '#lib/clients/idb-client.js';
 import { defineReader } from '#lib/data/dependencies.js';
-import { foodEntryKeys } from '../keys';
+import { foodEntryKeys } from '../keys.js';
 
 /** One of a user's food entries, or `null` when it no longer exists. */
 export const getFoodEntryById = defineReader({

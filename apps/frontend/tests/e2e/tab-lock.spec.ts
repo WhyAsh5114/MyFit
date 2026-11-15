@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { signUp } from './support/auth';
+import { signUp } from './support/auth.js';
 
 const blockedDialog = (page: Page) =>
 	page.getByRole('dialog', { name: 'MyFit is open in another tab' });

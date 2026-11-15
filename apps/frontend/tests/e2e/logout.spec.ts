@@ -7,7 +7,7 @@ import {
 	signUp,
 	signUpWithUnsyncedEdit,
 	unblockApi
-} from './support/auth';
+} from './support/auth.js';
 
 const failedDialog = (page: import('@playwright/test').Page) =>
 	page.getByRole('dialog', { name: "Couldn't log out" });

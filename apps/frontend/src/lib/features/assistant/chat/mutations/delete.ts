@@ -3,7 +3,7 @@ import { invalidateKeys } from '#lib/data/dependencies.js';
 import { useMutation } from '#lib/data/mutation.svelte.js';
 import { m } from '#lib/paraglide/messages.js';
 import { toast } from 'svelte-sonner';
-import { chatKeys } from '../keys';
+import { chatKeys } from '../keys.js';
 
 /**
  * Deletes a chat and its messages, and resolves to what it deleted so the caller can offer an undo,

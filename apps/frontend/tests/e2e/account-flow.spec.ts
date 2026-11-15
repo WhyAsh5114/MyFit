@@ -8,8 +8,8 @@ import {
 	signUpWithUnsyncedEdit,
 	unblockApi,
 	waitForNameSynced
-} from './support/auth';
-import { settle } from './support/settle';
+} from './support/auth.js';
+import { settle } from './support/settle.js';
 
 test('a background session refetch keeps the page and what was typed on it', async ({ page }) => {
 	let sessionRequests = 0;

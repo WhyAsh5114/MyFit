@@ -1,6 +1,6 @@
 import { getDb } from '#lib/clients/idb-client.js';
 import { defineReader } from '#lib/data/dependencies.js';
-import { macroMetricsKeys } from '../keys';
+import { macroMetricsKeys } from '../keys.js';
 
 /** A user's latest body metrics, or `null` when they have none. */
 export const getMacroMetrics = defineReader({

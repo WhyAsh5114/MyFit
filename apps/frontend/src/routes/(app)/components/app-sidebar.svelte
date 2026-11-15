@@ -4,7 +4,7 @@
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '#lib/components/ui/sidebar/index.js';
 	import type { ComponentProps } from 'svelte';
-	import { isExternalLink, sidebarLinks } from './constants';
+	import { isExternalLink, sidebarLinks } from './constants.js';
 	import favicon from '#lib/assets/favicon.webp';
 	import { m } from '#lib/paraglide/messages.js';
 	import NavUser from './nav-user.svelte';

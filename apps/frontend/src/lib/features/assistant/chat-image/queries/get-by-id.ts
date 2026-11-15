@@ -1,6 +1,6 @@
 import { createQuery } from '@tanstack/svelte-query';
 import { apiClient } from '#lib/clients/api-client.js';
-import { chatImageKeys } from '../keys';
+import { chatImageKeys } from '../keys.js';
 
 /**
  * A chat photo from object storage, as a URL an `<img>` can show. The photo is read with the

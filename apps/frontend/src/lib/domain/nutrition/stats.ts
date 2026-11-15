@@ -1,6 +1,6 @@
 import type { Row } from '@myfit/shared/client';
-import { calculateBMR } from './bmr';
-import { forQuantity } from './portion';
+import { calculateBMR } from './bmr.js';
+import { forQuantity } from './portion.js';
 
 type CalculateDailyNutritionStatsArgs = {
 	metrics: Row<'MacroMetrics'>;

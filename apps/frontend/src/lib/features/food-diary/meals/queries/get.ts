@@ -1,6 +1,6 @@
 import { getDb } from '#lib/clients/idb-client.js';
 import { defineReader } from '#lib/data/dependencies.js';
-import { mealKeys } from '../keys';
+import { mealKeys } from '../keys.js';
 
 /** A user's active meals, in the order they chose. */
 export const getMeals = defineReader({

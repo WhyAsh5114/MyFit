@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { signUp } from './support/auth';
+import { signUp } from './support/auth.js';
 
 // Accepting a real update needs a second build under the running server, which would pull files
 // out from under the other tests, so only the check itself runs here.

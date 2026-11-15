@@ -2,8 +2,8 @@ import type { CalendarDate } from '@internationalized/date';
 import { and } from '@prisma-idb/client-idb/orm';
 import { getDb } from '#lib/clients/idb-client.js';
 import { defineReader } from '#lib/data/dependencies.js';
-import { dayBounds } from '../../_common/day-bounds';
-import { foodEntryKeys } from '../keys';
+import { dayBounds } from '../../_common/day-bounds.js';
+import { foodEntryKeys } from '../keys.js';
 
 type Args = { userId: string; date: CalendarDate };
 

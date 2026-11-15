@@ -3,8 +3,8 @@ import { getDb } from '#lib/clients/idb-client.js';
 import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
 import { invalidateKeys } from '#lib/data/dependencies.js';
-import { mealKeys } from '../keys';
-import { saveMeals } from '../save-meals';
+import { mealKeys } from '../keys.js';
+import { saveMeals } from '../save-meals.js';
 
 /**
  * Gives a new account the usual meals, named in the user's language, so the diary has somewhere to

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { signUp } from './support/auth';
+import { signUp } from './support/auth.js';
 
 // Build and type checks can't see a removed framework module that only throws when a route uses
 // it, so every signed-in page has to open without an error.

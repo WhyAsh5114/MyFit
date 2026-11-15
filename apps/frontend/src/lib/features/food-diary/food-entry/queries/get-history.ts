@@ -1,7 +1,7 @@
 import { getDb } from '#lib/clients/idb-client.js';
 import { defineReader } from '#lib/data/dependencies.js';
 import { mealTimes, rankFoodHistory } from '#lib/domain/food-history/rank.js';
-import { foodEntryKeys } from '../keys';
+import { foodEntryKeys } from '../keys.js';
 
 /** How far back the foods the user logged are read. Older ones would barely rank anyway. */
 const HISTORY_DAYS = 180;

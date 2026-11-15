@@ -3,9 +3,9 @@ import { getDb } from '#lib/clients/idb-client.js';
 import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
 import { invalidateKeys } from '#lib/data/dependencies.js';
-import type { MealsFormSchema } from '../schema';
-import { mealKeys } from '../keys';
-import { saveMeals } from '../save-meals';
+import type { MealsFormSchema } from '../schema.js';
+import { mealKeys } from '../keys.js';
+import { saveMeals } from '../save-meals.js';
 
 /** Saves the complete meal configuration atomically before reloading the pages. */
 export const useSaveMeals = () =>

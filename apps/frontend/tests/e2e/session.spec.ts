@@ -12,7 +12,7 @@ import {
 	submitEmail,
 	unblockApi,
 	waitForNameSynced
-} from './support/auth';
+} from './support/auth.js';
 
 const expiredToast = 'Your session expired. Log in to sync your changes.';
 const otherAccountDialog = (page: Page) =>

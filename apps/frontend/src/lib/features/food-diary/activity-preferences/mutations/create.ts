@@ -4,7 +4,7 @@ import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
 import { invalidateKeys } from '#lib/data/dependencies.js';
 import type { NewRow } from '@myfit/shared/client';
-import { activityPreferencesKeys } from '../keys';
+import { activityPreferencesKeys } from '../keys.js';
 
 // Each save adds a row effective from now, so earlier preferences stay as history.
 export const useCreateActivityPreferences = () =>

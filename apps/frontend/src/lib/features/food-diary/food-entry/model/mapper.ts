@@ -3,7 +3,7 @@ import {
 	type FoodEntryFormSchema
 } from '#lib/features/food-diary/food-entry/model/schema.js';
 import type { NewRow } from '@myfit/shared/client';
-import { momentOnDay } from '../../_common/day-bounds';
+import { momentOnDay } from '../../_common/day-bounds.js';
 
 export function foodEntryFormSchemaToFoodEntry(
 	input: FoodEntryFormSchema,

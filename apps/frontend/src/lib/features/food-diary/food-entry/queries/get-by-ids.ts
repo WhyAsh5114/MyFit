@@ -1,6 +1,6 @@
 import { getDb } from '#lib/clients/idb-client.js';
 import { defineReader } from '#lib/data/dependencies.js';
-import { foodEntryKeys } from '../keys';
+import { foodEntryKeys } from '../keys.js';
 
 type Args = { userId: string; ids: string[] };
 

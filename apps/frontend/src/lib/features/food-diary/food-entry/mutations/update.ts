@@ -5,7 +5,7 @@ import { m } from '#lib/paraglide/messages.js';
 import { invalidateKeys } from '#lib/data/dependencies.js';
 import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
 import { foodEntryFormSchemaToFoodEntry } from '#lib/features/food-diary/food-entry/model/mapper.js';
-import { foodEntryKeys } from '../keys';
+import { foodEntryKeys } from '../keys.js';
 
 type MutationProps = {
 	data: FoodEntryFormSchema;

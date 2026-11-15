@@ -1,7 +1,7 @@
 import { useMutation } from '#lib/data/mutation.svelte.js';
 import { getDb } from '#lib/clients/idb-client.js';
 import type { NewRow } from '@myfit/shared/client';
-import { activityEntryKeys } from '../keys';
+import { activityEntryKeys } from '../keys.js';
 import { invalidateKeys } from '#lib/data/dependencies.js';
 import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';

@@ -1,6 +1,6 @@
 import { getDb } from '#lib/clients/idb-client.js';
 import { defineReader } from '#lib/data/dependencies.js';
-import { macroTargetsKeys } from '../keys';
+import { macroTargetsKeys } from '../keys.js';
 
 /** A user's latest macro targets, or `null` when they have none. */
 export const getMacroTargets = defineReader({
