@@ -9,7 +9,7 @@ if (!databaseUrl) throw new Error('Set TEST_DATABASE_URL to a migrated test Post
 const userId = `sync-smoke-${randomUUID()}`;
 
 // Sign-in is not under test, so the session always belongs to the test user.
-vi.mock('../../../src/shared/middleware/auth.js', () => ({
+vi.mock('#src/shared/middleware/auth.js', () => ({
 	authMiddleware: (_c: unknown, next: () => Promise<void>) => next(),
 	requireSessionUserId: async () => userId
 }));

@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { env } from '../lib/env.js';
+import { env } from '#lib/env.js';
 
 const app = new Hono();
 
@@ -26,7 +26,7 @@ app.use(
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const routes = app
 	.route('/api/health', (await import('./features/health/routes.js')).healthRoutes)
-	.route('/api/auth', (await import('./features/auth/auth.js')).authRoutes)
+	.route('/api/auth', (await import('./features/auth/routes.js')).authRoutes)
 	.route(
 		'/api/nutrition-data',
 		(await import('./features/nutrition-data/routes.js')).nutritionDataRoutes
@@ -37,7 +37,7 @@ const routes = app
 
 export type AppType = typeof routes;
 
-export type { MyUIMessage } from './features/chat/helpers.js';
+export type { MyUIMessage } from './features/chat/messages.js';
 export type { MyUITools } from './features/chat/tools.js';
 
 export { app };

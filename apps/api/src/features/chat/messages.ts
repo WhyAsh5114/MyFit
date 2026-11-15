@@ -1,5 +1,5 @@
 import type { UIDataTypes, UIMessage } from 'ai';
-import type { MyUITools } from './tools';
+import type { MyUITools } from './tools.js';
 
 export type MyUIMessage = UIMessage<unknown, UIDataTypes, MyUITools>;
 

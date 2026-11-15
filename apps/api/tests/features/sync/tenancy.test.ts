@@ -11,7 +11,7 @@ const victim = `tenancy-b-${randomUUID()}`;
 const victimMeal = randomUUID();
 
 // The session always belongs to the attacker, who tries to reach the victim's rows.
-vi.mock('../../../src/shared/middleware/auth.js', () => ({
+vi.mock('#src/shared/middleware/auth.js', () => ({
 	authMiddleware: (_c: unknown, next: () => Promise<void>) => next(),
 	requireSessionUserId: async () => attacker
 }));

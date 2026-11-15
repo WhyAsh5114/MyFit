@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 const objects = vi.hoisted(() => new Map<string, string>());
-vi.mock('../../../lib/storage.js', () => ({
+vi.mock('#lib/storage.js', () => ({
 	getStorage: async () => ({
 		file: (key: string) => ({
 			arrayBuffer: async () => {

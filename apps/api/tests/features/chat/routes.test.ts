@@ -3,7 +3,7 @@ import type { AddressInfo } from 'node:net';
 import { afterAll, beforeAll, expect, test, vi } from 'vitest';
 
 // Sign-in is not under test.
-vi.mock('../../../src/shared/middleware/auth.js', () => ({
+vi.mock('#src/shared/middleware/auth.js', () => ({
 	authMiddleware: (_c: unknown, next: () => Promise<void>) => next(),
 	getUserId: () => 'user-1'
 }));
@@ -239,7 +239,7 @@ test('the title route names a chat from its first message, cleaned of quotes and
 });
 
 test('a pending delete the user moved on from reaches the model as cancelled', async () => {
-	const { resolveMessages } = await import('#src/features/chat/helpers.js');
+	const { resolveMessages } = await import('#src/features/chat/messages.js');
 	const [message] = resolveMessages([
 		{
 			id: 'a1',

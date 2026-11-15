@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { pool } from './pool.js';
 import { anonymous, emailOTP } from 'better-auth/plugins';
-import { sendOTPEmail } from '../src/mailer.js';
+import { sendOTPEmail } from '#src/mailer.js';
 import { env } from './env.js';
 
 export const auth = betterAuth({

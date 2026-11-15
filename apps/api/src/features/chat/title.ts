@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { generateText } from 'ai';
 import z from 'zod';
 import { authMiddleware } from '#src/shared/middleware/auth.js';
-import { model } from './provider';
+import { model } from './provider.js';
 
 const TITLE_LENGTH = 60;
 const TIMEOUT_MS = 10_000;

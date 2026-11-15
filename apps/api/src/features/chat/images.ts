@@ -8,7 +8,7 @@ import {
 } from '@myfit/shared/constants';
 import { getStorage } from '#lib/storage.js';
 import { authMiddleware, getUserId } from '#src/shared/middleware/auth.js';
-import type { MyUIMessage } from './helpers.js';
+import type { MyUIMessage } from './messages.js';
 
 /** Where a user's photo lives in the bucket. The user id comes from the session, never the client. */
 const imageKey = (userId: string, id: string) => `chat-images/${userId}/${id}`;

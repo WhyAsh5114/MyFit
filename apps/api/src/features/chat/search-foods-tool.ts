@@ -1,6 +1,6 @@
 import { OPTIONAL_NUTRIENT_FIELDS, REQUIRED_NUTRIENT_FIELDS } from '@myfit/shared/nutrition';
 import { getDb, getSearchDb } from '#lib/db.js';
-import { searchFoods } from '../nutrition-data/search-foods.js';
+import { searchFoods } from '#src/features/nutrition-data/search-foods.js';
 
 /** Few enough that the full nutrients of each stay a small part of the model's context. */
 const MAX_FOODS = 5;

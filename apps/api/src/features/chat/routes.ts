@@ -8,12 +8,12 @@ import {
 } from 'ai';
 import z from 'zod';
 import { env } from '#lib/env.js';
-import { model } from './provider';
-import { tools } from './tools';
-import { systemPrompt } from './system-prompt';
-import { resolveMessages, type MyUIMessage } from './helpers';
-import { chatImageRoutes, resolveChatImages } from './images';
-import { chatTitleRoutes } from './title';
+import { model } from './provider.js';
+import { tools } from './tools.js';
+import { systemPrompt } from './system-prompt.js';
+import { resolveMessages, type MyUIMessage } from './messages.js';
+import { chatImageRoutes, resolveChatImages } from './images.js';
+import { chatTitleRoutes } from './title.js';
 import { authMiddleware, getUserId } from '#src/shared/middleware/auth.js';
 
 /**
