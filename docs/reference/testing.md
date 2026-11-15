@@ -21,6 +21,8 @@ Pick the smallest layer that can see the behavior. Most of the suite is the firs
 | A user flow across pages, the account, sync or offline                       | End to end against the built app, the real API and Postgres              | Playwright                      | `tests/e2e/diary-data.spec.ts`                                 |
 | How a screen looks, and 44px tap targets                                     | Screenshot gallery, reviewed by a person; tap targets are asserted       | Playwright (`pnpm screenshots`) | `tests/screenshots/screens.spec.ts`                            |
 
+Invariants that span files get a unit test too: `tests/messages.test.ts` checks that every language has the English keys and parameters, and `sync-invalidation.test.ts` checks that every synced model has keys.
+
 Svelte components have no unit tests. If a component holds logic worth testing, move that logic into `lib/domain/` or the feature and test it there; the component is covered by e2e and screenshots.
 
 ## When to write one

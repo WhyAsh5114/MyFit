@@ -11,10 +11,10 @@ How to add a new kind of user data, from schema to screen. The folder layout is 
 4. **Add the schema** (`schema.ts`, or `model/schema.ts` with a `model/mapper.ts` if the DB and form shapes differ).
 5. **Add readers in `queries/`** with `defineReader`, one per file, named after the operation (`get.ts`, `get-by-date.ts`).
 6. **Add mutations in `mutations/`** with `useMutation`, invalidating the user's keys in `onSuccess`.
-7. **Add the model to `KEYS_BY_MODEL`** in `services/sync/sync-invalidation.ts`, so a sync pull reruns only the pages that read it. A missing model still works, but every pull that touches it reruns every page.
+7. **Add the model to `KEYS_BY_MODEL`** in `services/sync/sync-invalidation.ts`, so a sync pull reruns only the pages that read it. A unit test fails until the model is listed; map it to `[]` while no page reads it.
 8. **Add the route** under `routes/(app)/(protected)/`. Its `+page.ts` takes `ownerId` from `await parent()` and calls the readers. Components only that route uses go in `components/` beside it.
 9. **Build the UI** following [`DESIGN.md`](../../DESIGN.md) and the steps in `.claude/rules/ui.md`. Add every string to `messages/en.json` and `messages/hi.json`.
 10. **Test it** at the layers [Testing](../reference/testing.md) names for each part, and add the screen to the screenshot spec.
-11. **Check it**: `pnpm lint`, `pnpm check`, `pnpm test` from the repo root.
+11. **Check it**: from the repo root, run `pnpm lint`, `pnpm check` and `pnpm --filter @myfit/frontend test`. Run the API and e2e suites too when the change touches them ([Run the tests](run-tests.md)).
 
 You are done when the screen reads its data in a `load`, a save updates every page that shows the data, a sync pull from another device does the same, and the checks pass.

@@ -18,6 +18,9 @@ type Key = readonly string[];
  *
  * `Meal` also covers the food entries: they include their meal, and deleting a meal cascades to
  * its entries, which a pull reports only as a change to the meal.
+ *
+ * A test checks that every synced model is listed. A model no page reads yet maps to `[]`; give it
+ * its keys when a reader for it lands.
  */
 const KEYS_BY_MODEL: Record<string, Key[]> = {
 	User: [userKeys.all],
@@ -28,7 +31,9 @@ const KEYS_BY_MODEL: Record<string, Key[]> = {
 	MacroMetrics: [macroMetricsKeys.all],
 	MacroTargets: [macroTargetsKeys.all],
 	Chat: [chatKeys.all],
-	ChatMessage: [chatKeys.all]
+	ChatMessage: [chatKeys.all],
+	Recipe: [],
+	RecipeIngredient: []
 };
 
 /** The key prefixes a pull changed, or `null` when a changed model has no mapping. */

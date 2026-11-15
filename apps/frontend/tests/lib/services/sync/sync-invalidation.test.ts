@@ -1,10 +1,14 @@
 import type { PullChange } from '@prisma-idb/sync-extension-idb/client';
 import { describe, expect, it } from 'vitest';
+import contract from '@myfit/shared/generated/contract.json';
 import { dependencyId, isUnder } from '#lib/data/dependencies.js';
 import { foodEntryKeys } from '#lib/features/food-diary/food-entry/keys.js';
 import { macroTargetsKeys } from '#lib/features/food-diary/macro-targets/keys.js';
 import { mealKeys } from '#lib/features/food-diary/meals/keys.js';
 import { keysChangedBy } from '#lib/services/sync/sync-invalidation.js';
+
+/** Every model the device syncs, from the client contract the schema sync writes. */
+const syncedModels = Object.values(contract.roots).map((root) => root.model);
 
 /** A pulled change to `model`. Only the model matters to the invalidation. */
 const changeTo = (model: string) => ({ model }) as PullChange;
@@ -25,7 +29,12 @@ describe('keysChangedBy', () => {
 	});
 
 	it('asks for every load to rerun when a changed model has no mapping', () => {
-		expect(keysChangedBy([changeTo('MacroTargets'), changeTo('Recipe')])).toBeNull();
+		expect(keysChangedBy([changeTo('MacroTargets'), changeTo('UnmappedModel')])).toBeNull();
+	});
+
+	// A synced model without a mapping makes every pull that touches it rerun every page.
+	it.each(syncedModels)('maps the synced model %s', (model) => {
+		expect(keysChangedBy([changeTo(model)]), `add ${model} to KEYS_BY_MODEL`).not.toBeNull();
 	});
 
 	it('invalidates nothing when the pull changed nothing', () => {
