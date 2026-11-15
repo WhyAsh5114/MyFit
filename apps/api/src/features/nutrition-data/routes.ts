@@ -12,7 +12,7 @@ const PG_QUERY_CANCELED = '57014';
 /** The search was cancelled for running too long, or waited too long for a free connection. */
 function isSearchOverloaded(error: unknown) {
 	return (
-		(error as { sqlState?: string } | null)?.sqlState === PG_QUERY_CANCELED ||
+		(error instanceof Object && 'sqlState' in error && error.sqlState === PG_QUERY_CANCELED) ||
 		(error instanceof Error && error.message === 'timeout exceeded when trying to connect')
 	);
 }

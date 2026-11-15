@@ -17,7 +17,7 @@ const imageKey = (userId: string, id: string) => `chat-images/${userId}/${id}`;
 const MAX_IMAGES_PER_REQUEST = 4;
 
 const isChatImageType = (type: string): type is (typeof CHAT_IMAGE_TYPES)[number] =>
-	(CHAT_IMAGE_TYPES as readonly string[]).includes(type);
+	CHAT_IMAGE_TYPES.some((known) => known === type);
 
 export const chatImageRoutes = new Hono()
 	/**

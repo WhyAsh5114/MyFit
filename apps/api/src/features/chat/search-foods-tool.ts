@@ -22,10 +22,9 @@ export async function findFoods(query: string) {
 		foods: rows
 			.filter((row) => row !== null && row !== undefined)
 			.map((row) => {
-				const values = row as unknown as Record<string, unknown>;
 				const per100g: Record<string, number> = {};
 				for (const key of NUTRIENT_KEYS) {
-					const value = values[key];
+					const value = row[key];
 					if (typeof value === 'number') per100g[key] = value;
 				}
 				return {

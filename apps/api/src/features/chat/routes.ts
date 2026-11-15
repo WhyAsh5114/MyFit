@@ -63,6 +63,7 @@ const chatRoutes = new Hono()
 			messages: await convertToModelMessages(resolved, { ignoreIncompleteToolCalls: true }),
 			instructions: instructions(extra),
 			tools,
+			// `Object.keys` types its result as `string[]`, so the tool names are restated.
 			activeTools: env.EXA_API_KEY
 				? undefined
 				: (Object.keys(tools).filter((name) => name !== 'webSearch') as (keyof typeof tools)[]),

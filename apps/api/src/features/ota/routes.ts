@@ -86,12 +86,10 @@ let pendingManifestWrite: Promise<void> = Promise.resolve();
  */
 async function acquireManifestLock(): Promise<() => void> {
 	const prev = pendingManifestWrite;
-	let release: () => void;
-	pendingManifestWrite = new Promise<void>((resolve) => {
-		release = resolve;
-	});
+	const { promise, resolve } = Promise.withResolvers<void>();
+	pendingManifestWrite = promise;
 	await prev;
-	return release!;
+	return resolve;
 }
 
 // ---------------------------------------------------------------------------
@@ -144,7 +142,9 @@ async function validateUploadForm(body: UploadForm): Promise<ValidBundleUpload |
 	}
 
 	// An empty field counts as absent: a blank version would publish a bundle with no name.
-	const requestedVersion = (body.get('version') as string | null) || generateVersion();
+	const versionField = body.get('version');
+	const requestedVersion =
+		typeof versionField === 'string' && versionField ? versionField : generateVersion();
 	const version = requestedVersion.replace(/[^a-zA-Z0-9._-]/g, '_');
 	// Assigning `bundles['__proto__']` would set the object's prototype instead of adding a bundle.
 	if (version === '__proto__') return { status: 400, error: `Version "${version}" is reserved` };
@@ -240,6 +240,7 @@ const otaRoutes = new Hono()
 
 		try {
 			const { size } = await stat(filePath);
+			// Node types its web stream apart from the DOM's `ReadableStream`, which `Response` takes.
 			const stream = Readable.toWeb(createReadStream(filePath)) as unknown as ReadableStream;
 			return new Response(stream, {
 				status: 200,

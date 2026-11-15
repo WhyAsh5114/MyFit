@@ -1,15 +1,17 @@
 import { mkdir, open, readFile, rename } from 'node:fs/promises';
 import { join } from 'node:path';
+import z from 'zod';
 
 /** One uploaded bundle. Entries are immutable: a version's file and checksum never change. */
-export interface BundleEntry {
-	version: string;
-	filename: string;
-	checksum: string;
-	createdAt: string;
+const bundleEntry = z.object({
+	version: z.string(),
+	filename: z.string(),
+	checksum: z.string(),
+	createdAt: z.string(),
 	/** The native compatibility line the bundle was built for, such as `cap8`. */
-	channel: string;
-}
+	channel: z.string()
+});
+export type BundleEntry = z.infer<typeof bundleEntry>;
 
 /** What a channel name may look like: lowercase letters, digits and hyphens. */
 export const CHANNEL_PATTERN = /^[a-z0-9-]{1,32}$/;
@@ -18,9 +20,8 @@ export const CHANNEL_PATTERN = /^[a-z0-9-]{1,32}$/;
  * Every uploaded bundle by version. Which one clients install is not stored: it is the newest
  * bundle in the client's channel (see `latestInChannel`), so uploading is the only way to change it.
  */
-export interface Manifest {
-	bundles: Record<string, BundleEntry>;
-}
+const manifest = z.object({ bundles: z.record(z.string(), bundleEntry) });
+export type Manifest = z.infer<typeof manifest>;
 
 const MANIFEST_FILENAME = 'manifest.json';
 
@@ -58,7 +59,7 @@ export function latestInChannel(manifest: Manifest, channel: string): BundleEntr
  */
 export async function readManifest(dir: string): Promise<Manifest> {
 	try {
-		return JSON.parse(await readFile(join(dir, MANIFEST_FILENAME), 'utf-8')) as Manifest;
+		return manifest.parse(JSON.parse(await readFile(join(dir, MANIFEST_FILENAME), 'utf-8')));
 	} catch (error) {
 		if (hasErrorCode(error, 'ENOENT')) return { bundles: {} };
 		throw error;

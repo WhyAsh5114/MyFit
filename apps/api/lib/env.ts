@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import z from 'zod';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -38,14 +39,18 @@ function requiredUrlOrigin(key: string): string {
 	return optionalUrlOrigin(key) ?? required(key);
 }
 
-/** Required JSON-encoded value. Fails fast on missing or invalid JSON. */
-function requiredJson<T>(key: string): T {
+/** Required JSON-encoded value of `schema`'s shape. Fails fast on missing, invalid or wrong JSON. */
+function requiredJson<T>(key: string, schema: z.ZodType<T>): T {
 	const raw = required(key);
+	let value: unknown;
 	try {
-		return JSON.parse(raw) as T;
+		value = JSON.parse(raw);
 	} catch {
 		throw new Error(`Invalid JSON in environment variable: ${key}`);
 	}
+	const parsed = schema.safeParse(value);
+	if (!parsed.success) throw new Error(`Unexpected value in environment variable: ${key}`);
+	return parsed.data;
 }
 
 // ---------------------------------------------------------------------------
@@ -57,7 +62,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 export const env = {
 	// --- Required (app won't start without these) ---
 	DATABASE_URL: required('DATABASE_URL'),
-	TRUSTED_ORIGINS: requiredJson<string[]>('TRUSTED_ORIGINS'),
+	TRUSTED_ORIGINS: requiredJson('TRUSTED_ORIGINS', z.array(z.string())),
 	BETTER_AUTH_SECRET: required('BETTER_AUTH_SECRET'),
 	BETTER_AUTH_URL: required('BETTER_AUTH_URL'),
 
