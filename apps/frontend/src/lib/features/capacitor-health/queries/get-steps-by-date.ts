@@ -1,14 +1,14 @@
 import { createQuery } from '@tanstack/svelte-query';
-import { capacitorHealthKeys } from '../keys';
+import { capacitorHealthKeys } from '../keys.js';
 import type { CalendarDate } from '@internationalized/date';
-import { Capacitor } from '@capacitor/core';
+import { hasHealth } from '../has-health.js';
 import { Health } from '@capgo/capacitor-health';
 
-export const useGetDaySteps = (getDate: () => CalendarDate) =>
+export const useStepsByDate = (getDate: () => CalendarDate) =>
 	createQuery(() => {
 		const date = getDate();
 		return {
-			queryKey: capacitorHealthKeys.stepCount(date.toString()),
+			queryKey: capacitorHealthKeys.stepsByDate(date.toString()),
 			queryFn: async () => {
 				return await Health.readSamples({
 					limit: 1,
@@ -18,7 +18,6 @@ export const useGetDaySteps = (getDate: () => CalendarDate) =>
 				});
 			},
 			staleTime: 1000 * 60 * 5,
-			// An older app binary may not have the plugin.
-			enabled: !!date && Capacitor.isPluginAvailable('Health')
+			enabled: !!date && hasHealth()
 		};
 	});

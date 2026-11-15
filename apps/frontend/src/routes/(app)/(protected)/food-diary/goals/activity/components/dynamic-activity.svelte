@@ -2,7 +2,7 @@
 	import Button from '#lib/components/ui/button/button.svelte';
 	import Separator from '#lib/components/ui/separator/separator.svelte';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
-	import { Capacitor } from '@capacitor/core';
+	import { hasHealth } from '#lib/features/capacitor-health/has-health.js';
 	import { Health } from '@capgo/capacitor-health';
 	import { CheckIcon, HeartHandshakeIcon } from '@lucide/svelte';
 	import { onMount } from 'svelte';
@@ -16,8 +16,7 @@
 	let todaysCalories = $state<number | null>();
 
 	onMount(async () => {
-		// An older app binary may not have the plugin.
-		if (!Capacitor.isPluginAvailable('Health')) {
+		if (!hasHealth()) {
 			data = 'unavailable';
 			return;
 		}

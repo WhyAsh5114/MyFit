@@ -2,7 +2,7 @@
 	import { untrack } from 'svelte';
 	import { CalendarDate, getLocalTimeZone } from '@internationalized/date';
 	import type { Row } from '@myfit/shared/client';
-	import { useGetDaySteps } from '#lib/features/capacitor-health/queries/get-day-steps.js';
+	import { useStepsByDate } from '#lib/features/capacitor-health/queries/get-steps-by-date.js';
 	import { calculateActivityCalories } from '#lib/domain/nutrition/activity-calories.js';
 	import { useSaveDynamicActivityData } from '#lib/features/food-diary/activity-entry/mutations/save-dynamic-activity-data.js';
 
@@ -15,7 +15,7 @@
 	};
 	let { selectedDay, userId, activityEntries, activityPreferences, macroMetrics }: Props = $props();
 
-	const daySteps = useGetDaySteps(() => selectedDay);
+	const daySteps = useStepsByDate(() => selectedDay);
 	const saveDynamicActivityData = useSaveDynamicActivityData();
 
 	// Returns true only when the step-count-based entry needs to be created or updated, and the
@@ -53,14 +53,16 @@
 	$effect(() => {
 		if (!shouldSyncDynamic) return;
 		untrack(() => {
-			const sample = daySteps.data!.samples.at(0)!;
+			const sample = daySteps.data?.samples.at(0);
+			if (!sample || !macroMetrics) return;
 			const existing = activityEntries.find((e) => e.systemGenerated);
 
 			saveDynamicActivityData.mutate({
 				date: selectedDay,
+				// Stored in English; the diary names generated entries by their unit, translated.
 				name: 'Daily steps',
 				performedAt: existing?.performedAt ?? selectedDay.toDate(getLocalTimeZone()),
-				calories: calculateActivityCalories({ ...macroMetrics!, stepCount: sample.value }),
+				calories: calculateActivityCalories({ ...macroMetrics, stepCount: sample.value }),
 				quantity: sample.value,
 				quantityUnit: 'steps',
 				systemGenerated: true,
@@ -73,14 +75,15 @@
 	$effect(() => {
 		if (!shouldSyncStatic) return;
 		untrack(() => {
-			const prefs = activityPreferences!;
+			const prefs = activityPreferences;
+			if (!prefs?.staticCalories) return;
 			const existing = activityEntries.find((e) => e.systemGenerated);
 
 			saveDynamicActivityData.mutate({
 				date: selectedDay,
 				name: 'Daily fixed activity',
 				performedAt: existing?.performedAt ?? selectedDay.toDate(getLocalTimeZone()),
-				calories: prefs.staticCalories!,
+				calories: prefs.staticCalories,
 				quantity: 1,
 				quantityUnit: 'day',
 				systemGenerated: true,

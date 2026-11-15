@@ -110,7 +110,8 @@ export const useNutritionDataById = (getId: () => string) =>
 ```
 
 - **Take args through a getter function**, not raw values.
-- **Remote queries set** `staleTime: 1000 * 60 * 10`, `refetchOnWindowFocus: false` and `refetchOnReconnect: false`.
+- **Network queries set** `staleTime: 1000 * 60 * 10`, `refetchOnWindowFocus: false` and `refetchOnReconnect: false`. A query whose data never changes (a chat photo) uses `staleTime: Infinity`.
+- **Device queries** (Health, the OTA plugin) set a `staleTime` that fits how fast the value changes, and gate `enabled` on the plugin check in their feature (`hasHealth()`, `hasUpdater()`; see [Frontend → Capacitor](frontend.md#capacitor-and-native)).
 - **Let `queryFn` throw.** No `try/catch`, toast or log inside it: TanStack retries a failed query, so a toast there repeats. The component reads `isError` and shows an empty state with a retry, or one toast in an `$effect`. A response that is an answer, like a 404 for a missing food, returns `null`.
 - **A write that goes only to the network uses TanStack's `createMutation`**, which keeps its retry: login (`routes/login/components/login-form.svelte`), the chat photo upload (`chat-image/mutations/upload.ts`) and the OTA check (`ota/mutations/check-for-updates.ts`). Local writes use `useMutation`.
 - **Leave `queryClient` to the account root and logout**, which cancel and clear it when the account changes. Routes and components never call it. A feature hook may seed its own query's cache: the photo upload puts the local image under `chatImageKeys.byId(id)`, so the message shows it without downloading it again.
@@ -140,11 +141,7 @@ export const foodEntryKeys = {
 };
 ```
 
-- **Every user-scoped key has `userId` at the second level.** A key without it keeps one user's data after another signs in.
-- Segment names are `byUser`, `byDate`, `byId` and `search`, with no `Query` or `get` suffix.
+- **Every user-scoped key has `userId` at the second level.** A key without it keeps one user's data after another signs in. A key for a random id the API scopes to its owner (`chatImageKeys.byId(id)`) needs no user level.
+- Factory methods are `byUser`, `by{Selector}` (`byDate`, `byId`, `byCode`) or `search`, with no `Query` or `get` suffix. A domain with several kinds of value puts the kind first: `capacitorHealthKeys.stepsByDate(date)`. A key for one value with no selector is named for it: `otaKeys.currentBundle()`.
 - **The segment label goes before its value**: `[...byUser(userId), 'date', date]`, not `[..., date]` or `[..., 'byDate', date]`.
 - Device data, such as Health (`capacitorHealthKeys`), has no `userId` level: it belongs to the device, not the account.
-
-## Known deviations
-
-None known. Add one here when code is left breaking a rule above, with where it is.
