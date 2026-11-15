@@ -40,8 +40,8 @@
 	/** Counts attaches, so a slow one that was replaced or removed doesn't overwrite the newer one. */
 	let attachCount = 0;
 
-	async function attach(event: Event) {
-		const target = event.target as HTMLInputElement;
+	async function attach(event: Event & { currentTarget: HTMLInputElement }) {
+		const target = event.currentTarget;
 		const file = target.files?.[0];
 		target.value = '';
 		if (!file) return;
@@ -63,8 +63,8 @@
 				previewUrl: URL.createObjectURL(compressed)
 			};
 			const { id } = await uploadImage.mutateAsync(compressed);
-			if (!current()) return;
-			image = { ...image!, id };
+			if (!current() || !image) return;
+			image = { ...image, id };
 			posthog.capture('chat_image_attached');
 		} catch (error) {
 			if (!current()) return;

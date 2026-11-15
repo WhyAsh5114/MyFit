@@ -19,7 +19,12 @@ export async function pickBestCamera(devices: MediaDeviceInfo[]) {
 
 			let score = Object.keys(caps).length;
 			if ('focusDistance' in caps) score += 5;
-			if ('focusMode' in caps && (caps.focusMode as string[]).includes('continuous')) score += 3;
+			if (
+				'focusMode' in caps &&
+				Array.isArray(caps.focusMode) &&
+				caps.focusMode.includes('continuous')
+			)
+				score += 3;
 
 			if (score > bestScore) {
 				bestScore = score;

@@ -21,7 +21,9 @@
 			<Select.Root
 				type="single"
 				value={userPrefersMode.current}
-				onValueChange={(v) => setMode(v as 'light' | 'dark' | 'system')}
+				onValueChange={(v) => {
+					if (v === 'light' || v === 'dark' || v === 'system') setMode(v);
+				}}
 			>
 				<Select.Trigger class="capitalize">
 					{modeLabel}

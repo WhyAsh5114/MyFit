@@ -8,8 +8,6 @@ import {
 	type SyncWorkerStatus
 } from '@prisma-idb/sync-extension-idb/client';
 
-const SYNC_WORKER_STATE_KEY = '__myfit_sync_worker_state__';
-
 /**
  * Owns the app's single sync worker and the reactive state the sync indicator reads.
  *
@@ -92,11 +90,11 @@ class SyncWorkerState {
 	}
 }
 
-const g = globalThis as Record<string, unknown>;
-if (!g[SYNC_WORKER_STATE_KEY]) {
-	g[SYNC_WORKER_STATE_KEY] = new SyncWorkerState();
+// Kept on `globalThis` so a hot reload of this module reuses the page's one worker.
+declare global {
+	var __myfit_sync_worker_state__: SyncWorkerState | undefined;
 }
-export const syncWorkerState = g[SYNC_WORKER_STATE_KEY] as SyncWorkerState;
+export const syncWorkerState = (globalThis.__myfit_sync_worker_state__ ??= new SyncWorkerState());
 
 /**
  * Calls `onChange` with whether any change still waits to sync, now and whenever the outbox gains,

@@ -1,6 +1,9 @@
 import { PUBLIC_API_URL } from '$app/env/public';
 import { createMutation, useQueryClient } from '@tanstack/svelte-query';
-import { chatImageKeys } from '../keys';
+import z from 'zod';
+import { chatImageKeys } from '../keys.js';
+
+const uploadResponse = z.object({ id: z.string() });
 
 /**
  * Stores a photo in object storage and answers its id. A network request, so it keeps TanStack's
@@ -18,7 +21,7 @@ export const useUploadChatImage = () => {
 				body: image
 			});
 			if (!res.ok) throw new Error(`Failed to upload chat image (${res.status})`);
-			const { id } = (await res.json()) as { id: string };
+			const { id } = uploadResponse.parse(await res.json());
 			return { id, image };
 		},
 		retry: 2,

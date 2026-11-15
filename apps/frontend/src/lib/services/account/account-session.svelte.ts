@@ -4,14 +4,18 @@ import { dependOn, invalidateKeys, type Depends } from '#lib/data/dependencies.j
 export type TabStatus = 'pending' | 'active' | 'blocked';
 
 /** Gates account views while the tab lock and the logout flow settle. */
-export const accountSession = $state({
-	tab: 'pending' as TabStatus,
-	logout: 'idle' as 'idle' | 'busy' | 'failed',
+export const accountSession = $state<{
+	tab: TabStatus;
+	logout: 'idle' | 'busy' | 'failed';
+	ownerId: string | null | undefined;
+}>({
+	tab: 'pending',
+	logout: 'idle',
 	/**
 	 * The account the app is showing: `undefined` while it isn't ready (the local database is being
 	 * reconciled with the session, or a dialog is waiting for the user), `null` when there is none.
 	 */
-	ownerId: undefined as string | null | undefined
+	ownerId: undefined
 });
 
 export const accountKeys = { owner: ['account'] as const };

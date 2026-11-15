@@ -120,6 +120,7 @@ export class ChatSession {
 	 */
 	persist(title?: string) {
 		if (this.#discarded) return;
+		// The snapshot's inferred type is too deep for TypeScript; it is the same messages, unproxied.
 		const messages = $state.snapshot(this.chat.messages) as MyUIMessage[];
 		if (messages.length === 0) return;
 		this.#saving = this.#saving

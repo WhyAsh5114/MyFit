@@ -82,11 +82,14 @@ export async function checkForUpdates(): Promise<void> {
 	updateCheckInProgress = true;
 
 	try {
+		// `hasUpdater()` passed, so this is a native app.
+		const platform = Capacitor.getPlatform();
+		if (platform !== 'ios' && platform !== 'android') return;
 		const current = await CapacitorUpdater.current();
 
 		const res = await apiClient.api.ota.latest.$get({
 			query: {
-				platform: Capacitor.getPlatform() as 'ios' | 'android' | 'web',
+				platform,
 				currentVersion: current.bundle.version,
 				channel: __OTA_CHANNEL__
 			}

@@ -1,7 +1,7 @@
 import type { MyUIMessage } from '@myfit/api';
 import { getDb } from '#lib/clients/idb-client.js';
 import { defineReader } from '#lib/data/dependencies.js';
-import { chatKeys } from '../keys';
+import { chatKeys } from '../keys.js';
 
 /**
  * One chat with its messages in order, or `null` for a chat that has not been saved yet: a new
@@ -14,6 +14,7 @@ export const getChatById = defineReader({
 		const chat = await orm.chat.where({ id, userId }).first();
 		if (!chat) return null;
 		const rows = await orm.chatMessage.where({ chatId: id }).orderBy({ position: 'asc' }).all();
+		// `parts` is stored as JSON, which the client types loosely; the app wrote it from a message.
 		const messages = rows.map(
 			(row) => ({ id: row.id, role: row.role, parts: row.parts }) as unknown as MyUIMessage
 		);

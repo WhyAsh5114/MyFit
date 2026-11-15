@@ -1,6 +1,6 @@
 import type { IdbOrmTransaction } from '@prisma-idb/client-idb/client';
 import type { Contract } from '@myfit/shared/client';
-import type { MealsFormSchema } from './schema';
+import type { MealsFormSchema } from './schema.js';
 
 type Tx = IdbOrmTransaction<Contract, 'meal'>;
 
@@ -23,8 +23,8 @@ export async function saveMeals(tx: Tx, userId: string, meals: MealsFormSchema['
 	const submittedIds = new Set(meals.map((meal) => meal.id));
 
 	async function rename(id: string, name: string) {
-		const row = rows.get(id)!;
-		if (row.name === name) return;
+		const row = rows.get(id);
+		if (!row || row.name === name) return;
 		await tx.meal.where({ id }).update({ name });
 		idByName.delete(row.name);
 		idByName.set(name, id);
@@ -39,7 +39,8 @@ export async function saveMeals(tx: Tx, userId: string, meals: MealsFormSchema['
 
 	// Free every name that is about to change first, so two meals can swap names.
 	for (const meal of meals) {
-		if (rows.has(meal.id) && rows.get(meal.id)!.name !== meal.name) {
+		const row = rows.get(meal.id);
+		if (row && row.name !== meal.name) {
 			await rename(meal.id, placeholder(meal.id));
 		}
 	}

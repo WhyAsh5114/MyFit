@@ -17,7 +17,7 @@ const TAKEOVER_MS = 3000;
 type UpdateStatus =
 	'unavailable' | 'idle' | 'checking' | 'upToDate' | 'ready' | 'applying' | 'failed';
 
-export const appUpdate = $state({ status: 'unavailable' as UpdateStatus });
+export const appUpdate = $state<{ status: UpdateStatus }>({ status: 'unavailable' });
 
 let serwist: Serwist | undefined;
 let registration: ServiceWorkerRegistration | undefined;

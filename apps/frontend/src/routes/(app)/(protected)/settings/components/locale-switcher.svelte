@@ -7,7 +7,7 @@
 	type Locale = (typeof locales)[number];
 
 	function isValidLocale(locale: unknown): locale is Locale {
-		return typeof locale === 'string' && locales.includes(locale as Locale);
+		return locales.some((known) => known === locale);
 	}
 
 	function changeLocale(locale: unknown) {

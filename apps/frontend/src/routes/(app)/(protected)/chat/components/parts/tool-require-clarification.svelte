@@ -21,7 +21,8 @@
 
 	function answer(event: SubmitEvent) {
 		event.preventDefault();
-		const values = new FormData(event.currentTarget as HTMLFormElement)
+		if (!(event.currentTarget instanceof HTMLFormElement)) return;
+		const values = new FormData(event.currentTarget)
 			.getAll('answer')
 			.filter((value): value is string => typeof value === 'string' && value.trim() !== '');
 		const output = values.at(-1)?.trim();

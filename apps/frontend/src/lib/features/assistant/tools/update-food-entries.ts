@@ -9,6 +9,11 @@ import { localTime, parseLocalDateTime } from './local-time.js';
 
 type Edit = MyUITools['updateFoodEntries']['input']['edits'][number];
 type Output = MyUITools['updateFoodEntries']['output'];
+type ExtraKey = (typeof OPTIONAL_NUTRIENT_FIELDS)[number]['key'];
+
+/** An optional nutrient's value per 100 g, or null when it isn't known. */
+const extra = (source: Partial<Record<ExtraKey, number | null>>, key: ExtraKey) =>
+	source[key] ?? null;
 
 /** What an entry is, before and after an edit, as the card shows it. */
 export type EntryState = {
@@ -56,8 +61,7 @@ export async function planUpdates(
 
 		const changes: FoodEntryChanges = {};
 		const set = <K extends keyof FoodEntryChanges>(key: K, value: FoodEntryChanges[K]) => {
-			if (value !== undefined && value !== (entry as Record<string, unknown>)[key])
-				changes[key] = value;
+			if (value !== undefined && value !== entry[key]) changes[key] = value;
 		};
 		set('productName', edit.name);
 		set('quantityG', edit.quantityG);
@@ -65,24 +69,10 @@ export async function planUpdates(
 		set('carbohydratesG_100g', edit.carbohydratesG_100g);
 		set('fatG_100g', edit.fatG_100g);
 		set('proteinsG_100g', edit.proteinsG_100g);
-		const extras = (key: string, source: Record<string, unknown>) => {
-			const value = source[key];
-			return typeof value === 'number' ? value : null;
-		};
 		for (const { key } of OPTIONAL_NUTRIENT_FIELDS) {
-			const value = (edit as Record<string, unknown>)[key];
-			if (value === undefined) continue;
-			if (value !== extras(key, entry)) (changes as Record<string, unknown>)[key] = value;
+			const value = edit[key];
+			if (value !== undefined && value !== extra(entry, key)) changes[key] = value;
 		}
-		const extrasAfter = (source: Record<string, unknown>) =>
-			Object.fromEntries(
-				OPTIONAL_NUTRIENT_FIELDS.map(({ key }) => [
-					key,
-					key in changes
-						? ((changes as Record<string, number | null>)[key] ?? null)
-						: extras(key, source)
-				])
-			);
 
 		const eatenAt = parseLocalDateTime(edit.eatenAt);
 		if (eatenAt && eatenAt.getTime() !== entry.eatenAt.getTime()) changes.eatenAt = eatenAt;
@@ -112,7 +102,7 @@ export async function planUpdates(
 				fatG: entry.fatG_100g,
 				proteinG: entry.proteinsG_100g,
 				extras: Object.fromEntries(
-					OPTIONAL_NUTRIENT_FIELDS.map(({ key }) => [key, extras(key, entry)])
+					OPTIONAL_NUTRIENT_FIELDS.map(({ key }) => [key, extra(entry, key)])
 				)
 			},
 			after: {
@@ -124,7 +114,12 @@ export async function planUpdates(
 				carbsG: changes.carbohydratesG_100g ?? entry.carbohydratesG_100g,
 				fatG: changes.fatG_100g ?? entry.fatG_100g,
 				proteinG: changes.proteinsG_100g ?? entry.proteinsG_100g,
-				extras: extrasAfter(entry)
+				extras: Object.fromEntries(
+					OPTIONAL_NUTRIENT_FIELDS.map(({ key }) => [
+						key,
+						key in changes ? (changes[key] ?? null) : extra(entry, key)
+					])
+				)
 			},
 			changes
 		});

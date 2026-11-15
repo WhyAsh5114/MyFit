@@ -12,9 +12,6 @@
 	import SearchFoodsPart from './parts/tool-search-foods.svelte';
 	import WebSearchPart from './parts/tool-web-search.svelte';
 
-	type Part = MyUIMessage['parts'][number];
-	type PartOf<T extends Part['type']> = Extract<Part, { type: T }>;
-
 	let { message, active }: { message: MyUIMessage; active: boolean } = $props();
 
 	const isUser = $derived(message.role === 'user');
@@ -24,25 +21,25 @@
 	<Message.Content>
 		{#each message.parts as part, index (index)}
 			{#if part.type === 'text'}
-				<TextPart part={part as PartOf<'text'>} role={message.role} />
+				<TextPart {part} role={message.role} />
 			{:else if part.type === 'file'}
-				<FilePart part={part as PartOf<'file'>} />
+				<FilePart {part} />
 			{:else if part.type === 'reasoning'}
-				<ReasoningPart part={part as PartOf<'reasoning'>} />
+				<ReasoningPart {part} />
 			{:else if part.type === 'tool-requireClarification'}
-				<RequireClarificationPart part={part as PartOf<'tool-requireClarification'>} {active} />
+				<RequireClarificationPart {part} {active} />
 			{:else if part.type === 'tool-createFoodEntry'}
-				<CreateFoodEntryPart part={part as PartOf<'tool-createFoodEntry'>} {active} />
+				<CreateFoodEntryPart {part} {active} />
 			{:else if part.type === 'tool-readFoodEntries'}
-				<ReadFoodEntriesPart part={part as PartOf<'tool-readFoodEntries'>} />
+				<ReadFoodEntriesPart {part} />
 			{:else if part.type === 'tool-deleteFoodEntries'}
-				<DeleteFoodEntriesPart part={part as PartOf<'tool-deleteFoodEntries'>} {active} />
+				<DeleteFoodEntriesPart {part} {active} />
 			{:else if part.type === 'tool-updateFoodEntries'}
-				<UpdateFoodEntriesPart part={part as PartOf<'tool-updateFoodEntries'>} {active} />
+				<UpdateFoodEntriesPart {part} {active} />
 			{:else if part.type === 'tool-searchFoods'}
-				<SearchFoodsPart part={part as PartOf<'tool-searchFoods'>} />
+				<SearchFoodsPart {part} />
 			{:else if part.type === 'tool-webSearch'}
-				<WebSearchPart part={part as PartOf<'tool-webSearch'>} />
+				<WebSearchPart {part} />
 			{/if}
 		{/each}
 	</Message.Content>
