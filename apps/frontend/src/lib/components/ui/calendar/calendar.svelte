@@ -2,6 +2,7 @@
 	import { isEqualMonth, type DateValue } from '@internationalized/date';
 	import { Calendar as CalendarPrimitive } from 'bits-ui';
 	import { cn, type WithoutChildrenOrChild } from '#lib/utils.js';
+	import { getLocale } from '#lib/paraglide/runtime.js';
 	import CalendarCaption from './calendar-caption.svelte';
 	import CalendarCell from './calendar-cell.svelte';
 	import CalendarDay from './calendar-day.svelte';
@@ -27,7 +28,7 @@
 		weekdayFormat = 'short',
 		buttonVariant = 'ghost',
 		captionLayout = 'label',
-		locale = 'en-US',
+		locale = getLocale(),
 		months: monthsProp,
 		years,
 		monthFormat: monthFormatProp,

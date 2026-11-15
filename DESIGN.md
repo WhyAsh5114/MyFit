@@ -178,6 +178,7 @@ Re-adding or reinstalling a component with the CLI overwrites these edits, so re
 - **`dialog-content`:** a `closeLabel` prop, so the close button's label can be translated.
 - **`empty-media`:** the icon tile is `rounded-xl`.
 - **Toast buttons:** `layout.css` gives sonner's action buttons the same hit area.
+- **App language:** `calendar` defaults `locale` to Paraglide's `getLocale()`, and `chart-tooltip` formats numbers with `formatNumber` (`lib/format.ts`). The generated versions use `'en-US'` and the browser's locale.
 - Chat message rows use `content-visibility: auto`, which clips anything hanging outside the row, so controls inside them need real 44px height, not `tap`.
 - Safe-area insets are always respected. Never override `viewport-fit=cover`.
 
