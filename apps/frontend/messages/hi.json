@@ -380,5 +380,12 @@
 	"nutrient.zincMg_100g": "ज़िंक",
 	"nutrient.copperMg_100g": "कॉपर",
 	"nutrient.manganeseMg_100g": "मैंगनीज़",
-	"nutrient.caffeineMg_100g": "कैफ़ीन"
+	"nutrient.caffeineMg_100g": "कैफ़ीन",
+	"sidebar.menu": "मेनू",
+	"sidebar.menuDescription": "ऐप के पेज और आपका खाता",
+	"common.scrollToEnd": "आख़िर तक स्क्रॉल करें",
+	"common.scrollToStart": "शुरू तक स्क्रॉल करें",
+	"breadcrumb.label": "पेज का रास्ता",
+	"foodDiary.noName": "कोई नाम नहीं",
+	"foodDiary.noBrand": "कोई ब्रांड नहीं"
 }

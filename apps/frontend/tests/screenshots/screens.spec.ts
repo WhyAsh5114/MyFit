@@ -544,7 +544,7 @@ test('capture every screen', async ({ page }, testInfo) => {
 	await page.getByRole('button', { name: 'Undo' }).click();
 	await settle(page);
 	await shot('undo-highlight', 'Food diary', 'After Undo', 'The restored entry highlights briefly');
-	await page.getByRole('button', { name: 'Toggle Sidebar' }).click();
+	await page.getByRole('button', { name: 'Menu' }).click();
 	await settle(page);
 	await shot('sidebar', 'Home', 'Navigation menu', 'Opened from the header');
 	await page.keyboard.press('Escape');

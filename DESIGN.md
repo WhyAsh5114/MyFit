@@ -160,10 +160,10 @@ Protein is a floor: on target at 95% or more. Carbs and fat are bands: on target
 Re-adding or reinstalling a component with the CLI overwrites these edits, so re-apply them (or add the component with `-o` into a scratch project and merge by hand):
 
 - **44px hit areas:** `button` (base gets `relative tap`), `input` and `input-group` (`h-11`), `input-otp-slot` (`size-11`), `select-trigger` (`h-11`, `tap`), `dropdown-menu-item` and `select-item` (`min-h-11`), `switch` and `radio-group-item` (larger `after:` inset), `toggle` (`h-11`), `sidebar-menu-button` and `sidebar-menu-sub-button` (`h-11`), `breadcrumb-link` (`tap`).
-- **`dialog-content`:** a `closeLabel` prop, so the close button's label can be translated.
+- **`dialog-content` and `sheet-content`:** a `closeLabel` prop for the close button, defaulting to `m['common.close']()`.
 - **`empty-media`:** the icon tile is `rounded-xl`.
 - **Toast buttons:** `layout.css` gives sonner's action buttons the same hit area.
-- **App language:** `calendar` defaults `locale` to Paraglide's `getLocale()`, and `chart-tooltip` formats numbers with `formatNumber` (`lib/format.ts`). The generated versions use `'en-US'` and the browser's locale.
+- **App language:** `calendar` defaults `locale` to Paraglide's `getLocale()`, and `chart-tooltip` formats numbers with `formatNumber` (`lib/format.ts`). The generated versions use `'en-US'` and the browser's locale. Screen-reader labels come from Paraglide: `sidebar-trigger` and the phone `sidebar` sheet (`sidebar.menu`), `breadcrumb` (`breadcrumb.label`) and `message-scroller-button` (`common.scrollTo…`); the generated versions are English.
 - Chat message rows use `content-visibility: auto`, which clips anything hanging outside the row, so controls inside them need real 44px height, not `tap`.
 - Safe-area insets are always respected. Never override `viewport-fit=cover`.
 

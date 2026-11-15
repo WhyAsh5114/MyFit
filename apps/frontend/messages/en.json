@@ -380,5 +380,12 @@
 	"nutrient.zincMg_100g": "Zinc",
 	"nutrient.copperMg_100g": "Copper",
 	"nutrient.manganeseMg_100g": "Manganese",
-	"nutrient.caffeineMg_100g": "Caffeine"
+	"nutrient.caffeineMg_100g": "Caffeine",
+	"sidebar.menu": "Menu",
+	"sidebar.menuDescription": "Pages of the app and your account",
+	"common.scrollToEnd": "Scroll to end",
+	"common.scrollToStart": "Scroll to start",
+	"breadcrumb.label": "Breadcrumb",
+	"foodDiary.noName": "No name",
+	"foodDiary.noBrand": "No brand"
 }

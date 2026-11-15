@@ -3,6 +3,7 @@
 	import XIcon from '@lucide/svelte/icons/x';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { cn, type WithoutChildrenOrChild } from '#lib/utils.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import DialogOverlay from './dialog-overlay.svelte';
 	import DialogPortal from './dialog-portal.svelte';
 	import type { Snippet } from 'svelte';
@@ -14,7 +15,7 @@
 		portalProps,
 		children,
 		showCloseButton = true,
-		closeLabel = 'Close',
+		closeLabel = m['common.close'](),
 		...restProps
 	}: WithoutChildrenOrChild<DialogPrimitive.ContentProps> & {
 		portalProps?: WithoutChildrenOrChild<ComponentProps<typeof DialogPortal>>;

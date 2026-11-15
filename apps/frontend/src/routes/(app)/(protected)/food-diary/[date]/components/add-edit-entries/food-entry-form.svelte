@@ -93,8 +93,8 @@
 <form use:enhance id={formId} class="contents">
 	<Card.Root>
 		<Card.Header>
-			<Card.Title>{$formData.productName === '' ? 'No name' : $formData.productName}</Card.Title>
-			<Card.Description>{$formData.brands ?? 'No brand'}</Card.Description>
+			<Card.Title>{$formData.productName || m['foodDiary.noName']()}</Card.Title>
+			<Card.Description>{$formData.brands ?? m['foodDiary.noBrand']()}</Card.Description>
 			<Card.Action>
 				<ModifyNutritionalInfoSheet {form} />
 			</Card.Action>

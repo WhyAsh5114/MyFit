@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Sheet from '#lib/components/ui/sheet/index.js';
 	import { cn, type WithElementRef } from '#lib/utils.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { SIDEBAR_WIDTH_MOBILE } from './constants.js';
 	import { useSidebar } from './context.svelte.js';
 	import type { HTMLAttributes } from 'svelte/elements';
@@ -48,8 +49,8 @@
 			{side}
 		>
 			<Sheet.Header class="sr-only">
-				<Sheet.Title>Sidebar</Sheet.Title>
-				<Sheet.Description>Displays the mobile sidebar.</Sheet.Description>
+				<Sheet.Title>{m['sidebar.menu']()}</Sheet.Title>
+				<Sheet.Description>{m['sidebar.menuDescription']()}</Sheet.Description>
 			</Sheet.Header>
 			<div class="flex h-full w-full flex-col">
 				{@render children?.()}

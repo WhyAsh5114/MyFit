@@ -4,6 +4,7 @@
 	import { Button } from '#lib/components/ui/button/index.js';
 	import type { ButtonSize, ButtonVariant } from '#lib/components/ui/button/index.js';
 	import { cn } from '#lib/utils.js';
+	import { m } from '#lib/paraglide/messages.js';
 
 	let {
 		ref = $bindable(null),
@@ -43,7 +44,7 @@
 				{:else}
 					<ArrowDownIcon />
 					<span class="sr-only">
-						{direction === 'end' ? 'Scroll to end' : 'Scroll to start'}
+						{direction === 'end' ? m['common.scrollToEnd']() : m['common.scrollToStart']()}
 					</span>
 				{/if}
 			</Button>

@@ -2,6 +2,7 @@
 	import PanelLeftIcon from '@lucide/svelte/icons/panel-left';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { cn } from '#lib/utils.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { useSidebar } from './context.svelte.js';
 	import type { ComponentProps } from 'svelte';
 
@@ -32,5 +33,5 @@
 	{...restProps}
 >
 	<PanelLeftIcon class="cn-rtl-flip" />
-	<span class="sr-only">Toggle Sidebar</span>
+	<span class="sr-only">{m['sidebar.menu']()}</span>
 </Button>
