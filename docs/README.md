@@ -2,12 +2,12 @@
 
 For people and agents working on MyFit. Each page is one [Diátaxis](https://diataxis.fr/) type, so you know what kind of page you are reading and where a new fact belongs.
 
-| Type            | Answers                       | Where                                    |
-| --------------- | ----------------------------- | ---------------------------------------- |
-| **Explanation** | Why is it built this way?     | `explanation/`                           |
-| **Reference**   | What are the rules and names? | `reference/`, `DESIGN.md`, `GLOSSARY.md` |
-| **How-to**      | How do I do this task?        | `how-to/`                                |
-| **Decisions**   | Why did we choose X over Y?   | `adr/`                                   |
+| Type            | Answers                       | Where                                       |
+| --------------- | ----------------------------- | ------------------------------------------- |
+| **Explanation** | Why is it built this way?     | `explanation/`                              |
+| **Reference**   | What are the rules and names? | `reference/`, `DESIGN.md`, `GLOSSARY.md`    |
+| **How-to**      | How do I do this task?        | `how-to/`                                   |
+| **Decisions**   | Why did we choose X over Y?   | `adr/` (none yet; the first ADR creates it) |
 
 There are no tutorials yet. Add one when someone new needs a guided first change.
 

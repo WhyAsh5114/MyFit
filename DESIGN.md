@@ -91,22 +91,7 @@ Every interactive element has a **hit area of at least 44×44px**. The drawn siz
 - Neighbouring hit areas must not overlap. If two controls are closer than their hit areas allow, increase the gap, don't shrink the target.
 - Full-width rows count: the row height is the target height.
 
-Proposed utility (add to `layout.css` and apply in the `button` variants for `icon-xs`, `icon-sm`, `icon` and `icon-lg`):
-
-```css
-@utility tap {
-	position: relative;
-	&::after {
-		content: '';
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		width: max(100%, 44px);
-		height: max(100%, 44px);
-		transform: translate(-50%, -50%);
-	}
-}
-```
+- The `tap` utility in `layout.css` grows a control's hit area to 44px without changing how it is drawn. `Button` has it on every size; add it to any other small control.
 
 ## Color
 
@@ -135,8 +120,8 @@ There are two nutrition statuses and no red:
 | Off target | warning (amber) | `▲` over, `▼` under |
 
 - The icon and color carry the status; the number beside it (`912 kcal over`) carries how far. There is no separate badge, and severity never escalates to red.
-- Text uses the darker **ink** tokens, fills use the brighter tokens. Today's `--warning` as small text on white is roughly 2.5:1, below the 4.5:1 minimum, so add `--success-ink` and `--warning-ink` and use them for text.
-- Starting values, to confirm in implementation: success `oklch(0.62 0.16 152)` fill, `oklch(0.45 0.12 152)` ink; warning ink `oklch(0.5 0.12 65)` light, `oklch(0.82 0.14 75)` dark.
+- Text uses the darker **ink** tokens (`--success-ink`, `--warning-ink`); fills use `--success` and `--warning`. `--warning` as small text on white is about 2.5:1, below the 4.5:1 minimum.
+- The rules for which status a value gets live in `lib/domain/nutrition/status.ts`.
 - Red (`--destructive`) is for errors and destructive actions only.
 
 ### When status applies
@@ -168,7 +153,7 @@ Protein is a floor: on target at 95% or more. Carbs and fat are bands: on target
 
 - Page gutter is 16px; content is capped at `max-w-xl` and centered. Use the Tailwind spacing scale with `gap-*`, not per-element margins.
 - Lists and rows are dense but 44px or taller wherever they are tappable.
-- Components come from the shadcn-svelte **vega** style (preset `bIkeymG`: neutral base, Inter, Lucide), with `--radius: 0.5rem` in `layout.css`. Reuse its shapes; don't introduce new radii or shadows. The brand blue (`--primary`) and the status tokens are ours and stay when the preset is re-applied.
+- Components come from the shadcn-svelte **vega** style (preset `bIkeymG`: neutral base, Inter, Lucide), with `--radius: 0.5rem` in `layout.css`. Reuse its shapes: use only the radii and shadows (`shadow-xs`, `shadow-sm`, `shadow-lg`) the components in `lib/components/ui/` already use. The brand blue (`--primary`) and the status tokens are ours and stay when the preset is re-applied.
 
 ### Customised shadcn components
 
@@ -196,6 +181,12 @@ Expressive, but purposeful. Motion explains cause and effect, rewards completion
 - Respect `prefers-reduced-motion`: replace movement with an instant change or a fade.
 - Rewards celebrate the day, not a streak. No countdowns, no loss framing.
 - Don't animate layout for long lists; animate only the item that changed.
+
+## Adding food
+
+- **Add food leads with Your foods** (decided 2026-11-13): foods from the diary in one list, ranked by frequency and recency together. Each entry counts 1, and its weight halves every 14 days (`lib/domain/food-history/rank.ts`).
+- While the user types, up to 3 matches from Your foods sit above the food database results. They work offline.
+- A row's + logs the food again at its last amount. It goes in the meal filter's meal, or else the meal usually logged at this time of day, and lands on the diary with the entry highlighted. Tapping the row opens it to change the amount first.
 
 ## Feedback
 
@@ -239,36 +230,19 @@ Run `pnpm --filter @myfit/frontend screenshots` to see every screen in light and
 - [ ] Numbers carry their unit and target; digits are tabular.
 - [ ] Status has an icon or word, uses ink for text, and never uses red for nutrition.
 - [ ] In-progress days are not judged.
-- [ ] Confirmation is inline; toasts only for errors, undo and system events.
+- [ ] Confirmation is inline; toasts only for errors, undo, system events and "Copied".
 - [ ] All strings come from Paraglide in both languages.
 - [ ] Reduced motion and dark mode both look right.
 - [ ] Works one-handed, offline, and with the keyboard open.
 
-## Where the app differs today
+## Known gaps
 
-Applied on 2026-10-30. What changed, and what is still open.
+Screens that break a rule above and need design work to fix. They are bugs, not examples: don't copy them. Delete an item when its fix lands.
 
-**Done**
-
-- 44px hit areas: the `tap` utility is on every `Button` size, breadcrumb links, select triggers and the chat disclosure. Inputs, input groups, OTP slots, menu rows, toggles and sidebar rows are 44px tall. Switch and radio hit areas are 44px. Empty meal and activity rows are 44px or taller.
-- The sync panel is a responsive dialog (drawer on phones) with a 44px trigger and a visible Close button. Offline is shown as a neutral note, not an alarm.
-- The drawer content was positioned off screen on mobile (`fixed relative` in `drawer-content.svelte`). Fixed, which also repairs the account dialogs on phones.
-- Status colors: `--success`, `--success-ink` and `--warning-ink` exist. The calorie bar uses ink for text, a check when on target, an arrow when off target, and a tick at the goal once passed. The rules live in `lib/domain/nutrition/status.ts` with tests.
-- Feedback: creating or editing an entry marks it (`recent-change.svelte.ts`) and the diary highlights and scrolls to it; the goals screen highlights the card you just changed the same way. Deleting an entry shows an Undo toast that restores it. Success toasts are gone.
-- Paraglide: toast, chat, scan, search, targets, breadcrumb and macro-name strings. Calorie numbers have thousands separators.
-- Reduced motion is respected globally; spinners keep moving.
-- The goals list no longer nests a button inside a link, and the calorie bar no longer nests a link inside a link.
-- Add food leads with **Your foods** (decided 2026-11-13): foods from the diary, one list ranked by frequency and recency together (each entry counts 1, halving every 14 days). While typing, up to 3 matches sit above the food database, and they work offline. A row's + logs the food again at its last amount, in the meal filter's meal or the meal usually logged at this time of day, and lands on the diary with the entry highlighted; tapping the row opens it to change the amount first.
-
-**Still open**
-
-1. The nutrition editor (`modify-nutritional-info-sheet.svelte`) is a sheet with many fields. The rule says a page. Moving it means lifting the parent form's state, so it is left for now.
-2. Hardcoded text in markup is now an ESLint error (`eslint.config.js`, `copyRules`). Strings built in scripts, such as toast text and label arrays, are not checked; convert them as screens ship.
-3. The Week and Nutrients views from the status section do not exist yet.
-4. A "daily goal met" reward moment is allowed by the motion rules but not built.
-5. Touch targets were measured in a mobile-width browser. Check on a real device, especially the header.
-6. Meals can only be reordered by dragging the handle (`goals/meals/meal-item.svelte`), which breaks the rule that a gesture is never the only way. It needs a visible control, such as Move up and Move down in a row menu.
-7. Cards, food rows, the diary list and the meal drag ghost use `shadow-sm` and `shadow-lg`. Left for the visual identity decision (Open questions).
+- **A gesture is the only way** (Never): meals reorder only by dragging the handle (`food-diary/goals/meals/components/meal-item.svelte`). Add Move up and Move down to a row menu.
+- **Surfaces:** the nutrition editor (`modify-nutritional-info-sheet.svelte`) is a sheet with many fields; it should be a page. Moving it means lifting the parent form's state.
+- **Empty page:** `food-diary/[date]/add-activity/+page.svelte` is empty, but the diary's Activity header links to it.
+- **Touch targets** were checked at mobile width in a browser, not on a real device. Check the header first.
 
 ## Open questions
 

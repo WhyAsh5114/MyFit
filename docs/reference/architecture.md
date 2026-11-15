@@ -42,7 +42,6 @@ lib/features/{domain}/{resource}/
   model/                  # when a resource has both a mapper and a non-trivial schema
     schema.ts
     mapper.ts             # DB shape ↔ form shape
-    nutrients.ts          # domain constants and config arrays
   queries/
     get.ts                # getResource = defineReader(...)        → (depends, userId)
     get-by-date.ts        # getResourceByDate                       → (depends, { userId, date })
@@ -53,6 +52,8 @@ lib/features/{domain}/{resource}/
 ```
 
 Name files after the operation. One exported reader or hook per file.
+
+A domain with only one resource skips the resource level: `user/`, `ota/` and `capacitor-health/` hold `keys.ts`, `queries/` and `mutations/` directly. Add the level when a second resource arrives.
 
 A helper that belongs to one resource but isn't a reader or a mutation sits in the resource folder, named for what it does: `meals/save-meals.ts` (the upsert the mutation and account setup share), `assistant/chat/model.ts` (titles and stored parts), `assistant/chat/request-title.ts` (a network call). Code for a domain that isn't one resource gets its own folder beside the resources, like `assistant/tools/` (the handlers for the assistant's in-app tools).
 
@@ -96,7 +97,10 @@ The vocabulary is from the `codebase-design` skill: a **module** has an **interf
 - **Depend inward.** Routes depend on features; features depend on `data`, `clients` and `domain`; `domain` depends on nothing. Never import a route from `lib/`.
 - **Pass dependencies in where a test needs to swap them.** `saveMeals(tx, userId, meals)` takes the transaction, so a test can hand it a fake-indexeddb database. Add a seam only when there are two real uses (production and test count); one adapter is just indirection.
 - **Reuse before you write.** Look for an existing type, helper or function before adding one. Build a type from the data model, for example `Pick<Row<'FoodEntry'>, 'energyKcal_100g' | 'quantityG'>`, instead of retyping its fields, so a schema change reaches every user of it.
-- **Let TypeScript infer.** Leave out a return type or annotation the compiler already knows, and avoid casts (`as`, `!`). A cast hides a type that doesn't fit; fix the type, narrow the value, or add a type guard.
+- **Let TypeScript infer.** Leave out a return type or annotation the compiler already knows.
+- **Don't cast.** A cast (`as`, `!`) hides a type that doesn't fit. Fix the type, give the declaration its type (`$state<T>(…)`), or narrow the value with a check (`typeof`, `in`, `instanceof`, a type predicate). ESLint rejects `!` in app code.
+- **Parse data from outside the app with Zod**: a fetch response, a request body, a file, an environment variable. `web-search.ts` and `ota/manifest.ts` do this.
+- A cast stays only where TypeScript can't express the type, with a comment saying why: `Object.fromEntries` over a typed list, Node's `ReadableStream`, `EMPTY_NUMBER` (`food-diary/_common/empty-number.ts`).
 - **Return values instead of mutating arguments.** Side effects sit at the edges: mutations, `$effect`s, services.
 
 SOLID, applied here:
@@ -131,7 +135,3 @@ let state = $state<SyncState>({ kind: 'idle' });
 - **Same job, same pattern.** A new reader looks like the existing readers; a new mutation like the existing mutations. A one-off pattern needs a reason in a comment.
 - **Names follow [Data layer → Naming](data-layer.md#naming)** and the terms in [`GLOSSARY.md`](../../GLOSSARY.md).
 - **No dead code or speculative options.** Build what the current task needs; delete what nothing uses.
-
-## Known deviations
-
-None known. Add one here when code is left breaking a rule above, with where it is.

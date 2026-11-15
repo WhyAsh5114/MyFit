@@ -69,7 +69,3 @@ The test name plus the assertion message should tell a reader what broke without
 - A refactor that changes no behavior should change no tests. If tests must change, they were testing the implementation; fix them to test behavior.
 - When a module is deepened and tests exist at its new interface, delete the old tests on the shallow parts.
 - Never weaken or delete a failing test to make a change pass. Either the code is wrong or the behavior changed on purpose; say which.
-
-## Known deviations
-
-- `todo.md` lists the e2e tests still missing: adding food on a diary day, editing an entry keeps its time, renaming a meal.

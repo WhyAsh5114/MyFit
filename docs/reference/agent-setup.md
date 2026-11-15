@@ -15,17 +15,17 @@ How coding agents get MyFit's conventions, and where to change each piece. The r
 
 ## Path-scoped rules
 
-| Rule              | Fires on                                                                   | Sends the agent to                                       |
-| ----------------- | -------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `ui.md`           | `.svelte` files, `layout.css`, `messages/*.json`                           | `DESIGN.md`, `frontend.md`, and the UI steps in the rule |
-| `data.md`         | features, `lib/data`, sync invalidation, `+page.ts`, `+layout.ts`          | `data-layer.md`                                          |
-| `architecture.md` | any app source                                                             | `architecture.md`                                        |
-| `testing.md`      | tests and Playwright configs                                               | `testing.md`, `run-tests.md`                             |
-| `schema.md`       | `schema.prisma` and migrations                                             | `change-the-schema.md`, `updates.md`                     |
-| `accounts.md`     | account services and components, login, the app layouts, `hooks.client.ts` | `accounts.md`                                            |
-| `updates.md`      | service worker, OTA, Capacitor config, sync and OTA routes                 | `updates.md`, `release.md`                               |
-| `chat.md`         | chat feature, route and API                                                | `chat.md`                                                |
-| `docs.md`         | any Markdown                                                               | `writing.md`, `GLOSSARY.md`                              |
+| Rule              | Fires on                                                                                     | Sends the agent to                                       |
+| ----------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `ui.md`           | `.svelte` files, `layout.css`, `messages/*.json`                                             | `DESIGN.md`, `frontend.md`, and the UI steps in the rule |
+| `data.md`         | features, `lib/data`, sync invalidation, `+page.ts`, `+layout.ts`                            | `data-layer.md`                                          |
+| `architecture.md` | any app source                                                                               | `architecture.md`                                        |
+| `testing.md`      | tests and Playwright configs                                                                 | `testing.md`, `run-tests.md`                             |
+| `schema.md`       | `schema.prisma` and migrations                                                               | `change-the-schema.md`, `updates.md`                     |
+| `accounts.md`     | account services and components, login, the app layouts, `hooks.client.ts`                   | `accounts.md`                                            |
+| `updates.md`      | service worker, OTA, Capacitor config, the sync worker, sync and OTA routes, the sync server | `updates.md`, `release.md`                               |
+| `chat.md`         | chat feature, route and API                                                                  | `chat.md`                                                |
+| `docs.md`         | any Markdown                                                                                 | `writing.md`, `GLOSSARY.md`                              |
 
 Two Claude Code behaviors shape how a rule is written (checked on 2.1.325):
 
@@ -44,11 +44,9 @@ Personal permissions go in `.claude/settings.local.json` (ignored by git).
 
 ## Keeping it healthy
 
-- When an agent keeps getting something wrong, fix it at the strongest level that works: a lint rule, then a path rule, then a doc.
+- The docs are authoritative, so the reference docs hold no list of tolerated exceptions. Code that breaks a rule gets fixed. The one tracked list is `DESIGN.md` → Known gaps, for screens that need design work before they can comply; delete an item when its fix lands.
+- When an agent keeps getting something wrong, fix it at the strongest level that works: a lint rule or test, then a path rule, then a doc.
+- Write lint rules to cover new code by default (a glob over every feature, not a list of today's folders), so a new feature can't fall outside them.
 - Keep `CLAUDE.md` a map of about 120 lines at most. Rules for one area go in `.claude/rules/`; the content goes in `docs/`.
 - Run `/doctor prompt-audit` in Claude Code now and then. It reports stale or conflicting instructions across these files.
 - After moving a doc, update the rules that name it: `grep -rn "docs/" .claude/rules`.
-
-## Known deviations
-
-None known. Add one here when something is left breaking a rule above, with where it is.

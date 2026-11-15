@@ -31,10 +31,10 @@ This file is a map. The rules live in `docs/` (index: [`docs/README.md`](docs/RE
 - **UI comes from `#lib/components/ui/`** and follows `DESIGN.md`. Look at the screens you changed with `pnpm --filter @myfit/frontend screenshots`.
 - **Test at the layer `docs/reference/testing.md` names**, through the public interface. A bug fix starts with a failing test.
 - **Update the doc in the same change as the code.** If you made a decision the docs don't cover, add it to the one doc where it belongs.
-- **When the docs and the code disagree, new code follows the docs.** Leave the surrounding code as it is unless the task covers it, and name the deviation in your summary. Each reference doc lists its known deviations at the end, and `DESIGN.md` under "Still open". When two docs disagree, ask.
+- **The docs are authoritative.** Code that breaks a rule in `docs/`, `DESIGN.md` or this file is a bug, not a precedent. Fix it when your change touches that code; when the fix is bigger than the task, ask, and name it in your summary. Don't copy it, even when it is listed under `DESIGN.md` → Known gaps. When two docs disagree, or a rule looks wrong for the task, ask before working around it.
 - **Commit only when the user asks.**
 
-ESLint enforces the mechanical rules (readers, IDB access from routes, `bits-ui` imports, pure `lib/domain`, `../../../../` imports, hardcoded text in markup; strings built in scripts and toasts are still on you). A lint error's message says what to do instead; fix the code rather than disabling the rule.
+ESLint enforces the mechanical rules (readers and query names, IDB access from routes, `bits-ui` imports, pure `lib/domain`, `../../../../` imports, import extensions, `!` assertions, hardcoded text in markup; strings built in scripts and toasts are still on you). Unit tests check that every synced model is in `KEYS_BY_MODEL` and that `messages/hi.json` matches `en.json`. A lint error's message says what to do instead; fix the code rather than disabling the rule.
 
 ## Before you finish
 
@@ -74,6 +74,6 @@ docs/              how-to, reference, explanation, adr
 
 ## Skills
 
-`.claude/skills/README.md` lists them. Use `grill-me` to stress-test a plan before building it, and `improve-codebase-architecture` to look for refactors.
+`.claude/skills/README.md` lists them. People run `/grill-me` to stress-test a plan and `/improve-codebase-architecture` to look for refactors; agents can't invoke those two, so use the `grilling` and `codebase-design` skills they wrap.
 
 How the agent setup fits together (rules, hooks, permissions, skills) is in [`docs/reference/agent-setup.md`](docs/reference/agent-setup.md).
