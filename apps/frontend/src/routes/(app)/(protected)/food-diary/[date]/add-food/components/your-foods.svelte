@@ -13,7 +13,7 @@
 	import { foodEntryToRepeatFormData } from '#lib/features/food-diary/food-entry/model/mapper.js';
 	import type { FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
 	import FoodRow from './food-row.svelte';
-	import type { PageData } from './$types';
+	import type { PageData } from '../$types';
 
 	type History = PageData['history'];
 	type HistoryFood = History['foods'][number];

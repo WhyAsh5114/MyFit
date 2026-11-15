@@ -9,7 +9,7 @@
 	import Skeleton from '#lib/components/ui/skeleton/skeleton.svelte';
 	import { m } from '#lib/paraglide/messages.js';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
-	import { pickBestCamera } from './utils';
+	import { pickBestCamera } from './components/pick-camera.js';
 	import Button from '#lib/components/ui/button/button.svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';

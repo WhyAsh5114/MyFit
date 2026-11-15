@@ -10,7 +10,7 @@
 	import { enums } from '#lib/clients/idb-client.js';
 	import Button from '#lib/components/ui/button/button.svelte';
 	import { SaveIcon } from '@lucide/svelte';
-	import DynamicActivity from './dynamic-activity.svelte';
+	import DynamicActivity from './components/dynamic-activity.svelte';
 	import Spinner from '#lib/components/ui/spinner/spinner.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';

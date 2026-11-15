@@ -7,8 +7,8 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { m } from '#lib/paraglide/messages.js';
-	import FoodInfinite from './food-infinite.svelte';
-	import YourFoods from './your-foods.svelte';
+	import FoodInfinite from './components/food-infinite.svelte';
+	import YourFoods from './components/your-foods.svelte';
 	import { goto } from '$app/navigation';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import * as InputGroup from '#lib/components/ui/input-group/index.js';

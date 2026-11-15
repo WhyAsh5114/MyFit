@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	foodDetail,
 	type FoodDetailEntry
-} from '#routes/(app)/(protected)/food-diary/[date]/add-food/food-detail.js';
+} from '#routes/(app)/(protected)/food-diary/[date]/add-food/components/food-detail.js';
 
 const entry = (extra: Partial<FoodDetailEntry> = {}): FoodDetailEntry => ({
 	brands: null,

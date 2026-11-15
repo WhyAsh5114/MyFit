@@ -35,7 +35,7 @@
 				<MealItem
 					class={cn({ 'bg-muted *:invisible': sortable.isDragging })}
 					gripAttachment={sortable.attachHandle}
-					name={$formData.meals.find((m) => m.id === id)!.name}
+					name={$formData.meals.find((m) => m.id === id)?.name ?? ''}
 					inputProps={props}
 					onchange={(e) => ($formData.meals[index].name = e.currentTarget.value)}
 					{onDelete}

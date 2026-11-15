@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { markRecentChange } from '#lib/features/food-diary/_common/recent-change.svelte.js';
-	import MacroTargetsForm from './macro-targets-form.svelte';
+	import MacroTargetsForm from './components/macro-targets-form.svelte';
 	import { useCreateMacroTargets } from '#lib/features/food-diary/macro-targets/mutations/create.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { SaveIcon } from '@lucide/svelte';
