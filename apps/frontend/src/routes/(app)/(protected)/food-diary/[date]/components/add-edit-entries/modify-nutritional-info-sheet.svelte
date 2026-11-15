@@ -16,10 +16,10 @@
 	import { cn } from '#lib/utils.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import {
+		nutrientLabel,
 		OPTIONAL_NUTRIENTS,
-		optionalNutrientsFields,
 		REQUIRED_NUTRIENTS,
-		requiredNutrientsFields
+		type NutrientKey
 	} from '#lib/features/food-diary/_common/nutrients.js';
 	import { hasCalculationErrors } from '#lib/domain/nutrition/energy-check.js';
 
@@ -27,10 +27,12 @@
 	let formData = $derived(form.form);
 	let formErrors = $derived(form.allErrors);
 
+	const NUTRIENTS: { key: NutrientKey }[] = [...REQUIRED_NUTRIENTS, ...OPTIONAL_NUTRIENTS];
+
 	let open = $state(false);
 
 	let hasFieldErrors = $derived.by(() => {
-		for (const field of [...requiredNutrientsFields, ...optionalNutrientsFields]) {
+		for (const field of NUTRIENTS) {
 			if ($formErrors.find(({ path }) => path === field.key)) return true;
 		}
 		return false;
@@ -45,10 +47,8 @@
 	}
 
 	function getLabelForField(key: string) {
-		const field = [...requiredNutrientsFields, ...optionalNutrientsFields].find(
-			(field) => field.key === key
-		);
-		return field ? field.label : key;
+		const field = NUTRIENTS.find((field) => field.key === key);
+		return field ? nutrientLabel(field.key) : key;
 	}
 </script>
 
@@ -84,7 +84,7 @@
 				<Form.Field {form} name={nutrient.key}>
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label>{nutrient.label}</Form.Label>
+							<Form.Label>{nutrientLabel(nutrient.key)}</Form.Label>
 							<InputGroup.Root>
 								<InputGroup.Input
 									{...props}
@@ -136,7 +136,7 @@
 					<Form.Field {form} name={nutrient.key}>
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>{nutrient.label}</Form.Label>
+								<Form.Label>{nutrientLabel(nutrient.key)}</Form.Label>
 								<InputGroup.Root>
 									<InputGroup.Input
 										{...props}

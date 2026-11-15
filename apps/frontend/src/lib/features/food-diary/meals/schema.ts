@@ -3,7 +3,7 @@ import { m } from '#lib/paraglide/messages.js';
 
 export const mealFormItemSchema = z.object({
 	id: z.string(),
-	name: z.string().min(1)
+	name: z.string().min(1, { error: () => m['validation.required']() })
 });
 
 export const mealsFormSchema = z

@@ -12,7 +12,7 @@
 	} from '#lib/features/food-diary/macro-targets/schema.js';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
 	import { defaults, superForm, type SuperForm } from 'sveltekit-superforms';
-	import { REQUIRED_NUTRIENTS } from '#lib/features/food-diary/_common/nutrients.js';
+	import { nutrientLabel, REQUIRED_NUTRIENTS } from '#lib/features/food-diary/_common/nutrients.js';
 	import { CALORIES_PER_KILOGRAM } from '#lib/domain/nutrition/constants.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import type { Snippet } from 'svelte';
@@ -25,12 +25,12 @@
 	};
 	let { initialData, formId, onSubmit, submit }: Props = $props();
 
-	// Map macro target field names to nutrient labels and form field names
+	// Each macro target's form field, beside the nutrient that gives its icon and name.
 	const macroFields = [
-		{ label: m['macro.protein'](), formField: 'proteinG' as const },
-		{ label: m['macro.carbs'](), formField: 'carbsG' as const },
-		{ label: m['macro.fat'](), formField: 'fatG' as const }
-	];
+		{ key: 'proteinsG_100g', formField: 'proteinG' },
+		{ key: 'carbohydratesG_100g', formField: 'carbsG' },
+		{ key: 'fatG_100g', formField: 'fatG' }
+	] as const;
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(
@@ -107,17 +107,17 @@
 				<Form.FieldErrors />
 			</Form.Field>
 			<div class="grid place-items-center">
-				{#each macroFields as { label, formField } (label)}
+				{#each macroFields as { key, formField } (key)}
 					<Form.Field {form} name={formField}>
 						<Form.Control>
 							{#snippet children({ props })}
-								{@const nutrient = REQUIRED_NUTRIENTS.find((n) => n.label === label)}
+								{@const nutrient = REQUIRED_NUTRIENTS.find((n) => n.key === key)}
 								{#if nutrient}
 									<ButtonGroup.Root>
 										<InputGroup.Root class="w-fit">
 											<InputGroup.Addon class="w-26 justify-start">
 												<nutrient.icon />
-												{nutrient.label}
+												{nutrientLabel(nutrient.key)}
 											</InputGroup.Addon>
 											<InputGroup.Input
 												type="number"
@@ -129,7 +129,7 @@
 											/>
 											<InputGroup.Addon align="inline-end">
 												<InputGroup.Text>
-													{$formData.quantifier === 'Percentage' ? '%' : 'gm'}
+													{$formData.quantifier === 'Percentage' ? '%' : 'g'}
 												</InputGroup.Text>
 											</InputGroup.Addon>
 										</InputGroup.Root>

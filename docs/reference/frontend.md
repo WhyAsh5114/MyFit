@@ -98,7 +98,8 @@ const form = superForm(
 - Keys are namespaced `feature.camelCase`, such as `foodDiary.addManually`.
 - **Format dates and numbers with `#lib/format.ts`** (`formatDate(date, 'long' | 'short' | 'time')`, `formatNumber`), which use the app's language. Never pass `'en-US'` or call `toLocaleString()` without a locale.
 - **Show an enum value through a message**, not by reformatting its name: `Absolute` is `m['foodDiary.targets.absolute']()`.
-- An unfinished screen may hardcode strings for now. Convert them when the screen ships.
+- **Show a nutrient's name with `nutrientLabel(key)`** (`food-diary/_common/nutrients.ts`). The `label` in `@myfit/shared/nutrition` is English, for the model.
+- **Give every Zod check a message from Paraglide**, as a function so it reads the current language: `.min(1, { error: () => m['validation.required']() })`. Zod's default messages are English.
 
 ## Capacitor and native
 

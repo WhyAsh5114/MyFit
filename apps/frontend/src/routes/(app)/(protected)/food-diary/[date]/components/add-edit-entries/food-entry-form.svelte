@@ -23,6 +23,7 @@
 	import FoodCard from '#lib/components/food/food-card.svelte';
 	import type { Snippet } from 'svelte';
 	import { round } from '#lib/format.js';
+	import { isEmptyNumber } from '#lib/features/food-diary/_common/empty-number.js';
 	import { cn } from '#lib/utils.js';
 	import type { Row } from '@myfit/shared/client';
 
@@ -66,7 +67,7 @@
 	);
 
 	let displayQuantityG = $derived.by(() => {
-		if (($formData.quantityG as unknown) === '') return '';
+		if (isEmptyNumber($formData.quantityG)) return '';
 		if ($formData.preferredUnit === 'g') return round($formData.quantityG);
 		if ($formData.servingQuantity) return round($formData.quantityG / $formData.servingQuantity);
 		return round($formData.quantityG);

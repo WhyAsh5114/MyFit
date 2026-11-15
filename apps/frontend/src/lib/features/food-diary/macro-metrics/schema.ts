@@ -1,26 +1,28 @@
 import { z } from 'zod';
+import { m } from '#lib/paraglide/messages.js';
+import { EMPTY_NUMBER } from '../_common/empty-number.js';
 
 export const macroTrackingMetricsSchema = z.object({
 	bodyweight: z
 		.number()
-		.min(0, 'Bodyweight must be a positive number')
-		.default('' as unknown as number),
+		.min(0, { error: () => m['validation.nonNegative']() })
+		.default(EMPTY_NUMBER),
 	bodyweightUnit: z.enum(['kg', 'lb']),
 	height: z
 		.number()
-		.min(0, 'Height must be a positive number')
-		.default('' as unknown as number),
+		.min(0, { error: () => m['validation.nonNegative']() })
+		.default(EMPTY_NUMBER),
 	heightUnit: z.enum(['cm', 'in']),
 	gender: z.enum(['Male', 'Female']),
 	age: z
 		.number()
-		.min(0, 'Age must be a positive number')
-		.default('' as unknown as number),
+		.min(0, { error: () => m['validation.nonNegative']() })
+		.default(EMPTY_NUMBER),
 	bodyFatPercentage: z
 		.number()
-		.min(0, 'Body fat percentage must be a positive number')
-		.max(100, 'Body fat percentage must be less than 100%')
-		.default('' as unknown as number)
+		.min(0, { error: () => m['validation.nonNegative']() })
+		.max(100, { error: () => m['validation.percentMax']() })
+		.default(EMPTY_NUMBER)
 });
 
 export type MacroTrackingMetricsSchema = z.infer<typeof macroTrackingMetricsSchema>;

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { m } from '#lib/paraglide/messages.js';
 
 export const macroTargetsSchema = z
 	.object({
@@ -21,7 +22,7 @@ export const macroTargetsSchema = z
 			}
 			return total <= 100;
 		},
-		{ error: 'Macro targets must sum to 100%' }
+		{ error: () => m['validation.macroPercentTotal']() }
 	);
 
 export type MacroTargetsSchema = z.infer<typeof macroTargetsSchema>;
