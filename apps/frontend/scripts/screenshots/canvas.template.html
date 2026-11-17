@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+		<title>MyFit Screens</title>
+		<style>
+			/* A pannable, zoomable canvas: one titled row of phone frames per area. Click a frame to enlarge it. */
+			:root {
+				--page: oklch(0.955 0 0);
+				--card: oklch(1 0 0);
+				--fg: oklch(0.145 0 0);
+				--muted-fg: oklch(0.47 0 0);
+				--border: oklch(0.88 0 0);
+				--primary: oklch(0.572 0.144 253.606);
+				--primary-fg: oklch(0.98 0.01 254.6);
+				--veil: oklch(0.1 0 0 / 0.85);
+				--font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+				color-scheme: light;
+			}
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme='light']) {
+					--page: oklch(0.16 0 0);
+					--card: oklch(0.21 0 0);
+					--fg: oklch(0.97 0 0);
+					--muted-fg: oklch(0.72 0 0);
+					--border: oklch(1 0 0 / 14%);
+					color-scheme: dark;
+				}
+			}
+			:root[data-theme='dark'] {
+				--page: oklch(0.16 0 0);
+				--card: oklch(0.21 0 0);
+				--fg: oklch(0.97 0 0);
+				--muted-fg: oklch(0.72 0 0);
+				--border: oklch(1 0 0 / 14%);
+				color-scheme: dark;
+			}
+			* {
+				box-sizing: border-box;
+			}
+			html,
+			body {
+				margin: 0;
+				height: 100%;
+				overflow: hidden;
+			}
+			body {
+				background: var(--page);
+				color: var(--fg);
+				font: 15px/1.5 var(--font);
+			}
+
+			/* ---- toolbar */
+			.bar {
+				position: fixed;
+				z-index: 5;
+				top: max(10px, env(safe-area-inset-top, 0px));
+				left: max(10px, env(safe-area-inset-left, 0px));
+				right: max(10px, env(safe-area-inset-right, 0px));
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+				align-items: center;
+				pointer-events: none;
+			}
+			.bar > * {
+				pointer-events: auto;
+			}
+			.pill {
+				display: flex;
+				align-items: center;
+				gap: 2px;
+				padding: 3px;
+				border-radius: 14px;
+				border: 1px solid var(--border);
+				background: color-mix(in oklch, var(--card) 92%, transparent);
+				backdrop-filter: blur(8px);
+				box-shadow: 0 4px 16px rgb(0 0 0 / 0.08);
+			}
+			.pill .name {
+				font-weight: 600;
+				padding: 0 10px;
+				white-space: nowrap;
+			}
+			.pill .name small {
+				font-weight: 400;
+				color: var(--muted-fg);
+				margin-left: 6px;
+			}
+			.btn {
+				min-width: 44px;
+				height: 44px;
+				padding: 0 12px;
+				border: 0;
+				border-radius: 11px;
+				background: transparent;
+				color: var(--fg);
+				font: 500 14px var(--font);
+				cursor: pointer;
+				white-space: nowrap;
+			}
+			.btn:hover {
+				background: color-mix(in oklch, var(--fg) 7%, transparent);
+			}
+			.btn[aria-pressed='true'] {
+				background: var(--primary);
+				color: var(--primary-fg);
+			}
+			select.btn {
+				appearance: none;
+				padding-right: 28px;
+				background-image:
+					linear-gradient(45deg, transparent 50%, currentColor 50%),
+					linear-gradient(135deg, currentColor 50%, transparent 50%);
+				background-position:
+					calc(100% - 15px) 50%,
+					calc(100% - 10px) 50%;
+				background-size: 5px 5px;
+				background-repeat: no-repeat;
+			}
+			select.btn option {
+				background: var(--card);
+				color: var(--fg);
+			}
+			.zoom {
+				font-variant-numeric: tabular-nums;
+				min-width: 64px;
+			}
+			.btn:focus-visible,
+			.shots:focus-visible,
+			.viewport:focus-visible,
+			.lb button:focus-visible {
+				outline: 3px solid color-mix(in oklch, var(--primary) 55%, transparent);
+				outline-offset: 2px;
+			}
+
+			/* ---- canvas */
+			.viewport {
+				position: fixed;
+				inset: 0;
+				overflow: hidden;
+				cursor: grab;
+				touch-action: none;
+				outline: none;
+			}
+			.viewport.dragging {
+				cursor: grabbing;
+			}
+			.world {
+				position: absolute;
+				left: 0;
+				top: 0;
+				transform-origin: 0 0;
+				display: flex;
+				flex-direction: column;
+				gap: 220px;
+				padding: 120px;
+				will-change: transform;
+			}
+			.area {
+				position: relative;
+				display: flex;
+				flex-direction: column;
+				gap: 48px;
+			}
+			.area h2 {
+				margin: 0;
+				font-size: 72px;
+				line-height: 1;
+				letter-spacing: -0.02em;
+				font-weight: 700;
+				white-space: nowrap;
+			}
+			.area h2 small {
+				font-size: 32px;
+				font-weight: 400;
+				color: var(--muted-fg);
+				margin-left: 20px;
+				letter-spacing: 0;
+			}
+			.frames {
+				display: flex;
+				gap: 80px;
+				align-items: flex-start;
+			}
+			.fig {
+				margin: 0;
+				display: flex;
+				flex-direction: column;
+				gap: 14px;
+			}
+			.fig figcaption {
+				width: 390px;
+			}
+			body[data-view='both'] .fig figcaption {
+				width: 800px;
+			}
+			.fig figcaption b {
+				display: block;
+				font-size: 22px;
+				font-weight: 600;
+				line-height: 1.25;
+			}
+			.fig figcaption span {
+				display: block;
+				font-size: 17px;
+				color: var(--muted-fg);
+				line-height: 1.35;
+				min-height: 1.35em;
+			}
+			.shots {
+				all: unset;
+				display: flex;
+				gap: 20px;
+				cursor: zoom-in;
+				border-radius: 28px;
+			}
+			.shots img {
+				display: block;
+				width: 390px;
+				height: 844px;
+				object-fit: cover;
+				object-position: top;
+				border-radius: 28px;
+				border: 1px solid var(--border);
+				background: var(--card);
+				box-shadow: 0 10px 30px rgb(0 0 0 / 0.1);
+			}
+			body[data-view='light'] img.dk,
+			body[data-view='dark'] img.lt {
+				display: none;
+			}
+			.hint {
+				position: fixed;
+				z-index: 5;
+				left: max(10px, env(safe-area-inset-left, 0px));
+				bottom: max(10px, env(safe-area-inset-bottom, 0px));
+				font-size: 12.5px;
+				color: var(--muted-fg);
+				padding: 6px 10px;
+				border-radius: 10px;
+				background: color-mix(in oklch, var(--card) 85%, transparent);
+				max-width: min(70ch, calc(100vw - 20px));
+			}
+
+			/* ---- enlarged view */
+			.lb {
+				position: fixed;
+				inset: 0;
+				z-index: 50;
+				background: var(--veil);
+				display: none;
+				align-items: center;
+				justify-content: center;
+				padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px))
+					max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+			}
+			.lb.open {
+				display: flex;
+			}
+			.lb .stage {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 10px;
+				max-width: 100%;
+				max-height: 100%;
+				min-height: 0;
+			}
+			.lb .imgs {
+				display: flex;
+				gap: 14px;
+				min-height: 0;
+				max-width: 100%;
+			}
+			.lb img {
+				display: block;
+				height: min(80vh, 900px);
+				width: auto;
+				max-width: 100%;
+				border-radius: 22px;
+				background: var(--card);
+			}
+			body[data-view='both'] .lb img {
+				max-width: 46vw;
+				object-fit: contain;
+			}
+			body[data-view='light'] .lb img.dk,
+			body[data-view='dark'] .lb img.lt {
+				display: none;
+			}
+			.lb .meta {
+				color: #fff;
+				text-align: center;
+				max-width: 60ch;
+			}
+			.lb .meta span {
+				display: block;
+				font-size: 13px;
+				opacity: 0.75;
+			}
+			.lb button {
+				position: absolute;
+				width: 48px;
+				height: 48px;
+				border-radius: 50%;
+				border: 1px solid oklch(1 0 0 / 0.25);
+				background: oklch(0.2 0 0 / 0.7);
+				color: #fff;
+				font: 600 20px var(--font);
+				cursor: pointer;
+			}
+			.lb .close {
+				top: max(8px, env(safe-area-inset-top, 0px));
+				right: max(8px, env(safe-area-inset-right, 0px));
+			}
+			.lb .prev,
+			.lb .next {
+				top: 50%;
+				transform: translateY(-50%);
+			}
+			.lb .prev {
+				left: max(8px, env(safe-area-inset-left, 0px));
+			}
+			.lb .next {
+				right: max(8px, env(safe-area-inset-right, 0px));
+			}
+			@media (max-width: 520px) {
+				.hint {
+					display: none;
+				}
+				.lb .prev,
+				.lb .next {
+					top: auto;
+					bottom: 8px;
+					transform: none;
+				}
+			}
+		</style>
+	</head>
+	<body data-view="light">
+		<div
+			class="viewport"
+			id="vp"
+			tabindex="0"
+			aria-label="Screens canvas. Drag or scroll to pan, Ctrl or ⌘ plus scroll to zoom."
+		>
+			<div class="world" id="world">__SECTIONS__</div>
+		</div>
+
+		<div class="bar">
+			<div class="pill">
+				<span class="name">MyFit screens<small>__COUNT__ · __DATE__</small></span>
+			</div>
+			<div class="pill" role="group" aria-label="Theme" id="views"></div>
+			<div class="pill">
+				<label
+					for="jump"
+					style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)"
+					>Go to area</label
+				>
+				<select class="btn" id="jump"></select>
+			</div>
+			<div class="pill" role="group" aria-label="Zoom">
+				<button type="button" class="btn" id="zout" aria-label="Zoom out">−</button>
+				<button type="button" class="btn zoom" id="zreset" aria-label="Zoom to 100%">100%</button>
+				<button type="button" class="btn" id="zin" aria-label="Zoom in">+</button>
+				<button type="button" class="btn" id="zfit">Fit</button>
+			</div>
+		</div>
+
+		<p class="hint">
+			Drag or scroll to pan. Ctrl or ⌘ + scroll (or pinch) to zoom. Click a screen to enlarge it,
+			then use the arrow keys. Captured from a production build against a local API with sample
+			data; chat replies are scripted.
+		</p>
+
+		<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Screen preview">
+			<button class="close" id="lb-close" aria-label="Close">✕</button>
+			<button class="prev" id="lb-prev" aria-label="Previous screen">‹</button>
+			<div class="stage">
+				<div class="imgs" id="lb-imgs"></div>
+				<div class="meta" id="lb-meta"></div>
+			</div>
+			<button class="next" id="lb-next" aria-label="Next screen">›</button>
+		</div>
+
+		<script>
+			const GROUPS = __GROUPS__;
+			const $ = (s, r = document) => r.querySelector(s);
+			const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+			const vp = $('#vp');
+			const world = $('#world');
+			const figs = $$('.fig');
+			const areas = $$('.area');
+
+			// Per-viewer conveniences only; the page works the same without storage.
+			const store = {
+				get(k) {
+					try {
+						return JSON.parse(localStorage.getItem('myfit-screens:' + k));
+					} catch {
+						return null;
+					}
+				},
+				set(k, v) {
+					try {
+						localStorage.setItem('myfit-screens:' + k, JSON.stringify(v));
+					} catch {}
+				}
+			};
+
+			// ---- theme of the screens
+			const prefersDark = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
+			let view = store.get('view') || (prefersDark ? 'dark' : 'light');
+			const VIEWS = [
+				['light', 'Light'],
+				['dark', 'Dark'],
+				['both', 'Both']
+			];
+			$('#views').innerHTML = VIEWS.map(
+				([id, label]) =>
+					`<button type="button" class="btn" data-v="${id}" aria-pressed="false">${label}</button>`
+			).join('');
+			$('#views').addEventListener('click', (e) => {
+				const b = e.target.closest('button');
+				if (b) setView(b.dataset.v);
+			});
+			function setView(v) {
+				view = v;
+				document.body.dataset.view = v;
+				$$('#views .btn').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+				store.set('view', v);
+				renderLb();
+			}
+
+			// ---- pan and zoom
+			const MIN = 0.04;
+			const MAX = 2;
+			let t = store.get('t') || null;
+			function apply() {
+				world.style.transform = `translate(${t.x}px, ${t.y}px) scale(${t.k})`;
+				$('#zreset').textContent = Math.round(t.k * 100) + '%';
+				store.set('t', t);
+			}
+			function zoomAt(k, px, py) {
+				const nk = Math.min(MAX, Math.max(MIN, k));
+				t = { x: px - ((px - t.x) * nk) / t.k, y: py - ((py - t.y) * nk) / t.k, k: nk };
+				apply();
+			}
+			const centre = () => [vp.clientWidth / 2, vp.clientHeight / 2];
+			function frameRect(x, y, w, h, left) {
+				const pad = 48;
+				const top = 80;
+				const k = Math.min(MAX, (vp.clientWidth - pad * 2) / w, (vp.clientHeight - top - pad) / h);
+				t = {
+					k,
+					x: left ? pad - x * k : (vp.clientWidth - w * k) / 2 - x * k,
+					y: top + (vp.clientHeight - top - pad - h * k) / 2 - y * k
+				};
+				apply();
+			}
+			function fitAll() {
+				frameRect(0, 0, world.offsetWidth, world.offsetHeight);
+			}
+			/** Fits an area's height and starts at its left edge: long rows would be tiny if fitted whole. */
+			function goTo(area) {
+				const k = Math.min(1, (vp.clientHeight - 140) / area.offsetHeight);
+				t = { k, x: 48 - area.offsetLeft * k, y: 90 - area.offsetTop * k };
+				apply();
+			}
+
+			vp.addEventListener(
+				'wheel',
+				(e) => {
+					e.preventDefault();
+					if (e.ctrlKey || e.metaKey) {
+						const r = vp.getBoundingClientRect();
+						zoomAt(t.k * Math.exp(-e.deltaY * 0.01), e.clientX - r.left, e.clientY - r.top);
+					} else {
+						t = {
+							...t,
+							x: t.x - (e.shiftKey ? e.deltaY : e.deltaX),
+							y: t.y - (e.shiftKey ? 0 : e.deltaY)
+						};
+						apply();
+					}
+				},
+				{ passive: false }
+			);
+
+			const pointers = new Map();
+			let moved = false;
+			let pinch = null;
+			vp.addEventListener('pointerdown', (e) => {
+				pointers.set(e.pointerId, { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY });
+				moved = false;
+				if (pointers.size === 2) {
+					const [a, b] = [...pointers.values()];
+					pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), k: t.k };
+				}
+			});
+			vp.addEventListener('pointermove', (e) => {
+				const p = pointers.get(e.pointerId);
+				if (!p) return;
+				const dx = e.clientX - p.x;
+				const dy = e.clientY - p.y;
+				p.x = e.clientX;
+				p.y = e.clientY;
+				if (pointers.size === 1) {
+					if (!moved) {
+						// A press that barely moves stays a click on the frame under it.
+						if (Math.hypot(e.clientX - p.x0, e.clientY - p.y0) < 4) return;
+						moved = true;
+						vp.setPointerCapture(e.pointerId);
+						vp.classList.add('dragging');
+					}
+					t = { ...t, x: t.x + dx, y: t.y + dy };
+					apply();
+				} else if (pointers.size === 2 && pinch) {
+					moved = true;
+					const [a, b] = [...pointers.values()];
+					const r = vp.getBoundingClientRect();
+					zoomAt(
+						(pinch.k * Math.hypot(a.x - b.x, a.y - b.y)) / pinch.d,
+						(a.x + b.x) / 2 - r.left,
+						(a.y + b.y) / 2 - r.top
+					);
+				}
+			});
+			const up = (e) => {
+				pointers.delete(e.pointerId);
+				if (pointers.size < 2) pinch = null;
+				if (!pointers.size) vp.classList.remove('dragging');
+			};
+			vp.addEventListener('pointerup', up);
+			vp.addEventListener('pointercancel', up);
+
+			vp.addEventListener('keydown', (e) => {
+				const step = 80;
+				const moves = {
+					ArrowLeft: [step, 0],
+					ArrowRight: [-step, 0],
+					ArrowUp: [0, step],
+					ArrowDown: [0, -step]
+				};
+				if (moves[e.key]) {
+					t = { ...t, x: t.x + moves[e.key][0], y: t.y + moves[e.key][1] };
+					apply();
+				} else if (e.key === '+' || e.key === '=') zoomAt(t.k * 1.25, ...centre());
+				else if (e.key === '-') zoomAt(t.k / 1.25, ...centre());
+				else if (e.key === '0') fitAll();
+				else return;
+				e.preventDefault();
+			});
+
+			$('#zin').addEventListener('click', () => zoomAt(t.k * 1.25, ...centre()));
+			$('#zout').addEventListener('click', () => zoomAt(t.k / 1.25, ...centre()));
+			$('#zreset').addEventListener('click', () => zoomAt(1, ...centre()));
+			$('#zfit').addEventListener('click', fitAll);
+
+			const jump = $('#jump');
+			jump.innerHTML =
+				'<option value="">Go to area…</option>' +
+				GROUPS.map((g, i) => `<option value="${i}">${g.name} (${g.count})</option>`).join('');
+			jump.addEventListener('change', () => {
+				if (jump.value !== '') goTo(areas[Number(jump.value)]);
+				jump.value = '';
+			});
+
+			// ---- enlarged view
+			const lb = $('#lb');
+			let cur = -1;
+			let opener = null;
+			function renderLb() {
+				if (cur < 0) return;
+				const f = figs[cur];
+				$('#lb-imgs').innerHTML = $$('img', f)
+					.map((i) => `<img class="${i.className}" alt="${i.alt}" src="${i.src}">`)
+					.join('');
+				$('#lb-meta').innerHTML =
+					`<b>${$('b', f).innerHTML}</b><span>${$('span', f).innerHTML} · ${cur + 1} of ${figs.length}</span>`;
+			}
+			function open(i) {
+				opener = document.activeElement;
+				cur = (i + figs.length) % figs.length;
+				lb.classList.add('open');
+				renderLb();
+				$('#lb-close').focus();
+			}
+			function close() {
+				lb.classList.remove('open');
+				cur = -1;
+				if (opener) opener.focus();
+			}
+			figs.forEach((f, i) =>
+				$('.shots', f).addEventListener('click', (e) => {
+					if (moved) {
+						e.preventDefault();
+						return;
+					}
+					open(i);
+				})
+			);
+			$('#lb-close').addEventListener('click', close);
+			$('#lb-prev').addEventListener('click', () => open(cur - 1));
+			$('#lb-next').addEventListener('click', () => open(cur + 1));
+			lb.addEventListener('click', (e) => {
+				if (e.target === lb) close();
+			});
+			document.addEventListener('keydown', (e) => {
+				if (!lb.classList.contains('open')) return;
+				if (e.key === 'Escape') close();
+				else if (e.key === 'ArrowLeft') open(cur - 1);
+				else if (e.key === 'ArrowRight') open(cur + 1);
+			});
+
+			setView(view);
+			if (t) apply();
+			else goTo(areas[0]);
+		</script>
+	</body>
+</html>

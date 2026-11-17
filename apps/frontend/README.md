@@ -55,6 +55,7 @@ See [Run the tests and screenshots](../../docs/how-to/run-tests.md), and [Testin
 - `pnpm check` - Type-check
 - `pnpm test` - Unit tests
 - `pnpm test:e2e` - End-to-end tests
-- `pnpm screenshots` - Capture every screen and build a gallery
+- `pnpm screenshots` - Capture every screen in light and dark
+- `pnpm screenshots:serve` - Serve the last capture's canvas at http://localhost:4280
 - `pnpm lint` - Lint and format check
 - `pnpm format` - Auto-format code

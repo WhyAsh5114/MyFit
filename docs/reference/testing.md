@@ -19,7 +19,7 @@ Pick the smallest layer that can see the behavior. Most of the suite is the firs
 | Services with timing or ordering (tab lock, sync invalidation, dependencies) | Through their public functions, with real collaborators                  | Vitest                          | `tests/lib/services/account/account-session.test.ts`           |
 | API routes and server logic                                                  | Through the Hono app against a migrated Postgres test database           | Vitest + `TEST_DATABASE_URL`    | `apps/api/tests/features/sync/routes.test.ts`                  |
 | A user flow across pages, the account, sync or offline                       | End to end against the built app, the real API and Postgres              | Playwright                      | `tests/e2e/diary-data.spec.ts`                                 |
-| How a screen looks, and 44px tap targets                                     | Screenshot gallery, reviewed by a person; tap targets are asserted       | Playwright (`pnpm screenshots`) | `tests/screenshots/screens.spec.ts`                            |
+| How a screen looks, and 44px tap targets                                     | Screenshot canvas, reviewed by a person; tap targets are asserted        | Playwright (`pnpm screenshots`) | `tests/screenshots/screens.spec.ts`                            |
 
 Invariants that span files get a unit test too: `tests/messages.test.ts` checks that every language has the English keys and parameters, and `sync-invalidation.test.ts` checks that every synced model has keys.
 

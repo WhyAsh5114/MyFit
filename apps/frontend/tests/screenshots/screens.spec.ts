@@ -590,11 +590,11 @@ test('capture every screen', async ({ page }, testInfo) => {
 		`[${theme}] ${report.length ? `Small tap targets on ${report.length} screens:\n${report.join('\n')}` : 'All tap targets reach 44px.'}`
 	);
 
-	// One theme describes the set; the gallery pairs the other by id.
+	// One theme describes the set; the canvas pairs the other by id.
 	if (theme === 'light') {
 		writeFileSync(
 			join(OUT_DIR, 'manifest.json'),
-			JSON.stringify({ ext: EXT, screens }, null, '\t')
+			JSON.stringify({ ext: EXT, capturedAt: new Date().toISOString(), screens }, null, '\t')
 		);
 	}
 });

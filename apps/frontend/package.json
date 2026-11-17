@@ -14,7 +14,7 @@
 		"test": "vitest run",
 		"test:e2e": "playwright test",
 		"screenshots": "node scripts/screenshots/run.mjs",
-		"screenshots:gallery": "node scripts/screenshots/build-gallery.mjs",
+		"screenshots:serve": "node scripts/screenshots/serve.mjs",
 		"format": "prettier --write .",
 		"ota:channel": "node --input-type=module -e \"import { otaChannel } from './scripts/ota-channel.js'; console.log(otaChannel())\"",
 		"ota:upload": "bash scripts/ota-upload.sh"
@@ -70,6 +70,8 @@
 		"@capgo/capacitor-updater": "^8.54.0",
 		"@dnd-kit/helpers": "^0.5.1",
 		"@dnd-kit/svelte": "^0.5.1",
+		"@fontsource-variable/jetbrains-mono": "^5.3.0",
+		"@fontsource-variable/space-grotesk": "^5.3.0",
 		"@internationalized/date": "^3.12.4",
 		"@prisma-idb/client-idb": "^0.16.0",
 		"@prisma-idb/sync-extension-idb": "^0.12.0",

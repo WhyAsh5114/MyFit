@@ -1,5 +1,5 @@
-// Captures every screen in light and dark and builds a gallery. Usage:
-//   pnpm screenshots [--no-gallery]
+// Captures every screen in light and dark into `screenshots/`. `pnpm screenshots:serve` shows them. Usage:
+//   pnpm screenshots
 // Set SCREENSHOT_DATABASE_URL to point at a Postgres server. The database is created, migrated
 // and seeded for you, and nothing in it is precious.
 import { spawnSync } from 'node:child_process';
@@ -162,21 +162,11 @@ async function prepareDatabase() {
 
 await prepareDatabase();
 
-const args = process.argv.slice(2);
-const run = (command, commandArgs) =>
-	spawnSync(command, commandArgs, {
+const status =
+	spawnSync('pnpm', ['exec', 'playwright', 'test', '-c', 'playwright.screenshots.config.ts'], {
 		cwd: frontend,
 		stdio: 'inherit',
 		env: { ...process.env, SCREENSHOT_DATABASE_URL: url }
 	}).status ?? 1;
-
-const status = run('pnpm', [
-	'exec',
-	'playwright',
-	'test',
-	'-c',
-	'playwright.screenshots.config.ts'
-]);
-if (status !== 0) process.exit(status);
-if (!args.includes('--no-gallery'))
-	process.exit(run('node', ['scripts/screenshots/build-gallery.mjs']));
+if (status === 0) console.log('Browse them with `pnpm screenshots:serve`.');
+process.exit(status);
