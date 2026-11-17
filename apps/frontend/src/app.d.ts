@@ -14,7 +14,10 @@ declare global {
 			ownerId?: string | null;
 			user?: Row<'User'> | null;
 		}
-		// interface PageState {}
+		interface PageState {
+			/** The drawer or sheet open on this history entry (`lib/hooks/history-overlay.svelte.ts`). */
+			overlay?: string;
+		}
 		// interface Platform {}
 	}
 }

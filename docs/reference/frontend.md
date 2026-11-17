@@ -55,6 +55,7 @@ $effect(() => {
 - **Use `<Spinner />` in a button, `<Skeleton />` for a section** loading remote data. Local data never shows a skeleton (see [Data layer](data-layer.md#readers-and-loads)).
 - **Use `<Empty.Root>`, `<Empty.Header>` and `<Empty.Content>`** for empty states.
 - **Use `ResponsiveDialog`** (`lib/components/responsive-dialog.svelte`) for a secondary panel, never a bare `Drawer`.
+- **Keep a drawer, sheet or panel the user opens in the history** with `HistoryOverlay` (`lib/hooks/history-overlay.svelte.ts`), so Back closes it ([DESIGN.md → Surfaces](../../DESIGN.md#surfaces)). Bind it: `bind:open={() => panel.open, (open) => (panel.open = open)}`, as `sync-component.svelte` does with `ResponsiveDialog`. A link from it keeps the overlay's entry by default, so Back from the new page reopens the overlay; that suits an overlay the user browses and comes back to. A link from a menu or a one-way action (the phone sidebar, the sync panel's Log in) gets `data-sveltekit-replacestate`, or passes `replace: true` to `goto`, so the new page takes the overlay's entry and Back returns with it closed. A dialog the app raises leaves `open` out and is open while it is mounted.
 
 ## Forms (superforms and Zod 4)
 

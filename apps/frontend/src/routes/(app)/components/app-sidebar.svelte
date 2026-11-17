@@ -11,19 +11,20 @@
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 	const sidebar = useSidebar();
+	// The open phone sidebar is a history entry. A link in it takes that entry's place, which also
+	// closes the sidebar, so Back from the new page returns here with it closed.
+	const replaceState = $derived(sidebar.openMobile ? '' : 'off');
 </script>
 
 <Sidebar.Root {...restProps} bind:ref>
 	<Sidebar.Header class="pt-[calc(env(safe-area-inset-top)+0.5rem)]">
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
-				<Sidebar.MenuButton
-					class="h-fit w-full justify-start bg-card text-start"
-					onclick={() => sidebar.setOpenMobile(false)}
-				>
+				<Sidebar.MenuButton class="h-fit w-full justify-start bg-card text-start">
 					<a
 						class="flex w-full items-center gap-2 px-2 py-0 text-xl font-semibold"
 						href={resolve('/')}
+						data-sveltekit-replacestate={replaceState}
 					>
 						<!-- Decorative: the app name follows it in the same link. -->
 						<img src={favicon} alt="" class="h-12 w-12" />
@@ -42,19 +43,28 @@
 					<Sidebar.Menu>
 						{#each group.items as link (link.title)}
 							<Sidebar.MenuItem>
-								<Sidebar.MenuButton
-									onclick={() => sidebar.setOpenMobile(false)}
-									isActive={page.url.pathname.startsWith(`/${link.url}`)}
-								>
+								<Sidebar.MenuButton isActive={page.url.pathname.startsWith(`/${link.url}`)}>
 									{#snippet child({ props })}
 										{#if isExternalLink(link.url)}
-											<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-											<a href={link.url} target="_blank" rel="noopener noreferrer" {...props}>
+											<!-- An external site: `resolve` is for routes of this app. -->
+											<!-- eslint-disable svelte/no-navigation-without-resolve -->
+											<a
+												href={link.url}
+												target="_blank"
+												rel="noopener noreferrer"
+												{...props}
+												onclick={() => sidebar.setOpenMobile(false)}
+											>
 												<link.icon />
 												<span>{link.title}</span>
 											</a>
+											<!-- eslint-enable svelte/no-navigation-without-resolve -->
 										{:else}
-											<a href={resolve(link.url)} {...props}>
+											<a
+												href={resolve(link.url)}
+												{...props}
+												data-sveltekit-replacestate={replaceState}
+											>
 												<link.icon />
 												<span>{link.title}</span>
 											</a>

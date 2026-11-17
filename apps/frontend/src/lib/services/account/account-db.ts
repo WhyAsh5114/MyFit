@@ -10,11 +10,18 @@ type AuthSessionData = {
 	session: Session;
 };
 
-/** Sends users without a session or offline account to login without deleting any data. */
-export async function redirectToLogin(url: { pathname: string; search: string; hash: string }) {
+/**
+ * Sends users without a session or offline account to login without deleting any data. From inside
+ * a drawer or sheet, pass `replace` so login takes the overlay's history entry and Back
+ * doesn't reopen it.
+ */
+export async function redirectToLogin(
+	url: { pathname: string; search: string; hash: string },
+	{ replace = false } = {}
+) {
 	const redirect = `${url.pathname}${url.search}${url.hash}`;
 	// eslint-disable-next-line svelte/no-navigation-without-resolve
-	await goto(`/login?redirect=${encodeURIComponent(redirect)}`);
+	await goto(`/login?redirect=${encodeURIComponent(redirect)}`, { replace });
 	return toast.info(m['account.loginToContinue']());
 }
 

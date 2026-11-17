@@ -81,8 +81,9 @@ Rules:
 - **Popovers are not a surface for content.** Anything with more than a line or two of text, or any action, is a responsive dialog. The one exception is a picker: a trigger that shows the current choice and opens a search field over a list (chat history).
 - A bottom drawer alone looks wrong on desktop, so secondary panels use `ResponsiveDialog` (`lib/components/responsive-dialog.svelte`), never a bare `Drawer`.
 - Don't stack overlays. A drawer never opens a dialog over itself except to confirm a destructive action.
-- Drawers have a visible close control and respond to the system back gesture.
-- Sheets for editing use a page when the form is more than a few fields.
+- Drawers and sheets have a visible close control.
+- **Back closes what the user opened.** A drawer, sheet or panel the user opens is a step in the history: Back (the system gesture, the Android button, the browser) closes it and stays on the page. What Back does after a link inside it depends on the overlay. A link from a menu or a one-way action, such as the phone sidebar or the sync panel's Log in, takes the overlay's place, so Back from the next page returns with it closed. A link from an overlay the user browses and comes back to, such as a list they open items from, keeps the overlay's step, so Back returns to it open. A dialog the app raises (the tab lock, another account, a failed load) is not a step, and neither are menus, the picker and tooltips, which close on Escape or a tap outside.
+- A form with more than a few fields that saves on its own is a page. A sub-form that only edits fields of the form beneath it may be a full-height sheet instead (the nutrition editor): it saves nothing itself, and a page would have to carry the parent's unsaved input across a navigation.
 
 ## Touch targets
 
@@ -161,6 +162,7 @@ Re-adding or reinstalling a component with the CLI overwrites these edits, so re
 
 - **44px hit areas:** `button` (base gets `relative tap`), `input` and `input-group` (`h-11`), `input-otp-slot` (`size-11`), `select-trigger` (`h-11`, `tap`), `dropdown-menu-item` and `select-item` (`min-h-11`), `switch` and `radio-group-item` (larger `after:` inset), `toggle` (`h-11`), `sidebar-menu-button` and `sidebar-menu-sub-button` (`h-11`), `breadcrumb-link` (`tap`).
 - **`dialog-content` and `sheet-content`:** a `closeLabel` prop for the close button, defaulting to `m['common.close']()`.
+- **`sidebar/context.svelte.ts`:** `openMobile` is a `HistoryOverlay`, so Back closes the phone sidebar.
 - **`empty-media`:** the icon tile is `rounded-xl`.
 - **Toast buttons:** `layout.css` gives sonner's action buttons the same hit area.
 - **App language:** `calendar` defaults `locale` to Paraglide's `getLocale()`, and `chart-tooltip` formats numbers with `formatNumber` (`lib/format.ts`). The generated versions use `'en-US'` and the browser's locale. Screen-reader labels come from Paraglide: `sidebar-trigger` and the phone `sidebar` sheet (`sidebar.menu`), `breadcrumb` (`breadcrumb.label`) and `message-scroller-button` (`common.scrollTo…`); the generated versions are English.
@@ -240,7 +242,6 @@ Run `pnpm --filter @myfit/frontend screenshots` to see every screen in light and
 Screens that break a rule above and need design work to fix. They are bugs, not examples: don't copy them. Delete an item when its fix lands.
 
 - **A gesture is the only way** (Never): meals reorder only by dragging the handle (`food-diary/goals/meals/components/meal-item.svelte`). Add Move up and Move down to a row menu.
-- **Surfaces:** the nutrition editor (`modify-nutritional-info-sheet.svelte`) is a sheet with many fields; it should be a page. Moving it means lifting the parent form's state.
 - **Empty page:** `food-diary/[date]/add-activity/+page.svelte` is empty, but the diary's Activity header links to it.
 - **Touch targets** were checked at mobile width in a browser, not on a real device. Check the header first.
 

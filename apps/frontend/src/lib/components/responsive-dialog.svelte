@@ -5,6 +5,7 @@
 	import { MediaQuery } from 'svelte/reactivity';
 
 	let {
+		open = $bindable(true),
 		title,
 		description,
 		dismissible = true,
@@ -13,6 +14,11 @@
 		children,
 		footer
 	}: {
+		/**
+		 * Bind it for a panel the user opens, to a `HistoryOverlay` so Back closes it. A dialog the
+		 * app raises leaves it out: it is open while it is mounted.
+		 */
+		open?: boolean;
 		title: string;
 		/** Plain text, or a snippet when the description needs markup such as a shimmer. */
 		description: string | Snippet;
@@ -27,7 +33,6 @@
 	} = $props();
 
 	const isDesktop = new MediaQuery('(min-width: 768px)');
-	let open = $state(true);
 
 	function changeOpen(value: boolean) {
 		if (value || !dismissible) return;

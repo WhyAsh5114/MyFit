@@ -14,6 +14,8 @@
 
 	const sidebar = useSidebar();
 	let user = $derived(getCurrentUser());
+	// A link in the open phone sidebar takes its history entry's place (see app-sidebar.svelte).
+	const replaceState = $derived(sidebar.openMobile ? '' : 'off');
 
 	function getInitials(name: string, email: string) {
 		if (name.length === 0) {
@@ -31,7 +33,9 @@
 		{#if !user}
 			<Sidebar.MenuButton variant="outline" size="lg" aria-label={m['account.login']()}>
 				{#snippet child({ props })}
-					<a href={resolve('login')} {...props}><LogInIcon />{m['account.login']()}</a>
+					<a href={resolve('login')} {...props} data-sveltekit-replacestate={replaceState}>
+						<LogInIcon />{m['account.login']()}
+					</a>
 				{/snippet}
 			</Sidebar.MenuButton>
 		{:else}
@@ -66,7 +70,9 @@
 				>
 					<DropdownMenu.Item>
 						{#snippet child({ props })}
-							<a href={resolve('account')} {...props}><BadgeCheckIcon />{m['account.title']()}</a>
+							<a href={resolve('account')} {...props} data-sveltekit-replacestate={replaceState}>
+								<BadgeCheckIcon />{m['account.title']()}
+							</a>
 						{/snippet}
 					</DropdownMenu.Item>
 					<DropdownMenu.Item onclick={() => logout()}>

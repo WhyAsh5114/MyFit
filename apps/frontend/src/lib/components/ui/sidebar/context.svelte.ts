@@ -1,5 +1,6 @@
 import { getContext, setContext } from 'svelte';
 import { IsMobile } from '#lib/hooks/is-mobile.svelte.js';
+import { HistoryOverlay } from '#lib/hooks/history-overlay.svelte.js';
 import { SIDEBAR_KEYBOARD_SHORTCUT } from './constants.js';
 
 type Getter<T> = () => T;
@@ -23,7 +24,14 @@ export type SidebarStateProps = {
 class SidebarState {
 	readonly props: SidebarStateProps;
 	open = $derived.by(() => this.props.open());
-	openMobile = $state(false);
+	// MyFit: the phone sidebar is a step in the history, so Back closes it (DESIGN.md → Surfaces).
+	#mobile = new HistoryOverlay('sidebar');
+	get openMobile() {
+		return this.#mobile.open;
+	}
+	set openMobile(value: boolean) {
+		this.#mobile.open = value;
+	}
 	setOpen: SidebarStateProps['setOpen'];
 	#isMobile: IsMobile;
 	state = $derived.by(() => (this.open ? 'expanded' : 'collapsed'));

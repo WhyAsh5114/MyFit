@@ -22,6 +22,7 @@
 		type NutrientKey
 	} from '#lib/features/food-diary/_common/nutrients.js';
 	import { hasCalculationErrors } from '#lib/domain/nutrition/energy-check.js';
+	import { HistoryOverlay } from '#lib/hooks/history-overlay.svelte.js';
 
 	let { form }: { form: SuperForm<FoodEntryFormSchema> } = $props();
 	let formData = $derived(form.form);
@@ -29,7 +30,9 @@
 
 	const NUTRIENTS: { key: NutrientKey }[] = [...REQUIRED_NUTRIENTS, ...OPTIONAL_NUTRIENTS];
 
-	let open = $state(false);
+	// Part of the entry form. Without a history step, Back would leave the form and lose what the
+	// user typed; as one, Back closes only this sheet (DESIGN.md → Surfaces).
+	const editor = new HistoryOverlay('nutrition-editor');
 
 	let hasFieldErrors = $derived.by(() => {
 		for (const field of NUTRIENTS) {
@@ -52,7 +55,7 @@
 	}
 </script>
 
-<Sheet.Root bind:open>
+<Sheet.Root bind:open={() => editor.open, (open) => (editor.open = open)}>
 	<Sheet.Trigger>
 		{#snippet child({ props })}
 			<Button
@@ -164,13 +167,13 @@
 			<Button
 				class="mx-4 mb-4 bg-warning text-warning-foreground"
 				type="button"
-				onclick={() => (open = false)}
+				onclick={() => (editor.open = false)}
 			>
 				{m['foodDiary.nutritionInaccurateEntries']()}
 				<AlertCircleIcon />
 			</Button>
 		{:else}
-			<Button class="mx-4 mb-4" type="button" onclick={() => (open = false)}>
+			<Button class="mx-4 mb-4" type="button" onclick={() => (editor.open = false)}>
 				{m['foodDiary.nutritionDone']()}
 				<CircleCheckIcon />
 			</Button>

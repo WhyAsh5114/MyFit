@@ -21,8 +21,9 @@
 	import { online } from 'svelte/reactivity/window';
 	import { redirectToLogin } from '#lib/services/account/account-db.js';
 	import type { SyncWorkerStatus } from '@prisma-idb/sync-extension-idb/client';
+	import { HistoryOverlay } from '#lib/hooks/history-overlay.svelte.js';
 
-	let open = $state(false);
+	const panel = new HistoryOverlay('sync');
 	let hasAnyRetryableUnsynced = $state<boolean>();
 
 	onMount(() => watchUnsyncedChanges((pending) => (hasAnyRetryableUnsynced = pending)));
@@ -73,7 +74,7 @@
 <Button
 	variant="ghost"
 	size="icon"
-	onclick={() => (open = true)}
+	onclick={() => (panel.open = true)}
 	aria-label={m['sync.title']()}
 	class="text-muted-foreground"
 >
@@ -90,56 +91,58 @@
 	{/if}
 </Button>
 
-{#if open}
-	<ResponsiveDialog title={m['sync.title']()} onclose={() => (open = false)}>
-		{#snippet description()}
-			<!-- While paused there is no status to read out, and "Connecting" would be wrong. -->
-			{#if paused}
-				<span class="sr-only">{m['sync.title']()}</span>
-			{:else}
-				<Badge variant={statusVariant}>{statusLabel}</Badge>
-			{/if}
-		{/snippet}
-		<div class="flex flex-col gap-3">
-			{#if paused}
-				<div class="flex items-start gap-2 rounded-lg bg-muted p-3 text-sm">
-					<CloudOffIcon class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-					<span>
-						{paused === 'signedOut' ? m['sync.pausedSignedOut']() : m['sync.pausedOffline']()}
-					</span>
-				</div>
-				{#if paused === 'signedOut'}
-					<Button variant="secondary" onclick={() => void redirectToLogin(page.url)}>
-						{m['account.logIn']()}
-					</Button>
-				{/if}
-			{/if}
-			{#if !paused || lastSyncTime}
-				<div class="flex items-center gap-2 text-sm text-muted-foreground">
-					<ClockIcon class="size-4 shrink-0" />
-					<span>{m['sync.lastSynced']()}</span>
-					<span class="ml-auto font-medium text-foreground tabular-nums">{lastSyncDisplay}</span>
-				</div>
-			{/if}
-			{#if lastError && !paused}
-				<div
-					class="flex items-start gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive"
-				>
-					<AlertCircleIcon class="mt-0.5 size-4 shrink-0" />
-					<span class="break-all">{lastError}</span>
-				</div>
-			{/if}
-			{#if !paused && hasAnyRetryableUnsynced && syncWorkerState.syncWorker && (syncStatus === 'idle' || syncStatus === 'error')}
+<ResponsiveDialog
+	bind:open={() => panel.open, (open) => (panel.open = open)}
+	title={m['sync.title']()}
+>
+	{#snippet description()}
+		<!-- While paused there is no status to read out, and "Connecting" would be wrong. -->
+		{#if paused}
+			<span class="sr-only">{m['sync.title']()}</span>
+		{:else}
+			<Badge variant={statusVariant}>{statusLabel}</Badge>
+		{/if}
+	{/snippet}
+	<div class="flex flex-col gap-3">
+		{#if paused}
+			<div class="flex items-start gap-2 rounded-lg bg-muted p-3 text-sm">
+				<CloudOffIcon class="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+				<span>
+					{paused === 'signedOut' ? m['sync.pausedSignedOut']() : m['sync.pausedOffline']()}
+				</span>
+			</div>
+			{#if paused === 'signedOut'}
 				<Button
 					variant="secondary"
-					onclick={() =>
-						// The worker's `error` event already reports the failure to `lastError`.
-						syncWorkerState.syncWorker?.forceSync().catch(() => {})}
+					onclick={() => void redirectToLogin(page.url, { replace: true })}
 				>
-					{m['sync.syncNow']()}
-					<RefreshCcwIcon />
+					{m['account.logIn']()}
 				</Button>
 			{/if}
-		</div>
-	</ResponsiveDialog>
-{/if}
+		{/if}
+		{#if !paused || lastSyncTime}
+			<div class="flex items-center gap-2 text-sm text-muted-foreground">
+				<ClockIcon class="size-4 shrink-0" />
+				<span>{m['sync.lastSynced']()}</span>
+				<span class="ml-auto font-medium text-foreground tabular-nums">{lastSyncDisplay}</span>
+			</div>
+		{/if}
+		{#if lastError && !paused}
+			<div class="flex items-start gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+				<AlertCircleIcon class="mt-0.5 size-4 shrink-0" />
+				<span class="break-all">{lastError}</span>
+			</div>
+		{/if}
+		{#if !paused && hasAnyRetryableUnsynced && syncWorkerState.syncWorker && (syncStatus === 'idle' || syncStatus === 'error')}
+			<Button
+				variant="secondary"
+				onclick={() =>
+					// The worker's `error` event already reports the failure to `lastError`.
+					syncWorkerState.syncWorker?.forceSync().catch(() => {})}
+			>
+				{m['sync.syncNow']()}
+				<RefreshCcwIcon />
+			</Button>
+		{/if}
+	</div>
+</ResponsiveDialog>
