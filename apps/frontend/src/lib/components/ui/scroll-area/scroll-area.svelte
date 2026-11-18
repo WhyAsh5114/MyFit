@@ -10,12 +10,15 @@
 		orientation = 'vertical',
 		scrollbarXClasses = '',
 		scrollbarYClasses = '',
+		viewportClass = '',
 		children,
 		...restProps
 	}: WithoutChild<ScrollAreaPrimitive.RootProps> & {
 		orientation?: 'vertical' | 'horizontal' | 'both' | undefined;
 		scrollbarXClasses?: string | undefined;
 		scrollbarYClasses?: string | undefined;
+		/** For the viewport, which holds the content in one wrapper: `*:` reaches that wrapper. */
+		viewportClass?: string | undefined;
 		viewportRef?: HTMLElement | null;
 	} = $props();
 </script>
@@ -29,7 +32,10 @@
 	<ScrollAreaPrimitive.Viewport
 		bind:ref={viewportRef}
 		data-slot="scroll-area-viewport"
-		class="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1"
+		class={cn(
+			'size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1',
+			viewportClass
+		)}
 	>
 		{@render children?.()}
 	</ScrollAreaPrimitive.Viewport>

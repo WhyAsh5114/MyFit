@@ -217,19 +217,6 @@
 	}
 }
 
-/*
- * Scrollbars for the message scroller (and anywhere else that asks for them): a thin thumb in the
- * muted color on a clear track, which the scroller hides while it scrolls by itself.
- */
-@utility scrollbar-thin {
-	scrollbar-width: thin;
-	scrollbar-color: var(
-			--scrollbar-thumb,
-			color-mix(in oklab, var(--muted-foreground) 40%, transparent)
-		)
-		var(--scrollbar-track, transparent);
-}
-
 @utility scrollbar-thumb-transparent {
 	--scrollbar-thumb: transparent;
 }
@@ -246,6 +233,14 @@
 	* {
 		@apply border-border outline-ring/50;
 		font-family: 'Space Grotesk Variable', sans-serif;
+		/* Every scrollbar is a thin muted thumb on a clear track. The message scroller hides it while it
+		   scrolls by itself, through these variables. */
+		scrollbar-width: thin;
+		scrollbar-color: var(
+				--scrollbar-thumb,
+				color-mix(in oklab, var(--muted-foreground) 40%, transparent)
+			)
+			var(--scrollbar-track, transparent);
 	}
 	body {
 		@apply bg-background text-foreground;

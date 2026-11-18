@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getLocalTimeZone } from '@internationalized/date';
+	import { ScrollArea } from '#lib/components/ui/scroll-area/index.js';
 	import { parseSelectedDay } from '#lib/features/food-diary/_common/selected-day.js';
 	import HeaderCard from './components/entries-page/header-card.svelte';
 	import DaySummary from './components/entries-page/day-summary.svelte';
@@ -19,12 +20,13 @@
 	userId={data.ownerId}
 	activityEntries={data.activityEntries}
 	activityPreferences={data.activityPreferences}
+	fixedActivity={data.fixedActivity}
 	macroMetrics={data.macroMetrics}
 />
 
 <HeaderCard {selectedDay} {timezone} />
 
-<div class="min-h-0 w-full grow basis-0 overflow-y-auto">
+<ScrollArea type="scroll" class="min-h-0 w-full grow basis-0">
 	<div class="flex flex-col gap-4">
 		<DaySummary
 			foodEntries={data.foodEntries}
@@ -38,4 +40,4 @@
 			<ActivityEntries activityEntries={data.activityEntries} />
 		</div>
 	</div>
-</div>
+</ScrollArea>

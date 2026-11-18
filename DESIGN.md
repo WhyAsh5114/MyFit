@@ -60,7 +60,7 @@ These are rejected in review.
 - Errors say what happened and what to do next. No apology, no blame.
 - Buttons say exactly what they do: `Log`, `Save`, `Cancel`, never `OK`.
 - Every string goes through Paraglide with keys in `messages/en.json` and `messages/hi.json`.
-- Format: `kcal` and `g` after a space, thousands separators, `tabular-nums` wherever digits line up. kcal and gram values in lists are whole numbers; editors may show one decimal. In a Diary meal card, only the meal's total says `kcal`; the entries under it show the bare number.
+- Format: `kcal` and `g` after a space, thousands separators, `tabular-nums` wherever digits line up. kcal and gram values in lists are whole numbers; editors may show one decimal. In a Diary meal card, only the meal's total says `kcal`; the entries under it show the bare number. The Activity card works the same way, with the day's calories burned as its total.
 - Macro order and letters are **C F P** (carbs, fat, protein) in summaries, with the identity colors below.
 
 ## Surfaces
@@ -129,7 +129,7 @@ There are two nutrition statuses and no red:
 
 - **Today (in progress)** shows only certain facts: a ceiling already passed (amber `▲`), or a floor already met (green `✓`). Everything else stays neutral. Being under at 1 pm is normal.
 - **Past days (finished)** are judged: on target, or off target with direction.
-- The Diary gauge is a 270° arc split by macro (each macro's share of the calories eaten, in its identity color) with a tick at the goal. Past the goal, the arc is scaled to what was eaten, and an amber band outside the arc spans the excess only when the day is off target. Its middle holds only the kcal left (or over) and the status. Bars to its right give the numbers: calories, then C F P in grams against each macro's target. The calorie bar turns amber under the same rule as the band. Under the summary, the day's actions (Edit goal, Log by chat) share a row, like Add manually and Scan barcode on Add food. A floating button would cover the last meal's `+`. Without a goal the summary keeps the same shape and height: the gauge is an empty track showing kcal eaten, a bar without a target shows the amount over an empty bar, and the action reads Set goal. Never fill in a default goal, since a made-up target reads like the user's own.
+- The Diary gauge is a 270° arc split by macro (each macro's share of the calories eaten, in its identity color) with a tick at the goal. Past the goal, the arc is scaled to what was eaten, and an amber band outside the arc spans the excess only when the day is off target. Its middle holds only the kcal left (or over) and the status; calories burned show on the Activity card, not on the gauge. Bars to its right give the numbers: calories, then C F P in grams against each macro's target. The calorie bar turns amber under the same rule as the band. Under the summary, the day's actions (Edit goal, Log by chat) share a row, like Add manually and Scan barcode on Add food. A floating button would cover the last meal's `+`. Without a goal the summary keeps the same shape and height: the gauge is an empty track showing kcal eaten, a bar without a target shows the amount over an empty bar, and the action reads Set goal. Never fill in a default goal, since a made-up target reads like the user's own.
 
 ### Judging a finished day depends on the goal
 
@@ -154,6 +154,7 @@ Protein is a floor: on target at 95% or more. Carbs and fat are bands: on target
 
 - Page gutter is 16px; content is capped at `max-w-xl` and centered. Use the Tailwind spacing scale with `gap-*`, not per-element margins.
 - Lists and rows are dense but 44px or taller wherever they are tappable.
+- Scroll a page or list with `ScrollArea type="scroll"`. Its scrollbar sits over the content and shows only while scrolling, as on a phone, where a desktop browser's own scrollbar takes width from the content. Style the content wrapper with `viewportClass` (`*:flex *:flex-col`). A scroller that manages its own scrolling, like the chat's message scroller, stays native; a base rule in `layout.css` gives those a thin muted thumb on a clear track.
 - Components come from the shadcn-svelte **vega** style (preset `bIkeymG`: neutral base, Inter, Lucide), with `--radius: 0.5rem` in `layout.css`. Reuse its shapes: use only the radii and shadows (`shadow-xs`, `shadow-sm`, `shadow-lg`) the components in `lib/components/ui/` already use. The brand blue (`--primary`) and the status tokens are ours and stay when the preset is re-applied.
 
 ### Customised shadcn components
@@ -180,7 +181,7 @@ Expressive, but purposeful. Motion explains cause and effect, rewards completion
 | Charts and number changes       | 250–400 ms   | Tween values; don't re-animate on every render |
 | Reward moments (daily goal met) | up to 600 ms | At most once per day; ignorable, never blocks  |
 
-- Respect `prefers-reduced-motion`: replace movement with an instant change or a fade. layerchart charts take their `motion` from `chartMotion` (`lib/components/chart-motion.svelte.ts`), which does both.
+- Respect `prefers-reduced-motion`: replace movement with an instant change or a fade. layerchart charts take their `motion` from `chartMotion` (`lib/components/chart-motion.svelte.ts`), which does both. layerchart animates a pie only as it appears, so a pie that changes with the day (the Diary gauge) sweeps in with `chartMotion` and tweens later changes itself, with a Svelte `Tween` and `chartTween` from the same file. Start that `Tween` at the first values, not zero: marks drawn from it mount at their first angle.
 - Rewards celebrate the day, not a streak. No countdowns, no loss framing.
 - Don't animate layout for long lists; animate only the item that changed.
 

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import * as Chart from '#lib/components/ui/chart/index.js';
-	import { chartMotion } from '#lib/components/chart-motion.svelte.js';
+	import { chartMotion, chartTween } from '#lib/components/chart-motion.svelte.js';
+	import { Tween } from 'svelte/motion';
+	import { untrack } from 'svelte';
 	import { Arc, PieChart } from 'layerchart';
 	import { m } from '#lib/paraglide/messages.js';
 	import { formatNumber } from '#lib/format.js';
@@ -14,12 +16,11 @@
 		consumed: number;
 		/** The day's allowance, including what was burned; null without a calorie goal. */
 		target: number | null;
-		burned: number;
 		/** What was eaten, to split the consumed arc by macro. */
 		eaten: Macros;
 		status: NutritionStatus;
 	};
-	let { consumed, target, burned, eaten, status }: Props = $props();
+	let { consumed, target, eaten, status }: Props = $props();
 
 	/** The gauge sweeps 270°, open at the bottom. Angles are in degrees from 12 o'clock. */
 	const RANGE: [number, number] = [-135, 135];
@@ -29,32 +30,50 @@
 
 	let over = $derived(target !== null && consumed > target);
 	let flagged = $derived(status.kind === 'off-target');
+
+	// Food labels and their macros rarely add up exactly, so the macros only split the eaten calories.
+	let shares = $derived.by(() => {
+		const kcal = {
+			carbs: eaten.carbsG * KCAL_PER_GRAM.carbs,
+			fat: eaten.fatG * KCAL_PER_GRAM.fat,
+			protein: eaten.proteinG * KCAL_PER_GRAM.protein
+		};
+		const total = kcal.carbs + kcal.fat + kcal.protein;
+		const share = (part: number) => (total > 0 ? (consumed * part) / total : 0);
+		return {
+			carbs: share(kcal.carbs),
+			fat: share(kcal.fat),
+			protein: share(kcal.protein),
+			// Food without macros still fills the arc.
+			eaten: total > 0 ? 0 : consumed,
+			consumed,
+			target: target ?? 0
+		};
+	});
+
+	// layerchart sweeps the pie in once and then jumps to new data, so the gauge tweens its own
+	// numbers between values, like the bars beside it. It starts at the first values rather than at
+	// zero: the goal tick and the band would otherwise mount at zero and keep that angle.
+	const shown = new Tween(untrack(() => shares));
+	$effect(() => {
+		void shown.set(shares, chartTween.current);
+	});
+
 	/** Past the goal, the gauge is scaled to what was eaten. */
-	let scale = $derived(Math.max(target ?? 0, consumed, 1));
+	let scale = $derived(Math.max(shown.current.target, shown.current.consumed, 1));
 
 	// Without a goal there is nothing to fill against, so the track stays empty.
-	// Food labels and their macros rarely add up exactly, so the macros only split the eaten calories.
 	let chartData = $derived.by(() => {
 		if (target === null) return [{ key: 'remaining', value: 1, color: 'var(--muted)' }];
-		const shares = [
-			{ key: 'carbs', kcal: eaten.carbsG * KCAL_PER_GRAM.carbs, color: 'var(--chart-carbs)' },
-			{ key: 'fat', kcal: eaten.fatG * KCAL_PER_GRAM.fat, color: 'var(--chart-fat)' },
-			{
-				key: 'protein',
-				kcal: eaten.proteinG * KCAL_PER_GRAM.protein,
-				color: 'var(--chart-protein)'
-			}
-		];
-		const macroKcal = shares.reduce((sum, s) => sum + s.kcal, 0);
-		const eatenArcs =
-			macroKcal > 0
-				? shares.map((s) => ({ ...s, value: (consumed * s.kcal) / macroKcal }))
-				: [{ key: 'eaten', value: consumed, color: 'var(--chart-consumed)' }];
+		const s = shown.current;
 		return [
-			...eatenArcs,
+			{ key: 'carbs', value: s.carbs, color: 'var(--chart-carbs)' },
+			{ key: 'fat', value: s.fat, color: 'var(--chart-fat)' },
+			{ key: 'protein', value: s.protein, color: 'var(--chart-protein)' },
+			{ key: 'eaten', value: s.eaten, color: 'var(--chart-consumed)' },
 			{
 				key: 'remaining',
-				value: Math.max(0, target - consumed),
+				value: Math.max(0, s.target - s.consumed),
 				color: 'var(--chart-remaining)'
 			}
 		].filter((d) => d.value > 0);
@@ -64,7 +83,7 @@
 	/** Where `kcal` falls on the gauge, in radians. */
 	const angleOf = (kcal: number) => toRadians(RANGE[0] + ((RANGE[1] - RANGE[0]) * kcal) / scale);
 
-	let goalAngle = $derived(angleOf(Math.max(target ?? 0, 0)));
+	let goalAngle = $derived(angleOf(shown.current.target));
 </script>
 
 <!-- The bars beside it say the same, so the chart is decorative. -->
@@ -84,11 +103,12 @@
 			props={{ pie: { motion: chartMotion.current, sort: null } }}
 		>
 			{#snippet aboveMarks()}
-				{#if over && flagged}
+				<!-- Checked against the tweened values too, so the band never runs backwards mid-tween. -->
+				{#if over && flagged && shown.current.consumed > shown.current.target}
 					<!-- An amber band outside the arc marks how far the day went past the goal. -->
 					<Arc
 						startAngle={goalAngle}
-						endAngle={angleOf(consumed)}
+						endAngle={angleOf(shown.current.consumed)}
 						innerRadius={OUTER + 2}
 						outerRadius={OUTER + 5}
 						cornerRadius={1.5}
@@ -136,11 +156,5 @@
 					? m['foodDiary.gaugeOver']()
 					: m['foodDiary.gaugeLeft']()}
 		</p>
-		<!-- Inside the dial, so a day with activity is the same height as one without. -->
-		{#if target !== null && burned > 0}
-			<p class="mt-0.5 text-[0.625rem] text-muted-foreground tabular-nums">
-				{m['foodDiary.burnedShort']({ amount: formatNumber(burned) })}
-			</p>
-		{/if}
 	</div>
 </div>

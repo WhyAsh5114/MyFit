@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Card from '#lib/components/ui/card/index.js';
 	import {
+		ChevronDownIcon,
 		ClockIcon,
 		FolderPenIcon,
 		GroupIcon,
@@ -10,6 +11,7 @@
 	import * as InputGroup from '#lib/components/ui/input-group/index.js';
 	import * as Form from '#lib/components/ui/form/index.js';
 	import * as Select from '#lib/components/ui/select/index.js';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
 	import { superForm, defaults, dateProxy, type SuperForm } from 'sveltekit-superforms';
 	import { zod4, zod4Client } from 'sveltekit-superforms/adapters';
@@ -61,6 +63,9 @@
 	});
 
 	const { form: formData, enhance } = form;
+
+	const unitLabel = (unit: 'g' | 'serving') =>
+		unit === 'g' ? m['foodDiary.unitGrams']() : m['foodDiary.unitServing']();
 
 	let hasServingData = $derived(
 		!!$formData.servingSize && !!$formData.servingQuantity && $formData.servingQuantity > 0
@@ -148,17 +153,31 @@
 							/>
 							<InputGroup.Addon align="inline-end">
 								{#if hasServingData}
-									<InputGroup.Button
-										type="button"
-										variant="ghost"
-										class="pe-1.5! text-xs"
-										onclick={() =>
-											($formData.preferredUnit = $formData.preferredUnit === 'g' ? 'serving' : 'g')}
-									>
-										{$formData.preferredUnit}
-									</InputGroup.Button>
+									<!-- Like the unit pickers in the metrics form. -->
+									<DropdownMenu.Root>
+										<DropdownMenu.Trigger>
+											{#snippet child({ props })}
+												<InputGroup.Button
+													{...props}
+													variant="ghost"
+													aria-label={m['foodDiary.metrics.unit']()}
+												>
+													{unitLabel($formData.preferredUnit)}
+													<ChevronDownIcon />
+												</InputGroup.Button>
+											{/snippet}
+										</DropdownMenu.Trigger>
+										<DropdownMenu.Content align="end">
+											<DropdownMenu.Item onclick={() => ($formData.preferredUnit = 'g')}>
+												{unitLabel('g')}
+											</DropdownMenu.Item>
+											<DropdownMenu.Item onclick={() => ($formData.preferredUnit = 'serving')}>
+												{unitLabel('serving')}
+											</DropdownMenu.Item>
+										</DropdownMenu.Content>
+									</DropdownMenu.Root>
 								{:else}
-									g
+									{unitLabel('g')}
 								{/if}
 							</InputGroup.Addon>
 						</InputGroup.Root>
@@ -168,8 +187,9 @@
 					<Form.Description>
 						{#if $formData.preferredUnit === 'g'}
 							{@const servings = round($formData.quantityG / $formData.servingQuantity)}
-							≈ {servings}
-							{servings === 1 ? 'serving' : 'servings'}
+							{servings === 1
+								? m['foodDiary.aboutOneServing']()
+								: m['foodDiary.aboutServings']({ count: servings })}
 							<br />
 						{/if}
 						<p class={cn({ 'text-xs': $formData.preferredUnit === 'g' })}>

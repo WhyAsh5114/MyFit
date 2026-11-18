@@ -15,6 +15,8 @@
 
 	type Entry = Row<'ActivityEntry'>;
 
+	let burned = $derived((activityEntries ?? []).reduce((sum, entry) => sum + entry.calories, 0));
+
 	// An entry the app generates keeps an English name in the database, so it reads the same on
 	// every device; the diary names it in the app's language by its unit instead.
 	function entryName(entry: Entry) {
@@ -46,6 +48,12 @@
 						<FlameIcon class="size-4" />
 						<PlusIcon class="ml-auto size-4" strokeWidth={2.5} />
 					</Item.Title>
+					{#if activityEntries?.length}
+						<!-- The day's total burned, where a meal shows what it adds up to. -->
+						<Item.Description class="flex w-full text-xs text-muted-foreground tabular-nums">
+							<p class="ml-auto">{formatNumber(burned)}{m['foodDiary.kcalUnit']()}</p>
+						</Item.Description>
+					{/if}
 				</Item.Content>
 			</a>
 		{/snippet}
@@ -56,7 +64,8 @@
 				<Item.Title class="flex w-full">
 					{entryName(entry)}
 					<p class="ml-auto font-normal whitespace-nowrap text-muted-foreground tabular-nums">
-						{formatNumber(entry.calories)} kcal
+						<!-- The header's total carries the unit. -->
+						{formatNumber(entry.calories)}
 					</p>
 				</Item.Title>
 				<Item.Description class="flex w-full text-xs tabular-nums">

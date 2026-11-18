@@ -14,6 +14,7 @@
 	import * as InputGroup from '#lib/components/ui/input-group/index.js';
 	import posthog from 'posthog-js';
 	import * as Empty from '#lib/components/ui/empty/index.js';
+	import { ScrollArea } from '#lib/components/ui/scroll-area/index.js';
 	import { matchesHistorySearch } from '#lib/domain/food-history/rank.js';
 	import type { PageProps } from './$types';
 
@@ -120,7 +121,7 @@
 	</Button>
 </div>
 
-<div class="flex min-h-0 grow basis-0 flex-col gap-2 overflow-y-auto">
+<ScrollArea type="scroll" class="min-h-0 grow basis-0" viewportClass="*:flex *:flex-col *:gap-2">
 	{#if yourFoods.length > 0}
 		<YourFoods
 			foods={yourFoods}
@@ -132,7 +133,7 @@
 			ownerId={data.ownerId}
 		/>
 	{:else if typed.length === 0}
-		<Empty.Root class="h-full">
+		<Empty.Root class="grow">
 			<Empty.Header>
 				<Empty.Media variant="icon">
 					<SearchIcon />
@@ -151,4 +152,4 @@
 		{/if}
 		<FoodInfinite {params} compact={yourFoods.length > 0} />
 	{/if}
-</div>
+</ScrollArea>

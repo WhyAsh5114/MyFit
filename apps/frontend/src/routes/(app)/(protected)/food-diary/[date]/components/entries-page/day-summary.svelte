@@ -105,13 +105,7 @@
 
 <div class="flex flex-col gap-4">
 	<div class="flex items-center gap-4">
-		<CalorieGauge
-			consumed={eaten.kcal}
-			{target}
-			burned={stats?.caloriesBurned ?? 0}
-			{eaten}
-			{status}
-		/>
+		<CalorieGauge consumed={eaten.kcal} {target} {eaten} {status} />
 		<div class="flex min-w-0 grow flex-col gap-2.5">
 			{#each rows as row (row.key)}
 				<div class="flex flex-col gap-1">

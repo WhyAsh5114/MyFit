@@ -6,6 +6,7 @@
 	import Button from '#lib/components/ui/button/button.svelte';
 	import * as Popover from '#lib/components/ui/popover/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
+	import { ScrollArea } from '#lib/components/ui/scroll-area/index.js';
 	import * as Empty from '#lib/components/ui/empty/index.js';
 	import * as Item from '#lib/components/ui/item/index.js';
 	import { formatDate } from '#lib/format.js';
@@ -106,7 +107,8 @@
 				placeholder={m['chat.searchHistory']()}
 				aria-label={m['chat.searchHistory']()}
 			/>
-			<div class="flex max-h-[50dvh] flex-col overflow-y-auto">
+			<!-- The height limit goes on the viewport: the root has no height for it to fill. -->
+			<ScrollArea type="scroll" viewportClass="max-h-[50dvh]">
 				{#each shown as chat (chat.id)}
 					<Item.Root
 						size="sm"
@@ -149,7 +151,7 @@
 						</Empty.Header>
 					</Empty.Root>
 				{/each}
-			</div>
+			</ScrollArea>
 		</Popover.Content>
 	</Popover.Root>
 

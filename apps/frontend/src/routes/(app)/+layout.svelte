@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ScrollArea } from '#lib/components/ui/scroll-area/index.js';
 	import { Separator } from '#lib/components/ui/separator/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import { accountSession } from '#lib/services/account/account-session.svelte.js';
@@ -29,11 +30,11 @@
 					<SyncComponent />
 				{/if}
 			</header>
-			<div class="flex min-h-0 w-full flex-1 flex-col overflow-y-auto">
+			<ScrollArea type="scroll" class="min-h-0 w-full flex-1" viewportClass="*:flex *:flex-col">
 				<main class="flex w-full grow flex-col gap-2 p-4 pt-2">
 					{@render children?.()}
 				</main>
-			</div>
+			</ScrollArea>
 		</div>
 	</Sidebar.Provider>
 {/if}

@@ -10,6 +10,7 @@
 		XCircleIcon
 	} from '@lucide/svelte';
 	import * as InputGroup from '#lib/components/ui/input-group/index.js';
+	import { ScrollArea } from '#lib/components/ui/scroll-area/index.js';
 	import { type SuperForm } from 'sveltekit-superforms';
 	import { type FoodEntryFormSchema } from '#lib/features/food-diary/food-entry/model/schema.js';
 	import { toast } from 'svelte-sonner';
@@ -81,83 +82,90 @@
 				{m['foodDiary.nutritionAllValuesPerHundred']()}
 			</div>
 		</Sheet.Header>
-		<span class="ml-4 font-semibold">{m['foodDiary.nutritionRequiredFields']()}</span>
-		<div class="grid grid-cols-2 gap-2 px-4">
-			{#each REQUIRED_NUTRIENTS as nutrient (nutrient.key)}
-				<Form.Field {form} name={nutrient.key}>
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>{nutrientLabel(nutrient.key)}</Form.Label>
-							<InputGroup.Root>
-								<InputGroup.Input
-									{...props}
-									type="number"
-									step={0.01}
-									bind:value={$formData[nutrient.key]}
-								/>
-								<InputGroup.Addon align="inline-end">
-									<InputGroup.Text>{nutrient.unit}</InputGroup.Text>
-								</InputGroup.Addon>
-							</InputGroup.Root>
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
-			{/each}
-		</div>
-		<span class="ml-4 font-semibold">{m['foodDiary.nutritionOptionalFields']()}</span>
-		<div class="mb-2 no-scrollbar min-h-0 flex-1 scroll-fade-y overflow-y-auto px-4">
-			<div class="grid grid-cols-2 gap-2">
-				<Form.Field {form} name="servingSize">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>{m['foodDiary.servingSizeLabel']()}</Form.Label>
-							<InputGroup.Root>
-								<InputGroup.Input {...props} type="text" bind:value={$formData.servingSize} />
-							</InputGroup.Root>
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
-				<Form.Field {form} name="servingQuantity">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label>{m['foodDiary.servingQuantityLabel']()}</Form.Label>
-							<InputGroup.Root>
-								<InputGroup.Input {...props} type="number" bind:value={$formData.servingQuantity} />
-								<InputGroup.Addon align="inline-end">
-									<InputGroup.Text>
-										{m['foodDiary.servingQuantityUnit']()}
-									</InputGroup.Text>
-								</InputGroup.Addon>
-							</InputGroup.Root>
-						{/snippet}
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
-				{#each OPTIONAL_NUTRIENTS as nutrient (nutrient.key)}
-					<Form.Field {form} name={nutrient.key}>
+		<!-- Required and optional fields scroll together, so a short screen still reaches every field. -->
+		<ScrollArea type="scroll" class="mb-2 min-h-0 flex-1" viewportClass="scroll-fade-y">
+			<div class="flex flex-col gap-2 px-4">
+				<span class="font-semibold">{m['foodDiary.nutritionRequiredFields']()}</span>
+				<div class="grid grid-cols-2 gap-2">
+					{#each REQUIRED_NUTRIENTS as nutrient (nutrient.key)}
+						<Form.Field {form} name={nutrient.key}>
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>{nutrientLabel(nutrient.key)}</Form.Label>
+									<InputGroup.Root>
+										<InputGroup.Input
+											{...props}
+											type="number"
+											step={0.01}
+											bind:value={$formData[nutrient.key]}
+										/>
+										<InputGroup.Addon align="inline-end">
+											<InputGroup.Text>{nutrient.unit}</InputGroup.Text>
+										</InputGroup.Addon>
+									</InputGroup.Root>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					{/each}
+				</div>
+				<span class="mt-2 font-semibold">{m['foodDiary.nutritionOptionalFields']()}</span>
+				<div class="grid grid-cols-2 gap-2">
+					<Form.Field {form} name="servingSize">
 						<Form.Control>
 							{#snippet children({ props })}
-								<Form.Label>{nutrientLabel(nutrient.key)}</Form.Label>
+								<Form.Label>{m['foodDiary.servingSizeLabel']()}</Form.Label>
+								<InputGroup.Root>
+									<InputGroup.Input {...props} type="text" bind:value={$formData.servingSize} />
+								</InputGroup.Root>
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field {form} name="servingQuantity">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>{m['foodDiary.servingQuantityLabel']()}</Form.Label>
 								<InputGroup.Root>
 									<InputGroup.Input
 										{...props}
 										type="number"
-										step={0.01}
-										bind:value={$formData[nutrient.key]}
+										bind:value={$formData.servingQuantity}
 									/>
 									<InputGroup.Addon align="inline-end">
-										<InputGroup.Text>{nutrient.unit}</InputGroup.Text>
+										<InputGroup.Text>
+											{m['foodDiary.servingQuantityUnit']()}
+										</InputGroup.Text>
 									</InputGroup.Addon>
 								</InputGroup.Root>
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
-				{/each}
+					{#each OPTIONAL_NUTRIENTS as nutrient (nutrient.key)}
+						<Form.Field {form} name={nutrient.key}>
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>{nutrientLabel(nutrient.key)}</Form.Label>
+									<InputGroup.Root>
+										<InputGroup.Input
+											{...props}
+											type="number"
+											step={0.01}
+											bind:value={$formData[nutrient.key]}
+										/>
+										<InputGroup.Addon align="inline-end">
+											<InputGroup.Text>{nutrient.unit}</InputGroup.Text>
+										</InputGroup.Addon>
+									</InputGroup.Root>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					{/each}
+				</div>
 			</div>
-		</div>
+		</ScrollArea>
 		{#if hasFieldErrors}
 			<Button class="mx-4 mb-4" type="button" variant="destructive" onclick={showErrorsToast}>
 				{m['foodDiary.nutritionFormErrors']()}

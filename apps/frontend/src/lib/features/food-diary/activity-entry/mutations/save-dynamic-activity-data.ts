@@ -6,6 +6,7 @@ import { activityEntryKeys } from '../keys.js';
 import { invalidateKeys } from '#lib/data/dependencies.js';
 import { toast } from 'svelte-sonner';
 import { m } from '#lib/paraglide/messages.js';
+import { generatedActivityId } from '#lib/domain/nutrition/generated-activity.js';
 
 export const useSaveDynamicActivityData = () =>
 	useMutation({
@@ -16,7 +17,7 @@ export const useSaveDynamicActivityData = () =>
 			const { orm } = await getDb();
 			// One row per account and day, so devices that sync later converge instead of each creating
 			// their own. The id is the table's primary key across all accounts, hence the userId.
-			const id = `generated-activity:${data.userId}:${date.toString()}`;
+			const id = generatedActivityId(data.userId, date.toString());
 			return await orm.activityEntry.upsert({
 				where: { id },
 				update: data,

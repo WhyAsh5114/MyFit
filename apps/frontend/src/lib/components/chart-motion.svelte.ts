@@ -1,6 +1,8 @@
 import { prefersReducedMotion } from 'svelte/motion';
 import { cubicOut } from 'svelte/easing';
 
+const DURATION = 300;
+
 /**
  * How layerchart animates a chart to new values: a short tween (DESIGN.md → Motion), or an
  * instant change when the user asks for reduced motion. Read it in markup so it follows the setting.
@@ -9,6 +11,16 @@ export const chartMotion = {
 	get current() {
 		return prefersReducedMotion.current
 			? ('none' as const)
-			: { type: 'tween' as const, duration: 300, easing: cubicOut };
+			: { type: 'tween' as const, duration: DURATION, easing: cubicOut };
+	}
+};
+
+/**
+ * The same tween as options for a Svelte `Tween`, for a chart that tweens its own values because
+ * layerchart would only animate it once, as it appears.
+ */
+export const chartTween = {
+	get current() {
+		return { duration: prefersReducedMotion.current ? 0 : DURATION, easing: cubicOut };
 	}
 };
