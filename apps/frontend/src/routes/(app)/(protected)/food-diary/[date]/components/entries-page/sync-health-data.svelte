@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
-	import { CalendarDate, getLocalTimeZone } from '@internationalized/date';
+	import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 	import type { Row } from '@myfit/shared/client';
 	import { useStepsByDate } from '#lib/features/capacitor-health/queries/get-steps-by-date.js';
 	import { calculateActivityCalories } from '#lib/domain/nutrition/activity-calories.js';
@@ -12,8 +12,17 @@
 		activityEntries: Row<'ActivityEntry'>[];
 		activityPreferences: Row<'ActivityPreferences'> | null;
 		macroMetrics: Row<'MacroMetrics'> | null;
+		/** The day's fixed-amount entry, worked out by the page's load and not saved yet. */
+		fixedActivity: Row<'ActivityEntry'> | null;
 	};
-	let { selectedDay, userId, activityEntries, activityPreferences, macroMetrics }: Props = $props();
+	let {
+		selectedDay,
+		userId,
+		activityEntries,
+		activityPreferences,
+		macroMetrics,
+		fixedActivity
+	}: Props = $props();
 
 	const daySteps = useStepsByDate(() => selectedDay);
 	const saveDynamicActivityData = useSaveDynamicActivityData();
@@ -23,6 +32,8 @@
 	// day at once, so only the steps can be mid-flight.
 	let shouldSyncDynamic = $derived.by(() => {
 		if (daySteps.isFetching) return false;
+		// A day that hasn't started gets no entry: the preferences may change before it does.
+		if (selectedDay.compare(today(getLocalTimeZone())) > 0) return false;
 
 		const prefs = activityPreferences;
 		const metrics = macroMetrics;
@@ -35,18 +46,6 @@
 
 		const existing = activityEntries.find((e) => e.systemGenerated && e.quantityUnit === 'steps');
 		return existing?.quantity !== sample.value;
-	});
-
-	// Returns true only when the fixed-calorie entry needs to be created or updated.
-	let shouldSyncStatic = $derived.by(() => {
-		const prefs = activityPreferences;
-		if (!prefs) return false;
-
-		if (prefs.adjustmentType !== 'Static') return false;
-		if (!prefs.staticCalories) return false;
-
-		const existing = activityEntries.find((e) => e.systemGenerated && e.quantityUnit === 'day');
-		return existing?.calories !== prefs.staticCalories;
 	});
 
 	// Only re-runs when shouldSyncDynamic flips true. Everything else is untracked.
@@ -71,24 +70,22 @@
 		});
 	});
 
-	// Only re-runs when shouldSyncStatic flips true. Everything else is untracked.
+	// The page already shows the fixed amount; this saves it.
 	$effect(() => {
-		if (!shouldSyncStatic) return;
-		untrack(() => {
-			const prefs = activityPreferences;
-			if (!prefs?.staticCalories) return;
-			const existing = activityEntries.find((e) => e.systemGenerated);
-
+		if (!fixedActivity) return;
+		// The mutation sets the id itself.
+		const { name, performedAt, calories, quantity, quantityUnit } = fixedActivity;
+		untrack(() =>
 			saveDynamicActivityData.mutate({
 				date: selectedDay,
-				name: 'Daily fixed activity',
-				performedAt: existing?.performedAt ?? selectedDay.toDate(getLocalTimeZone()),
-				calories: prefs.staticCalories,
-				quantity: 1,
-				quantityUnit: 'day',
+				name,
+				performedAt,
+				calories,
+				quantity,
+				quantityUnit,
 				systemGenerated: true,
 				userId
-			});
-		});
+			})
+		);
 	});
 </script>

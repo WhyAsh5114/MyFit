@@ -5,6 +5,11 @@ import { getMacroMetricsByDate } from '#lib/features/food-diary/macro-metrics/qu
 import { getMacroTargetsByDate } from '#lib/features/food-diary/macro-targets/queries/get-by-date.js';
 import { getMeals } from '#lib/features/food-diary/meals/queries/get.js';
 import { parseSelectedDay } from '#lib/features/food-diary/_common/selected-day.js';
+import {
+	unsavedFixedActivity,
+	withGeneratedActivity
+} from '#lib/domain/nutrition/generated-activity.js';
+import { getLocalTimeZone, today } from '@internationalized/date';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ params, depends, parent }) => {
@@ -21,11 +26,22 @@ export const load: PageLoad = async ({ params, depends, parent }) => {
 			getMacroMetricsByDate(depends, args),
 			getMacroTargetsByDate(depends, args)
 		]);
+	// A fixed amount is known from the preferences, so the day shows it before it is saved.
+	const fixedActivity = unsavedFixedActivity({
+		userId: ownerId,
+		day: date.toString(),
+		today: today(getLocalTimeZone()).toString(),
+		startOfDay: date.toDate(getLocalTimeZone()),
+		entries: activityEntries,
+		preferences: activityPreferences
+	});
 	return {
 		day: date.toString(),
 		meals,
 		foodEntries,
-		activityEntries,
+		activityEntries: withGeneratedActivity(activityEntries, fixedActivity),
+		/** Saved by `SyncHealthData`; until then it is already in `activityEntries`. */
+		fixedActivity,
 		activityPreferences,
 		macroMetrics,
 		macroTargets
