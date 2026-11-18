@@ -262,6 +262,10 @@
 	[data-slot='card-title'] {
 		letter-spacing: -0.02em;
 	}
+	/* An icon keeps its size in a row whose text truncates. */
+	svg.lucide {
+		flex-shrink: 0;
+	}
 	/* Finer Lucide icons. Icons given their own stroke width keep it. */
 	svg.lucide[stroke-width='2'] {
 		stroke-width: 1.75;

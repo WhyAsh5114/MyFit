@@ -11,15 +11,21 @@
 	import RequireClarificationPart from './parts/tool-require-clarification.svelte';
 	import SearchFoodsPart from './parts/tool-search-foods.svelte';
 	import WebSearchPart from './parts/tool-web-search.svelte';
+	import { reuseUnchanged } from '#lib/features/assistant/chat/stable-parts.js';
 
 	let { message, active }: { message: MyUIMessage; active: boolean } = $props();
 
 	const isUser = $derived(message.role === 'user');
+
+	// Only the parts that changed re-render as the reply streams in (see `reuseUnchanged`). `shown`
+	// holds the parts as last rendered, which the next copy of the message is compared against.
+	const shown: { parts: MyUIMessage['parts'] } = { parts: [] };
+	const parts = $derived((shown.parts = reuseUnchanged(shown.parts, message.parts)));
 </script>
 
 <Message.Root align={isUser ? 'end' : 'start'}>
 	<Message.Content>
-		{#each message.parts as part, index (index)}
+		{#each parts as part, index (index)}
 			{#if part.type === 'text'}
 				<TextPart {part} role={message.role} />
 			{:else if part.type === 'file'}
