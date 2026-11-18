@@ -1,14 +1,11 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-	import { m } from '#lib/paraglide/messages.js';
 	import { getLocalTimeZone } from '@internationalized/date';
 	import { parseSelectedDay } from '#lib/features/food-diary/_common/selected-day.js';
 	import HeaderCard from './components/entries-page/header-card.svelte';
+	import DaySummary from './components/entries-page/day-summary.svelte';
 	import FoodEntries from './components/entries-page/food-entries.svelte';
 	import ActivityEntries from './components/entries-page/activity-entries.svelte';
 	import SyncHealthData from './components/entries-page/sync-health-data.svelte';
-	import Button from '#lib/components/ui/button/button.svelte';
-	import { BotMessageSquareIcon } from '@lucide/svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -25,29 +22,20 @@
 	macroMetrics={data.macroMetrics}
 />
 
-<HeaderCard
-	foodEntries={data.foodEntries}
-	activityEntries={data.activityEntries}
-	{selectedDay}
-	{timezone}
-	macroMetrics={data.macroMetrics}
-	macroTargets={data.macroTargets}
-/>
+<HeaderCard {selectedDay} {timezone} />
 
-<div class="relative flex min-h-0 w-full grow basis-0">
-	<div class="size-full overflow-y-auto">
-		<div class="flex h-full flex-col gap-2">
+<div class="min-h-0 w-full grow basis-0 overflow-y-auto">
+	<div class="flex flex-col gap-4">
+		<DaySummary
+			foodEntries={data.foodEntries}
+			activityEntries={data.activityEntries}
+			{selectedDay}
+			macroMetrics={data.macroMetrics}
+			macroTargets={data.macroTargets}
+		/>
+		<div class="flex flex-col gap-2">
 			<FoodEntries foodEntries={data.foodEntries} meals={data.meals} />
 			<ActivityEntries activityEntries={data.activityEntries} />
 		</div>
 	</div>
-
-	<Button
-		class="absolute right-2 bottom-2"
-		size="icon-lg"
-		href={resolve('chat')}
-		aria-label={m['foodDiary.logWithChat']()}
-	>
-		<BotMessageSquareIcon class="size-6" />
-	</Button>
 </div>

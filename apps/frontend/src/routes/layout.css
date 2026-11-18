@@ -1,13 +1,14 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn-svelte/tailwind.css';
-@import '@fontsource-variable/inter';
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource-variable/jetbrains-mono';
 @plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-	--radius: 0.625rem;
+	--radius: 0.75rem;
 
 	--background: oklch(0.99 0.0001 271.152);
 	--foreground: oklch(0.145 0 0);
@@ -55,7 +56,7 @@
 	--sidebar-border: oklch(0.922 0 0);
 	--sidebar-ring: oklch(0.708 0 0);
 
-	--chart-protein: oklch(61.906% 0.20597 260.705);
+	--chart-protein: oklch(0.58 0.21 290);
 	--chart-fat: oklch(0.769 0.188 70.08);
 	--chart-carbs: oklch(0.696 0.17 162.48);
 
@@ -69,6 +70,7 @@
 }
 
 .dark {
+	--chart-protein: oklch(0.7 0.17 290);
 	--background: oklch(0.145 0 0);
 	--foreground: oklch(0.985 0 0);
 	--shadow-color: rgba(255, 255, 255, 0.2);
@@ -82,8 +84,9 @@
 	--primary: oklch(0.572 0.144 253.606);
 	--primary-foreground: oklch(0.97 0.014 254.604);
 
-	--secondary: oklch(0.269 0 0);
-	--secondary-foreground: oklch(0.985 0 0);
+	/* Navy, from the original MyFit: secondary buttons read as part of the blue brand. */
+	--secondary: oklch(0.28 0.05 250);
+	--secondary-foreground: oklch(0.93 0.03 255);
 
 	--muted: oklch(0.269 0 0);
 	--muted-foreground: oklch(0.708 0 0);
@@ -161,13 +164,18 @@
 	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
 	--color-sidebar-border: var(--sidebar-border);
 	--color-sidebar-ring: var(--sidebar-ring);
-	--font-sans: 'Inter Variable', sans-serif;
-	--font-heading: 'Inter Variable', sans-serif;
+	--font-sans: 'Space Grotesk Variable', sans-serif;
+	--font-heading: 'Space Grotesk Variable', sans-serif;
+	--font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 	--color-chart-5: var(--chart-5);
 	--color-chart-4: var(--chart-4);
 	--color-chart-3: var(--chart-3);
 	--color-chart-2: var(--chart-2);
 	--color-chart-1: var(--chart-1);
+	/* Surfaces are flat: edges come from borders. Overlays keep shadow-lg. */
+	--shadow-2xs: 0 0 #0000;
+	--shadow-xs: 0 0 #0000;
+	--shadow-sm: 0 0 #0000;
 	--radius-2xl: calc(var(--radius) * 1.8);
 	--radius-3xl: calc(var(--radius) * 2.2);
 	--radius-4xl: calc(var(--radius) * 2.6);
@@ -181,6 +189,19 @@
 			background-color: color-mix(in oklab, var(--primary) 18%, var(--card));
 		}
 	}
+}
+
+/* Small uppercase mono text for field labels and meta lines, like the markings on an instrument. */
+@utility label-mono {
+	font-family: var(--font-mono);
+	font-size: 0.6875rem;
+	font-weight: 500;
+	text-transform: uppercase;
+	color: var(--muted-foreground);
+	/* Mono letters are wide: a long word in a narrow column hyphenates rather than spilling out. */
+	min-width: 0;
+	hyphens: auto;
+	overflow-wrap: anywhere;
 }
 
 /* A 44px hit area around a smaller control. Neighbouring hit areas must not overlap. */
@@ -221,23 +242,34 @@
 	scrollbar-gutter: stable;
 }
 
-@font-face {
-	font-family: 'Inter';
-	src: url('/fonts/Inter-VariableFont_slnt,wght.ttf') format('truetype');
-	font-style: normal;
-	font-display: swap;
-}
-
 @layer base {
 	* {
 		@apply border-border outline-ring/50;
-		font-family: 'Inter', sans-serif;
+		font-family: 'Space Grotesk Variable', sans-serif;
 	}
 	body {
 		@apply bg-background text-foreground;
 	}
 	html {
 		@apply font-sans;
+	}
+	/* Numbers that line up are set in the mono face. */
+	/* Descendants too: the `*` rule above would otherwise reset them to the text face. */
+	.tabular-nums,
+	.tabular-nums * {
+		font-family: var(--font-mono);
+	}
+	/* Headings sit tighter; Space Grotesk is loose at its default spacing. */
+	h1,
+	h2,
+	h3,
+	h4,
+	[data-slot='card-title'] {
+		letter-spacing: -0.02em;
+	}
+	/* Finer Lucide icons. Icons given their own stroke width keep it. */
+	svg.lucide[stroke-width='2'] {
+		stroke-width: 1.75;
 	}
 }
 

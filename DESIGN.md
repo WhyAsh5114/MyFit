@@ -60,7 +60,7 @@ These are rejected in review.
 - Errors say what happened and what to do next. No apology, no blame.
 - Buttons say exactly what they do: `Log`, `Save`, `Cancel`, never `OK`.
 - Every string goes through Paraglide with keys in `messages/en.json` and `messages/hi.json`.
-- Format: `kcal` and `g` after a space, thousands separators, `tabular-nums` wherever digits line up. kcal and gram values in lists are whole numbers; editors may show one decimal.
+- Format: `kcal` and `g` after a space, thousands separators, `tabular-nums` wherever digits line up. kcal and gram values in lists are whole numbers; editors may show one decimal. In a Diary meal card, only the meal's total says `kcal`; the entries under it show the bare number.
 - Macro order and letters are **C F P** (carbs, fat, protein) in summaries, with the identity colors below.
 
 ## Surfaces
@@ -129,7 +129,7 @@ There are two nutrition statuses and no red:
 
 - **Today (in progress)** shows only certain facts: a ceiling already passed (amber `▲`), or a floor already met (green `✓`). Everything else stays neutral. Being under at 1 pm is normal.
 - **Past days (finished)** are judged: on target, or off target with direction.
-- The Diary calorie bar shows a tick at the goal once you pass it; the excess segment is amber.
+- The Diary gauge is a 270° arc split by macro (each macro's share of the calories eaten, in its identity color) with a tick at the goal. Past the goal, the arc is scaled to what was eaten, and an amber band outside the arc spans the excess only when the day is off target. Its middle holds only the kcal left (or over) and the status. Bars to its right give the numbers: calories, then C F P in grams against each macro's target. The calorie bar turns amber under the same rule as the band. Under the summary, the day's actions (Edit goal, Log by chat) share a row, like Add manually and Scan barcode on Add food. A floating button would cover the last meal's `+`. Without a goal the summary keeps the same shape and height: the gauge is an empty track showing kcal eaten, a bar without a target shows the amount over an empty bar, and the action reads Set goal. Never fill in a default goal, since a made-up target reads like the user's own.
 
 ### Judging a finished day depends on the goal
 
@@ -180,7 +180,7 @@ Expressive, but purposeful. Motion explains cause and effect, rewards completion
 | Charts and number changes       | 250–400 ms   | Tween values; don't re-animate on every render |
 | Reward moments (daily goal met) | up to 600 ms | At most once per day; ignorable, never blocks  |
 
-- Respect `prefers-reduced-motion`: replace movement with an instant change or a fade.
+- Respect `prefers-reduced-motion`: replace movement with an instant change or a fade. layerchart charts take their `motion` from `chartMotion` (`lib/components/chart-motion.svelte.ts`), which does both.
 - Rewards celebrate the day, not a streak. No countdowns, no loss framing.
 - Don't animate layout for long lists; animate only the item that changed.
 

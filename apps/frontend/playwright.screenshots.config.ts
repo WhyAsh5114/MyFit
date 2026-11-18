@@ -23,7 +23,9 @@ export default defineConfig({
 		baseURL: WEB,
 		locale: 'en-US',
 		viewport: { width: 390, height: 844 },
-		deviceScaleFactor: 2
+		deviceScaleFactor: 2,
+		// Charts and transitions land in their final state instead of being caught mid-tween.
+		reducedMotion: 'reduce'
 	},
 	projects: [
 		{ name: 'light', use: { colorScheme: 'light' } },

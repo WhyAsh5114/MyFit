@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { m } from '#lib/paraglide/messages.js';
 	import * as Chart from '#lib/components/ui/chart/index.js';
+	import { chartMotion } from '#lib/components/chart-motion.svelte.js';
 	import { cn } from '#lib/utils.js';
 	import { PieChart, Text } from 'layerchart';
 	import { hasCalculationErrors } from '#lib/domain/nutrition/energy-check.js';
@@ -30,14 +31,14 @@
 		c="color"
 		innerRadius={36}
 		padding={6}
-		props={{ pie: { motion: 'tween' } }}
+		props={{ pie: { motion: chartMotion.current } }}
 	>
 		{#snippet aboveMarks()}
 			<Text
 				value={Math.round(kcal).toString()}
 				textAnchor="middle"
 				verticalAnchor="end"
-				class="fill-foreground text-lg! font-bold"
+				class="fill-foreground text-lg! font-bold tabular-nums"
 			/>
 			<Text
 				value="kcal"

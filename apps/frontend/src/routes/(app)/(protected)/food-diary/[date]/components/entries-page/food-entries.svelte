@@ -67,16 +67,19 @@
 								<PlusIcon class="ml-auto size-4" strokeWidth={2.5} />
 							</Item.Title>
 							{#if group.entries.length > 0}
-								<Item.Description class="flex w-full gap-1 text-xs text-muted-foreground">
-									<p>
+								<!-- Each letter sits close to its amount, with more room between macros. -->
+								<Item.Description
+									class="flex w-full gap-3 text-xs text-muted-foreground tabular-nums"
+								>
+									<p class="flex gap-1">
 										<span class="text-chart-carbs">C</span>
 										{groupSummary.carbsG.toFixed()}g
 									</p>
-									<p>
+									<p class="flex gap-1">
 										<span class="text-chart-fat">F</span>
 										{groupSummary.fatG.toFixed()}g
 									</p>
-									<p>
+									<p class="flex gap-1">
 										<span class="text-chart-protein">P</span>
 										{groupSummary.proteinG.toFixed()}g
 									</p>
@@ -107,11 +110,14 @@
 								<Item.Content>
 									<Item.Title class="flex w-full">
 										{foodEntry.productName}
-										<p class="ml-auto font-normal whitespace-nowrap text-muted-foreground">
-											{round(forQuantity(foodEntry.energyKcal_100g, foodEntry.quantityG), 0)} kcal
+										<p
+											class="ml-auto font-normal whitespace-nowrap text-muted-foreground tabular-nums"
+										>
+											<!-- The meal's total carries the unit. -->
+											{round(forQuantity(foodEntry.energyKcal_100g, foodEntry.quantityG), 0)}
 										</p>
 									</Item.Title>
-									<Item.Description class="flex w-full text-xs">
+									<Item.Description class="flex w-full text-xs tabular-nums">
 										{#if foodEntry.servingQuantity && foodEntry.servingSize}
 											{@const calculatedQuantity = round(
 												foodEntry.quantityG / foodEntry.servingQuantity,

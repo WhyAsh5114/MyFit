@@ -38,10 +38,10 @@
 
 {#snippet macroCell(macro: string, value: number, color: string, multiplier: number)}
 	<div class="flex flex-col items-center justify-center">
-		<span class="text-xs {color}">
+		<span class="text-xs tabular-nums {color}">
 			{Math.round(calculateMacroPercentage(value, multiplier))}%
 		</span>
-		<span class="text-sm">{formatGrams(value)}</span>
+		<span class="text-sm tabular-nums">{formatGrams(value)}</span>
 		<span class="text-xs text-muted-foreground">{macro}</span>
 	</div>
 {/snippet}
