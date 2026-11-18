@@ -142,3 +142,25 @@ test('a food from your history logs again in one tap, and opens with its last am
 	await expect(page).toHaveURL(new RegExp(`/food-diary/${day()}$`));
 	await expect(page.getByText('Greek yogurt')).toHaveCount(2);
 });
+
+test('a scanned food opens for the meal the scan started from', async ({ page }) => {
+	await page.route(`${API}/api/nutrition-data/code/*`, (route) =>
+		route.fulfill({
+			status: 200,
+			headers: { ...CORS, 'content-type': 'application/json' },
+			body: JSON.stringify([{ id: 'scanned-food', code: '8901234567890', name: 'Muesli' }])
+		})
+	);
+	await signUp(page, newEmail());
+
+	await page.goto(`/food-diary/${day()}/add-food`);
+	await page.getByRole('button', { name: 'No meal' }).click();
+	await page.getByRole('menuitem', { name: 'Lunch' }).click();
+	await expect(page).toHaveURL(/meal-id=/);
+	const mealId = new URL(page.url()).searchParams.get('meal-id');
+
+	await page.getByRole('link', { name: 'Scan barcode' }).click();
+	await page.getByPlaceholder('Enter code manually').fill('8901234567890');
+	await page.getByPlaceholder('Enter code manually').press('Enter');
+	await expect(page).toHaveURL(new RegExp(`/add-food/scanned-food\\?.*meal-id=${mealId}`));
+});
