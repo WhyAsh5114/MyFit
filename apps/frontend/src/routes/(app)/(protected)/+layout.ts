@@ -9,7 +9,8 @@ import type { LayoutLoad } from './$types';
 export const load: LayoutLoad = async ({ parent, url }) => {
 	const { ownerId } = await parent();
 	if (ownerId === null) {
-		const back = encodeURIComponent(`${url.pathname}${url.search}${url.hash}`);
+		// SvelteKit throws on `url.hash` in a load, because a load can run where there is no hash.
+		const back = encodeURIComponent(`${url.pathname}${url.search}`);
 		redirect(307, `${resolve('login')}?redirect=${back}`);
 	}
 	return { ownerId };
