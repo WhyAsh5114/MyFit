@@ -13,7 +13,11 @@
 	const sidebar = useSidebar();
 	// The open phone sidebar is a history entry. A link in it takes that entry's place, which also
 	// closes the sidebar, so Back from the new page returns here with it closed.
-	const replaceState = $derived(sidebar.openMobile ? '' : 'off');
+	// SvelteKit reads `data-sveltekit-replacestate` as "" (on) or "false"; any other value warns.
+	const replaceState = $derived.by(() => {
+		if (sidebar.openMobile) return '';
+		return 'false';
+	});
 </script>
 
 <Sidebar.Root {...restProps} bind:ref>

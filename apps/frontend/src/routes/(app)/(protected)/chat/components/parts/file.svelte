@@ -11,11 +11,15 @@
 	const { part }: { part: FilePart } = $props();
 
 	/** A photo in object storage is read through the API; an older inline photo is shown as it is. */
-	const storedId = $derived(
-		part.url.startsWith(CHAT_IMAGE_URL_PREFIX) ? part.url.slice(CHAT_IMAGE_URL_PREFIX.length) : ''
-	);
+	const storedId = $derived.by(() => {
+		if (!part.url.startsWith(CHAT_IMAGE_URL_PREFIX)) return '';
+		return part.url.slice(CHAT_IMAGE_URL_PREFIX.length);
+	});
 	const stored = useChatImageById(() => storedId);
-	const src = $derived(storedId ? stored.data : part.url);
+	const src = $derived.by(() => {
+		if (!storedId) return part.url;
+		return stored.data;
+	});
 </script>
 
 <Attachment.Root class="self-end">

@@ -15,7 +15,10 @@
 	const sidebar = useSidebar();
 	let user = $derived(getCurrentUser());
 	// A link in the open phone sidebar takes its history entry's place (see app-sidebar.svelte).
-	const replaceState = $derived(sidebar.openMobile ? '' : 'off');
+	const replaceState = $derived.by(() => {
+		if (sidebar.openMobile) return '';
+		return 'false';
+	});
 
 	function getInitials(name: string, email: string) {
 		if (name.length === 0) {

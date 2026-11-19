@@ -29,11 +29,10 @@
 	const skipped = $derived(part.state === 'input-available' && !active);
 
 	/** The entries as they are on this device, read once the model has named them. */
-	const lookup = $derived(
-		part.state === 'input-available'
-			? findEntriesToDelete(context.session.userId, part.input.ids)
-			: null
-	);
+	const lookup = $derived.by(() => {
+		if (part.state !== 'input-available') return null;
+		return findEntriesToDelete(context.session.userId, part.input.ids);
+	});
 
 	async function confirm(found: Awaited<ReturnType<typeof findEntriesToDelete>>) {
 		let deleted;

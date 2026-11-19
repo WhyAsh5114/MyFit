@@ -50,7 +50,10 @@
 	const fail = (error: string) => (account = { kind: 'failed', error });
 
 	// `undefined` until the local database has been checked against the session.
-	const ownerId = $derived(account.kind === 'ready' ? account.ownerId : undefined);
+	const ownerId = $derived.by(() => {
+		if (account.kind !== 'ready') return undefined;
+		return account.ownerId;
+	});
 
 	// Ready once the database was checked against the session, and the store still agrees with it.
 	// A background refetch (on focus, or coming back online) doesn't count: the page stays up.

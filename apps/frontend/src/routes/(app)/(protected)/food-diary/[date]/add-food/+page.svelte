@@ -37,13 +37,12 @@
 
 	const typed = $derived(search.trim());
 	const urlSearch = $derived(page.url.searchParams.get('search')?.trim() ?? '');
-	const yourFoods = $derived(
-		typed.length === 0
-			? data.history.foods.slice(0, HISTORY_ROWS)
-			: data.history.foods
-					.filter((food) => matchesHistorySearch(food.latest, typed))
-					.slice(0, HISTORY_MATCHES)
-	);
+	const yourFoods = $derived.by(() => {
+		if (typed.length === 0) return data.history.foods.slice(0, HISTORY_ROWS);
+		return data.history.foods
+			.filter((food) => matchesHistorySearch(food.latest, typed))
+			.slice(0, HISTORY_MATCHES);
+	});
 
 	// The search the page opened with isn't a new search, so it isn't tracked.
 	let trackedQuery = page.url.searchParams.get('search')?.trim() ?? '';

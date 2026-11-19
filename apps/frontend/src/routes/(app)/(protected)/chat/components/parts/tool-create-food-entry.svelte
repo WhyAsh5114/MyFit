@@ -36,7 +36,10 @@
 	});
 	/** The user's own pick, once they make one; `undefined` keeps the proposed meal. */
 	let pickedMealId = $state<string | null | undefined>(undefined);
-	const mealId = $derived(pickedMealId === undefined ? proposedMealId : pickedMealId);
+	const mealId = $derived.by(() => {
+		if (pickedMealId === undefined) return proposedMealId;
+		return pickedMealId;
+	});
 	const mealName = $derived(meals.find((meal) => meal.id === mealId)?.name ?? null);
 
 	/** When the model says it was eaten, or `null` for "now", which is fixed when the user logs it. */

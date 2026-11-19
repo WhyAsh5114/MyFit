@@ -31,11 +31,10 @@
 	const skipped = $derived(part.state === 'input-available' && !active);
 
 	/** The edits against the entries on this device, read once the model has named them. */
-	const plan = $derived(
-		part.state === 'input-available'
-			? planUpdates(context.session.userId, part.input.edits, context.meals)
-			: null
-	);
+	const plan = $derived.by(() => {
+		if (part.state !== 'input-available') return null;
+		return planUpdates(context.session.userId, part.input.edits, context.meals);
+	});
 
 	async function confirm(planned: Awaited<ReturnType<typeof planUpdates>>) {
 		const changing = planned.updates.filter((u) => Object.keys(u.changes).length > 0);

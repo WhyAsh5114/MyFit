@@ -54,9 +54,10 @@
 		return $session.data ? null : ('signedOut' as const);
 	});
 
-	let statusLabel = $derived(
-		syncStatus === undefined ? m['sync.statusConnecting']() : STATUS_LABELS[syncStatus]()
-	);
+	let statusLabel = $derived.by(() => {
+		if (syncStatus === undefined) return m['sync.statusConnecting']();
+		return STATUS_LABELS[syncStatus]();
+	});
 
 	let statusVariant = $derived.by(() => {
 		if (syncStatus === 'idle' || syncStatus === 'pulling') return 'secondary' as const;
@@ -66,9 +67,10 @@
 		return 'outline' as const;
 	});
 
-	let lastSyncDisplay = $derived(
-		lastSyncTime ? formatDate(lastSyncTime, 'time') : m['sync.neverSynced']()
-	);
+	let lastSyncDisplay = $derived.by(() => {
+		if (!lastSyncTime) return m['sync.neverSynced']();
+		return formatDate(lastSyncTime, 'time');
+	});
 </script>
 
 <Button
