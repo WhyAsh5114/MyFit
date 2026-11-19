@@ -28,18 +28,18 @@
 		() => {
 			label: string;
 			description: string;
-			badge?: { text: string; variant: 'outline' | 'default' };
+			badge?: { text: string; emphasis: boolean };
 		}
 	> = {
 		Static: () => ({
 			label: m['foodDiary.activityGoal.static'](),
 			description: m['foodDiary.activityGoal.staticDescription'](),
-			badge: { text: m['foodDiary.activityGoal.staticBadge'](), variant: 'outline' }
+			badge: { text: m['foodDiary.activityGoal.staticBadge'](), emphasis: false }
 		}),
 		Dynamic: () => ({
 			label: m['foodDiary.activityGoal.dynamic'](),
 			description: m['foodDiary.activityGoal.dynamicDescription'](),
-			badge: { text: m['foodDiary.activityGoal.dynamicBadge'](), variant: 'default' }
+			badge: { text: m['foodDiary.activityGoal.dynamicBadge'](), emphasis: true }
 		}),
 		Manual: () => ({
 			label: m['foodDiary.activityGoal.manual'](),
@@ -106,16 +106,18 @@
 				{@const meta = activityAdjustmentMetadata[option]()}
 				<Label
 					for={option}
-					class="flex items-start rounded-lg border bg-secondary/50 p-3 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/10"
+					class="flex items-start rounded-lg border bg-muted/50 p-3 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/5"
 				>
-					<RadioGroup.Item value={option} id={option} class="mt-0.5 bg-card!" />
+					<RadioGroup.Item value={option} id={option} class="mt-0.5 not-data-checked:bg-card" />
 					<div class="flex flex-col items-start gap-1">
 						<p>
 							{meta.label}
 							{#if meta.badge}
 								<Badge
-									variant={meta.badge.variant}
-									class={cn('ml-2 h-5', { 'bg-card': meta.badge.variant === 'outline' })}
+									variant="outline"
+									class={cn('ml-2 h-5 bg-card', {
+										'border-primary/45 text-primary': meta.badge.emphasis
+									})}
 								>
 									{meta.badge.text}
 								</Badge>
@@ -128,7 +130,7 @@
 				</Label>
 			{/each}
 		</RadioGroup.Root>
-		<div class="mt-4 flex flex-col gap-2 rounded-lg border bg-secondary/50 p-3">
+		<div class="mt-4 flex flex-col gap-2 rounded-lg border bg-muted/50 p-3">
 			{#if selectedOption === 'Manual'}
 				<p class="text-xs text-muted-foreground">
 					{m['foodDiary.activityGoal.manualNote']()}

@@ -63,7 +63,7 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{m['foodDiary.targets.weightChangePerWeek']()}</Form.Label>
-						<div class="grid w-full gap-2 rounded-lg border bg-secondary/50 p-4">
+						<div class="grid w-full gap-2 rounded-lg border bg-muted/50 p-4">
 							<Slider
 								class="col-span-full"
 								type="single"

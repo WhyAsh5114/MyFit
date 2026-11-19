@@ -98,6 +98,11 @@ Every interactive element has a **hit area of at least 44×44px**. The drawn siz
 
 All colors come from the tokens in `apps/frontend/src/routes/layout.css`. Don't introduce literal colors in components.
 
+### Panels and selection inside a card
+
+- A boxed area inside a card (a slider readout, a note, an option card) is `rounded-lg border bg-muted/50`. Don't use `bg-secondary` for it: `--secondary` is navy in dark mode and clashes with the neutral card.
+- Blue marks only what is on or chosen. A checked option card gets `border-primary bg-primary/5`. A badge inside an option card is `outline`; one that needs emphasis adds `border-primary/45 text-primary` instead of a solid blue fill.
+
 ### Identity colors (what a thing is)
 
 Fixed meanings, never reused for status:
