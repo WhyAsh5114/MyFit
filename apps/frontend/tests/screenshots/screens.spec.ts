@@ -528,6 +528,16 @@ test('capture every screen', async ({ page }, testInfo) => {
 		'Diary with entries',
 		'Today is in progress, so under target stays neutral'
 	);
+	await page.getByRole('button', { name: 'Micronutrients' }).click();
+	await settle(page);
+	await shot(
+		'diary-micronutrients',
+		'Food diary',
+		'Diary, micronutrients page',
+		'Swipe the summary or tap the second dot'
+	);
+	await page.getByRole('button', { name: 'Macros' }).click();
+	await settle(page);
 	await page.getByRole('button', { name: 'Data sync' }).click();
 	await settle(page);
 	await shot('sync-drawer', 'Food diary', 'Sync drawer', 'Tap the cloud in the header');

@@ -180,6 +180,12 @@
 	--radius-3xl: calc(var(--radius) * 2.2);
 	--radius-4xl: calc(var(--radius) * 2.6);
 
+	/* Stronger curves than Tailwind's defaults, so motion responds at once (DESIGN.md → Motion).
+	   They replace the `ease-out` and `ease-in-out` utilities and add `ease-drawer`. */
+	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+	--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
 	/* Holds a blue tint, then fades back to the element's own background. There is no end keyframe, so
 	   the fade lands on whatever background the element has (card or row) instead of on transparent. */
 	--animate-highlight: highlight 1s ease-out;

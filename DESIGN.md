@@ -135,6 +135,7 @@ There are two nutrition statuses and no red:
 - **Today (in progress)** shows only certain facts: a ceiling already passed (amber `▲`), or a floor already met (green `✓`). Everything else stays neutral. Being under at 1 pm is normal.
 - **Past days (finished)** are judged: on target, or off target with direction.
 - The Diary gauge is a 270° arc split by macro (each macro's share of the calories eaten, in its identity color) with a tick at the goal. Past the goal, the arc is scaled to what was eaten, and an amber band outside the arc spans the excess only when the day is off target. Its middle holds only the kcal left (or over) and the status; calories burned show on the Activity card, not on the gauge. Bars to its right give the numbers: calories, then C F P in grams against each macro's target. The calorie bar turns amber under the same rule as the band. Under the summary, the day's actions (Edit goal, Log by chat) share a row, like Add manually and Scan barcode on Add food. A floating button would cover the last meal's `+`. Without a goal the summary keeps the same shape and height: the gauge is an empty track showing kcal eaten, a bar without a target shows the amount over an empty bar, and the action reads Set goal. Never fill in a default goal, since a made-up target reads like the user's own.
+- The Diary summary has two pages in a `Carousel`: the gauge and macro bars, then micronutrients. Swiping is the shortcut. Two dots under it are buttons that open each page, so the summary keeps working without the swipe gesture. The micronutrient page shows ten nutrients in two columns against published references (US Dietary Reference Intakes by age and sex, from the body metrics; `lib/domain/nutrition/micronutrients.ts`). These are reference values, not goals the user set, so they appear only once body metrics exist. Their bars are neutral grey, because the colors belong to the macros. A ceiling's reference reads `≤` (`6.1/≤18 g`); a word label beside the name doesn't fit the half-width column on a phone. Status shows only what is certain, on any day: a floor that is met (green `✓`) or a ceiling that is passed (amber `▲`, bar turns amber). Being under is never judged, because many foods have no micronutrient values. A one-line note under the grid says that values may be missing or inexact.
 
 ### Judging a finished day depends on the goal
 
@@ -181,11 +182,18 @@ Expressive, but purposeful. Motion explains cause and effect, rewards completion
 
 | Use                             | Duration     | Notes                                          |
 | ------------------------------- | ------------ | ---------------------------------------------- |
-| Press, hover, toggles           | 100–150 ms   | Ease-out                                       |
-| Sheets, drawers, route changes  | 200–300 ms   | Spring or ease-out; interruptible              |
+| Press, hover, toggles           | 100–150 ms   | `ease-out`; color changes use `ease`           |
+| Menus, popovers, tooltips       | 125–250 ms   | `ease-out`, scaled from the trigger            |
+| Sheets, drawers, route changes  | 200–300 ms   | Spring or `ease-drawer`; interruptible         |
 | Charts and number changes       | 250–400 ms   | Tween values; don't re-animate on every render |
 | Reward moments (daily goal met) | up to 600 ms | At most once per day; ignorable, never blocks  |
 
+- **Decide whether before how.** Something the user does many times a day (logging a food, switching dates) or from the keyboard gets no motion, or only press feedback. Motion needs a purpose: feedback, showing where something came from or went, a state change, or bridging an abrupt change.
+- **Easing tokens** live in `layout.css`: `ease-out` (entering, exiting, the default), `ease-in-out` (moving on screen), `ease-drawer` (sheets and drawers). They are stronger than Tailwind's defaults. Never `ease-in` for UI: it delays the start, which is what the user watches. Exits run faster than entries.
+- **Enter from `scale(0.95)` and transparent**, never from `scale(0)`. Menus, popovers, selects and tooltips scale from their trigger (bits-ui's `--bits-*-content-transform-origin`); dialogs stay centered.
+- **Animate `transform` and `opacity`**, naming the property (`transition-transform`, not `transition-all`). A measured-height accordion is the one exception.
+- **Interruptible by default.** Anything triggered rapidly uses a CSS transition, a Svelte `Tween` or `Spring`; keyframes are for one-shot effects like the save highlight.
+- The craft detail behind these rules (springs, gestures, stagger, performance) is in `.claude/skills/review-animations/STANDARDS.md`. Run `/review-animations` on motion changes and `/find-animation-opportunities` to look for gaps.
 - Respect `prefers-reduced-motion`: replace movement with an instant change or a fade. layerchart charts take their `motion` from `chartMotion` (`lib/components/chart-motion.svelte.ts`), which does both. layerchart animates a pie only as it appears, so a pie that changes with the day (the Diary gauge) sweeps in with `chartMotion` and tweens later changes itself, with a Svelte `Tween` and `chartTween` from the same file. Start that `Tween` at the first values, not zero: marks drawn from it mount at their first angle.
 - Rewards celebrate the day, not a streak. No countdowns, no loss framing.
 - Don't animate layout for long lists; animate only the item that changed.

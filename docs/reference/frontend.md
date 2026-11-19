@@ -31,6 +31,18 @@ $effect(() => {
 ```
 
 - **Compute with `$derived` or `$derived.by()`.** Setting state inside an `$effect` to compute a value is a bug waiting to happen.
+- **Branch inside `$derived.by()` with early returns, not a ternary in `$derived()`.** Return the empty case first, then build the value, so each case reads on its own line:
+
+  ```ts
+  // Null until the body metrics for a calorie goal are set.
+  let stats = $derived.by(() => {
+  	if (!macroMetrics) return null;
+  	return calculateDailyNutritionStats({ metrics: macroMetrics, foodEntries, activityEntries });
+  });
+  ```
+
+  Keep `$derived(expr)` for a single expression with no branch, such as `$derived(data.diary)`.
+
 - **Use `$effect` only for side effects**: navigation, DOM work, syncing with something outside Svelte.
 - **Reassign a `$derived` when you need a local value that follows its source.** Since Svelte 5.25, a `$derived` declared with `let` is writable: an assignment overrides it until a dependency changes, then it recomputes. Use it for an optimistic value or an editable copy of a prop or `data`, instead of `$state` plus an `$effect` that syncs it (ESLint's `svelte/prefer-writable-derived` flags that pattern). A `const` derived stays read-only.
 - **Use `$state` for local UI state only**, never for a copy of `data`.
