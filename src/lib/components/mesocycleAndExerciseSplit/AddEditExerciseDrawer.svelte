@@ -27,6 +27,7 @@
 		MesocycleExerciseTemplateWithoutIdsOrIndex,
 		SplitExerciseTemplateWithoutIdsOrIndex
 	} from './commonTypes';
+	import { buildDraftFromSelection } from './exerciseSelection';
 
 	type CommonProps<T> = {
 		editingExercise: T | undefined;
@@ -128,10 +129,11 @@
 	});
 
 	function selectExercise(exercise: ExerciseTemplateWithoutIdsOrIndex) {
-		currentExercise = structuredClone({
-			...exercise,
-			...(props.context !== 'exerciseSplit' && structuredClone(extraMesocycleProps))
-		});
+		currentExercise = buildDraftFromSelection(
+			defaultExercise,
+			exercise,
+			props.context !== 'exerciseSplit' ? extraMesocycleProps : undefined
+		);
 		searching = false;
 	}
 
